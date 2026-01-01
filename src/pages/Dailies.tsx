@@ -16,10 +16,12 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
-  Clock
+  Clock,
+  Columns
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { RenderComparison } from '@/components/dailies/RenderComparison';
 
 interface DailiesSession {
   id: string;
@@ -61,6 +63,7 @@ export default function Dailies() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [ratings, setRatings] = useState<Rating>({ acting: 3, camera: 3, lighting: 3, sound: 3, feelsReal: 3 });
   const [frameNote, setFrameNote] = useState('');
+  const [showComparison, setShowComparison] = useState(false);
 
   useEffect(() => {
     async function fetchSessions() {
@@ -189,10 +192,26 @@ export default function Dailies() {
   return (
     <AppLayout>
       <PageHeader title={t.dailies.title} description={t.dailies.subtitle}>
+        <Button variant="outline" onClick={() => setShowComparison(true)} disabled={items.length < 2}>
+          <Columns className="w-4 h-4 mr-2" />
+          Comparar
+        </Button>
         <Button variant="outline" onClick={createDemoSession}>
           {t.dailies.createDemoSession}
         </Button>
       </PageHeader>
+
+      {/* Render Comparison Dialog */}
+      <RenderComparison
+        items={items}
+        open={showComparison}
+        onOpenChange={setShowComparison}
+        onSelectWinner={async (itemId, decision) => {
+          await supabase.from('dailies_items').update({ decision }).eq('id', itemId);
+          setItems(items.map(item => item.id === itemId ? { ...item, decision } : item));
+          toast.success(`Marcado como ${decision}`);
+        }}
+      />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sessions sidebar */}

@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 import BibleOverview from '@/components/project/BibleOverview';
 import StylePack from '@/components/project/StylePack';
 import { ProjectSettings } from '@/components/project/ProjectSettings';
+import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import Characters from '@/components/project/Characters';
 import Locations from '@/components/project/Locations';
 import Scenes from '@/components/project/Scenes';
@@ -123,6 +124,7 @@ export default function ProjectDetail() {
         <Badge variant={bibleReady ? 'pass' : 'pending'}>
           Biblia: {project.bible_completeness_score}%
         </Badge>
+        <NotificationCenter projectId={project.id} />
         <Button variant="outline" size="icon" onClick={() => setShowSettings(true)}>
           <Settings className="w-4 h-4" />
         </Button>
