@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Play, Film } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Play, Film, Copy, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -59,6 +59,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [expandedEpisodes, setExpandedEpisodes] = useState<Set<number>>(new Set([1]));
   const [newSlugline, setNewSlugline] = useState('');
   const [newEpisodeNo, setNewEpisodeNo] = useState('1');
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [duplicateFromEpisode, setDuplicateFromEpisode] = useState('1');
+  const [duplicateToEpisode, setDuplicateToEpisode] = useState('2');
+  const [duplicating, setDuplicating] = useState(false);
   const [showAIDialog, setShowAIDialog] = useState(false);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [selectedShot, setSelectedShot] = useState<{ shot: Shot; scene: Scene } | null>(null);
@@ -171,6 +175,103 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     acc[scene.episode_no].push(scene);
     return acc;
   }, {} as Record<number, Scene[]>);
+
+  // Calculate episode durations based on shots
+  const getEpisodeDuration = (episodeNo: number): number => {
+    const episodeScenes = scenesByEpisode[episodeNo] || [];
+    let totalDuration = 0;
+    episodeScenes.forEach(scene => {
+      const sceneShots = shots[scene.id] || [];
+      sceneShots.forEach(shot => {
+        totalDuration += shot.duration_target || 3;
+      });
+    });
+    return totalDuration;
+  };
+
+  const formatDuration = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.round(seconds % 60);
+    return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+  };
+
+  // Duplicate scenes from one episode to another
+  const duplicateEpisodeScenes = async () => {
+    const fromEp = parseInt(duplicateFromEpisode);
+    const toEp = parseInt(duplicateToEpisode);
+    
+    if (fromEp === toEp) {
+      toast.error('Selecciona episodios diferentes');
+      return;
+    }
+
+    const scenesToDuplicate = scenesByEpisode[fromEp] || [];
+    if (scenesToDuplicate.length === 0) {
+      toast.error('El episodio origen no tiene escenas');
+      return;
+    }
+
+    setDuplicating(true);
+    try {
+      // Get existing scene count in target episode
+      const existingScenes = scenesByEpisode[toEp] || [];
+      let nextSceneNo = existingScenes.length > 0 ? Math.max(...existingScenes.map(s => s.scene_no)) + 1 : 1;
+
+      for (const scene of scenesToDuplicate) {
+        // Create new scene
+        const { data: newScene, error: sceneError } = await supabase
+          .from('scenes')
+          .insert([{
+            project_id: projectId,
+            episode_no: toEp,
+            scene_no: nextSceneNo,
+            slugline: scene.slugline,
+            summary: scene.summary,
+            quality_mode: scene.quality_mode,
+            priority: scene.priority as 'P0' | 'P1' | 'P2',
+            time_of_day: scene.time_of_day,
+            character_ids: scene.character_ids,
+            location_id: scene.location_id,
+          }])
+          .select()
+          .single();
+
+        if (sceneError) throw sceneError;
+
+        // Duplicate shots for this scene
+        const { data: sceneShots } = await supabase
+          .from('shots')
+          .select('*')
+          .eq('scene_id', scene.id)
+          .order('shot_no');
+
+        if (sceneShots && sceneShots.length > 0) {
+          const shotInserts = sceneShots.map(shot => ({
+            scene_id: newScene.id,
+            shot_no: shot.shot_no,
+            shot_type: shot.shot_type,
+            duration_target: shot.duration_target,
+            hero: shot.hero,
+            effective_mode: shot.effective_mode,
+            dialogue_text: shot.dialogue_text,
+          }));
+          await supabase.from('shots').insert(shotInserts);
+        }
+
+        nextSceneNo++;
+      }
+
+      toast.success(`${scenesToDuplicate.length} escenas duplicadas al Episodio ${toEp}`);
+      setShowDuplicateDialog(false);
+      setExpandedEpisodes(prev => new Set(prev).add(toEp));
+      fetchScenes();
+    } catch (error) {
+      console.error('Error duplicating scenes:', error);
+      toast.error('Error al duplicar escenas');
+    } finally {
+      setDuplicating(false);
+    }
+  };
 
   const deleteScene = async (id: string) => { await supabase.from('scenes').delete().eq('id', id); fetchScenes(); };
 
@@ -381,10 +482,16 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         </div>
         <div className="flex gap-2">
           {scenes.length > 0 && (
-            <Button variant="outline" onClick={exportStoryboard} disabled={exporting}>
-              {exporting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileDown className="w-4 h-4 mr-2" />}
-              Exportar Storyboard
-            </Button>
+            <>
+              <Button variant="outline" onClick={() => setShowDuplicateDialog(true)}>
+                <Copy className="w-4 h-4 mr-2" />
+                Duplicar Episodio
+              </Button>
+              <Button variant="outline" onClick={exportStoryboard} disabled={exporting}>
+                {exporting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileDown className="w-4 h-4 mr-2" />}
+                Exportar Storyboard
+              </Button>
+            </>
           )}
           <Button variant="gold" onClick={() => setShowAIDialog(true)}>
             <Wand2 className="w-4 h-4 mr-2" />
@@ -462,6 +569,11 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                     <p className="text-sm text-muted-foreground">
                       {episodeScenes.length} escenas • {episodeScenes.reduce((sum, s) => sum + (shots[s.id]?.length || 0), 0)} shots
                     </p>
+                  </div>
+                  {/* Duration counter */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    <span>{formatDuration(getEpisodeDuration(episodeNo))}</span>
                   </div>
                   <Badge variant={episodeScenes.length > 0 ? 'default' : 'secondary'}>
                     {episodeScenes.length > 0 ? 'Con contenido' : 'Vacío'}
@@ -732,6 +844,90 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                 <>
                   <Wand2 className="w-4 h-4 mr-2" />
                   Generar Escenas
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Duplicate Episode Dialog */}
+      <Dialog open={showDuplicateDialog} onOpenChange={setShowDuplicateDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Copy className="w-5 h-5 text-primary" />
+              Duplicar Escenas de Episodio
+            </DialogTitle>
+            <DialogDescription>
+              Copia todas las escenas y shots de un episodio a otro
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Desde Episodio</Label>
+                <Select 
+                  value={duplicateFromEpisode} 
+                  onValueChange={setDuplicateFromEpisode}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: episodesCount }, (_, i) => (
+                      <SelectItem key={i + 1} value={String(i + 1)}>
+                        Episodio {i + 1} ({(scenesByEpisode[i + 1] || []).length} escenas)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>A Episodio</Label>
+                <Select 
+                  value={duplicateToEpisode} 
+                  onValueChange={setDuplicateToEpisode}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: episodesCount }, (_, i) => (
+                      <SelectItem key={i + 1} value={String(i + 1)}>
+                        Episodio {i + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {duplicateFromEpisode && (
+              <div className="p-3 bg-muted/50 rounded-lg text-sm">
+                <p className="text-muted-foreground">
+                  Se duplicarán <strong>{(scenesByEpisode[parseInt(duplicateFromEpisode)] || []).length}</strong> escenas 
+                  del Episodio {duplicateFromEpisode} al Episodio {duplicateToEpisode}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDuplicateDialog(false)} disabled={duplicating}>
+              Cancelar
+            </Button>
+            <Button variant="gold" onClick={duplicateEpisodeScenes} disabled={duplicating}>
+              {duplicating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Duplicando...
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" />
+                  Duplicar Escenas
                 </>
               )}
             </Button>

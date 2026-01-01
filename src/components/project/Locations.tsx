@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp, Copy } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,6 +20,7 @@ interface Location {
   description: string | null;
   token: string | null;
   variants: { day?: boolean; night?: boolean; weather?: string[] } | null;
+  reference_urls: unknown;
 }
 
 export default function Locations({ projectId }: LocationsProps) {
@@ -29,6 +30,7 @@ export default function Locations({ projectId }: LocationsProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [expandedPackId, setExpandedPackId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [duplicating, setDuplicating] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -125,6 +127,60 @@ export default function Locations({ projectId }: LocationsProps) {
       hasNight: location.variants?.night ?? true,
     });
     setEditingId(location.id);
+  };
+
+  // Duplicate location
+  const duplicateLocation = async (location: Location) => {
+    setDuplicating(location.id);
+    try {
+      // Create new location
+      const { data: newLoc, error: locError } = await supabase
+        .from('locations')
+        .insert([{
+          project_id: projectId,
+          name: `${location.name} (copia)`,
+          description: location.description,
+          token: location.token,
+          variants: location.variants,
+          reference_urls: location.reference_urls as any,
+        }])
+        .select()
+        .single();
+      
+      if (locError) throw locError;
+      
+      // Duplicate location pack slots
+      const { data: slots } = await supabase
+        .from('location_pack_slots')
+        .select('*')
+        .eq('location_id', location.id);
+      
+      if (slots && slots.length > 0) {
+        const slotInserts = slots.map(s => ({
+          location_id: newLoc.id,
+          slot_type: s.slot_type,
+          slot_index: s.slot_index,
+          view_angle: s.view_angle,
+          time_of_day: s.time_of_day,
+          weather: s.weather,
+          image_url: s.image_url,
+          prompt_text: s.prompt_text,
+          seed: s.seed,
+          status: s.status,
+          required: s.required,
+        }));
+        
+        await supabase.from('location_pack_slots').insert(slotInserts);
+      }
+      
+      toast.success('Localización duplicada correctamente');
+      fetchLocations();
+    } catch (error) {
+      console.error('Error duplicating location:', error);
+      toast.error('Error al duplicar localización');
+    } finally {
+      setDuplicating(null);
+    }
   };
 
   if (loading) {
@@ -256,6 +312,19 @@ export default function Locations({ projectId }: LocationsProps) {
                             )}
                           </Button>
                         </CollapsibleTrigger>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => duplicateLocation(location)}
+                          disabled={duplicating === location.id}
+                          title="Duplicar localización"
+                        >
+                          {duplicating === location.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
+                        </Button>
                         <Button variant="ghost" size="icon" onClick={() => startEditing(location)}>
                           <Edit2 className="w-4 h-4" />
                         </Button>
