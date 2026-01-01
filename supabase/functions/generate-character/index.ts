@@ -27,67 +27,68 @@ interface SlotGenerateRequest {
   styleToken?: string;
 }
 
-// Image engine configuration
-const IMAGE_ENGINES = {
-  PRO: 'google/gemini-3-pro-image-preview',      // nano-banana-pro
-  STANDARD: 'google/gemini-2.5-flash-image-preview', // nano-banana-standard
-};
+// Image engine configuration - ALL slots use nano-banana-pro for maximum quality
+const IMAGE_ENGINE = 'google/gemini-3-pro-image-preview'; // nano-banana-pro
 
 // Prompt modifiers for stylization control
 const STYLE_MODIFIERS = {
-  // For identity anchors - force photorealistic, no stylization
-  PHOTOREAL_ANCHOR: `
+  // For identity anchors (closeup, turnaround) - force photorealistic, disable all stylization
+  PHOTOREAL_DISABLED: `
 CRITICAL REQUIREMENTS:
 - Photorealistic human rendering, no cartoon or stylized elements
 - Disable all artistic stylization - pure photographic quality
 - Realistic skin texture, pores, and natural imperfections
 - True-to-life lighting and shadows
 - Professional photography quality, suitable for identity matching
-- No filters, no artistic effects, no AI stylization artifacts`,
+- No filters, no artistic effects, no AI stylization artifacts
+- Force photoreal human appearance`,
 
-  // For expressions/outfits - low stylization tolerance
-  LOW_STYLIZATION: `
+  // For expression, outfit, base_look - low stylization tolerance
+  LOW_TOLERANCE: `
 STYLE REQUIREMENTS:
-- Maintain consistent character identity with minimal stylization
+- Maintain consistent character identity with low stylization tolerance
 - Keep artistic interpretation to a minimum
 - Prioritize recognizable facial features and body proportions
-- Clean, professional reference quality`,
+- Clean, professional reference quality
+- Subtle stylization allowed but identity must be preserved`,
 };
 
 // Prompt templates by slot type
 const PROMPT_TEMPLATES = {
+  // Identity anchors - photoreal forced, stylization disabled
   turnaround: (name: string, bio: string, angle: string, _style: string) => 
     `Character turnaround sheet, ${angle} view of ${name}. ${bio}. 
 Full body pose, clean studio background, professional character design reference sheet.
 Consistent lighting, detailed anatomy, high resolution character reference.
-${STYLE_MODIFIERS.PHOTOREAL_ANCHOR}`,
-
-  expression: (name: string, bio: string, expression: string, _style: string) =>
-    `Character expression sheet for ${name}. ${bio}.
-Close-up portrait showing "${expression}" emotion/expression.
-Face clearly visible, dramatic lighting highlighting facial features.
-High detail, suitable for animation reference. Clean background.
-${STYLE_MODIFIERS.LOW_STYLIZATION}`,
+${STYLE_MODIFIERS.PHOTOREAL_DISABLED}`,
 
   closeup: (name: string, bio: string, _style: string) =>
     `Identity anchor close-up portrait of ${name}. ${bio}.
 Extreme close-up of face, neutral expression, direct eye contact with camera.
 Studio lighting, clean background, ultra high detail on facial features.
 Sharp focus on eyes, skin texture, and defining facial characteristics.
-${STYLE_MODIFIERS.PHOTOREAL_ANCHOR}`,
+${STYLE_MODIFIERS.PHOTOREAL_DISABLED}`,
+
+  // Other slots - low stylization tolerance
+  expression: (name: string, bio: string, expression: string, _style: string) =>
+    `Character expression sheet for ${name}. ${bio}.
+Close-up portrait showing "${expression}" emotion/expression.
+Face clearly visible, dramatic lighting highlighting facial features.
+High detail, suitable for animation reference. Clean background.
+${STYLE_MODIFIERS.LOW_TOLERANCE}`,
 
   outfit: (name: string, bio: string, outfitDesc: string, angle: string, _style: string) =>
     `Character ${name} wearing ${outfitDesc}. ${bio}.
 ${angle || '3/4'} view, full body or 3/4 body pose showing the complete outfit.
 Professional wardrobe reference, detailed fabric textures and accessories.
 Clean background, fashion photography quality, suitable for production reference.
-${STYLE_MODIFIERS.LOW_STYLIZATION}`,
+${STYLE_MODIFIERS.LOW_TOLERANCE}`,
 
   base_look: (name: string, bio: string, _style: string) =>
     `Base character design for ${name}. ${bio}.
 3/4 view pose, showing character's default look and personality.
 Professional character design, clean background.
-${STYLE_MODIFIERS.LOW_STYLIZATION}`,
+${STYLE_MODIFIERS.LOW_TOLERANCE}`,
 };
 
 // QC checks for character images
@@ -220,16 +221,14 @@ async function handleSlotGeneration(body: SlotGenerateRequest): Promise<Response
     prompt_text: prompt,
   }).eq('id', slotId);
 
-  // Determine image engine based on slot type
-  // Identity anchors (closeup, turnaround) use nano-banana-pro for highest quality
-  // Other slots use nano-banana-standard for efficiency
+  // ALL slots use nano-banana-pro for maximum quality
+  // Stylization control differs by slot type
   const isIdentityAnchor = slotType === 'closeup' || slotType === 'turnaround';
-  const imageEngine = isIdentityAnchor ? IMAGE_ENGINES.PRO : IMAGE_ENGINES.STANDARD;
 
-  console.log(`Slot: ${slotType} | Engine: ${isIdentityAnchor ? 'nano-banana-pro' : 'nano-banana-standard'}`);
-  console.log(`Photoreal: ${isIdentityAnchor} | Low stylization: ${!isIdentityAnchor}`);
+  console.log(`Slot: ${slotType} | Engine: nano-banana-pro`);
+  console.log(`Stylization: ${isIdentityAnchor ? 'DISABLED (photoreal forced)' : 'LOW TOLERANCE'}`);
 
-  // Generate image with selected engine
+  // Generate image with nano-banana-pro
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -237,7 +236,7 @@ async function handleSlotGeneration(body: SlotGenerateRequest): Promise<Response
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: imageEngine,
+      model: IMAGE_ENGINE,
       messages: [
         {
           role: 'user',
