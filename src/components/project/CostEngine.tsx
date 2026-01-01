@@ -4,17 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown,
-  Settings,
-  Loader2,
-  Save,
-  AlertTriangle,
-  CheckCircle2
-} from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Settings, Loader2, Save, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CostEngineProps { projectId: string; }
@@ -53,6 +45,7 @@ interface SceneEstimate {
 }
 
 export default function CostEngine({ projectId }: CostEngineProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -197,12 +190,12 @@ export default function CostEngine({ projectId }: CostEngineProps) {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-foreground mb-1">Cost Engine</h2>
-          <p className="text-muted-foreground">Estimate production costs per scene</p>
+          <h2 className="text-2xl font-bold text-foreground mb-1">{t.costEngine.title}</h2>
+          <p className="text-muted-foreground">{t.costEngine.subtitle}</p>
         </div>
         <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
           <Settings className="w-4 h-4" />
-          Settings
+          {t.costEngine.settings}
         </Button>
       </div>
 
