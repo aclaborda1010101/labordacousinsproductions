@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, XCircle, AlertTriangle, 
-  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus, FolderUp
+  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus, FolderUp, Trash2
 } from 'lucide-react';
 
 // Role-based slot requirements
@@ -404,6 +404,35 @@ export function CharacterPackBuilder({
     toast.info('Waiver concedido');
   };
 
+  // Delete image from slot
+  const deleteSlotImage = async (slot: PackSlot) => {
+    if (!slot.image_url) return;
+
+    try {
+      // Extract file path from URL
+      const urlParts = slot.image_url.split('/character-packs/');
+      if (urlParts.length > 1) {
+        const filePath = urlParts[1];
+        await supabase.storage.from('character-packs').remove([filePath]);
+      }
+
+      // Reset slot to empty
+      await supabase.from('character_pack_slots').update({
+        image_url: null,
+        status: 'empty',
+        qc_score: null,
+        qc_issues: [],
+        fix_notes: null,
+      }).eq('id', slot.id);
+
+      await fetchSlots();
+      toast.success('Imagen eliminada');
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Error al eliminar imagen');
+    }
+  };
+
   // Get identity anchor URLs for QC comparison
   const getAnchorImageUrls = (): string[] => {
     return slots
@@ -795,35 +824,48 @@ export function CharacterPackBuilder({
               {typeSlots.map((slot) => (
                 <div 
                   key={slot.id}
-                  className={`relative aspect-square rounded-lg border-2 overflow-hidden transition-all
+                  className={`group relative aspect-square rounded-lg border-2 overflow-hidden transition-all
                     ${slot.status === 'approved' ? 'border-green-500/50' : ''}
                     ${slot.status === 'failed' ? 'border-destructive/50' : ''}
                     ${slot.status === 'empty' ? 'border-dashed border-muted-foreground/30' : ''}
                   `}
                 >
                   {slot.image_url ? (
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <img 
-                          src={slot.image_url} 
-                          alt={`${slot.slot_type} ${slot.slot_index}`}
-                          className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                        />
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                          <DialogTitle>
-                            {slot.slot_type} {slot.view_angle || slot.expression_name || ''}
-                          </DialogTitle>
-                        </DialogHeader>
-                        <img src={slot.image_url} alt="" className="w-full rounded-lg" />
-                        {slot.fix_notes && (
-                          <div className="p-3 bg-destructive/10 rounded-lg text-sm">
-                            <p className="font-medium text-destructive">Fix Notes:</p>
-                            <p>{slot.fix_notes}</p>
-                          </div>
-                        )}
-                        {slot.status === 'failed' && (
+                    <>
+                      {/* Delete button overlay */}
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="absolute top-1 left-1 h-6 w-6 p-0 z-10 opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteSlotImage(slot);
+                        }}
+                        title="Eliminar imagen"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <img 
+                            src={slot.image_url} 
+                            alt={`${slot.slot_type} ${slot.slot_index}`}
+                            className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                          />
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>
+                              {slot.slot_type} {slot.view_angle || slot.expression_name || ''}
+                            </DialogTitle>
+                          </DialogHeader>
+                          <img src={slot.image_url} alt="" className="w-full rounded-lg" />
+                          {slot.fix_notes && (
+                            <div className="p-3 bg-destructive/10 rounded-lg text-sm">
+                              <p className="font-medium text-destructive">Fix Notes:</p>
+                              <p>{slot.fix_notes}</p>
+                            </div>
+                          )}
                           <div className="flex gap-2">
                             <Button 
                               variant="outline" 
@@ -835,16 +877,25 @@ export function CharacterPackBuilder({
                               Regenerar
                             </Button>
                             <Button 
-                              variant="secondary"
-                              onClick={() => grantWaiver(slot.id)}
+                              variant="destructive"
+                              onClick={() => deleteSlotImage(slot)}
                             >
-                              <AlertTriangle className="w-4 h-4 mr-2" />
-                              Waiver
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Eliminar
                             </Button>
+                            {slot.status === 'failed' && (
+                              <Button 
+                                variant="secondary"
+                                onClick={() => grantWaiver(slot.id)}
+                              >
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                Waiver
+                              </Button>
+                            )}
                           </div>
-                        )}
-                      </DialogContent>
-                    </Dialog>
+                        </DialogContent>
+                      </Dialog>
+                    </>
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted/30">
                       {generating === slot.id || uploading === slot.id ? (
