@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { 
-  ArrowLeft, 
   Book, 
   Film, 
   Users, 
@@ -19,7 +18,8 @@ import {
   Settings,
   ChevronRight,
   AlertCircle,
-  Lock
+  Lock,
+  DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import BibleOverview from '@/components/project/BibleOverview';
@@ -27,6 +27,7 @@ import StylePack from '@/components/project/StylePack';
 import Characters from '@/components/project/Characters';
 import Locations from '@/components/project/Locations';
 import Scenes from '@/components/project/Scenes';
+import CostEngine from '@/components/project/CostEngine';
 
 interface Project {
   id: string;
@@ -43,9 +44,8 @@ const PROJECT_TABS = [
   { id: 'style', path: '/style', label: 'Style Pack', icon: Palette, requiresBible: false },
   { id: 'characters', path: '/characters', label: 'Characters', icon: Users, requiresBible: false },
   { id: 'locations', path: '/locations', label: 'Locations', icon: MapPin, requiresBible: false },
-  { id: 'script', path: '/script', label: 'Script', icon: FileText, requiresBible: true },
   { id: 'scenes', path: '/scenes', label: 'Scenes', icon: Clapperboard, requiresBible: true },
-  { id: 'render', path: '/render', label: 'Render', icon: Play, requiresBible: true },
+  { id: 'cost', path: '/cost', label: 'Cost Engine', icon: DollarSign, requiresBible: false },
 ];
 
 export default function ProjectDetail() {
@@ -152,7 +152,7 @@ export default function ProjectDetail() {
                 <div className="text-xs">
                   <p className="font-medium text-warning">Bible Incomplete</p>
                   <p className="text-muted-foreground mt-0.5">
-                    Complete your production bible to unlock script and rendering.
+                    Complete your production bible to unlock scenes.
                   </p>
                 </div>
               </div>
@@ -168,7 +168,8 @@ export default function ProjectDetail() {
             <Route path="/style" element={<StylePack projectId={project.id} />} />
             <Route path="/characters" element={<Characters projectId={project.id} />} />
             <Route path="/locations" element={<Locations projectId={project.id} />} />
-            <Route path="/scenes" element={<Scenes projectId={project.id} />} />
+            <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
+            <Route path="/cost" element={<CostEngine projectId={project.id} />} />
             <Route path="*" element={
               <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center">

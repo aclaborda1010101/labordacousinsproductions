@@ -8,12 +8,16 @@ import { Link } from 'react-router-dom';
 interface Project {
   id: string;
   title: string;
+  format: string;
+  episodes_count: number;
+  target_duration_min: number;
   bible_completeness_score: number;
+  created_at: string;
 }
 
 interface BibleOverviewProps {
   project: Project;
-  setProject: (project: Project) => void;
+  setProject: React.Dispatch<React.SetStateAction<Project | null>>;
 }
 
 export default function BibleOverview({ project, setProject }: BibleOverviewProps) {
