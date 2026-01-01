@@ -5,12 +5,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ImageGallery } from '@/components/project/ImageGallery';
 
 interface CharactersProps { projectId: string; }
 
@@ -54,6 +55,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [outfitForm, setOutfitForm] = useState({
     name: '',
     description: '',
+    referenceImage: null as string | null,
   });
 
   const fetchCharacters = async () => { 
@@ -227,6 +229,7 @@ export default function Characters({ projectId }: CharactersProps) {
             characterDescription: character.bio || 'A character',
             outfitName: outfitForm.name.trim(),
             outfitDescription: outfitForm.description || '',
+            referenceImageBase64: outfitForm.referenceImage || undefined,
           }
         });
 
@@ -235,7 +238,7 @@ export default function Characters({ projectId }: CharactersProps) {
         }
 
         toast.success('Vestuario generado correctamente');
-        setOutfitForm({ name: '', description: '' });
+        setOutfitForm({ name: '', description: '', referenceImage: null });
         setShowOutfitDialog(null);
         fetchCharacters();
       } catch (error) {
@@ -255,6 +258,10 @@ export default function Characters({ projectId }: CharactersProps) {
         toast.error('Error al añadir vestuario');
       } else {
         toast.success('Vestuario añadido');
+        setOutfitForm({ name: '', description: '', referenceImage: null });
+        setShowOutfitDialog(null);
+        fetchCharacters();
+      }
         setOutfitForm({ name: '', description: '' });
         setShowOutfitDialog(null);
         fetchCharacters();
@@ -658,14 +665,47 @@ export default function Characters({ projectId }: CharactersProps) {
                 rows={3}
               />
             </div>
+            <div className="space-y-2">
+              <Label>Imagen de Referencia (opcional)</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        setOutfitForm({...outfitForm, referenceImage: ev.target?.result as string});
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="flex-1"
+                />
+                {outfitForm.referenceImage && (
+                  <Button variant="ghost" size="icon" onClick={() => setOutfitForm({...outfitForm, referenceImage: null})}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+              {outfitForm.referenceImage && (
+                <img src={outfitForm.referenceImage} alt="Preview" className="w-20 h-20 object-cover rounded-lg" />
+              )}
+              <p className="text-xs text-muted-foreground">La IA generará variaciones basadas en esta imagen</p>
+            </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowOutfitDialog(null); setOutfitForm({ name: '', description: '' }); }}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => { setShowOutfitDialog(null); setOutfitForm({ name: '', description: '', referenceImage: null }); }}>
               Cancelar
             </Button>
-            <Button variant="gold" onClick={() => showOutfitDialog && addOutfit(showOutfitDialog)} disabled={saving}>
+            <Button variant="outline" onClick={() => showOutfitDialog && addOutfit(showOutfitDialog, false)} disabled={saving}>
+              Solo Guardar
+            </Button>
+            <Button variant="gold" onClick={() => showOutfitDialog && addOutfit(showOutfitDialog, true)} disabled={saving}>
               {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-              Añadir Vestuario
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generar con IA
             </Button>
           </DialogFooter>
         </DialogContent>

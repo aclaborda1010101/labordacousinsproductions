@@ -7,15 +7,17 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2 } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
+import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
 
-interface Scene { id: string; scene_no: number; episode_no: number; slugline: string; summary: string | null; quality_mode: QualityMode; priority: string; approved: boolean; }
+interface Scene { id: string; scene_no: number; episode_no: number; slugline: string; summary: string | null; quality_mode: QualityMode; priority: string; approved: boolean; time_of_day: string | null; }
+interface Character { id: string; name: string; }
+interface Location { id: string; name: string; }
 interface Shot { id: string; shot_no: number; shot_type: string; duration_target: number; hero: boolean; effective_mode: QualityMode; dialogue_text: string | null; }
 
 export default function Scenes({ projectId, bibleReady }: ScenesProps) {
@@ -27,6 +29,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [newSlugline, setNewSlugline] = useState('');
   const [showAIDialog, setShowAIDialog] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [projectTitle, setProjectTitle] = useState('');
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [aiForm, setAiForm] = useState({
     episodeNo: '1',
     synopsis: '',
@@ -47,9 +53,19 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
   useEffect(() => { 
     fetchScenes();
-    // Get project info for episode count
-    supabase.from('projects').select('episodes_count').eq('id', projectId).single().then(({ data }) => {
-      if (data) setEpisodesCount(data.episodes_count);
+    // Get project info
+    supabase.from('projects').select('episodes_count, title').eq('id', projectId).single().then(({ data }) => {
+      if (data) {
+        setEpisodesCount(data.episodes_count);
+        setProjectTitle(data.title);
+      }
+    });
+    // Get characters and locations
+    supabase.from('characters').select('id, name').eq('project_id', projectId).then(({ data }) => {
+      if (data) setCharacters(data);
+    });
+    supabase.from('locations').select('id, name').eq('project_id', projectId).then(({ data }) => {
+      if (data) setLocations(data);
     });
   }, [projectId]);
 
@@ -131,6 +147,46 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     }
   };
 
+  const exportStoryboard = async () => {
+    setExporting(true);
+    toast.info('Preparando exportación del storyboard...');
+
+    try {
+      // Fetch all shots for all scenes
+      const allShots: Record<string, Shot[]> = {};
+      for (const scene of scenes) {
+        const { data } = await supabase.from('shots').select('*').eq('scene_id', scene.id).order('shot_no');
+        if (data) {
+          allShots[scene.id] = data.map(s => ({
+            ...s,
+            duration_target: Number(s.duration_target) || 3,
+            hero: s.hero || false,
+            effective_mode: s.effective_mode as QualityMode,
+          }));
+        }
+      }
+
+      const scenesWithShots = scenes.map(scene => ({
+        ...scene,
+        shots: allShots[scene.id] || [],
+      }));
+
+      exportStoryboardPDF({
+        projectTitle,
+        scenes: scenesWithShots,
+        characters,
+        locations,
+      });
+
+      toast.success('Storyboard exportado correctamente');
+    } catch (error) {
+      console.error('Error exporting storyboard:', error);
+      toast.error('Error al exportar storyboard');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   if (!bibleReady) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[400px]">
@@ -152,10 +208,18 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           <h2 className="text-2xl font-bold text-foreground mb-1">{t.scenes.title}</h2>
           <p className="text-muted-foreground">{t.scenes.subtitle}</p>
         </div>
-        <Button variant="gold" onClick={() => setShowAIDialog(true)}>
-          <Wand2 className="w-4 h-4 mr-2" />
-          Generar con IA
-        </Button>
+        <div className="flex gap-2">
+          {scenes.length > 0 && (
+            <Button variant="outline" onClick={exportStoryboard} disabled={exporting}>
+              {exporting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileDown className="w-4 h-4 mr-2" />}
+              Exportar Storyboard
+            </Button>
+          )}
+          <Button variant="gold" onClick={() => setShowAIDialog(true)}>
+            <Wand2 className="w-4 h-4 mr-2" />
+            Generar con IA
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-4 text-sm">
