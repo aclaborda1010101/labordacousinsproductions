@@ -127,11 +127,24 @@ export default function StylePack({ projectId }: StylePackProps) {
           
           <div className="space-y-2">
             <Label>Estilo de Lente</Label>
-            <Input 
-              placeholder="Ej: Anamórfico, 35mm prime, Vintage..." 
+            <Select 
               value={stylePack.lensStyle} 
-              onChange={e => setStylePack({...stylePack, lensStyle: e.target.value})} 
-            />
+              onValueChange={(v) => setStylePack({...stylePack, lensStyle: v})}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona estilo de lente" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="anamorphic">Anamórfico (Cinemascope)</SelectItem>
+                <SelectItem value="35mm-prime">35mm Prime (Clásico)</SelectItem>
+                <SelectItem value="50mm-prime">50mm Prime (Natural)</SelectItem>
+                <SelectItem value="vintage">Vintage (Suave, cálido)</SelectItem>
+                <SelectItem value="modern-sharp">Moderno Nítido</SelectItem>
+                <SelectItem value="telephoto">Teleobjetivo (Compresión)</SelectItem>
+                <SelectItem value="wide-angle">Gran Angular (Dramático)</SelectItem>
+                <SelectItem value="macro">Macro (Detalle extremo)</SelectItem>
+              </SelectContent>
+            </Select>
             <p className="text-xs text-muted-foreground">
               Define el tipo de óptica que quieres simular
             </p>
