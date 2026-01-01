@@ -51,17 +51,17 @@ interface Project {
 }
 
 const PROJECT_TABS = [
-  { id: 'bible', path: '', label: 'Bible', icon: Book, requiresBible: false },
-  { id: 'style', path: '/style', label: 'Style Pack', icon: Palette, requiresBible: false },
-  { id: 'characters', path: '/characters', label: 'Characters', icon: Users, requiresBible: false },
-  { id: 'locations', path: '/locations', label: 'Locations', icon: MapPin, requiresBible: false },
-  { id: 'script', path: '/script', label: 'Script Import', icon: FileText, requiresBible: false },
-  { id: 'scenes', path: '/scenes', label: 'Scenes', icon: Clapperboard, requiresBible: true },
-  { id: 'renders', path: '/renders', label: 'Render Queue', icon: Layers, requiresBible: true },
-  { id: 'cost', path: '/cost', label: 'Cost Engine', icon: DollarSign, requiresBible: false },
-  { id: 'qc', path: '/qc', label: 'QC Engine', icon: Gauge, requiresBible: true },
-  { id: 'approvals', path: '/approvals', label: 'Approvals', icon: CheckSquare, requiresBible: true },
-  { id: 'team', path: '/team', label: 'Team', icon: UserPlus, requiresBible: false },
+  { id: 'bible', path: '', label: 'Biblia', icon: Book, requiresBible: false },
+  { id: 'style', path: '/style', label: 'Estilo Visual', icon: Palette, requiresBible: false },
+  { id: 'characters', path: '/characters', label: 'Personajes', icon: Users, requiresBible: false },
+  { id: 'locations', path: '/locations', label: 'Localizaciones', icon: MapPin, requiresBible: false },
+  { id: 'script', path: '/script', label: 'Importar Guión', icon: FileText, requiresBible: false },
+  { id: 'scenes', path: '/scenes', label: 'Escenas', icon: Clapperboard, requiresBible: true },
+  { id: 'renders', path: '/renders', label: 'Cola de Renders', icon: Layers, requiresBible: true },
+  { id: 'cost', path: '/cost', label: 'Motor de Costes', icon: DollarSign, requiresBible: false },
+  { id: 'qc', path: '/qc', label: 'Control de Calidad', icon: Gauge, requiresBible: true },
+  { id: 'approvals', path: '/approvals', label: 'Aprobaciones', icon: CheckSquare, requiresBible: true },
+  { id: 'team', path: '/team', label: 'Equipo', icon: UserPlus, requiresBible: false },
 ];
 
 export default function ProjectDetail() {
@@ -112,13 +112,14 @@ export default function ProjectDetail() {
 
   const currentPath = location.pathname.replace(`/projects/${projectId}`, '') || '';
   const bibleReady = project.bible_completeness_score >= 85;
-  const currentSection = PROJECT_TABS.find(t => t.path === currentPath)?.label || 'Bible';
+  const currentSection = PROJECT_TABS.find(t => t.path === currentPath)?.label || 'Biblia';
+  const formatLabel = project.format === 'series' ? 'Serie' : project.format === 'mini' ? 'Miniserie' : 'Película';
 
   return (
     <AppLayout>
-      <PageHeader title={project.title} description={`${project.format} • ${project.episodes_count} episodes`}>
+      <PageHeader title={project.title} description={`${formatLabel} • ${project.episodes_count} episodios`}>
         <Badge variant={bibleReady ? 'pass' : 'pending'}>
-          Bible: {project.bible_completeness_score}%
+          Biblia: {project.bible_completeness_score}%
         </Badge>
         <Button variant="outline" size="icon">
           <Settings className="w-4 h-4" />
@@ -167,9 +168,9 @@ export default function ProjectDetail() {
               <div className="flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-warning mt-0.5 shrink-0" />
                 <div className="text-xs">
-                  <p className="font-medium text-warning">Bible Incomplete</p>
+                  <p className="font-medium text-warning">Biblia Incompleta</p>
                   <p className="text-muted-foreground mt-0.5">
-                    Complete your production bible to unlock scenes.
+                    Completa tu biblia de producción para desbloquear escenas.
                   </p>
                 </div>
               </div>
@@ -197,11 +198,11 @@ export default function ProjectDetail() {
                 <div className="text-center">
                   <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Complete your Bible first
+                    Completa tu Biblia primero
                   </h3>
                   <p className="text-muted-foreground max-w-md">
-                    Build your production canon with style, characters, and locations 
-                    before proceeding to script and rendering.
+                    Construye el canon de tu producción con estilo, personajes y localizaciones 
+                    antes de proceder con el guión y los renders.
                   </p>
                 </div>
               </div>

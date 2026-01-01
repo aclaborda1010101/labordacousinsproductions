@@ -21,8 +21,8 @@ interface AppLayoutProps {
 }
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: Home },
-  { href: '/projects', label: 'Projects', icon: FolderKanban },
+  { href: '/dashboard', label: 'Panel de Control', icon: Home },
+  { href: '/projects', label: 'Proyectos', icon: FolderKanban },
   { href: '/dailies', label: 'Dailies', icon: Play },
 ];
 
@@ -86,17 +86,17 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">
-                {user?.email?.split('@')[0] || 'User'}
+                {user?.email?.split('@')[0] || 'Usuario'}
               </p>
-              <p className="text-xs text-muted-foreground truncate">Producer</p>
+              <p className="text-xs text-muted-foreground truncate">Productor</p>
             </div>
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" size="sm" className="flex-1 justify-start">
               <Settings className="w-4 h-4 mr-2" />
-              Settings
+              Ajustes
             </Button>
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} title="Cerrar sesión">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
