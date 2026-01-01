@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2 } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -22,6 +22,8 @@ interface CharacterOutfit {
   name: string;
   description: string | null;
   reference_urls: unknown;
+  sort_order?: number;
+  is_default?: boolean;
 }
 
 interface Character {
@@ -72,17 +74,18 @@ export default function Characters({ projectId }: CharactersProps) {
       .order('created_at'); 
     
     if (charsData) {
-      // Fetch outfits for each character
+      // Fetch outfits for each character, sorted by sort_order
       const charsWithOutfits = await Promise.all(charsData.map(async (char) => {
         const { data: outfits } = await supabase
           .from('character_outfits')
           .select('*')
-          .eq('character_id', char.id);
+          .eq('character_id', char.id)
+          .order('sort_order');
         return { 
           ...char, 
           turnaround_urls: char.turnaround_urls as Record<string, string> | null,
           expressions: char.expressions as Record<string, string> | null,
-          outfits: outfits || [] 
+          outfits: (outfits || []) as CharacterOutfit[]
         };
       }));
       setCharacters(charsWithOutfits);
@@ -286,6 +289,36 @@ export default function Characters({ projectId }: CharactersProps) {
       toast.success('Vestuario eliminado');
       fetchCharacters();
     }
+  };
+
+  const setDefaultOutfit = async (outfitId: string) => {
+    const { error } = await supabase.from('character_outfits').update({ is_default: true }).eq('id', outfitId);
+    if (error) {
+      toast.error('Error al establecer outfit por defecto');
+    } else {
+      toast.success('Outfit establecido como principal');
+      fetchCharacters();
+    }
+  };
+
+  const moveOutfit = async (characterId: string, outfitId: string, direction: 'up' | 'down') => {
+    const character = characters.find(c => c.id === characterId);
+    if (!character?.outfits) return;
+
+    const currentIndex = character.outfits.findIndex(o => o.id === outfitId);
+    if (currentIndex === -1) return;
+
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= character.outfits.length) return;
+
+    // Swap sort orders
+    const currentOutfit = character.outfits[currentIndex];
+    const swapOutfit = character.outfits[newIndex];
+
+    await supabase.from('character_outfits').update({ sort_order: newIndex }).eq('id', currentOutfit.id);
+    await supabase.from('character_outfits').update({ sort_order: currentIndex }).eq('id', swapOutfit.id);
+    
+    fetchCharacters();
   };
 
   const getRoleLabel = (role: string) => {
@@ -577,15 +610,52 @@ export default function Characters({ projectId }: CharactersProps) {
                           <TabsContent value="outfits" className="p-4 m-0">
                             <div className="space-y-3">
                               {character.outfits && character.outfits.length > 0 ? (
-                                character.outfits.map(outfit => (
-                                  <div key={outfit.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                                    <Shirt className="w-5 h-5 text-muted-foreground" />
-                                    <div className="flex-1">
-                                      <p className="font-medium text-sm">{outfit.name}</p>
+                                character.outfits.map((outfit, index) => (
+                                  <div 
+                                    key={outfit.id} 
+                                    className={`flex items-center gap-3 p-3 rounded-lg ${outfit.is_default ? 'bg-primary/10 border border-primary/30' : 'bg-muted/50'}`}
+                                  >
+                                    <div className="flex flex-col gap-1">
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon"
+                                        className="h-5 w-5"
+                                        onClick={() => moveOutfit(character.id, outfit.id, 'up')}
+                                        disabled={index === 0}
+                                      >
+                                        <ArrowUp className="w-3 h-3" />
+                                      </Button>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon"
+                                        className="h-5 w-5"
+                                        onClick={() => moveOutfit(character.id, outfit.id, 'down')}
+                                        disabled={index === (character.outfits?.length || 1) - 1}
+                                      >
+                                        <ArrowDown className="w-3 h-3" />
+                                      </Button>
+                                    </div>
+                                    <Shirt className={`w-5 h-5 ${outfit.is_default ? 'text-primary' : 'text-muted-foreground'}`} />
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <p className="font-medium text-sm truncate">{outfit.name}</p>
+                                        {outfit.is_default && (
+                                          <Badge variant="default" className="text-xs bg-primary">Principal</Badge>
+                                        )}
+                                      </div>
                                       {outfit.description && (
-                                        <p className="text-xs text-muted-foreground">{outfit.description}</p>
+                                        <p className="text-xs text-muted-foreground truncate">{outfit.description}</p>
                                       )}
                                     </div>
+                                    <Button 
+                                      variant={outfit.is_default ? "ghost" : "outline"}
+                                      size="icon"
+                                      onClick={() => setDefaultOutfit(outfit.id)}
+                                      disabled={outfit.is_default}
+                                      title="Establecer como principal"
+                                    >
+                                      <Star className={`w-4 h-4 ${outfit.is_default ? 'fill-primary text-primary' : ''}`} />
+                                    </Button>
                                     <Button 
                                       variant="ghost" 
                                       size="icon"
