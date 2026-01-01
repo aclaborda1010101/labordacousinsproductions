@@ -89,55 +89,71 @@ export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
       const character = characters.find(c => c.id === selectedCharacter);
       const location = locations.find(l => l.id === selectedLocation);
 
-      // Simulate the generation process with progress updates
-      const steps = [
-        { progress: 10, message: 'Preparando prompt unificado...' },
-        { progress: 20, message: 'Generando keyframes de referencia...' },
-        { progress: 35, message: 'Renderizando con Veo 3.1...' },
-        { progress: 55, message: 'Renderizando con Kling 2.0...' },
-        { progress: 70, message: 'Analizando continuidad visual...' },
-        { progress: 80, message: 'Evaluando iluminación y textura...' },
-        { progress: 90, message: 'Calculando puntuación de motion...' },
-        { progress: 100, message: 'Comparando resultados...' },
-      ];
+      // Progress updates while waiting for API
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev < 90) {
+            const messages = [
+              'Preparando prompt unificado...',
+              'Enviando a Veo 3.1...',
+              'Enviando a Kling 2.0...',
+              'Esperando renders (puede tardar varios minutos)...',
+              'Analizando continuidad visual...',
+              'Evaluando iluminación y textura...',
+              'Calculando puntuación de motion...',
+            ];
+            setProgressMessage(messages[Math.floor(prev / 15)] || 'Procesando...');
+            return prev + 2;
+          }
+          return prev;
+        });
+      }, 3000);
 
-      for (const s of steps) {
-        setProgress(s.progress);
-        setProgressMessage(s.message);
-        await new Promise(resolve => setTimeout(resolve, 800));
-      }
-
-      // Simulate QC results (in production, this would call actual AI APIs)
-      const generateQC = (): QCResult => ({
-        continuity: Math.floor(Math.random() * 20) + 80,
-        lighting: Math.floor(Math.random() * 20) + 80,
-        texture: Math.floor(Math.random() * 20) + 80,
-        motion: Math.floor(Math.random() * 20) + 80,
-        overall: 0,
+      // Call the real edge function
+      const response = await supabase.functions.invoke('engine-shootout', {
+        body: {
+          characterName: character?.name || '',
+          characterDescription: character?.bio || '',
+          locationName: location?.name || '',
+          locationDescription: location?.description || '',
+          sceneDescription,
+          duration,
+        }
       });
 
-      const veoQC = generateQC();
-      veoQC.overall = Math.round((veoQC.continuity + veoQC.lighting + veoQC.texture + veoQC.motion) / 4);
+      clearInterval(progressInterval);
+      setProgress(100);
+      setProgressMessage('Comparando resultados...');
 
-      const klingQC = generateQC();
-      klingQC.overall = Math.round((klingQC.continuity + klingQC.lighting + klingQC.texture + klingQC.motion) / 4);
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
 
-      setVeoResult({ qc: veoQC });
-      setKlingResult({ qc: klingQC });
+      const data = response.data;
 
-      const winnerEngine = veoQC.overall >= klingQC.overall ? 'veo' : 'kling';
+      // Set results
+      setVeoResult({ 
+        videoUrl: data.veo?.videoUrl || undefined, 
+        qc: data.veo?.qc 
+      });
+      setKlingResult({ 
+        videoUrl: data.kling?.videoUrl || undefined, 
+        qc: data.kling?.qc 
+      });
+
+      const winnerEngine = data.winner === 'none' ? (data.veo?.qc?.overall >= data.kling?.qc?.overall ? 'veo' : 'kling') : data.winner;
       setWinner(winnerEngine);
 
-      // Save to database - use type assertion for new table
+      // Save to database
       await supabase.from('engine_tests').insert({
         project_id: projectId,
         character_id: selectedCharacter,
         location_id: selectedLocation,
         scene_description: sceneDescription,
         duration_sec: duration,
-        veo_result: { qc: veoQC },
-        kling_result: { qc: klingQC },
-        qc_results: { veo: veoQC, kling: klingQC },
+        veo_result: { qc: data.veo?.qc, videoUrl: data.veo?.videoUrl },
+        kling_result: { qc: data.kling?.qc, videoUrl: data.kling?.videoUrl },
+        qc_results: { veo: data.veo?.qc, kling: data.kling?.qc },
         winner: winnerEngine,
       } as any);
 
@@ -148,10 +164,15 @@ export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
       }).eq('id', projectId);
 
       setStep('results');
-      toast.success('Engine Shootout completado');
+      
+      if (data.veo?.success && data.kling?.success) {
+        toast.success('Engine Shootout completado con éxito');
+      } else {
+        toast.warning('Engine Shootout completado con algunos errores de API');
+      }
     } catch (error) {
       console.error('Error in shootout:', error);
-      toast.error('Error durante el test');
+      toast.error('Error durante el test: ' + (error instanceof Error ? error.message : 'Error desconocido'));
       setStep('setup');
     } finally {
       setGenerating(false);
