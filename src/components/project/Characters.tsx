@@ -262,10 +262,6 @@ export default function Characters({ projectId }: CharactersProps) {
         setShowOutfitDialog(null);
         fetchCharacters();
       }
-        setOutfitForm({ name: '', description: '' });
-        setShowOutfitDialog(null);
-        fetchCharacters();
-      }
     }
     setSaving(false);
   };
