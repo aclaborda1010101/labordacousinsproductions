@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -337,7 +337,21 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                 <Copy className="w-4 h-4 mr-2" />
                 Duplicar Episodio
               </Button>
-              <Button variant="outline" onClick={exportStoryboard} disabled={exporting}>
+              <Button variant="outline" onClick={async () => {
+                setExporting(true);
+                // Build scenes with shots for export
+                const scenesWithShots = scenes.map(scene => ({
+                  ...scene,
+                  shots: shots[scene.id] || []
+                }));
+                exportStoryboardPDF({
+                  projectTitle,
+                  scenes: scenesWithShots,
+                  characters,
+                  locations
+                });
+                setExporting(false);
+              }} disabled={exporting}>
                 {exporting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileDown className="w-4 h-4 mr-2" />}
                 Exportar Storyboard
               </Button>
@@ -542,69 +556,24 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
       </div>
 
 
-      {/* Generate Shot Dialog */}
-      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Video className="w-5 h-5 text-primary" />
-              Generar Shot
-            </DialogTitle>
-            <DialogDescription>
-              {selectedShot && `Shot ${selectedShot.shot.shot_no} - ${selectedShot.shot.shot_type}`}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Motor de Generación</Label>
-              <Select value={selectedEngine} onValueChange={v => setSelectedEngine(v as VideoEngine)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="veo">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold">Veo 3.1</span>
-                      {preferredEngine === 'veo' && <Badge variant="outline" className="text-xs">Recomendado</Badge>}
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="kling">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold">Kling 2.0</span>
-                      {preferredEngine === 'kling' && <Badge variant="outline" className="text-xs">Recomendado</Badge>}
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                {selectedEngine === 'veo' 
-                  ? 'Mejor para escenas con movimiento suave y cinematografía realista'
-                  : 'Mejor para escenas con personajes y expresiones detalladas'}
-              </p>
-            </div>
-
-            {selectedShot && (
-              <div className="p-3 bg-muted/50 rounded-lg space-y-2 text-sm">
-                <p><strong>Escena:</strong> {selectedShot.scene.slugline}</p>
-                <p><strong>Tipo:</strong> {selectedShot.shot.shot_type}</p>
-                <p><strong>Duración:</strong> {selectedShot.shot.duration_target}s</p>
-                <p><strong>Modo:</strong> {selectedShot.shot.effective_mode}</p>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowGenerateDialog(false)}>
-              Cancelar
-            </Button>
-            <Button variant="gold" onClick={generateShotVideo}>
-              <Play className="w-4 h-4 mr-2" />
-              Generar con {selectedEngine.toUpperCase()}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Shot Editor Modal */}
+      {selectedShot && (
+        <ShotEditor
+          open={showShotEditor}
+          onOpenChange={(open) => {
+            setShowShotEditor(open);
+            if (!open) setSelectedShot(null);
+          }}
+          shot={selectedShot.shot}
+          scene={selectedShot.scene}
+          characters={characters}
+          locations={locations}
+          preferredEngine={preferredEngine}
+          onShotUpdated={() => {
+            fetchShots(selectedShot.scene.id);
+          }}
+        />
+      )}
 
       {/* AI Generation Dialog */}
       <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
@@ -676,7 +645,38 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             <Button variant="outline" onClick={() => setShowAIDialog(false)} disabled={generating}>
               Cancelar
             </Button>
-            <Button variant="gold" onClick={generateScenesWithAI} disabled={generating}>
+            <Button variant="gold" onClick={async () => {
+              if (!aiForm.synopsis.trim()) {
+                toast.error('Por favor, escribe una sinopsis');
+                return;
+              }
+              setGenerating(true);
+              try {
+                const { data, error } = await supabase.functions.invoke('generate-scenes', {
+                  body: { 
+                    projectId, 
+                    episodeNo: parseInt(aiForm.episodeNo),
+                    synopsis: aiForm.synopsis,
+                    sceneCount: parseInt(aiForm.sceneCount),
+                    characters: characters.map(c => ({ id: c.id, name: c.name })),
+                    locations: locations.map(l => ({ id: l.id, name: l.name }))
+                  }
+                });
+                if (error) throw error;
+                if (data?.scenes) {
+                  toast.success(`${data.scenes.length} escenas generadas`);
+                  setShowAIDialog(false);
+                  setAiForm({ episodeNo: '1', synopsis: '', sceneCount: '5' });
+                  setExpandedEpisodes(prev => new Set(prev).add(parseInt(aiForm.episodeNo)));
+                  fetchScenes();
+                }
+              } catch (err) {
+                console.error('Error generating scenes:', err);
+                toast.error('Error al generar escenas');
+              } finally {
+                setGenerating(false);
+              }
+            }} disabled={generating}>
               {generating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
