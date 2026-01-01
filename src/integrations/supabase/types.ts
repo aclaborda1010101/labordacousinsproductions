@@ -49,15 +49,92 @@ export type Database = {
           },
         ]
       }
+      character_pack_slots: {
+        Row: {
+          character_id: string
+          created_at: string
+          expression_name: string | null
+          fix_notes: string | null
+          id: string
+          image_url: string | null
+          outfit_id: string | null
+          prompt_text: string | null
+          qc_issues: Json | null
+          qc_score: number | null
+          required: boolean
+          seed: number | null
+          slot_index: number
+          slot_type: string
+          status: string
+          updated_at: string
+          view_angle: string | null
+        }
+        Insert: {
+          character_id: string
+          created_at?: string
+          expression_name?: string | null
+          fix_notes?: string | null
+          id?: string
+          image_url?: string | null
+          outfit_id?: string | null
+          prompt_text?: string | null
+          qc_issues?: Json | null
+          qc_score?: number | null
+          required?: boolean
+          seed?: number | null
+          slot_index?: number
+          slot_type: string
+          status?: string
+          updated_at?: string
+          view_angle?: string | null
+        }
+        Update: {
+          character_id?: string
+          created_at?: string
+          expression_name?: string | null
+          fix_notes?: string | null
+          id?: string
+          image_url?: string | null
+          outfit_id?: string | null
+          prompt_text?: string | null
+          qc_issues?: Json | null
+          qc_score?: number | null
+          required?: boolean
+          seed?: number | null
+          slot_index?: number
+          slot_type?: string
+          status?: string
+          updated_at?: string
+          view_angle?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_pack_slots_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "character_pack_slots_outfit_id_fkey"
+            columns: ["outfit_id"]
+            isOneToOne: false
+            referencedRelation: "character_outfits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       characters: {
         Row: {
           arc: string | null
           bio: string | null
           canon_rules: Json | null
+          character_role: Database["public"]["Enums"]["character_role"] | null
           created_at: string
           expressions: Json | null
           id: string
           name: string
+          pack_completeness_score: number | null
           project_id: string
           role: string | null
           token: string | null
@@ -69,10 +146,12 @@ export type Database = {
           arc?: string | null
           bio?: string | null
           canon_rules?: Json | null
+          character_role?: Database["public"]["Enums"]["character_role"] | null
           created_at?: string
           expressions?: Json | null
           id?: string
           name: string
+          pack_completeness_score?: number | null
           project_id: string
           role?: string | null
           token?: string | null
@@ -84,10 +163,12 @@ export type Database = {
           arc?: string | null
           bio?: string | null
           canon_rules?: Json | null
+          character_role?: Database["public"]["Enums"]["character_role"] | null
           created_at?: string
           expressions?: Json | null
           id?: string
           name?: string
+          pack_completeness_score?: number | null
           project_id?: string
           role?: string | null
           token?: string | null
@@ -1245,6 +1326,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_pack_completeness: {
+        Args: { p_character_id: string }
+        Returns: number
+      }
       has_project_access: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
@@ -1267,6 +1352,7 @@ export type Database = {
         | "sound"
         | "reviewer"
       approval_status: "pending" | "approved" | "rejected"
+      character_role: "protagonist" | "recurring" | "episodic" | "extra"
       dailies_decision: "SELECT" | "FIX" | "REJECT" | "NONE"
       job_status: "queued" | "running" | "succeeded" | "failed" | "blocked"
       priority_level: "P0" | "P1" | "P2"
@@ -1409,6 +1495,7 @@ export const Constants = {
         "reviewer",
       ],
       approval_status: ["pending", "approved", "rejected"],
+      character_role: ["protagonist", "recurring", "episodic", "extra"],
       dailies_decision: ["SELECT", "FIX", "REJECT", "NONE"],
       job_status: ["queued", "running", "succeeded", "failed", "blocked"],
       priority_level: ["P0", "P1", "P2"],

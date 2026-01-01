@@ -5,13 +5,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ImageGallery } from '@/components/project/ImageGallery';
+import { CharacterPackBuilder } from '@/components/project/CharacterPackBuilder';
 
 interface CharactersProps { projectId: string; }
 
@@ -26,11 +28,13 @@ interface Character {
   id: string;
   name: string;
   role: string | null;
+  character_role?: 'protagonist' | 'recurring' | 'episodic' | 'extra' | null;
   bio: string | null;
   arc: string | null;
   token: string | null;
   turnaround_urls: Record<string, string> | null;
   expressions: Record<string, string> | null;
+  pack_completeness_score?: number | null;
   outfits?: CharacterOutfit[];
 }
 
@@ -44,6 +48,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [generating, setGenerating] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showOutfitDialog, setShowOutfitDialog] = useState<string | null>(null);
+  const [showPackBuilder, setShowPackBuilder] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
