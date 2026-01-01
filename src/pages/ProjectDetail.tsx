@@ -28,6 +28,7 @@ import {
 import { cn } from '@/lib/utils';
 import BibleOverview from '@/components/project/BibleOverview';
 import StylePack from '@/components/project/StylePack';
+import { ProjectSettings } from '@/components/project/ProjectSettings';
 import Characters from '@/components/project/Characters';
 import Locations from '@/components/project/Locations';
 import Scenes from '@/components/project/Scenes';
@@ -42,7 +43,7 @@ import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
 interface Project {
   id: string;
   title: string;
-  format: string;
+  format: 'series' | 'mini' | 'film';
   episodes_count: number;
   target_duration_min: number;
   bible_completeness_score: number;
@@ -71,6 +72,7 @@ export default function ProjectDetail() {
   const { user } = useAuth();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     async function fetchProject() {
@@ -121,10 +123,18 @@ export default function ProjectDetail() {
         <Badge variant={bibleReady ? 'pass' : 'pending'}>
           Biblia: {project.bible_completeness_score}%
         </Badge>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={() => setShowSettings(true)}>
           <Settings className="w-4 h-4" />
         </Button>
       </PageHeader>
+
+      {/* Project Settings Dialog */}
+      <ProjectSettings
+        project={project}
+        open={showSettings}
+        onOpenChange={setShowSettings}
+        onUpdate={(updated) => setProject({ ...project, ...updated })}
+      />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Project sidebar navigation */}

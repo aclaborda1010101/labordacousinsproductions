@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ImageGallery } from '@/components/project/ImageGallery';
 import { CharacterPackBuilder } from '@/components/project/CharacterPackBuilder';
+import { exportCharacterPackZip } from '@/lib/exportCharacterPackZip';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuCheckboxItem, DropdownMenuLabel } from '@/components/ui/dropdown-menu';
 
 interface CharactersProps { projectId: string; }
 
@@ -51,6 +53,13 @@ export default function Characters({ projectId }: CharactersProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showOutfitDialog, setShowOutfitDialog] = useState<string | null>(null);
   const [showPackBuilder, setShowPackBuilder] = useState<string | null>(null);
+  const [duplicating, setDuplicating] = useState<string | null>(null);
+  const [exporting, setExporting] = useState<string | null>(null);
+  
+  // Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string[]>([]);
+  const [packStatusFilter, setPackStatusFilter] = useState<'all' | 'complete' | 'incomplete'>('all');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -352,6 +361,94 @@ export default function Characters({ projectId }: CharactersProps) {
     }
   };
 
+  // Duplicate character
+  const duplicateCharacter = async (character: Character) => {
+    setDuplicating(character.id);
+    try {
+      // Create new character
+      const { data: newChar, error: charError } = await supabase
+        .from('characters')
+        .insert({
+          project_id: projectId,
+          name: `${character.name} (copia)`,
+          role: character.role,
+          character_role: character.character_role,
+          bio: character.bio,
+          arc: character.arc,
+          token: character.token,
+          turnaround_urls: character.turnaround_urls,
+          expressions: character.expressions,
+        })
+        .select()
+        .single();
+      
+      if (charError) throw charError;
+      
+      // Duplicate outfits
+      if (character.outfits && character.outfits.length > 0) {
+        const outfitInserts = character.outfits.map(o => ({
+          character_id: newChar.id,
+          name: o.name,
+          description: o.description,
+          sort_order: o.sort_order,
+          is_default: o.is_default,
+        }));
+        
+        await supabase.from('character_outfits').insert(outfitInserts);
+      }
+      
+      toast.success('Personaje duplicado correctamente');
+      fetchCharacters();
+    } catch (error) {
+      console.error('Error duplicating character:', error);
+      toast.error('Error al duplicar personaje');
+    } finally {
+      setDuplicating(null);
+    }
+  };
+
+  // Export character pack as ZIP
+  const handleExportPack = async (character: Character) => {
+    setExporting(character.id);
+    try {
+      const blob = await exportCharacterPackZip(character.id, character.name);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${character.name.replace(/[^a-z0-9]/gi, '_')}_pack.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success('Character Pack exportado');
+    } catch (error) {
+      console.error('Error exporting pack:', error);
+      toast.error('Error al exportar pack');
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  // Filter characters
+  const filteredCharacters = characters.filter(char => {
+    // Search filter
+    if (searchQuery && !char.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    // Role filter
+    if (roleFilter.length > 0 && char.character_role && !roleFilter.includes(char.character_role)) {
+      return false;
+    }
+    // Pack status filter
+    if (packStatusFilter === 'complete' && (char.pack_completeness_score || 0) < 90) {
+      return false;
+    }
+    if (packStatusFilter === 'incomplete' && (char.pack_completeness_score || 0) >= 90) {
+      return false;
+    }
+    return true;
+  });
+
   if (loading) {
     return (
       <div className="p-6 flex justify-center">
@@ -362,7 +459,7 @@ export default function Characters({ projectId }: CharactersProps) {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-foreground">{t.characters.title}</h2>
           <p className="text-muted-foreground">{t.characters.subtitle}</p>
@@ -372,6 +469,77 @@ export default function Characters({ projectId }: CharactersProps) {
           Añadir Personaje
         </Button>
       </div>
+
+      {/* Search and Filters */}
+      {characters.length > 0 && (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar personajes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="flex gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Filter className="w-4 h-4 mr-2" />
+                  Rol {roleFilter.length > 0 && `(${roleFilter.length})`}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Filtrar por rol</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem 
+                  checked={roleFilter.includes('protagonist')}
+                  onCheckedChange={(checked) => setRoleFilter(checked ? [...roleFilter, 'protagonist'] : roleFilter.filter(r => r !== 'protagonist'))}
+                >
+                  Protagonista
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem 
+                  checked={roleFilter.includes('recurring')}
+                  onCheckedChange={(checked) => setRoleFilter(checked ? [...roleFilter, 'recurring'] : roleFilter.filter(r => r !== 'recurring'))}
+                >
+                  Recurrente
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem 
+                  checked={roleFilter.includes('episodic')}
+                  onCheckedChange={(checked) => setRoleFilter(checked ? [...roleFilter, 'episodic'] : roleFilter.filter(r => r !== 'episodic'))}
+                >
+                  Episódico
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem 
+                  checked={roleFilter.includes('extra')}
+                  onCheckedChange={(checked) => setRoleFilter(checked ? [...roleFilter, 'extra'] : roleFilter.filter(r => r !== 'extra'))}
+                >
+                  Extra
+                </DropdownMenuCheckboxItem>
+                {roleFilter.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setRoleFilter([])}>
+                      Limpiar filtros
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Select value={packStatusFilter} onValueChange={(v: 'all' | 'complete' | 'incomplete') => setPackStatusFilter(v)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Pack status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="complete">Pack ≥90%</SelectItem>
+                <SelectItem value="incomplete">Pack &lt;90%</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      )}
       
       <div className="grid gap-4">
         {characters.length === 0 ? (
@@ -388,8 +556,21 @@ export default function Characters({ projectId }: CharactersProps) {
               </Button>
             </CardContent>
           </Card>
+        ) : filteredCharacters.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Search className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Sin resultados</h3>
+              <p className="text-muted-foreground mb-4">
+                No se encontraron personajes con los filtros aplicados
+              </p>
+              <Button variant="outline" onClick={() => { setSearchQuery(''); setRoleFilter([]); setPackStatusFilter('all'); }}>
+                Limpiar filtros
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
-          characters.map(character => (
+          filteredCharacters.map(character => (
             <Card key={character.id} className="overflow-hidden">
               <CardContent className="p-0">
                 {editingId === character.id ? (
@@ -530,10 +711,28 @@ export default function Characters({ projectId }: CharactersProps) {
                             <ChevronDown className="w-4 h-4" />
                           )}
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => startEditing(character)}>
+                        <Button variant="ghost" size="icon" onClick={() => startEditing(character)} title="Editar">
                           <Edit2 className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)}>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => duplicateCharacter(character)}
+                          disabled={duplicating === character.id}
+                          title="Duplicar"
+                        >
+                          {duplicating === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleExportPack(character)}
+                          disabled={exporting === character.id || !character.pack_completeness_score}
+                          title="Exportar Pack ZIP"
+                        >
+                          {exporting === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)} title="Eliminar">
                           <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>

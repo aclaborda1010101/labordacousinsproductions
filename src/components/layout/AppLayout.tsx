@@ -35,9 +35,11 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const [projectsExpanded, setProjectsExpanded] = useState(true);
+
   const navItems = [
     { href: '/dashboard', label: t.nav.dashboard, icon: Home },
-    { href: '/projects', label: t.nav.projects, icon: FolderKanban },
+    { href: '/projects', label: t.nav.projects, icon: FolderKanban, hasChildren: true },
     { href: '/dailies', label: t.nav.dailies, icon: Play },
   ];
 
@@ -67,10 +69,48 @@ export function AppLayout({ children }: AppLayoutProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 px-3 space-y-1">
+      <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = location.pathname.startsWith(item.href);
           const Icon = item.icon;
+          
+          if (item.hasChildren && (!collapsed || isMobile)) {
+            return (
+              <div key={item.href} className="space-y-1">
+                <button
+                  onClick={() => setProjectsExpanded(!projectsExpanded)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    isActive 
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground" 
+                      : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                  )}
+                >
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="flex-1 text-left">{item.label}</span>
+                  <ChevronRight className={cn("w-4 h-4 transition-transform", projectsExpanded && "rotate-90")} />
+                </button>
+                {projectsExpanded && (
+                  <div className="ml-8 space-y-1">
+                    <Link
+                      to="/projects"
+                      onClick={() => isMobile && setMobileOpen(false)}
+                      className="block px-3 py-2 text-sm text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent/50 rounded-lg"
+                    >
+                      Ver todos
+                    </Link>
+                    <Link
+                      to="/projects/new"
+                      onClick={() => isMobile && setMobileOpen(false)}
+                      className="block px-3 py-2 text-sm text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent/50 rounded-lg"
+                    >
+                      Nuevo proyecto
+                    </Link>
+                  </div>
+                )}
+              </div>
+            );
+          }
           
           return (
             <Link
@@ -88,7 +128,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             >
               <Icon className="w-5 h-5 flex-shrink-0" />
               {(!collapsed || isMobile) && <span>{item.label}</span>}
-              {isActive && (!collapsed || isMobile) && <ChevronRight className="w-4 h-4 ml-auto opacity-50" />}
+              {isActive && (!collapsed || isMobile) && !item.hasChildren && <ChevronRight className="w-4 h-4 ml-auto opacity-50" />}
             </Link>
           );
         })}
