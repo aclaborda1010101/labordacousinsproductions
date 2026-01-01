@@ -703,6 +703,74 @@ export type Database = {
           },
         ]
       }
+      location_pack_slots: {
+        Row: {
+          created_at: string
+          fix_notes: string | null
+          id: string
+          image_url: string | null
+          location_id: string
+          prompt_text: string | null
+          qc_issues: Json | null
+          qc_score: number | null
+          required: boolean
+          seed: number | null
+          slot_index: number
+          slot_type: string
+          status: string
+          time_of_day: string | null
+          updated_at: string
+          view_angle: string | null
+          weather: string | null
+        }
+        Insert: {
+          created_at?: string
+          fix_notes?: string | null
+          id?: string
+          image_url?: string | null
+          location_id: string
+          prompt_text?: string | null
+          qc_issues?: Json | null
+          qc_score?: number | null
+          required?: boolean
+          seed?: number | null
+          slot_index?: number
+          slot_type: string
+          status?: string
+          time_of_day?: string | null
+          updated_at?: string
+          view_angle?: string | null
+          weather?: string | null
+        }
+        Update: {
+          created_at?: string
+          fix_notes?: string | null
+          id?: string
+          image_url?: string | null
+          location_id?: string
+          prompt_text?: string | null
+          qc_issues?: Json | null
+          qc_score?: number | null
+          required?: boolean
+          seed?: number | null
+          slot_index?: number
+          slot_type?: string
+          status?: string
+          time_of_day?: string | null
+          updated_at?: string
+          view_angle?: string | null
+          weather?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_pack_slots_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           created_at: string
