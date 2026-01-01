@@ -1,23 +1,12 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { 
-  CheckCircle, 
-  XCircle, 
-  AlertTriangle,
-  Gauge,
-  Music,
-  Eye,
-  Clock,
-  Lock,
-  Unlock,
-  RefreshCw,
-  FileWarning
-} from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Gauge, Music, Eye, Clock, Lock, Unlock, RefreshCw, FileWarning } from 'lucide-react';
 
 interface QCScore {
   continuity: number;
@@ -69,6 +58,7 @@ const MODULE_CONFIG = {
 };
 
 export default function QCEngine({ projectId }: QCEngineProps) {
+  const { t } = useLanguage();
   const [scores, setScores] = useState<QCScore>({ continuity: 0, audio: 0, rhythm: 0, overall: 0 });
   const [reports, setReports] = useState<QCReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -206,14 +196,12 @@ export default function QCEngine({ projectId }: QCEngineProps) {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-foreground">QC Engine</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Automated quality control for continuity, audio, and rhythm
-          </p>
+          <h2 className="text-xl font-semibold text-foreground">{t.qcEngine.title}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t.qcEngine.subtitle}</p>
         </div>
         <Button variant="gold" onClick={runQCCheck} disabled={running}>
           <RefreshCw className={`w-4 h-4 mr-2 ${running ? 'animate-spin' : ''}`} />
-          {running ? 'Analyzing...' : 'Run QC Check'}
+          {running ? t.qcEngine.analyzing : t.qcEngine.runQCCheck}
         </Button>
       </div>
 
