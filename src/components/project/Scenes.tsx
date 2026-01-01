@@ -7,30 +7,65 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
+
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
+type VideoEngine = 'veo' | 'kling';
 
-interface Scene { id: string; scene_no: number; episode_no: number; slugline: string; summary: string | null; quality_mode: QualityMode; priority: string; approved: boolean; time_of_day: string | null; }
-interface Character { id: string; name: string; }
-interface Location { id: string; name: string; }
-interface Shot { id: string; shot_no: number; shot_type: string; duration_target: number; hero: boolean; effective_mode: QualityMode; dialogue_text: string | null; }
+interface Scene { 
+  id: string; 
+  scene_no: number; 
+  episode_no: number; 
+  slugline: string; 
+  summary: string | null; 
+  quality_mode: QualityMode; 
+  priority: string; 
+  approved: boolean; 
+  time_of_day: string | null;
+  character_ids: string[] | null;
+  location_id: string | null;
+}
+interface Character { id: string; name: string; token?: string; turnaround_urls?: any; }
+interface Location { id: string; name: string; token?: string; reference_urls?: any; }
+interface Shot { 
+  id: string; 
+  shot_no: number; 
+  shot_type: string; 
+  duration_target: number; 
+  hero: boolean; 
+  effective_mode: QualityMode; 
+  dialogue_text: string | null;
+}
+interface Render {
+  id: string;
+  shot_id: string;
+  video_url: string | null;
+  status: string;
+  engine: string | null;
+}
 
 export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [shots, setShots] = useState<Record<string, Shot[]>>({});
+  const [renders, setRenders] = useState<Record<string, Render[]>>({});
   const [expandedScenes, setExpandedScenes] = useState<Set<string>>(new Set());
   const [newSlugline, setNewSlugline] = useState('');
   const [showAIDialog, setShowAIDialog] = useState(false);
+  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [selectedShot, setSelectedShot] = useState<{ shot: Shot; scene: Scene } | null>(null);
+  const [selectedEngine, setSelectedEngine] = useState<VideoEngine>('veo');
   const [generating, setGenerating] = useState(false);
+  const [generatingShot, setGeneratingShot] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const [projectTitle, setProjectTitle] = useState('');
+  const [preferredEngine, setPreferredEngine] = useState<string | null>(null);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [aiForm, setAiForm] = useState({
@@ -49,22 +84,45 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const fetchShots = async (sceneId: string) => {
     const { data } = await supabase.from('shots').select('*').eq('scene_id', sceneId).order('shot_no');
     setShots(prev => ({ ...prev, [sceneId]: data || [] }));
+    
+    // Also fetch renders for these shots
+    if (data && data.length > 0) {
+      const shotIds = data.map(s => s.id);
+      const { data: rendersData } = await supabase
+        .from('renders')
+        .select('*')
+        .in('shot_id', shotIds)
+        .order('created_at', { ascending: false });
+      
+      if (rendersData) {
+        const rendersByShot: Record<string, Render[]> = {};
+        rendersData.forEach(r => {
+          if (!rendersByShot[r.shot_id]) rendersByShot[r.shot_id] = [];
+          rendersByShot[r.shot_id].push(r as Render);
+        });
+        setRenders(prev => ({ ...prev, ...rendersByShot }));
+      }
+    }
   };
 
   useEffect(() => { 
     fetchScenes();
-    // Get project info
-    supabase.from('projects').select('episodes_count, title').eq('id', projectId).single().then(({ data }) => {
+    // Get project info including preferred engine
+    supabase.from('projects').select('episodes_count, title, preferred_engine').eq('id', projectId).single().then(({ data }) => {
       if (data) {
         setEpisodesCount(data.episodes_count);
         setProjectTitle(data.title);
+        setPreferredEngine(data.preferred_engine);
+        if (data.preferred_engine) {
+          setSelectedEngine(data.preferred_engine as VideoEngine);
+        }
       }
     });
-    // Get characters and locations
-    supabase.from('characters').select('id, name').eq('project_id', projectId).then(({ data }) => {
+    // Get characters and locations with tokens
+    supabase.from('characters').select('id, name, token, turnaround_urls').eq('project_id', projectId).then(({ data }) => {
       if (data) setCharacters(data);
     });
-    supabase.from('locations').select('id, name').eq('project_id', projectId).then(({ data }) => {
+    supabase.from('locations').select('id, name, token, reference_urls').eq('project_id', projectId).then(({ data }) => {
       if (data) setLocations(data);
     });
   }, [projectId]);
@@ -109,7 +167,87 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     toast.success(t.common.success);
   };
 
-  const deleteShot = async (shotId: string, sceneId: string) => { await supabase.from('shots').delete().eq('id', shotId); fetchShots(sceneId); };
+  const deleteShot = async (shotId: string, sceneId: string) => { 
+    await supabase.from('shots').delete().eq('id', shotId); 
+    fetchShots(sceneId); 
+  };
+
+  const openGenerateDialog = (shot: Shot, scene: Scene) => {
+    setSelectedShot({ shot, scene });
+    setShowGenerateDialog(true);
+  };
+
+  const generateShotVideo = async () => {
+    if (!selectedShot) return;
+
+    const { shot, scene } = selectedShot;
+    setGeneratingShot(shot.id);
+    setShowGenerateDialog(false);
+
+    toast.info(`Generando shot con ${selectedEngine.toUpperCase()}... Esto puede tardar unos minutos.`);
+
+    try {
+      // Get character refs for this scene
+      const sceneCharacters = scene.character_ids 
+        ? characters.filter(c => scene.character_ids?.includes(c.id))
+        : [];
+      
+      // Get location ref for this scene
+      const sceneLocation = scene.location_id 
+        ? locations.find(l => l.id === scene.location_id)
+        : null;
+
+      const { data, error } = await supabase.functions.invoke('generate-shot', {
+        body: {
+          shotId: shot.id,
+          sceneDescription: `${scene.slugline}. ${scene.summary || ''}`,
+          shotType: shot.shot_type,
+          duration: shot.duration_target,
+          engine: selectedEngine,
+          characterRefs: sceneCharacters.map(c => ({
+            name: c.name,
+            token: c.token,
+            referenceUrl: (c.turnaround_urls as string[])?.[0]
+          })),
+          locationRef: sceneLocation ? {
+            name: sceneLocation.name,
+            token: sceneLocation.token,
+            referenceUrl: (sceneLocation.reference_urls as string[])?.[0]
+          } : undefined
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        // Create render record
+        await supabase.from('renders').insert([{
+          shot_id: shot.id,
+          engine: selectedEngine,
+          video_url: data.videoUrl,
+          status: data.fallback ? 'failed' : 'succeeded',
+          prompt_text: `${scene.slugline} - ${shot.shot_type}`,
+          params: data.metadata
+        }]);
+
+        if (data.fallback) {
+          toast.warning(`Video no generado, usando keyframe de respaldo`);
+        } else {
+          toast.success(`Shot generado con ${selectedEngine.toUpperCase()}`);
+        }
+
+        // Refresh renders
+        fetchShots(scene.id);
+      } else {
+        throw new Error(data?.error || 'Generation failed');
+      }
+    } catch (error) {
+      console.error('Error generating shot:', error);
+      toast.error('Error al generar shot. Inténtalo de nuevo.');
+    } finally {
+      setGeneratingShot(null);
+    }
+  };
 
   const generateScenesWithAI = async () => {
     if (!aiForm.synopsis.trim()) {
@@ -152,7 +290,6 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     toast.info('Preparando exportación del storyboard...');
 
     try {
-      // Fetch all shots for all scenes
       const allShots: Record<string, Shot[]> = {};
       for (const scene of scenes) {
         const { data } = await supabase.from('shots').select('*').eq('scene_id', scene.id).order('shot_no');
@@ -185,6 +322,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     } finally {
       setExporting(false);
     }
+  };
+
+  const getShotRender = (shotId: string): Render | undefined => {
+    return renders[shotId]?.[0];
   };
 
   if (!bibleReady) {
@@ -221,6 +362,17 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           </Button>
         </div>
       </div>
+
+      {/* Engine preference indicator */}
+      {preferredEngine && (
+        <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg">
+          <Video className="w-4 h-4 text-primary" />
+          <span className="text-sm">
+            Motor preferido: <strong className="text-primary uppercase">{preferredEngine}</strong>
+            <span className="text-muted-foreground ml-2">(determinado por Engine Shootout)</span>
+          </span>
+        </div>
+      )}
 
       <div className="flex gap-4 text-sm">
         <div className="flex items-center gap-2"><Badge variant="cine">CINE</Badge><span className="text-muted-foreground">{t.scenes.qualityModes.CINE}</span></div>
@@ -271,22 +423,55 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                   <p className="text-sm text-muted-foreground text-center py-4">{t.scenes.noShots}</p>
                 ) : (
                   <div className="grid gap-2">
-                    {shots[scene.id].map(shot => (
-                      <div key={shot.id} className={cn("flex items-center gap-3 p-3 rounded-lg border transition-all", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
-                        <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-sm font-mono">{shot.shot_no}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
-                            <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
-                            <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
-                            {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
+                    {shots[scene.id].map(shot => {
+                      const render = getShotRender(shot.id);
+                      const isGenerating = generatingShot === shot.id;
+                      
+                      return (
+                        <div key={shot.id} className={cn("flex items-center gap-3 p-3 rounded-lg border transition-all", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
+                          <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-sm font-mono">{shot.shot_no}</div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
+                              <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
+                              <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
+                              {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
+                              {render && (
+                                <Badge 
+                                  variant={render.status === 'succeeded' ? 'default' : 'secondary'}
+                                  className={cn("text-xs", render.status === 'succeeded' && "bg-green-600")}
+                                >
+                                  <Video className="w-3 h-3 mr-1" />
+                                  {render.engine?.toUpperCase()}
+                                </Badge>
+                              )}
+                            </div>
+                            {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
                           </div>
-                          {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
+                          
+                          {/* Generate button */}
+                          <Button
+                            size="sm"
+                            variant={render ? "outline" : "gold"}
+                            className="h-8"
+                            onClick={() => openGenerateDialog(shot, scene)}
+                            disabled={isGenerating}
+                          >
+                            {isGenerating ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <>
+                                <Play className="w-3 h-3 mr-1" />
+                                {render ? 'Regen' : 'Generar'}
+                              </>
+                            )}
+                          </Button>
+                          
+                          <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
+                          <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
                         </div>
-                        <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
-                        <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 
@@ -299,6 +484,70 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           </div>
         ))}
       </div>
+
+      {/* Generate Shot Dialog */}
+      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Video className="w-5 h-5 text-primary" />
+              Generar Shot
+            </DialogTitle>
+            <DialogDescription>
+              {selectedShot && `Shot ${selectedShot.shot.shot_no} - ${selectedShot.shot.shot_type}`}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Motor de Generación</Label>
+              <Select value={selectedEngine} onValueChange={v => setSelectedEngine(v as VideoEngine)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="veo">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">Veo 3.1</span>
+                      {preferredEngine === 'veo' && <Badge variant="outline" className="text-xs">Recomendado</Badge>}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="kling">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">Kling 2.0</span>
+                      {preferredEngine === 'kling' && <Badge variant="outline" className="text-xs">Recomendado</Badge>}
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {selectedEngine === 'veo' 
+                  ? 'Mejor para escenas con movimiento suave y cinematografía realista'
+                  : 'Mejor para escenas con personajes y expresiones detalladas'}
+              </p>
+            </div>
+
+            {selectedShot && (
+              <div className="p-3 bg-muted/50 rounded-lg space-y-2 text-sm">
+                <p><strong>Escena:</strong> {selectedShot.scene.slugline}</p>
+                <p><strong>Tipo:</strong> {selectedShot.shot.shot_type}</p>
+                <p><strong>Duración:</strong> {selectedShot.shot.duration_target}s</p>
+                <p><strong>Modo:</strong> {selectedShot.shot.effective_mode}</p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowGenerateDialog(false)}>
+              Cancelar
+            </Button>
+            <Button variant="gold" onClick={generateShotVideo}>
+              <Play className="w-4 h-4 mr-2" />
+              Generar con {selectedEngine.toUpperCase()}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* AI Generation Dialog */}
       <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
