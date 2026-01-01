@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.engine-shootout]
 verify_jwt = false
+
+[functions.generate-location]
+verify_jwt = false

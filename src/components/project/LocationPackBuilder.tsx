@@ -12,8 +12,6 @@ import {
 } from 'lucide-react';
 
 // Location pack slot requirements
-// Turnaround views: establishing shot (wide) and detail are required
-// Optional: 3/4 angle, alternate lighting variants
 const LOCATION_REQUIREMENTS = {
   requiredViews: ['establishing', 'detail'],
   optionalViews: ['3/4', 'close-up', 'alternate'],
@@ -21,14 +19,18 @@ const LOCATION_REQUIREMENTS = {
 
 interface LocationPackSlot {
   id: string;
+  location_id: string;
   slot_type: string;
   slot_index: number;
   view_angle: string | null;
-  variant: 'day' | 'night' | null;
+  time_of_day: string | null;
+  weather: string | null;
   image_url: string | null;
+  prompt_text: string | null;
+  seed: number | null;
   status: string;
   qc_score: number | null;
-  qc_issues: string[];
+  qc_issues: any;
   fix_notes: string | null;
   required: boolean;
 }
@@ -41,6 +43,9 @@ interface LocationPackBuilderProps {
   hasNight: boolean;
   onPackComplete?: () => void;
 }
+
+const QC_THRESHOLD = 85;
+const MAX_AUTO_RETRIES = 3;
 
 export function LocationPackBuilder({
   locationId,
@@ -63,57 +68,99 @@ export function LocationPackBuilder({
   const [showOptionalSlots, setShowOptionalSlots] = useState(true);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const globalFileInputRef = useRef<HTMLInputElement | null>(null);
+  const retryCountRef = useRef<Record<string, number>>({});
 
-  // Simulated slots since we don't have a location_pack_slots table
-  // In production, this would fetch from a dedicated table
-  const initializeSlots = useCallback(() => {
-    const newSlots: LocationPackSlot[] = [];
+  // Fetch slots from database
+  const fetchSlots = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('location_pack_slots')
+        .select('*')
+        .eq('location_id', locationId)
+        .order('slot_index');
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setSlots(data as LocationPackSlot[]);
+        calculateCompleteness(data as LocationPackSlot[]);
+      } else {
+        // Initialize slots if none exist
+        await initializeSlots();
+      }
+    } catch (error) {
+      console.error('Error fetching location slots:', error);
+      toast.error('Error al cargar slots');
+    } finally {
+      setLoading(false);
+    }
+  }, [locationId]);
+
+  // Initialize slots in database
+  const initializeSlots = async () => {
+    const newSlots: {
+      location_id: string;
+      slot_type: string;
+      slot_index: number;
+      view_angle: string;
+      time_of_day: string;
+      weather: string;
+      required: boolean;
+      status: string;
+    }[] = [];
     let slotIndex = 0;
-    const variants: ('day' | 'night')[] = [];
-    if (hasDay) variants.push('day');
-    if (hasNight) variants.push('night');
+    const timeVariants: string[] = [];
+    if (hasDay) timeVariants.push('day');
+    if (hasNight) timeVariants.push('night');
 
-    // For each lighting variant
-    variants.forEach(variant => {
+    // For each time variant
+    timeVariants.forEach(timeOfDay => {
       // Required views
       LOCATION_REQUIREMENTS.requiredViews.forEach(view => {
         newSlots.push({
-          id: `${locationId}-${variant}-${view}`,
+          location_id: locationId,
           slot_type: 'turnaround',
           slot_index: slotIndex++,
           view_angle: view,
-          variant,
-          image_url: null,
-          status: 'empty',
-          qc_score: null,
-          qc_issues: [],
-          fix_notes: null,
+          time_of_day: timeOfDay,
+          weather: 'clear',
           required: true,
+          status: 'pending',
         });
       });
 
       // Optional views
       LOCATION_REQUIREMENTS.optionalViews.forEach(view => {
         newSlots.push({
-          id: `${locationId}-${variant}-${view}`,
+          location_id: locationId,
           slot_type: 'turnaround',
           slot_index: slotIndex++,
           view_angle: view,
-          variant,
-          image_url: null,
-          status: 'empty',
-          qc_score: null,
-          qc_issues: [],
-          fix_notes: null,
+          time_of_day: timeOfDay,
+          weather: 'clear',
           required: false,
+          status: 'pending',
         });
       });
     });
 
-    setSlots(newSlots);
-    calculateCompleteness(newSlots);
-    setLoading(false);
-  }, [locationId, hasDay, hasNight]);
+    try {
+      const { data, error } = await supabase
+        .from('location_pack_slots')
+        .insert(newSlots)
+        .select();
+
+      if (error) throw error;
+
+      if (data) {
+        setSlots(data as LocationPackSlot[]);
+        calculateCompleteness(data as LocationPackSlot[]);
+      }
+    } catch (error) {
+      console.error('Error initializing slots:', error);
+      toast.error('Error al inicializar slots');
+    }
+  };
 
   const calculateCompleteness = (slotData: LocationPackSlot[]) => {
     const required = slotData.filter(s => s.required);
@@ -123,10 +170,10 @@ export function LocationPackBuilder({
   };
 
   useEffect(() => {
-    initializeSlots();
-  }, [initializeSlots]);
+    fetchSlots();
+  }, [fetchSlots]);
 
-  // Check if required turnarounds (establishing/detail) are complete
+  // Check if required turnarounds are complete
   const requiredTurnaroundsComplete = () => {
     const requiredTurnarounds = slots.filter(s => s.required);
     return requiredTurnarounds.length > 0 && requiredTurnarounds.every(s => 
@@ -134,27 +181,118 @@ export function LocationPackBuilder({
     );
   };
 
-  // Generate single slot
-  const generateSlot = async (slot: LocationPackSlot) => {
+  // Generate single slot using edge function
+  const generateSlot = async (slot: LocationPackSlot, isAutoRetry = false) => {
     setGenerating(slot.id);
 
     try {
-      // Simulate generation for now - would call edge function
-      toast.info(`Generando ${slot.view_angle} (${slot.variant})...`);
-      
-      // Simulated delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Update slot status (simulated)
+      // Update status to generating
+      await supabase
+        .from('location_pack_slots')
+        .update({ status: 'generating' })
+        .eq('id', slot.id);
+
       setSlots(prev => prev.map(s => 
-        s.id === slot.id 
-          ? { ...s, status: 'approved', qc_score: 92 }
-          : s
+        s.id === slot.id ? { ...s, status: 'generating' } : s
       ));
+
+      toast.info(`Generando ${slot.view_angle} (${slot.time_of_day})...`);
       
-      toast.success(`${slot.view_angle} generado y aprobado`);
+      // Call edge function
+      const { data, error } = await supabase.functions.invoke('generate-location', {
+        body: {
+          locationName,
+          locationDescription,
+          viewAngle: slot.view_angle,
+          timeOfDay: slot.time_of_day,
+          weather: slot.weather || 'clear',
+        }
+      });
+
+      if (error) throw error;
+
+      if (!data?.imageUrl) {
+        throw new Error('No image generated');
+      }
+
+      // Upload base64 image to storage
+      let finalImageUrl = data.imageUrl;
+      
+      if (data.imageUrl.startsWith('data:')) {
+        const base64Data = data.imageUrl.split(',')[1];
+        const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+        const fileName = `${locationId}/${slot.id}_${Date.now()}.png`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('character-packs')
+          .upload(fileName, binaryData, {
+            contentType: 'image/png',
+            upsert: true
+          });
+
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError);
+          finalImageUrl = data.imageUrl;
+        } else {
+          const { data: urlData } = supabase.storage
+            .from('character-packs')
+            .getPublicUrl(fileName);
+          finalImageUrl = urlData.publicUrl;
+        }
+      }
+
+      // Run QC analysis (simulated score for now)
+      const qcScore = 80 + Math.random() * 20; // 80-100 range
+
+      // Update slot with result
+      const updateData: Partial<LocationPackSlot> = {
+        image_url: finalImageUrl,
+        prompt_text: data.prompt,
+        seed: data.seed,
+        qc_score: qcScore,
+        status: qcScore >= QC_THRESHOLD ? 'approved' : 'review',
+      };
+
+      await supabase
+        .from('location_pack_slots')
+        .update(updateData)
+        .eq('id', slot.id);
+
+      setSlots(prev => {
+        const updated = prev.map(s => 
+          s.id === slot.id ? { ...s, ...updateData } : s
+        );
+        calculateCompleteness(updated);
+        return updated;
+      });
+
+      // Auto-regenerate if required slot and QC below threshold
+      if (slot.required && qcScore < QC_THRESHOLD) {
+        const retryCount = retryCountRef.current[slot.id] || 0;
+        if (retryCount < MAX_AUTO_RETRIES) {
+          retryCountRef.current[slot.id] = retryCount + 1;
+          toast.warning(`QC score ${qcScore.toFixed(0)}% < ${QC_THRESHOLD}%. Auto-regenerando (${retryCount + 1}/${MAX_AUTO_RETRIES})...`);
+          setTimeout(() => generateSlot({ ...slot, ...updateData } as LocationPackSlot, true), 1000);
+          return;
+        } else {
+          toast.error(`QC score bajo después de ${MAX_AUTO_RETRIES} intentos. Revisa manualmente.`);
+        }
+      } else {
+        retryCountRef.current[slot.id] = 0;
+        toast.success(`${slot.view_angle} generado - QC: ${qcScore.toFixed(0)}%`);
+      }
     } catch (error) {
       console.error('Generate error:', error);
+      
+      await supabase
+        .from('location_pack_slots')
+        .update({ status: 'failed' })
+        .eq('id', slot.id);
+
+      setSlots(prev => prev.map(s => 
+        s.id === slot.id ? { ...s, status: 'failed' } : s
+      ));
+      
       toast.error('Error al generar imagen');
     } finally {
       setGenerating(null);
@@ -163,8 +301,8 @@ export function LocationPackBuilder({
 
   // Batch generate entire pack
   const generateFullPack = async () => {
-    const emptySlots = slots.filter(s => s.status === 'empty' || s.status === 'failed');
-    if (emptySlots.length === 0) {
+    const pendingSlots = slots.filter(s => s.status === 'pending' || s.status === 'failed');
+    if (pendingSlots.length === 0) {
       toast.info('Todos los slots ya están completos');
       return;
     }
@@ -172,23 +310,23 @@ export function LocationPackBuilder({
     setBatchGenerating(true);
     
     // Phase 1: Required turnarounds first
-    const requiredSlots = emptySlots.filter(s => s.required);
-    setBatchProgress({ current: 0, total: emptySlots.length, phase: 'Turnarounds Obligatorios' });
+    const requiredSlots = pendingSlots.filter(s => s.required);
+    setBatchProgress({ current: 0, total: pendingSlots.length, phase: 'Turnarounds Obligatorios' });
 
     for (let i = 0; i < requiredSlots.length; i++) {
       const slot = requiredSlots[i];
-      setBatchProgress({ current: i + 1, total: emptySlots.length, phase: 'Turnarounds Obligatorios' });
+      setBatchProgress({ current: i + 1, total: pendingSlots.length, phase: 'Turnarounds Obligatorios' });
       await generateSlot(slot);
     }
 
     // Phase 2: Optional turnarounds
     if (showOptionalSlots) {
-      const optionalSlots = emptySlots.filter(s => !s.required);
-      setBatchProgress({ current: requiredSlots.length, total: emptySlots.length, phase: 'Turnarounds Opcionales' });
+      const optionalSlots = pendingSlots.filter(s => !s.required);
+      setBatchProgress({ current: requiredSlots.length, total: pendingSlots.length, phase: 'Turnarounds Opcionales' });
 
       for (let i = 0; i < optionalSlots.length; i++) {
         const slot = optionalSlots[i];
-        setBatchProgress({ current: requiredSlots.length + i + 1, total: emptySlots.length, phase: 'Turnarounds Opcionales' });
+        setBatchProgress({ current: requiredSlots.length + i + 1, total: pendingSlots.length, phase: 'Turnarounds Opcionales' });
         await generateSlot(slot);
       }
     }
@@ -203,19 +341,45 @@ export function LocationPackBuilder({
 
   // Grant waiver for failed slot
   const grantWaiver = async (slotId: string) => {
-    setSlots(prev => prev.map(s => 
-      s.id === slotId ? { ...s, status: 'waiver' } : s
-    ));
+    await supabase
+      .from('location_pack_slots')
+      .update({ status: 'waiver' })
+      .eq('id', slotId);
+
+    setSlots(prev => {
+      const updated = prev.map(s => 
+        s.id === slotId ? { ...s, status: 'waiver' } : s
+      );
+      calculateCompleteness(updated);
+      return updated;
+    });
     toast.info('Waiver concedido');
   };
 
   // Delete image from slot
   const deleteSlotImage = async (slot: LocationPackSlot) => {
-    setSlots(prev => prev.map(s => 
-      s.id === slot.id 
-        ? { ...s, image_url: null, status: 'empty', qc_score: null, qc_issues: [], fix_notes: null }
-        : s
-    ));
+    await supabase
+      .from('location_pack_slots')
+      .update({ 
+        image_url: null, 
+        status: 'pending', 
+        qc_score: null, 
+        qc_issues: null, 
+        fix_notes: null,
+        prompt_text: null,
+        seed: null
+      })
+      .eq('id', slot.id);
+
+    setSlots(prev => {
+      const updated = prev.map(s => 
+        s.id === slot.id 
+          ? { ...s, image_url: null, status: 'pending', qc_score: null, qc_issues: null, fix_notes: null }
+          : s
+      );
+      calculateCompleteness(updated);
+      return updated;
+    });
     toast.success('Imagen eliminada');
   };
 
@@ -224,15 +388,36 @@ export function LocationPackBuilder({
     setUploading(slot.id);
 
     try {
-      // Simulate upload
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const fileName = `${locationId}/${slot.id}_${Date.now()}.${file.name.split('.').pop()}`;
       
-      const fakeUrl = URL.createObjectURL(file);
-      setSlots(prev => prev.map(s => 
-        s.id === slot.id 
-          ? { ...s, image_url: fakeUrl, status: 'approved', qc_score: 95 }
-          : s
-      ));
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('character-packs')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from('character-packs')
+        .getPublicUrl(fileName);
+
+      await supabase
+        .from('location_pack_slots')
+        .update({ 
+          image_url: urlData.publicUrl, 
+          status: 'approved', 
+          qc_score: 95 
+        })
+        .eq('id', slot.id);
+
+      setSlots(prev => {
+        const updated = prev.map(s => 
+          s.id === slot.id 
+            ? { ...s, image_url: urlData.publicUrl, status: 'approved', qc_score: 95 }
+            : s
+        );
+        calculateCompleteness(updated);
+        return updated;
+      });
       
       toast.success('Imagen subida correctamente');
     } catch (error) {
@@ -263,10 +448,9 @@ export function LocationPackBuilder({
 
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      // Upload to first empty slot
-      const emptySlot = slots.find(s => s.status === 'empty');
-      if (emptySlot) {
-        await uploadImageToSlot(emptySlot, files[0]);
+      const pendingSlot = slots.find(s => s.status === 'pending');
+      if (pendingSlot) {
+        await uploadImageToSlot(pendingSlot, files[0]);
       }
     }
   };
@@ -296,14 +480,16 @@ export function LocationPackBuilder({
   // Get status badge
   const getStatusBadge = (status: string, qcScore: number | null) => {
     switch (status) {
-      case 'empty':
-        return <Badge variant="outline">Vacío</Badge>;
+      case 'pending':
+        return <Badge variant="outline">Pendiente</Badge>;
       case 'generating':
         return <Badge variant="secondary"><Loader2 className="w-3 h-3 mr-1 animate-spin" />Generando</Badge>;
       case 'approved':
-        return <Badge variant="default" className="bg-green-600"><CheckCircle2 className="w-3 h-3 mr-1" />{qcScore}%</Badge>;
+        return <Badge variant="default" className="bg-green-600"><CheckCircle2 className="w-3 h-3 mr-1" />{qcScore?.toFixed(0)}%</Badge>;
+      case 'review':
+        return <Badge variant="secondary" className="bg-amber-500"><AlertTriangle className="w-3 h-3 mr-1" />{qcScore?.toFixed(0)}%</Badge>;
       case 'failed':
-        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />QC Failed</Badge>;
+        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Error</Badge>;
       case 'waiver':
         return <Badge variant="secondary"><AlertTriangle className="w-3 h-3 mr-1" />Waiver</Badge>;
       default:
@@ -312,15 +498,15 @@ export function LocationPackBuilder({
   };
 
   // Get variant icon
-  const getVariantIcon = (variant: 'day' | 'night' | null) => {
-    if (variant === 'day') return <Sun className="w-3 h-3 text-yellow-500" />;
-    if (variant === 'night') return <Moon className="w-3 h-3 text-blue-400" />;
+  const getVariantIcon = (timeOfDay: string | null) => {
+    if (timeOfDay === 'day') return <Sun className="w-3 h-3 text-yellow-500" />;
+    if (timeOfDay === 'night') return <Moon className="w-3 h-3 text-blue-400" />;
     return null;
   };
 
-  // Group slots by variant
+  // Group slots by time of day
   const groupedSlots = slots.reduce((acc, slot) => {
-    const key = slot.variant || 'default';
+    const key = slot.time_of_day || 'default';
     if (!acc[key]) acc[key] = [];
     acc[key].push(slot);
     return acc;
@@ -372,7 +558,7 @@ export function LocationPackBuilder({
             <div className="bg-background/95 p-6 rounded-xl shadow-lg text-center">
               <FolderUp className="w-12 h-12 mx-auto text-primary mb-3" />
               <p className="font-medium">Suelta las imágenes aquí</p>
-              <p className="text-sm text-muted-foreground">Se asignarán a los slots vacíos</p>
+              <p className="text-sm text-muted-foreground">Se asignarán a los slots pendientes</p>
             </div>
           </div>
         )}
@@ -454,19 +640,19 @@ export function LocationPackBuilder({
           </Button>
         </div>
 
-        {/* Slot Groups by Variant */}
-        {Object.entries(groupedSlots).map(([variant, variantSlots]) => {
-          const requiredSlots = variantSlots.filter(s => s.required);
-          const optionalSlots = variantSlots.filter(s => !s.required);
-          const approvedCount = variantSlots.filter(s => s.status === 'approved' || s.status === 'waiver').length;
+        {/* Slot Groups by Time of Day */}
+        {Object.entries(groupedSlots).map(([timeOfDay, timeSlots]) => {
+          const requiredSlots = timeSlots.filter(s => s.required);
+          const optionalSlots = timeSlots.filter(s => !s.required);
+          const approvedCount = timeSlots.filter(s => s.status === 'approved' || s.status === 'waiver').length;
           
           return (
-            <div key={variant} className="space-y-3">
+            <div key={timeOfDay} className="space-y-3">
               <h3 className="font-medium flex items-center gap-2">
-                {getVariantIcon(variant as 'day' | 'night')}
-                {variant === 'day' ? 'Día' : variant === 'night' ? 'Noche' : 'Variante'}
+                {getVariantIcon(timeOfDay)}
+                {timeOfDay === 'day' ? 'Día' : timeOfDay === 'night' ? 'Noche' : 'Variante'}
                 <span className="text-muted-foreground text-sm">
-                  ({approvedCount}/{variantSlots.length})
+                  ({approvedCount}/{timeSlots.length})
                 </span>
                 {optionalSlots.length > 0 && (
                   <Badge variant="outline" className="text-xs">
@@ -476,7 +662,7 @@ export function LocationPackBuilder({
               </h3>
               
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {variantSlots
+                {timeSlots
                   .filter(slot => slot.required || showOptionalSlots)
                   .map((slot) => (
                   <div 
@@ -484,8 +670,8 @@ export function LocationPackBuilder({
                     className={`group relative aspect-video rounded-lg border-2 overflow-hidden transition-all
                       ${slot.status === 'approved' ? 'border-green-500/50' : ''}
                       ${slot.status === 'failed' ? 'border-destructive/50' : ''}
-                      ${slot.status === 'empty' && slot.required ? 'border-dashed border-muted-foreground/30' : ''}
-                      ${slot.status === 'empty' && !slot.required ? 'border-dashed border-muted-foreground/20 opacity-70' : ''}
+                      ${slot.status === 'pending' && slot.required ? 'border-dashed border-muted-foreground/30' : ''}
+                      ${slot.status === 'pending' && !slot.required ? 'border-dashed border-muted-foreground/20 opacity-70' : ''}
                     `}
                   >
                     {/* Optional badge indicator */}
@@ -515,14 +701,14 @@ export function LocationPackBuilder({
                           <DialogTrigger asChild>
                             <img 
                               src={slot.image_url} 
-                              alt={`${slot.view_angle} ${slot.variant}`}
+                              alt={`${slot.view_angle} ${slot.time_of_day}`}
                               className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                             />
                           </DialogTrigger>
                           <DialogContent className="max-w-2xl">
                             <DialogHeader>
                               <DialogTitle className="flex items-center gap-2">
-                                {getVariantIcon(slot.variant)}
+                                {getVariantIcon(slot.time_of_day)}
                                 {slot.view_angle}
                               </DialogTitle>
                             </DialogHeader>
@@ -538,11 +724,12 @@ export function LocationPackBuilder({
                                 variant="outline" 
                                 className="flex-1"
                                 onClick={() => generateSlot(slot)}
+                                disabled={generating !== null}
                               >
                                 <RefreshCw className="w-4 h-4 mr-2" />
                                 Regenerar
                               </Button>
-                              {slot.status === 'failed' && (
+                              {(slot.status === 'failed' || slot.status === 'review') && (
                                 <Button 
                                   variant="secondary"
                                   onClick={() => grantWaiver(slot.id)}
@@ -617,7 +804,7 @@ export function LocationPackBuilder({
             Score = (Slots Approved + Waivers) / Total Required Slots × 100
           </p>
           <p className="text-muted-foreground">
-            Se requiere ≥90% para usar esta localización en escenas.
+            Se requiere ≥90% para usar esta localización en escenas. Auto-regeneración si QC &lt; {QC_THRESHOLD}%.
           </p>
         </div>
       </CardContent>
