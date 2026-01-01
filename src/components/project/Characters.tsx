@@ -5,12 +5,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, User } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CharactersProps { projectId: string; }
+
+interface CharacterOutfit {
+  id: string;
+  name: string;
+  description: string | null;
+  reference_urls: unknown;
+}
 
 interface Character {
   id: string;
@@ -19,14 +28,21 @@ interface Character {
   bio: string | null;
   arc: string | null;
   token: string | null;
+  turnaround_urls: Record<string, string> | null;
+  expressions: Record<string, string> | null;
+  outfits?: CharacterOutfit[];
 }
 
 export default function Characters({ projectId }: CharactersProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showOutfitDialog, setShowOutfitDialog] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -35,13 +51,34 @@ export default function Characters({ projectId }: CharactersProps) {
     arc: '',
   });
 
+  const [outfitForm, setOutfitForm] = useState({
+    name: '',
+    description: '',
+  });
+
   const fetchCharacters = async () => { 
-    const { data } = await supabase
+    const { data: charsData } = await supabase
       .from('characters')
       .select('*')
       .eq('project_id', projectId)
       .order('created_at'); 
-    setCharacters(data || []); 
+    
+    if (charsData) {
+      // Fetch outfits for each character
+      const charsWithOutfits = await Promise.all(charsData.map(async (char) => {
+        const { data: outfits } = await supabase
+          .from('character_outfits')
+          .select('*')
+          .eq('character_id', char.id);
+        return { 
+          ...char, 
+          turnaround_urls: char.turnaround_urls as Record<string, string> | null,
+          expressions: char.expressions as Record<string, string> | null,
+          outfits: outfits || [] 
+        };
+      }));
+      setCharacters(charsWithOutfits);
+    }
     setLoading(false); 
   };
 
@@ -124,6 +161,92 @@ export default function Characters({ projectId }: CharactersProps) {
     setEditingId(character.id);
   };
 
+  const generateCharacterAI = async (character: Character) => {
+    setGenerating(character.id);
+    toast.info('Generando personaje con IA... Esto puede tardar un momento.');
+
+    try {
+      const response = await supabase.functions.invoke('generate-character', {
+        body: {
+          name: character.name,
+          role: character.role || 'main character',
+          bio: character.bio || 'A compelling character',
+        }
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      const { description, turnarounds, expressionSheet } = response.data;
+
+      // Update character with generated content
+      await supabase
+        .from('characters')
+        .update({
+          bio: description || character.bio,
+          turnaround_urls: turnarounds || null,
+          expressions: expressionSheet ? { sheet: expressionSheet } : null,
+        })
+        .eq('id', character.id);
+
+      toast.success('Personaje generado correctamente');
+      fetchCharacters();
+    } catch (error) {
+      console.error('Error generating character:', error);
+      toast.error('Error al generar personaje. Inténtalo de nuevo.');
+    } finally {
+      setGenerating(null);
+    }
+  };
+
+  const addOutfit = async (characterId: string) => {
+    if (!outfitForm.name.trim()) {
+      toast.error('El nombre del vestuario es obligatorio');
+      return;
+    }
+
+    setSaving(true);
+    const { error } = await supabase
+      .from('character_outfits')
+      .insert({
+        character_id: characterId,
+        name: outfitForm.name.trim(),
+        description: outfitForm.description || null,
+      });
+
+    if (error) {
+      toast.error('Error al añadir vestuario');
+    } else {
+      toast.success('Vestuario añadido');
+      setOutfitForm({ name: '', description: '' });
+      setShowOutfitDialog(null);
+      fetchCharacters();
+    }
+    setSaving(false);
+  };
+
+  const deleteOutfit = async (outfitId: string) => {
+    const { error } = await supabase.from('character_outfits').delete().eq('id', outfitId);
+    if (error) {
+      toast.error('Error al eliminar vestuario');
+    } else {
+      toast.success('Vestuario eliminado');
+      fetchCharacters();
+    }
+  };
+
+  const getRoleLabel = (role: string) => {
+    const labels: Record<string, string> = {
+      protagonist: 'Protagonista',
+      antagonist: 'Antagonista',
+      supporting: 'Secundario',
+      recurring: 'Recurrente',
+      cameo: 'Cameo',
+    };
+    return labels[role] || role;
+  };
+
   if (loading) {
     return (
       <div className="p-6 flex justify-center">
@@ -136,8 +259,8 @@ export default function Characters({ projectId }: CharactersProps) {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Personajes</h2>
-          <p className="text-muted-foreground">Define tu reparto para mantener la continuidad visual</p>
+          <h2 className="text-2xl font-bold text-foreground">{t.characters.title}</h2>
+          <p className="text-muted-foreground">{t.characters.subtitle}</p>
         </div>
         <Button variant="gold" onClick={() => setShowAddDialog(true)}>
           <Plus className="w-4 h-4 mr-2" />
@@ -150,7 +273,7 @@ export default function Characters({ projectId }: CharactersProps) {
           <Card>
             <CardContent className="p-8 text-center">
               <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No hay personajes aún</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{t.characters.noCharacters}</h3>
               <p className="text-muted-foreground mb-4">
                 Añade personajes para mantener la consistencia visual en tu producción
               </p>
@@ -162,10 +285,10 @@ export default function Characters({ projectId }: CharactersProps) {
           </Card>
         ) : (
           characters.map(character => (
-            <Card key={character.id}>
-              <CardContent className="p-4">
+            <Card key={character.id} className="overflow-hidden">
+              <CardContent className="p-0">
                 {editingId === character.id ? (
-                  <div className="space-y-4">
+                  <div className="p-4 space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Nombre *</Label>
@@ -225,39 +348,181 @@ export default function Characters({ projectId }: CharactersProps) {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                      {character.name[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground">{character.name}</h3>
-                        {character.role && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize">
-                            {character.role === 'protagonist' ? 'Protagonista' :
-                             character.role === 'antagonist' ? 'Antagonista' :
-                             character.role === 'supporting' ? 'Secundario' :
-                             character.role === 'recurring' ? 'Recurrente' :
-                             character.role === 'cameo' ? 'Cameo' : character.role}
-                          </span>
+                  <>
+                    {/* Character Header */}
+                    <div className="p-4 flex items-start gap-4">
+                      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden">
+                        {character.turnaround_urls?.front ? (
+                          <img 
+                            src={character.turnaround_urls.front} 
+                            alt={character.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          character.name[0].toUpperCase()
                         )}
                       </div>
-                      {character.bio && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">{character.bio}</p>
-                      )}
-                      {!character.bio && !character.role && (
-                        <p className="text-sm text-muted-foreground italic">Sin información adicional</p>
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-foreground text-lg">{character.name}</h3>
+                          {character.role && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                              {getRoleLabel(character.role)}
+                            </span>
+                          )}
+                          {character.turnaround_urls && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-500">
+                              IA Generado
+                            </span>
+                          )}
+                        </div>
+                        {character.bio && (
+                          <p className="text-sm text-muted-foreground line-clamp-2">{character.bio}</p>
+                        )}
+                      </div>
+                      <div className="flex gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => generateCharacterAI(character)}
+                          disabled={generating === character.id}
+                          title="Generar con IA"
+                        >
+                          {generating === character.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Sparkles className="w-4 h-4 text-primary" />
+                          )}
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => setExpandedId(expandedId === character.id ? null : character.id)}
+                        >
+                          {expandedId === character.id ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => startEditing(character)}>
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)}>
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => startEditing(character)}>
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)}>
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
+
+                    {/* Expanded Content */}
+                    {expandedId === character.id && (
+                      <div className="border-t border-border">
+                        <Tabs defaultValue="turnarounds" className="w-full">
+                          <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0">
+                            <TabsTrigger 
+                              value="turnarounds" 
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              Vistas ({Object.keys(character.turnaround_urls || {}).length})
+                            </TabsTrigger>
+                            <TabsTrigger 
+                              value="outfits"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                            >
+                              <Shirt className="w-4 h-4 mr-2" />
+                              Vestuarios ({character.outfits?.length || 0})
+                            </TabsTrigger>
+                          </TabsList>
+
+                          <TabsContent value="turnarounds" className="p-4 m-0">
+                            {character.turnaround_urls ? (
+                              <div className="grid grid-cols-4 gap-3">
+                                {Object.entries(character.turnaround_urls).map(([view, url]) => (
+                                  <div key={view} className="space-y-1">
+                                    <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+                                      <img 
+                                        src={url} 
+                                        alt={`${character.name} - ${view}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    <p className="text-xs text-center text-muted-foreground capitalize">{view}</p>
+                                  </div>
+                                ))}
+                                {character.expressions?.sheet && (
+                                  <div className="space-y-1">
+                                    <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+                                      <img 
+                                        src={character.expressions.sheet} 
+                                        alt={`${character.name} - expressions`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    <p className="text-xs text-center text-muted-foreground">Expresiones</p>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-center py-8">
+                                <Eye className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                                <p className="text-sm text-muted-foreground mb-3">
+                                  No hay vistas generadas
+                                </p>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => generateCharacterAI(character)}
+                                  disabled={generating === character.id}
+                                >
+                                  <Sparkles className="w-4 h-4 mr-2" />
+                                  Generar con IA
+                                </Button>
+                              </div>
+                            )}
+                          </TabsContent>
+
+                          <TabsContent value="outfits" className="p-4 m-0">
+                            <div className="space-y-3">
+                              {character.outfits && character.outfits.length > 0 ? (
+                                character.outfits.map(outfit => (
+                                  <div key={outfit.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                                    <Shirt className="w-5 h-5 text-muted-foreground" />
+                                    <div className="flex-1">
+                                      <p className="font-medium text-sm">{outfit.name}</p>
+                                      {outfit.description && (
+                                        <p className="text-xs text-muted-foreground">{outfit.description}</p>
+                                      )}
+                                    </div>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon"
+                                      onClick={() => deleteOutfit(outfit.id)}
+                                    >
+                                      <Trash2 className="w-4 h-4 text-destructive" />
+                                    </Button>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="text-center py-4">
+                                  <p className="text-sm text-muted-foreground">No hay vestuarios definidos</p>
+                                </div>
+                              )}
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-full"
+                                onClick={() => setShowOutfitDialog(character.id)}
+                              >
+                                <Plus className="w-4 h-4 mr-2" />
+                                Añadir Vestuario
+                              </Button>
+                            </div>
+                          </TabsContent>
+                        </Tabs>
+                      </div>
+                    )}
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -271,7 +536,7 @@ export default function Characters({ projectId }: CharactersProps) {
           <DialogHeader>
             <DialogTitle>Añadir Personaje</DialogTitle>
             <DialogDescription>
-              Define un nuevo personaje para tu producción
+              Define un nuevo personaje. Podrás generar sus vistas con IA después.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -300,15 +565,21 @@ export default function Characters({ projectId }: CharactersProps) {
                   <SelectItem value="cameo">Cameo</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">
+                El rol determina la cantidad de variaciones generadas
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Biografía</Label>
               <Textarea 
                 value={formData.bio}
                 onChange={e => setFormData({...formData, bio: e.target.value})}
-                placeholder="Describe al personaje..."
-                rows={3}
+                placeholder="Describe al personaje: apariencia física, personalidad, vestimenta..."
+                rows={4}
               />
+              <p className="text-xs text-muted-foreground">
+                Una descripción detallada mejora la generación con IA
+              </p>
             </div>
           </div>
           <DialogFooter>
@@ -318,6 +589,46 @@ export default function Characters({ projectId }: CharactersProps) {
             <Button variant="gold" onClick={handleAddCharacter} disabled={saving}>
               {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
               Añadir Personaje
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Outfit Dialog */}
+      <Dialog open={!!showOutfitDialog} onOpenChange={() => setShowOutfitDialog(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Añadir Vestuario</DialogTitle>
+            <DialogDescription>
+              Define una variación de vestuario para el personaje
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Nombre del Vestuario *</Label>
+              <Input 
+                value={outfitForm.name} 
+                onChange={e => setOutfitForm({...outfitForm, name: e.target.value})}
+                placeholder="Ej: Traje formal, Ropa casual, Uniforme..."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Descripción</Label>
+              <Textarea 
+                value={outfitForm.description}
+                onChange={e => setOutfitForm({...outfitForm, description: e.target.value})}
+                placeholder="Describe el vestuario en detalle..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setShowOutfitDialog(null); setOutfitForm({ name: '', description: '' }); }}>
+              Cancelar
+            </Button>
+            <Button variant="gold" onClick={() => showOutfitDialog && addOutfit(showOutfitDialog)} disabled={saving}>
+              {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              Añadir Vestuario
             </Button>
           </DialogFooter>
         </DialogContent>
