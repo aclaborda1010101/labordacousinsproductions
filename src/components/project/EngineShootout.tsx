@@ -39,6 +39,15 @@ interface QCResult {
   overall: number;
 }
 
+interface EngineResult {
+  videoUrl?: string;
+  keyframeUrl?: string;
+  qc?: QCResult;
+  success?: boolean;
+  usedFallback?: boolean;
+  error?: string;
+}
+
 export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
   const { t } = useLanguage();
   const [step, setStep] = useState<ShootoutStep>('setup');
@@ -56,8 +65,8 @@ export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
   const [duration, setDuration] = useState(8);
 
   // Results
-  const [veoResult, setVeoResult] = useState<{ videoUrl?: string; qc?: QCResult } | null>(null);
-  const [klingResult, setKlingResult] = useState<{ videoUrl?: string; qc?: QCResult } | null>(null);
+  const [veoResult, setVeoResult] = useState<EngineResult | null>(null);
+  const [klingResult, setKlingResult] = useState<EngineResult | null>(null);
   const [winner, setWinner] = useState<string | null>(null);
 
   useEffect(() => {
@@ -131,14 +140,22 @@ export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
 
       const data = response.data;
 
-      // Set results
+      // Set results with full data including fallback info
       setVeoResult({ 
-        videoUrl: data.veo?.videoUrl || undefined, 
-        qc: data.veo?.qc 
+        videoUrl: data.veo?.videoUrl || undefined,
+        keyframeUrl: data.veo?.keyframeUrl || undefined,
+        qc: data.veo?.qc,
+        success: data.veo?.success,
+        usedFallback: data.veo?.usedFallback,
+        error: data.veo?.error,
       });
       setKlingResult({ 
-        videoUrl: data.kling?.videoUrl || undefined, 
-        qc: data.kling?.qc 
+        videoUrl: data.kling?.videoUrl || undefined,
+        keyframeUrl: data.kling?.keyframeUrl || undefined,
+        qc: data.kling?.qc,
+        success: data.kling?.success,
+        usedFallback: data.kling?.usedFallback,
+        error: data.kling?.error,
       });
 
       const winnerEngine = data.winner === 'none' ? (data.veo?.qc?.overall >= data.kling?.qc?.overall ? 'veo' : 'kling') : data.winner;
@@ -352,6 +369,88 @@ export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
               </p>
             </div>
 
+            {/* Video/Keyframe Preview Section */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Veo Preview */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <span className="text-blue-500 font-bold text-xs">V</span>
+                  </div>
+                  <span className="font-medium text-sm">Veo 3.1</span>
+                  {veoResult.usedFallback && (
+                    <Badge variant="secondary" className="text-xs">
+                      <AlertTriangle className="w-3 h-3 mr-1" />
+                      Keyframe
+                    </Badge>
+                  )}
+                </div>
+                <div className="aspect-video bg-muted rounded-lg overflow-hidden border">
+                  {veoResult.videoUrl ? (
+                    <video 
+                      src={veoResult.videoUrl} 
+                      controls 
+                      className="w-full h-full object-cover"
+                      poster={veoResult.keyframeUrl}
+                    >
+                      Tu navegador no soporta video HTML5.
+                    </video>
+                  ) : veoResult.keyframeUrl ? (
+                    <img 
+                      src={veoResult.keyframeUrl} 
+                      alt="Veo keyframe" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <XCircle className="w-8 h-8 mr-2" />
+                      <span>Sin resultado</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Kling Preview */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <span className="text-purple-500 font-bold text-xs">K</span>
+                  </div>
+                  <span className="font-medium text-sm">Kling 2.0</span>
+                  {klingResult.usedFallback && (
+                    <Badge variant="secondary" className="text-xs">
+                      <AlertTriangle className="w-3 h-3 mr-1" />
+                      Keyframe
+                    </Badge>
+                  )}
+                </div>
+                <div className="aspect-video bg-muted rounded-lg overflow-hidden border">
+                  {klingResult.videoUrl ? (
+                    <video 
+                      src={klingResult.videoUrl} 
+                      controls 
+                      className="w-full h-full object-cover"
+                      poster={klingResult.keyframeUrl}
+                    >
+                      Tu navegador no soporta video HTML5.
+                    </video>
+                  ) : klingResult.keyframeUrl ? (
+                    <img 
+                      src={klingResult.keyframeUrl} 
+                      alt="Kling keyframe" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <XCircle className="w-8 h-8 mr-2" />
+                      <span>Sin resultado</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* QC Scores Section */}
             <div className="grid grid-cols-2 gap-4">
               {/* Veo Results */}
               <div className={`p-4 rounded-lg border-2 ${winner === 'veo' ? 'border-primary bg-primary/5' : 'border-border'}`}>
@@ -370,14 +469,14 @@ export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
                   )}
                 </div>
                 <div className="space-y-3">
-                  <QCScoreBar label="Continuidad" score={veoResult.qc!.continuity} />
-                  <QCScoreBar label="Iluminación" score={veoResult.qc!.lighting} />
-                  <QCScoreBar label="Textura" score={veoResult.qc!.texture} />
-                  <QCScoreBar label="Motion" score={veoResult.qc!.motion} />
+                  <QCScoreBar label="Continuidad" score={veoResult.qc?.continuity || 0} />
+                  <QCScoreBar label="Iluminación" score={veoResult.qc?.lighting || 0} />
+                  <QCScoreBar label="Textura" score={veoResult.qc?.texture || 0} />
+                  <QCScoreBar label="Motion" score={veoResult.qc?.motion || 0} />
                   <div className="pt-2 border-t">
                     <div className="flex justify-between">
                       <span className="font-medium">Puntuación Total</span>
-                      <span className="font-bold text-lg">{veoResult.qc!.overall}%</span>
+                      <span className="font-bold text-lg">{veoResult.qc?.overall || 0}%</span>
                     </div>
                   </div>
                 </div>
@@ -400,14 +499,14 @@ export function EngineShootout({ projectId, onComplete }: EngineShootoutProps) {
                   )}
                 </div>
                 <div className="space-y-3">
-                  <QCScoreBar label="Continuidad" score={klingResult.qc!.continuity} />
-                  <QCScoreBar label="Iluminación" score={klingResult.qc!.lighting} />
-                  <QCScoreBar label="Textura" score={klingResult.qc!.texture} />
-                  <QCScoreBar label="Motion" score={klingResult.qc!.motion} />
+                  <QCScoreBar label="Continuidad" score={klingResult.qc?.continuity || 0} />
+                  <QCScoreBar label="Iluminación" score={klingResult.qc?.lighting || 0} />
+                  <QCScoreBar label="Textura" score={klingResult.qc?.texture || 0} />
+                  <QCScoreBar label="Motion" score={klingResult.qc?.motion || 0} />
                   <div className="pt-2 border-t">
                     <div className="flex justify-between">
                       <span className="font-medium">Puntuación Total</span>
-                      <span className="font-bold text-lg">{klingResult.qc!.overall}%</span>
+                      <span className="font-bold text-lg">{klingResult.qc?.overall || 0}%</span>
                     </div>
                   </div>
                 </div>
