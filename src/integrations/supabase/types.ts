@@ -341,6 +341,70 @@ export type Database = {
           },
         ]
       }
+      engine_tests: {
+        Row: {
+          character_id: string | null
+          created_at: string
+          duration_sec: number | null
+          id: string
+          kling_result: Json | null
+          location_id: string | null
+          project_id: string
+          qc_results: Json | null
+          scene_description: string
+          veo_result: Json | null
+          winner: string | null
+        }
+        Insert: {
+          character_id?: string | null
+          created_at?: string
+          duration_sec?: number | null
+          id?: string
+          kling_result?: Json | null
+          location_id?: string | null
+          project_id: string
+          qc_results?: Json | null
+          scene_description: string
+          veo_result?: Json | null
+          winner?: string | null
+        }
+        Update: {
+          character_id?: string | null
+          created_at?: string
+          duration_sec?: number | null
+          id?: string
+          kling_result?: Json | null
+          location_id?: string | null
+          project_id?: string
+          qc_results?: Json | null
+          scene_description?: string
+          veo_result?: Json | null
+          winner?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engine_tests_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engine_tests_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engine_tests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entity_versions: {
         Row: {
           change_summary: string | null
@@ -668,11 +732,13 @@ export type Database = {
           budget_cap_project_eur: number | null
           budget_cap_scene_eur: number | null
           created_at: string
+          engine_test_completed: boolean | null
           episodes_count: number
           format: Database["public"]["Enums"]["project_format"]
           id: string
           master_language: string
           owner_id: string
+          preferred_engine: string | null
           target_duration_min: number
           target_languages: string[] | null
           title: string
@@ -684,11 +750,13 @@ export type Database = {
           budget_cap_project_eur?: number | null
           budget_cap_scene_eur?: number | null
           created_at?: string
+          engine_test_completed?: boolean | null
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
           id?: string
           master_language?: string
           owner_id: string
+          preferred_engine?: string | null
           target_duration_min?: number
           target_languages?: string[] | null
           title: string
@@ -700,11 +768,13 @@ export type Database = {
           budget_cap_project_eur?: number | null
           budget_cap_scene_eur?: number | null
           created_at?: string
+          engine_test_completed?: boolean | null
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
           id?: string
           master_language?: string
           owner_id?: string
+          preferred_engine?: string | null
           target_duration_min?: number
           target_languages?: string[] | null
           title?: string
