@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -29,6 +29,23 @@ const LANGUAGE_OPTIONS = [
   { code: 'zh', label: '中文' },
 ];
 
+const STORAGE_KEY = 'cineforge_new_project_draft';
+
+interface ProjectDraft {
+  title: string;
+  format: ProjectFormat;
+  episodesCount: number;
+  targetDuration: number;
+  masterLanguage: string;
+  targetLanguages: string[];
+  budgetCap: string;
+  shootoutCharacter: { name: string; bio: string };
+  shootoutLocation: { name: string; description: string };
+  shootoutScene: string;
+  currentStep: number;
+  savedAt: string;
+}
+
 export default function NewProject() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -36,6 +53,7 @@ export default function NewProject() {
   const [currentStep, setCurrentStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
+  const [hasDraft, setHasDraft] = useState(false);
 
   // Basic info
   const [title, setTitle] = useState('');
@@ -51,6 +69,74 @@ export default function NewProject() {
   const [shootoutLocation, setShootoutLocation] = useState({ name: '', description: '' });
   const [shootoutScene, setShootoutScene] = useState('');
   const [engineTestCompleted, setEngineTestCompleted] = useState(false);
+
+  // Load draft on mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(STORAGE_KEY);
+    if (savedDraft) {
+      try {
+        const draft: ProjectDraft = JSON.parse(savedDraft);
+        setHasDraft(true);
+        // We'll show a prompt to restore or discard
+      } catch (e) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+  }, []);
+
+  // Save draft on changes
+  useEffect(() => {
+    if (title || shootoutCharacter.name || shootoutLocation.name) {
+      const draft: ProjectDraft = {
+        title,
+        format,
+        episodesCount,
+        targetDuration,
+        masterLanguage,
+        targetLanguages,
+        budgetCap,
+        shootoutCharacter,
+        shootoutLocation,
+        shootoutScene,
+        currentStep,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    }
+  }, [title, format, episodesCount, targetDuration, masterLanguage, targetLanguages, budgetCap, shootoutCharacter, shootoutLocation, shootoutScene, currentStep]);
+
+  const restoreDraft = () => {
+    const savedDraft = localStorage.getItem(STORAGE_KEY);
+    if (savedDraft) {
+      try {
+        const draft: ProjectDraft = JSON.parse(savedDraft);
+        setTitle(draft.title);
+        setFormat(draft.format);
+        setEpisodesCount(draft.episodesCount);
+        setTargetDuration(draft.targetDuration);
+        setMasterLanguage(draft.masterLanguage);
+        setTargetLanguages(draft.targetLanguages);
+        setBudgetCap(draft.budgetCap);
+        setShootoutCharacter(draft.shootoutCharacter);
+        setShootoutLocation(draft.shootoutLocation);
+        setShootoutScene(draft.shootoutScene);
+        setCurrentStep(draft.currentStep);
+        toast.success('Borrador restaurado');
+      } catch (e) {
+        toast.error('Error al restaurar borrador');
+      }
+    }
+    setHasDraft(false);
+  };
+
+  const discardDraft = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setHasDraft(false);
+  };
+
+  const clearDraftOnComplete = () => {
+    localStorage.removeItem(STORAGE_KEY);
+  };
 
   const WIZARD_STEPS = [
     { id: 'basics', title: t.newProject.steps?.basics?.title || 'Información Básica', description: t.newProject.steps?.basics?.description || 'Título y formato' },
@@ -157,6 +243,7 @@ export default function NewProject() {
 
   const handleFinish = () => {
     if (createdProjectId) {
+      clearDraftOnComplete();
       navigate(`/projects/${createdProjectId}/bible`);
     }
   };
@@ -195,6 +282,20 @@ export default function NewProject() {
               </div>
             ))}
           </div>
+
+          {/* Draft restoration banner */}
+          {hasDraft && (
+            <div className="mb-6 p-4 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-between">
+              <div>
+                <p className="font-medium text-foreground">Borrador guardado encontrado</p>
+                <p className="text-sm text-muted-foreground">¿Deseas continuar donde lo dejaste?</p>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={discardDraft}>Descartar</Button>
+                <Button variant="gold" size="sm" onClick={restoreDraft}>Restaurar</Button>
+              </div>
+            </div>
+          )}
 
           <div className="panel-elevated p-8">
             {currentStep === 0 && (
