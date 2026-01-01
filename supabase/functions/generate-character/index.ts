@@ -201,7 +201,7 @@ async function handleSlotGeneration(body: SlotGenerateRequest): Promise<Response
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash-image-preview',
+      model: 'google/gemini-3-pro-image-preview',
       messages: [
         {
           role: 'user',
@@ -359,7 +359,7 @@ Lighting: Soft, even studio lighting for reference accuracy`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-image-preview',
+        model: 'google/gemini-3-pro-image-preview',
         messages: [{ role: 'user', content: imagePrompt }],
         modalities: ['image', 'text'],
       }),
@@ -387,8 +387,8 @@ Background: Clean white background`;
       'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      model: 'google/gemini-2.5-flash-image-preview',
+      body: JSON.stringify({
+        model: 'google/gemini-3-pro-image-preview',
       messages: [{ role: 'user', content: expressionPrompt }],
       modalities: ['image', 'text'],
     }),
