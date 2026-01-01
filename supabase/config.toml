@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.generate-outfit]
 verify_jwt = false
+
+[functions.engine-shootout]
+verify_jwt = false
