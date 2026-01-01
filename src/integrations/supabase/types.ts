@@ -1273,6 +1273,7 @@ export type Database = {
           aspect_ratio: string | null
           color_palette: Json | null
           created_at: string
+          description: string | null
           forbidden_rules: Json | null
           fps: number | null
           grain_level: string | null
@@ -1288,6 +1289,7 @@ export type Database = {
           aspect_ratio?: string | null
           color_palette?: Json | null
           created_at?: string
+          description?: string | null
           forbidden_rules?: Json | null
           fps?: number | null
           grain_level?: string | null
@@ -1303,6 +1305,7 @@ export type Database = {
           aspect_ratio?: string | null
           color_palette?: Json | null
           created_at?: string
+          description?: string | null
           forbidden_rules?: Json | null
           fps?: number | null
           grain_level?: string | null
@@ -1318,7 +1321,7 @@ export type Database = {
           {
             foreignKeyName: "style_packs_project_id_fkey"
             columns: ["project_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
