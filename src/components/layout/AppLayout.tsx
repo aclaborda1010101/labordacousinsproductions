@@ -1,7 +1,9 @@
 import { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
+import { LanguageSelector } from '@/components/LanguageSelector';
 import { 
   Film, 
   Home, 
@@ -20,16 +22,17 @@ interface AppLayoutProps {
   children: ReactNode;
 }
 
-const navItems = [
-  { href: '/dashboard', label: 'Panel de Control', icon: Home },
-  { href: '/projects', label: 'Proyectos', icon: FolderKanban },
-  { href: '/dailies', label: 'Dailies', icon: Play },
-];
-
 export function AppLayout({ children }: AppLayoutProps) {
   const { user, signOut } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const navItems = [
+    { href: '/dashboard', label: t.nav.dashboard, icon: Home },
+    { href: '/projects', label: t.nav.projects, icon: FolderKanban },
+    { href: '/dailies', label: t.nav.dailies, icon: Play },
+  ];
 
   const handleSignOut = async () => {
     await signOut();
@@ -86,17 +89,14 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">
-                {user?.email?.split('@')[0] || 'Usuario'}
+                {user?.email?.split('@')[0] || 'User'}
               </p>
-              <p className="text-xs text-muted-foreground truncate">Productor</p>
+              <p className="text-xs text-muted-foreground truncate">{t.team.roles.producer}</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="ghost" size="sm" className="flex-1 justify-start">
-              <Settings className="w-4 h-4 mr-2" />
-              Ajustes
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handleSignOut} title="Cerrar sesión">
+            <LanguageSelector />
+            <Button variant="ghost" size="icon" onClick={handleSignOut} title={t.nav.signOut}>
               <LogOut className="w-4 h-4" />
             </Button>
           </div>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Play, 
   Loader2, 
@@ -52,6 +53,7 @@ type Rating = { acting: number; camera: number; lighting: number; sound: number;
 
 export default function Dailies() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [sessions, setSessions] = useState<DailiesSession[]>([]);
   const [activeSession, setActiveSession] = useState<DailiesSession | null>(null);
@@ -110,14 +112,12 @@ export default function Dailies() {
       .update({ decision })
       .eq('id', currentItem.id);
     
-    // Update local state
     setItems(items.map((item, i) => 
       i === currentIndex ? { ...item, decision } : item
     ));
     
-    toast.success(`Marked as ${decision}`);
+    toast.success(`${t.dailies.markedAs} ${decision}`);
     
-    // Auto-advance
     if (currentIndex < items.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
@@ -128,19 +128,18 @@ export default function Dailies() {
     
     await supabase.from('frame_notes').insert({
       render_id: currentItem.render_id,
-      timestamp_sec: 0, // Would be actual timestamp in real implementation
+      timestamp_sec: 0,
       author_id: user.id,
       note: frameNote.trim()
     });
     
-    toast.success('Frame note added');
+    toast.success(t.common.success);
     setFrameNote('');
   };
 
   const createDemoSession = async () => {
     if (!user) return;
     
-    // Get a project
     const { data: projects } = await supabase
       .from('projects')
       .select('id')
@@ -148,7 +147,7 @@ export default function Dailies() {
       .limit(1);
     
     if (!projects || projects.length === 0) {
-      toast.error('Create a project first');
+      toast.error(t.projects.createFirst);
       return;
     }
 
@@ -165,7 +164,7 @@ export default function Dailies() {
     if (session) {
       setSessions([session, ...sessions]);
       setActiveSession(session);
-      toast.success('Demo dailies session created');
+      toast.success(t.common.success);
     }
   };
 
@@ -179,20 +178,28 @@ export default function Dailies() {
     );
   }
 
+  const ratingLabels: Record<keyof Rating, string> = {
+    acting: t.dailies.acting,
+    camera: t.dailies.camera,
+    lighting: t.dailies.lighting,
+    sound: t.dailies.sound,
+    feelsReal: t.dailies.feelsReal,
+  };
+
   return (
     <AppLayout>
-      <PageHeader title="Dailies Review" description="Review and approve renders">
+      <PageHeader title={t.dailies.title} description={t.dailies.subtitle}>
         <Button variant="outline" onClick={createDemoSession}>
-          Create Demo Session
+          {t.dailies.createDemoSession}
         </Button>
       </PageHeader>
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sessions sidebar */}
         <div className="w-64 bg-sidebar border-r border-sidebar-border overflow-y-auto p-3 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 mb-2">Sessions</p>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 mb-2">{t.dailies.sessions}</p>
           {sessions.length === 0 ? (
-            <p className="text-sm text-muted-foreground px-2">No sessions yet</p>
+            <p className="text-sm text-muted-foreground px-2">{t.dailies.noSessions}</p>
           ) : sessions.map(session => (
             <button
               key={session.id}
@@ -219,9 +226,9 @@ export default function Dailies() {
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <Play className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">No renders to review</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-2">{t.dailies.noRenders}</h3>
                 <p className="text-muted-foreground max-w-md">
-                  Create scenes and generate renders to start reviewing dailies.
+                  {t.dailies.noRendersDesc}
                 </p>
               </div>
             </div>
@@ -239,7 +246,7 @@ export default function Dailies() {
                   <div className="text-center text-muted-foreground">
                     <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
                     <p>No video available</p>
-                    <p className="text-sm">Take {currentItem?.render?.take_label}</p>
+                    <p className="text-sm">{t.dailies.take} {currentItem?.render?.take_label}</p>
                   </div>
                 )}
 
@@ -282,13 +289,13 @@ export default function Dailies() {
                         {currentItem?.render?.shot?.scene?.slugline || 'Unknown scene'}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Scene {currentItem?.render?.shot?.scene?.scene_no}, 
-                        Shot {currentItem?.render?.shot?.shot_no}, 
-                        Take {currentItem?.render?.take_label}
+                        {t.dailies.scene} {currentItem?.render?.shot?.scene?.scene_no}, 
+                        {t.dailies.shot} {currentItem?.render?.shot?.shot_no}, 
+                        {t.dailies.take} {currentItem?.render?.take_label}
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {currentIndex + 1} of {items.length}
+                      {currentIndex + 1} {t.dailies.of} {items.length}
                     </p>
                   </div>
 
@@ -296,7 +303,7 @@ export default function Dailies() {
                   <div className="grid grid-cols-5 gap-4 mb-4">
                     {(['acting', 'camera', 'lighting', 'sound', 'feelsReal'] as const).map(key => (
                       <div key={key} className="text-center">
-                        <p className="text-xs text-muted-foreground capitalize mb-1">{key === 'feelsReal' ? 'Feels Real' : key}</p>
+                        <p className="text-xs text-muted-foreground mb-1">{ratingLabels[key]}</p>
                         <div className="flex justify-center gap-0.5">
                           {[1, 2, 3, 4, 5].map(n => (
                             <button
@@ -317,7 +324,7 @@ export default function Dailies() {
                   <div className="flex gap-2 mb-4">
                     <input
                       type="text"
-                      placeholder="Add frame note (e.g., 00:03 - audio pop)"
+                      placeholder={t.dailies.addFrameNote}
                       value={frameNote}
                       onChange={e => setFrameNote(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && addFrameNote()}
@@ -337,7 +344,7 @@ export default function Dailies() {
                       className="min-w-32"
                     >
                       <CheckCircle2 className="w-5 h-5" />
-                      Select
+                      {t.dailies.select}
                     </Button>
                     <Button
                       size="lg"
@@ -346,7 +353,7 @@ export default function Dailies() {
                       className="min-w-32"
                     >
                       <Wrench className="w-5 h-5" />
-                      Fix
+                      {t.dailies.fix}
                     </Button>
                     <Button
                       size="lg"
@@ -355,7 +362,7 @@ export default function Dailies() {
                       className="min-w-32"
                     >
                       <XCircle className="w-5 h-5" />
-                      Reject
+                      {t.dailies.reject}
                     </Button>
                   </div>
                 </div>
