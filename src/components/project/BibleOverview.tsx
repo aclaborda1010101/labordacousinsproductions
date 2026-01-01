@@ -3,32 +3,45 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Book, Users, MapPin, Palette, CheckCircle2, Circle, ArrowRight } from 'lucide-react';
+import { Book, Users, MapPin, Palette, CheckCircle2, Circle, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface Project { id: string; title: string; format: string; episodes_count: number; target_duration_min: number; bible_completeness_score: number; created_at: string; }
 interface BibleOverviewProps { project: Project; setProject: React.Dispatch<React.SetStateAction<Project | null>>; }
 
+interface Requirement {
+  id: string;
+  label: string;
+  points: number;
+  complete: boolean;
+  path: string;
+}
+
 export default function BibleOverview({ project, setProject }: BibleOverviewProps) {
   const { t } = useLanguage();
-  const [stats, setStats] = useState({ style: false, characters: 0, locations: 0 });
+  const [stats, setStats] = useState({ style: false, hasDescription: false, characters: 0, locations: 0 });
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     async function fetchStats() {
       const [styleRes, charsRes, locsRes] = await Promise.all([
-        supabase.from('style_packs').select('id').eq('project_id', project.id).maybeSingle(),
-        supabase.from('characters').select('id').eq('project_id', project.id),
+        supabase.from('style_packs').select('id, description').eq('project_id', project.id).maybeSingle(),
+        supabase.from('characters').select('id, pack_completeness_score').eq('project_id', project.id),
         supabase.from('locations').select('id').eq('project_id', project.id),
       ]);
 
       const hasStyle = !!styleRes.data;
+      const hasDescription = !!(styleRes.data?.description && styleRes.data.description.trim().length > 0);
       const charCount = charsRes.data?.length || 0;
       const locCount = locsRes.data?.length || 0;
 
-      setStats({ style: hasStyle, characters: charCount, locations: locCount });
+      setStats({ style: hasStyle, hasDescription, characters: charCount, locations: locCount });
 
       let score = 0;
-      if (hasStyle) score += 30;
+      if (hasStyle) score += 20;
+      if (hasDescription) score += 10;
       if (charCount >= 1) score += 20;
       if (charCount >= 3) score += 15;
       if (locCount >= 1) score += 20;
@@ -41,6 +54,18 @@ export default function BibleOverview({ project, setProject }: BibleOverviewProp
     }
     fetchStats();
   }, [project.id]);
+
+  const requirements: Requirement[] = [
+    { id: 'style', label: 'Estilo visual configurado', points: 20, complete: stats.style, path: '/style' },
+    { id: 'description', label: 'Descripción del estilo', points: 10, complete: stats.hasDescription, path: '/style' },
+    { id: 'char1', label: 'Al menos 1 personaje', points: 20, complete: stats.characters >= 1, path: '/characters' },
+    { id: 'char3', label: '3+ personajes definidos', points: 15, complete: stats.characters >= 3, path: '/characters' },
+    { id: 'loc1', label: 'Al menos 1 localización', points: 20, complete: stats.locations >= 1, path: '/locations' },
+    { id: 'loc2', label: '2+ localizaciones definidas', points: 15, complete: stats.locations >= 2, path: '/locations' },
+  ];
+
+  const completedPoints = requirements.filter(r => r.complete).reduce((sum, r) => sum + r.points, 0);
+  const missingRequirements = requirements.filter(r => !r.complete);
 
   const sections = [
     { id: 'style', label: t.bible.sections.style.label, icon: Palette, complete: stats.style, path: '/style', desc: t.bible.sections.style.desc },
@@ -55,18 +80,68 @@ export default function BibleOverview({ project, setProject }: BibleOverviewProp
         <p className="text-muted-foreground">{t.bible.subtitle}</p>
       </div>
 
-      <div className="panel p-6">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm text-muted-foreground">{t.bible.completeness}</span>
-          <Badge variant={project.bible_completeness_score >= 85 ? 'pass' : 'pending'}>{project.bible_completeness_score}%</Badge>
+      <Collapsible open={expanded} onOpenChange={setExpanded}>
+        <div className="panel p-6">
+          <CollapsibleTrigger asChild>
+            <button className="w-full">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">{t.bible.completeness}</span>
+                  {expanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                </div>
+                <Badge variant={project.bible_completeness_score >= 85 ? 'pass' : 'pending'}>{project.bible_completeness_score}%</Badge>
+              </div>
+              <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-primary to-amber-500 rounded-full transition-all duration-500" style={{ width: `${project.bible_completeness_score}%` }} />
+              </div>
+            </button>
+          </CollapsibleTrigger>
+
+          <CollapsibleContent className="mt-4 space-y-3">
+            <div className="border-t border-border pt-4">
+              <p className="text-sm font-medium text-foreground mb-3">Desglose de puntuación:</p>
+              <div className="space-y-2">
+                {requirements.map((req) => (
+                  <Link
+                    key={req.id}
+                    to={`/projects/${project.id}${req.path}`}
+                    className={cn(
+                      "flex items-center justify-between p-2 rounded-lg transition-colors",
+                      req.complete ? "bg-qc-pass/10" : "bg-muted/50 hover:bg-muted"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      {req.complete ? (
+                        <CheckCircle2 className="w-4 h-4 text-qc-pass" />
+                      ) : (
+                        <Circle className="w-4 h-4 text-muted-foreground" />
+                      )}
+                      <span className={cn("text-sm", req.complete ? "text-foreground" : "text-muted-foreground")}>
+                        {req.label}
+                      </span>
+                    </div>
+                    <Badge variant={req.complete ? "pass" : "secondary"} className="text-xs">
+                      {req.complete ? `+${req.points}` : `0/${req.points}`}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+
+              {missingRequirements.length > 0 && (
+                <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <p className="text-sm text-amber-400">
+                    <strong>Falta para 100%:</strong> {missingRequirements.map(r => r.label).join(', ')}
+                  </p>
+                </div>
+              )}
+            </div>
+          </CollapsibleContent>
+
+          {project.bible_completeness_score >= 85 && (
+            <p className="text-sm text-qc-pass mt-3 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> {t.bible.readyToProceed}</p>
+          )}
         </div>
-        <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-primary to-amber-500 rounded-full transition-all duration-500" style={{ width: `${project.bible_completeness_score}%` }} />
-        </div>
-        {project.bible_completeness_score >= 85 && (
-          <p className="text-sm text-qc-pass mt-3 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> {t.bible.readyToProceed}</p>
-        )}
-      </div>
+      </Collapsible>
 
       <div className="grid gap-4">
         {sections.map((section) => {
