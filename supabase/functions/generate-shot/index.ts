@@ -89,10 +89,10 @@ async function generateWithVeo(prompt: string, duration: number, keyframeUrl?: s
     requestBody.image_url = keyframeUrl;
   }
 
-  const createResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/models/veo-2.0-generate-001:predictLongRunning", {
+  // Use API key authentication (not OAuth)
+  const createResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/veo-2.0-generate-001:predictLongRunning?key=${VEO_API_KEY}`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${VEO_API_KEY}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -124,8 +124,8 @@ async function generateWithVeo(prompt: string, duration: number, keyframeUrl?: s
   while (attempts < maxAttempts) {
     await new Promise(r => setTimeout(r, 5000));
     
-    const statusResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/${operationName}`, {
-      headers: { "Authorization": `Bearer ${VEO_API_KEY}` }
+    const statusResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${VEO_API_KEY}`, {
+      headers: { "Content-Type": "application/json" }
     });
 
     if (!statusResponse.ok) {
