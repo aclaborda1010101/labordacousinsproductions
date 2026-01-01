@@ -13,21 +13,36 @@ import {
 } from 'lucide-react';
 
 // Role-based slot requirements
+// Turnaround views: front/back are required, intermediate angles (1/3, 2/3, 3/4) are optional
+const TURNAROUND_VIEWS = {
+  required: ['front', 'back'],
+  optional: ['1/3', '2/3', '3/4'],
+};
+
 const ROLE_REQUIREMENTS = {
   protagonist: {
-    turnaround: { count: 4, views: ['front', 'side-left', 'back', 'side-right'] },
+    turnaround: { 
+      requiredViews: ['front', 'back'], 
+      optionalViews: ['1/3', '2/3', '3/4'],
+    },
     expression: { count: 8, names: ['neutral', 'happy', 'sad', 'angry', 'surprised', 'fearful', 'disgusted', 'contempt'] },
     closeup: { count: 2 },
     outfit: { count: 5, viewsPerOutfit: 2 },
   },
   recurring: {
-    turnaround: { count: 3, views: ['front', '3/4-left', 'back'] },
+    turnaround: { 
+      requiredViews: ['front', 'back'], 
+      optionalViews: ['3/4'],
+    },
     expression: { count: 5, names: ['neutral', 'happy', 'sad', 'angry', 'surprised'] },
     closeup: { count: 1 },
     outfit: { count: 3, viewsPerOutfit: 2 },
   },
   episodic: {
-    turnaround: { count: 2, views: ['front', '3/4'] },
+    turnaround: { 
+      requiredViews: ['front', 'back'], 
+      optionalViews: [],
+    },
     expression: { count: 3, names: ['neutral', 'happy', 'angry'] },
     closeup: { count: 1 },
     outfit: { count: 2, viewsPerOutfit: 1 },
@@ -131,12 +146,16 @@ export function CharacterPackBuilder({
       }
     }
 
-    // Turnarounds (identity anchors)
+    // Turnarounds (identity anchors) - required views first, then optional
     if ('turnaround' in requirements) {
-      requirements.turnaround.views.forEach((view, i) => {
+      const turnaroundConfig = requirements.turnaround;
+      let slotIndex = 0;
+      
+      // Required views (front, back)
+      turnaroundConfig.requiredViews.forEach((view) => {
         newSlots.push({
           slot_type: 'turnaround',
-          slot_index: i,
+          slot_index: slotIndex++,
           view_angle: view,
           expression_name: null,
           outfit_id: null,
@@ -146,6 +165,23 @@ export function CharacterPackBuilder({
           qc_issues: [],
           fix_notes: null,
           required: true,
+        });
+      });
+      
+      // Optional views (1/3, 2/3, 3/4)
+      turnaroundConfig.optionalViews.forEach((view) => {
+        newSlots.push({
+          slot_type: 'turnaround',
+          slot_index: slotIndex++,
+          view_angle: view,
+          expression_name: null,
+          outfit_id: null,
+          image_url: null,
+          status: 'empty',
+          qc_score: null,
+          qc_issues: [],
+          fix_notes: null,
+          required: false, // Optional slots
         });
       });
     }
