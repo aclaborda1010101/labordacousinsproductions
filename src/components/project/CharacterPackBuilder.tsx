@@ -27,7 +27,7 @@ const ROLE_REQUIREMENTS = {
     },
     expression: { count: 8, names: ['neutral', 'happy', 'sad', 'angry', 'surprised', 'fearful', 'disgusted', 'contempt'] },
     closeup: { count: 2 },
-    outfit: { count: 5, viewsPerOutfit: 2 },
+    outfit: { requiredCount: 5, optionalCount: 3, viewsPerOutfit: 2 },
   },
   recurring: {
     turnaround: { 
@@ -36,7 +36,7 @@ const ROLE_REQUIREMENTS = {
     },
     expression: { count: 5, names: ['neutral', 'happy', 'sad', 'angry', 'surprised'] },
     closeup: { count: 1 },
-    outfit: { count: 3, viewsPerOutfit: 2 },
+    outfit: { requiredCount: 3, optionalCount: 3, viewsPerOutfit: 2 },
   },
   episodic: {
     turnaround: { 
@@ -45,7 +45,7 @@ const ROLE_REQUIREMENTS = {
     },
     expression: { count: 3, names: ['neutral', 'happy', 'angry'] },
     closeup: { count: 1 },
-    outfit: { count: 2, viewsPerOutfit: 1 },
+    outfit: { requiredCount: 2, optionalCount: 3, viewsPerOutfit: 1 },
   },
   extra: {
     base_look: { count: 1 },
@@ -205,15 +205,20 @@ export function CharacterPackBuilder({
       });
     }
 
-    // Outfits (will be linked later)
+    // Outfits (will be linked later) - required + optional
     if ('outfit' in requirements) {
-      for (let i = 0; i < requirements.outfit.count; i++) {
-        const viewsPerOutfit = requirements.outfit.viewsPerOutfit;
+      const outfitConfig = requirements.outfit;
+      const totalOutfits = outfitConfig.requiredCount + outfitConfig.optionalCount;
+      let slotIndex = 0;
+      
+      for (let i = 0; i < totalOutfits; i++) {
+        const isRequired = i < outfitConfig.requiredCount;
+        const viewsPerOutfit = outfitConfig.viewsPerOutfit;
         const views = viewsPerOutfit === 2 ? ['front', '3/4'] : ['3/4'];
-        views.forEach((view, vi) => {
+        views.forEach((view) => {
           newSlots.push({
             slot_type: 'outfit',
-            slot_index: i * viewsPerOutfit + vi,
+            slot_index: slotIndex++,
             view_angle: view,
             expression_name: null,
             outfit_id: null,
@@ -222,7 +227,7 @@ export function CharacterPackBuilder({
             qc_score: null,
             qc_issues: [],
             fix_notes: null,
-            required: true,
+            required: isRequired,
           });
         });
       }
@@ -271,17 +276,36 @@ export function CharacterPackBuilder({
     fetchSlots();
   }, [fetchSlots]);
 
-  // Check if identity anchors are complete
+  // Check if identity anchors are complete (only required turnarounds)
   const anchorsComplete = () => {
-    const anchors = slots.filter(s => s.slot_type === 'closeup' || s.slot_type === 'turnaround');
+    const anchors = slots.filter(s => 
+      s.slot_type === 'closeup' || 
+      (s.slot_type === 'turnaround' && s.required)
+    );
     return anchors.length > 0 && anchors.every(s => s.status === 'approved' || s.status === 'waiver');
+  };
+
+  // Check if required turnarounds (front/back) are complete
+  const requiredTurnaroundsComplete = () => {
+    const requiredTurnarounds = slots.filter(s => 
+      s.slot_type === 'turnaround' && s.required
+    );
+    return requiredTurnarounds.length > 0 && requiredTurnarounds.every(s => 
+      s.status === 'approved' || s.status === 'waiver'
+    );
   };
 
   // Generate single slot
   const generateSlot = async (slot: PackSlot) => {
+    // Block expression/outfit generation if required turnarounds not complete
+    if ((slot.slot_type === 'expression' || slot.slot_type === 'outfit') && !requiredTurnaroundsComplete()) {
+      toast.error('Completa primero los turnarounds obligatorios (frontal y trasero)');
+      return;
+    }
+    
     // Block outfit generation if anchors not complete
     if (slot.slot_type === 'outfit' && !anchorsComplete()) {
-      toast.error('Completa primero los Identity Anchors (close-ups y turnarounds)');
+      toast.error('Completa primero los Identity Anchors (close-ups y turnarounds obligatorios)');
       return;
     }
 
@@ -837,23 +861,33 @@ export function CharacterPackBuilder({
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start gap-2">
             <Lock className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
             <div className="text-sm">
-              <p className="font-medium text-amber-600">Identity Anchors requeridos</p>
+              <p className="font-medium text-amber-600">Turnarounds obligatorios requeridos</p>
               <p className="text-muted-foreground">
-                Completa los close-ups y turnarounds antes de generar outfits.
+                Completa los turnarounds frontal y trasero antes de generar expresiones y outfits.
               </p>
             </div>
           </div>
         )}
 
         {/* Slot Groups */}
-        {Object.entries(groupedSlots).map(([type, typeSlots]) => (
+        {Object.entries(groupedSlots).map(([type, typeSlots]) => {
+          const requiredSlots = typeSlots.filter(s => s.required);
+          const optionalSlots = typeSlots.filter(s => !s.required);
+          const approvedCount = typeSlots.filter(s => s.status === 'approved' || s.status === 'waiver').length;
+          
+          return (
           <div key={type} className="space-y-3">
             <h3 className="font-medium flex items-center gap-2">
               {getSlotIcon(type)}
               {slotTypeLabels[type] || type}
               <span className="text-muted-foreground text-sm">
-                ({typeSlots.filter(s => s.status === 'approved' || s.status === 'waiver').length}/{typeSlots.length})
+                ({approvedCount}/{typeSlots.length})
               </span>
+              {optionalSlots.length > 0 && (
+                <Badge variant="outline" className="text-xs">
+                  {requiredSlots.length} req + {optionalSlots.length} opt
+                </Badge>
+              )}
             </h3>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -863,9 +897,18 @@ export function CharacterPackBuilder({
                   className={`group relative aspect-square rounded-lg border-2 overflow-hidden transition-all
                     ${slot.status === 'approved' ? 'border-green-500/50' : ''}
                     ${slot.status === 'failed' ? 'border-destructive/50' : ''}
-                    ${slot.status === 'empty' ? 'border-dashed border-muted-foreground/30' : ''}
+                    ${slot.status === 'empty' && slot.required ? 'border-dashed border-muted-foreground/30' : ''}
+                    ${slot.status === 'empty' && !slot.required ? 'border-dashed border-muted-foreground/20 opacity-70' : ''}
                   `}
                 >
+                  {/* Optional badge indicator */}
+                  {!slot.required && (
+                    <div className="absolute top-0 left-0 z-20">
+                      <span className="text-[10px] bg-muted/80 text-muted-foreground px-1.5 py-0.5 rounded-br-md font-medium">
+                        OPT
+                      </span>
+                    </div>
+                  )}
                   {slot.image_url ? (
                     <>
                       {/* Delete button overlay */}
@@ -983,7 +1026,8 @@ export function CharacterPackBuilder({
               ))}
             </div>
           </div>
-        ))}
+        );
+        })}
 
         {/* Pack Completeness Calculation Info */}
         <div className="p-4 bg-muted/50 rounded-lg text-sm space-y-2">
