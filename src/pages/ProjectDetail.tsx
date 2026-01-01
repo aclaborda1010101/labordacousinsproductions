@@ -22,7 +22,8 @@ import {
   DollarSign,
   Gauge,
   UserPlus,
-  CheckSquare
+  CheckSquare,
+  Layers
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import BibleOverview from '@/components/project/BibleOverview';
@@ -35,6 +36,8 @@ import TeamMembers from '@/components/project/TeamMembers';
 import ApprovalWorkflow from '@/components/project/ApprovalWorkflow';
 import QCEngine from '@/components/project/QCEngine';
 import ScriptImport from '@/components/project/ScriptImport';
+import RenderQueue from '@/components/project/RenderQueue';
+import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
 
 interface Project {
   id: string;
@@ -54,6 +57,7 @@ const PROJECT_TABS = [
   { id: 'locations', path: '/locations', label: 'Locations', icon: MapPin, requiresBible: false },
   { id: 'script', path: '/script', label: 'Script Import', icon: FileText, requiresBible: false },
   { id: 'scenes', path: '/scenes', label: 'Scenes', icon: Clapperboard, requiresBible: true },
+  { id: 'renders', path: '/renders', label: 'Render Queue', icon: Layers, requiresBible: true },
   { id: 'cost', path: '/cost', label: 'Cost Engine', icon: DollarSign, requiresBible: false },
   { id: 'qc', path: '/qc', label: 'QC Engine', icon: Gauge, requiresBible: true },
   { id: 'approvals', path: '/approvals', label: 'Approvals', icon: CheckSquare, requiresBible: true },
@@ -108,6 +112,7 @@ export default function ProjectDetail() {
 
   const currentPath = location.pathname.replace(`/projects/${projectId}`, '') || '';
   const bibleReady = project.bible_completeness_score >= 85;
+  const currentSection = PROJECT_TABS.find(t => t.path === currentPath)?.label || 'Bible';
 
   return (
     <AppLayout>
@@ -182,6 +187,7 @@ export default function ProjectDetail() {
             <Route path="/locations" element={<Locations projectId={project.id} />} />
             <Route path="/script" element={<ScriptImport projectId={project.id} />} />
             <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
+            <Route path="/renders" element={<RenderQueue projectId={project.id} />} />
             <Route path="/cost" element={<CostEngine projectId={project.id} />} />
             <Route path="/qc" element={<QCEngine projectId={project.id} />} />
             <Route path="/approvals" element={<ApprovalWorkflow projectId={project.id} />} />
@@ -203,6 +209,9 @@ export default function ProjectDetail() {
           </Routes>
         </div>
       </div>
+
+      {/* Realtime collaboration overlay */}
+      <RealtimeCollaboration projectId={project.id} currentSection={currentSection} />
     </AppLayout>
   );
 }

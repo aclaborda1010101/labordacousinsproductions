@@ -341,6 +341,50 @@ export type Database = {
           },
         ]
       }
+      entity_versions: {
+        Row: {
+          change_summary: string | null
+          created_at: string
+          created_by: string | null
+          data: Json
+          entity_id: string
+          entity_type: string
+          id: string
+          project_id: string
+          version_number: number
+        }
+        Insert: {
+          change_summary?: string | null
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          entity_id: string
+          entity_type: string
+          id?: string
+          project_id: string
+          version_number?: number
+        }
+        Update: {
+          change_summary?: string | null
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          project_id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_versions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       episode_qc: {
         Row: {
           created_at: string
