@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, DragEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, XCircle, AlertTriangle, 
-  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus
+  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus, FolderUp
 } from 'lucide-react';
 
 // Role-based slot requirements
@@ -76,7 +76,11 @@ export function CharacterPackBuilder({
   const [batchGenerating, setBatchGenerating] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [batchUploading, setBatchUploading] = useState(false);
+  const [batchUploadProgress, setBatchUploadProgress] = useState({ current: 0, total: 0 });
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const globalFileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Fetch or initialize slots
   const fetchSlots = useCallback(async () => {
@@ -400,8 +404,47 @@ export function CharacterPackBuilder({
     toast.info('Waiver concedido');
   };
 
-  // Upload image to slot
-  const uploadImageToSlot = async (slot: PackSlot, file: File) => {
+  // Get identity anchor URLs for QC comparison
+  const getAnchorImageUrls = (): string[] => {
+    return slots
+      .filter(s => (s.slot_type === 'closeup' || s.slot_type === 'turnaround') && s.image_url && s.status === 'approved')
+      .map(s => s.image_url!)
+      .slice(0, 4);
+  };
+
+  // Run visual QC on uploaded image
+  const runVisualQC = async (imageUrl: string, slotType: string): Promise<{ passed: boolean; score: number; issues: string[]; fixNotes: string }> => {
+    const anchorUrls = getAnchorImageUrls();
+    
+    // Skip QC for anchors themselves or if no anchors exist
+    if (slotType === 'closeup' || slotType === 'turnaround' || anchorUrls.length === 0) {
+      return { passed: true, score: 100, issues: [], fixNotes: '' };
+    }
+
+    try {
+      const response = await supabase.functions.invoke('qc-visual-identity', {
+        body: {
+          uploadedImageUrl: imageUrl,
+          anchorImageUrls: anchorUrls,
+          characterName,
+          slotType,
+        },
+      });
+
+      if (response.error) {
+        console.error('QC error:', response.error);
+        return { passed: true, score: 100, issues: [], fixNotes: '' };
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('QC visual error:', error);
+      return { passed: true, score: 100, issues: [], fixNotes: '' };
+    }
+  };
+
+  // Upload image to slot with QC
+  const uploadImageToSlot = async (slot: PackSlot, file: File, runQC: boolean = true) => {
     // Block outfit upload if anchors not complete
     if (slot.slot_type === 'outfit' && !anchorsComplete()) {
       toast.error('Completa primero los Identity Anchors (close-ups y turnarounds)');
@@ -429,16 +472,38 @@ export function CharacterPackBuilder({
         .from('character-packs')
         .getPublicUrl(fileName);
 
-      // Update slot with image URL and set as approved (manual uploads skip AI QC)
+      const imageUrl = urlData.publicUrl;
+
+      // Run QC if enabled and not an anchor slot
+      let status = 'approved';
+      let qcScore = 100;
+      let qcIssues: string[] = [];
+      let fixNotes: string | null = null;
+
+      if (runQC && slot.slot_type !== 'closeup' && slot.slot_type !== 'turnaround') {
+        toast.info('Ejecutando QC visual...');
+        const qcResult = await runVisualQC(imageUrl, slot.slot_type);
+        qcScore = qcResult.score;
+        qcIssues = qcResult.issues || [];
+        fixNotes = qcResult.fixNotes || null;
+        status = qcResult.passed ? 'approved' : 'failed';
+      }
+
+      // Update slot
       await supabase.from('character_pack_slots').update({
-        image_url: urlData.publicUrl,
-        status: 'approved',
-        qc_score: 100, // Manual uploads are assumed to be approved by user
-        fix_notes: null,
-        qc_issues: [],
+        image_url: imageUrl,
+        status,
+        qc_score: qcScore,
+        fix_notes: fixNotes,
+        qc_issues: qcIssues,
       }).eq('id', slot.id);
 
-      toast.success(`Imagen subida a ${slot.slot_type}`);
+      if (status === 'approved') {
+        toast.success(`Imagen subida y aprobada (${qcScore}%)`);
+      } else {
+        toast.warning(`QC falló (${qcScore}%) - revisa las notas`);
+      }
+      
       await fetchSlots();
     } catch (error) {
       console.error('Upload error:', error);
@@ -446,6 +511,82 @@ export function CharacterPackBuilder({
     } finally {
       setUploading(null);
     }
+  };
+
+  // Batch upload multiple files to empty slots
+  const handleBatchUpload = async (files: File[]) => {
+    const emptySlots = slots.filter(s => s.status === 'empty' || s.status === 'failed');
+    const filesToUpload = files.filter(f => f.type.startsWith('image/') && f.size <= 10 * 1024 * 1024);
+    
+    if (filesToUpload.length === 0) {
+      toast.error('No se encontraron archivos de imagen válidos');
+      return;
+    }
+
+    const slotsToFill = Math.min(filesToUpload.length, emptySlots.length);
+    if (slotsToFill === 0) {
+      toast.info('No hay slots vacíos disponibles');
+      return;
+    }
+
+    setBatchUploading(true);
+    setBatchUploadProgress({ current: 0, total: slotsToFill });
+
+    // Prioritize anchors first
+    const sortedSlots = [...emptySlots].sort((a, b) => {
+      const priority: Record<string, number> = { closeup: 0, turnaround: 1, expression: 2, outfit: 3, base_look: 4 };
+      return (priority[a.slot_type] ?? 5) - (priority[b.slot_type] ?? 5);
+    });
+
+    for (let i = 0; i < slotsToFill; i++) {
+      const slot = sortedSlots[i];
+      const file = filesToUpload[i];
+      
+      // Skip outfits if anchors not complete
+      if (slot.slot_type === 'outfit' && !anchorsComplete()) {
+        toast.warning(`Saltando outfit - anchors incompletos`);
+        continue;
+      }
+
+      setBatchUploadProgress({ current: i + 1, total: slotsToFill });
+      await uploadImageToSlot(slot, file, true);
+    }
+
+    setBatchUploading(false);
+    toast.success(`${slotsToFill} imágenes subidas`);
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      await handleBatchUpload(files);
+    }
+  };
+
+  // Handle global file input change for batch upload
+  const handleGlobalFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      await handleBatchUpload(files);
+    }
+    e.target.value = '';
   };
 
   // Handle file input change
@@ -460,7 +601,7 @@ export function CharacterPackBuilder({
         toast.error('El archivo es demasiado grande (máximo 10MB)');
         return;
       }
-      uploadImageToSlot(slot, file);
+      uploadImageToSlot(slot, file, true);
     }
     // Reset input
     event.target.value = '';
@@ -550,30 +691,78 @@ export function CharacterPackBuilder({
         </div>
         <Progress value={completenessScore} className="h-2 mt-2" />
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Batch Generate Button */}
-        <Button
-          variant="gold"
-          className="w-full"
-          onClick={generateFullPack}
-          disabled={batchGenerating || generating !== null}
-        >
-          {batchGenerating ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              {batchProgress.phase} ({batchProgress.current}/{batchProgress.total})
-            </>
-          ) : (
-            <>
-              <Play className="w-4 h-4 mr-2" />
-              Generar Pack Completo
-            </>
-          )}
-        </Button>
+      <CardContent 
+        className="space-y-6"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {/* Drag & Drop Overlay */}
+        {isDragOver && (
+          <div className="fixed inset-0 bg-primary/10 border-4 border-dashed border-primary rounded-lg z-50 flex items-center justify-center pointer-events-none">
+            <div className="bg-background/95 p-6 rounded-xl shadow-lg text-center">
+              <FolderUp className="w-12 h-12 mx-auto text-primary mb-3" />
+              <p className="font-medium">Suelta las imágenes aquí</p>
+              <p className="text-sm text-muted-foreground">Se asignarán a los slots vacíos</p>
+            </div>
+          </div>
+        )}
 
-        {batchGenerating && (
+        {/* Action Buttons Row */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="gold"
+            className="flex-1"
+            onClick={generateFullPack}
+            disabled={batchGenerating || batchUploading || generating !== null}
+          >
+            {batchGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                {batchProgress.phase} ({batchProgress.current}/{batchProgress.total})
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4 mr-2" />
+                Generar Pack Completo
+              </>
+            )}
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => globalFileInputRef.current?.click()}
+            disabled={batchGenerating || batchUploading || generating !== null}
+          >
+            {batchUploading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Subiendo ({batchUploadProgress.current}/{batchUploadProgress.total})
+              </>
+            ) : (
+              <>
+                <FolderUp className="w-4 h-4 mr-2" />
+                Subir Múltiples
+              </>
+            )}
+          </Button>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            ref={globalFileInputRef}
+            onChange={handleGlobalFileChange}
+          />
+        </div>
+
+        {(batchGenerating || batchUploading) && (
           <Progress 
-            value={(batchProgress.current / batchProgress.total) * 100} 
+            value={batchGenerating 
+              ? (batchProgress.current / batchProgress.total) * 100
+              : (batchUploadProgress.current / batchUploadProgress.total) * 100
+            } 
             className="h-2" 
           />
         )}
@@ -581,7 +770,7 @@ export function CharacterPackBuilder({
         {/* Identity Anchors Warning */}
         {!anchorsComplete() && characterRole !== 'extra' && (
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start gap-2">
-            <Lock className="w-4 h-4 text-amber-500 mt-0.5" />
+            <Lock className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
             <div className="text-sm">
               <p className="font-medium text-amber-600">Identity Anchors requeridos</p>
               <p className="text-muted-foreground">
