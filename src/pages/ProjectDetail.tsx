@@ -19,7 +19,10 @@ import {
   ChevronRight,
   AlertCircle,
   Lock,
-  DollarSign
+  DollarSign,
+  Gauge,
+  UserPlus,
+  CheckSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import BibleOverview from '@/components/project/BibleOverview';
@@ -28,6 +31,10 @@ import Characters from '@/components/project/Characters';
 import Locations from '@/components/project/Locations';
 import Scenes from '@/components/project/Scenes';
 import CostEngine from '@/components/project/CostEngine';
+import TeamMembers from '@/components/project/TeamMembers';
+import ApprovalWorkflow from '@/components/project/ApprovalWorkflow';
+import QCEngine from '@/components/project/QCEngine';
+import ScriptImport from '@/components/project/ScriptImport';
 
 interface Project {
   id: string;
@@ -37,6 +44,7 @@ interface Project {
   target_duration_min: number;
   bible_completeness_score: number;
   created_at: string;
+  owner_id: string;
 }
 
 const PROJECT_TABS = [
@@ -44,8 +52,12 @@ const PROJECT_TABS = [
   { id: 'style', path: '/style', label: 'Style Pack', icon: Palette, requiresBible: false },
   { id: 'characters', path: '/characters', label: 'Characters', icon: Users, requiresBible: false },
   { id: 'locations', path: '/locations', label: 'Locations', icon: MapPin, requiresBible: false },
+  { id: 'script', path: '/script', label: 'Script Import', icon: FileText, requiresBible: false },
   { id: 'scenes', path: '/scenes', label: 'Scenes', icon: Clapperboard, requiresBible: true },
   { id: 'cost', path: '/cost', label: 'Cost Engine', icon: DollarSign, requiresBible: false },
+  { id: 'qc', path: '/qc', label: 'QC Engine', icon: Gauge, requiresBible: true },
+  { id: 'approvals', path: '/approvals', label: 'Approvals', icon: CheckSquare, requiresBible: true },
+  { id: 'team', path: '/team', label: 'Team', icon: UserPlus, requiresBible: false },
 ];
 
 export default function ProjectDetail() {
@@ -168,8 +180,12 @@ export default function ProjectDetail() {
             <Route path="/style" element={<StylePack projectId={project.id} />} />
             <Route path="/characters" element={<Characters projectId={project.id} />} />
             <Route path="/locations" element={<Locations projectId={project.id} />} />
+            <Route path="/script" element={<ScriptImport projectId={project.id} />} />
             <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
             <Route path="/cost" element={<CostEngine projectId={project.id} />} />
+            <Route path="/qc" element={<QCEngine projectId={project.id} />} />
+            <Route path="/approvals" element={<ApprovalWorkflow projectId={project.id} />} />
+            <Route path="/team" element={<TeamMembers projectId={project.id} ownerId={project.owner_id} />} />
             <Route path="*" element={
               <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center">
