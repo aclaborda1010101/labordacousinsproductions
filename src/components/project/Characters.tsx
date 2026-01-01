@@ -53,6 +53,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [formData, setFormData] = useState({
     name: '',
     role: '',
+    character_role: '' as 'protagonist' | 'recurring' | 'episodic' | 'extra' | '',
     bio: '',
     arc: '',
   });
@@ -92,13 +93,17 @@ export default function Characters({ projectId }: CharactersProps) {
   useEffect(() => { fetchCharacters(); }, [projectId]);
 
   const resetForm = () => {
-    setFormData({ name: '', role: '', bio: '', arc: '' });
+    setFormData({ name: '', role: '', character_role: '', bio: '', arc: '' });
     setEditingId(null);
   };
 
   const handleAddCharacter = async () => {
     if (!formData.name.trim()) {
       toast.error('El nombre es obligatorio');
+      return;
+    }
+    if (!formData.character_role) {
+      toast.error('El rol del personaje es obligatorio');
       return;
     }
     
@@ -109,6 +114,7 @@ export default function Characters({ projectId }: CharactersProps) {
         project_id: projectId, 
         name: formData.name.trim(),
         role: formData.role || null,
+        character_role: formData.character_role,
         bio: formData.bio || null,
         arc: formData.arc || null,
       });
@@ -162,6 +168,7 @@ export default function Characters({ projectId }: CharactersProps) {
     setFormData({
       name: character.name,
       role: character.role || '',
+      character_role: character.character_role || '',
       bio: character.bio || '',
       arc: character.arc || '',
     });
@@ -292,6 +299,26 @@ export default function Characters({ projectId }: CharactersProps) {
     return labels[role] || role;
   };
 
+  const getCharacterRoleLabel = (role: string) => {
+    const labels: Record<string, string> = {
+      protagonist: 'Protagonista',
+      recurring: 'Recurrente',
+      episodic: 'Episódico',
+      extra: 'Extra',
+    };
+    return labels[role] || role;
+  };
+
+  const getCharacterRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'protagonist': return 'bg-amber-500/20 text-amber-600 border-amber-500/30';
+      case 'recurring': return 'bg-blue-500/20 text-blue-600 border-blue-500/30';
+      case 'episodic': return 'bg-purple-500/20 text-purple-600 border-purple-500/30';
+      case 'extra': return 'bg-gray-500/20 text-gray-600 border-gray-500/30';
+      default: return '';
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 flex justify-center">
@@ -408,16 +435,25 @@ export default function Characters({ projectId }: CharactersProps) {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <h3 className="font-semibold text-foreground text-lg">{character.name}</h3>
+                          {character.character_role && (
+                            <Badge variant="outline" className={getCharacterRoleBadgeColor(character.character_role)}>
+                              {getCharacterRoleLabel(character.character_role)}
+                            </Badge>
+                          )}
+                          {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
+                            <Badge 
+                              variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
+                              className={character.pack_completeness_score >= 90 ? "bg-green-600" : ""}
+                            >
+                              <Package className="w-3 h-3 mr-1" />
+                              Pack {character.pack_completeness_score}%
+                            </Badge>
+                          )}
                           {character.role && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                               {getRoleLabel(character.role)}
-                            </span>
-                          )}
-                          {character.turnaround_urls && (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-500">
-                              IA Generado
                             </span>
                           )}
                         </div>
@@ -426,6 +462,17 @@ export default function Characters({ projectId }: CharactersProps) {
                         )}
                       </div>
                       <div className="flex gap-1">
+                        {character.character_role && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setShowPackBuilder(character.id)}
+                            className="mr-2"
+                          >
+                            <Package className="w-4 h-4 mr-1" />
+                            Pack Builder
+                          </Button>
+                        )}
                         <Button 
                           variant="ghost" 
                           size="icon" 
@@ -581,26 +628,65 @@ export default function Characters({ projectId }: CharactersProps) {
           <DialogHeader>
             <DialogTitle>Añadir Personaje</DialogTitle>
             <DialogDescription>
-              Define un nuevo personaje. Podrás generar sus vistas con IA después.
+              Define un nuevo personaje. El tipo de rol determina los requisitos del Character Pack.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Nombre *</Label>
-              <Input 
-                value={formData.name} 
-                onChange={e => setFormData({...formData, name: e.target.value})}
-                placeholder="Nombre del personaje"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Nombre *</Label>
+                <Input 
+                  value={formData.name} 
+                  onChange={e => setFormData({...formData, name: e.target.value})}
+                  placeholder="Nombre del personaje"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Tipo de Personaje *</Label>
+                <Select 
+                  value={formData.character_role} 
+                  onValueChange={v => setFormData({...formData, character_role: v as typeof formData.character_role})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="protagonist">
+                      <div className="flex flex-col">
+                        <span>Protagonista</span>
+                        <span className="text-xs text-muted-foreground">Pack completo: 4 vistas, 8 expr., 5+ outfits</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="recurring">
+                      <div className="flex flex-col">
+                        <span>Recurrente</span>
+                        <span className="text-xs text-muted-foreground">Pack medio: 3 vistas, 5 expr., 3+ outfits</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="episodic">
+                      <div className="flex flex-col">
+                        <span>Episódico</span>
+                        <span className="text-xs text-muted-foreground">Pack básico: 2 vistas, 3 expr., 2 outfits</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="extra">
+                      <div className="flex flex-col">
+                        <span>Extra</span>
+                        <span className="text-xs text-muted-foreground">Solo base look (1 imagen)</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div className="space-y-2">
-              <Label>Rol</Label>
+              <Label>Rol Narrativo (opcional)</Label>
               <Select 
                 value={formData.role} 
                 onValueChange={v => setFormData({...formData, role: v})}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecciona un rol" />
+                  <SelectValue placeholder="Selecciona un rol narrativo" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="protagonist">Protagonista</SelectItem>
@@ -610,9 +696,6 @@ export default function Characters({ projectId }: CharactersProps) {
                   <SelectItem value="cameo">Cameo</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
-                El rol determina la cantidad de variaciones generadas
-              </p>
             </div>
             <div className="space-y-2">
               <Label>Biografía</Label>
@@ -709,6 +792,29 @@ export default function Characters({ projectId }: CharactersProps) {
               Generar con IA
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pack Builder Dialog */}
+      <Dialog open={!!showPackBuilder} onOpenChange={() => setShowPackBuilder(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {showPackBuilder && (() => {
+            const char = characters.find(c => c.id === showPackBuilder);
+            if (!char || !char.character_role) return null;
+            return (
+              <CharacterPackBuilder
+                characterId={char.id}
+                characterName={char.name}
+                characterBio={char.bio || ''}
+                characterRole={char.character_role}
+                styleToken={char.token || undefined}
+                onPackComplete={() => {
+                  fetchCharacters();
+                  toast.success('Character Pack completado');
+                }}
+              />
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </div>
