@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Film, Sparkles, Lock } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -21,6 +25,14 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [shots, setShots] = useState<Record<string, Shot[]>>({});
   const [expandedScenes, setExpandedScenes] = useState<Set<string>>(new Set());
   const [newSlugline, setNewSlugline] = useState('');
+  const [showAIDialog, setShowAIDialog] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [aiForm, setAiForm] = useState({
+    episodeNo: '1',
+    synopsis: '',
+    sceneCount: '5',
+  });
+  const [episodesCount, setEpisodesCount] = useState(1);
 
   const fetchScenes = async () => {
     const { data } = await supabase.from('scenes').select('*').eq('project_id', projectId).order('episode_no').order('scene_no');
@@ -33,7 +45,13 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     setShots(prev => ({ ...prev, [sceneId]: data || [] }));
   };
 
-  useEffect(() => { fetchScenes(); }, [projectId]);
+  useEffect(() => { 
+    fetchScenes();
+    // Get project info for episode count
+    supabase.from('projects').select('episodes_count').eq('id', projectId).single().then(({ data }) => {
+      if (data) setEpisodesCount(data.episodes_count);
+    });
+  }, [projectId]);
 
   const toggleScene = (sceneId: string) => {
     const newExpanded = new Set(expandedScenes);
@@ -77,6 +95,42 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
   const deleteShot = async (shotId: string, sceneId: string) => { await supabase.from('shots').delete().eq('id', shotId); fetchShots(sceneId); };
 
+  const generateScenesWithAI = async () => {
+    if (!aiForm.synopsis.trim()) {
+      toast.error('Por favor, introduce una sinopsis del episodio');
+      return;
+    }
+
+    setGenerating(true);
+    toast.info('Generando escenas con IA... Esto puede tardar un momento.');
+
+    try {
+      const response = await supabase.functions.invoke('generate-scenes', {
+        body: {
+          projectId,
+          episodeNo: parseInt(aiForm.episodeNo),
+          synopsis: aiForm.synopsis,
+          sceneCount: parseInt(aiForm.sceneCount),
+        }
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      const { scenesGenerated } = response.data;
+      toast.success(`${scenesGenerated} escenas generadas correctamente`);
+      setShowAIDialog(false);
+      setAiForm({ episodeNo: '1', synopsis: '', sceneCount: '5' });
+      fetchScenes();
+    } catch (error) {
+      console.error('Error generating scenes:', error);
+      toast.error('Error al generar escenas. Inténtalo de nuevo.');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   if (!bibleReady) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[400px]">
@@ -93,9 +147,15 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-1">{t.scenes.title}</h2>
-        <p className="text-muted-foreground">{t.scenes.subtitle}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-1">{t.scenes.title}</h2>
+          <p className="text-muted-foreground">{t.scenes.subtitle}</p>
+        </div>
+        <Button variant="gold" onClick={() => setShowAIDialog(true)}>
+          <Wand2 className="w-4 h-4 mr-2" />
+          Generar con IA
+        </Button>
       </div>
 
       <div className="flex gap-4 text-sm">
@@ -106,12 +166,19 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
       <div className="flex gap-2">
         <Input placeholder={t.scenes.sluglinePlaceholder} value={newSlugline} onChange={e => setNewSlugline(e.target.value)} onKeyDown={e => e.key === 'Enter' && addScene()} className="font-mono" />
-        <Button variant="gold" onClick={addScene}><Plus className="w-4 h-4" />{t.scenes.addScene}</Button>
+        <Button variant="outline" onClick={addScene}><Plus className="w-4 h-4 mr-1" />{t.scenes.addScene}</Button>
       </div>
 
       <div className="space-y-3">
         {scenes.length === 0 ? (
-          <div className="panel p-8 text-center"><Clapperboard className="w-10 h-10 mx-auto text-muted-foreground mb-3" /><p className="text-muted-foreground">{t.scenes.noScenes}</p></div>
+          <div className="panel p-8 text-center">
+            <Clapperboard className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+            <p className="text-muted-foreground mb-4">{t.scenes.noScenes}</p>
+            <Button variant="gold" onClick={() => setShowAIDialog(true)}>
+              <Wand2 className="w-4 h-4 mr-2" />
+              Generar escenas con IA
+            </Button>
+          </div>
         ) : scenes.map(scene => (
           <div key={scene.id} className="panel overflow-hidden">
             <div className="p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleScene(scene.id)}>
@@ -133,7 +200,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
               <div className="border-t border-border bg-muted/20 p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground">{t.scenes.shots}</span>
-                  <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}><Plus className="w-3 h-3" />{t.scenes.addShot}</Button>
+                  <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}><Plus className="w-3 h-3 mr-1" />{t.scenes.addShot}</Button>
                 </div>
 
                 {!shots[scene.id] || shots[scene.id].length === 0 ? (
@@ -168,6 +235,93 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           </div>
         ))}
       </div>
+
+      {/* AI Generation Dialog */}
+      <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wand2 className="w-5 h-5 text-primary" />
+              Generar Escenas con IA
+            </DialogTitle>
+            <DialogDescription>
+              La IA utilizará los personajes y localizaciones de tu bible para crear escenas coherentes
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Episodio</Label>
+                <Select 
+                  value={aiForm.episodeNo} 
+                  onValueChange={v => setAiForm({...aiForm, episodeNo: v})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: episodesCount }, (_, i) => (
+                      <SelectItem key={i + 1} value={String(i + 1)}>
+                        Episodio {i + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Número de Escenas</Label>
+                <Select 
+                  value={aiForm.sceneCount} 
+                  onValueChange={v => setAiForm({...aiForm, sceneCount: v})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="3">3 escenas</SelectItem>
+                    <SelectItem value="5">5 escenas</SelectItem>
+                    <SelectItem value="8">8 escenas</SelectItem>
+                    <SelectItem value="10">10 escenas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Sinopsis del Episodio *</Label>
+              <Textarea 
+                value={aiForm.synopsis}
+                onChange={e => setAiForm({...aiForm, synopsis: e.target.value})}
+                placeholder="Describe qué ocurre en este episodio: la trama principal, conflictos, giros importantes..."
+                rows={5}
+              />
+              <p className="text-xs text-muted-foreground">
+                Una sinopsis detallada ayuda a generar escenas más coherentes con tu historia
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAIDialog(false)} disabled={generating}>
+              Cancelar
+            </Button>
+            <Button variant="gold" onClick={generateScenesWithAI} disabled={generating}>
+              {generating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Generando...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="w-4 h-4 mr-2" />
+                  Generar Escenas
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

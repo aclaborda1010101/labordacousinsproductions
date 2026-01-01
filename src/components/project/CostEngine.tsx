@@ -6,10 +6,11 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { DollarSign, TrendingUp, TrendingDown, Settings, Loader2, Save, AlertTriangle, Clock, Film, Tv } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Settings, Loader2, Save, AlertTriangle, Clock, Film, Tv, FileDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { exportBudgetPDF } from '@/lib/exportBudgetPDF';
 
 interface CostEngineProps { projectId: string; }
 
@@ -74,18 +75,20 @@ export default function CostEngine({ projectId }: CostEngineProps) {
   const [sceneEstimates, setSceneEstimates] = useState<SceneEstimate[]>([]);
   const [episodeEstimates, setEpisodeEstimates] = useState<EpisodeEstimate[]>([]);
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
+  const [projectTitle, setProjectTitle] = useState<string>('Proyecto');
 
   useEffect(() => {
     async function fetch() {
       // Fetch project info
       const { data: projectData } = await supabase
         .from('projects')
-        .select('episodes_count, target_duration_min, budget_cap_project_eur, budget_cap_episode_eur, budget_cap_scene_eur')
+        .select('title, episodes_count, target_duration_min, budget_cap_project_eur, budget_cap_episode_eur, budget_cap_scene_eur')
         .eq('id', projectId)
         .single();
       
       if (projectData) {
         setProjectInfo(projectData);
+        setProjectTitle(projectData.title || 'Proyecto');
       }
 
       // Fetch assumptions
@@ -251,10 +254,32 @@ export default function CostEngine({ projectId }: CostEngineProps) {
           <h2 className="text-2xl font-bold text-foreground mb-1">{t.costEngine.title}</h2>
           <p className="text-muted-foreground">{t.costEngine.subtitle}</p>
         </div>
-        <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
-          <Settings className="w-4 h-4 mr-2" />
-          {t.costEngine.settings}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              exportBudgetPDF({
+                projectTitle,
+                sceneEstimates,
+                episodeEstimates,
+                totalLow,
+                totalExpected,
+                totalHigh,
+                totalDuration,
+                budgetCap: projectInfo?.budget_cap_project_eur,
+              });
+              toast.success('PDF exportado correctamente');
+            }}
+            disabled={sceneEstimates.length === 0}
+          >
+            <FileDown className="w-4 h-4 mr-2" />
+            Exportar PDF
+          </Button>
+          <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
+            <Settings className="w-4 h-4 mr-2" />
+            {t.costEngine.settings}
+          </Button>
+        </div>
       </div>
 
       {/* Summary Cards */}
