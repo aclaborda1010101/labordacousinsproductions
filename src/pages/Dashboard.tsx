@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Plus, 
   Film, 
@@ -29,6 +30,7 @@ interface Project {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,25 +55,25 @@ export default function Dashboard() {
 
   const stats = [
     { 
-      label: 'Active Projects', 
+      label: t.dashboard.activeProjects, 
       value: projects.length, 
       icon: Film,
       color: 'text-primary' 
     },
     { 
-      label: 'Scenes Rendered', 
+      label: t.dashboard.scenesRendered, 
       value: 0, 
       icon: Clapperboard,
       color: 'text-qc-pass' 
     },
     { 
-      label: 'Pending QC', 
+      label: t.dashboard.pendingQC, 
       value: 0, 
       icon: Clock,
       color: 'text-qc-pending' 
     },
     { 
-      label: 'QC Issues', 
+      label: t.dashboard.qcIssues, 
       value: 0, 
       icon: AlertCircle,
       color: 'text-qc-fail' 
@@ -80,11 +82,11 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <PageHeader title="Dashboard" description="Welcome to your production studio">
+      <PageHeader title={t.dashboard.title} description={t.dashboard.subtitle}>
         <Button variant="gold" asChild>
           <Link to="/projects/new">
             <Plus className="w-4 h-4" />
-            New Project
+            {t.projects.newProject}
           </Link>
         </Button>
       </PageHeader>
@@ -111,10 +113,10 @@ export default function Dashboard() {
           {/* Recent projects */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-foreground">Recent Projects</h2>
+              <h2 className="text-lg font-semibold text-foreground">{t.dashboard.recentProjects}</h2>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/projects">
-                  View all
+                  {t.dashboard.viewAll}
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </Link>
               </Button>
@@ -132,16 +134,15 @@ export default function Dashboard() {
                   <Sparkles className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Create your first production
+                  {t.dashboard.createFirst}
                 </h3>
                 <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                  Start building a cinema-quality project with AI-powered tools, 
-                  quality gates, and professional workflows.
+                  {t.dashboard.createFirstDesc}
                 </p>
                 <Button variant="gold" asChild>
                   <Link to="/projects/new">
                     <Plus className="w-4 h-4" />
-                    New Project
+                    {t.projects.newProject}
                   </Link>
                 </Button>
               </div>
@@ -163,20 +164,20 @@ export default function Dashboard() {
                             {project.title}
                           </h3>
                           <Badge variant="outline" className="capitalize">
-                            {project.format}
+                            {t.projects.format[project.format as keyof typeof t.projects.format] || project.format}
                           </Badge>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>{project.episodes_count} episodes</span>
+                          <span>{project.episodes_count} {t.dashboard.episodes}</span>
                           <span>•</span>
-                          <span>Bible: {project.bible_completeness_score}%</span>
+                          <span>{t.dashboard.bible}: {project.bible_completeness_score}%</span>
                         </div>
                       </div>
                       <div className="shrink-0">
                         {project.bible_completeness_score >= 85 ? (
-                          <Badge variant="pass">Ready</Badge>
+                          <Badge variant="pass">{t.dashboard.ready}</Badge>
                         ) : (
-                          <Badge variant="pending">In Progress</Badge>
+                          <Badge variant="pending">{t.dashboard.inProgress}</Badge>
                         )}
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -189,15 +190,15 @@ export default function Dashboard() {
 
           {/* Quick actions */}
           <div>
-            <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t.dashboard.quickActions}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <button className="panel p-5 text-left hover:bg-card/80 transition-colors group">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
                   <Film className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="font-medium text-foreground mb-1">Import Script</h3>
+                <h3 className="font-medium text-foreground mb-1">{t.dashboard.importScript}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Upload a screenplay or paste text
+                  {t.dashboard.importScriptDesc}
                 </p>
               </button>
 
@@ -205,9 +206,9 @@ export default function Dashboard() {
                 <div className="w-10 h-10 rounded-lg bg-qc-pass/10 flex items-center justify-center mb-3 group-hover:bg-qc-pass/20 transition-colors">
                   <CheckCircle2 className="w-5 h-5 text-qc-pass" />
                 </div>
-                <h3 className="font-medium text-foreground mb-1">Review Dailies</h3>
+                <h3 className="font-medium text-foreground mb-1">{t.dashboard.reviewDailies}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Check today's renders and QC reports
+                  {t.dashboard.reviewDailiesDesc}
                 </p>
               </button>
 
@@ -215,9 +216,9 @@ export default function Dashboard() {
                 <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center mb-3 group-hover:bg-info/20 transition-colors">
                   <Sparkles className="w-5 h-5 text-info" />
                 </div>
-                <h3 className="font-medium text-foreground mb-1">SOS Assistant</h3>
+                <h3 className="font-medium text-foreground mb-1">{t.dashboard.sosAssistant}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Get AI recommendations for your project
+                  {t.dashboard.sosAssistantDesc}
                 </p>
               </button>
             </div>
