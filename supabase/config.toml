@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.generate-shot]
 verify_jwt = false
+
+[functions.generate-shot-details]
+verify_jwt = false
+
+[functions.qc-visual-identity]
+verify_jwt = false
