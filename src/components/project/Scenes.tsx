@@ -426,49 +426,64 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                     {shots[scene.id].map(shot => {
                       const render = getShotRender(shot.id);
                       const isGenerating = generatingShot === shot.id;
+                      const hasVideo = render?.video_url && render.status === 'succeeded';
                       
                       return (
-                        <div key={shot.id} className={cn("flex items-center gap-3 p-3 rounded-lg border transition-all", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
-                          <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-sm font-mono">{shot.shot_no}</div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
-                              <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
-                              <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
-                              {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
-                              {render && (
-                                <Badge 
-                                  variant={render.status === 'succeeded' ? 'default' : 'secondary'}
-                                  className={cn("text-xs", render.status === 'succeeded' && "bg-green-600")}
-                                >
-                                  <Video className="w-3 h-3 mr-1" />
-                                  {render.engine?.toUpperCase()}
-                                </Badge>
-                              )}
+                        <div key={shot.id} className={cn("rounded-lg border transition-all overflow-hidden", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
+                          <div className="flex items-center gap-3 p-3">
+                            <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-sm font-mono">{shot.shot_no}</div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
+                                <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
+                                <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
+                                {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
+                                {render && (
+                                  <Badge 
+                                    variant={render.status === 'succeeded' ? 'default' : 'secondary'}
+                                    className={cn("text-xs", render.status === 'succeeded' && "bg-green-600")}
+                                  >
+                                    <Video className="w-3 h-3 mr-1" />
+                                    {render.engine?.toUpperCase()}
+                                  </Badge>
+                                )}
+                              </div>
+                              {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
                             </div>
-                            {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
+                            
+                            {/* Generate button */}
+                            <Button
+                              size="sm"
+                              variant={render ? "outline" : "gold"}
+                              className="h-8"
+                              onClick={() => openGenerateDialog(shot, scene)}
+                              disabled={isGenerating}
+                            >
+                              {isGenerating ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Play className="w-3 h-3 mr-1" />
+                                  {render ? 'Regen' : 'Generar'}
+                                </>
+                              )}
+                            </Button>
+                            
+                            <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
+                            <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
                           </div>
                           
-                          {/* Generate button */}
-                          <Button
-                            size="sm"
-                            variant={render ? "outline" : "gold"}
-                            className="h-8"
-                            onClick={() => openGenerateDialog(shot, scene)}
-                            disabled={isGenerating}
-                          >
-                            {isGenerating ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <>
-                                <Play className="w-3 h-3 mr-1" />
-                                {render ? 'Regen' : 'Generar'}
-                              </>
-                            )}
-                          </Button>
-                          
-                          <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
-                          <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
+                          {/* Inline Video Preview */}
+                          {hasVideo && (
+                            <div className="border-t border-border bg-black/50 p-2">
+                              <video
+                                src={render.video_url!}
+                                controls
+                                className="w-full max-h-48 rounded object-contain"
+                                preload="metadata"
+                              />
+                            </div>
+                          )}
                         </div>
                       );
                     })}
