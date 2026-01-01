@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -483,14 +483,39 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                 <div className="grid gap-2">
                                   {shots[scene.id].map(shot => {
                                     const render = getShotRender(shot.id);
-                                    const hasVideo = render?.video_url && render.status === 'succeeded';
+                                    const hasMedia = render?.video_url;
+                                    const isVideo = hasMedia && (render.video_url?.endsWith('.mp4') || render.video_url?.endsWith('.webm') || render.video_url?.includes('video'));
+                                    const isImage = hasMedia && !isVideo;
                                     
                                     return (
                                       <div key={shot.id} className={cn("rounded-lg border transition-all overflow-hidden", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
                                         <div className="flex items-center gap-3 p-3">
-                                          <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-sm font-mono">{shot.shot_no}</div>
-                                          <div className="flex-1">
-                                            <div className="flex items-center gap-2">
+                                          {/* Thumbnail preview */}
+                                          {hasMedia ? (
+                                            <div className="w-16 h-12 rounded bg-black flex items-center justify-center overflow-hidden shrink-0">
+                                              {isVideo ? (
+                                                <video
+                                                  src={render.video_url!}
+                                                  className="w-full h-full object-cover"
+                                                  muted
+                                                  preload="metadata"
+                                                />
+                                              ) : (
+                                                <img
+                                                  src={render.video_url!}
+                                                  alt={`Shot ${shot.shot_no}`}
+                                                  className="w-full h-full object-cover"
+                                                />
+                                              )}
+                                            </div>
+                                          ) : (
+                                            <div className="w-16 h-12 rounded bg-muted flex items-center justify-center text-sm font-mono shrink-0">
+                                              <span className="text-muted-foreground">{shot.shot_no}</span>
+                                            </div>
+                                          )}
+                                          
+                                          <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 flex-wrap">
                                               <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
                                               <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
                                               <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
@@ -498,10 +523,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                               {render && (
                                                 <Badge 
                                                   variant={render.status === 'succeeded' ? 'default' : 'secondary'}
-                                                  className={cn("text-xs", render.status === 'succeeded' && "bg-green-600")}
+                                                  className={cn("text-xs", render.status === 'succeeded' ? "bg-green-600" : render.status === 'failed' && "bg-amber-600")}
                                                 >
-                                                  <Video className="w-3 h-3 mr-1" />
-                                                  {render.engine?.toUpperCase()}
+                                                  {isVideo ? <Video className="w-3 h-3 mr-1" /> : <Camera className="w-3 h-3 mr-1" />}
+                                                  {render.status === 'failed' ? 'Keyframe' : render.engine?.toUpperCase()}
                                                 </Badge>
                                               )}
                                             </div>
@@ -522,14 +547,24 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                           <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
                                         </div>
                                         
-                                        {hasVideo && (
+                                        {/* Expanded media preview */}
+                                        {hasMedia && (
                                           <div className="border-t border-border bg-black/50 p-2">
-                                            <video
-                                              src={render.video_url!}
-                                              controls
-                                              className="w-full max-h-48 rounded object-contain"
-                                              preload="metadata"
-                                            />
+                                            {isVideo ? (
+                                              <video
+                                                src={render.video_url!}
+                                                controls
+                                                className="w-full max-h-48 rounded object-contain"
+                                                preload="metadata"
+                                              />
+                                            ) : (
+                                              <img
+                                                src={render.video_url!}
+                                                alt={`Shot ${shot.shot_no} keyframe`}
+                                                className="w-full max-h-48 rounded object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                                onClick={() => window.open(render.video_url!, '_blank')}
+                                              />
+                                            )}
                                           </div>
                                         )}
                                       </div>
