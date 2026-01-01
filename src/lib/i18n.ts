@@ -382,6 +382,13 @@ export const es = {
     rateLimited: 'Demasiadas solicitudes. Inténtalo más tarde.',
     paymentRequired: 'Créditos agotados. Añade más para continuar.',
   },
+
+  // Language selector
+  language: {
+    select: 'Idioma',
+    es: 'Español',
+    en: 'English',
+  },
 };
 
 export type Translations = typeof es;
