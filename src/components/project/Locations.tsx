@@ -5,10 +5,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon } from 'lucide-react';
+import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { LocationPackBuilder } from './LocationPackBuilder';
 
 interface LocationsProps { projectId: string; }
 
@@ -25,6 +27,7 @@ export default function Locations({ projectId }: LocationsProps) {
   const [locations, setLocations] = useState<Location[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [expandedPackId, setExpandedPackId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -162,7 +165,7 @@ export default function Locations({ projectId }: LocationsProps) {
           </Card>
         ) : (
           locations.map(location => (
-            <Card key={location.id}>
+            <Card key={location.id} className="md:col-span-2">
               <CardContent className="p-4">
                 {editingId === location.id ? (
                   <div className="space-y-4">
@@ -217,37 +220,60 @@ export default function Locations({ projectId }: LocationsProps) {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground">{location.name}</h3>
-                        <div className="flex gap-1">
-                          {location.variants?.day && (
-                            <Sun className="w-3.5 h-3.5 text-yellow-500" />
-                          )}
-                          {location.variants?.night && (
-                            <Moon className="w-3.5 h-3.5 text-blue-400" />
-                          )}
-                        </div>
+                  <Collapsible 
+                    open={expandedPackId === location.id}
+                    onOpenChange={(open) => setExpandedPackId(open ? location.id : null)}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <MapPin className="w-6 h-6 text-primary" />
                       </div>
-                      {location.description ? (
-                        <p className="text-sm text-muted-foreground line-clamp-2">{location.description}</p>
-                      ) : (
-                        <p className="text-sm text-muted-foreground italic">Sin descripción</p>
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-foreground">{location.name}</h3>
+                          <div className="flex gap-1">
+                            {location.variants?.day && (
+                              <Sun className="w-3.5 h-3.5 text-yellow-500" />
+                            )}
+                            {location.variants?.night && (
+                              <Moon className="w-3.5 h-3.5 text-blue-400" />
+                            )}
+                          </div>
+                        </div>
+                        {location.description ? (
+                          <p className="text-sm text-muted-foreground line-clamp-2">{location.description}</p>
+                        ) : (
+                          <p className="text-sm text-muted-foreground italic">Sin descripción</p>
+                        )}
+                      </div>
+                      <div className="flex gap-1">
+                        <CollapsibleTrigger asChild>
+                          <Button variant="ghost" size="icon" title="Pack Builder">
+                            {expandedPackId === location.id ? (
+                              <ChevronUp className="w-4 h-4" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </CollapsibleTrigger>
+                        <Button variant="ghost" size="icon" onClick={() => startEditing(location)}>
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDeleteLocation(location.id)}>
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => startEditing(location)}>
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDeleteLocation(location.id)}>
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
+                    <CollapsibleContent className="mt-4">
+                      <LocationPackBuilder
+                        locationId={location.id}
+                        locationName={location.name}
+                        locationDescription={location.description || ''}
+                        hasDay={location.variants?.day ?? true}
+                        hasNight={location.variants?.night ?? false}
+                      />
+                    </CollapsibleContent>
+                  </Collapsible>
                 )}
               </CardContent>
             </Card>
