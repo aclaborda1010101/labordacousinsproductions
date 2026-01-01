@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Play } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Play, Film } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -56,7 +56,9 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [shots, setShots] = useState<Record<string, Shot[]>>({});
   const [renders, setRenders] = useState<Record<string, Render[]>>({});
   const [expandedScenes, setExpandedScenes] = useState<Set<string>>(new Set());
+  const [expandedEpisodes, setExpandedEpisodes] = useState<Set<number>>(new Set([1]));
   const [newSlugline, setNewSlugline] = useState('');
+  const [newEpisodeNo, setNewEpisodeNo] = useState('1');
   const [showAIDialog, setShowAIDialog] = useState(false);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [selectedShot, setSelectedShot] = useState<{ shot: Shot; scene: Scene } | null>(null);
@@ -127,6 +129,13 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     });
   }, [projectId]);
 
+  const toggleEpisode = (episodeNo: number) => {
+    const newExpanded = new Set(expandedEpisodes);
+    if (newExpanded.has(episodeNo)) { newExpanded.delete(episodeNo); } 
+    else { newExpanded.add(episodeNo); }
+    setExpandedEpisodes(newExpanded);
+  };
+
   const toggleScene = (sceneId: string) => {
     const newExpanded = new Set(expandedScenes);
     if (newExpanded.has(sceneId)) { newExpanded.delete(sceneId); } 
@@ -136,11 +145,32 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
   const addScene = async () => {
     if (!newSlugline.trim()) return;
-    const nextSceneNo = scenes.length > 0 ? Math.max(...scenes.map(s => s.scene_no)) + 1 : 1;
-    const { error } = await supabase.from('scenes').insert({ project_id: projectId, scene_no: nextSceneNo, episode_no: 1, slugline: newSlugline.trim(), quality_mode: 'CINE', priority: 'P1' });
+    const episodeScenes = scenes.filter(s => s.episode_no === parseInt(newEpisodeNo));
+    const nextSceneNo = episodeScenes.length > 0 ? Math.max(...episodeScenes.map(s => s.scene_no)) + 1 : 1;
+    const { error } = await supabase.from('scenes').insert({ 
+      project_id: projectId, 
+      scene_no: nextSceneNo, 
+      episode_no: parseInt(newEpisodeNo), 
+      slugline: newSlugline.trim(), 
+      quality_mode: 'CINE', 
+      priority: 'P1' 
+    });
     if (error) toast.error(t.common.error);
-    else { toast.success(t.common.success); setNewSlugline(''); fetchScenes(); }
+    else { 
+      toast.success(t.common.success); 
+      setNewSlugline(''); 
+      fetchScenes(); 
+      // Expand the episode where scene was added
+      setExpandedEpisodes(prev => new Set(prev).add(parseInt(newEpisodeNo)));
+    }
   };
+
+  // Group scenes by episode
+  const scenesByEpisode = scenes.reduce((acc, scene) => {
+    if (!acc[scene.episode_no]) acc[scene.episode_no] = [];
+    acc[scene.episode_no].push(scene);
+    return acc;
+  }, {} as Record<number, Scene[]>);
 
   const deleteScene = async (id: string) => { await supabase.from('scenes').delete().eq('id', id); fetchScenes(); };
 
@@ -381,11 +411,27 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
       </div>
 
       <div className="flex gap-2">
-        <Input placeholder={t.scenes.sluglinePlaceholder} value={newSlugline} onChange={e => setNewSlugline(e.target.value)} onKeyDown={e => e.key === 'Enter' && addScene()} className="font-mono" />
+        <div className="flex items-center gap-2">
+          <Label className="text-sm whitespace-nowrap">Episodio:</Label>
+          <Select value={newEpisodeNo} onValueChange={setNewEpisodeNo}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: episodesCount }, (_, i) => (
+                <SelectItem key={i + 1} value={String(i + 1)}>
+                  Ep. {i + 1}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Input placeholder={t.scenes.sluglinePlaceholder} value={newSlugline} onChange={e => setNewSlugline(e.target.value)} onKeyDown={e => e.key === 'Enter' && addScene()} className="font-mono flex-1" />
         <Button variant="outline" onClick={addScene}><Plus className="w-4 h-4 mr-1" />{t.scenes.addScene}</Button>
       </div>
 
-      <div className="space-y-3">
+      {/* Episodes with scenes */}
+      <div className="space-y-4">
         {scenes.length === 0 ? (
           <div className="panel p-8 text-center">
             <Clapperboard className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
@@ -395,110 +441,152 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
               Generar escenas con IA
             </Button>
           </div>
-        ) : scenes.map(scene => (
-          <div key={scene.id} className="panel overflow-hidden">
-            <div className="p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleScene(scene.id)}>
-              {expandedScenes.has(scene.id) ? <ChevronDown className="w-5 h-5 text-muted-foreground" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"><span className="font-mono text-primary font-bold">{scene.scene_no}</span></div>
-              <div className="flex-1 min-w-0">
-                <p className="font-mono text-foreground truncate">{scene.slugline}</p>
-                <p className="text-sm text-muted-foreground">{t.scenes.episode} {scene.episode_no} • {shots[scene.id]?.length || 0} shots</p>
-              </div>
-              <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                <button onClick={() => updateSceneMode(scene.id, 'CINE')} className={cn("px-3 py-1 rounded text-xs font-semibold transition-all", scene.quality_mode === 'CINE' ? "bg-primary/20 text-primary border border-primary/30" : "bg-muted text-muted-foreground hover:bg-muted/80")}>CINE</button>
-                <button onClick={() => updateSceneMode(scene.id, 'ULTRA')} className={cn("px-3 py-1 rounded text-xs font-semibold transition-all", scene.quality_mode === 'ULTRA' ? "bg-gradient-to-r from-primary/20 to-amber-500/20 text-primary border border-primary/30" : "bg-muted text-muted-foreground hover:bg-muted/80")}>ULTRA</button>
-              </div>
-              <Badge variant={scene.priority === 'P0' ? 'p0' : scene.priority === 'P1' ? 'p1' : 'p2'}>{scene.priority}</Badge>
-              <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); deleteScene(scene.id); }}><Trash2 className="w-4 h-4" /></Button>
-            </div>
-
-            {expandedScenes.has(scene.id) && (
-              <div className="border-t border-border bg-muted/20 p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">{t.scenes.shots}</span>
-                  <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}><Plus className="w-3 h-3 mr-1" />{t.scenes.addShot}</Button>
+        ) : (
+          Array.from({ length: episodesCount }, (_, i) => i + 1).map(episodeNo => {
+            const episodeScenes = scenesByEpisode[episodeNo] || [];
+            const isExpanded = expandedEpisodes.has(episodeNo);
+            
+            return (
+              <div key={episodeNo} className="panel overflow-hidden">
+                {/* Episode header */}
+                <div 
+                  className="p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/30 transition-colors border-b border-border"
+                  onClick={() => toggleEpisode(episodeNo)}
+                >
+                  {isExpanded ? <ChevronDown className="w-5 h-5 text-primary" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Film className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground">Episodio {episodeNo}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {episodeScenes.length} escenas • {episodeScenes.reduce((sum, s) => sum + (shots[s.id]?.length || 0), 0)} shots
+                    </p>
+                  </div>
+                  <Badge variant={episodeScenes.length > 0 ? 'default' : 'secondary'}>
+                    {episodeScenes.length > 0 ? 'Con contenido' : 'Vacío'}
+                  </Badge>
                 </div>
 
-                {!shots[scene.id] || shots[scene.id].length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">{t.scenes.noShots}</p>
-                ) : (
-                  <div className="grid gap-2">
-                    {shots[scene.id].map(shot => {
-                      const render = getShotRender(shot.id);
-                      const isGenerating = generatingShot === shot.id;
-                      const hasVideo = render?.video_url && render.status === 'succeeded';
-                      
-                      return (
-                        <div key={shot.id} className={cn("rounded-lg border transition-all overflow-hidden", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
-                          <div className="flex items-center gap-3 p-3">
-                            <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-sm font-mono">{shot.shot_no}</div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
-                                <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
-                                <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
-                                {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
-                                {render && (
-                                  <Badge 
-                                    variant={render.status === 'succeeded' ? 'default' : 'secondary'}
-                                    className={cn("text-xs", render.status === 'succeeded' && "bg-green-600")}
-                                  >
-                                    <Video className="w-3 h-3 mr-1" />
-                                    {render.engine?.toUpperCase()}
-                                  </Badge>
-                                )}
-                              </div>
-                              {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
+                {/* Episode scenes */}
+                {isExpanded && (
+                  <div className="p-4 space-y-3 bg-muted/10">
+                    {episodeScenes.length === 0 ? (
+                      <div className="text-center py-6 text-muted-foreground">
+                        <p className="mb-2">No hay escenas en este episodio</p>
+                        <p className="text-xs">Importa un guión o añade escenas manualmente</p>
+                      </div>
+                    ) : (
+                      episodeScenes.map(scene => (
+                        <div key={scene.id} className="rounded-lg border border-border bg-card overflow-hidden">
+                          <div className="p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleScene(scene.id)}>
+                            {expandedScenes.has(scene.id) ? <ChevronDown className="w-5 h-5 text-muted-foreground" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"><span className="font-mono text-primary font-bold">{scene.scene_no}</span></div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-mono text-foreground truncate">{scene.slugline}</p>
+                              <p className="text-sm text-muted-foreground">{shots[scene.id]?.length || 0} shots</p>
                             </div>
-                            
-                            {/* Generate button */}
-                            <Button
-                              size="sm"
-                              variant={render ? "outline" : "gold"}
-                              className="h-8"
-                              onClick={() => openGenerateDialog(shot, scene)}
-                              disabled={isGenerating}
-                            >
-                              {isGenerating ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Play className="w-3 h-3 mr-1" />
-                                  {render ? 'Regen' : 'Generar'}
-                                </>
-                              )}
-                            </Button>
-                            
-                            <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
-                            <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
+                            <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                              <button onClick={() => updateSceneMode(scene.id, 'CINE')} className={cn("px-3 py-1 rounded text-xs font-semibold transition-all", scene.quality_mode === 'CINE' ? "bg-primary/20 text-primary border border-primary/30" : "bg-muted text-muted-foreground hover:bg-muted/80")}>CINE</button>
+                              <button onClick={() => updateSceneMode(scene.id, 'ULTRA')} className={cn("px-3 py-1 rounded text-xs font-semibold transition-all", scene.quality_mode === 'ULTRA' ? "bg-gradient-to-r from-primary/20 to-amber-500/20 text-primary border border-primary/30" : "bg-muted text-muted-foreground hover:bg-muted/80")}>ULTRA</button>
+                            </div>
+                            <Badge variant={scene.priority === 'P0' ? 'p0' : scene.priority === 'P1' ? 'p1' : 'p2'}>{scene.priority}</Badge>
+                            <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); deleteScene(scene.id); }}><Trash2 className="w-4 h-4" /></Button>
                           </div>
-                          
-                          {/* Inline Video Preview */}
-                          {hasVideo && (
-                            <div className="border-t border-border bg-black/50 p-2">
-                              <video
-                                src={render.video_url!}
-                                controls
-                                className="w-full max-h-48 rounded object-contain"
-                                preload="metadata"
-                              />
+
+                          {expandedScenes.has(scene.id) && (
+                            <div className="border-t border-border bg-muted/20 p-4 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-foreground">{t.scenes.shots}</span>
+                                <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}><Plus className="w-3 h-3 mr-1" />{t.scenes.addShot}</Button>
+                              </div>
+
+                              {!shots[scene.id] || shots[scene.id].length === 0 ? (
+                                <p className="text-sm text-muted-foreground text-center py-4">{t.scenes.noShots}</p>
+                              ) : (
+                                <div className="grid gap-2">
+                                  {shots[scene.id].map(shot => {
+                                    const render = getShotRender(shot.id);
+                                    const isGenerating = generatingShot === shot.id;
+                                    const hasVideo = render?.video_url && render.status === 'succeeded';
+                                    
+                                    return (
+                                      <div key={shot.id} className={cn("rounded-lg border transition-all overflow-hidden", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
+                                        <div className="flex items-center gap-3 p-3">
+                                          <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-sm font-mono">{shot.shot_no}</div>
+                                          <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                              <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
+                                              <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
+                                              <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
+                                              {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
+                                              {render && (
+                                                <Badge 
+                                                  variant={render.status === 'succeeded' ? 'default' : 'secondary'}
+                                                  className={cn("text-xs", render.status === 'succeeded' && "bg-green-600")}
+                                                >
+                                                  <Video className="w-3 h-3 mr-1" />
+                                                  {render.engine?.toUpperCase()}
+                                                </Badge>
+                                              )}
+                                            </div>
+                                            {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
+                                          </div>
+                                          
+                                          <Button
+                                            size="sm"
+                                            variant={render ? "outline" : "gold"}
+                                            className="h-8"
+                                            onClick={() => openGenerateDialog(shot, scene)}
+                                            disabled={isGenerating}
+                                          >
+                                            {isGenerating ? (
+                                              <Loader2 className="w-4 h-4 animate-spin" />
+                                            ) : (
+                                              <>
+                                                <Play className="w-3 h-3 mr-1" />
+                                                {render ? 'Regen' : 'Generar'}
+                                              </>
+                                            )}
+                                          </Button>
+                                          
+                                          <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
+                                          <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
+                                        </div>
+                                        
+                                        {hasVideo && (
+                                          <div className="border-t border-border bg-black/50 p-2">
+                                            <video
+                                              src={render.video_url!}
+                                              controls
+                                              className="w-full max-h-48 rounded object-contain"
+                                              preload="metadata"
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+
+                              <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                                <Sparkles className="w-4 h-4 text-primary mt-0.5" />
+                                <div className="text-xs"><p className="font-medium text-foreground">{t.scenes.sosTip}</p><p className="text-muted-foreground">{t.scenes.sosTipDesc}</p></div>
+                              </div>
                             </div>
                           )}
                         </div>
-                      );
-                    })}
+                      ))
+                    )}
                   </div>
                 )}
-
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
-                  <Sparkles className="w-4 h-4 text-primary mt-0.5" />
-                  <div className="text-xs"><p className="font-medium text-foreground">{t.scenes.sosTip}</p><p className="text-muted-foreground">{t.scenes.sosTipDesc}</p></div>
-                </div>
               </div>
-            )}
-          </div>
-        ))}
+            );
+          })
+        )}
       </div>
+
 
       {/* Generate Shot Dialog */}
       <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
