@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, Save } from 'lucide-react';
@@ -13,11 +13,13 @@ interface StylePackProps { projectId: string; }
 export default function StylePack({ projectId }: StylePackProps) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [existingId, setExistingId] = useState<string | null>(null);
   const [stylePack, setStylePack] = useState({ 
     aspectRatio: '16:9', 
     fps: 24, 
     lensStyle: '', 
-    grainLevel: 'subtle' 
+    grainLevel: 'subtle',
+    description: ''
   });
 
   useEffect(() => {
@@ -29,11 +31,13 @@ export default function StylePack({ projectId }: StylePackProps) {
         .maybeSingle();
       
       if (data) {
+        setExistingId(data.id);
         setStylePack({ 
           aspectRatio: data.aspect_ratio || '16:9', 
           fps: data.fps || 24, 
           lensStyle: data.lens_style || '', 
-          grainLevel: data.grain_level || 'subtle' 
+          grainLevel: data.grain_level || 'subtle',
+          description: data.description || ''
         });
       }
       setLoading(false);
@@ -43,17 +47,38 @@ export default function StylePack({ projectId }: StylePackProps) {
 
   const handleSave = async () => {
     setSaving(true);
-    const { error } = await supabase
-      .from('style_packs')
-      .upsert({ 
-        project_id: projectId, 
-        aspect_ratio: stylePack.aspectRatio, 
-        fps: stylePack.fps, 
-        lens_style: stylePack.lensStyle, 
-        grain_level: stylePack.grainLevel 
-      }, { onConflict: 'project_id' });
+    
+    const payload = { 
+      project_id: projectId, 
+      aspect_ratio: stylePack.aspectRatio, 
+      fps: stylePack.fps, 
+      lens_style: stylePack.lensStyle || null, 
+      grain_level: stylePack.grainLevel,
+      description: stylePack.description || null
+    };
+
+    let error;
+    
+    if (existingId) {
+      // Update existing record
+      const result = await supabase
+        .from('style_packs')
+        .update(payload)
+        .eq('id', existingId);
+      error = result.error;
+    } else {
+      // Insert new record
+      const result = await supabase
+        .from('style_packs')
+        .insert(payload)
+        .select()
+        .single();
+      error = result.error;
+      if (result.data) setExistingId(result.data.id);
+    }
     
     if (error) {
+      console.error('Save error:', error);
       toast.error('Error al guardar el estilo visual');
     } else {
       toast.success('Estilo visual guardado correctamente');
@@ -84,6 +109,20 @@ export default function StylePack({ projectId }: StylePackProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Description field */}
+          <div className="space-y-2">
+            <Label>Descripción del Estilo</Label>
+            <Textarea
+              value={stylePack.description}
+              onChange={(e) => setStylePack({...stylePack, description: e.target.value})}
+              placeholder="Describe el look visual general: atmósfera, paleta de colores, referencias cinematográficas, época..."
+              rows={4}
+            />
+            <p className="text-xs text-muted-foreground">
+              Esta descripción se usará como contexto para la generación de imágenes y videos
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Relación de Aspecto</Label>
@@ -128,7 +167,7 @@ export default function StylePack({ projectId }: StylePackProps) {
           <div className="space-y-2">
             <Label>Estilo de Lente</Label>
             <Select 
-              value={stylePack.lensStyle} 
+              value={stylePack.lensStyle || ""} 
               onValueChange={(v) => setStylePack({...stylePack, lensStyle: v})}
             >
               <SelectTrigger>
