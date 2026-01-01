@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Search, Film, ArrowRight, Calendar } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, Search, Film, ArrowRight, Calendar, MoreHorizontal, Settings, Trash2, Loader2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Project {
   id: string;
@@ -20,9 +23,25 @@ interface Project {
 
 export default function Projects() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [deleteDialog, setDeleteDialog] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteProject = async (projectId: string) => {
+    setDeleting(true);
+    const { error } = await supabase.from('projects').delete().eq('id', projectId);
+    if (error) {
+      toast.error('Error al eliminar proyecto');
+    } else {
+      toast.success('Proyecto eliminado');
+      setProjects(projects.filter(p => p.id !== projectId));
+    }
+    setDeleting(false);
+    setDeleteDialog(null);
+  };
 
   useEffect(() => {
     async function fetchProjects() {
@@ -106,13 +125,10 @@ export default function Projects() {
             </div>
           ) : (
             <div className="grid gap-4">
-              {filteredProjects.map((project) => (
-                <Link
-                  key={project.id}
-                  to={`/projects/${project.id}`}
-                  className="panel p-6 hover:bg-card/80 transition-colors group"
-                >
-                  <div className="flex items-center gap-4">
+          {filteredProjects.map((project) => (
+                <div key={project.id} className="panel p-6 hover:bg-card/80 transition-colors group relative">
+                  <Link to={`/projects/${project.id}`} className="absolute inset-0 z-0" />
+                  <div className="flex items-center gap-4 relative z-10 pointer-events-none">
                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center shrink-0">
                       <Film className="w-7 h-7 text-primary" />
                     </div>
@@ -134,7 +150,7 @@ export default function Projects() {
                       </div>
                     </div>
                     <div className="shrink-0 flex items-center gap-3">
-                      <div className="text-right">
+                      <div className="text-right hidden sm:block">
                         <div className="text-sm text-muted-foreground mb-1">Biblia</div>
                         <div className="flex items-center gap-2">
                           <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
@@ -149,15 +165,58 @@ export default function Projects() {
                         </div>
                       </div>
                       {project.bible_completeness_score >= 85 ? (
-                        <Badge variant="pass">Listo</Badge>
+                        <Badge variant="pass" className="hidden sm:inline-flex">Listo</Badge>
                       ) : (
-                        <Badge variant="pending">En Progreso</Badge>
+                        <Badge variant="pending" className="hidden sm:inline-flex">En Progreso</Badge>
                       )}
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="pointer-events-auto">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => navigate(`/projects/${project.id}`)}>
+                            <Settings className="w-4 h-4 mr-2" />
+                            Abrir proyecto
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            className="text-destructive focus:text-destructive"
+                            onClick={() => setDeleteDialog(project.id)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors hidden sm:block" />
                     </div>
                   </div>
-                </Link>
+                </div>
               ))}
+
+              {/* Delete confirmation dialog */}
+              <AlertDialog open={!!deleteDialog} onOpenChange={() => setDeleteDialog(null)}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>¿Eliminar proyecto?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta acción no se puede deshacer. Se eliminarán todos los datos asociados al proyecto.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={() => deleteDialog && handleDeleteProject(deleteDialog)}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      {deleting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                      Eliminar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           )}
         </div>
