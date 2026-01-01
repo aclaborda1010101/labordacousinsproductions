@@ -20,24 +20,30 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          is_default: boolean | null
           name: string
           reference_urls: Json | null
+          sort_order: number | null
         }
         Insert: {
           character_id: string
           created_at?: string
           description?: string | null
           id?: string
+          is_default?: boolean | null
           name: string
           reference_urls?: Json | null
+          sort_order?: number | null
         }
         Update: {
           character_id?: string
           created_at?: string
           description?: string | null
           id?: string
+          is_default?: boolean | null
           name?: string
           reference_urls?: Json | null
+          sort_order?: number | null
         }
         Relationships: [
           {
