@@ -83,7 +83,7 @@ async function runQC(imageUrl: string, slotType: string, characterName: string):
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'google/gemini-3-pro-preview', // Reasoning model for QC
         messages: [
           {
             role: 'system',
@@ -193,7 +193,17 @@ async function handleSlotGeneration(body: SlotGenerateRequest): Promise<Response
     prompt_text: prompt,
   }).eq('id', slotId);
 
-  // Generate image with Lovable AI
+  // Determine image engine based on slot type
+  // Identity anchors (closeup, turnaround) use Gemini 3 Pro for highest quality
+  // Other slots use Nano Banana (gemini-2.5-flash-image-preview) for efficiency
+  const isIdentityAnchor = slotType === 'closeup' || slotType === 'turnaround';
+  const imageEngine = isIdentityAnchor 
+    ? 'google/gemini-3-pro-image-preview'  // Pro quality for identity anchors
+    : 'google/gemini-2.5-flash-image-preview'; // Nano banana for other slots
+
+  console.log(`Using image engine: ${imageEngine} for ${slotType}`);
+
+  // Generate image with selected engine
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -201,7 +211,7 @@ async function handleSlotGeneration(body: SlotGenerateRequest): Promise<Response
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'google/gemini-3-pro-image-preview',
+      model: imageEngine,
       messages: [
         {
           role: 'user',
