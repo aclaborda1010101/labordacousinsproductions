@@ -1,14 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, XCircle, AlertTriangle, 
-  User, Camera, Shirt, Palette, RefreshCw, Lock, Play
+  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus
 } from 'lucide-react';
 
 // Role-based slot requirements
@@ -71,9 +72,11 @@ export function CharacterPackBuilder({
   const [slots, setSlots] = useState<PackSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<string | null>(null);
   const [batchGenerating, setBatchGenerating] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // Fetch or initialize slots
   const fetchSlots = useCallback(async () => {
@@ -397,6 +400,77 @@ export function CharacterPackBuilder({
     toast.info('Waiver concedido');
   };
 
+  // Upload image to slot
+  const uploadImageToSlot = async (slot: PackSlot, file: File) => {
+    // Block outfit upload if anchors not complete
+    if (slot.slot_type === 'outfit' && !anchorsComplete()) {
+      toast.error('Completa primero los Identity Anchors (close-ups y turnarounds)');
+      return;
+    }
+
+    setUploading(slot.id);
+
+    try {
+      // Create unique file path
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${characterId}/${slot.slot_type}_${slot.slot_index}_${Date.now()}.${fileExt}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from('character-packs')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('character-packs')
+        .getPublicUrl(fileName);
+
+      // Update slot with image URL and set as approved (manual uploads skip AI QC)
+      await supabase.from('character_pack_slots').update({
+        image_url: urlData.publicUrl,
+        status: 'approved',
+        qc_score: 100, // Manual uploads are assumed to be approved by user
+        fix_notes: null,
+        qc_issues: [],
+      }).eq('id', slot.id);
+
+      toast.success(`Imagen subida a ${slot.slot_type}`);
+      await fetchSlots();
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Error al subir imagen');
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  // Handle file input change
+  const handleFileChange = (slot: PackSlot, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Solo se permiten archivos de imagen');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        toast.error('El archivo es demasiado grande (máximo 10MB)');
+        return;
+      }
+      uploadImageToSlot(slot, file);
+    }
+    // Reset input
+    event.target.value = '';
+  };
+
+  // Trigger file input for slot
+  const triggerFileUpload = (slotId: string) => {
+    fileInputRefs.current[slotId]?.click();
+  };
+
   // Get icon for slot type
   const getSlotIcon = (type: string) => {
     switch (type) {
@@ -584,7 +658,7 @@ export function CharacterPackBuilder({
                     </Dialog>
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted/30">
-                      {generating === slot.id ? (
+                      {generating === slot.id || uploading === slot.id ? (
                         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                       ) : (
                         <>
@@ -597,7 +671,8 @@ export function CharacterPackBuilder({
                               variant="ghost"
                               className="h-7 px-2"
                               onClick={() => generateSlot(slot)}
-                              disabled={generating !== null || batchGenerating || (slot.slot_type === 'outfit' && !anchorsComplete())}
+                              disabled={generating !== null || uploading !== null || batchGenerating || (slot.slot_type === 'outfit' && !anchorsComplete())}
+                              title="Generar con IA"
                             >
                               <Sparkles className="w-3 h-3" />
                             </Button>
@@ -605,10 +680,19 @@ export function CharacterPackBuilder({
                               size="sm"
                               variant="ghost"
                               className="h-7 px-2"
-                              disabled={generating !== null || batchGenerating}
+                              onClick={() => triggerFileUpload(slot.id)}
+                              disabled={generating !== null || uploading !== null || batchGenerating || (slot.slot_type === 'outfit' && !anchorsComplete())}
+                              title="Subir imagen"
                             >
-                              <Upload className="w-3 h-3" />
+                              <ImagePlus className="w-3 h-3" />
                             </Button>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              ref={(el) => { fileInputRefs.current[slot.id] = el; }}
+                              onChange={(e) => handleFileChange(slot, e)}
+                            />
                           </div>
                         </>
                       )}
