@@ -88,6 +88,7 @@ export function CharacterPackBuilder({
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [showOptionalSlots, setShowOptionalSlots] = useState(true);
   const [batchGenerating, setBatchGenerating] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
@@ -332,12 +333,39 @@ export function CharacterPackBuilder({
 
       const result = response.data;
       if (result.success) {
-        if (result.qc.passed) {
+        // Auto-regenerate required turnarounds if QC score < 85%
+        const isRequiredTurnaround = slot.slot_type === 'turnaround' && slot.required;
+        const qcScore = result.qc?.score ?? 0;
+        
+        if (isRequiredTurnaround && qcScore < 85 && qcScore > 0) {
+          toast.warning(`Turnaround obligatorio con QC ${qcScore}% - regenerando automáticamente...`);
+          // Retry once with adjusted parameters
+          const retryResponse = await supabase.functions.invoke('generate-character', {
+            body: {
+              slotId: slot.id,
+              characterId,
+              characterName,
+              characterBio,
+              slotType: slot.slot_type,
+              viewAngle: slot.view_angle,
+              styleToken,
+              retryAttempt: true, // Signal to edge function for stronger constraints
+            },
+          });
+          
+          if (retryResponse.data?.success && retryResponse.data?.qc?.score >= 85) {
+            toast.success(`Turnaround regenerado con QC ${retryResponse.data.qc.score}%`);
+          } else {
+            toast.warning(`Turnaround aún por debajo de 85% - revisa manualmente`);
+          }
+          await fetchSlots();
+        } else if (result.qc.passed) {
           toast.success(`${slot.slot_type} generado y aprobado`);
+          await fetchSlots();
         } else {
           toast.warning(`${slot.slot_type} generado pero QC falló - revisa las Fix Notes`);
+          await fetchSlots();
         }
-        await fetchSlots();
       } else {
         toast.error(`Error: ${result.error}`);
       }
@@ -869,6 +897,24 @@ export function CharacterPackBuilder({
           </div>
         )}
 
+        {/* Toggle Optional Slots */}
+        <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Mostrar slots opcionales</span>
+            <Badge variant="outline" className="text-xs">
+              {slots.filter(s => !s.required).length} slots
+            </Badge>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowOptionalSlots(!showOptionalSlots)}
+            className="h-8"
+          >
+            {showOptionalSlots ? 'Ocultar' : 'Mostrar'}
+          </Button>
+        </div>
+
         {/* Slot Groups */}
         {Object.entries(groupedSlots).map(([type, typeSlots]) => {
           const requiredSlots = typeSlots.filter(s => s.required);
@@ -891,7 +937,9 @@ export function CharacterPackBuilder({
             </h3>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {typeSlots.map((slot) => (
+              {typeSlots
+                .filter(slot => slot.required || showOptionalSlots)
+                .map((slot) => (
                 <div 
                   key={slot.id}
                   className={`group relative aspect-square rounded-lg border-2 overflow-hidden transition-all
