@@ -7,15 +7,15 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Play, Film, Copy, Clock } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
+import ShotEditor from './ShotEditor';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
-type VideoEngine = 'veo' | 'kling';
 
 interface Scene { 
   id: string; 
@@ -40,6 +40,8 @@ interface Shot {
   hero: boolean; 
   effective_mode: QualityMode; 
   dialogue_text: string | null;
+  camera?: any;
+  blocking?: any;
 }
 interface Render {
   id: string;
@@ -64,11 +66,9 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [duplicateToEpisode, setDuplicateToEpisode] = useState('2');
   const [duplicating, setDuplicating] = useState(false);
   const [showAIDialog, setShowAIDialog] = useState(false);
-  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [showShotEditor, setShowShotEditor] = useState(false);
   const [selectedShot, setSelectedShot] = useState<{ shot: Shot; scene: Scene } | null>(null);
-  const [selectedEngine, setSelectedEngine] = useState<VideoEngine>('veo');
   const [generating, setGenerating] = useState(false);
-  const [generatingShot, setGeneratingShot] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const [projectTitle, setProjectTitle] = useState('');
   const [preferredEngine, setPreferredEngine] = useState<string | null>(null);
@@ -119,9 +119,6 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         setEpisodesCount(data.episodes_count);
         setProjectTitle(data.title);
         setPreferredEngine(data.preferred_engine);
-        if (data.preferred_engine) {
-          setSelectedEngine(data.preferred_engine as VideoEngine);
-        }
       }
     });
     // Get characters and locations with tokens
@@ -303,156 +300,9 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     fetchShots(sceneId); 
   };
 
-  const openGenerateDialog = (shot: Shot, scene: Scene) => {
+  const openShotEditor = (shot: Shot, scene: Scene) => {
     setSelectedShot({ shot, scene });
-    setShowGenerateDialog(true);
-  };
-
-  const generateShotVideo = async () => {
-    if (!selectedShot) return;
-
-    const { shot, scene } = selectedShot;
-    setGeneratingShot(shot.id);
-    setShowGenerateDialog(false);
-
-    toast.info(`Generando shot con ${selectedEngine.toUpperCase()}... Esto puede tardar unos minutos.`);
-
-    try {
-      // Get character refs for this scene
-      const sceneCharacters = scene.character_ids 
-        ? characters.filter(c => scene.character_ids?.includes(c.id))
-        : [];
-      
-      // Get location ref for this scene
-      const sceneLocation = scene.location_id 
-        ? locations.find(l => l.id === scene.location_id)
-        : null;
-
-      const { data, error } = await supabase.functions.invoke('generate-shot', {
-        body: {
-          shotId: shot.id,
-          sceneDescription: `${scene.slugline}. ${scene.summary || ''}`,
-          shotType: shot.shot_type,
-          duration: shot.duration_target,
-          engine: selectedEngine,
-          characterRefs: sceneCharacters.map(c => ({
-            name: c.name,
-            token: c.token,
-            referenceUrl: (c.turnaround_urls as string[])?.[0]
-          })),
-          locationRef: sceneLocation ? {
-            name: sceneLocation.name,
-            token: sceneLocation.token,
-            referenceUrl: (sceneLocation.reference_urls as string[])?.[0]
-          } : undefined
-        }
-      });
-
-      if (error) throw error;
-
-      if (data?.success) {
-        // Create render record
-        await supabase.from('renders').insert([{
-          shot_id: shot.id,
-          engine: selectedEngine,
-          video_url: data.videoUrl,
-          status: data.fallback ? 'failed' : 'succeeded',
-          prompt_text: `${scene.slugline} - ${shot.shot_type}`,
-          params: data.metadata
-        }]);
-
-        if (data.fallback) {
-          toast.warning(`Video no generado, usando keyframe de respaldo`);
-        } else {
-          toast.success(`Shot generado con ${selectedEngine.toUpperCase()}`);
-        }
-
-        // Refresh renders
-        fetchShots(scene.id);
-      } else {
-        throw new Error(data?.error || 'Generation failed');
-      }
-    } catch (error) {
-      console.error('Error generating shot:', error);
-      toast.error('Error al generar shot. Inténtalo de nuevo.');
-    } finally {
-      setGeneratingShot(null);
-    }
-  };
-
-  const generateScenesWithAI = async () => {
-    if (!aiForm.synopsis.trim()) {
-      toast.error('Por favor, introduce una sinopsis del episodio');
-      return;
-    }
-
-    setGenerating(true);
-    toast.info('Generando escenas con IA... Esto puede tardar un momento.');
-
-    try {
-      const response = await supabase.functions.invoke('generate-scenes', {
-        body: {
-          projectId,
-          episodeNo: parseInt(aiForm.episodeNo),
-          synopsis: aiForm.synopsis,
-          sceneCount: parseInt(aiForm.sceneCount),
-        }
-      });
-
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
-
-      const { scenesGenerated } = response.data;
-      toast.success(`${scenesGenerated} escenas generadas correctamente`);
-      setShowAIDialog(false);
-      setAiForm({ episodeNo: '1', synopsis: '', sceneCount: '5' });
-      fetchScenes();
-    } catch (error) {
-      console.error('Error generating scenes:', error);
-      toast.error('Error al generar escenas. Inténtalo de nuevo.');
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const exportStoryboard = async () => {
-    setExporting(true);
-    toast.info('Preparando exportación del storyboard...');
-
-    try {
-      const allShots: Record<string, Shot[]> = {};
-      for (const scene of scenes) {
-        const { data } = await supabase.from('shots').select('*').eq('scene_id', scene.id).order('shot_no');
-        if (data) {
-          allShots[scene.id] = data.map(s => ({
-            ...s,
-            duration_target: Number(s.duration_target) || 3,
-            hero: s.hero || false,
-            effective_mode: s.effective_mode as QualityMode,
-          }));
-        }
-      }
-
-      const scenesWithShots = scenes.map(scene => ({
-        ...scene,
-        shots: allShots[scene.id] || [],
-      }));
-
-      exportStoryboardPDF({
-        projectTitle,
-        scenes: scenesWithShots,
-        characters,
-        locations,
-      });
-
-      toast.success('Storyboard exportado correctamente');
-    } catch (error) {
-      console.error('Error exporting storyboard:', error);
-      toast.error('Error al exportar storyboard');
-    } finally {
-      setExporting(false);
-    }
+    setShowShotEditor(true);
   };
 
   const getShotRender = (shotId: string): Render | undefined => {
@@ -619,7 +469,6 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                 <div className="grid gap-2">
                                   {shots[scene.id].map(shot => {
                                     const render = getShotRender(shot.id);
-                                    const isGenerating = generatingShot === shot.id;
                                     const hasVideo = render?.video_url && render.status === 'succeeded';
                                     
                                     return (
@@ -649,17 +498,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                             size="sm"
                                             variant={render ? "outline" : "gold"}
                                             className="h-8"
-                                            onClick={() => openGenerateDialog(shot, scene)}
-                                            disabled={isGenerating}
+                                            onClick={() => openShotEditor(shot, scene)}
                                           >
-                                            {isGenerating ? (
-                                              <Loader2 className="w-4 h-4 animate-spin" />
-                                            ) : (
-                                              <>
-                                                <Play className="w-3 h-3 mr-1" />
-                                                {render ? 'Regen' : 'Generar'}
-                                              </>
-                                            )}
+                                            <Settings className="w-3 h-3 mr-1" />
+                                            {render ? 'Editar' : 'Configurar'}
                                           </Button>
                                           
                                           <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
