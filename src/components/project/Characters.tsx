@@ -200,28 +200,65 @@ export default function Characters({ projectId }: CharactersProps) {
     }
   };
 
-  const addOutfit = async (characterId: string) => {
+  const addOutfit = async (characterId: string, generateWithAI: boolean = false) => {
     if (!outfitForm.name.trim()) {
       toast.error('El nombre del vestuario es obligatorio');
       return;
     }
 
     setSaving(true);
-    const { error } = await supabase
-      .from('character_outfits')
-      .insert({
-        character_id: characterId,
-        name: outfitForm.name.trim(),
-        description: outfitForm.description || null,
-      });
 
-    if (error) {
-      toast.error('Error al añadir vestuario');
+    if (generateWithAI) {
+      // Find the character
+      const character = characters.find(c => c.id === characterId);
+      if (!character) {
+        toast.error('Personaje no encontrado');
+        setSaving(false);
+        return;
+      }
+
+      toast.info('Generando vestuario con IA... Esto puede tardar un momento.');
+
+      try {
+        const response = await supabase.functions.invoke('generate-outfit', {
+          body: {
+            characterId,
+            characterName: character.name,
+            characterDescription: character.bio || 'A character',
+            outfitName: outfitForm.name.trim(),
+            outfitDescription: outfitForm.description || '',
+          }
+        });
+
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+
+        toast.success('Vestuario generado correctamente');
+        setOutfitForm({ name: '', description: '' });
+        setShowOutfitDialog(null);
+        fetchCharacters();
+      } catch (error) {
+        console.error('Error generating outfit:', error);
+        toast.error('Error al generar vestuario. Inténtalo de nuevo.');
+      }
     } else {
-      toast.success('Vestuario añadido');
-      setOutfitForm({ name: '', description: '' });
-      setShowOutfitDialog(null);
-      fetchCharacters();
+      const { error } = await supabase
+        .from('character_outfits')
+        .insert({
+          character_id: characterId,
+          name: outfitForm.name.trim(),
+          description: outfitForm.description || null,
+        });
+
+      if (error) {
+        toast.error('Error al añadir vestuario');
+      } else {
+        toast.success('Vestuario añadido');
+        setOutfitForm({ name: '', description: '' });
+        setShowOutfitDialog(null);
+        fetchCharacters();
+      }
     }
     setSaving(false);
   };
