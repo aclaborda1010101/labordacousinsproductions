@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { 
   FileText, 
@@ -13,7 +15,6 @@ import {
   Film,
   Users,
   MapPin,
-  AlertCircle,
   Link2
 } from 'lucide-react';
 
@@ -50,16 +51,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [existingLocations, setExistingLocations] = useState<Location[]>([]);
   const [linkedCharacters, setLinkedCharacters] = useState<Record<number, string[]>>({});
   const [linkedLocations, setLinkedLocations] = useState<Record<number, string | null>>({});
+  const [episodesCount, setEpisodesCount] = useState(1);
+  const [selectedEpisode, setSelectedEpisode] = useState('1');
 
-  // Fetch existing characters and locations
+  // Fetch existing characters, locations, and project info
   useEffect(() => {
     const fetchData = async () => {
-      const [charsRes, locsRes] = await Promise.all([
+      const [charsRes, locsRes, projectRes] = await Promise.all([
         supabase.from('characters').select('id, name').eq('project_id', projectId),
-        supabase.from('locations').select('id, name').eq('project_id', projectId)
+        supabase.from('locations').select('id, name').eq('project_id', projectId),
+        supabase.from('projects').select('episodes_count').eq('id', projectId).single()
       ]);
       if (charsRes.data) setExistingCharacters(charsRes.data);
       if (locsRes.data) setExistingLocations(locsRes.data);
+      if (projectRes.data) setEpisodesCount(projectRes.data.episodes_count || 1);
     };
     fetchData();
   }, [projectId]);
@@ -163,7 +168,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const scenesToInsert = parsedScenes.map((scene, index) => ({
         project_id: projectId,
         script_id: script.id,
-        episode_no: 1,
+        episode_no: parseInt(selectedEpisode),
         scene_no: index + 1,
         slugline: scene.slugline,
         summary: scene.summary,
@@ -257,6 +262,26 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           </div>
         </div>
       )}
+
+      {/* Episode selector */}
+      <div className="space-y-2">
+        <Label>Capítulo / Episodio</Label>
+        <Select value={selectedEpisode} onValueChange={setSelectedEpisode}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Selecciona episodio" />
+          </SelectTrigger>
+          <SelectContent>
+            {Array.from({ length: episodesCount }, (_, i) => (
+              <SelectItem key={i + 1} value={String(i + 1)}>
+                Episodio {i + 1}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground">
+          Las escenas se guardarán en el episodio seleccionado
+        </p>
+      </div>
 
       {/* Script input */}
       <Card>
