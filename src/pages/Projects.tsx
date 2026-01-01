@@ -46,13 +46,22 @@ export default function Projects() {
     p.title.toLowerCase().includes(search.toLowerCase())
   );
 
+  const getFormatLabel = (format: string) => {
+    switch (format) {
+      case 'series': return 'Serie';
+      case 'mini': return 'Miniserie';
+      case 'film': return 'Película';
+      default: return format;
+    }
+  };
+
   return (
     <AppLayout>
-      <PageHeader title="Projects" description="Manage your productions">
+      <PageHeader title="Proyectos" description="Gestiona tus producciones">
         <Button variant="gold" asChild>
           <Link to="/projects/new">
             <Plus className="w-4 h-4" />
-            New Project
+            Nuevo Proyecto
           </Link>
         </Button>
       </PageHeader>
@@ -63,7 +72,7 @@ export default function Projects() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search projects..."
+              placeholder="Buscar proyectos..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10"
@@ -81,16 +90,16 @@ export default function Projects() {
             <div className="panel p-12 text-center">
               <Film className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                {search ? 'No projects found' : 'No projects yet'}
+                {search ? 'No se encontraron proyectos' : 'No hay proyectos aún'}
               </h3>
               <p className="text-muted-foreground mb-6">
-                {search ? 'Try a different search term' : 'Create your first production to get started'}
+                {search ? 'Intenta con otro término de búsqueda' : 'Crea tu primera producción para comenzar'}
               </p>
               {!search && (
                 <Button variant="gold" asChild>
                   <Link to="/projects/new">
                     <Plus className="w-4 h-4" />
-                    New Project
+                    Nuevo Proyecto
                   </Link>
                 </Button>
               )}
@@ -113,20 +122,20 @@ export default function Projects() {
                           {project.title}
                         </h3>
                         <Badge variant="outline" className="capitalize">
-                          {project.format}
+                          {getFormatLabel(project.format)}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span>{project.episodes_count} episode{project.episodes_count > 1 ? 's' : ''}</span>
+                        <span>{project.episodes_count} episodio{project.episodes_count > 1 ? 's' : ''}</span>
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
-                          {new Date(project.created_at).toLocaleDateString()}
+                          {new Date(project.created_at).toLocaleDateString('es-ES')}
                         </span>
                       </div>
                     </div>
                     <div className="shrink-0 flex items-center gap-3">
                       <div className="text-right">
-                        <div className="text-sm text-muted-foreground mb-1">Bible</div>
+                        <div className="text-sm text-muted-foreground mb-1">Biblia</div>
                         <div className="flex items-center gap-2">
                           <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                             <div 
@@ -140,9 +149,9 @@ export default function Projects() {
                         </div>
                       </div>
                       {project.bible_completeness_score >= 85 ? (
-                        <Badge variant="pass">Ready</Badge>
+                        <Badge variant="pass">Listo</Badge>
                       ) : (
-                        <Badge variant="pending">In Progress</Badge>
+                        <Badge variant="pending">En Progreso</Badge>
                       )}
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                     </div>

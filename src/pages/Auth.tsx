@@ -9,8 +9,8 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 const authSchema = z.object({
-  email: z.string().email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email('Introduce un correo electrónico válido'),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
   displayName: z.string().optional(),
 });
 
@@ -62,27 +62,27 @@ export default function Auth() {
         const { error } = await signUp(email, password, displayName);
         if (error) {
           if (error.message.includes('already registered')) {
-            toast.error('This email is already registered. Please sign in.');
+            toast.error('Este correo ya está registrado. Por favor, inicia sesión.');
           } else {
             toast.error(error.message);
           }
         } else {
-          toast.success('Account created! Welcome to CINEFORGE.');
+          toast.success('¡Cuenta creada! Bienvenido a CINEFORGE.');
         }
       } else {
         const { error } = await signIn(email, password);
         if (error) {
           if (error.message.includes('Invalid login')) {
-            toast.error('Invalid email or password');
+            toast.error('Correo o contraseña incorrectos');
           } else {
             toast.error(error.message);
           }
         } else {
-          toast.success('Welcome back!');
+          toast.success('¡Bienvenido de nuevo!');
         }
       }
     } catch {
-      toast.error('An unexpected error occurred');
+      toast.error('Ha ocurrido un error inesperado');
     } finally {
       setLoading(false);
     }
@@ -102,28 +102,28 @@ export default function Auth() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground tracking-tight">CINEFORGE</h1>
-              <p className="text-muted-foreground">Blockbuster Factory</p>
+              <p className="text-muted-foreground">Fábrica de Blockbusters</p>
             </div>
           </div>
           
           <h2 className="text-4xl font-bold text-foreground leading-tight mb-4">
-            Create <span className="text-gradient-gold">Cinema-Quality</span><br />
-            Productions with AI
+            Crea Producciones<br />
+            <span className="text-gradient-gold">Calidad Cine</span> con IA
           </h2>
           
           <p className="text-lg text-muted-foreground max-w-md">
-            Professional-grade video production pipeline with quality gates, 
-            continuity management, and studio collaboration tools.
+            Pipeline de producción profesional con controles de calidad, 
+            gestión de continuidad y herramientas de colaboración en estudio.
           </p>
           
           <div className="mt-12 grid grid-cols-2 gap-6">
             <div className="panel p-4">
               <div className="text-2xl font-bold text-primary">100%</div>
-              <div className="text-sm text-muted-foreground">Continuity Tracking</div>
+              <div className="text-sm text-muted-foreground">Control de Continuidad</div>
             </div>
             <div className="panel p-4">
               <div className="text-2xl font-bold text-primary">4K+</div>
-              <div className="text-sm text-muted-foreground">Ultra Quality Output</div>
+              <div className="text-sm text-muted-foreground">Salida Ultra Calidad</div>
             </div>
           </div>
         </div>
@@ -146,23 +146,23 @@ export default function Auth() {
           <div className="panel-elevated p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-foreground">
-                {isSignUp ? 'Create your account' : 'Welcome back'}
+                {isSignUp ? 'Crea tu cuenta' : 'Bienvenido de nuevo'}
               </h2>
               <p className="text-muted-foreground mt-1">
                 {isSignUp 
-                  ? 'Start creating premium productions' 
-                  : 'Sign in to continue to your studio'}
+                  ? 'Comienza a crear producciones premium' 
+                  : 'Inicia sesión para continuar a tu estudio'}
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {isSignUp && (
                 <div className="space-y-2">
-                  <Label htmlFor="displayName">Display Name</Label>
+                  <Label htmlFor="displayName">Nombre para Mostrar</Label>
                   <Input
                     id="displayName"
                     type="text"
-                    placeholder="Steven Spielberg"
+                    placeholder="Tu nombre"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                   />
@@ -170,11 +170,11 @@ export default function Auth() {
               )}
               
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Correo Electrónico</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="director@studio.com"
+                  placeholder="director@estudio.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={errors.email ? 'border-destructive' : ''}
@@ -185,7 +185,7 @@ export default function Auth() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Contraseña</Label>
                 <Input
                   id="password"
                   type="password"
@@ -207,7 +207,7 @@ export default function Auth() {
                 disabled={loading}
               >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                {isSignUp ? 'Create Account' : 'Sign In'}
+                {isSignUp ? 'Crear Cuenta' : 'Iniciar Sesión'}
               </Button>
             </form>
 
@@ -218,8 +218,8 @@ export default function Auth() {
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 {isSignUp 
-                  ? 'Already have an account? Sign in' 
-                  : "Don't have an account? Sign up"}
+                  ? '¿Ya tienes cuenta? Inicia sesión' 
+                  : '¿No tienes cuenta? Regístrate'}
               </button>
             </div>
           </div>
