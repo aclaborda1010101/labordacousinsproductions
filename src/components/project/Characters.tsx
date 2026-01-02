@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -55,6 +55,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [showPackBuilder, setShowPackBuilder] = useState<string | null>(null);
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
+  const [generatingProfile, setGeneratingProfile] = useState<string | null>(null);
   
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -223,6 +224,58 @@ export default function Characters({ projectId }: CharactersProps) {
       toast.error('Error al generar personaje. Inténtalo de nuevo.');
     } finally {
       setGenerating(null);
+    }
+  };
+
+  // Generate full profile with Entity Builder
+  const generateProfileWithEntityBuilder = async (character: Character) => {
+    setGeneratingProfile(character.id);
+    toast.info('Generando perfil completo con Entity Builder... Esto puede tardar un momento.');
+
+    try {
+      const response = await supabase.functions.invoke('entity-builder', {
+        body: {
+          entityType: 'character',
+          name: character.name,
+          description: character.bio || '',
+          context: {
+            role: character.role,
+            characterRole: character.character_role,
+            arc: character.arc,
+          },
+          language: 'es',
+        }
+      });
+
+      if (response.error) {
+        if (response.error.message?.includes('429')) {
+          toast.error('Límite de solicitudes excedido. Intenta de nuevo en unos minutos.');
+        } else if (response.error.message?.includes('402')) {
+          toast.error('Créditos insuficientes. Por favor añade fondos a tu cuenta.');
+        } else {
+          throw new Error(response.error.message);
+        }
+        return;
+      }
+
+      const { entity } = response.data;
+
+      // Update character with generated profile
+      await supabase
+        .from('characters')
+        .update({
+          profile_json: entity,
+          bio: entity.profile?.description || character.bio,
+        })
+        .eq('id', character.id);
+
+      toast.success('Perfil de personaje generado correctamente');
+      fetchCharacters();
+    } catch (error) {
+      console.error('Error generating character profile:', error);
+      toast.error('Error al generar perfil. Inténtalo de nuevo.');
+    } finally {
+      setGeneratingProfile(null);
     }
   };
 
@@ -688,11 +741,26 @@ export default function Characters({ projectId }: CharactersProps) {
                           </Button>
                         )}
                         <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => generateProfileWithEntityBuilder(character)}
+                          disabled={generatingProfile === character.id}
+                          title="Generar Perfil Bible"
+                          className="mr-1"
+                        >
+                          {generatingProfile === character.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                          ) : (
+                            <BookOpen className="w-4 h-4 mr-1" />
+                          )}
+                          Bible
+                        </Button>
+                        <Button 
                           variant="ghost" 
                           size="icon" 
                           onClick={() => generateCharacterAI(character)}
                           disabled={generating === character.id}
-                          title="Generar con IA"
+                          title="Generar imágenes con IA"
                         >
                           {generating === character.id ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

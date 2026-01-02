@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp, Copy } from 'lucide-react';
+import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp, Copy, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -31,6 +31,7 @@ export default function Locations({ projectId }: LocationsProps) {
   const [expandedPackId, setExpandedPackId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [duplicating, setDuplicating] = useState<string | null>(null);
+  const [generatingProfile, setGeneratingProfile] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -183,6 +184,56 @@ export default function Locations({ projectId }: LocationsProps) {
     }
   };
 
+  // Generate full profile with Entity Builder
+  const generateProfileWithEntityBuilder = async (location: Location) => {
+    setGeneratingProfile(location.id);
+    toast.info('Generando perfil completo con Entity Builder... Esto puede tardar un momento.');
+
+    try {
+      const response = await supabase.functions.invoke('entity-builder', {
+        body: {
+          entityType: 'location',
+          name: location.name,
+          description: location.description || '',
+          context: {
+            variants: location.variants,
+          },
+          language: 'es',
+        }
+      });
+
+      if (response.error) {
+        if (response.error.message?.includes('429')) {
+          toast.error('Límite de solicitudes excedido. Intenta de nuevo en unos minutos.');
+        } else if (response.error.message?.includes('402')) {
+          toast.error('Créditos insuficientes. Por favor añade fondos a tu cuenta.');
+        } else {
+          throw new Error(response.error.message);
+        }
+        return;
+      }
+
+      const { entity } = response.data;
+
+      // Update location with generated profile
+      await supabase
+        .from('locations')
+        .update({
+          profile_json: entity,
+          description: entity.profile?.description || location.description,
+        })
+        .eq('id', location.id);
+
+      toast.success('Perfil de localización generado correctamente');
+      fetchLocations();
+    } catch (error) {
+      console.error('Error generating location profile:', error);
+      toast.error('Error al generar perfil. Inténtalo de nuevo.');
+    } finally {
+      setGeneratingProfile(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 flex justify-center">
@@ -303,6 +354,21 @@ export default function Locations({ projectId }: LocationsProps) {
                         )}
                       </div>
                       <div className="flex gap-1">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => generateProfileWithEntityBuilder(location)}
+                          disabled={generatingProfile === location.id}
+                          title="Generar Perfil Bible"
+                          className="mr-1"
+                        >
+                          {generatingProfile === location.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                          ) : (
+                            <BookOpen className="w-4 h-4 mr-1" />
+                          )}
+                          Bible
+                        </Button>
                         <CollapsibleTrigger asChild>
                           <Button variant="ghost" size="icon" title="Pack Builder">
                             {expandedPackId === location.id ? (
