@@ -2186,6 +2186,59 @@ export type Database = {
           },
         ]
       }
+      reference_scripts: {
+        Row: {
+          content: string
+          created_at: string
+          genre: string | null
+          id: string
+          is_global: boolean | null
+          language: string | null
+          notes: string | null
+          project_id: string | null
+          source_type: string
+          title: string
+          updated_at: string
+          word_count: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          genre?: string | null
+          id?: string
+          is_global?: boolean | null
+          language?: string | null
+          notes?: string | null
+          project_id?: string | null
+          source_type?: string
+          title: string
+          updated_at?: string
+          word_count?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          genre?: string | null
+          id?: string
+          is_global?: boolean | null
+          language?: string | null
+          notes?: string | null
+          project_id?: string | null
+          source_type?: string
+          title?: string
+          updated_at?: string
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reference_scripts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       renders: {
         Row: {
           audio_url: string | null
