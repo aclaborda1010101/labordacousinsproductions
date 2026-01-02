@@ -244,6 +244,42 @@ export default function ShotEditor({
     return parts.join('. ') + '.';
   };
 
+  // Helper: Convert base64 to Blob
+  const base64ToBlob = (base64: string, mimeType: string = 'video/mp4'): Blob => {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mimeType });
+  };
+
+  // Helper: Upload video to storage and return public URL
+  const uploadVideoToStorage = async (base64Video: string, shotId: string): Promise<string> => {
+    const blob = base64ToBlob(base64Video);
+    const fileName = `${shotId}/${Date.now()}.mp4`;
+    
+    const { data, error } = await supabase.storage
+      .from('renders')
+      .upload(fileName, blob, {
+        contentType: 'video/mp4',
+        upsert: false
+      });
+    
+    if (error) {
+      console.error('Storage upload error:', error);
+      throw new Error(`Failed to upload video: ${error.message}`);
+    }
+    
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('renders')
+      .getPublicUrl(data.path);
+    
+    return urlData.publicUrl;
+  };
+
   // Poll Veo operation until complete
   // IMPORTANTE: operationName debe ser el nombre completo de la operación (projects/...)
   const pollVeoOperation = async (operationName: string): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
@@ -257,7 +293,7 @@ export default function ShotEditor({
       toast.info(`Procesando video... (${attempts * 5}s)`);
       
       const { data, error } = await supabase.functions.invoke('veo_poll', {
-        body: { operationName }  // Usar operationName completo, no UUID
+        body: { operationName }
       });
       
       if (error) {
@@ -268,24 +304,55 @@ export default function ShotEditor({
       console.log('Poll result:', data);
       
       if (data?.done) {
-        // Extract video URL from response
-        // Veo returns bytesBase64Encoded or GCS uri
+        // Check for error first
+        if (data.error) {
+          return { done: true, error: data.error.message || 'Veo generation failed' };
+        }
+        
+        // Extract video from response - structure is response.videos[0].bytesBase64Encoded
         const result = data.result;
+        
+        // Check bytesBase64Encoded (inline video data)
+        if (result?.videos?.[0]?.bytesBase64Encoded) {
+          try {
+            toast.info('Subiendo video a storage...');
+            const base64 = result.videos[0].bytesBase64Encoded;
+            const videoUrl = await uploadVideoToStorage(base64, shot.id);
+            return { done: true, videoUrl };
+          } catch (uploadError) {
+            console.error('Upload error:', uploadError);
+            return { done: true, error: `Video generado pero falló upload: ${(uploadError as Error).message}` };
+          }
+        }
+        
+        // Check gcsUri (Google Cloud Storage URI)
+        if (result?.videos?.[0]?.gcsUri) {
+          // For now, return the GCS URI - we could also download and re-upload
+          return { done: true, videoUrl: result.videos[0].gcsUri };
+        }
+        
+        // Legacy formats
         if (result?.predictions?.[0]?.bytesBase64Encoded) {
-          // Convert base64 to data URL
-          const base64 = result.predictions[0].bytesBase64Encoded;
-          return { done: true, videoUrl: `data:video/mp4;base64,${base64}` };
-        } else if (result?.predictions?.[0]?.gcsUri) {
+          try {
+            toast.info('Subiendo video a storage...');
+            const base64 = result.predictions[0].bytesBase64Encoded;
+            const videoUrl = await uploadVideoToStorage(base64, shot.id);
+            return { done: true, videoUrl };
+          } catch (uploadError) {
+            return { done: true, error: `Video generado pero falló upload: ${(uploadError as Error).message}` };
+          }
+        }
+        
+        if (result?.predictions?.[0]?.gcsUri) {
           return { done: true, videoUrl: result.predictions[0].gcsUri };
-        } else if (result?.video) {
+        }
+        
+        if (result?.video) {
           return { done: true, videoUrl: result.video };
         }
         
-        // Check for error
-        if (data.raw?.error) {
-          return { done: true, error: data.raw.error.message || 'Veo generation failed' };
-        }
-        
+        // No video found in response
+        console.error('No video in response:', data);
         return { done: true, error: 'No video URL in response' };
       }
     }
