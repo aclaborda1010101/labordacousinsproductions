@@ -14,7 +14,8 @@ import {
 import { useTechnicalPrompt, Engine, PromptOptions, buildLocalPrompt } from '@/hooks/useTechnicalPrompt';
 
 const ENGINES: { value: Engine; label: string; description: string }[] = [
-  { value: 'gemini', label: 'Gemini', description: 'Google AI - Alta calidad general' },
+  { value: 'chatgpt', label: 'ChatGPT', description: 'OpenAI - Motor por defecto para prompts' },
+  { value: 'claude', label: 'Claude', description: 'Anthropic - Razonamiento avanzado' },
   { value: 'veo', label: 'Veo 3.1', description: 'Video generation - Cinemático' },
   { value: 'kling', label: 'Kling 2.0', description: 'Video generation - Rápido' },
   { value: 'flux', label: 'Flux', description: 'Imagen - Fotorealista' },
@@ -53,7 +54,7 @@ export function TechnicalPromptGenerator({
   onPromptGenerated,
 }: TechnicalPromptGeneratorProps) {
   const { generating, generatePrompt, copyToClipboard } = useTechnicalPrompt();
-  const [engine, setEngine] = useState<Engine>('gemini');
+  const [engine, setEngine] = useState<Engine>('chatgpt');
   const [options, setOptions] = useState<PromptOptions>({
     shotType: '',
     expression: '',
