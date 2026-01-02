@@ -108,6 +108,35 @@ async function getAccessTokenFromServiceAccount(): Promise<string> {
   return j.access_token as string;
 }
 
+/**
+ * Normaliza el operation name:
+ * - Si ya viene completo "projects/.../operations/..." → lo usa tal cual
+ * - Si viene como URL completa → extrae el path después de "/v1/"
+ * - Si viene solo UUID → reconstruye el path completo
+ */
+function normalizeOperationName(input: string, projectId: string, location: string, modelId: string): string {
+  // Caso 1: ya viene completo "projects/.../operations/..."
+  if (input.startsWith("projects/")) return input;
+
+  // Caso 2: viene como URL completa (a veces pasa)
+  if (input.startsWith("https://")) {
+    const idx = input.indexOf("/v1/");
+    if (idx !== -1) return input.slice(idx + 4); // lo que va después de "/v1/"
+  }
+
+  // Caso 3: viene solo UUID → reconstruimos
+  // Formato Veo: projects/PROJECT/locations/LOCATION/publishers/google/models/MODEL/operations/UUID
+  return `projects/${projectId}/locations/${location}/publishers/google/models/${modelId}/operations/${input}`;
+}
+
+/**
+ * Extrae la región del operation name para usar el host correcto
+ */
+function extractLocationFromOpName(opName: string): string | null {
+  const m = opName.match(/\/locations\/([^/]+)\//);
+  return m?.[1] ?? null;
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -122,110 +151,70 @@ serve(async (req) => {
       return json({ error: "Missing operation (string)" }, 400);
     }
 
-    console.log("Polling Veo operation:", operation);
+    console.log("Received operation input:", operation);
 
-    const location = getEnv("GCP_LOCATION");
+    const projectId = getEnv("GCP_PROJECT_ID");
+    const defaultLocation = getEnv("GCP_LOCATION");
+    // Use default model if VEO_MODEL_ID is not set or is a placeholder
+    const rawModelId = Deno.env.get("VEO_MODEL_ID");
+    const modelId = (rawModelId && rawModelId !== "VEO_MODEL_ID" && !rawModelId.includes("MODEL_ID")) 
+      ? rawModelId 
+      : "veo-3.1-generate-001";
+
+    // Normalizar el operation name (maneja UUID solo, path completo, o URL)
+    const opName = normalizeOperationName(operation, projectId, defaultLocation, modelId);
+    console.log("Normalized operation name:", opName);
+
+    // IMPORTANTÍSIMO: usar la región del operation name, no solo el secret
+    const opLocation = extractLocationFromOpName(opName) ?? defaultLocation;
+    console.log("Using location from operation:", opLocation);
+
     const token = await getAccessTokenFromServiceAccount();
 
-    // Operation name comes as:
-    // "projects/.../locations/.../publishers/google/models/.../operations/..."
-    // We need to extract just the operation path and use the correct endpoint
-    
-    // Try multiple URL formats for compatibility
-    // Format 1: Full path as returned by predictLongRunning
-    let url = `https://${location}-aiplatform.googleapis.com/v1/${operation}`;
-    
-    // If operation contains full URL-like path, extract location from it
-    const locationMatch = operation.match(/locations\/([^\/]+)/);
-    const operationLocation = locationMatch ? locationMatch[1] : location;
-    
-    // Alternative: Use the operation as a direct path
-    // For Veo, the correct endpoint format may be:
-    // https://{location}-aiplatform.googleapis.com/v1/projects/{project}/locations/{location}/operations/{op_id}
-    
-    // Extract operation ID from the full path
-    const opIdMatch = operation.match(/operations\/([^\/]+)$/);
-    const operationId = opIdMatch ? opIdMatch[1] : null;
-    
-    // Extract project ID from the operation path
-    const projectMatch = operation.match(/projects\/([^\/]+)/);
-    const projectId = projectMatch ? projectMatch[1] : null;
-    
-    if (operationId && projectId) {
-      // Try the simpler operations endpoint format first
-      const alternativeUrl = `https://${operationLocation}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${operationLocation}/operations/${operationId}`;
-      console.log("Trying alternative operations URL:", alternativeUrl);
-      
-      const altResponse = await fetch(alternativeUrl, {
-        headers: { authorization: `Bearer ${token}` },
-      });
-      
-      if (altResponse.ok) {
-        console.log("Alternative URL succeeded");
-        url = alternativeUrl;
-        const j = await altResponse.json();
-        console.log("Poll response:", JSON.stringify(j, null, 2));
-        
-        return json({
-          ok: true,
-          done: Boolean(j.done),
-          operation,
-          result: j.response ?? null,
-          metadata: j.metadata ?? null,
-          raw: j,
-        });
-      } else {
-        console.log("Alternative URL failed with status:", altResponse.status);
-      }
-    }
-    
-    console.log("Using original polling URL:", url);
+    // Vertex AI LRO get: GET /v1/{name}
+    // https://{location}-aiplatform.googleapis.com/v1/{operation_name}
+    const url = `https://${opLocation}-aiplatform.googleapis.com/v1/${opName}`;
+    console.log("Polling URL:", url);
 
-    const r = await fetch(url, {
-      headers: { authorization: `Bearer ${token}` },
-    });
-
+    const r = await fetch(url, { headers: { authorization: `Bearer ${token}` } });
+    
     console.log("Poll response status:", r.status);
     
     // Check content type before parsing
     const contentType = r.headers.get("content-type") || "";
-    const responseText = await r.text();
     
-    console.log("Poll response content-type:", contentType);
-    console.log("Poll response text (first 500 chars):", responseText.substring(0, 500));
-    
-    // If not JSON, return error with details
     if (!contentType.includes("application/json")) {
-      console.error("Non-JSON response from Veo API");
-      return json({ 
-        error: "Non-JSON response from Veo API", 
+      const text = await r.text();
+      console.error("Non-JSON response:", r.status, text.substring(0, 500));
+      return json({
+        error: "Poll returned non-JSON response",
         status: r.status,
+        opName,
+        url,
         contentType,
-        responsePreview: responseText.substring(0, 200)
-      }, 502);
+        responsePreview: text.substring(0, 200),
+      }, r.status >= 400 ? r.status : 502);
     }
-    
-    let j;
-    try {
-      j = JSON.parse(responseText);
-    } catch (parseError) {
-      console.error("Failed to parse JSON:", parseError);
-      return json({ 
-        error: "Failed to parse API response", 
-        responsePreview: responseText.substring(0, 200)
-      }, 502);
-    }
-    
+
+    const j = await r.json();
     console.log("Poll response:", JSON.stringify(j, null, 2));
 
-    if (!r.ok) return json({ error: "Poll failed", details: j }, r.status);
+    if (!r.ok) {
+      return json({
+        error: "Poll failed",
+        status: r.status,
+        opName,
+        url,
+        details: j,
+      }, r.status);
+    }
 
-    // When done, j.done = true and result is in j.response
-    // Format varies: sometimes bytesBase64Encoded or GCS uri
+    // Respuesta exitosa
     return json({
       ok: true,
       done: Boolean(j.done),
-      operation,
+      operation: opName,
+      location: opLocation,
       result: j.response ?? null,
       metadata: j.metadata ?? null,
       raw: j,
