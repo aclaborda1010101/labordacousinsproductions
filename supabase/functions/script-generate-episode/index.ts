@@ -151,7 +151,7 @@ IDIOMA: ${language || 'es-ES'}
 
 Devuelve SOLO JSON válido con el episodio completo.`;
 
-    console.log(`Generating episode ${episodeNumber} with Lovable AI (Gemini)`);
+    console.log(`Generating episode ${episodeNumber} with Lovable AI (GPT-4o)`);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -160,7 +160,7 @@ Devuelve SOLO JSON válido con el episodio completo.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'openai/gpt-4o',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
