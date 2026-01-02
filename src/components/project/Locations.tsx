@@ -10,7 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LocationPackBuilder } from './LocationPackBuilder';
+import BibleProfileViewer from './BibleProfileViewer';
+import { EntityQCBadge } from './QCStatusBadge';
 
 interface LocationsProps { projectId: string; }
 
@@ -21,6 +24,7 @@ interface Location {
   token: string | null;
   variants: { day?: boolean; night?: boolean; weather?: string[] } | null;
   reference_urls: unknown;
+  profile_json?: unknown;
 }
 
 export default function Locations({ projectId }: LocationsProps) {
@@ -346,6 +350,11 @@ export default function Locations({ projectId }: LocationsProps) {
                               <Moon className="w-3.5 h-3.5 text-blue-400" />
                             )}
                           </div>
+                          <EntityQCBadge
+                            entityType="location"
+                            hasProfile={!!location.profile_json}
+                            hasContinuityLock={!!(location.profile_json as any)?.continuity_lock}
+                          />
                         </div>
                         {location.description ? (
                           <p className="text-sm text-muted-foreground line-clamp-2">{location.description}</p>
@@ -400,13 +409,29 @@ export default function Locations({ projectId }: LocationsProps) {
                       </div>
                     </div>
                     <CollapsibleContent className="mt-4">
-                      <LocationPackBuilder
-                        locationId={location.id}
-                        locationName={location.name}
-                        locationDescription={location.description || ''}
-                        hasDay={location.variants?.day ?? true}
-                        hasNight={location.variants?.night ?? false}
-                      />
+                      <Tabs defaultValue="pack" className="w-full">
+                        <TabsList className="w-full justify-start mb-4">
+                          <TabsTrigger value="pack">Pack Builder</TabsTrigger>
+                          <TabsTrigger value="bible">
+                            Bible {location.profile_json && '✓'}
+                          </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="pack">
+                          <LocationPackBuilder
+                            locationId={location.id}
+                            locationName={location.name}
+                            locationDescription={location.description || ''}
+                            hasDay={location.variants?.day ?? true}
+                            hasNight={location.variants?.night ?? false}
+                          />
+                        </TabsContent>
+                        <TabsContent value="bible">
+                          <BibleProfileViewer 
+                            profile={location.profile_json as any} 
+                            entityType="location" 
+                          />
+                        </TabsContent>
+                      </Tabs>
                     </CollapsibleContent>
                   </Collapsible>
                 )}

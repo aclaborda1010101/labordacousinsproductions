@@ -16,6 +16,8 @@ import { ImageGallery } from '@/components/project/ImageGallery';
 import { CharacterPackBuilder } from '@/components/project/CharacterPackBuilder';
 import { exportCharacterPackZip } from '@/lib/exportCharacterPackZip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuCheckboxItem, DropdownMenuLabel } from '@/components/ui/dropdown-menu';
+import BibleProfileViewer from './BibleProfileViewer';
+import { EntityQCBadge } from './QCStatusBadge';
 
 interface CharactersProps { projectId: string; }
 
@@ -39,6 +41,7 @@ interface Character {
   turnaround_urls: Record<string, string> | null;
   expressions: Record<string, string> | null;
   pack_completeness_score?: number | null;
+  profile_json?: unknown;
   outfits?: CharacterOutfit[];
 }
 
@@ -718,6 +721,12 @@ export default function Characters({ projectId }: CharactersProps) {
                               Pack {character.pack_completeness_score}%
                             </Badge>
                           )}
+                          <EntityQCBadge
+                            entityType="character"
+                            hasProfile={!!character.profile_json}
+                            packScore={character.pack_completeness_score || 0}
+                            hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                          />
                           {character.role && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                               {getRoleLabel(character.role)}
@@ -824,6 +833,13 @@ export default function Characters({ projectId }: CharactersProps) {
                             >
                               <Shirt className="w-4 h-4 mr-2" />
                               Vestuarios ({character.outfits?.length || 0})
+                            </TabsTrigger>
+                            <TabsTrigger 
+                              value="bible"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                            >
+                              <BookOpen className="w-4 h-4 mr-2" />
+                              Bible {character.profile_json && '✓'}
                             </TabsTrigger>
                           </TabsList>
 
@@ -947,6 +963,30 @@ export default function Characters({ projectId }: CharactersProps) {
                                 Añadir Vestuario
                               </Button>
                             </div>
+                          </TabsContent>
+
+                          <TabsContent value="bible" className="p-4 m-0">
+                            <BibleProfileViewer 
+                              profile={character.profile_json as any} 
+                              entityType="character" 
+                            />
+                            {!character.profile_json && (
+                              <div className="mt-4">
+                                <Button 
+                                  variant="gold" 
+                                  size="sm"
+                                  onClick={() => generateProfileWithEntityBuilder(character)}
+                                  disabled={generatingProfile === character.id}
+                                >
+                                  {generatingProfile === character.id ? (
+                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                  ) : (
+                                    <BookOpen className="w-4 h-4 mr-2" />
+                                  )}
+                                  Generar Perfil Bible con IA
+                                </Button>
+                              </div>
+                            )}
                           </TabsContent>
                         </Tabs>
                       </div>
