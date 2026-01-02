@@ -108,90 +108,9 @@ async function getAccessTokenFromServiceAccount(): Promise<string> {
   return j.access_token as string;
 }
 
-/**
- * Extrae componentes del operation name
- */
-function parseOperationName(opName: string): { projectId: string | null; location: string | null; operationId: string | null } {
-  const projectMatch = opName.match(/projects\/([^/]+)/);
-  const locationMatch = opName.match(/locations\/([^/]+)/);
-  const operationMatch = opName.match(/operations\/([^/]+)$/);
-  
-  return {
-    projectId: projectMatch?.[1] ?? null,
-    location: locationMatch?.[1] ?? null,
-    operationId: operationMatch?.[1] ?? null,
-  };
-}
-
-/**
- * Intenta hacer polling con múltiples formatos de URL
- */
-async function tryPolling(opName: string, token: string, defaultProjectId: string, defaultLocation: string): Promise<Response> {
-  const { projectId, location, operationId } = parseOperationName(opName);
-  const effectiveProjectId = projectId || defaultProjectId;
-  const effectiveLocation = location || defaultLocation;
-  
-  // Lista de URLs a intentar en orden de prioridad
-  const urlsToTry = [
-    // Formato 1: Path completo tal como viene (publishers/google/models/.../operations/...)
-    `https://${effectiveLocation}-aiplatform.googleapis.com/v1/${opName}`,
-    
-    // Formato 2: LRO estándar de Vertex AI (projects/.../locations/.../operations/...)
-    operationId ? `https://${effectiveLocation}-aiplatform.googleapis.com/v1/projects/${effectiveProjectId}/locations/${effectiveLocation}/operations/${operationId}` : null,
-    
-    // Formato 3: Generative Language API (para algunos modelos Veo)
-    operationId ? `https://generativelanguage.googleapis.com/v1beta/operations/${operationId}` : null,
-  ].filter(Boolean) as string[];
-  
-  let lastError: { url: string; status: number; response: string } | null = null;
-  
-  for (const url of urlsToTry) {
-    console.log(`Trying polling URL: ${url}`);
-    
-    const r = await fetch(url, { 
-      headers: { authorization: `Bearer ${token}` } 
-    });
-    
-    console.log(`Response status for ${url}: ${r.status}`);
-    
-    // Si es exitoso, retornar
-    if (r.ok) {
-      const contentType = r.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        const data = await r.json();
-        console.log("Successful poll response:", JSON.stringify(data, null, 2));
-        return new Response(JSON.stringify({
-          ok: true,
-          done: Boolean(data.done),
-          operation: opName,
-          location: effectiveLocation,
-          usedUrl: url,
-          result: data.response ?? null,
-          metadata: data.metadata ?? null,
-          raw: data,
-        }), {
-          status: 200,
-          headers: { ...corsHeaders, "content-type": "application/json" },
-        });
-      }
-    }
-    
-    // Guardar el error para reportar si todos fallan
-    const text = await r.text();
-    lastError = { url, status: r.status, response: text.substring(0, 300) };
-    console.log(`URL ${url} failed: ${r.status}`);
-  }
-  
-  // Todos fallaron
-  return new Response(JSON.stringify({
-    error: "All polling URLs failed",
-    operation: opName,
-    urlsTried: urlsToTry,
-    lastError,
-  }), {
-    status: 404,
-    headers: { ...corsHeaders, "content-type": "application/json" },
-  });
+function extractLocation(opName: string): string | null {
+  const m = opName.match(/\/locations\/([^/]+)\//);
+  return m?.[1] ?? null;
 }
 
 serve(async (req) => {
@@ -203,40 +122,76 @@ serve(async (req) => {
   try {
     if (req.method !== "POST") return json({ error: "Use POST" }, 405);
 
-    const { operation } = await req.json();
-    if (!operation || typeof operation !== "string") {
-      return json({ error: "Missing operation (string)" }, 400);
+    // Aceptar tanto "operationName" (nuevo) como "operation" (legacy) para compatibilidad
+    const body = await req.json();
+    const operationName = body.operationName || body.operation;
+    
+    if (!operationName || typeof operationName !== "string") {
+      return json({ error: "Missing operationName (string)" }, 400);
     }
 
-    console.log("Received operation input:", operation);
+    console.log("Received operationName:", operationName);
 
-    const projectId = getEnv("GCP_PROJECT_ID");
-    const location = getEnv("GCP_LOCATION");
-
-    // Normalizar: si es solo UUID, convertir a path completo
-    let opName = operation;
-    if (!operation.startsWith("projects/") && !operation.startsWith("https://")) {
-      // Es solo un UUID, reconstruir
-      const rawModelId = Deno.env.get("VEO_MODEL_ID");
-      const modelId = (rawModelId && rawModelId !== "VEO_MODEL_ID" && !rawModelId.includes("MODEL_ID")) 
-        ? rawModelId 
-        : "veo-3.1-generate-001";
-      opName = `projects/${projectId}/locations/${location}/publishers/google/models/${modelId}/operations/${operation}`;
-      console.log("Reconstructed operation name from UUID:", opName);
-    } else if (operation.startsWith("https://")) {
-      // Es una URL, extraer el path
-      const idx = operation.indexOf("/v1/");
-      if (idx !== -1) {
-        opName = operation.slice(idx + 4);
-        console.log("Extracted operation name from URL:", opName);
-      }
+    // CRÍTICO: Exigir nombre completo para evitar 404/400
+    if (!operationName.startsWith("projects/")) {
+      return json({
+        error: "operationName must be full resource name (starts with 'projects/')",
+        received: operationName,
+        fix: "Guarda y envía el campo operationName tal cual te lo devuelve veo_start",
+      }, 400);
     }
+
+    const defaultLocation = getEnv("GCP_LOCATION");
+    const loc = extractLocation(operationName) ?? defaultLocation;
+
+    console.log("Using location:", loc);
 
     const token = await getAccessTokenFromServiceAccount();
+
+    // Endpoint correcto: GET https://{loc}-aiplatform.googleapis.com/v1/{operationName}
+    const url = `https://${loc}-aiplatform.googleapis.com/v1/${operationName}`;
+    console.log("Polling URL:", url);
+
+    const r = await fetch(url, { headers: { authorization: `Bearer ${token}` } });
+
+    // Loggear body SIEMPRE (para 400/404)
+    const text = await r.text();
+    console.log("Poll response status:", r.status);
+    console.log("Poll response body:", text.substring(0, 500));
     
-    // Intentar múltiples formatos de polling
-    return await tryPolling(opName, token, projectId, location);
-    
+    let responseBody: any = null;
+    try { 
+      responseBody = JSON.parse(text); 
+    } catch { 
+      responseBody = { rawText: text.substring(0, 1000) }; 
+    }
+
+    if (!r.ok) {
+      return json({
+        error: "Poll failed",
+        status: r.status,
+        url,
+        operationName,
+        details: responseBody,
+        hint: r.status === 404
+          ? "Si esto es 404, casi siempre es: operationName mal guardado/recortado o región (host) distinta."
+          : r.status === 400
+          ? "Si esto es 400, suele ser nombre de recurso inválido (no uses UUID, usa operationName completo)."
+          : "Error inesperado del API de Vertex AI.",
+      }, r.status);
+    }
+
+    console.log("Poll successful, done:", responseBody.done);
+
+    return json({
+      ok: true,
+      done: Boolean(responseBody.done),
+      operationName,
+      location: loc,
+      result: responseBody.response ?? null,
+      metadata: responseBody.metadata ?? null,
+      raw: responseBody,
+    });
   } catch (e) {
     console.error("veo_poll error:", e);
     return json({ error: (e as Error).message }, 500);

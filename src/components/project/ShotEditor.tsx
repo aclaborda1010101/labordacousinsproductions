@@ -245,7 +245,8 @@ export default function ShotEditor({
   };
 
   // Poll Veo operation until complete
-  const pollVeoOperation = async (operationId: string): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
+  // IMPORTANTE: operationName debe ser el nombre completo de la operación (projects/...)
+  const pollVeoOperation = async (operationName: string): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
     const maxAttempts = 60; // 5 minutes max
     let attempts = 0;
     
@@ -256,7 +257,7 @@ export default function ShotEditor({
       toast.info(`Procesando video... (${attempts * 5}s)`);
       
       const { data, error } = await supabase.functions.invoke('veo_poll', {
-        body: { operation: operationId }
+        body: { operationName }  // Usar operationName completo, no UUID
       });
       
       if (error) {
@@ -311,16 +312,17 @@ export default function ShotEditor({
       return { success: false, error: startError.message };
     }
     
-    if (!startData?.ok || !startData?.operation) {
+    // Usar operationName (nombre completo) en lugar de operation (UUID)
+    if (!startData?.ok || !startData?.operationName) {
       console.error('Veo start failed:', startData);
       return { success: false, error: startData?.error || 'Failed to start Veo operation' };
     }
     
-    console.log('Veo operation started:', startData.operation);
+    console.log('Veo operation started (full name):', startData.operationName);
     toast.info('Video en generación con Veo 3.1...');
     
-    // Poll for completion
-    const pollResult = await pollVeoOperation(startData.operation);
+    // Poll for completion usando el operationName completo
+    const pollResult = await pollVeoOperation(startData.operationName);
     
     if (pollResult.done && pollResult.videoUrl) {
       return { success: true, videoUrl: pollResult.videoUrl };
