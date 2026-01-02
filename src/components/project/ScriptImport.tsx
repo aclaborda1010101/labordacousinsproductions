@@ -783,11 +783,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           </TabsTrigger>
           <TabsTrigger value="doctor" className="flex items-center gap-2">
             <Stethoscope className="w-4 h-4" />
-            Doctor
+            Revisar
           </TabsTrigger>
           <TabsTrigger value="breakdown" className="flex items-center gap-2">
             <Layers className="w-4 h-4" />
-            Breakdown
+            Desglose
           </TabsTrigger>
         </TabsList>
 
