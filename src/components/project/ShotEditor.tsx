@@ -530,10 +530,13 @@ export default function ShotEditor({
   };
 
   // Poll Kling operation until complete
-  const pollKlingOperation = async (taskId: string): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
+  const pollKlingOperation = async (
+    taskId: string,
+    endpoint: 'image2video' | 'text2video'
+  ): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
     const maxAttempts = 60; // 5 minutes max
     let attempts = 0;
-    
+
     setGenerationProgress({
       status: 'generating',
       elapsedSeconds: 0,
@@ -541,47 +544,55 @@ export default function ShotEditor({
       message: 'Generando video con Kling 2.0...',
       engine: 'kling'
     });
-    
+
     while (attempts < maxAttempts) {
       await new Promise(r => setTimeout(r, 5000)); // Poll every 5 seconds
       attempts++;
-      
+
       setGenerationProgress(prev => ({
         ...prev,
         message: `Renderizando video... (intento ${attempts})`
       }));
-      
+
       const { data, error } = await supabase.functions.invoke('kling_poll', {
-        body: { taskId }
+        body: {
+          taskId: String(taskId),
+          endpoint
+        }
       });
-      
+
       if (error) {
-        console.error('Kling poll error:', error);
+        console.error('Kling poll invoke error:', error);
         continue;
       }
-      
+
       console.log('Kling poll result:', data);
-      
-      if (data?.status === 'succeeded' && data?.videoUrl) {
+
+      // kling_poll contract: { ok, done, videoUrl?, error?, status?, statusMsg? }
+      if (data?.done && data?.videoUrl) {
         setGenerationProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado con Kling!' }));
         return { done: true, videoUrl: data.videoUrl };
       }
-      
-      if (data?.status === 'failed') {
-        setGenerationProgress(prev => ({ ...prev, status: 'error', message: data.error || 'Kling generation failed' }));
-        return { done: true, error: data.error || 'Kling generation failed' };
+
+      if (data?.done && data?.error) {
+        setGenerationProgress(prev => ({ ...prev, status: 'error', message: data.error }));
+        return { done: true, error: data.error };
       }
-      
+
+      // If the poll endpoint itself errored (e.g. 404/429), keep trying until timeout
+      if (data?.ok === false) {
+        continue;
+      }
+
       // Still processing
-      if (data?.status === 'processing' || data?.status === 'submitted') {
+      if (data?.done === false) {
         continue;
       }
     }
-    
+
     setGenerationProgress(prev => ({ ...prev, status: 'error', message: 'Timeout - generación muy lenta' }));
     return { done: false, error: 'Timeout waiting for Kling video generation' };
   };
-
   const generateWithKling = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
     const prompt = buildVideoPrompt();
     console.log('Starting Kling generation with prompt:', prompt);
@@ -618,11 +629,14 @@ export default function ShotEditor({
       return { success: false, error: startData?.error || 'Failed to start Kling operation' };
     }
     
-    console.log('Kling task started:', startData.taskId);
+    console.log('Kling task started:', startData.taskId, 'endpoint:', startData.endpoint);
     
+    const endpoint = (startData.endpoint as ('image2video' | 'text2video') | undefined) ??
+      (startData.keyframeUrl ? 'image2video' : 'text2video');
+
     // Poll for completion
-    const pollResult = await pollKlingOperation(startData.taskId);
-    
+    const pollResult = await pollKlingOperation(String(startData.taskId), endpoint);
+
     if (pollResult.done && pollResult.videoUrl) {
       return { success: true, videoUrl: pollResult.videoUrl };
     }
