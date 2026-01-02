@@ -249,7 +249,7 @@ Cada setpiece necesita descripción de 200+ palabras.
 
 Genera el outline cumpliendo TODOS los targets. Devuelve SOLO JSON válido.`;
 
-    console.log('Generating outline with Lovable AI (GPT-5) for:', idea.substring(0, 100));
+    console.log('Generating outline with Lovable AI (Gemini) for:', idea.substring(0, 100));
     console.log('Targets:', JSON.stringify(targets));
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -259,11 +259,12 @@ Genera el outline cumpliendo TODOS los targets. Devuelve SOLO JSON válido.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5',
+        model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
         ],
+        temperature: 0.7,
       }),
     });
 
