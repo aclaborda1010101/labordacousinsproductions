@@ -208,13 +208,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setPipelineProgress(10);
 
       // Step 2: Generate DETAILED Outline
-      updatePipelineStep('outline', 'running', 'Generando outline...');
-      toast.info('Generando outline estructurado...');
-      
+      updatePipelineStep('outline', 'running', 'Segmentando episodios (outline)...');
+      toast.info('Generando outline (segmentación por episodios)...');
+
+      const normalizedIdea = ideaText.trim();
+      const ideaForGeneration = normalizedIdea.length > 1800 ? normalizedIdea.slice(0, 1800) : normalizedIdea;
+      if (normalizedIdea.length > 1800) {
+        toast.info('Idea muy larga: usando un extracto para evitar que se quede colgado.');
+      }
+
+      const referencesForGeneration = references?.length > 600 ? references.slice(0, 600) : references;
+
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('script-generate-outline', {
         body: {
           projectId,
-          idea: ideaText,
+          idea: ideaForGeneration,
           format,
           episodesCount: format === 'series' ? episodesCount : undefined,
           episodeDurationMin: format === 'series' ? episodeDurationMin : undefined,
@@ -222,7 +230,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           genre,
           tone,
           language,
-          references,
+          references: referencesForGeneration,
           referenceScripts: referenceScripts.length > 0 ? referenceScripts : undefined,
           targets
         }
