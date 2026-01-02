@@ -50,3 +50,12 @@ verify_jwt = false
 
 [functions.shot-suggest]
 verify_jwt = false
+
+[functions.audio-design]
+verify_jwt = false
+
+[functions.validate-continuity-locks]
+verify_jwt = false
+
+[functions.pre-render-qc-gate]
+verify_jwt = false
