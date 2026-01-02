@@ -78,14 +78,14 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
       // 1. Upload to storage
       const fileName = `${characterId}/${anchorType}_${Date.now()}.${file.name.split('.').pop()}`;
       const { error: uploadError } = await supabase.storage
-        .from('character-packs')
+        .from('character-references')
         .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
       // 2. Get public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('character-packs')
+        .from('character-references')
         .getPublicUrl(fileName);
 
       // 3. Create anchor
