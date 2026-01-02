@@ -5,10 +5,18 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface ReferenceScript {
+  title: string;
+  content: string;
+  genre?: string;
+  notes?: string;
+}
+
 interface ScreenplayRequest {
   outline: any;
   targets: any;
   language?: string;
+  referenceScripts?: ReferenceScript[];
 }
 
 const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER generando un GUION LISTO PARA RODAR desde un outline aprobado.
@@ -150,7 +158,7 @@ serve(async (req) => {
   }
 
   try {
-    const { outline, targets, language }: ScreenplayRequest = await req.json();
+    const { outline, targets, language, referenceScripts }: ScreenplayRequest = await req.json();
 
     if (!outline) {
       return new Response(
@@ -164,6 +172,31 @@ serve(async (req) => {
       throw new Error('OPENAI_API_KEY no está configurada');
     }
 
+    // Build professional screenplay reference section
+    let referenceSection = '';
+    if (referenceScripts && referenceScripts.length > 0) {
+      referenceSection = `
+
+--- EJEMPLOS DE GUIONES PROFESIONALES ---
+Estudia estos extractos de guiones premiados para entender:
+- Formato correcto de sluglines (INT./EXT. LOCALIZACIÓN - DÍA/NOCHE)
+- Cómo escribir acciones descriptivas cinematográficas
+- Formato y ritmo de diálogos profesionales
+- Parentéticos usados correctamente
+
+`;
+      for (const ref of referenceScripts.slice(0, 2)) {
+        const excerpt = ref.content.slice(0, 4000);
+        referenceSection += `=== ${ref.title} ===
+${excerpt}
+
+`;
+      }
+      referenceSection += `--- FIN DE EJEMPLOS ---
+IMPORTANTE: Tu output debe tener la misma calidad profesional que estos ejemplos.
+`;
+    }
+
     const userPrompt = `GENERA EL GUION COMPLETO LISTO PARA RODAR:
 
 OUTLINE APROBADO:
@@ -173,12 +206,14 @@ TARGETS:
 ${JSON.stringify(targets, null, 2)}
 
 IDIOMA: ${language || 'es-ES'}
-
+${referenceSection}
 Genera el guion COMPLETO con TODOS los diálogos. Cada escena debe tener:
-- Acción descriptiva cinematográfica
-- Diálogos COMPLETOS de todos los personajes
-- Cues de música/SFX
-- Continuity anchors
+- Slugline en formato estándar: INT./EXT. LOCALIZACIÓN - DÍA/NOCHE
+- Acción descriptiva cinematográfica (visual, presente, sin adjetivos excesivos)
+- Diálogos COMPLETOS de todos los personajes (naturales, con subtexto)
+- Parentéticos solo cuando son necesarios
+- Cues de música/SFX específicos
+- Continuity anchors para producción
 
 Devuelve SOLO JSON válido.`;
 
