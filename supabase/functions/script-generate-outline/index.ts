@@ -255,11 +255,8 @@ ${format === 'series' ? `- Escenas por episodio: ${targets.scenes_per_episode}` 
 
 IMPORTANTE: Prioriza segmentación por episodios y descripciones compactas. Devuelve SOLO JSON válido.`;
 
-    console.log('Generating outline with Lovable AI (GPT-5 mini) for:', idea.substring(0, 100));
+    console.log('Generating outline with Gemini Flash for:', idea.substring(0, 100));
     console.log('Targets:', JSON.stringify(targets));
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 55_000);
 
     let response: Response;
     try {
@@ -269,9 +266,8 @@ IMPORTANTE: Prioriza segmentación por episodios y descripciones compactas. Devu
           'Authorization': `Bearer ${LOVABLE_API_KEY}`,
           'Content-Type': 'application/json',
         },
-        signal: controller.signal,
         body: JSON.stringify({
-          model: 'openai/gpt-5-mini',
+          model: 'google/gemini-2.5-flash',
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt }
@@ -280,15 +276,8 @@ IMPORTANTE: Prioriza segmentación por episodios y descripciones compactas. Devu
         }),
       });
     } catch (e) {
-      if (e instanceof DOMException && e.name === 'AbortError') {
-        return new Response(
-          JSON.stringify({ error: 'Tiempo de espera generando el outline. Reduce la longitud de la idea o baja la complejidad/targets.' }),
-          { status: 504, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+      console.error('Fetch error:', e);
       throw e;
-    } finally {
-      clearTimeout(timeoutId);
     }
 
     if (!response.ok) {
