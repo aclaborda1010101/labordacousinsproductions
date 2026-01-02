@@ -215,12 +215,16 @@ export type Database = {
           created_at: string
           expression_name: string | null
           fix_notes: string | null
+          generation_metadata: Json | null
           id: string
           image_url: string | null
+          ip_adapter_enabled: boolean | null
           outfit_id: string | null
           prompt_text: string | null
           qc_issues: Json | null
           qc_score: number | null
+          reference_anchor_id: string | null
+          reference_weight: number | null
           required: boolean
           seed: number | null
           slot_index: number
@@ -234,12 +238,16 @@ export type Database = {
           created_at?: string
           expression_name?: string | null
           fix_notes?: string | null
+          generation_metadata?: Json | null
           id?: string
           image_url?: string | null
+          ip_adapter_enabled?: boolean | null
           outfit_id?: string | null
           prompt_text?: string | null
           qc_issues?: Json | null
           qc_score?: number | null
+          reference_anchor_id?: string | null
+          reference_weight?: number | null
           required?: boolean
           seed?: number | null
           slot_index?: number
@@ -253,12 +261,16 @@ export type Database = {
           created_at?: string
           expression_name?: string | null
           fix_notes?: string | null
+          generation_metadata?: Json | null
           id?: string
           image_url?: string | null
+          ip_adapter_enabled?: boolean | null
           outfit_id?: string | null
           prompt_text?: string | null
           qc_issues?: Json | null
           qc_score?: number | null
+          reference_anchor_id?: string | null
+          reference_weight?: number | null
           required?: boolean
           seed?: number | null
           slot_index?: number
@@ -280,6 +292,13 @@ export type Database = {
             columns: ["outfit_id"]
             isOneToOne: false
             referencedRelation: "character_outfits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_character_pack_slots_reference_anchor"
+            columns: ["reference_anchor_id"]
+            isOneToOne: false
+            referencedRelation: "reference_anchors"
             referencedColumns: ["id"]
           },
         ]
@@ -1297,6 +1316,97 @@ export type Database = {
           },
         ]
       }
+      generation_history: {
+        Row: {
+          character_id: string
+          cost_usd: number | null
+          created_at: string | null
+          duration_seconds: number | null
+          engine: string
+          error_message: string | null
+          id: string
+          is_reproducible: boolean | null
+          likeness_score: number | null
+          model: string
+          negative_prompt: string | null
+          prompt_text: string
+          qc_score: number | null
+          reference_images: Json | null
+          reproduction_notes: string | null
+          result_url: string | null
+          shot_id: string | null
+          slot_id: string | null
+          success: boolean | null
+          technical_params: Json
+        }
+        Insert: {
+          character_id: string
+          cost_usd?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          engine: string
+          error_message?: string | null
+          id?: string
+          is_reproducible?: boolean | null
+          likeness_score?: number | null
+          model: string
+          negative_prompt?: string | null
+          prompt_text: string
+          qc_score?: number | null
+          reference_images?: Json | null
+          reproduction_notes?: string | null
+          result_url?: string | null
+          shot_id?: string | null
+          slot_id?: string | null
+          success?: boolean | null
+          technical_params?: Json
+        }
+        Update: {
+          character_id?: string
+          cost_usd?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          engine?: string
+          error_message?: string | null
+          id?: string
+          is_reproducible?: boolean | null
+          likeness_score?: number | null
+          model?: string
+          negative_prompt?: string | null
+          prompt_text?: string
+          qc_score?: number | null
+          reference_images?: Json | null
+          reproduction_notes?: string | null
+          result_url?: string | null
+          shot_id?: string | null
+          slot_id?: string | null
+          success?: boolean | null
+          technical_params?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generation_history_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generation_history_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generation_history_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "character_pack_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           attempts: number | null
@@ -1405,6 +1515,63 @@ export type Database = {
             columns: ["shot_id"]
             isOneToOne: false
             referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likeness_comparisons: {
+        Row: {
+          ai_analysis: string | null
+          ai_model_used: string | null
+          created_at: string | null
+          generated_slot_id: string
+          id: string
+          issues: Json | null
+          overall_likeness_score: number | null
+          passes_threshold: boolean | null
+          reference_anchor_id: string
+          scores: Json | null
+          threshold_used: number | null
+        }
+        Insert: {
+          ai_analysis?: string | null
+          ai_model_used?: string | null
+          created_at?: string | null
+          generated_slot_id: string
+          id?: string
+          issues?: Json | null
+          overall_likeness_score?: number | null
+          passes_threshold?: boolean | null
+          reference_anchor_id: string
+          scores?: Json | null
+          threshold_used?: number | null
+        }
+        Update: {
+          ai_analysis?: string | null
+          ai_model_used?: string | null
+          created_at?: string | null
+          generated_slot_id?: string
+          id?: string
+          issues?: Json | null
+          overall_likeness_score?: number | null
+          passes_threshold?: boolean | null
+          reference_anchor_id?: string
+          scores?: Json | null
+          threshold_used?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likeness_comparisons_generated_slot_id_fkey"
+            columns: ["generated_slot_id"]
+            isOneToOne: false
+            referencedRelation: "character_pack_slots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likeness_comparisons_reference_anchor_id_fkey"
+            columns: ["reference_anchor_id"]
+            isOneToOne: false
+            referencedRelation: "reference_anchors"
             referencedColumns: ["id"]
           },
         ]
@@ -1827,6 +1994,72 @@ export type Database = {
             columns: ["shot_id"]
             isOneToOne: false
             referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reference_anchors: {
+        Row: {
+          anchor_type: string
+          approved: boolean | null
+          approved_at: string | null
+          approved_by: string | null
+          character_id: string
+          created_at: string | null
+          id: string
+          image_url: string
+          is_active: boolean | null
+          last_used_at: string | null
+          metadata: Json | null
+          priority: number | null
+          updated_at: string | null
+          usage_count: number | null
+        }
+        Insert: {
+          anchor_type: string
+          approved?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          character_id: string
+          created_at?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          metadata?: Json | null
+          priority?: number | null
+          updated_at?: string | null
+          usage_count?: number | null
+        }
+        Update: {
+          anchor_type?: string
+          approved?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          character_id?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          metadata?: Json | null
+          priority?: number | null
+          updated_at?: string | null
+          usage_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reference_anchors_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "reference_anchors_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
             referencedColumns: ["id"]
           },
         ]
@@ -2629,7 +2862,26 @@ export type Database = {
         Args: { char_id: string; modifications: Json; new_version_name: string }
         Returns: string
       }
+      get_active_anchors: {
+        Args: { anchor_types?: string[]; char_id: string }
+        Returns: {
+          anchor_id: string
+          anchor_type: string
+          image_url: string
+          priority: number
+          usage_count: number
+        }[]
+      }
       get_active_visual_dna: { Args: { char_id: string }; Returns: Json }
+      get_primary_identity_anchor: {
+        Args: { char_id: string }
+        Returns: {
+          anchor_id: string
+          anchor_type: string
+          image_url: string
+          priority: number
+        }[]
+      }
       has_project_access: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
@@ -2641,6 +2893,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_anchor_usage: { Args: { p_anchor_id: string }; Returns: undefined }
       validate_audio_layers: { Args: { layer_id: string }; Returns: boolean }
     }
     Enums: {

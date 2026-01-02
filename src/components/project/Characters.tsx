@@ -1234,6 +1234,7 @@ export default function Characters({ projectId }: CharactersProps) {
                 characterBio={char.bio || ''}
                 characterRole={char.character_role}
                 styleToken={char.token || undefined}
+                projectId={projectId}
                 onPackComplete={() => {
                   fetchCharacters();
                   toast.success('Character Pack completado');
