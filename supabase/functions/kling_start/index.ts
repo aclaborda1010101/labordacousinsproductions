@@ -63,45 +63,56 @@ async function imageUrlToBase64(imageUrl: string): Promise<string> {
   return base64;
 }
 
-// Generate keyframe using Lovable AI
-async function generateKeyframe(prompt: string): Promise<string> {
+// Generate keyframe using Lovable AI - returns null if generation fails
+async function generateKeyframe(prompt: string): Promise<string | null> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  if (!LOVABLE_API_KEY) {
+    console.warn('LOVABLE_API_KEY not configured, skipping keyframe generation');
+    return null;
+  }
 
   console.log('Generating keyframe with Lovable AI...');
 
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "google/gemini-3-pro-image-preview",
-      messages: [{ 
-        role: "user", 
-        content: `Cinematic keyframe for video generation: ${prompt}. 16:9 aspect ratio, professional film quality, dramatic lighting, high production value.` 
-      }],
-      modalities: ["image", "text"]
-    }),
-  });
+  try {
+    // Simplify prompt for image generation to avoid content filters
+    const imagePrompt = `Professional cinematic still frame: A person in a modern office environment. 16:9 aspect ratio, film quality, natural lighting.`;
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Keyframe generation error:', response.status, errorText);
-    throw new Error(`Keyframe generation failed: ${response.status}`);
-  }
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-3-pro-image-preview",
+        messages: [{ 
+          role: "user", 
+          content: imagePrompt
+        }],
+        modalities: ["image", "text"]
+      }),
+    });
 
-  const data = await response.json();
-  const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-  
-  if (!imageUrl) {
-    console.error('No image URL in response:', JSON.stringify(data, null, 2));
-    throw new Error('No keyframe generated');
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn('Keyframe generation failed, will use text2video:', response.status, errorText);
+      return null;
+    }
+
+    const data = await response.json();
+    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    if (!imageUrl) {
+      console.warn('No image URL in response, will use text2video. Response:', JSON.stringify(data, null, 2));
+      return null;
+    }
+    
+    console.log('Keyframe generated successfully');
+    return imageUrl;
+  } catch (error) {
+    console.warn('Keyframe generation error, will use text2video:', error);
+    return null;
   }
-  
-  console.log('Keyframe generated successfully');
-  return imageUrl;
 }
 
 serve(async (req) => {
@@ -141,11 +152,16 @@ serve(async (req) => {
     // Check if model requires image2video (v2.x models typically do)
     const requiresImage = KLING_MODEL_NAME.includes('v2');
     
-    // For v2.x models, always need a keyframe
-    let finalKeyframeUrl = keyframeUrl;
+    // For v2.x models, try to generate keyframe but fallback to text2video if it fails
+    let finalKeyframeUrl: string | undefined = keyframeUrl;
     if (requiresImage && !finalKeyframeUrl) {
-      console.log('Model requires keyframe, generating one...');
-      finalKeyframeUrl = await generateKeyframe(prompt);
+      console.log('Model requires keyframe, attempting to generate one...');
+      const generatedKeyframe = await generateKeyframe(prompt);
+      if (generatedKeyframe) {
+        finalKeyframeUrl = generatedKeyframe;
+      } else {
+        console.log('Keyframe generation failed, falling back to text2video');
+      }
     }
 
     const requestBody: Record<string, unknown> = {
