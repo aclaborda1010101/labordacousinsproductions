@@ -1407,6 +1407,78 @@ export type Database = {
           },
         ]
       }
+      generation_logs: {
+        Row: {
+          character_id: string | null
+          cost_usd: number | null
+          created_at: string | null
+          duration_ms: number | null
+          engine: string | null
+          error_message: string | null
+          from_cache: boolean | null
+          id: string
+          metadata: Json | null
+          project_id: string | null
+          prompt_hash: string | null
+          qc_score: number | null
+          slot_id: string | null
+          slot_type: string | null
+          success: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          character_id?: string | null
+          cost_usd?: number | null
+          created_at?: string | null
+          duration_ms?: number | null
+          engine?: string | null
+          error_message?: string | null
+          from_cache?: boolean | null
+          id?: string
+          metadata?: Json | null
+          project_id?: string | null
+          prompt_hash?: string | null
+          qc_score?: number | null
+          slot_id?: string | null
+          slot_type?: string | null
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          character_id?: string | null
+          cost_usd?: number | null
+          created_at?: string | null
+          duration_ms?: number | null
+          engine?: string | null
+          error_message?: string | null
+          from_cache?: boolean | null
+          id?: string
+          metadata?: Json | null
+          project_id?: string | null
+          prompt_hash?: string | null
+          qc_score?: number | null
+          slot_id?: string | null
+          slot_type?: string | null
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generation_logs_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generation_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           attempts: number | null
@@ -1868,6 +1940,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      prompt_cache: {
+        Row: {
+          anchor_id: string | null
+          cached_result_url: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          last_used_at: string | null
+          prompt_hash: string
+          quality_score: number | null
+          slot_type: string
+          usage_count: number | null
+          visual_dna_hash: string | null
+        }
+        Insert: {
+          anchor_id?: string | null
+          cached_result_url: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          last_used_at?: string | null
+          prompt_hash: string
+          quality_score?: number | null
+          slot_type: string
+          usage_count?: number | null
+          visual_dna_hash?: string | null
+        }
+        Update: {
+          anchor_id?: string | null
+          cached_result_url?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          last_used_at?: string | null
+          prompt_hash?: string
+          quality_score?: number | null
+          slot_type?: string
+          usage_count?: number | null
+          visual_dna_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_cache_anchor_id_fkey"
+            columns: ["anchor_id"]
+            isOneToOne: false
+            referencedRelation: "reference_anchors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       props: {
         Row: {
@@ -2640,6 +2762,42 @@ export type Database = {
           },
         ]
       }
+      style_presets: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_system: boolean | null
+          name: string
+          preset_data: Json
+          usage_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_system?: boolean | null
+          name: string
+          preset_data?: Json
+          usage_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_system?: boolean | null
+          name?: string
+          preset_data?: Json
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           created_at: string
@@ -2690,6 +2848,39 @@ export type Database = {
           },
         ]
       }
+      user_budgets: {
+        Row: {
+          alert_threshold_percent: number | null
+          created_at: string | null
+          daily_limit_usd: number | null
+          id: string
+          monthly_limit_usd: number | null
+          pause_on_exceed: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_threshold_percent?: number | null
+          created_at?: string | null
+          daily_limit_usd?: number | null
+          id?: string
+          monthly_limit_usd?: number | null
+          pause_on_exceed?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_threshold_percent?: number | null
+          created_at?: string | null
+          daily_limit_usd?: number | null
+          id?: string
+          monthly_limit_usd?: number | null
+          pause_on_exceed?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2707,6 +2898,45 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_usage: {
+        Row: {
+          created_at: string | null
+          generations_cost_usd: number | null
+          generations_count: number | null
+          id: string
+          month: string
+          storage_bytes: number | null
+          storage_cost_usd: number | null
+          total_cost_usd: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          generations_cost_usd?: number | null
+          generations_count?: number | null
+          id?: string
+          month: string
+          storage_bytes?: number | null
+          storage_cost_usd?: number | null
+          total_cost_usd?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          generations_cost_usd?: number | null
+          generations_count?: number | null
+          id?: string
+          month?: string
+          storage_bytes?: number | null
+          storage_cost_usd?: number | null
+          total_cost_usd?: number | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -2858,6 +3088,16 @@ export type Database = {
           can_render: boolean
         }[]
       }
+      can_user_generate: {
+        Args: { p_user_id: string }
+        Returns: {
+          allowed: boolean
+          limit_today: number
+          reason: string
+          usage_today: number
+        }[]
+      }
+      clean_expired_cache: { Args: never; Returns: number }
       create_visual_dna_version: {
         Args: { char_id: string; modifications: Json; new_version_name: string }
         Returns: string
@@ -2873,6 +3113,17 @@ export type Database = {
         }[]
       }
       get_active_visual_dna: { Args: { char_id: string }; Returns: Json }
+      get_cached_generation: {
+        Args: {
+          p_anchor_id?: string
+          p_prompt_hash: string
+          p_visual_dna_hash?: string
+        }
+        Returns: {
+          cached_url: string
+          quality: number
+        }[]
+      }
       get_primary_identity_anchor: {
         Args: { char_id: string }
         Returns: {
@@ -2893,7 +3144,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_user_usage: {
+        Args: { p_cost: number; p_month: string; p_user_id: string }
+        Returns: undefined
+      }
       record_anchor_usage: { Args: { p_anchor_id: string }; Returns: undefined }
+      save_to_cache: {
+        Args: {
+          p_anchor_id: string
+          p_prompt_hash: string
+          p_quality_score: number
+          p_result_url: string
+          p_slot_type: string
+          p_visual_dna_hash: string
+        }
+        Returns: undefined
+      }
       validate_audio_layers: { Args: { layer_id: string }; Returns: boolean }
     }
     Enums: {
