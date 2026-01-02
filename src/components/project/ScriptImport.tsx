@@ -91,11 +91,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [currentEpisodeGenerating, setCurrentEpisodeGenerating] = useState<number | null>(null);
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([
     { id: 'targets', label: 'Calculando targets', status: 'pending' },
-    { id: 'outline', label: 'Generando outline extenso', status: 'pending' },
+    { id: 'outline', label: 'Generando outline', status: 'pending' },
     { id: 'qc', label: 'QC del outline', status: 'pending' },
     { id: 'episodes', label: 'Generando episodios', status: 'pending' },
     { id: 'save', label: 'Guardando', status: 'pending' },
   ]);
+  const [currentStepLabel, setCurrentStepLabel] = useState<string>('');
   
   // Episode view mode: summary vs full screenplay
   const [episodeViewMode, setEpisodeViewMode] = useState<Record<number, 'summary' | 'full'>>({});
@@ -167,8 +168,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   }, [format, filmDurationMin, episodesCount, episodeDurationMin, complexity, genre, proMode]);
 
-  const updatePipelineStep = (stepId: string, status: PipelineStep['status']) => {
-    setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status } : s));
+  const updatePipelineStep = (stepId: string, status: PipelineStep['status'], label?: string) => {
+    setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status, label: label || s.label } : s));
+    if (label) setCurrentStepLabel(label);
   };
 
   // Main pipeline: Generate Script "Listo para Rodar" - NEW: Episode by Episode
@@ -205,9 +207,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       updatePipelineStep('targets', 'success');
       setPipelineProgress(10);
 
-      // Step 2: Generate DETAILED Outline (with GPT-5)
-      updatePipelineStep('outline', 'running');
-      toast.info('Generando outline extenso con GPT-5...');
+      // Step 2: Generate DETAILED Outline
+      updatePipelineStep('outline', 'running', 'Generando outline...');
+      toast.info('Generando outline estructurado...');
       
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('script-generate-outline', {
         body: {
@@ -273,7 +275,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setPipelineProgress(35);
 
       // Step 4: Generate EACH EPISODE separately with full dialogue
-      updatePipelineStep('episodes', 'running');
+      updatePipelineStep('episodes', 'running', 'Preparando episodios...');
       
       const episodeOutlines = currentOutline.episode_outlines || [{ 
         episode_number: 1, 
@@ -290,7 +292,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         const episodeNum = epOutline.episode_number || i + 1;
         setCurrentEpisodeGenerating(episodeNum);
         
-        toast.info(`Generando episodio ${episodeNum}/${totalEpisodes} con diálogos completos...`);
+        // Update step label with current episode
+        updatePipelineStep('episodes', 'running', `Episodio ${episodeNum} de ${totalEpisodes}...`);
+        toast.info(`Generando episodio ${episodeNum}/${totalEpisodes}...`);
         
         const { data: episodeData, error: episodeError } = await supabase.functions.invoke('script-generate-episode', {
           body: {
@@ -919,9 +923,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     ))}
                   </div>
                   {currentEpisodeGenerating !== null && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                      <span>Generando Episodio {currentEpisodeGenerating} con diálogos completos...</span>
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Escribiendo diálogos del Episodio {currentEpisodeGenerating}...</span>
                     </div>
                   )}
                 </div>
