@@ -39,7 +39,11 @@ import {
   Rocket,
   XCircle,
   RefreshCw,
-  Snowflake
+  Snowflake,
+  Import,
+  CheckSquare,
+  Square,
+  Sparkles
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -99,6 +103,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [analyzing, setAnalyzing] = useState(false);
   const [doctorSuggestions, setDoctorSuggestions] = useState<any[]>([]);
   const [doctorScore, setDoctorScore] = useState<number | null>(null);
+
+  // Entity import state
+  const [selectedCharacters, setSelectedCharacters] = useState<Set<number>>(new Set());
+  const [selectedLocations, setSelectedLocations] = useState<Set<number>>(new Set());
+  const [selectedProps, setSelectedProps] = useState<Set<number>>(new Set());
+  const [importing, setImporting] = useState(false);
 
   // Load existing script
   useEffect(() => {
@@ -396,6 +406,169 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     doc.save(`${(generatedScript.title || 'guion').replace(/\s+/g, '_')}.pdf`);
     toast.success('PDF exportado');
+  };
+
+  // Export single episode
+  const exportEpisodePDF = (episode: any, epIdx: number) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
+
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text(episode.title || `Episodio ${epIdx + 1}`, pageWidth / 2, y, { align: 'center' });
+    y += 15;
+
+    if (episode.synopsis) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'italic');
+      const synLines = doc.splitTextToSize(episode.synopsis, pageWidth - 40);
+      doc.text(synLines, 20, y);
+      y += synLines.length * 5 + 10;
+    }
+
+    (episode.scenes || []).forEach((scene: any, sceneIdx: number) => {
+      if (y > 260) { doc.addPage(); y = 20; }
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Escena ${scene.scene_number || sceneIdx + 1}: ${scene.slugline || ''}`, 20, y);
+      y += 6;
+
+      if (scene.dialogue?.length > 0) {
+        doc.setFontSize(8);
+        scene.dialogue.slice(0, 5).forEach((d: any) => {
+          if (y > 270) { doc.addPage(); y = 20; }
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${d.character}:`, 25, y);
+          doc.setFont('helvetica', 'normal');
+          const lineText = doc.splitTextToSize(d.line || '', pageWidth - 55);
+          doc.text(lineText, 50, y);
+          y += Math.max(lineText.length * 4, 5);
+        });
+      }
+      y += 6;
+    });
+
+    doc.save(`${(episode.title || `episodio_${epIdx + 1}`).replace(/\s+/g, '_')}.pdf`);
+    toast.success(`Episodio ${epIdx + 1} exportado`);
+  };
+
+  // Toggle entity selection
+  const toggleCharacter = (idx: number) => {
+    setSelectedCharacters(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  };
+
+  const toggleLocation = (idx: number) => {
+    setSelectedLocations(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  };
+
+  const toggleProp = (idx: number) => {
+    setSelectedProps(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  };
+
+  const selectAllCharacters = () => {
+    if (!generatedScript?.characters) return;
+    if (selectedCharacters.size === generatedScript.characters.length) {
+      setSelectedCharacters(new Set());
+    } else {
+      setSelectedCharacters(new Set(generatedScript.characters.map((_: any, i: number) => i)));
+    }
+  };
+
+  const selectAllLocations = () => {
+    if (!generatedScript?.locations) return;
+    if (selectedLocations.size === generatedScript.locations.length) {
+      setSelectedLocations(new Set());
+    } else {
+      setSelectedLocations(new Set(generatedScript.locations.map((_: any, i: number) => i)));
+    }
+  };
+
+  const selectAllProps = () => {
+    if (!generatedScript?.props) return;
+    if (selectedProps.size === generatedScript.props.length) {
+      setSelectedProps(new Set());
+    } else {
+      setSelectedProps(new Set(generatedScript.props.map((_: any, i: number) => i)));
+    }
+  };
+
+  // Import selected entities to Bible
+  const importEntitiesToBible = async () => {
+    if (selectedCharacters.size === 0 && selectedLocations.size === 0 && selectedProps.size === 0) {
+      toast.error('Selecciona al menos una entidad para importar');
+      return;
+    }
+
+    setImporting(true);
+    try {
+      // Import characters
+      if (selectedCharacters.size > 0 && generatedScript?.characters) {
+        const charsToImport = generatedScript.characters.filter((_: any, i: number) => selectedCharacters.has(i));
+        for (const char of charsToImport) {
+          const { error } = await supabase.from('characters').insert({
+            project_id: projectId,
+            name: char.name,
+            role: char.role || 'supporting',
+            bio: char.description || char.bio || '',
+            arc: char.arc || '',
+          });
+          if (error) throw error;
+        }
+      }
+
+      // Import locations
+      if (selectedLocations.size > 0 && generatedScript?.locations) {
+        const locsToImport = generatedScript.locations.filter((_: any, i: number) => selectedLocations.has(i));
+        for (const loc of locsToImport) {
+          const { error } = await supabase.from('locations').insert({
+            project_id: projectId,
+            name: typeof loc === 'string' ? loc : loc.name,
+            description: typeof loc === 'object' ? (loc.description || '') : '',
+          });
+          if (error) throw error;
+        }
+      }
+
+      // Import props
+      if (selectedProps.size > 0 && generatedScript?.props) {
+        const propsToImport = generatedScript.props.filter((_: any, i: number) => selectedProps.has(i));
+        for (const prop of propsToImport) {
+          const { error } = await supabase.from('props').insert({
+            project_id: projectId,
+            name: typeof prop === 'string' ? prop : prop.name,
+            description: typeof prop === 'object' ? (prop.description || '') : '',
+          });
+          if (error) throw error;
+        }
+      }
+      toast.success(`Importados: ${selectedCharacters.size} personajes, ${selectedLocations.size} localizaciones, ${selectedProps.size} props`);
+      
+      // Clear selections
+      setSelectedCharacters(new Set());
+      setSelectedLocations(new Set());
+      setSelectedProps(new Set());
+    } catch (err: any) {
+      console.error('Error importing entities:', err);
+      toast.error('Error al importar entidades');
+    } finally {
+      setImporting(false);
+    }
   };
 
   const getSeverityColor = (severity: string) => {
@@ -776,6 +949,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           ) : (
             <>
+              {/* Header with export */}
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-lg">{generatedScript.title || 'Guion Generado'}</h3>
@@ -786,14 +960,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={exportCompletePDF}>
                     <FileDown className="w-4 h-4 mr-2" />
-                    Exportar PDF
+                    Exportar Guion Completo
                   </Button>
                 </div>
               </div>
 
+              {/* Synopsis Card */}
               {generatedScript.synopsis && (
                 <Card>
-                  <CardHeader><CardTitle className="text-base">Sinopsis</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="text-base">Sinopsis General</CardTitle></CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">{generatedScript.synopsis}</p>
                   </CardContent>
@@ -814,69 +989,145 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </div>
               )}
 
-              {/* Characters & Locations */}
-              <div className="grid gap-4 md:grid-cols-2">
-                {generatedScript.characters?.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <Users className="w-4 h-4 text-primary" />
-                        Personajes ({generatedScript.characters.length})
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ScrollArea className="h-[150px]">
-                        <ul className="space-y-2 text-sm">
-                          {generatedScript.characters.map((char: any, i: number) => (
-                            <li key={i}>
-                              <span className="font-medium">{char.name}</span>
-                              {char.role && <Badge variant="outline" className="ml-2 text-xs">{char.role}</Badge>}
-                              {char.description && <p className="text-xs text-muted-foreground">{char.description.substring(0, 100)}...</p>}
-                            </li>
-                          ))}
-                        </ul>
+              {/* BREAKDOWN - Import Entities */}
+              <Card className="border-primary/50">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-primary" />
+                      Breakdown: Importar a Biblia
+                    </CardTitle>
+                    <Button 
+                      onClick={importEntitiesToBible} 
+                      disabled={importing || (selectedCharacters.size === 0 && selectedLocations.size === 0 && selectedProps.size === 0)}
+                    >
+                      {importing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Import className="w-4 h-4 mr-2" />}
+                      Importar Seleccionados ({selectedCharacters.size + selectedLocations.size + selectedProps.size})
+                    </Button>
+                  </div>
+                  <CardDescription>
+                    Selecciona personajes, localizaciones y props para añadirlos a la Biblia del proyecto
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {/* Characters */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-primary" />
+                          Personajes ({generatedScript.characters?.length || 0})
+                        </Label>
+                        <Button variant="ghost" size="sm" onClick={selectAllCharacters}>
+                          {selectedCharacters.size === (generatedScript.characters?.length || 0) ? 'Deseleccionar' : 'Seleccionar todos'}
+                        </Button>
+                      </div>
+                      <ScrollArea className="h-[200px] border rounded-md p-2">
+                        {generatedScript.characters?.map((char: any, i: number) => (
+                          <div 
+                            key={i} 
+                            className={`flex items-start gap-2 p-2 rounded cursor-pointer hover:bg-muted/50 ${selectedCharacters.has(i) ? 'bg-primary/10' : ''}`}
+                            onClick={() => toggleCharacter(i)}
+                          >
+                            {selectedCharacters.has(i) ? 
+                              <CheckSquare className="w-4 h-4 text-primary shrink-0 mt-0.5" /> : 
+                              <Square className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                            }
+                            <div className="min-w-0">
+                              <p className="font-medium text-sm truncate">{char.name}</p>
+                              {char.role && <Badge variant="outline" className="text-xs">{char.role}</Badge>}
+                            </div>
+                          </div>
+                        ))}
+                        {(!generatedScript.characters || generatedScript.characters.length === 0) && (
+                          <p className="text-sm text-muted-foreground text-center py-4">Sin personajes detectados</p>
+                        )}
                       </ScrollArea>
-                    </CardContent>
-                  </Card>
-                )}
-                {generatedScript.locations?.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        Localizaciones ({generatedScript.locations.length})
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ScrollArea className="h-[150px]">
-                        <ul className="space-y-1 text-sm">
-                          {generatedScript.locations.map((loc: any, i: number) => (
-                            <li key={i}>
-                              <span className="font-medium">{loc.name || loc}</span>
-                              {loc.type && <Badge variant="secondary" className="ml-2 text-xs">{loc.type}</Badge>}
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+                    </div>
 
-              {/* Episodes */}
+                    {/* Locations */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-primary" />
+                          Localizaciones ({generatedScript.locations?.length || 0})
+                        </Label>
+                        <Button variant="ghost" size="sm" onClick={selectAllLocations}>
+                          {selectedLocations.size === (generatedScript.locations?.length || 0) ? 'Deseleccionar' : 'Seleccionar todos'}
+                        </Button>
+                      </div>
+                      <ScrollArea className="h-[200px] border rounded-md p-2">
+                        {generatedScript.locations?.map((loc: any, i: number) => (
+                          <div 
+                            key={i} 
+                            className={`flex items-start gap-2 p-2 rounded cursor-pointer hover:bg-muted/50 ${selectedLocations.has(i) ? 'bg-primary/10' : ''}`}
+                            onClick={() => toggleLocation(i)}
+                          >
+                            {selectedLocations.has(i) ? 
+                              <CheckSquare className="w-4 h-4 text-primary shrink-0 mt-0.5" /> : 
+                              <Square className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                            }
+                            <p className="font-medium text-sm truncate">{typeof loc === 'string' ? loc : loc.name}</p>
+                          </div>
+                        ))}
+                        {(!generatedScript.locations || generatedScript.locations.length === 0) && (
+                          <p className="text-sm text-muted-foreground text-center py-4">Sin localizaciones detectadas</p>
+                        )}
+                      </ScrollArea>
+                    </div>
+
+                    {/* Props */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="flex items-center gap-2">
+                          <Package className="w-4 h-4 text-primary" />
+                          Props ({generatedScript.props?.length || 0})
+                        </Label>
+                        <Button variant="ghost" size="sm" onClick={selectAllProps}>
+                          {selectedProps.size === (generatedScript.props?.length || 0) ? 'Deseleccionar' : 'Seleccionar todos'}
+                        </Button>
+                      </div>
+                      <ScrollArea className="h-[200px] border rounded-md p-2">
+                        {generatedScript.props?.map((prop: any, i: number) => (
+                          <div 
+                            key={i} 
+                            className={`flex items-start gap-2 p-2 rounded cursor-pointer hover:bg-muted/50 ${selectedProps.has(i) ? 'bg-primary/10' : ''}`}
+                            onClick={() => toggleProp(i)}
+                          >
+                            {selectedProps.has(i) ? 
+                              <CheckSquare className="w-4 h-4 text-primary shrink-0 mt-0.5" /> : 
+                              <Square className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                            }
+                            <p className="font-medium text-sm truncate">{typeof prop === 'string' ? prop : prop.name}</p>
+                          </div>
+                        ))}
+                        {(!generatedScript.props || generatedScript.props.length === 0) && (
+                          <p className="text-sm text-muted-foreground text-center py-4">Sin props detectados</p>
+                        )}
+                      </ScrollArea>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Episodes with individual export */}
               <div className="space-y-3">
-                <h4 className="font-medium">Episodios</h4>
-                {(generatedScript.episodes || [{ title: 'Película', scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => (
+                <h4 className="font-medium">Episodios / Capítulos</h4>
+                {(generatedScript.episodes || [{ title: generatedScript.title || 'Película', scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => (
                   <Card key={epIdx}>
                     <Collapsible open={expandedEpisodes[epIdx] ?? false} onOpenChange={(open) => setExpandedEpisodes(prev => ({ ...prev, [epIdx]: open }))}>
                       <CardHeader className="py-3">
-                        <CollapsibleTrigger className="flex items-center gap-2 w-full justify-between">
-                          <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-between w-full">
+                          <CollapsibleTrigger className="flex items-center gap-2">
                             {expandedEpisodes[epIdx] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             <span className="font-medium">{ep.title || `Episodio ${epIdx + 1}`}</span>
                             <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
-                          </div>
-                        </CollapsibleTrigger>
+                          </CollapsibleTrigger>
+                          <Button variant="ghost" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
+                            <FileDown className="w-4 h-4 mr-1" />
+                            Exportar
+                          </Button>
+                        </div>
                       </CardHeader>
                       <CollapsibleContent>
                         <CardContent className="pt-0">
@@ -888,7 +1139,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                                   <Badge variant="outline" className="text-xs">#{scene.scene_number || sceneIdx + 1}</Badge>
                                   <span className="font-medium">{scene.slugline}</span>
                                 </div>
-                                {scene.dialogue && scene.dialogue.length > 0 && (
+                                {scene.dialogue?.length > 0 && (
                                   <div className="text-xs text-muted-foreground">
                                     {scene.dialogue.slice(0, 2).map((d: any, di: number) => (
                                       <p key={di}><strong>{d.character}:</strong> {d.line?.substring(0, 60)}...</p>
