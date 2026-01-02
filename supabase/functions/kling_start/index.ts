@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 import { requireAuthOrDemo, authErrorResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
@@ -50,16 +51,30 @@ async function makeKlingJwt(accessKey: string, secretKey: string): Promise<strin
   return `${unsigned}.${signature}`;
 }
 
-// Helper: Convert image URL to base64
+// Helper: Convert image URL (or data URL) to raw base64 (no prefix)
 async function imageUrlToBase64(imageUrl: string): Promise<string> {
   console.log('Converting image URL to base64...');
+
+  // If the AI returns a data URL, it already contains base64.
+  if (imageUrl.startsWith('data:')) {
+    const commaIndex = imageUrl.indexOf(',');
+    if (commaIndex === -1) {
+      throw new Error('Invalid data URL (missing comma)');
+    }
+
+    const base64 = imageUrl.slice(commaIndex + 1);
+    console.log('Data URL detected, using embedded base64. Length:', base64.length);
+    return base64;
+  }
+
   const response = await fetch(imageUrl);
   if (!response.ok) {
     throw new Error(`Failed to fetch image: ${response.status}`);
   }
-  const arrayBuffer = await response.arrayBuffer();
-  const uint8Array = new Uint8Array(arrayBuffer);
-  const base64 = btoa(String.fromCharCode(...uint8Array));
+
+  const uint8Array = new Uint8Array(await response.arrayBuffer());
+  const base64 = encode(uint8Array.buffer);
+
   console.log('Image converted to base64 successfully, length:', base64.length);
   return base64;
 }
