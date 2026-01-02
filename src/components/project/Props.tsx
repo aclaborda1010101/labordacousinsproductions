@@ -8,12 +8,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Plus, Box, Loader2, Trash2, Edit2, Save, X, Copy, 
-  Search, ChevronDown, ChevronUp, Wand2
+  Search, ChevronDown, ChevronUp, Wand2, BookOpen
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import BibleProfileViewer from './BibleProfileViewer';
+import { EntityQCBadge } from './QCStatusBadge';
 
 interface PropsComponentProps {
   projectId: string;
@@ -33,6 +36,7 @@ interface Prop {
   continuity_notes: string | null;
   reference_urls: unknown;
   status: string | null;
+  profile_json?: any;
 }
 
 const PROP_TYPES = [
@@ -72,6 +76,7 @@ export default function Props({ projectId }: PropsComponentProps) {
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [generatingBible, setGeneratingBible] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -93,6 +98,51 @@ export default function Props({ projectId }: PropsComponentProps) {
       .order('created_at');
     setProps((data || []) as Prop[]);
     setLoading(false);
+  };
+
+  const generateBibleProfile = async (prop: Prop) => {
+    setGeneratingBible(prop.id);
+    toast.info('Generando perfil Bible con IA...');
+
+    try {
+      const response = await supabase.functions.invoke('entity-builder', {
+        body: {
+          entityType: 'prop',
+          name: prop.name,
+          description: prop.description || '',
+          existingData: {
+            prop_type: prop.prop_type,
+            condition: prop.condition,
+            color_finish: prop.color_finish,
+            dimensions: prop.dimensions,
+            interaction_rules: prop.interaction_rules,
+            materials: prop.materials
+          },
+          language: 'es-ES',
+        }
+      });
+
+      if (response.error) throw new Error(response.error.message);
+
+      const profileData = response.data?.entity || response.data;
+      
+      await supabase.from('props').update({
+        profile_json: profileData,
+        prop_type: profileData?.profile?.prop_type || prop.prop_type,
+        condition: profileData?.profile?.condition || prop.condition,
+        color_finish: profileData?.profile?.color_finish || prop.color_finish,
+        dimensions: profileData?.profile?.dimensions_approx || prop.dimensions,
+        materials: profileData?.profile?.materials || prop.materials,
+      }).eq('id', prop.id);
+
+      toast.success('Perfil Bible generado correctamente');
+      fetchProps();
+    } catch (error) {
+      console.error('Error generating bible:', error);
+      toast.error('Error al generar perfil Bible');
+    } finally {
+      setGeneratingBible(null);
+    }
   };
 
   useEffect(() => { fetchProps(); }, [projectId]);
@@ -358,7 +408,7 @@ export default function Props({ projectId }: PropsComponentProps) {
                   open={expandedId === prop.id}
                   onOpenChange={(open) => setExpandedId(open ? prop.id : null)}
                 >
-                  <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                       <Box className="w-6 h-6 text-primary" />
                     </div>
@@ -371,6 +421,11 @@ export default function Props({ projectId }: PropsComponentProps) {
                         {prop.condition && (
                           <Badge variant="secondary">{getConditionLabel(prop.condition)}</Badge>
                         )}
+                        <EntityQCBadge 
+                          entityType="prop" 
+                          hasProfile={!!prop.profile_json}
+                          hasContinuityLock={!!prop.profile_json?.continuity_lock}
+                        />
                       </div>
                       {prop.description && (
                         <p className="text-sm text-muted-foreground line-clamp-2">{prop.description}</p>
@@ -385,11 +440,20 @@ export default function Props({ projectId }: PropsComponentProps) {
                       <Button
                         variant="ghost"
                         size="icon"
+                        onClick={() => generateBibleProfile(prop)}
+                        disabled={generatingBible === prop.id}
+                        title="Generar perfil Bible con IA"
+                      >
+                        {generatingBible === prop.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4 text-primary" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => generateProfileAI(prop)}
                         disabled={generating === prop.id}
-                        title="Generar perfil con IA"
+                        title="Generar perfil rápido"
                       >
-                        {generating === prop.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4 text-primary" />}
+                        {generating === prop.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
                       </Button>
                       <Button variant="ghost" size="icon" onClick={() => duplicateProp(prop)} disabled={duplicating === prop.id}>
                         {duplicating === prop.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
@@ -404,6 +468,22 @@ export default function Props({ projectId }: PropsComponentProps) {
                   </div>
 
                   <CollapsibleContent className="mt-4 pt-4 border-t">
+                    <Tabs defaultValue={prop.profile_json ? "bible" : "details"} className="w-full">
+                      <TabsList className="mb-4">
+                        <TabsTrigger value="details">Detalles</TabsTrigger>
+                        <TabsTrigger value="bible" disabled={!prop.profile_json}>
+                          <BookOpen className="w-3 h-3 mr-1" />
+                          Bible
+                        </TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="bible">
+                        {prop.profile_json && (
+                          <BibleProfileViewer profile={prop.profile_json} entityType="prop" />
+                        )}
+                      </TabsContent>
+
+                      <TabsContent value="details">
                     {editingId === prop.id ? (
                       <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
@@ -515,6 +595,8 @@ export default function Props({ projectId }: PropsComponentProps) {
                         )}
                       </div>
                     )}
+                      </TabsContent>
+                    </Tabs>
                   </CollapsibleContent>
                 </Collapsible>
               </CardContent>
