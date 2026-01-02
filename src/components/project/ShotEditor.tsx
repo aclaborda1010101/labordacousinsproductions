@@ -210,6 +210,125 @@ export default function ShotEditor({
     }
   };
 
+  // Build prompt for video generation
+  const buildVideoPrompt = () => {
+    const parts: string[] = [];
+    
+    parts.push(`${form.shot_type} shot`);
+    parts.push(`Scene: ${scene.slugline}`);
+    
+    if (scene.summary) {
+      parts.push(scene.summary);
+    }
+    
+    if (form.blocking_description) {
+      parts.push(`Action: ${form.blocking_description}`);
+    }
+    
+    if (form.camera_movement && form.camera_movement !== 'static') {
+      parts.push(`Camera: ${form.camera_movement}`);
+    }
+    
+    if (sceneCharacters.length > 0) {
+      parts.push(`Characters: ${sceneCharacters.map(c => c.name).join(', ')}`);
+    }
+    
+    if (sceneLocation) {
+      parts.push(`Location: ${sceneLocation.name}`);
+    }
+    
+    if (form.dialogue_text) {
+      parts.push(`Dialogue: "${form.dialogue_text}"`);
+    }
+    
+    return parts.join('. ') + '.';
+  };
+
+  // Poll Veo operation until complete
+  const pollVeoOperation = async (operationId: string): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
+    const maxAttempts = 60; // 5 minutes max
+    let attempts = 0;
+    
+    while (attempts < maxAttempts) {
+      await new Promise(r => setTimeout(r, 5000)); // Poll every 5 seconds
+      attempts++;
+      
+      toast.info(`Procesando video... (${attempts * 5}s)`);
+      
+      const { data, error } = await supabase.functions.invoke('veo_poll', {
+        body: { operation: operationId }
+      });
+      
+      if (error) {
+        console.error('Poll error:', error);
+        continue;
+      }
+      
+      console.log('Poll result:', data);
+      
+      if (data?.done) {
+        // Extract video URL from response
+        // Veo returns bytesBase64Encoded or GCS uri
+        const result = data.result;
+        if (result?.predictions?.[0]?.bytesBase64Encoded) {
+          // Convert base64 to data URL
+          const base64 = result.predictions[0].bytesBase64Encoded;
+          return { done: true, videoUrl: `data:video/mp4;base64,${base64}` };
+        } else if (result?.predictions?.[0]?.gcsUri) {
+          return { done: true, videoUrl: result.predictions[0].gcsUri };
+        } else if (result?.video) {
+          return { done: true, videoUrl: result.video };
+        }
+        
+        // Check for error
+        if (data.raw?.error) {
+          return { done: true, error: data.raw.error.message || 'Veo generation failed' };
+        }
+        
+        return { done: true, error: 'No video URL in response' };
+      }
+    }
+    
+    return { done: false, error: 'Timeout waiting for video generation' };
+  };
+
+  const generateWithVeo = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
+    const prompt = buildVideoPrompt();
+    console.log('Starting Veo generation with prompt:', prompt);
+    
+    // Start the operation
+    const { data: startData, error: startError } = await supabase.functions.invoke('veo_start', {
+      body: {
+        prompt,
+        seconds: form.duration_target,
+        aspectRatio: '16:9',
+        sampleCount: 1
+      }
+    });
+    
+    if (startError) {
+      console.error('Veo start error:', startError);
+      return { success: false, error: startError.message };
+    }
+    
+    if (!startData?.ok || !startData?.operation) {
+      console.error('Veo start failed:', startData);
+      return { success: false, error: startData?.error || 'Failed to start Veo operation' };
+    }
+    
+    console.log('Veo operation started:', startData.operation);
+    toast.info('Video en generación con Veo 3.1...');
+    
+    // Poll for completion
+    const pollResult = await pollVeoOperation(startData.operation);
+    
+    if (pollResult.done && pollResult.videoUrl) {
+      return { success: true, videoUrl: pollResult.videoUrl };
+    }
+    
+    return { success: false, error: pollResult.error || 'Video generation failed' };
+  };
+
   const generateVideo = async () => {
     // Save first
     await saveShot();
@@ -218,53 +337,81 @@ export default function ShotEditor({
     toast.info(`Generando shot con ${selectedEngine.toUpperCase()}...`);
 
     try {
-      const { data, error } = await supabase.functions.invoke('generate-shot', {
-        body: {
-          shotId: shot.id,
-          sceneDescription: `${scene.slugline}. ${scene.summary || ''}`,
-          shotType: form.shot_type,
-          duration: form.duration_target,
-          engine: selectedEngine,
-          dialogueText: form.dialogue_text,
-          cameraMovement: form.camera_movement,
-          blocking: form.blocking_description,
-          characterRefs: sceneCharacters.map(c => ({
-            name: c.name,
-            token: c.token,
-            referenceUrl: (c.turnaround_urls as string[])?.[0]
-          })),
-          locationRef: sceneLocation ? {
-            name: sceneLocation.name,
-            token: sceneLocation.token,
-            referenceUrl: (sceneLocation.reference_urls as string[])?.[0]
-          } : undefined
-        }
-      });
+      let videoUrl: string | null = null;
+      let fallback = false;
+      let engineUsed = selectedEngine;
+      let metadata: Record<string, unknown> = {};
 
-      if (error) throw error;
-
-      if (data?.success) {
-        // Create render record
-        await supabase.from('renders').insert([{
-          shot_id: shot.id,
-          engine: selectedEngine,
-          video_url: data.videoUrl || data.imageUrl,
-          status: data.fallback ? 'failed' : 'succeeded',
-          prompt_text: `${scene.slugline} - ${form.shot_type}`,
-          params: data.metadata
-        }]);
-
-        if (data.fallback) {
-          toast.warning('Keyframe generado (video no disponible)');
+      if (selectedEngine === 'veo') {
+        // Use new veo_start/veo_poll flow with OAuth2
+        const veoResult = await generateWithVeo();
+        
+        if (veoResult.success && veoResult.videoUrl) {
+          videoUrl = veoResult.videoUrl;
+          metadata = { engine: 'veo', model: 'veo-3.1-generate-001' };
         } else {
-          toast.success('Shot generado correctamente');
+          // Fallback to Lovable AI for keyframe
+          console.log('Veo failed, falling back to Lovable AI:', veoResult.error);
+          toast.warning('Veo no disponible, generando keyframe...');
+          fallback = true;
+          engineUsed = 'lovable';
         }
-
-        onShotUpdated();
-        onOpenChange(false);
-      } else {
-        throw new Error(data?.error || 'Generation failed');
       }
+
+      // Use original generate-shot for kling and lovable (and as fallback)
+      if (selectedEngine !== 'veo' || fallback) {
+        const { data, error } = await supabase.functions.invoke('generate-shot', {
+          body: {
+            shotId: shot.id,
+            sceneDescription: `${scene.slugline}. ${scene.summary || ''}`,
+            shotType: form.shot_type,
+            duration: form.duration_target,
+            engine: fallback ? 'lovable' : selectedEngine,
+            dialogueText: form.dialogue_text,
+            cameraMovement: form.camera_movement,
+            blocking: form.blocking_description,
+            characterRefs: sceneCharacters.map(c => ({
+              name: c.name,
+              token: c.token,
+              referenceUrl: (c.turnaround_urls as string[])?.[0]
+            })),
+            locationRef: sceneLocation ? {
+              name: sceneLocation.name,
+              token: sceneLocation.token,
+              referenceUrl: (sceneLocation.reference_urls as string[])?.[0]
+            } : undefined
+          }
+        });
+
+        if (error) throw error;
+
+        if (data?.success) {
+          videoUrl = data.videoUrl || data.imageUrl;
+          fallback = data.fallback || fallback;
+          metadata = data.metadata || {};
+        } else {
+          throw new Error(data?.error || 'Generation failed');
+        }
+      }
+
+      // Create render record
+      await supabase.from('renders').insert([{
+        shot_id: shot.id,
+        engine: engineUsed,
+        video_url: videoUrl,
+        status: fallback ? 'failed' : 'succeeded',
+        prompt_text: `${scene.slugline} - ${form.shot_type}`,
+        params: metadata as Record<string, string | number | boolean | null>
+      }]);
+
+      if (fallback) {
+        toast.warning('Keyframe generado (video no disponible)');
+      } else {
+        toast.success('Shot generado correctamente');
+      }
+
+      onShotUpdated();
+      onOpenChange(false);
     } catch (error) {
       console.error('Error generating shot:', error);
       toast.error('Error al generar. Inténtalo de nuevo.');
