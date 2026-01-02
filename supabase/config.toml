@@ -35,3 +35,12 @@ verify_jwt = false
 
 [functions.generate-keyframe]
 verify_jwt = false
+
+[functions.script-generate]
+verify_jwt = false
+
+[functions.script-doctor]
+verify_jwt = false
+
+[functions.script-breakdown]
+verify_jwt = false
