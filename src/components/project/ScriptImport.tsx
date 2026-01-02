@@ -33,8 +33,11 @@ import {
   Shirt,
   Sparkles,
   Volume2,
-  Zap
+  Zap,
+  BookOpen,
+  FileDown
 } from 'lucide-react';
+import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ParsedScene {
@@ -120,6 +123,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [breakdownScenes, setBreakdownScenes] = useState<any[]>([]);
   const [creatingEntities, setCreatingEntities] = useState(false);
 
+  // Generated script data for summary
+  const [generatedScript, setGeneratedScript] = useState<any>(null);
+  const [expandedEpisodes, setExpandedEpisodes] = useState<Record<number, boolean>>({});
+
   // Fetch existing data
   useEffect(() => {
     const fetchData = async () => {
@@ -186,8 +193,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (error) throw error;
       if (data?.script?.screenplay) {
         setScriptText(data.script.screenplay);
+        setGeneratedScript(data.script);
         toast.success('Guion generado correctamente');
-        setActiveTab('import');
+        setActiveTab('summary');
       } else {
         toast.error('No se pudo generar el guion');
       }
@@ -476,6 +484,252 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setBreakdownProps(prev => prev.map(p => ({ ...p, selected: true })));
   };
 
+  // PDF Export functions
+  const exportEpisodePDF = (episode: any, episodeNumber: number) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    const title = episode.title || `Episodio ${episodeNumber}`;
+    doc.text(title, pageWidth / 2, y, { align: 'center' });
+    y += 10;
+
+    // Summary
+    if (episode.summary || episode.synopsis) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'italic');
+      const summary = episode.summary || episode.synopsis;
+      const summaryLines = doc.splitTextToSize(summary, pageWidth - 40);
+      doc.text(summaryLines, 20, y);
+      y += summaryLines.length * 5 + 10;
+    }
+
+    // Scenes
+    (episode.scenes || []).forEach((scene: any, sceneIdx: number) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+
+      // Scene header
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Escena ${scene.scene_number || sceneIdx + 1}: ${scene.slugline || ''}`, 20, y);
+      y += 6;
+
+      // Scene summary
+      if (scene.summary) {
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        const sumLines = doc.splitTextToSize(scene.summary, pageWidth - 40);
+        doc.text(sumLines, 20, y);
+        y += sumLines.length * 4 + 4;
+      }
+
+      // Dialogue
+      if (scene.dialogue && scene.dialogue.length > 0) {
+        doc.setFontSize(8);
+        scene.dialogue.forEach((d: any) => {
+          if (y > 270) {
+            doc.addPage();
+            y = 20;
+          }
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${d.character}:`, 25, y);
+          doc.setFont('helvetica', 'normal');
+          const lineText = doc.splitTextToSize(d.line || '', pageWidth - 55);
+          doc.text(lineText, 50, y);
+          y += Math.max(lineText.length * 4, 5);
+        });
+        y += 4;
+      }
+
+      // Action
+      if (scene.action) {
+        if (y > 260) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'italic');
+        const actionLines = doc.splitTextToSize(`(${scene.action})`, pageWidth - 40);
+        doc.text(actionLines, 20, y);
+        y += actionLines.length * 4 + 4;
+      }
+
+      // Music/SFX
+      if (scene.music_cue || scene.sfx_cue) {
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'normal');
+        const cues = [scene.music_cue ? `♪ ${scene.music_cue}` : '', scene.sfx_cue ? `⚡ ${scene.sfx_cue}` : ''].filter(Boolean).join(' | ');
+        doc.text(cues, 20, y);
+        y += 6;
+      }
+
+      y += 6;
+    });
+
+    doc.save(`${title.replace(/\s+/g, '_')}.pdf`);
+    toast.success('PDF exportado correctamente');
+  };
+
+  const exportCompletePDF = () => {
+    if (!generatedScript) return;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
+
+    // Cover page
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text(generatedScript.title || 'Guion', pageWidth / 2, 60, { align: 'center' });
+
+    if (generatedScript.genre || generatedScript.tone) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${generatedScript.genre || ''} • ${generatedScript.tone || ''}`, pageWidth / 2, 75, { align: 'center' });
+    }
+
+    if (generatedScript.synopsis) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'italic');
+      const synopsisLines = doc.splitTextToSize(generatedScript.synopsis, pageWidth - 60);
+      doc.text(synopsisLines, pageWidth / 2, 100, { align: 'center', maxWidth: pageWidth - 60 });
+    }
+
+    // Characters summary
+    if (generatedScript.characters?.length > 0) {
+      doc.addPage();
+      y = 20;
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('PERSONAJES', 20, y);
+      y += 10;
+
+      generatedScript.characters.forEach((char: any) => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${char.name}${char.role ? ` (${char.role})` : ''}`, 20, y);
+        y += 5;
+        if (char.description) {
+          doc.setFont('helvetica', 'normal');
+          const descLines = doc.splitTextToSize(char.description, pageWidth - 40);
+          doc.text(descLines, 25, y);
+          y += descLines.length * 4 + 4;
+        }
+      });
+    }
+
+    // Locations summary
+    if (generatedScript.locations?.length > 0) {
+      doc.addPage();
+      y = 20;
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('LOCALIZACIONES', 20, y);
+      y += 10;
+
+      generatedScript.locations.forEach((loc: any) => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(loc.name || loc, 20, y);
+        y += 5;
+        if (loc.description) {
+          doc.setFont('helvetica', 'normal');
+          const descLines = doc.splitTextToSize(loc.description, pageWidth - 40);
+          doc.text(descLines, 25, y);
+          y += descLines.length * 4 + 4;
+        }
+      });
+    }
+
+    // Episodes
+    const episodes = generatedScript.episodes || [{ title: 'Película', scenes: generatedScript.scenes || [] }];
+    episodes.forEach((ep: any, epIdx: number) => {
+      doc.addPage();
+      y = 20;
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text(ep.title || `Episodio ${epIdx + 1}`, pageWidth / 2, y, { align: 'center' });
+      y += 10;
+
+      if (ep.summary || ep.synopsis) {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'italic');
+        const epSummary = ep.summary || ep.synopsis;
+        const summaryLines = doc.splitTextToSize(epSummary, pageWidth - 40);
+        doc.text(summaryLines, 20, y);
+        y += summaryLines.length * 5 + 10;
+      }
+
+      (ep.scenes || []).forEach((scene: any, sceneIdx: number) => {
+        if (y > 260) {
+          doc.addPage();
+          y = 20;
+        }
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Escena ${scene.scene_number || sceneIdx + 1}: ${scene.slugline || ''}`, 20, y);
+        y += 6;
+
+        if (scene.summary) {
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          const sumLines = doc.splitTextToSize(scene.summary, pageWidth - 40);
+          doc.text(sumLines, 20, y);
+          y += sumLines.length * 4 + 4;
+        }
+
+        if (scene.dialogue && scene.dialogue.length > 0) {
+          doc.setFontSize(8);
+          scene.dialogue.forEach((d: any) => {
+            if (y > 270) {
+              doc.addPage();
+              y = 20;
+            }
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${d.character}:`, 25, y);
+            doc.setFont('helvetica', 'normal');
+            const lineText = doc.splitTextToSize(d.line || '', pageWidth - 55);
+            doc.text(lineText, 50, y);
+            y += Math.max(lineText.length * 4, 5);
+          });
+          y += 4;
+        }
+
+        if (scene.action) {
+          if (y > 260) {
+            doc.addPage();
+            y = 20;
+          }
+          doc.setFontSize(8);
+          doc.setFont('helvetica', 'italic');
+          const actionLines = doc.splitTextToSize(`(${scene.action})`, pageWidth - 40);
+          doc.text(actionLines, 20, y);
+          y += actionLines.length * 4 + 4;
+        }
+
+        y += 6;
+      });
+    });
+
+    doc.save(`${(generatedScript.title || 'guion').replace(/\s+/g, '_')}_completo.pdf`);
+    toast.success('PDF completo exportado');
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -514,7 +768,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="generate" className="flex items-center gap-2">
             <Lightbulb className="w-4 h-4" />
             Generar
@@ -522,6 +776,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           <TabsTrigger value="import" className="flex items-center gap-2">
             <FileText className="w-4 h-4" />
             Importar
+          </TabsTrigger>
+          <TabsTrigger value="summary" className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4" />
+            Resumen
           </TabsTrigger>
           <TabsTrigger value="doctor" className="flex items-center gap-2">
             <Stethoscope className="w-4 h-4" />
@@ -594,6 +852,211 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* SUMMARY TAB */}
+        <TabsContent value="summary" className="space-y-4">
+          {!generatedScript ? (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <BookOpen className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                <h3 className="font-medium text-lg mb-2">No hay guion generado</h3>
+                <p className="text-muted-foreground mb-4">
+                  Genera un guion desde la pestaña "Generar" para ver el resumen completo
+                </p>
+                <Button variant="outline" onClick={() => setActiveTab('generate')}>
+                  <Lightbulb className="w-4 h-4 mr-2" />
+                  Ir a Generar
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* Export buttons */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg">{generatedScript.title || 'Guion Generado'}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {generatedScript.episodes?.length || 1} episodio(s) • {generatedScript.genre || ''} • {generatedScript.tone || ''}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => exportCompletePDF()}>
+                    <FileDown className="w-4 h-4 mr-2" />
+                    Exportar PDF Completo
+                  </Button>
+                </div>
+              </div>
+
+              {/* Global summary */}
+              {generatedScript.synopsis && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Sinopsis General</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{generatedScript.synopsis}</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Characters, Locations, Props summary */}
+              <div className="grid gap-4 md:grid-cols-3">
+                {generatedScript.characters?.length > 0 && (
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Users className="w-4 h-4 text-primary" />
+                        Personajes ({generatedScript.characters.length})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ScrollArea className="h-[120px]">
+                        <ul className="space-y-1 text-sm">
+                          {generatedScript.characters.map((char: any, i: number) => (
+                            <li key={i} className="flex items-center gap-2">
+                              <span className="font-medium">{char.name}</span>
+                              {char.role && <Badge variant="outline" className="text-xs">{char.role}</Badge>}
+                            </li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                )}
+                {generatedScript.locations?.length > 0 && (
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-primary" />
+                        Localizaciones ({generatedScript.locations.length})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ScrollArea className="h-[120px]">
+                        <ul className="space-y-1 text-sm">
+                          {generatedScript.locations.map((loc: any, i: number) => (
+                            <li key={i}>{loc.name || loc}</li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                )}
+                {generatedScript.props?.length > 0 && (
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Package className="w-4 h-4 text-primary" />
+                        Props ({generatedScript.props.length})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ScrollArea className="h-[120px]">
+                        <ul className="space-y-1 text-sm">
+                          {generatedScript.props.map((prop: any, i: number) => (
+                            <li key={i}>{prop.name || prop}</li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* Episodes list */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-base">Episodios / Capítulos</h4>
+                {(generatedScript.episodes || [{ title: 'Película', scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => (
+                  <Card key={epIdx}>
+                    <Collapsible open={expandedEpisodes[epIdx] ?? true} onOpenChange={(open) => setExpandedEpisodes(prev => ({ ...prev, [epIdx]: open }))}>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center justify-between">
+                          <CollapsibleTrigger className="flex items-center gap-2 hover:text-primary transition-colors">
+                            {expandedEpisodes[epIdx] ?? true ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            <CardTitle className="text-base">
+                              {ep.title || `Episodio ${epIdx + 1}`}
+                            </CardTitle>
+                            <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
+                          </CollapsibleTrigger>
+                          <Button variant="ghost" size="sm" onClick={() => exportEpisodePDF(ep, epIdx + 1)}>
+                            <Download className="w-4 h-4 mr-1" />
+                            PDF
+                          </Button>
+                        </div>
+                        {ep.summary && <CardDescription>{ep.summary}</CardDescription>}
+                      </CardHeader>
+                      <CollapsibleContent>
+                        <CardContent className="pt-0">
+                          {ep.synopsis && (
+                            <div className="mb-4 p-3 bg-muted/30 rounded-lg">
+                              <p className="text-sm">{ep.synopsis}</p>
+                            </div>
+                          )}
+                          <div className="space-y-3">
+                            {(ep.scenes || []).map((scene: any, sceneIdx: number) => (
+                              <div key={sceneIdx} className="border rounded-lg p-3">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Badge variant="outline">#{scene.scene_number || sceneIdx + 1}</Badge>
+                                  <span className="font-medium text-sm">{scene.slugline}</span>
+                                  {scene.time_of_day && <Badge variant="secondary" className="text-xs">{scene.time_of_day}</Badge>}
+                                </div>
+                                {scene.summary && <p className="text-sm text-muted-foreground mb-2">{scene.summary}</p>}
+                                {scene.dialogue && scene.dialogue.length > 0 && (
+                                  <div className="mt-2 space-y-1">
+                                    <p className="text-xs font-medium text-muted-foreground">Diálogos:</p>
+                                    {scene.dialogue.slice(0, 3).map((d: any, dIdx: number) => (
+                                      <div key={dIdx} className="text-xs pl-3 border-l-2 border-primary/30">
+                                        <span className="font-semibold">{d.character}:</span> {d.line?.substring(0, 100)}{d.line?.length > 100 ? '...' : ''}
+                                      </div>
+                                    ))}
+                                    {scene.dialogue.length > 3 && <p className="text-xs text-muted-foreground pl-3">+{scene.dialogue.length - 3} más</p>}
+                                  </div>
+                                )}
+                                {scene.action && (
+                                  <div className="mt-2">
+                                    <p className="text-xs font-medium text-muted-foreground">Acción:</p>
+                                    <p className="text-xs text-muted-foreground">{scene.action.substring(0, 150)}{scene.action.length > 150 ? '...' : ''}</p>
+                                  </div>
+                                )}
+                                <div className="flex gap-3 mt-2">
+                                  {scene.music_cue && <div className="flex items-center gap-1 text-xs text-muted-foreground"><Volume2 className="w-3 h-3" />{scene.music_cue}</div>}
+                                  {scene.sfx_cue && <div className="flex items-center gap-1 text-xs text-muted-foreground"><Zap className="w-3 h-3" />{scene.sfx_cue}</div>}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </Card>
+                ))}
+              </div>
+
+              {generatedScript.screenplay && (
+                <Card>
+                  <Collapsible>
+                    <CardHeader>
+                      <CollapsibleTrigger className="flex items-center gap-2 hover:text-primary transition-colors w-full justify-between">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          Guion Completo (Texto)
+                        </CardTitle>
+                        <ChevronDown className="w-4 h-4" />
+                      </CollapsibleTrigger>
+                    </CardHeader>
+                    <CollapsibleContent>
+                      <CardContent>
+                        <ScrollArea className="h-[400px]">
+                          <pre className="whitespace-pre-wrap font-mono text-xs">{generatedScript.screenplay}</pre>
+                        </ScrollArea>
+                      </CardContent>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </Card>
+              )}
+            </>
+          )}
         </TabsContent>
 
         {/* IMPORT TAB */}
