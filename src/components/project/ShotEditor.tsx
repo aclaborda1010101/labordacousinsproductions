@@ -41,6 +41,7 @@ interface Scene {
   quality_mode: 'CINE' | 'ULTRA';
   character_ids: string[] | null;
   location_id: string | null;
+  time_of_day?: string | null;
 }
 
 interface Character {
@@ -79,33 +80,94 @@ interface ShotEditorProps {
   onShotUpdated: () => void;
 }
 
+// ============= SHOT_ASSISTANT OPTION SETS =============
 const SHOT_TYPES = [
-  { value: 'extreme-wide', label: 'Extreme Wide' },
-  { value: 'wide', label: 'Wide' },
-  { value: 'full', label: 'Full' },
-  { value: 'medium-wide', label: 'Medium Wide' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'medium-close', label: 'Medium Close-up' },
-  { value: 'close-up', label: 'Close-up' },
-  { value: 'extreme-close', label: 'Extreme Close-up' },
-  { value: 'over-shoulder', label: 'Over the Shoulder' },
-  { value: 'pov', label: 'POV' },
-  { value: 'insert', label: 'Insert' },
+  { value: 'ExtremeWide', label: 'Extreme Wide' },
+  { value: 'Wide', label: 'Wide' },
+  { value: 'Full', label: 'Full' },
+  { value: 'MediumWide', label: 'Medium Wide' },
+  { value: 'Medium', label: 'Medium' },
+  { value: 'MediumClose', label: 'Medium Close-up' },
+  { value: 'CloseUp', label: 'Close-up' },
+  { value: 'ExtremeCloseUp', label: 'Extreme Close-up' },
+  { value: 'OverShoulder', label: 'Over the Shoulder' },
+  { value: 'POV', label: 'POV' },
+  { value: 'Insert', label: 'Insert' },
+  { value: 'Cutaway', label: 'Cutaway' },
+  { value: 'Establishing', label: 'Establishing' },
+  { value: 'TwoShot', label: 'Two Shot' },
+  { value: 'GroupShot', label: 'Group Shot' },
+  { value: 'ReactionShot', label: 'Reaction Shot' },
+  { value: 'DetailMacro', label: 'Detail/Macro' },
 ];
 
 const CAMERA_MOVEMENTS = [
-  { value: 'static', label: 'Estático' },
-  { value: 'pan-left', label: 'Pan Izquierda' },
-  { value: 'pan-right', label: 'Pan Derecha' },
-  { value: 'tilt-up', label: 'Tilt Arriba' },
-  { value: 'tilt-down', label: 'Tilt Abajo' },
-  { value: 'dolly-in', label: 'Dolly In' },
-  { value: 'dolly-out', label: 'Dolly Out' },
-  { value: 'tracking', label: 'Tracking' },
-  { value: 'crane-up', label: 'Crane Up' },
-  { value: 'crane-down', label: 'Crane Down' },
-  { value: 'handheld', label: 'Handheld' },
-  { value: 'steadicam', label: 'Steadicam' },
+  { value: 'Static', label: 'Estático' },
+  { value: 'Handheld_Controlled', label: 'Handheld Controlado' },
+  { value: 'Handheld_Raw', label: 'Handheld Raw' },
+  { value: 'Steadicam', label: 'Steadicam' },
+  { value: 'Gimbal', label: 'Gimbal' },
+  { value: 'Tripod_Pan_Left', label: 'Pan Izquierda' },
+  { value: 'Tripod_Pan_Right', label: 'Pan Derecha' },
+  { value: 'Tripod_Tilt_Up', label: 'Tilt Arriba' },
+  { value: 'Tripod_Tilt_Down', label: 'Tilt Abajo' },
+  { value: 'Slider_Left', label: 'Slider Izq' },
+  { value: 'Slider_Right', label: 'Slider Der' },
+  { value: 'Dolly_In', label: 'Dolly In' },
+  { value: 'Dolly_Out', label: 'Dolly Out' },
+  { value: 'PushIn_Slow', label: 'Push In Lento' },
+  { value: 'PullOut_Slow', label: 'Pull Out Lento' },
+  { value: 'Tracking_Follow', label: 'Tracking Follow' },
+  { value: 'Tracking_Lead', label: 'Tracking Lead' },
+  { value: 'Arc_Orbit_Left', label: 'Arco Izq' },
+  { value: 'Arc_Orbit_Right', label: 'Arco Der' },
+  { value: 'Crane_Up', label: 'Crane Up' },
+  { value: 'Crane_Down', label: 'Crane Down' },
+  { value: 'Jib_Arc', label: 'Jib Arc' },
+  { value: 'Zoom_In', label: 'Zoom In' },
+  { value: 'Zoom_Out', label: 'Zoom Out' },
+  { value: 'Snap_Zoom', label: 'Snap Zoom' },
+  { value: 'Whip_Pan', label: 'Whip Pan' },
+  { value: 'Dolly_Zoom', label: 'Dolly Zoom' },
+  { value: 'Rack_Focus', label: 'Rack Focus' },
+  { value: 'Micro_Drift', label: 'Micro Drift' },
+];
+
+const FOCAL_LENGTHS = [
+  { value: 18, label: '18mm' },
+  { value: 24, label: '24mm' },
+  { value: 28, label: '28mm' },
+  { value: 35, label: '35mm' },
+  { value: 40, label: '40mm' },
+  { value: 50, label: '50mm' },
+  { value: 65, label: '65mm' },
+  { value: 85, label: '85mm' },
+  { value: 100, label: '100mm' },
+  { value: 135, label: '135mm' },
+];
+
+const CAMERA_HEIGHTS = [
+  { value: 'EyeLevel', label: 'Eye Level' },
+  { value: 'LowAngle', label: 'Low Angle' },
+  { value: 'HighAngle', label: 'High Angle' },
+  { value: 'WaistLevel', label: 'Waist Level' },
+  { value: 'ShoulderLevel', label: 'Shoulder Level' },
+  { value: 'Overhead', label: 'Overhead' },
+  { value: 'GroundLevel', label: 'Ground Level' },
+];
+
+const LIGHTING_STYLES = [
+  { value: 'Naturalistic_Daylight', label: 'Luz Natural Día' },
+  { value: 'Naturalistic_Tungsten', label: 'Tungsteno Natural' },
+  { value: 'Soft_Key_LowContrast', label: 'Key Suave' },
+  { value: 'Hard_Key_HighContrast', label: 'Key Dura' },
+  { value: 'Motivated_Practicals', label: 'Prácticas Motivadas' },
+  { value: 'WindowKey_SideLight', label: 'Luz de Ventana' },
+  { value: 'TopLight_Dramatic', label: 'Top Light Dramática' },
+  { value: 'Backlight_Rim', label: 'Contra/Rim' },
+  { value: 'Neon_Mixed', label: 'Neón Mixto' },
+  { value: 'Corporate_Clean', label: 'Corporativa Limpia' },
+  { value: 'Noir_Contrast', label: 'Noir' },
 ];
 
 export default function ShotEditor({
@@ -149,13 +211,21 @@ export default function ShotEditor({
     shot_type: shot.shot_type,
     duration_target: shot.duration_target,
     dialogue_text: shot.dialogue_text || '',
-    camera_movement: (shot.camera as any)?.movement || 'static',
+    camera_movement: (shot.camera as any)?.movement || 'Static',
+    camera_height: (shot.camera as any)?.height || 'EyeLevel',
     camera_angle: (shot.camera as any)?.angle || '',
-    camera_lens: (shot.camera as any)?.lens || '',
+    focal_mm: (shot.camera as any)?.focal_mm || 35,
     blocking_description: (shot.blocking as any)?.description || '',
     blocking_action: (shot.blocking as any)?.action || '',
     effective_mode: shot.effective_mode,
     hero: shot.hero || false,
+    // SHOT_ASSISTANT extra fields
+    viewer_notice: (shot.blocking as any)?.viewer_notice || '',
+    ai_risk: (shot.blocking as any)?.ai_risk || '',
+    lighting_style: (shot.camera as any)?.lighting_style || 'Naturalistic_Daylight',
+    intention: (shot.blocking as any)?.intention || '',
+    prev_shot_context: '',
+    next_shot_context: '',
   });
   
   const [selectedEngine, setSelectedEngine] = useState<VideoEngine>(
@@ -181,12 +251,17 @@ export default function ShotEditor({
         hero: form.hero,
         camera: {
           movement: form.camera_movement,
+          height: form.camera_height,
           angle: form.camera_angle,
-          lens: form.camera_lens
+          focal_mm: form.focal_mm,
+          lighting_style: form.lighting_style
         },
         blocking: {
           description: form.blocking_description,
-          action: form.blocking_action
+          action: form.blocking_action,
+          viewer_notice: form.viewer_notice,
+          ai_risk: form.ai_risk,
+          intention: form.intention
         }
       }).eq('id', shot.id);
 
@@ -206,27 +281,64 @@ export default function ShotEditor({
     try {
       const response = await supabase.functions.invoke('generate-shot-details', {
         body: {
-          sceneDescription: `${scene.slugline}. ${scene.summary || ''}`,
-          shotNo: shot.shot_no,
-          totalShots: 1, // We'd need to pass this properly
-          characters: sceneCharacters.map(c => c.name),
-          location: sceneLocation?.name,
-          dialogue: form.dialogue_text,
+          project: {
+            quality_mode_default: scene.quality_mode,
+            fps: 24,
+            aspect_ratio: '16:9',
+            language: 'es-ES'
+          },
+          scene: {
+            slugline: scene.slugline,
+            scene_summary: scene.summary || '',
+            previous_shot_context: form.prev_shot_context,
+            next_shot_context: form.next_shot_context
+          },
+          shot: {
+            shot_index: shot.shot_no,
+            effective_mode: form.effective_mode,
+            duration_sec: form.duration_target,
+            current_fields: {
+              shot_type: form.shot_type,
+              camera_movement: form.camera_movement,
+              dialogue: form.dialogue_text
+            }
+          },
+          location: sceneLocation ? {
+            name: sceneLocation.name,
+            time_of_day: scene.time_of_day
+          } : undefined,
+          characters: sceneCharacters.map(c => ({
+            name: c.name,
+            reference_images_available: !!(c.turnaround_urls as string[])?.length
+          }))
         }
       });
 
       if (response.error) throw response.error;
 
-      const details = response.data;
+      const data = response.data;
+      const fills = data.fills || data;
+      
       setForm(prev => ({
         ...prev,
-        shot_type: details.shotType || prev.shot_type,
-        camera_movement: details.cameraMovement || prev.camera_movement,
-        camera_angle: details.cameraAngle || prev.camera_angle,
-        blocking_description: details.blockingDescription || prev.blocking_description,
-        blocking_action: details.blockingAction || prev.blocking_action,
-        duration_target: details.duration || prev.duration_target,
+        shot_type: fills.shot_type || prev.shot_type,
+        camera_movement: fills.camera_movement || prev.camera_movement,
+        camera_height: fills.camera_details?.camera_height || prev.camera_height,
+        camera_angle: fills.camera_details?.camera_angle || prev.camera_angle,
+        focal_mm: fills.lens?.focal_mm || prev.focal_mm,
+        lighting_style: fills.lighting?.lighting_style || prev.lighting_style,
+        blocking_description: fills.blocking_action || prev.blocking_description,
+        blocking_action: fills.blocking_action || prev.blocking_action,
+        duration_target: fills.duration_sec || prev.duration_target,
+        viewer_notice: fills.viewer_notice || prev.viewer_notice,
+        ai_risk: fills.ai_risk?.primary_risk || prev.ai_risk,
+        intention: fills.intention || prev.intention,
       }));
+
+      // Show missing info if any
+      if (data.missing_info?.length > 0) {
+        toast.info(`Faltan datos: ${data.missing_info.map((m: any) => m.field).join(', ')}`);
+      }
 
       toast.success('Detalles generados con IA');
     } catch (error) {
@@ -712,12 +824,103 @@ export default function ShotEditor({
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Ángulo/Lente</Label>
+                  <Label className="text-xs text-muted-foreground">Focal</Label>
+                  <Select value={String(form.focal_mm)} onValueChange={v => setForm({...form, focal_mm: parseInt(v)})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FOCAL_LENGTHS.map(f => (
+                        <SelectItem key={f.value} value={String(f.value)}>
+                          {f.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Altura</Label>
+                  <Select value={form.camera_height} onValueChange={v => setForm({...form, camera_height: v})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CAMERA_HEIGHTS.map(h => (
+                        <SelectItem key={h.value} value={h.value}>
+                          {h.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Iluminación</Label>
+                  <Select value={form.lighting_style} onValueChange={v => setForm({...form, lighting_style: v})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LIGHTING_STYLES.map(l => (
+                        <SelectItem key={l.value} value={l.value}>
+                          {l.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* SHOT_ASSISTANT Extra Fields */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Campos SHOT_ASSISTANT
+              </Label>
+              <div className="space-y-3 p-3 bg-muted/30 rounded-lg">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">¿Qué debe notar el espectador?</Label>
                   <Input 
-                    placeholder="ej: 35mm, eye-level"
-                    value={form.camera_lens}
-                    onChange={e => setForm({...form, camera_lens: e.target.value})}
+                    placeholder="Ej: El nerviosismo en sus manos"
+                    value={form.viewer_notice}
+                    onChange={e => setForm({...form, viewer_notice: e.target.value})}
                   />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Riesgo IA a vigilar</Label>
+                  <Input 
+                    placeholder="Ej: hands, face, lighting, morphing"
+                    value={form.ai_risk}
+                    onChange={e => setForm({...form, ai_risk: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Intención del plano</Label>
+                  <Input 
+                    placeholder="Ej: Revelar la duda del personaje"
+                    value={form.intention}
+                    onChange={e => setForm({...form, intention: e.target.value})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Plano anterior</Label>
+                    <Input 
+                      placeholder="Contexto del plano anterior"
+                      value={form.prev_shot_context}
+                      onChange={e => setForm({...form, prev_shot_context: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Plano siguiente</Label>
+                    <Input 
+                      placeholder="Lo que viene después"
+                      value={form.next_shot_context}
+                      onChange={e => setForm({...form, next_shot_context: e.target.value})}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
