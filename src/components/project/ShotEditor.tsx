@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,9 +7,17 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings } from 'lucide-react';
+import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings, Clock, Upload, CheckCircle2, XCircle } from 'lucide-react';
+
+interface VeoProgress {
+  status: 'idle' | 'starting' | 'generating' | 'uploading' | 'done' | 'error';
+  elapsedSeconds: number;
+  estimatedTotalSeconds: number;
+  message: string;
+}
 
 interface Shot {
   id: string;
@@ -113,6 +121,28 @@ export default function ShotEditor({
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generatingDetails, setGeneratingDetails] = useState(false);
+  const [veoProgress, setVeoProgress] = useState<VeoProgress>({
+    status: 'idle',
+    elapsedSeconds: 0,
+    estimatedTotalSeconds: 120, // Veo typically takes 1-2 minutes
+    message: ''
+  });
+
+  // Timer for elapsed time during generation
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (veoProgress.status === 'generating' || veoProgress.status === 'starting') {
+      interval = setInterval(() => {
+        setVeoProgress(prev => ({
+          ...prev,
+          elapsedSeconds: prev.elapsedSeconds + 1
+        }));
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [veoProgress.status]);
   
   const [form, setForm] = useState({
     shot_type: shot.shot_type,
@@ -286,11 +316,21 @@ export default function ShotEditor({
     const maxAttempts = 60; // 5 minutes max
     let attempts = 0;
     
+    setVeoProgress({
+      status: 'generating',
+      elapsedSeconds: 0,
+      estimatedTotalSeconds: 120,
+      message: 'Generando video con Veo 3.1...'
+    });
+    
     while (attempts < maxAttempts) {
       await new Promise(r => setTimeout(r, 5000)); // Poll every 5 seconds
       attempts++;
       
-      toast.info(`Procesando video... (${attempts * 5}s)`);
+      setVeoProgress(prev => ({
+        ...prev,
+        message: `Renderizando video... (intento ${attempts})`
+      }));
       
       const { data, error } = await supabase.functions.invoke('veo_poll', {
         body: { operationName }
@@ -306,6 +346,7 @@ export default function ShotEditor({
       if (data?.done) {
         // Check for error first
         if (data.error) {
+          setVeoProgress(prev => ({ ...prev, status: 'error', message: data.error.message || 'Veo generation failed' }));
           return { done: true, error: data.error.message || 'Veo generation failed' };
         }
         
@@ -315,54 +356,70 @@ export default function ShotEditor({
         // Check bytesBase64Encoded (inline video data)
         if (result?.videos?.[0]?.bytesBase64Encoded) {
           try {
-            toast.info('Subiendo video a storage...');
+            setVeoProgress(prev => ({ ...prev, status: 'uploading', message: 'Subiendo video a storage...' }));
             const base64 = result.videos[0].bytesBase64Encoded;
             const videoUrl = await uploadVideoToStorage(base64, shot.id);
+            setVeoProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado!' }));
             return { done: true, videoUrl };
           } catch (uploadError) {
             console.error('Upload error:', uploadError);
+            setVeoProgress(prev => ({ ...prev, status: 'error', message: `Error subiendo: ${(uploadError as Error).message}` }));
             return { done: true, error: `Video generado pero falló upload: ${(uploadError as Error).message}` };
           }
         }
         
         // Check gcsUri (Google Cloud Storage URI)
         if (result?.videos?.[0]?.gcsUri) {
-          // For now, return the GCS URI - we could also download and re-upload
+          setVeoProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado!' }));
           return { done: true, videoUrl: result.videos[0].gcsUri };
         }
         
         // Legacy formats
         if (result?.predictions?.[0]?.bytesBase64Encoded) {
           try {
-            toast.info('Subiendo video a storage...');
+            setVeoProgress(prev => ({ ...prev, status: 'uploading', message: 'Subiendo video a storage...' }));
             const base64 = result.predictions[0].bytesBase64Encoded;
             const videoUrl = await uploadVideoToStorage(base64, shot.id);
+            setVeoProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado!' }));
             return { done: true, videoUrl };
           } catch (uploadError) {
+            setVeoProgress(prev => ({ ...prev, status: 'error', message: `Error subiendo video` }));
             return { done: true, error: `Video generado pero falló upload: ${(uploadError as Error).message}` };
           }
         }
         
         if (result?.predictions?.[0]?.gcsUri) {
+          setVeoProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado!' }));
           return { done: true, videoUrl: result.predictions[0].gcsUri };
         }
         
         if (result?.video) {
+          setVeoProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado!' }));
           return { done: true, videoUrl: result.video };
         }
         
         // No video found in response
         console.error('No video in response:', data);
+        setVeoProgress(prev => ({ ...prev, status: 'error', message: 'No se encontró video en la respuesta' }));
         return { done: true, error: 'No video URL in response' };
       }
     }
     
+    setVeoProgress(prev => ({ ...prev, status: 'error', message: 'Timeout - generación muy lenta' }));
     return { done: false, error: 'Timeout waiting for video generation' };
   };
 
   const generateWithVeo = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
     const prompt = buildVideoPrompt();
     console.log('Starting Veo generation with prompt:', prompt);
+    
+    // Reset and start progress
+    setVeoProgress({
+      status: 'starting',
+      elapsedSeconds: 0,
+      estimatedTotalSeconds: 120,
+      message: 'Iniciando generación con Veo 3.1...'
+    });
     
     // Start the operation
     const { data: startData, error: startError } = await supabase.functions.invoke('veo_start', {
@@ -376,17 +433,18 @@ export default function ShotEditor({
     
     if (startError) {
       console.error('Veo start error:', startError);
+      setVeoProgress(prev => ({ ...prev, status: 'error', message: startError.message }));
       return { success: false, error: startError.message };
     }
     
     // Usar operationName (nombre completo) en lugar de operation (UUID)
     if (!startData?.ok || !startData?.operationName) {
       console.error('Veo start failed:', startData);
+      setVeoProgress(prev => ({ ...prev, status: 'error', message: startData?.error || 'Failed to start' }));
       return { success: false, error: startData?.error || 'Failed to start Veo operation' };
     }
     
     console.log('Veo operation started (full name):', startData.operationName);
-    toast.info('Video en generación con Veo 3.1...');
     
     // Poll for completion usando el operationName completo
     const pollResult = await pollVeoOperation(startData.operationName);
@@ -689,6 +747,59 @@ export default function ShotEditor({
                 <p className="text-sm"><span className="text-muted-foreground">Blocking:</span> {form.blocking_description}</p>
               )}
             </div>
+
+            {/* Veo Progress Indicator */}
+            {generating && selectedEngine === 'veo' && veoProgress.status !== 'idle' && (
+              <div className="p-4 border border-primary/30 bg-primary/5 rounded-lg space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {veoProgress.status === 'generating' && (
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    )}
+                    {veoProgress.status === 'starting' && (
+                      <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                    )}
+                    {veoProgress.status === 'uploading' && (
+                      <Upload className="w-5 h-5 text-blue-500 animate-pulse" />
+                    )}
+                    {veoProgress.status === 'done' && (
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    )}
+                    {veoProgress.status === 'error' && (
+                      <XCircle className="w-5 h-5 text-destructive" />
+                    )}
+                    <span className="font-medium text-sm">{veoProgress.message}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    <span>
+                      {Math.floor(veoProgress.elapsedSeconds / 60)}:{(veoProgress.elapsedSeconds % 60).toString().padStart(2, '0')}
+                    </span>
+                  </div>
+                </div>
+                
+                {(veoProgress.status === 'generating' || veoProgress.status === 'starting') && (
+                  <>
+                    <Progress 
+                      value={Math.min((veoProgress.elapsedSeconds / veoProgress.estimatedTotalSeconds) * 100, 95)} 
+                      className="h-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>
+                        {Math.round(Math.min((veoProgress.elapsedSeconds / veoProgress.estimatedTotalSeconds) * 100, 95))}% estimado
+                      </span>
+                      <span>
+                        ~{Math.max(0, Math.ceil((veoProgress.estimatedTotalSeconds - veoProgress.elapsedSeconds) / 60))} min restantes
+                      </span>
+                    </div>
+                  </>
+                )}
+                
+                {veoProgress.status === 'uploading' && (
+                  <Progress value={100} className="h-2 animate-pulse" />
+                )}
+              </div>
+            )}
 
             {/* Existing render */}
             {render && (
