@@ -596,7 +596,7 @@ export default function ShotEditor({
   const generateWithKling = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
     const prompt = buildVideoPrompt();
     console.log('Starting Kling generation with prompt:', prompt);
-    
+
     // Reset and start progress
     setGenerationProgress({
       status: 'starting',
@@ -605,34 +605,78 @@ export default function ShotEditor({
       message: 'Iniciando generación con Kling 2.0...',
       engine: 'kling'
     });
-    
-    // Start the operation
+
+    // Kling v2: require a keyframe for consistent image2video quality
+    let keyframeUrl: string | undefined;
+    try {
+      const { data: approvedKf, error: approvedErr } = await supabase
+        .from('keyframes')
+        .select('image_url')
+        .eq('shot_id', shot.id)
+        .eq('approved', true)
+        .not('image_url', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (approvedErr) {
+        console.warn('Error fetching approved keyframe:', approvedErr);
+      }
+
+      keyframeUrl = approvedKf?.image_url ?? undefined;
+
+      if (!keyframeUrl) {
+        const { data: anyKf, error: anyErr } = await supabase
+          .from('keyframes')
+          .select('image_url')
+          .eq('shot_id', shot.id)
+          .not('image_url', 'is', null)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (anyErr) {
+          console.warn('Error fetching keyframe:', anyErr);
+        }
+
+        keyframeUrl = anyKf?.image_url ?? undefined;
+      }
+    } catch (e) {
+      console.warn('Keyframe lookup failed:', e);
+    }
+
+    if (!keyframeUrl) {
+      const msg = 'Kling v2 requiere un keyframe. Ve a “Keyframes” y genera uno primero.';
+      toast.error(msg);
+      setGenerationProgress(prev => ({ ...prev, status: 'error', message: msg }));
+      return { success: false, error: msg };
+    }
+
+    // Start the operation (kling_start contract: { prompt, duration, keyframeUrl?, qualityMode? })
     const { data: startData, error: startError } = await supabase.functions.invoke('kling_start', {
       body: {
         prompt,
         duration: form.duration_target <= 5 ? 5 : 10,
-        aspectRatio: '16:9',
-        model: 'kling-v2', // Use latest model
-        mode: form.effective_mode === 'ULTRA' ? 'pro' : 'std'
+        keyframeUrl,
+        qualityMode: form.effective_mode
       }
     });
-    
+
     if (startError) {
       console.error('Kling start error:', startError);
       setGenerationProgress(prev => ({ ...prev, status: 'error', message: startError.message }));
       return { success: false, error: startError.message };
     }
-    
+
     if (!startData?.ok || !startData?.taskId) {
       console.error('Kling start failed:', startData);
       setGenerationProgress(prev => ({ ...prev, status: 'error', message: startData?.error || 'Failed to start' }));
       return { success: false, error: startData?.error || 'Failed to start Kling operation' };
     }
-    
+
     console.log('Kling task started:', startData.taskId, 'endpoint:', startData.endpoint);
-    
-    const endpoint = (startData.endpoint as ('image2video' | 'text2video') | undefined) ??
-      (startData.keyframeUrl ? 'image2video' : 'text2video');
+
+    const endpoint = (startData.endpoint as ('image2video' | 'text2video') | undefined) ?? 'image2video';
 
     // Poll for completion
     const pollResult = await pollKlingOperation(String(startData.taskId), endpoint);
@@ -640,7 +684,7 @@ export default function ShotEditor({
     if (pollResult.done && pollResult.videoUrl) {
       return { success: true, videoUrl: pollResult.videoUrl };
     }
-    
+
     return { success: false, error: pollResult.error || 'Video generation failed' };
   };
 

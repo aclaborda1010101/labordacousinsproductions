@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuthOrDemo, authErrorResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-demo-key',
 };
 
 interface KlingPollRequest {
@@ -53,12 +54,26 @@ serve(async (req) => {
   }
 
   try {
+    // Auth check (even if verify_jwt=false in config)
+    const { userId } = await requireAuthOrDemo(req);
+    console.log("[AUTH] Authenticated user:", userId);
+
     const { taskId, endpoint }: KlingPollRequest = await req.json();
 
     if (!taskId) {
       return new Response(JSON.stringify({
         ok: false,
         error: 'taskId is required'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!endpoint || (endpoint !== 'image2video' && endpoint !== 'text2video')) {
+      return new Response(JSON.stringify({
+        ok: false,
+        error: 'endpoint must be image2video or text2video'
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -163,10 +178,15 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in kling_poll:', error);
+
+    if (error instanceof Error) {
+      return authErrorResponse(error, corsHeaders);
+    }
+
     return new Response(JSON.stringify({
       ok: false,
       done: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Unknown error'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
