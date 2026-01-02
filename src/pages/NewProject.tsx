@@ -8,18 +8,18 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import { 
-  ArrowLeft, ArrowRight, Check, Film, Tv, Clapperboard, Sparkles, Loader2, 
-  HelpCircle, Zap, Users, MapPin, FileText, Wand2, Lightbulb, DollarSign,
-  Globe, Settings2, BookOpen, Pencil
+  ArrowLeft, ArrowRight, Check, Film, Tv, Clapperboard, Loader2, 
+  Zap, Users, MapPin, FileText, DollarSign,
+  Globe, Settings2, Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EngineShootout } from '@/components/project/EngineShootout';
+import { WizardScriptStep, GeneratedScript } from '@/components/project/WizardScriptStep';
 
 type ProjectFormat = 'series' | 'mini' | 'film';
 
@@ -35,38 +35,7 @@ const LANGUAGE_OPTIONS = [
   { code: 'zh', label: '中文' },
 ];
 
-const GENRE_OPTIONS = [
-  { value: 'drama', label: 'Drama' },
-  { value: 'thriller', label: 'Thriller' },
-  { value: 'comedy', label: 'Comedia' },
-  { value: 'action', label: 'Acción' },
-  { value: 'horror', label: 'Terror' },
-  { value: 'sci-fi', label: 'Ciencia Ficción' },
-  { value: 'romance', label: 'Romance' },
-  { value: 'fantasy', label: 'Fantasía' },
-  { value: 'crime', label: 'Crimen' },
-];
-
-const TONE_OPTIONS = [
-  { value: 'Cinematográfico realista', label: 'Cinematográfico realista' },
-  { value: 'Oscuro y tenso', label: 'Oscuro y tenso' },
-  { value: 'Ligero y entretenido', label: 'Ligero y entretenido' },
-  { value: 'Épico y grandioso', label: 'Épico y grandioso' },
-  { value: 'Intimista y emocional', label: 'Intimista y emocional' },
-  { value: 'Estilizado y visual', label: 'Estilizado y visual' },
-];
-
 const STORAGE_KEY = 'cineforge_new_project_draft';
-
-interface GeneratedScript {
-  title?: string;
-  logline?: string;
-  synopsis?: string;
-  characters?: Array<{ name: string; role?: string; description?: string }>;
-  locations?: Array<{ name: string; description?: string }>;
-  episodes?: Array<{ title: string; summary?: string }>;
-  screenplay?: string;
-}
 
 interface ProjectDraft {
   title: string;
@@ -113,7 +82,6 @@ export default function NewProject() {
   const [scriptGenre, setScriptGenre] = useState('drama');
   const [scriptTone, setScriptTone] = useState('Cinematográfico realista');
   const [scriptText, setScriptText] = useState('');
-  const [generatingScript, setGeneratingScript] = useState(false);
   const [generatedScript, setGeneratedScript] = useState<GeneratedScript | null>(null);
 
   // Engine Shootout setup data
@@ -224,57 +192,6 @@ export default function NewProject() {
       if (index > currentStep && !canProceed()) return;
       setCurrentStep(index);
     }
-  };
-
-  const generateScriptFromIdea = async () => {
-    if (!scriptIdea.trim()) {
-      toast.error('Escribe una idea para generar el guion');
-      return;
-    }
-    setGeneratingScript(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('script-generate', {
-        body: {
-          idea: scriptIdea,
-          genre: scriptGenre,
-          tone: scriptTone,
-          format: format === 'film' ? 'film' : 'series',
-          episodesCount: format === 'film' ? 1 : episodesCount,
-          episodeDurationMin: targetDuration,
-          language: masterLanguage === 'es' ? 'es-ES' : masterLanguage,
-        }
-      });
-      if (error) throw error;
-      if (data?.script) {
-        setGeneratedScript(data.script);
-        // Auto-fill title if empty
-        if (!title && data.script.title) {
-          setTitle(data.script.title);
-        }
-        // Auto-fill shootout data from generated content
-        if (data.script.characters?.length > 0) {
-          const mainChar = data.script.characters[0];
-          setShootoutCharacter({ name: mainChar.name, bio: mainChar.description || '' });
-        }
-        if (data.script.locations?.length > 0) {
-          const mainLoc = data.script.locations[0];
-          setShootoutLocation({ name: mainLoc.name, description: mainLoc.description || '' });
-        }
-        toast.success('Guion generado correctamente');
-      } else {
-        toast.error('No se pudo generar el guion');
-      }
-    } catch (err: any) {
-      console.error('Error generating script:', err);
-      if (err.message?.includes('429')) {
-        toast.error('Rate limit alcanzado. Espera un momento.');
-      } else if (err.message?.includes('402')) {
-        toast.error('Créditos agotados.');
-      } else {
-        toast.error('Error al generar guion');
-      }
-    }
-    setGeneratingScript(false);
   };
 
   const handleNext = async () => {
@@ -640,191 +557,31 @@ export default function NewProject() {
               </div>
             )}
 
-            {/* Step 4: Script/Idea - NEW */}
+            {/* Step 4: Script/Idea - Using new component */}
             {currentStep === 4 && (
-              <div className="space-y-6 animate-fade-in">
-                <div>
-                  <h2 className="text-xl font-semibold text-foreground mb-1 flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-amber-500" />
-                    Tu guion o idea
-                  </h2>
-                  <p className="text-muted-foreground">Genera desde una idea, importa un guion o sáltalo para después</p>
-                </div>
-
-                {/* Script mode selector */}
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    onClick={() => setScriptMode('idea')}
-                    className={cn(
-                      "p-4 rounded-lg border text-center transition-all",
-                      scriptMode === 'idea' ? "border-amber-500 bg-amber-500/10" : "border-border hover:border-amber-500/50"
-                    )}
-                  >
-                    <Lightbulb className={cn("w-6 h-6 mx-auto mb-2", scriptMode === 'idea' ? "text-amber-500" : "text-muted-foreground")} />
-                    <div className="font-medium text-sm">Desde idea</div>
-                    <div className="text-xs text-muted-foreground">IA genera todo</div>
-                  </button>
-                  <button
-                    onClick={() => setScriptMode('import')}
-                    className={cn(
-                      "p-4 rounded-lg border text-center transition-all",
-                      scriptMode === 'import' ? "border-amber-500 bg-amber-500/10" : "border-border hover:border-amber-500/50"
-                    )}
-                  >
-                    <Pencil className={cn("w-6 h-6 mx-auto mb-2", scriptMode === 'import' ? "text-amber-500" : "text-muted-foreground")} />
-                    <div className="font-medium text-sm">Importar guion</div>
-                    <div className="text-xs text-muted-foreground">Tengo escrito</div>
-                  </button>
-                  <button
-                    onClick={() => setScriptMode('skip')}
-                    className={cn(
-                      "p-4 rounded-lg border text-center transition-all",
-                      scriptMode === 'skip' ? "border-amber-500 bg-amber-500/10" : "border-border hover:border-amber-500/50"
-                    )}
-                  >
-                    <ArrowRight className={cn("w-6 h-6 mx-auto mb-2", scriptMode === 'skip' ? "text-amber-500" : "text-muted-foreground")} />
-                    <div className="font-medium text-sm">Saltar</div>
-                    <div className="text-xs text-muted-foreground">Lo haré después</div>
-                  </button>
-                </div>
-
-                {/* Idea mode */}
-                {scriptMode === 'idea' && (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Tu idea *</Label>
-                      <Textarea
-                        placeholder="Ej: Una detective de homicidios descubre que su padre podría estar involucrado en una serie de asesinatos sin resolver de hace 20 años..."
-                        value={scriptIdea}
-                        onChange={(e) => setScriptIdea(e.target.value)}
-                        className="min-h-[100px]"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Género</Label>
-                        <Select value={scriptGenre} onValueChange={setScriptGenre}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {GENRE_OPTIONS.map(g => (
-                              <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Tono</Label>
-                        <Select value={scriptTone} onValueChange={setScriptTone}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {TONE_OPTIONS.map(t => (
-                              <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <Button 
-                      variant="gold" 
-                      onClick={generateScriptFromIdea} 
-                      disabled={generatingScript || scriptIdea.trim().length < 10}
-                      className="w-full"
-                    >
-                      {generatingScript ? (
-                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generando guion, personajes y localizaciones...</>
-                      ) : (
-                        <><Wand2 className="w-4 h-4 mr-2" />Generar con IA</>
-                      )}
-                    </Button>
-
-                    {/* Generated content preview */}
-                    {generatedScript && (
-                      <div className="space-y-4 p-4 rounded-lg bg-muted/30 border border-border">
-                        <div className="flex items-center gap-2 text-primary">
-                          <Sparkles className="w-5 h-5" />
-                          <span className="font-semibold">Contenido generado</span>
-                        </div>
-                        
-                        {generatedScript.title && (
-                          <div>
-                            <Label className="text-xs text-muted-foreground">Título sugerido</Label>
-                            <p className="font-medium">{generatedScript.title}</p>
-                          </div>
-                        )}
-                        
-                        {generatedScript.logline && (
-                          <div>
-                            <Label className="text-xs text-muted-foreground">Logline</Label>
-                            <p className="text-sm">{generatedScript.logline}</p>
-                          </div>
-                        )}
-
-                        {generatedScript.characters && generatedScript.characters.length > 0 && (
-                          <div>
-                            <Label className="text-xs text-muted-foreground">Personajes ({generatedScript.characters.length})</Label>
-                            <div className="flex flex-wrap gap-2 mt-1">
-                              {generatedScript.characters.map((c, i) => (
-                                <Badge key={i} variant="secondary">{c.name}</Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {generatedScript.locations && generatedScript.locations.length > 0 && (
-                          <div>
-                            <Label className="text-xs text-muted-foreground">Localizaciones ({generatedScript.locations.length})</Label>
-                            <div className="flex flex-wrap gap-2 mt-1">
-                              {generatedScript.locations.map((l, i) => (
-                                <Badge key={i} variant="outline">{l.name}</Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {generatedScript.episodes && generatedScript.episodes.length > 0 && (
-                          <div>
-                            <Label className="text-xs text-muted-foreground">Episodios ({generatedScript.episodes.length})</Label>
-                            <div className="space-y-1 mt-1">
-                              {generatedScript.episodes.slice(0, 3).map((ep, i) => (
-                                <p key={i} className="text-sm text-muted-foreground">
-                                  <span className="font-medium text-foreground">Ep {i + 1}:</span> {ep.title}
-                                </p>
-                              ))}
-                              {generatedScript.episodes.length > 3 && (
-                                <p className="text-xs text-muted-foreground">...y {generatedScript.episodes.length - 3} más</p>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Import mode */}
-                {scriptMode === 'import' && (
-                  <div className="space-y-2">
-                    <Label>Pega tu guion *</Label>
-                    <Textarea
-                      placeholder="INT. CAFETERÍA - DÍA&#10;&#10;SARA (30s) espera nerviosa..."
-                      value={scriptText}
-                      onChange={(e) => setScriptText(e.target.value)}
-                      className="min-h-[200px] font-mono text-sm"
-                    />
-                    <p className="text-xs text-muted-foreground">{scriptText.length} caracteres (mínimo 100)</p>
-                  </div>
-                )}
-
-                {/* Skip mode */}
-                {scriptMode === 'skip' && (
-                  <div className="p-6 rounded-lg bg-muted/30 border border-border text-center">
-                    <BookOpen className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground">
-                      Podrás crear o importar tu guion después desde la sección "Importar Guión" del proyecto.
-                    </p>
-                  </div>
-                )}
-              </div>
+              <WizardScriptStep
+                format={format}
+                episodesCount={episodesCount}
+                targetDuration={targetDuration}
+                masterLanguage={masterLanguage}
+                scriptMode={scriptMode}
+                setScriptMode={setScriptMode}
+                scriptIdea={scriptIdea}
+                setScriptIdea={setScriptIdea}
+                scriptGenre={scriptGenre}
+                setScriptGenre={setScriptGenre}
+                scriptTone={scriptTone}
+                setScriptTone={setScriptTone}
+                scriptText={scriptText}
+                setScriptText={setScriptText}
+                generatedScript={generatedScript}
+                setGeneratedScript={setGeneratedScript}
+                onShootoutDataReady={(char, loc) => {
+                  setShootoutCharacter(char);
+                  setShootoutLocation(loc);
+                }}
+                setProjectTitle={setTitle}
+              />
             )}
 
             {/* Step 5: Shootout Setup */}
