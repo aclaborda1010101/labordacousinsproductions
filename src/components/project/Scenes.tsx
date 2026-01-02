@@ -485,7 +485,15 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                   {shots[scene.id].map(shot => {
                                     const render = getShotRender(shot.id);
                                     const hasMedia = render?.video_url;
-                                    const isVideo = hasMedia && (render.video_url?.endsWith('.mp4') || render.video_url?.endsWith('.webm') || render.video_url?.includes('video'));
+                                    // Check for video: mp4, webm, or video in path, or Kling/Veo engines
+                                    const isVideoEngine = render?.engine?.toLowerCase() === 'kling' || render?.engine?.toLowerCase() === 'veo';
+                                    const isVideo = hasMedia && (
+                                      render.video_url?.endsWith('.mp4') || 
+                                      render.video_url?.endsWith('.webm') || 
+                                      render.video_url?.includes('video') ||
+                                      render.video_url?.includes('.mp4') ||
+                                      isVideoEngine
+                                    );
                                     const isImage = hasMedia && !isVideo;
                                     
                                     return (
@@ -526,8 +534,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                                   variant={render.status === 'succeeded' ? 'default' : 'secondary'}
                                                   className={cn("text-xs", render.status === 'succeeded' ? "bg-green-600" : render.status === 'failed' && "bg-amber-600")}
                                                 >
-                                                  {isVideo ? <Video className="w-3 h-3 mr-1" /> : <Camera className="w-3 h-3 mr-1" />}
-                                                  {render.status === 'failed' ? 'Keyframe' : render.engine?.toUpperCase()}
+                                                  <Video className="w-3 h-3 mr-1" />
+                                                  {render.status === 'failed' ? 'Fallback' : render.engine?.toUpperCase()}
                                                 </Badge>
                                               )}
                                             </div>
