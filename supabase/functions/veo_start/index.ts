@@ -108,6 +108,39 @@ async function getAccessTokenFromServiceAccount(): Promise<string> {
   return j.access_token as string;
 }
 
+// Helper: Convert image URL to base64 for Veo image-to-video
+async function imageUrlToBase64(imageUrl: string): Promise<string> {
+  console.log('Converting image URL to base64 for Veo...');
+
+  // If already a data URL, extract base64
+  if (imageUrl.startsWith('data:')) {
+    const commaIndex = imageUrl.indexOf(',');
+    if (commaIndex === -1) {
+      throw new Error('Invalid data URL (missing comma)');
+    }
+    const base64 = imageUrl.slice(commaIndex + 1);
+    console.log('Data URL detected, using embedded base64. Length:', base64.length);
+    return base64;
+  }
+
+  // Fetch and convert to base64
+  const response = await fetch(imageUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch image: ${response.status}`);
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  let binary = '';
+  for (let i = 0; i < uint8Array.length; i++) {
+    binary += String.fromCharCode(uint8Array[i]);
+  }
+  const base64 = btoa(binary);
+
+  console.log('Image converted to base64 successfully, length:', base64.length);
+  return base64;
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -117,7 +150,7 @@ serve(async (req) => {
   try {
     if (req.method !== "POST") return json({ error: "Use POST" }, 405);
 
-    const { prompt, seconds = 8, aspectRatio = "16:9", negativePrompt, sampleCount = 1, seed } =
+    const { prompt, seconds = 8, aspectRatio = "16:9", negativePrompt, sampleCount = 1, seed, keyframeUrl } =
       await req.json();
 
     if (!prompt || typeof prompt !== "string") {
@@ -125,6 +158,7 @@ serve(async (req) => {
     }
 
     console.log("Starting Veo generation with prompt:", prompt.substring(0, 100));
+    console.log("Keyframe URL provided:", keyframeUrl ? "Yes" : "No (text-to-video mode)");
 
     const projectId = getEnv("GCP_PROJECT_ID");
     const location = getEnv("GCP_LOCATION");
@@ -144,7 +178,23 @@ serve(async (req) => {
 
     console.log("Calling Veo endpoint:", endpoint);
 
-    // Request body based on Veo API reference
+    // Build instance - with or without image
+    const instance: Record<string, unknown> = { prompt };
+    
+    // If keyframeUrl provided, use image-to-video mode
+    if (keyframeUrl) {
+      try {
+        const imageBase64 = await imageUrlToBase64(keyframeUrl);
+        instance.image = {
+          bytesBase64Encoded: imageBase64,
+        };
+        console.log("Image-to-video mode: keyframe attached");
+      } catch (imgErr) {
+        console.warn("Failed to convert keyframe, falling back to text-to-video:", imgErr);
+      }
+    }
+
+    // Request parameters
     const parameters: Record<string, unknown> = {
       aspectRatio,
       sampleCount,
@@ -155,11 +205,17 @@ serve(async (req) => {
     if (seed !== undefined) parameters.seed = seed;
 
     const payload = {
-      instances: [{ prompt }],
+      instances: [instance],
       parameters,
     };
 
-    console.log("Request payload:", JSON.stringify(payload, null, 2));
+    console.log("Request payload (image truncated):", JSON.stringify({
+      ...payload,
+      instances: payload.instances.map(i => ({
+        ...i,
+        image: i.image ? { bytesBase64Encoded: "[BASE64_TRUNCATED]" } : undefined
+      }))
+    }, null, 2));
 
     const r = await fetch(endpoint, {
       method: "POST",
@@ -187,10 +243,11 @@ serve(async (req) => {
     // Devolver operationName completo para que el frontend lo guarde así
     return json({
       ok: true,
-      operationName,  // <-- ESTO ES LO QUE SE DEBE GUARDAR Y PASAR A veo_poll
+      operationName,
       raw: j,
       modelId,
       seconds,
+      mode: keyframeUrl ? "image-to-video" : "text-to-video",
     });
   } catch (e) {
     console.error("veo_start error:", e);

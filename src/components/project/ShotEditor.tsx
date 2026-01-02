@@ -701,13 +701,65 @@ export default function ShotEditor({
       engine: 'veo'
     });
     
-    // Start the operation
+    // Veo: try to find a keyframe for image-to-video (like Kling)
+    let keyframeUrl: string | undefined;
+    try {
+      // First try approved keyframes
+      const { data: approvedKf, error: approvedErr } = await supabase
+        .from('keyframes')
+        .select('image_url')
+        .eq('shot_id', shot.id)
+        .eq('approved', true)
+        .not('image_url', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (approvedErr) {
+        console.warn('Error fetching approved keyframe:', approvedErr);
+      }
+
+      keyframeUrl = approvedKf?.image_url ?? undefined;
+
+      // If no approved, try any keyframe
+      if (!keyframeUrl) {
+        const { data: anyKf, error: anyErr } = await supabase
+          .from('keyframes')
+          .select('image_url')
+          .eq('shot_id', shot.id)
+          .not('image_url', 'is', null)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (anyErr) {
+          console.warn('Error fetching keyframe:', anyErr);
+        }
+
+        keyframeUrl = anyKf?.image_url ?? undefined;
+      }
+    } catch (e) {
+      console.warn('Keyframe lookup failed:', e);
+    }
+
+    const mode = keyframeUrl ? 'image-to-video' : 'text-to-video';
+    console.log(`Veo mode: ${mode}`, keyframeUrl ? `with keyframe: ${keyframeUrl.substring(0, 50)}...` : '');
+    
+    setGenerationProgress(prev => ({
+      ...prev,
+      message: keyframeUrl 
+        ? 'Iniciando Veo 3.1 (image-to-video)...' 
+        : 'Iniciando Veo 3.1 (text-to-video)...'
+    }));
+    
+    // Start the operation - now with optional keyframeUrl
     const { data: startData, error: startError } = await supabase.functions.invoke('veo_start', {
       body: {
         prompt,
         seconds: form.duration_target,
         aspectRatio: '16:9',
-        sampleCount: 1
+        sampleCount: 1,
+        keyframeUrl, // Pass keyframe if available
       }
     });
     
@@ -724,7 +776,7 @@ export default function ShotEditor({
       return { success: false, error: startData?.error || 'Failed to start Veo operation' };
     }
     
-    console.log('Veo operation started (full name):', startData.operationName);
+    console.log('Veo operation started (full name):', startData.operationName, 'Mode:', startData.mode);
     
     // Poll for completion usando el operationName completo
     const pollResult = await pollVeoOperation(startData.operationName);
