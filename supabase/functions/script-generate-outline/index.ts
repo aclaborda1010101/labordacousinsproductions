@@ -210,17 +210,15 @@ serve(async (req) => {
       ? `Serie de ${episodesCount || 6} episodios de ${episodeDurationMin || 45} minutos cada uno`
       : `Película de ${filmDurationMin || 100} minutos`;
 
-    // Build reference scripts section if available (truncated for token management)
+    // Build reference scripts section - heavily truncated to prevent timeout
     let referenceSection = '';
     if (referenceScripts && referenceScripts.length > 0) {
-      referenceSection = `\n\nGUIONES DE REFERENCIA (aprende el estilo, estructura y tono de estos guiones profesionales):\n\n`;
+      referenceSection = `\n\nGUIONES DE REFERENCIA (estilo y tono):\n`;
       for (const ref of referenceScripts.slice(0, 2)) {
-        const excerpt = ref.content.slice(0, 4000);
-        referenceSection += `--- ${ref.title} (${ref.genre || 'N/A'}) ---\n`;
-        if (ref.notes) referenceSection += `Notas del usuario: ${ref.notes}\n`;
-        referenceSection += `${excerpt}\n${ref.content.length > 4000 ? '[...contenido truncado...]' : ''}\n\n`;
+        // Only take first 1500 chars to prevent timeout
+        const excerpt = ref.content.slice(0, 1500);
+        referenceSection += `• ${ref.title}: ${ref.genre || ''} - ${ref.notes || 'Referencia de estilo'}\n`;
       }
-      referenceSection += `IMPORTANTE: Usa estos guiones como inspiración para el estilo narrativo, formato de diálogos y estructura de escenas. NO copies la trama.\n`;
     }
 
     const userPrompt = `GENERA UN OUTLINE PROFESIONAL EXTENSO Y DETALLADO:
