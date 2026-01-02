@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,10 +10,12 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { 
   ChevronDown, ChevronUp, User, Eye, Palette, Scissors, 
-  Hand, Mic, Move, Star, Plus, X, Sparkles, Save, Loader2
+  Hand, Mic, Move, Star, Plus, X, Sparkles, Save, Loader2,
+  GitBranch, Check, Lock, History
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useVisualDNA } from '@/hooks/useVisualDNA';
 
 // ===== INTERFACES =====
 export interface CharacterVisualDNA {
@@ -566,6 +568,7 @@ interface CharacterVisualDNAEditorProps {
   onSave?: (data?: CharacterVisualDNA) => void;
   onGenerateWithAI?: () => void;
   saving?: boolean;
+  projectId?: string;
 }
 
 // ===== HELPER COMPONENT: Select Field =====
@@ -656,7 +659,19 @@ function CharacterVisualDNAEditor({
   onSave,
   onGenerateWithAI,
   saving = false,
+  projectId,
 }: CharacterVisualDNAEditorProps) {
+  // Use the Visual DNA hook for versioned storage
+  const { 
+    activeVersion, 
+    allVersions, 
+    loading: dnaLoading, 
+    saving: dnaSaving, 
+    saveVisualDNA,
+    switchVersion,
+    approveVersion
+  } = useVisualDNA(characterId);
+
   const [data, setData] = useState<CharacterVisualDNA>(initialData || getDefaultVisualDNA());
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     physical: true,
@@ -669,6 +684,17 @@ function CharacterVisualDNAEditor({
     references: false,
   });
   const [generating, setGenerating] = useState(false);
+  const [showVersions, setShowVersions] = useState(false);
+  const [newVersionName, setNewVersionName] = useState('');
+
+  // Load from active version when available
+  useEffect(() => {
+    if (activeVersion?.visual_dna) {
+      // Merge with defaults to ensure all fields exist
+      const merged = { ...getDefaultVisualDNA(), ...activeVersion.visual_dna };
+      setData(merged);
+    }
+  }, [activeVersion]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -723,19 +749,36 @@ function CharacterVisualDNAEditor({
   };
 
   const handleSave = async () => {
-    // Save to database
     try {
-      const { error } = await supabase
+      // Save to new character_visual_dna table
+      await saveVisualDNA(data);
+      
+      // Also update legacy profile_json for backward compatibility
+      await supabase
         .from('characters')
         .update({ profile_json: { ...data, visual_dna: true } })
         .eq('id', characterId);
       
-      if (error) throw error;
-      toast.success('Visual DNA guardado');
       onSave?.(data);
     } catch (error) {
       console.error('Error saving Visual DNA:', error);
-      toast.error('Error al guardar Visual DNA');
+    }
+  };
+
+  const handleCreateVersion = async () => {
+    if (!newVersionName.trim()) {
+      toast.error('Ingresa un nombre para la versión');
+      return;
+    }
+    try {
+      await saveVisualDNA(data, { 
+        createNewVersion: true, 
+        versionName: newVersionName 
+      });
+      setNewVersionName('');
+      setShowVersions(false);
+    } catch (error) {
+      console.error('Error creating version:', error);
     }
   };
 
@@ -786,6 +829,22 @@ function CharacterVisualDNAEditor({
           </p>
         </div>
         <div className="flex gap-2">
+          {/* Version indicator */}
+          {activeVersion && (
+            <div className="flex items-center gap-2 mr-2">
+              <Badge variant={activeVersion.approved ? "default" : "outline"} className="flex items-center gap-1">
+                {activeVersion.approved && <Check className="w-3 h-3" />}
+                v{activeVersion.version}: {activeVersion.version_name}
+              </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowVersions(!showVersions)}
+              >
+                <History className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -803,9 +862,9 @@ function CharacterVisualDNAEditor({
             variant="gold"
             size="sm"
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || dnaSaving}
           >
-            {saving ? (
+            {(saving || dnaSaving) ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
             ) : (
               <Save className="w-4 h-4 mr-2" />
@@ -814,6 +873,76 @@ function CharacterVisualDNAEditor({
           </Button>
         </div>
       </div>
+
+      {/* Version history panel */}
+      {showVersions && (
+        <Card className="p-4">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium flex items-center gap-2">
+                <GitBranch className="w-4 h-4" />
+                Historial de versiones
+              </h4>
+              <Button variant="ghost" size="sm" onClick={() => setShowVersions(false)}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            {/* Version list */}
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {allVersions.map(version => (
+                <div
+                  key={version.id}
+                  className={`flex items-center justify-between p-2 rounded-lg border ${
+                    version.is_active ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">v{version.version}</span>
+                    <span className="text-sm text-muted-foreground">{version.version_name}</span>
+                    {version.approved && (
+                      <Badge variant="default" className="text-xs">
+                        <Check className="w-3 h-3 mr-1" />
+                        Aprobado
+                      </Badge>
+                    )}
+                    {version.is_active && (
+                      <Badge variant="outline" className="text-xs">Activo</Badge>
+                    )}
+                  </div>
+                  {!version.is_active && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => switchVersion(version.id)}
+                    >
+                      Activar
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Create new version */}
+            <div className="flex gap-2 pt-2 border-t">
+              <Input
+                value={newVersionName}
+                onChange={e => setNewVersionName(e.target.value)}
+                placeholder="Nombre de nueva versión..."
+                className="h-8 text-sm"
+              />
+              <Button
+                size="sm"
+                onClick={handleCreateVersion}
+                disabled={!newVersionName.trim() || dnaSaving}
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Crear versión
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Sections */}
       <div className="space-y-2">
