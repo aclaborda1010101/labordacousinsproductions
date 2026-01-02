@@ -14,6 +14,119 @@ export type Database = {
   }
   public: {
     Tables: {
+      audio_layers: {
+        Row: {
+          ambience_layers: Json
+          created_at: string | null
+          foley_layers: Json
+          id: string
+          location_id: string | null
+          mix_notes: Json
+          project_id: string
+          room_tone: Json
+          scene_id: string | null
+          shot_id: string | null
+          updated_at: string | null
+          validated: boolean | null
+          validation_errors: Json | null
+        }
+        Insert: {
+          ambience_layers?: Json
+          created_at?: string | null
+          foley_layers?: Json
+          id?: string
+          location_id?: string | null
+          mix_notes?: Json
+          project_id: string
+          room_tone?: Json
+          scene_id?: string | null
+          shot_id?: string | null
+          updated_at?: string | null
+          validated?: boolean | null
+          validation_errors?: Json | null
+        }
+        Update: {
+          ambience_layers?: Json
+          created_at?: string | null
+          foley_layers?: Json
+          id?: string
+          location_id?: string | null
+          mix_notes?: Json
+          project_id?: string
+          room_tone?: Json
+          scene_id?: string | null
+          shot_id?: string | null
+          updated_at?: string | null
+          validated?: boolean | null
+          validation_errors?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audio_layers_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audio_layers_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audio_layers_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audio_layers_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audio_presets: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          id: string
+          name: string
+          preset_data: Json
+          subcategory: string | null
+          tags: string[] | null
+          usage_count: number | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          id?: string
+          name: string
+          preset_data: Json
+          subcategory?: string | null
+          tags?: string[] | null
+          usage_count?: number | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          name?: string
+          preset_data?: Json
+          subcategory?: string | null
+          tags?: string[] | null
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
       character_outfits: {
         Row: {
           character_id: string
@@ -303,6 +416,79 @@ export type Database = {
           },
         ]
       }
+      continuity_anchors_enhanced: {
+        Row: {
+          character_states: Json | null
+          created_at: string | null
+          id: string
+          lighting_continuity: Json | null
+          locked_values: Json | null
+          project_id: string
+          props_states: Json | null
+          scene_id: string | null
+          shot_id: string | null
+          temperature: string | null
+          time_exact: string | null
+          time_of_day: string
+          updated_at: string | null
+          weather: string
+        }
+        Insert: {
+          character_states?: Json | null
+          created_at?: string | null
+          id?: string
+          lighting_continuity?: Json | null
+          locked_values?: Json | null
+          project_id: string
+          props_states?: Json | null
+          scene_id?: string | null
+          shot_id?: string | null
+          temperature?: string | null
+          time_exact?: string | null
+          time_of_day: string
+          updated_at?: string | null
+          weather: string
+        }
+        Update: {
+          character_states?: Json | null
+          created_at?: string | null
+          id?: string
+          lighting_continuity?: Json | null
+          locked_values?: Json | null
+          project_id?: string
+          props_states?: Json | null
+          scene_id?: string | null
+          shot_id?: string | null
+          temperature?: string | null
+          time_exact?: string | null
+          time_of_day?: string
+          updated_at?: string | null
+          weather?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "continuity_anchors_enhanced_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "continuity_anchors_enhanced_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "continuity_anchors_enhanced_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       continuity_events: {
         Row: {
           character_id: string | null
@@ -420,6 +606,78 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      continuity_violations: {
+        Row: {
+          attempted_value: string
+          detected_at: string | null
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          expected_value: string
+          fix_notes: string | null
+          fixed_at: string | null
+          fixed_by: string | null
+          id: string
+          locked_field: string
+          project_id: string
+          severity: string
+          shot_id: string | null
+          status: string | null
+          violation_type: string
+        }
+        Insert: {
+          attempted_value: string
+          detected_at?: string | null
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          expected_value: string
+          fix_notes?: string | null
+          fixed_at?: string | null
+          fixed_by?: string | null
+          id?: string
+          locked_field: string
+          project_id: string
+          severity: string
+          shot_id?: string | null
+          status?: string | null
+          violation_type: string
+        }
+        Update: {
+          attempted_value?: string
+          detected_at?: string | null
+          entity_id?: string
+          entity_name?: string
+          entity_type?: string
+          expected_value?: string
+          fix_notes?: string | null
+          fixed_at?: string | null
+          fixed_by?: string | null
+          id?: string
+          locked_field?: string
+          project_id?: string
+          severity?: string
+          shot_id?: string | null
+          status?: string | null
+          violation_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "continuity_violations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "continuity_violations_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
             referencedColumns: ["id"]
           },
         ]
@@ -1164,6 +1422,59 @@ export type Database = {
           },
         ]
       }
+      pre_render_validations: {
+        Row: {
+          blockers: Json | null
+          can_render: boolean | null
+          checks: Json
+          id: string
+          override_at: string | null
+          override_by: string | null
+          override_reason: string | null
+          override_validation: boolean | null
+          shot_id: string
+          validated_at: string | null
+          validated_by: string | null
+          warnings: Json | null
+        }
+        Insert: {
+          blockers?: Json | null
+          can_render?: boolean | null
+          checks?: Json
+          id?: string
+          override_at?: string | null
+          override_by?: string | null
+          override_reason?: string | null
+          override_validation?: boolean | null
+          shot_id: string
+          validated_at?: string | null
+          validated_by?: string | null
+          warnings?: Json | null
+        }
+        Update: {
+          blockers?: Json | null
+          can_render?: boolean | null
+          checks?: Json
+          id?: string
+          override_at?: string | null
+          override_by?: string | null
+          override_reason?: string | null
+          override_validation?: boolean | null
+          shot_id?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_render_validations_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1737,7 +2048,9 @@ export type Database = {
           approval_status: Database["public"]["Enums"]["approval_status"] | null
           approved: boolean | null
           assigned_role: Database["public"]["Enums"]["app_role"] | null
+          audio_layer_id: string | null
           blocking: Json | null
+          blocking_timestamps: Json | null
           camera: Json | null
           created_at: string
           dialogue_text: string | null
@@ -1755,6 +2068,7 @@ export type Database = {
           shot_type: string
           sound_plan: Json | null
           updated_at: string
+          validation_status: string | null
         }
         Insert: {
           approval_status?:
@@ -1762,7 +2076,9 @@ export type Database = {
             | null
           approved?: boolean | null
           assigned_role?: Database["public"]["Enums"]["app_role"] | null
+          audio_layer_id?: string | null
           blocking?: Json | null
+          blocking_timestamps?: Json | null
           camera?: Json | null
           created_at?: string
           dialogue_text?: string | null
@@ -1780,6 +2096,7 @@ export type Database = {
           shot_type?: string
           sound_plan?: Json | null
           updated_at?: string
+          validation_status?: string | null
         }
         Update: {
           approval_status?:
@@ -1787,7 +2104,9 @@ export type Database = {
             | null
           approved?: boolean | null
           assigned_role?: Database["public"]["Enums"]["app_role"] | null
+          audio_layer_id?: string | null
           blocking?: Json | null
+          blocking_timestamps?: Json | null
           camera?: Json | null
           created_at?: string
           dialogue_text?: string | null
@@ -1805,8 +2124,16 @@ export type Database = {
           shot_type?: string
           sound_plan?: Json | null
           updated_at?: string
+          validation_status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "shots_audio_layer_id_fkey"
+            columns: ["audio_layer_id"]
+            isOneToOne: false
+            referencedRelation: "audio_layers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "shots_scene_id_fkey"
             columns: ["scene_id"]
@@ -2180,6 +2507,13 @@ export type Database = {
         Args: { p_character_id: string }
         Returns: number
       }
+      can_shot_render: {
+        Args: { shot_uuid: string }
+        Returns: {
+          blockers: Json
+          can_render: boolean
+        }[]
+      }
       has_project_access: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
@@ -2191,6 +2525,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      validate_audio_layers: { Args: { layer_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
