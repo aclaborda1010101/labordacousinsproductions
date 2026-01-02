@@ -109,24 +109,38 @@ async function getAccessTokenFromServiceAccount(): Promise<string> {
 }
 
 // Helper: Convert image URL to base64 for Veo image-to-video
-async function imageUrlToBase64(imageUrl: string): Promise<string> {
+// Returns { base64, mimeType } because Veo requires mimeType
+async function imageUrlToBase64(imageUrl: string): Promise<{ base64: string; mimeType: string }> {
   console.log('Converting image URL to base64 for Veo...');
 
-  // If already a data URL, extract base64
+  // If already a data URL, extract base64 and mimeType
   if (imageUrl.startsWith('data:')) {
     const commaIndex = imageUrl.indexOf(',');
     if (commaIndex === -1) {
       throw new Error('Invalid data URL (missing comma)');
     }
     const base64 = imageUrl.slice(commaIndex + 1);
-    console.log('Data URL detected, using embedded base64. Length:', base64.length);
-    return base64;
+    // Extract mime type from "data:image/png;base64,"
+    const mimeMatch = imageUrl.match(/^data:([^;]+);/);
+    const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+    console.log('Data URL detected, mimeType:', mimeType, 'base64 length:', base64.length);
+    return { base64, mimeType };
   }
 
   // Fetch and convert to base64
   const response = await fetch(imageUrl);
   if (!response.ok) {
     throw new Error(`Failed to fetch image: ${response.status}`);
+  }
+
+  // Get mime type from response headers or infer from URL
+  let mimeType = response.headers.get('content-type') || '';
+  if (!mimeType || mimeType === 'application/octet-stream') {
+    // Infer from URL extension
+    if (imageUrl.includes('.png')) mimeType = 'image/png';
+    else if (imageUrl.includes('.jpg') || imageUrl.includes('.jpeg')) mimeType = 'image/jpeg';
+    else if (imageUrl.includes('.webp')) mimeType = 'image/webp';
+    else mimeType = 'image/png'; // Default fallback
   }
 
   const arrayBuffer = await response.arrayBuffer();
@@ -137,8 +151,8 @@ async function imageUrlToBase64(imageUrl: string): Promise<string> {
   }
   const base64 = btoa(binary);
 
-  console.log('Image converted to base64 successfully, length:', base64.length);
-  return base64;
+  console.log('Image converted, mimeType:', mimeType, 'base64 length:', base64.length);
+  return { base64, mimeType };
 }
 
 serve(async (req) => {
@@ -184,11 +198,12 @@ serve(async (req) => {
     // If keyframeUrl provided, use image-to-video mode
     if (keyframeUrl) {
       try {
-        const imageBase64 = await imageUrlToBase64(keyframeUrl);
+        const { base64, mimeType } = await imageUrlToBase64(keyframeUrl);
         instance.image = {
-          bytesBase64Encoded: imageBase64,
+          bytesBase64Encoded: base64,
+          mimeType: mimeType, // Required by Veo API
         };
-        console.log("Image-to-video mode: keyframe attached");
+        console.log("Image-to-video mode: keyframe attached with mimeType:", mimeType);
       } catch (imgErr) {
         console.warn("Failed to convert keyframe, falling back to text-to-video:", imgErr);
       }
