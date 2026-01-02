@@ -529,6 +529,107 @@ export default function ShotEditor({
     return { done: false, error: 'Timeout waiting for video generation' };
   };
 
+  // Poll Kling operation until complete
+  const pollKlingOperation = async (taskId: string): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
+    const maxAttempts = 60; // 5 minutes max
+    let attempts = 0;
+    
+    setGenerationProgress({
+      status: 'generating',
+      elapsedSeconds: 0,
+      estimatedTotalSeconds: 90,
+      message: 'Generando video con Kling 2.0...',
+      engine: 'kling'
+    });
+    
+    while (attempts < maxAttempts) {
+      await new Promise(r => setTimeout(r, 5000)); // Poll every 5 seconds
+      attempts++;
+      
+      setGenerationProgress(prev => ({
+        ...prev,
+        message: `Renderizando video... (intento ${attempts})`
+      }));
+      
+      const { data, error } = await supabase.functions.invoke('kling_poll', {
+        body: { taskId }
+      });
+      
+      if (error) {
+        console.error('Kling poll error:', error);
+        continue;
+      }
+      
+      console.log('Kling poll result:', data);
+      
+      if (data?.status === 'succeeded' && data?.videoUrl) {
+        setGenerationProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado con Kling!' }));
+        return { done: true, videoUrl: data.videoUrl };
+      }
+      
+      if (data?.status === 'failed') {
+        setGenerationProgress(prev => ({ ...prev, status: 'error', message: data.error || 'Kling generation failed' }));
+        return { done: true, error: data.error || 'Kling generation failed' };
+      }
+      
+      // Still processing
+      if (data?.status === 'processing' || data?.status === 'submitted') {
+        continue;
+      }
+    }
+    
+    setGenerationProgress(prev => ({ ...prev, status: 'error', message: 'Timeout - generación muy lenta' }));
+    return { done: false, error: 'Timeout waiting for Kling video generation' };
+  };
+
+  const generateWithKling = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
+    const prompt = buildVideoPrompt();
+    console.log('Starting Kling generation with prompt:', prompt);
+    
+    // Reset and start progress
+    setGenerationProgress({
+      status: 'starting',
+      elapsedSeconds: 0,
+      estimatedTotalSeconds: 90,
+      message: 'Iniciando generación con Kling 2.0...',
+      engine: 'kling'
+    });
+    
+    // Start the operation
+    const { data: startData, error: startError } = await supabase.functions.invoke('kling_start', {
+      body: {
+        prompt,
+        duration: form.duration_target <= 5 ? 5 : 10,
+        aspectRatio: '16:9',
+        model: 'kling-v2', // Use latest model
+        mode: form.effective_mode === 'ULTRA' ? 'pro' : 'std'
+      }
+    });
+    
+    if (startError) {
+      console.error('Kling start error:', startError);
+      setGenerationProgress(prev => ({ ...prev, status: 'error', message: startError.message }));
+      return { success: false, error: startError.message };
+    }
+    
+    if (!startData?.ok || !startData?.taskId) {
+      console.error('Kling start failed:', startData);
+      setGenerationProgress(prev => ({ ...prev, status: 'error', message: startData?.error || 'Failed to start' }));
+      return { success: false, error: startData?.error || 'Failed to start Kling operation' };
+    }
+    
+    console.log('Kling task started:', startData.taskId);
+    
+    // Poll for completion
+    const pollResult = await pollKlingOperation(startData.taskId);
+    
+    if (pollResult.done && pollResult.videoUrl) {
+      return { success: true, videoUrl: pollResult.videoUrl };
+    }
+    
+    return { success: false, error: pollResult.error || 'Video generation failed' };
+  };
+
   const generateWithVeo = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
     const prompt = buildVideoPrompt();
     console.log('Starting Veo generation with prompt:', prompt);
@@ -606,15 +707,31 @@ export default function ShotEditor({
         }
       }
 
-      // Use original generate-shot for kling and lovable (and as fallback)
-      if (selectedEngine !== 'veo' || fallback) {
+      // Use new kling_start/kling_poll flow for Kling
+      if (selectedEngine === 'kling' && !fallback) {
+        const klingResult = await generateWithKling();
+        
+        if (klingResult.success && klingResult.videoUrl) {
+          videoUrl = klingResult.videoUrl;
+          metadata = { engine: 'kling', model: 'kling-v2' };
+        } else {
+          // Fallback to Lovable AI for keyframe
+          console.log('Kling failed, falling back to Lovable AI:', klingResult.error);
+          toast.warning('Kling no disponible, generando keyframe...');
+          fallback = true;
+          engineUsed = 'lovable';
+        }
+      }
+
+      // Use generate-shot for lovable only (and as fallback)
+      if (selectedEngine === 'lovable' || fallback) {
         const { data, error } = await supabase.functions.invoke('generate-shot', {
           body: {
             shotId: shot.id,
             sceneDescription: `${scene.slugline}. ${scene.summary || ''}`,
             shotType: form.shot_type,
             duration: form.duration_target,
-            engine: fallback ? 'lovable' : selectedEngine,
+            engine: 'lovable',
             dialogueText: form.dialogue_text,
             cameraMovement: form.camera_movement,
             blocking: form.blocking_description,
