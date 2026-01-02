@@ -13,6 +13,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
+import ReferenceScriptLibrary from './ReferenceScriptLibrary';
 import { 
   FileText, 
   Wand2, 
@@ -177,10 +178,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setPipelineSteps(prev => prev.map(s => ({ ...s, status: 'pending' })));
 
     try {
-      // Step 1: Targets (already calculated)
+      // Step 1: Targets (already calculated) + Load References
       updatePipelineStep('targets', 'running');
       setPipelineProgress(10);
-      await new Promise(r => setTimeout(r, 500));
+      
+      // Fetch reference scripts from library
+      const { data: refScriptsData } = await supabase
+        .from('reference_scripts')
+        .select('title, content, genre, notes')
+        .or(`project_id.eq.${projectId},is_global.eq.true`)
+        .order('created_at', { ascending: false })
+        .limit(3);
+      
+      const referenceScripts = refScriptsData || [];
+      
       updatePipelineStep('targets', 'success');
       setPipelineProgress(20);
 
@@ -198,6 +209,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           tone,
           language,
           references,
+          referenceScripts: referenceScripts.length > 0 ? referenceScripts : undefined,
           targets
         }
       });
@@ -682,14 +694,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="generate" className="flex items-center gap-2">
             <Lightbulb className="w-4 h-4" />
-            Generar desde Idea
+            Generar
           </TabsTrigger>
           <TabsTrigger value="import" className="flex items-center gap-2">
             <FileText className="w-4 h-4" />
             Importar
+          </TabsTrigger>
+          <TabsTrigger value="library" className="flex items-center gap-2">
+            <Film className="w-4 h-4" />
+            Referencias
           </TabsTrigger>
           <TabsTrigger value="summary" className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
@@ -697,7 +713,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           </TabsTrigger>
           <TabsTrigger value="doctor" className="flex items-center gap-2">
             <Stethoscope className="w-4 h-4" />
-            Script Doctor
+            Doctor
           </TabsTrigger>
         </TabsList>
 
@@ -979,6 +995,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* LIBRARY TAB */}
+        <TabsContent value="library" className="space-y-4">
+          <ReferenceScriptLibrary projectId={projectId} />
         </TabsContent>
 
         {/* SUMMARY TAB */}

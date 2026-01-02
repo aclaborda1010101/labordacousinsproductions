@@ -16,6 +16,12 @@ interface OutlineRequest {
   tone: string;
   language: string;
   references?: string;
+  referenceScripts?: Array<{
+    title: string;
+    content: string;
+    genre: string | null;
+    notes: string | null;
+  }>;
   targets: {
     protagonists_min: number;
     supporting_min: number;
@@ -168,7 +174,7 @@ serve(async (req) => {
 
   try {
     const request: OutlineRequest = await req.json();
-    const { idea, format, episodesCount, episodeDurationMin, filmDurationMin, genre, tone, language, references, targets } = request;
+    const { idea, format, episodesCount, episodeDurationMin, filmDurationMin, genre, tone, language, references, referenceScripts, targets } = request;
 
     if (!idea || !targets) {
       return new Response(
@@ -186,6 +192,19 @@ serve(async (req) => {
       ? `Serie de ${episodesCount || 6} episodios de ${episodeDurationMin || 45} minutos cada uno`
       : `Película de ${filmDurationMin || 100} minutos`;
 
+    // Build reference scripts section if available
+    let referenceSection = '';
+    if (referenceScripts && referenceScripts.length > 0) {
+      referenceSection = `\n\nGUIONES DE REFERENCIA (aprende el estilo, estructura y tono de estos guiones profesionales):\n\n`;
+      for (const ref of referenceScripts.slice(0, 3)) { // Max 3 references to avoid token limits
+        const excerpt = ref.content.slice(0, 8000); // First 8000 chars of each
+        referenceSection += `--- ${ref.title} (${ref.genre || 'N/A'}) ---\n`;
+        if (ref.notes) referenceSection += `Notas del usuario: ${ref.notes}\n`;
+        referenceSection += `${excerpt}\n${ref.content.length > 8000 ? '[...contenido truncado...]' : ''}\n\n`;
+      }
+      referenceSection += `IMPORTANTE: Usa estos guiones como inspiración para el estilo narrativo, formato de diálogos y estructura de escenas. NO copies la trama.\n`;
+    }
+
     const userPrompt = `GENERA UN OUTLINE PROFESIONAL:
 
 IDEA: ${idea}
@@ -195,7 +214,7 @@ GÉNERO: ${genre}
 TONO: ${tone}
 IDIOMA: ${language}
 ${references ? `REFERENCIAS (inspiración, NO copiar): ${references}` : ''}
-
+${referenceSection}
 TARGETS OBLIGATORIOS (DEBES CUMPLIRLOS):
 - Protagonistas: ${targets.protagonists_min}
 - Personajes secundarios: ${targets.supporting_min}
