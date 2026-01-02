@@ -154,6 +154,8 @@ export default function ShotEditor({
     camera_lens: (shot.camera as any)?.lens || '',
     blocking_description: (shot.blocking as any)?.description || '',
     blocking_action: (shot.blocking as any)?.action || '',
+    effective_mode: shot.effective_mode,
+    hero: shot.hero || false,
   });
   
   const [selectedEngine, setSelectedEngine] = useState<VideoEngine>(
@@ -175,6 +177,8 @@ export default function ShotEditor({
         shot_type: form.shot_type,
         duration_target: form.duration_target,
         dialogue_text: form.dialogue_text || null,
+        effective_mode: form.effective_mode,
+        hero: form.hero,
         camera: {
           movement: form.camera_movement,
           angle: form.camera_angle,
@@ -622,6 +626,67 @@ export default function ShotEditor({
                   onChange={e => setForm({...form, duration_target: parseFloat(e.target.value) || 3})}
                 />
               </div>
+            </div>
+
+            {/* Quality Mode Selector */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Modo de Calidad
+              </Label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setForm({...form, effective_mode: 'CINE', hero: false})}
+                  className={`p-3 rounded-lg border-2 transition-all text-left ${
+                    form.effective_mode === 'CINE' && !form.hero
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Badge variant="cine" className="text-xs">CINE</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    3 takes, 1 keyframe, balance calidad/coste
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setForm({...form, effective_mode: 'ULTRA', hero: false})}
+                  className={`p-3 rounded-lg border-2 transition-all text-left ${
+                    form.effective_mode === 'ULTRA' && !form.hero
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Badge variant="ultra" className="text-xs">ULTRA</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    5 takes, 2 keyframes, máxima calidad
+                  </p>
+                </button>
+              </div>
+              {scene.quality_mode === 'CINE' && (
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    type="checkbox"
+                    id="hero-shot"
+                    checked={form.hero}
+                    onChange={e => setForm({
+                      ...form, 
+                      hero: e.target.checked,
+                      effective_mode: e.target.checked ? 'ULTRA' : scene.quality_mode
+                    })}
+                    className="rounded border-border"
+                  />
+                  <Label htmlFor="hero-shot" className="text-sm cursor-pointer flex items-center gap-1">
+                    <Badge variant="hero" className="text-[10px]">HERO</Badge>
+                    Forzar ULTRA en este plano (escena CINE)
+                  </Label>
+                </div>
+              )}
             </div>
 
             {/* Camera Settings */}
