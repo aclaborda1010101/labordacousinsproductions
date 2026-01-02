@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.veo_poll]
 verify_jwt = false
+
+[functions.generate-keyframe]
+verify_jwt = false
