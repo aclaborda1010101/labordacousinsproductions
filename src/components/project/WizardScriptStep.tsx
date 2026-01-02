@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { 
   FileText, Lightbulb, Pencil, ArrowRight, BookOpen, Wand2, Loader2, 
   Sparkles, ChevronDown, ChevronRight, Users, MapPin, Package, Download,
-  Check, X
+  Check, X, Film, Music, Volume2, MessageSquare, Database
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import jsPDF from 'jspdf';
@@ -40,23 +40,52 @@ interface GeneratedProp {
   description?: string;
 }
 
+interface SceneDialogue {
+  character: string;
+  parenthetical?: string;
+  line: string;
+}
+
+interface GeneratedScene {
+  scene_number?: number;
+  slugline?: string;
+  description?: string;
+  characters?: string[];
+  action?: string;
+  dialogue?: SceneDialogue[];
+  music_cue?: string;
+  sfx?: string[];
+  vfx?: string[];
+  mood?: string;
+}
+
 interface GeneratedEpisode {
   episode_number?: number;
   title: string;
   synopsis?: string;
   summary?: string;
   duration_min?: number;
-  scenes?: Array<{
-    slugline?: string;
-    description?: string;
-    characters?: string[];
-  }>;
+  scenes?: GeneratedScene[];
+  screenplay_text?: string;
 }
 
 interface BeatSheetItem {
   beat: string;
   description: string;
   page_range?: string;
+}
+
+interface MusicDesign {
+  name: string;
+  type?: string;
+  description?: string;
+  scenes?: string[];
+}
+
+interface SFXDesign {
+  category: string;
+  description?: string;
+  scenes?: string[];
 }
 
 export interface GeneratedScript {
@@ -71,6 +100,8 @@ export interface GeneratedScript {
   characters?: GeneratedCharacter[];
   locations?: GeneratedLocation[];
   props?: GeneratedProp[];
+  music_design?: MusicDesign[];
+  sfx_design?: SFXDesign[];
   screenplay?: string;
 }
 
@@ -99,6 +130,7 @@ interface WizardScriptStepProps {
   setGeneratedScript: (script: GeneratedScript | null) => void;
   onShootoutDataReady: (character: { name: string; bio: string }, location: { name: string; description: string }) => void;
   setProjectTitle?: (title: string) => void;
+  projectId?: string;
 }
 
 const GENRE_OPTIONS = [
@@ -153,10 +185,13 @@ export function WizardScriptStep({
   setGeneratedScript,
   onShootoutDataReady,
   setProjectTitle,
+  projectId,
 }: WizardScriptStepProps) {
   const [generating, setGenerating] = useState(false);
+  const [creatingEntities, setCreatingEntities] = useState(false);
   const [progressStage, setProgressStage] = useState(0);
   const [expandedEpisodes, setExpandedEpisodes] = useState<Record<number, boolean>>({});
+  const [showFullScreenplay, setShowFullScreenplay] = useState(false);
   const [entitySelection, setEntitySelection] = useState<EntitySelection>({
     characters: {},
     locations: {},
@@ -276,188 +311,374 @@ export function WizardScriptStep({
     return { characters: chars, locations: locs, props };
   };
 
+  // Create entities in database
+  const createEntitiesInDB = async (targetProjectId: string) => {
+    if (!generatedScript) return;
+    
+    setCreatingEntities(true);
+    const selected = getSelectedEntities();
+    
+    try {
+      // Create characters
+      for (const char of selected.characters) {
+        await supabase.from('characters').insert({
+          project_id: targetProjectId,
+          name: char.name,
+          role: char.description || '',
+          bio: char.arc || '',
+          character_role: char.role === 'protagonist' ? 'protagonist' : 
+                         char.role === 'antagonist' || char.role === 'supporting' ? 'recurring' : 'episodic',
+          profile_json: {
+            description: char.description,
+            arc: char.arc,
+            first_appearance: char.first_appearance,
+            relationships: (char as any).relationships,
+            voice_notes: (char as any).voice_notes,
+            personality: (char as any).personality
+          }
+        });
+      }
+      
+      // Create locations
+      for (const loc of selected.locations) {
+        await supabase.from('locations').insert({
+          project_id: targetProjectId,
+          name: loc.name,
+          description: loc.description || '',
+          profile_json: {
+            type: loc.type,
+            atmosphere: (loc as any).atmosphere,
+            scenes_count: loc.scenes_count,
+            time_variants: (loc as any).time_variants
+          }
+        });
+      }
+      
+      // Create props
+      for (const prop of selected.props) {
+        await supabase.from('props').insert({
+          project_id: targetProjectId,
+          name: prop.name,
+          description: prop.description || '',
+          prop_type: prop.importance,
+          profile_json: {
+            importance: prop.importance,
+            scenes: (prop as any).scenes
+          }
+        });
+      }
+      
+      toast.success(`Creados ${selected.characters.length} personajes, ${selected.locations.length} localizaciones, ${selected.props.length} props`);
+    } catch (err) {
+      console.error('Error creating entities:', err);
+      toast.error('Error al crear algunas entidades');
+    }
+    
+    setCreatingEntities(false);
+  };
+
+  // Expose create function for parent component
+  (window as any).__wizardCreateEntities = createEntitiesInDB;
+
   const exportEpisodePDF = (episode: GeneratedEpisode, index: number) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 14;
+    const contentWidth = pageWidth - margin * 2;
+    
+    // Helper to check page break
+    const checkPageBreak = (requiredSpace: number) => {
+      if (yPos > 270 - requiredSpace) {
+        doc.addPage();
+        yPos = 20;
+      }
+    };
     
     // Header
     doc.setFillColor(20, 20, 25);
-    doc.rect(0, 0, pageWidth, 40, 'F');
+    doc.rect(0, 0, pageWidth, 45, 'F');
     
     doc.setTextColor(212, 175, 55);
-    doc.setFontSize(18);
+    doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text(generatedScript?.title || 'Guion', 14, 25);
+    doc.text(generatedScript?.title || 'Guion', margin, 22);
     
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(12);
-    doc.text(`Episodio ${index + 1}: ${episode.title}`, 14, 35);
+    doc.setFontSize(14);
+    doc.text(`Episodio ${index + 1}: ${episode.title}`, margin, 35);
     
-    let yPos = 55;
+    if (episode.duration_min) {
+      doc.setFontSize(10);
+      doc.setTextColor(180, 180, 180);
+      doc.text(`Duración: ${episode.duration_min} min`, pageWidth - margin - 40, 35);
+    }
     
-    // Synopsis
-    if (episode.synopsis || episode.summary) {
+    let yPos = 60;
+    
+    // Episode Summary (brief)
+    if (episode.summary) {
       doc.setTextColor(100, 100, 100);
       doc.setFontSize(10);
-      doc.setFont('helvetica', 'italic');
-      doc.text('SINOPSIS:', 14, yPos);
-      yPos += 7;
+      doc.setFont('helvetica', 'bold');
+      doc.text('RESUMEN:', margin, yPos);
+      yPos += 6;
       
-      const synopsis = episode.synopsis || episode.summary || '';
-      const synopsisLines = doc.splitTextToSize(synopsis, pageWidth - 28);
+      doc.setFont('helvetica', 'italic');
+      const summaryLines = doc.splitTextToSize(episode.summary, contentWidth);
+      doc.text(summaryLines, margin, yPos);
+      yPos += summaryLines.length * 5 + 8;
+    }
+    
+    // Episode Synopsis (detailed)
+    if (episode.synopsis && episode.synopsis !== episode.summary) {
+      checkPageBreak(30);
+      doc.setTextColor(50, 50, 50);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('SINOPSIS DETALLADA:', margin, yPos);
+      yPos += 6;
+      
       doc.setFont('helvetica', 'normal');
-      doc.text(synopsisLines, 14, yPos);
-      yPos += synopsisLines.length * 5 + 10;
+      const synopsisLines = doc.splitTextToSize(episode.synopsis, contentWidth);
+      doc.text(synopsisLines, margin, yPos);
+      yPos += synopsisLines.length * 5 + 12;
     }
 
-    // Scenes if available
+    // SCREENPLAY / SCENES WITH DIALOGUES
     if (episode.scenes?.length) {
+      checkPageBreak(20);
       doc.setTextColor(212, 175, 55);
-      doc.setFontSize(11);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text('ESCENAS:', 14, yPos);
+      doc.text('GUIÓN COMPLETO', margin, yPos);
       yPos += 10;
+      
+      doc.setDrawColor(212, 175, 55);
+      doc.line(margin, yPos - 3, pageWidth - margin, yPos - 3);
+      yPos += 5;
 
       episode.scenes.forEach((scene, sIdx) => {
-        if (yPos > 270) {
-          doc.addPage();
-          yPos = 20;
+        checkPageBreak(40);
+        
+        // Slugline
+        doc.setTextColor(30, 30, 30);
+        doc.setFontSize(11);
+        doc.setFont('courier', 'bold');
+        doc.text(`${scene.slugline || `ESCENA ${sIdx + 1}`}`, margin, yPos);
+        yPos += 7;
+        
+        // Action/Description
+        if (scene.action || scene.description) {
+          doc.setFont('courier', 'normal');
+          doc.setFontSize(10);
+          const actionText = scene.action || scene.description || '';
+          const actionLines = doc.splitTextToSize(actionText, contentWidth);
+          doc.text(actionLines, margin, yPos);
+          yPos += actionLines.length * 5 + 5;
+        }
+        
+        // Dialogues
+        if (scene.dialogue?.length) {
+          scene.dialogue.forEach(dial => {
+            checkPageBreak(25);
+            
+            // Character name (centered)
+            doc.setFont('courier', 'bold');
+            doc.setFontSize(10);
+            const charNameWidth = doc.getTextWidth(dial.character.toUpperCase());
+            doc.text(dial.character.toUpperCase(), (pageWidth - charNameWidth) / 2, yPos);
+            yPos += 5;
+            
+            // Parenthetical
+            if (dial.parenthetical) {
+              doc.setFont('courier', 'italic');
+              doc.setFontSize(9);
+              const parenText = `(${dial.parenthetical})`;
+              const parenWidth = doc.getTextWidth(parenText);
+              doc.text(parenText, (pageWidth - parenWidth) / 2, yPos);
+              yPos += 4;
+            }
+            
+            // Dialogue line (centered, narrower margins)
+            doc.setFont('courier', 'normal');
+            doc.setFontSize(10);
+            const dialogueMargin = 40;
+            const dialogueWidth = pageWidth - dialogueMargin * 2;
+            const dialogueLines = doc.splitTextToSize(dial.line, dialogueWidth);
+            dialogueLines.forEach((line: string) => {
+              doc.text(line, dialogueMargin, yPos);
+              yPos += 5;
+            });
+            yPos += 3;
+          });
+        }
+        
+        // Music/SFX cues
+        if (scene.music_cue) {
+          checkPageBreak(10);
+          doc.setFont('courier', 'italic');
+          doc.setFontSize(9);
+          doc.setTextColor(100, 100, 150);
+          doc.text(`♪ ${scene.music_cue}`, margin, yPos);
+          yPos += 5;
+        }
+        
+        if (scene.sfx?.length) {
+          doc.setTextColor(100, 150, 100);
+          doc.text(`SFX: ${scene.sfx.join(', ')}`, margin, yPos);
+          yPos += 5;
         }
         
         doc.setTextColor(50, 50, 50);
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`${sIdx + 1}. ${scene.slugline || 'ESCENA'}`, 14, yPos);
-        yPos += 6;
-        
-        if (scene.description) {
-          doc.setFont('helvetica', 'normal');
-          const descLines = doc.splitTextToSize(scene.description, pageWidth - 28);
-          doc.text(descLines, 14, yPos);
-          yPos += descLines.length * 5 + 5;
-        }
-        
-        if (scene.characters?.length) {
-          doc.setFont('helvetica', 'italic');
-          doc.setTextColor(100, 100, 100);
-          doc.text(`Personajes: ${scene.characters.join(', ')}`, 14, yPos);
-          yPos += 8;
-        }
-      });
-    }
-
-    // Characters list
-    if (generatedScript?.characters?.length) {
-      if (yPos > 240) {
-        doc.addPage();
-        yPos = 20;
-      }
-      
-      doc.setTextColor(212, 175, 55);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('PERSONAJES:', 14, yPos);
-      yPos += 8;
-      
-      generatedScript.characters.forEach(char => {
-        if (yPos > 270) {
-          doc.addPage();
-          yPos = 20;
-        }
-        doc.setTextColor(50, 50, 50);
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`• ${char.name}`, 14, yPos);
-        if (char.role) {
-          doc.setFont('helvetica', 'normal');
-          doc.text(` (${char.role})`, 14 + doc.getTextWidth(`• ${char.name}`), yPos);
-        }
-        yPos += 5;
-        if (char.description) {
-          doc.setFont('helvetica', 'normal');
-          const descLines = doc.splitTextToSize(char.description, pageWidth - 35);
-          doc.text(descLines, 20, yPos);
-          yPos += descLines.length * 4 + 3;
-        }
-      });
-    }
-
-    // Locations list
-    if (generatedScript?.locations?.length) {
-      if (yPos > 240) {
-        doc.addPage();
-        yPos = 20;
-      }
-      
-      yPos += 5;
-      doc.setTextColor(212, 175, 55);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('LOCALIZACIONES:', 14, yPos);
-      yPos += 8;
-      
-      generatedScript.locations.forEach(loc => {
-        if (yPos > 270) {
-          doc.addPage();
-          yPos = 20;
-        }
-        doc.setTextColor(50, 50, 50);
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`• ${loc.name}`, 14, yPos);
-        if (loc.type) {
-          doc.setFont('helvetica', 'normal');
-          doc.text(` (${loc.type})`, 14 + doc.getTextWidth(`• ${loc.name}`), yPos);
-        }
-        yPos += 5;
-        if (loc.description) {
-          doc.setFont('helvetica', 'normal');
-          const descLines = doc.splitTextToSize(loc.description, pageWidth - 35);
-          doc.text(descLines, 20, yPos);
-          yPos += descLines.length * 4 + 3;
-        }
-      });
-    }
-
-    // Props list
-    if (generatedScript?.props?.length) {
-      if (yPos > 240) {
-        doc.addPage();
-        yPos = 20;
-      }
-      
-      yPos += 5;
-      doc.setTextColor(212, 175, 55);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('OBJETOS/PROPS:', 14, yPos);
-      yPos += 8;
-      
-      generatedScript.props.forEach(prop => {
-        if (yPos > 270) {
-          doc.addPage();
-          yPos = 20;
-        }
-        doc.setTextColor(50, 50, 50);
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`• ${prop.name}`, 14, yPos);
-        if (prop.importance) {
-          doc.setFont('helvetica', 'normal');
-          doc.text(` [${prop.importance}]`, 14 + doc.getTextWidth(`• ${prop.name}`), yPos);
-        }
-        yPos += 5;
+        yPos += 8;
       });
     }
     
-    // Footer
+    // If no scenes but has screenplay_text
+    if (episode.screenplay_text && !episode.scenes?.length) {
+      checkPageBreak(20);
+      doc.setTextColor(212, 175, 55);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('GUIÓN', margin, yPos);
+      yPos += 10;
+      
+      doc.setFont('courier', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(30, 30, 30);
+      const screenplayLines = doc.splitTextToSize(episode.screenplay_text, contentWidth);
+      
+      screenplayLines.forEach((line: string) => {
+        checkPageBreak(6);
+        doc.text(line, margin, yPos);
+        yPos += 5;
+      });
+    }
+
+    // Characters section
+    if (generatedScript?.characters?.length) {
+      doc.addPage();
+      yPos = 20;
+      
+      doc.setTextColor(212, 175, 55);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('PERSONAJES', margin, yPos);
+      yPos += 12;
+      
+      generatedScript.characters.forEach(char => {
+        checkPageBreak(25);
+        doc.setTextColor(30, 30, 30);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${char.name}`, margin, yPos);
+        if (char.role) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(100, 100, 100);
+          doc.text(` — ${char.role}`, margin + doc.getTextWidth(`${char.name} `), yPos);
+        }
+        yPos += 6;
+        
+        if (char.description) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(50, 50, 50);
+          const descLines = doc.splitTextToSize(char.description, contentWidth - 10);
+          doc.text(descLines, margin + 5, yPos);
+          yPos += descLines.length * 4 + 2;
+        }
+        
+        if (char.arc) {
+          doc.setFont('helvetica', 'italic');
+          doc.setFontSize(9);
+          doc.setTextColor(80, 80, 80);
+          const arcLines = doc.splitTextToSize(`Arco: ${char.arc}`, contentWidth - 10);
+          doc.text(arcLines, margin + 5, yPos);
+          yPos += arcLines.length * 4 + 6;
+        }
+      });
+    }
+
+    // Locations section
+    if (generatedScript?.locations?.length) {
+      checkPageBreak(40);
+      yPos += 10;
+      
+      doc.setTextColor(212, 175, 55);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('LOCALIZACIONES', margin, yPos);
+      yPos += 12;
+      
+      generatedScript.locations.forEach(loc => {
+        checkPageBreak(20);
+        doc.setTextColor(30, 30, 30);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${loc.name}`, margin, yPos);
+        if (loc.type) {
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(100, 100, 100);
+          doc.text(` (${loc.type})`, margin + doc.getTextWidth(`${loc.name} `), yPos);
+        }
+        yPos += 6;
+        
+        if (loc.description) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(50, 50, 50);
+          const descLines = doc.splitTextToSize(loc.description, contentWidth - 10);
+          doc.text(descLines, margin + 5, yPos);
+          yPos += descLines.length * 4 + 6;
+        }
+      });
+    }
+
+    // Props section
+    if (generatedScript?.props?.length) {
+      checkPageBreak(30);
+      yPos += 10;
+      
+      doc.setTextColor(212, 175, 55);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('OBJETOS / PROPS', margin, yPos);
+      yPos += 10;
+      
+      generatedScript.props.forEach(prop => {
+        checkPageBreak(12);
+        doc.setTextColor(30, 30, 30);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`• ${prop.name}`, margin, yPos);
+        if (prop.importance) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(100, 100, 100);
+          doc.text(` [${prop.importance}]`, margin + doc.getTextWidth(`• ${prop.name} `), yPos);
+        }
+        yPos += 5;
+        if (prop.description) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(50, 50, 50);
+          const descLines = doc.splitTextToSize(prop.description, contentWidth - 10);
+          doc.text(descLines, margin + 10, yPos);
+          yPos += descLines.length * 4 + 3;
+        }
+      });
+    }
+    
+    // Footer on all pages
     const pageCount = doc.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
       doc.text(
-        `${generatedScript?.title || 'Guion'} - Ep.${index + 1} - Página ${i}/${pageCount}`,
+        `${generatedScript?.title || 'Guion'} — Episodio ${index + 1} — Página ${i} de ${pageCount}`,
         pageWidth / 2,
         doc.internal.pageSize.getHeight() - 10,
         { align: 'center' }
@@ -465,7 +686,7 @@ export function WizardScriptStep({
     }
     
     doc.save(`${(generatedScript?.title || 'guion').replace(/[^a-zA-Z0-9]/g, '_')}_ep${index + 1}.pdf`);
-    toast.success(`Episodio ${index + 1} exportado`);
+    toast.success(`Episodio ${index + 1} exportado con guión completo`);
   };
 
   const currentProgress = PROGRESS_STAGES[progressStage];
@@ -653,13 +874,84 @@ export function WizardScriptStep({
                               </Button>
                             </CollapsibleTrigger>
                             <CollapsibleContent>
-                              <div className="px-4 pb-4 pt-2 border-t border-border space-y-3">
-                                {(ep.synopsis || ep.summary) && (
-                                  <p className="text-sm text-muted-foreground">{ep.synopsis || ep.summary}</p>
+                              <div className="px-4 pb-4 pt-2 border-t border-border space-y-4">
+                                {/* Summary */}
+                                {ep.summary && (
+                                  <div className="p-3 rounded-lg bg-muted/30">
+                                    <div className="text-xs font-semibold text-amber-500 mb-1">RESUMEN</div>
+                                    <p className="text-sm">{ep.summary}</p>
+                                  </div>
                                 )}
-                                {ep.duration_min && (
-                                  <Badge variant="secondary" className="text-xs">{ep.duration_min} min</Badge>
+                                
+                                {/* Synopsis */}
+                                {ep.synopsis && ep.synopsis !== ep.summary && (
+                                  <div>
+                                    <div className="text-xs font-semibold text-muted-foreground mb-1">SINOPSIS DETALLADA</div>
+                                    <p className="text-sm text-muted-foreground">{ep.synopsis}</p>
+                                  </div>
                                 )}
+                                
+                                {/* Scenes with dialogues */}
+                                {ep.scenes && ep.scenes.length > 0 && (
+                                  <div className="space-y-3">
+                                    <div className="text-xs font-semibold text-amber-500 flex items-center gap-1">
+                                      <Film className="w-3 h-3" />
+                                      ESCENAS ({ep.scenes.length})
+                                    </div>
+                                    <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
+                                      {ep.scenes.slice(0, 5).map((scene, sIdx) => (
+                                        <div key={sIdx} className="p-2 rounded border border-border/50 bg-card/50 text-xs space-y-1">
+                                          <div className="font-mono font-bold text-foreground">{scene.slugline}</div>
+                                          {scene.description && (
+                                            <p className="text-muted-foreground line-clamp-2">{scene.description}</p>
+                                          )}
+                                          {scene.dialogue && scene.dialogue.length > 0 && (
+                                            <div className="mt-2 pl-2 border-l-2 border-amber-500/30 space-y-1">
+                                              <div className="flex items-center gap-1 text-amber-600">
+                                                <MessageSquare className="w-3 h-3" />
+                                                <span className="font-medium">Diálogos</span>
+                                              </div>
+                                              {scene.dialogue.slice(0, 3).map((d, dIdx) => (
+                                                <div key={dIdx} className="text-muted-foreground">
+                                                  <span className="font-semibold">{d.character}:</span> "{d.line.substring(0, 80)}{d.line.length > 80 ? '...' : ''}"
+                                                </div>
+                                              ))}
+                                              {scene.dialogue.length > 3 && (
+                                                <span className="text-muted-foreground">+{scene.dialogue.length - 3} más...</span>
+                                              )}
+                                            </div>
+                                          )}
+                                          {scene.music_cue && (
+                                            <div className="flex items-center gap-1 text-purple-400">
+                                              <Music className="w-3 h-3" />
+                                              <span>{scene.music_cue}</span>
+                                            </div>
+                                          )}
+                                          {scene.sfx && scene.sfx.length > 0 && (
+                                            <div className="flex items-center gap-1 text-green-400">
+                                              <Volume2 className="w-3 h-3" />
+                                              <span>{scene.sfx.join(', ')}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                      {ep.scenes.length > 5 && (
+                                        <p className="text-xs text-muted-foreground text-center">
+                                          +{ep.scenes.length - 5} escenas más en el PDF
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                <div className="flex items-center gap-2">
+                                  {ep.duration_min && (
+                                    <Badge variant="secondary" className="text-xs">{ep.duration_min} min</Badge>
+                                  )}
+                                  {ep.scenes?.length && (
+                                    <Badge variant="outline" className="text-xs">{ep.scenes.length} escenas</Badge>
+                                  )}
+                                </div>
                               </div>
                             </CollapsibleContent>
                           </div>
@@ -807,16 +1099,62 @@ export function WizardScriptStep({
                 )}
               </div>
 
-              {/* Summary of selections */}
-              <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Selección:</span>{' '}
-                  {Object.values(entitySelection.characters).filter(Boolean).length} personajes,{' '}
-                  {Object.values(entitySelection.locations).filter(Boolean).length} localizaciones,{' '}
-                  {Object.values(entitySelection.props).filter(Boolean).length} objetos
-                  <span className="text-xs ml-2">(se crearán al finalizar el proyecto)</span>
+              {/* Summary of selections + Create button */}
+              <div className="p-4 rounded-lg bg-gradient-to-r from-primary/5 to-amber-500/5 border border-primary/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                      <Database className="w-4 h-4 text-primary" />
+                      Entidades a crear
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {Object.values(entitySelection.characters).filter(Boolean).length} personajes,{' '}
+                      {Object.values(entitySelection.locations).filter(Boolean).length} localizaciones,{' '}
+                      {Object.values(entitySelection.props).filter(Boolean).length} objetos
+                    </p>
+                  </div>
+                  {projectId && (
+                    <Button 
+                      variant="gold"
+                      size="sm"
+                      onClick={() => createEntitiesInDB(projectId)}
+                      disabled={creatingEntities}
+                    >
+                      {creatingEntities ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Database className="w-4 h-4 mr-2" />
+                      )}
+                      Crear ahora
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {projectId ? 'Pulsa para crear las entidades en la base de datos' : 'Se crearán automáticamente al finalizar el wizard'}
                 </p>
               </div>
+
+              {/* Full screenplay toggle */}
+              {generatedScript.screenplay && (
+                <Collapsible open={showFullScreenplay} onOpenChange={setShowFullScreenplay}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      <span className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        Ver guión completo
+                      </span>
+                      {showFullScreenplay ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <ScrollArea className="h-[300px] mt-3 p-4 rounded-lg border border-border bg-card">
+                      <pre className="font-mono text-xs whitespace-pre-wrap text-muted-foreground">
+                        {generatedScript.screenplay}
+                      </pre>
+                    </ScrollArea>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
 
               {/* Regenerate button */}
               <Button 
