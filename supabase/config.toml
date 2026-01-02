@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.script-breakdown]
 verify_jwt = false
+
+[functions.entity-builder]
+verify_jwt = false
