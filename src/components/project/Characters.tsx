@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,6 +19,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import BibleProfileViewer from './BibleProfileViewer';
 import { EntityQCBadge } from './QCStatusBadge';
 import CharacterVisualDNAEditor from './CharacterVisualDNAEditor';
+import { CharacterNarrativeEditor } from './CharacterNarrativeEditor';
+import { TechnicalPromptGenerator } from './TechnicalPromptGenerator';
 
 interface CharactersProps { projectId: string; }
 
@@ -849,6 +851,20 @@ export default function Characters({ projectId }: CharactersProps) {
                               <Dna className="w-4 h-4 mr-2" />
                               Visual DNA
                             </TabsTrigger>
+                            <TabsTrigger 
+                              value="narrative"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                            >
+                              <Book className="w-4 h-4 mr-2" />
+                              Narrativa
+                            </TabsTrigger>
+                            <TabsTrigger 
+                              value="prompts"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                            >
+                              <Wand2 className="w-4 h-4 mr-2" />
+                              Prompts
+                            </TabsTrigger>
                           </TabsList>
 
                           <TabsContent value="turnarounds" className="p-4 m-0">
@@ -1003,6 +1019,22 @@ export default function Characters({ projectId }: CharactersProps) {
                               characterName={character.name}
                               characterBio={character.bio || ''}
                               onSave={() => fetchCharacters()}
+                            />
+                          </TabsContent>
+
+                          <TabsContent value="narrative" className="p-4 m-0">
+                            <CharacterNarrativeEditor
+                              characterId={character.id}
+                              characterName={character.name}
+                              projectId={projectId}
+                              otherCharacters={characters.filter(c => c.id !== character.id).map(c => ({ id: c.id, name: c.name }))}
+                            />
+                          </TabsContent>
+
+                          <TabsContent value="prompts" className="p-4 m-0">
+                            <TechnicalPromptGenerator
+                              characterId={character.id}
+                              characterName={character.name}
                             />
                           </TabsContent>
                         </Tabs>
