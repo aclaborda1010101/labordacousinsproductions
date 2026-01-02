@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { generateTechnicalPrompt, PromptContext, TechnicalPrompt } from '@/lib/technicalPromptGenerator';
+import type { CharacterVisualDNA } from '@/lib/visualDNASchema';
 
 export type Engine = 'veo' | 'kling' | 'gemini' | 'midjourney' | 'flux';
 
@@ -10,6 +12,7 @@ export interface PromptOptions {
   outfit?: string;
   action?: string;
   lighting?: string;
+  purpose?: 'identity_closeup' | 'identity_turnaround' | 'expression' | 'outfit' | 'scene_shot';
 }
 
 export interface GeneratedPrompt {
@@ -20,6 +23,7 @@ export interface GeneratedPrompt {
 export function useTechnicalPrompt() {
   const [generating, setGenerating] = useState(false);
   const [lastPrompt, setLastPrompt] = useState<GeneratedPrompt | null>(null);
+  const [lastFullPrompt, setLastFullPrompt] = useState<TechnicalPrompt | null>(null);
 
   const generatePrompt = useCallback(async (
     characterId: string,
@@ -57,6 +61,29 @@ export function useTechnicalPrompt() {
     }
   }, []);
 
+  const generateLocalPrompt = useCallback((
+    visualDNA: CharacterVisualDNA,
+    engine: Engine = 'gemini',
+    options?: PromptOptions
+  ): TechnicalPrompt => {
+    const context: PromptContext = {
+      purpose: options?.purpose || 'scene_shot',
+      expression: options?.expression,
+      outfit_description: options?.outfit,
+      view_angle: options?.shotType,
+      scene_context: options?.lighting ? { lighting: options.lighting } : undefined,
+      engine: engine === 'gemini' ? 'gemini_image' : engine as any,
+    };
+
+    const result = generateTechnicalPrompt(visualDNA, context);
+    setLastFullPrompt(result);
+    setLastPrompt({
+      positive: result.master_prompt,
+      negative: result.negative_prompt,
+    });
+    return result;
+  }, []);
+
   const copyToClipboard = useCallback(async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -69,12 +96,14 @@ export function useTechnicalPrompt() {
   return {
     generating,
     lastPrompt,
+    lastFullPrompt,
     generatePrompt,
+    generateLocalPrompt,
     copyToClipboard,
   };
 }
 
-// Utility function to build prompts locally without API call
+// Legacy utility function for backwards compatibility
 export function buildLocalPrompt(
   visualDNA: any,
   engine: Engine = 'gemini',
@@ -101,32 +130,39 @@ export function buildLocalPrompt(
   // Physical identity
   if (visualDNA?.physical_identity) {
     const pi = visualDNA.physical_identity;
-    if (pi.age_exact) parts.push(`${pi.age_exact} year old`);
-    if (pi.biological_sex) parts.push(pi.biological_sex);
-    if (pi.ethnicity?.primary) parts.push(`${pi.ethnicity.primary} ethnicity`);
-    if (pi.ethnicity?.skin_tone) parts.push(`${pi.ethnicity.skin_tone} skin tone`);
-    if (pi.body_type?.build) parts.push(`${pi.body_type.build} build`);
+    if (pi.age_exact_for_prompt || pi.age_exact) parts.push(`${pi.age_exact_for_prompt || pi.age_exact} year old`);
+    if (pi.gender_presentation) parts.push(pi.gender_presentation);
+    if (pi.ethnicity?.primary) parts.push(`${pi.ethnicity.primary.replace(/_/g, ' ')} ethnicity`);
+    if (pi.ethnicity?.skin_tone_description) parts.push(pi.ethnicity.skin_tone_description);
+    if (pi.body_type?.somatotype) parts.push(`${pi.body_type.somatotype.replace(/_/g, ' ')} build`);
   }
 
   // Face
   if (visualDNA?.face) {
     const f = visualDNA.face;
-    if (f.shape) parts.push(`${f.shape} face`);
-    if (f.eyes?.color) parts.push(`${f.eyes.color} eyes`);
-    if (f.eyes?.shape) parts.push(`${f.eyes.shape} eye shape`);
-    if (f.nose?.shape) parts.push(`${f.nose.shape} nose`);
-    if (f.mouth?.lip_fullness) parts.push(`${f.mouth.lip_fullness} lips`);
-    if (f.jaw_chin?.jaw_shape) parts.push(`${f.jaw_chin.jaw_shape} jawline`);
+    if (f.shape) parts.push(`${f.shape.replace(/_/g, ' ')} face`);
+    if (f.eyes?.color_base) parts.push(`${f.eyes.color_base.replace(/_/g, ' ')} eyes`);
+    if (f.eyes?.color_hex_approx) parts.push(`(${f.eyes.color_hex_approx})`);
+    if (f.eyes?.shape) parts.push(`${f.eyes.shape.replace(/_/g, ' ')} eye shape`);
+    if (f.nose?.bridge?.shape) parts.push(`${f.nose.bridge.shape.replace(/_/g, ' ')} nose`);
+    if (f.mouth?.lips?.fullness_upper) parts.push(`${f.mouth.lips.fullness_upper} lips`);
+    if (f.jaw_chin?.jawline?.shape) parts.push(`${f.jaw_chin.jawline.shape.replace(/_/g, ' ')} jawline`);
   }
 
   // Hair
   if (visualDNA?.hair) {
-    const h = visualDNA.hair;
-    const hairDesc = [h.length, h.texture, h.color?.base].filter(Boolean).join(' ');
+    const h = visualDNA.hair.head_hair || visualDNA.hair;
+    const hairDesc = [
+      h.length?.type || h.length, 
+      h.texture?.type || h.texture, 
+      h.color?.natural_base || h.color?.base
+    ].filter(Boolean).join(' ').replace(/_/g, ' ');
     if (hairDesc) parts.push(`${hairDesc} hair`);
-    if (h.style) parts.push(`styled ${h.style}`);
-    if (h.facial_hair?.type && h.facial_hair.type !== 'clean_shaven') {
-      parts.push(h.facial_hair.type.replace(/_/g, ' '));
+    if (h.style?.overall_shape) parts.push(`styled ${h.style.overall_shape}`);
+    
+    const fh = visualDNA.face?.facial_hair || h.facial_hair;
+    if (fh?.type && fh.type !== 'clean_shaven_smooth' && fh.type !== 'clean_shaven') {
+      parts.push(fh.type.replace(/_/g, ' '));
     }
   }
 
@@ -153,11 +189,17 @@ export function buildLocalPrompt(
   // Build positive prompt
   const positive = parts.filter(Boolean).join(', ');
 
-  // Build negative from common issues
+  // Build negative from common issues + continuity locks
   const negativeTerms = [
+    'cartoon', 'anime', 'illustration', '3D render',
     'deformed', 'blurry', 'bad anatomy', 'extra limbs', 
-    'bad hands', 'extra fingers', 'disfigured', 'mutation'
+    'bad hands', 'extra fingers', 'disfigured', 'mutation',
+    'watermark', 'text overlay', 'logo',
   ];
+
+  if (visualDNA?.continuity_lock?.must_avoid?.length) {
+    negativeTerms.push(...visualDNA.continuity_lock.must_avoid);
+  }
 
   return {
     positive,
