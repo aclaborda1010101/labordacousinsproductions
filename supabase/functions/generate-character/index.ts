@@ -304,13 +304,14 @@ function buildSkinDescription(skin: VisualDNA['skin']): string {
   return parts.join(', ');
 }
 
-function buildCelebrityReference(likeness: VisualDNA['visual_references']): string {
-  const primary = likeness?.celebrity_likeness?.primary;
+function buildCelebrityReference(likeness: VisualDNA['visual_references'] | undefined): string {
+  if (!likeness?.celebrity_likeness) return '';
+  
+  const cel = likeness.celebrity_likeness;
+  const primary = cel.primary;
   if (!primary?.name) return '';
   
   const parts: string[] = [];
-  const cel = likeness.celebrity_likeness;
-  
   parts.push(`${primary.percentage || 60}% ${primary.name}`);
   
   if (cel.secondary?.name) {
