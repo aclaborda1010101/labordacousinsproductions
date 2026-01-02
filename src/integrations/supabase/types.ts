@@ -663,34 +663,52 @@ export type Database = {
         Row: {
           approved: boolean | null
           created_at: string
+          determinism: Json | null
+          frame_geometry: Json | null
+          frame_type: string | null
           id: string
           image_url: string | null
           locks: Json | null
+          negative_constraints: Json | null
           prompt_text: string | null
           seed: number | null
           shot_id: string
+          staging_snapshot: Json | null
+          timestamp_sec: number | null
           version: number | null
         }
         Insert: {
           approved?: boolean | null
           created_at?: string
+          determinism?: Json | null
+          frame_geometry?: Json | null
+          frame_type?: string | null
           id?: string
           image_url?: string | null
           locks?: Json | null
+          negative_constraints?: Json | null
           prompt_text?: string | null
           seed?: number | null
           shot_id: string
+          staging_snapshot?: Json | null
+          timestamp_sec?: number | null
           version?: number | null
         }
         Update: {
           approved?: boolean | null
           created_at?: string
+          determinism?: Json | null
+          frame_geometry?: Json | null
+          frame_type?: string | null
           id?: string
           image_url?: string | null
           locks?: Json | null
+          negative_constraints?: Json | null
           prompt_text?: string | null
           seed?: number | null
           shot_id?: string
+          staging_snapshot?: Json | null
+          timestamp_sec?: number | null
           version?: number | null
         }
         Relationships: [

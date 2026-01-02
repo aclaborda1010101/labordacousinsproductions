@@ -10,7 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings, Clock, Upload, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings, Clock, Upload, CheckCircle2, XCircle, Image as ImageIcon } from 'lucide-react';
+import KeyframeManager from './KeyframeManager';
 
 interface VeoProgress {
   status: 'idle' | 'starting' | 'generating' | 'uploading' | 'done' | 'error';
@@ -561,10 +562,14 @@ export default function ShotEditor({
         </DialogHeader>
 
         <Tabs defaultValue="details" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="details">
               <Settings className="w-4 h-4 mr-2" />
               Detalles
+            </TabsTrigger>
+            <TabsTrigger value="keyframes">
+              <Camera className="w-4 h-4 mr-2" />
+              Keyframes
             </TabsTrigger>
             <TabsTrigger value="generate">
               <Video className="w-4 h-4 mr-2" />
@@ -693,6 +698,29 @@ export default function ShotEditor({
                 </Badge>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="keyframes" className="space-y-4 mt-4">
+            <KeyframeManager
+              shotId={shot.id}
+              duration={form.duration_target}
+              sceneDescription={`${scene.slugline}. ${scene.summary || ''}`}
+              shotType={form.shot_type}
+              cameraMovement={form.camera_movement}
+              blocking={form.blocking_description}
+              characters={sceneCharacters.map(c => ({
+                id: c.id,
+                name: c.name,
+                token: c.token,
+                turnaround_urls: c.turnaround_urls as string[] | undefined
+              }))}
+              location={sceneLocation ? {
+                id: sceneLocation.id,
+                name: sceneLocation.name,
+                token: sceneLocation.token,
+                reference_urls: sceneLocation.reference_urls as string[] | undefined
+              } : undefined}
+            />
           </TabsContent>
 
           <TabsContent value="generate" className="space-y-4 mt-4">
