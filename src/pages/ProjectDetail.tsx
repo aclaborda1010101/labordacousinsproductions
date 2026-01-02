@@ -60,7 +60,7 @@ const PROJECT_TABS = [
   { id: 'characters', path: '/characters', label: 'Personajes', icon: Users, requiresBible: false },
   { id: 'locations', path: '/locations', label: 'Localizaciones', icon: MapPin, requiresBible: false },
   { id: 'props', path: '/props', label: 'Props', icon: Box, requiresBible: false },
-  { id: 'script', path: '/script', label: 'Importar Guión', icon: FileText, requiresBible: false },
+  { id: 'script', path: '/script', label: 'Guion (Generar / Importar)', icon: FileText, requiresBible: false },
   { id: 'scenes', path: '/scenes', label: 'Escenas', icon: Clapperboard, requiresBible: true },
   { id: 'renders', path: '/renders', label: 'Cola de Renders', icon: Layers, requiresBible: true },
   { id: 'cost', path: '/cost', label: 'Motor de Costes', icon: DollarSign, requiresBible: false },
