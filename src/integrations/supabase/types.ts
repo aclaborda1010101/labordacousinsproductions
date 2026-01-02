@@ -1293,6 +1293,7 @@ export type Database = {
           materials: Json | null
           name: string
           placement_rules: string | null
+          profile_json: Json | null
           project_id: string
           prop_type: string | null
           reference_urls: Json | null
@@ -1311,6 +1312,7 @@ export type Database = {
           materials?: Json | null
           name: string
           placement_rules?: string | null
+          profile_json?: Json | null
           project_id: string
           prop_type?: string | null
           reference_urls?: Json | null
@@ -1329,6 +1331,7 @@ export type Database = {
           materials?: Json | null
           name?: string
           placement_rules?: string | null
+          profile_json?: Json | null
           project_id?: string
           prop_type?: string | null
           reference_urls?: Json | null
