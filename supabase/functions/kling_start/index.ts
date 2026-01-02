@@ -171,18 +171,21 @@ serve(async (req) => {
 
     // Check if model requires image2video (v2.x models typically do)
     const requiresImage = KLING_MODEL_NAME.includes('v2');
-    
-    // For v2.x models, try to generate keyframe but fallback to text2video if it fails
-    let finalKeyframeUrl: string | undefined = keyframeUrl;
-    if (requiresImage && !finalKeyframeUrl) {
-      console.log('Model requires keyframe, attempting to generate one...');
-      const generatedKeyframe = await generateKeyframe(prompt);
-      if (generatedKeyframe) {
-        finalKeyframeUrl = generatedKeyframe;
-      } else {
-        console.log('Keyframe generation failed, falling back to text2video');
-      }
+
+    // Kling v2: enforce image2video for consistent quality
+    if (requiresImage && !keyframeUrl) {
+      return new Response(JSON.stringify({
+        ok: false,
+        error: 'keyframeUrl is required for this Kling model',
+        requiresKeyframe: true,
+        model: KLING_MODEL_NAME
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
+
+    const finalKeyframeUrl: string | undefined = keyframeUrl;
 
     const requestBody: Record<string, unknown> = {
       prompt,
