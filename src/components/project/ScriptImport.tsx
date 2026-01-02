@@ -88,13 +88,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Pipeline state
   const [pipelineRunning, setPipelineRunning] = useState(false);
   const [pipelineProgress, setPipelineProgress] = useState(0);
+  const [currentEpisodeGenerating, setCurrentEpisodeGenerating] = useState<number | null>(null);
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([
     { id: 'targets', label: 'Calculando targets', status: 'pending' },
-    { id: 'outline', label: 'Generando outline', status: 'pending' },
+    { id: 'outline', label: 'Generando outline extenso', status: 'pending' },
     { id: 'qc', label: 'QC del outline', status: 'pending' },
-    { id: 'screenplay', label: 'Generando guion', status: 'pending' },
+    { id: 'episodes', label: 'Generando episodios', status: 'pending' },
     { id: 'save', label: 'Guardando', status: 'pending' },
   ]);
+  
+  // Episode view mode: summary vs full screenplay
+  const [episodeViewMode, setEpisodeViewMode] = useState<Record<number, 'summary' | 'full'>>({});
 
   // Generated data
   const [outline, setOutline] = useState<any>(null);
@@ -167,7 +171,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status } : s));
   };
 
-  // Main pipeline: Generate Script "Listo para Rodar"
+  // Main pipeline: Generate Script "Listo para Rodar" - NEW: Episode by Episode
   const runFullPipeline = async () => {
     if (!ideaText.trim()) {
       toast.error('Escribe una idea para generar el guion');
@@ -186,7 +190,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     try {
       // Step 1: Targets (already calculated) + Load References
       updatePipelineStep('targets', 'running');
-      setPipelineProgress(10);
+      setPipelineProgress(5);
       
       // Fetch reference scripts from library
       const { data: refScriptsData } = await supabase
@@ -194,15 +198,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         .select('title, content, genre, notes')
         .or(`project_id.eq.${projectId},is_global.eq.true`)
         .order('created_at', { ascending: false })
-        .limit(3);
+        .limit(2);
       
       const referenceScripts = refScriptsData || [];
       
       updatePipelineStep('targets', 'success');
-      setPipelineProgress(20);
+      setPipelineProgress(10);
 
-      // Step 2: Generate Outline
+      // Step 2: Generate DETAILED Outline (with GPT-5)
       updatePipelineStep('outline', 'running');
+      toast.info('Generando outline extenso con GPT-5...');
+      
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('script-generate-outline', {
         body: {
           projectId,
@@ -226,7 +232,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       let currentOutline = outlineData.outline;
       setOutline(currentOutline);
       updatePipelineStep('outline', 'success');
-      setPipelineProgress(40);
+      setPipelineProgress(25);
 
       // Step 3: QC Outline
       updatePipelineStep('qc', 'running');
@@ -245,7 +251,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         if (qcData?.passes) {
           qcPassed = true;
         } else if (retryCount < maxRetries && qcData?.rewrite_instructions) {
-          // Rewrite outline
           toast.info(`QC no aprobado, reintentando (${retryCount + 1}/${maxRetries})...`);
           const { data: rewriteData, error: rewriteError } = await supabase.functions.invoke('script-rewrite-outline', {
             body: { outline: currentOutline, rewriteInstructions: qcData.rewrite_instructions, targets }
@@ -257,7 +262,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           }
           retryCount++;
         } else {
-          // Failed after retries
           updatePipelineStep('qc', 'error');
           toast.error('El outline no cumple los targets después de varios intentos');
           setPipelineRunning(false);
@@ -266,35 +270,97 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       }
 
       updatePipelineStep('qc', 'success');
-      setPipelineProgress(60);
+      setPipelineProgress(35);
 
-      // Step 4: Generate Screenplay
-      updatePipelineStep('screenplay', 'running');
-      const { data: screenplayData, error: screenplayError } = await supabase.functions.invoke('script-generate-screenplay', {
-        body: { 
-          outline: currentOutline, 
-          targets, 
-          language,
-          referenceScripts: referenceScripts.length > 0 ? referenceScripts : undefined
+      // Step 4: Generate EACH EPISODE separately with full dialogue
+      updatePipelineStep('episodes', 'running');
+      
+      const episodeOutlines = currentOutline.episode_outlines || [{ 
+        episode_number: 1, 
+        title: currentOutline.title,
+        synopsis: currentOutline.synopsis,
+        scenes_count: currentOutline.counts?.total_scenes || 15
+      }];
+      
+      const totalEpisodes = episodeOutlines.length;
+      const generatedEpisodes: any[] = [];
+      
+      for (let i = 0; i < totalEpisodes; i++) {
+        const epOutline = episodeOutlines[i];
+        const episodeNum = epOutline.episode_number || i + 1;
+        setCurrentEpisodeGenerating(episodeNum);
+        
+        toast.info(`Generando episodio ${episodeNum}/${totalEpisodes} con diálogos completos...`);
+        
+        const { data: episodeData, error: episodeError } = await supabase.functions.invoke('script-generate-episode', {
+          body: {
+            outline: currentOutline,
+            episodeNumber: episodeNum,
+            episodeOutline: epOutline,
+            characters: currentOutline.character_list || [],
+            locations: currentOutline.location_list || [],
+            language
+          }
+        });
+        
+        if (episodeError) {
+          console.error(`Error generating episode ${episodeNum}:`, episodeError);
+          toast.error(`Error en episodio ${episodeNum}: ${episodeError.message}`);
+          // Continue with next episode instead of failing completely
+          generatedEpisodes.push({
+            episode_number: episodeNum,
+            title: epOutline.title || `Episodio ${episodeNum}`,
+            synopsis: epOutline.synopsis,
+            summary: epOutline.synopsis?.substring(0, 200),
+            scenes: [],
+            error: episodeError.message
+          });
+        } else if (episodeData?.episode) {
+          generatedEpisodes.push(episodeData.episode);
         }
-      });
-
-      if (screenplayError) throw screenplayError;
-      if (!screenplayData?.screenplay) throw new Error('No se generó el guion');
-
-      setGeneratedScript(screenplayData.screenplay);
-      updatePipelineStep('screenplay', 'success');
-      setPipelineProgress(80);
+        
+        // Update progress
+        const episodeProgress = 35 + Math.round((i + 1) / totalEpisodes * 50);
+        setPipelineProgress(episodeProgress);
+      }
+      
+      setCurrentEpisodeGenerating(null);
+      
+      // Build complete screenplay object
+      const completeScreenplay = {
+        title: currentOutline.title,
+        logline: currentOutline.logline,
+        synopsis: currentOutline.synopsis,
+        genre: currentOutline.genre,
+        tone: currentOutline.tone,
+        themes: currentOutline.themes,
+        characters: currentOutline.character_list,
+        locations: currentOutline.location_list,
+        props: currentOutline.hero_props,
+        episodes: generatedEpisodes,
+        music_design: currentOutline.music_design || [],
+        sfx_design: currentOutline.sfx_design || [],
+        vfx_requirements: currentOutline.vfx_requirements || [],
+        counts: {
+          ...currentOutline.counts,
+          total_dialogue_lines: generatedEpisodes.reduce((sum, ep) => sum + (ep.total_dialogue_lines || 0), 0)
+        },
+        qc_notes: currentOutline.assumptions || []
+      };
+      
+      setGeneratedScript(completeScreenplay);
+      updatePipelineStep('episodes', 'success');
+      setPipelineProgress(90);
 
       // Step 5: Save to DB
       updatePipelineStep('save', 'running');
-      const screenplayText = JSON.stringify(screenplayData.screenplay, null, 2);
+      const screenplayText = JSON.stringify(completeScreenplay, null, 2);
 
       const { data: savedScript, error: saveError } = await supabase.from('scripts').upsert({
         id: currentScriptId || undefined,
         project_id: projectId,
         raw_text: screenplayText,
-        parsed_json: screenplayData.screenplay,
+        parsed_json: completeScreenplay as any,
         status: 'draft',
         version: 1
       }, { onConflict: 'id' }).select().single();
@@ -306,7 +372,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       updatePipelineStep('save', 'success');
       setPipelineProgress(100);
 
-      toast.success('¡Guion listo para rodar generado correctamente!');
+      toast.success(`¡Guion completo generado! ${generatedEpisodes.length} episodios con diálogos extensos.`);
       setActiveTab('summary');
 
     } catch (error: any) {
@@ -316,6 +382,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (currentStep) updatePipelineStep(currentStep.id, 'error');
     } finally {
       setPipelineRunning(false);
+      setCurrentEpisodeGenerating(null);
     }
   };
 
@@ -837,7 +904,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               {pipelineRunning && (
                 <div className="mt-4 space-y-3">
                   <Progress value={pipelineProgress} className="h-2" />
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 flex-wrap items-center">
                     {pipelineSteps.map(step => (
                       <Badge 
                         key={step.id}
@@ -851,6 +918,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </Badge>
                     ))}
                   </div>
+                  {currentEpisodeGenerating !== null && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <span>Generando Episodio {currentEpisodeGenerating} con diálogos completos...</span>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -1335,7 +1408,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </CardContent>
               </Card>
 
-              {/* EPISODES / CHAPTERS - FULL SCREENPLAY VIEW */}
+              {/* EPISODES / CHAPTERS - WITH SUMMARY vs FULL SCREENPLAY TOGGLE */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold text-lg">Capítulos / Episodios</h4>
@@ -1349,147 +1422,248 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </Button>
                 </div>
 
-                {(generatedScript.episodes || [{ episode_number: 1, title: generatedScript.title || 'Película', synopsis: generatedScript.synopsis, scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => (
-                  <Card key={epIdx} className="overflow-hidden">
-                    <Collapsible open={expandedEpisodes[epIdx] ?? false} onOpenChange={(open) => setExpandedEpisodes(prev => ({ ...prev, [epIdx]: open }))}>
-                      <CardHeader className="bg-muted/30">
-                        <div className="flex items-center justify-between w-full">
-                          <CollapsibleTrigger className="flex items-center gap-3 text-left">
-                            {expandedEpisodes[epIdx] ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                            <div>
-                              <span className="font-semibold text-base">
-                                {ep.episode_number ? `Episodio ${ep.episode_number}: ` : ''}{ep.title || `Capítulo ${epIdx + 1}`}
-                              </span>
-                              <div className="flex gap-2 mt-1">
-                                <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
-                                {ep.duration_min && <Badge variant="outline">{ep.duration_min} min</Badge>}
-                                {segmentedEpisodes.has(ep.episode_number || epIdx + 1) && (
-                                  <Badge variant="default" className="bg-green-600">
-                                    <CheckCircle className="w-3 h-3 mr-1" />
-                                    Segmentado
-                                  </Badge>
-                                )}
+                {(generatedScript.episodes || [{ episode_number: 1, title: generatedScript.title || 'Película', synopsis: generatedScript.synopsis, scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => {
+                  const episodeNum = ep.episode_number || epIdx + 1;
+                  const viewMode = episodeViewMode[epIdx] || 'summary';
+                  const dialogueCount = ep.scenes?.reduce((sum: number, s: any) => sum + (s.dialogue?.length || 0), 0) || 0;
+                  
+                  return (
+                    <Card key={epIdx} className="overflow-hidden">
+                      <Collapsible open={expandedEpisodes[epIdx] ?? false} onOpenChange={(open) => setExpandedEpisodes(prev => ({ ...prev, [epIdx]: open }))}>
+                        <CardHeader className="bg-muted/30">
+                          <div className="flex items-center justify-between w-full">
+                            <CollapsibleTrigger className="flex items-center gap-3 text-left">
+                              {expandedEpisodes[epIdx] ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                              <div>
+                                <span className="font-semibold text-base">
+                                  {ep.episode_number ? `Episodio ${ep.episode_number}: ` : ''}{ep.title || `Capítulo ${epIdx + 1}`}
+                                </span>
+                                <div className="flex gap-2 mt-1 flex-wrap">
+                                  <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
+                                  <Badge variant="outline">{dialogueCount} diálogos</Badge>
+                                  {ep.duration_min && <Badge variant="outline">{ep.duration_min} min</Badge>}
+                                  {segmentedEpisodes.has(episodeNum) && (
+                                    <Badge variant="default" className="bg-green-600">
+                                      <CheckCircle className="w-3 h-3 mr-1" />
+                                      Segmentado
+                                    </Badge>
+                                  )}
+                                  {ep.error && (
+                                    <Badge variant="destructive">
+                                      <AlertTriangle className="w-3 h-3 mr-1" />
+                                      Error
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
+                            </CollapsibleTrigger>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
+                                <FileDown className="w-4 h-4 mr-1" />
+                                PDF
+                              </Button>
                             </div>
-                          </CollapsibleTrigger>
-                          <div className="flex gap-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => segmentScenesFromEpisode(ep, ep.episode_number || epIdx + 1)}
-                              disabled={segmenting}
-                            >
-                              {segmenting ? (
-                                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                              ) : (
-                                <Scissors className="w-4 h-4 mr-1" />
-                              )}
-                              Segmentar
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
-                              <FileDown className="w-4 h-4 mr-1" />
-                              PDF
-                            </Button>
                           </div>
-                        </div>
-                        {ep.synopsis && (
-                          <p className="text-sm text-muted-foreground mt-2 ml-8">{ep.synopsis}</p>
-                        )}
-                        {ep.summary && (
-                          <p className="text-xs text-muted-foreground mt-1 ml-8 italic">{ep.summary}</p>
-                        )}
-                      </CardHeader>
-                      
-                      <CollapsibleContent>
-                        <CardContent className="pt-4 space-y-4">
-                          {/* All scenes with full content */}
-                          {(ep.scenes || []).map((scene: any, sceneIdx: number) => (
-                            <div key={sceneIdx} className="border rounded-lg overflow-hidden">
-                              {/* Scene Header - Slugline */}
-                              <div className="bg-foreground text-background px-4 py-2 font-mono text-sm font-bold">
-                                {scene.scene_number || sceneIdx + 1}. {scene.slugline || 'SIN SLUGLINE'}
+                        </CardHeader>
+                        
+                        <CollapsibleContent>
+                          <CardContent className="pt-4 space-y-4">
+                            {/* View Mode Toggle: Summary vs Full Screenplay */}
+                            <div className="flex items-center justify-between border-b pb-3">
+                              <div className="flex gap-2">
+                                <Button
+                                  variant={viewMode === 'summary' ? 'default' : 'outline'}
+                                  size="sm"
+                                  onClick={() => setEpisodeViewMode(prev => ({ ...prev, [epIdx]: 'summary' }))}
+                                >
+                                  <BookOpen className="w-4 h-4 mr-1" />
+                                  Resumen
+                                </Button>
+                                <Button
+                                  variant={viewMode === 'full' ? 'default' : 'outline'}
+                                  size="sm"
+                                  onClick={() => setEpisodeViewMode(prev => ({ ...prev, [epIdx]: 'full' }))}
+                                >
+                                  <Film className="w-4 h-4 mr-1" />
+                                  Guion Completo
+                                </Button>
                               </div>
                               
-                              <div className="p-4 space-y-3">
-                                {/* Scene summary */}
-                                {scene.summary && (
-                                  <p className="text-sm text-muted-foreground italic border-l-2 border-primary/50 pl-3">
-                                    {scene.summary}
-                                  </p>
-                                )}
-
-                                {/* Action */}
-                                {scene.action && (
-                                  <div className="text-sm leading-relaxed">
-                                    {scene.action}
+                              {/* Segment button - ONLY for full screenplay view */}
+                              {viewMode === 'full' && ep.scenes?.length > 0 && (
+                                <Button 
+                                  variant="gold" 
+                                  size="sm" 
+                                  onClick={() => segmentScenesFromEpisode(ep, episodeNum)}
+                                  disabled={segmenting}
+                                >
+                                  {segmenting ? (
+                                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                  ) : (
+                                    <Scissors className="w-4 h-4 mr-1" />
+                                  )}
+                                  Segmentar Escenas
+                                </Button>
+                              )}
+                            </div>
+                            
+                            {/* SUMMARY VIEW */}
+                            {viewMode === 'summary' && (
+                              <div className="space-y-4">
+                                {/* Synopsis */}
+                                {ep.synopsis && (
+                                  <div className="p-4 bg-muted/30 rounded-lg">
+                                    <Label className="text-xs text-muted-foreground uppercase mb-2 block">Sinopsis del Episodio</Label>
+                                    <p className="text-sm leading-relaxed">{ep.synopsis}</p>
                                   </div>
                                 )}
-
-                                {/* Dialogue - FULL */}
-                                {scene.dialogue?.length > 0 && (
-                                  <div className="space-y-3 bg-muted/30 rounded-lg p-4">
-                                    {scene.dialogue.map((d: any, di: number) => (
-                                      <div key={di} className="pl-4">
-                                        <div className="font-bold text-sm text-center uppercase tracking-wide">
-                                          {d.character}
-                                        </div>
-                                        {d.parenthetical && (
-                                          <div className="text-xs text-muted-foreground text-center italic">
-                                            ({d.parenthetical})
-                                          </div>
-                                        )}
-                                        <div className="text-sm text-center max-w-md mx-auto mt-1">
-                                          {d.line}
-                                        </div>
+                                
+                                {/* Short summary */}
+                                {ep.summary && ep.summary !== ep.synopsis && (
+                                  <p className="text-sm text-muted-foreground italic">{ep.summary}</p>
+                                )}
+                                
+                                {/* Act structure if available */}
+                                {ep.act_structure && (
+                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                    {Object.entries(ep.act_structure).map(([act, scenes]) => (
+                                      <div key={act} className="p-2 bg-muted/20 rounded text-center">
+                                        <div className="text-xs text-muted-foreground uppercase">{act.replace('_', ' ')}</div>
+                                        <div className="text-sm font-medium">{String(scenes)}</div>
                                       </div>
                                     ))}
                                   </div>
                                 )}
-
-                                {/* Technical cues: Music, SFX, VFX */}
-                                <div className="flex flex-wrap gap-2 pt-2 border-t">
-                                  {scene.music_cue && (
-                                    <Badge variant="outline" className="text-xs">
-                                      <Volume2 className="w-3 h-3 mr-1" />
-                                      {scene.music_cue}
-                                    </Badge>
-                                  )}
-                                  {scene.sfx_cue && (
-                                    <Badge variant="outline" className="text-xs">
-                                      <Zap className="w-3 h-3 mr-1" />
-                                      {scene.sfx_cue}
-                                    </Badge>
-                                  )}
-                                  {scene.vfx?.length > 0 && scene.vfx.map((v: string, vi: number) => (
-                                    <Badge key={vi} variant="secondary" className="text-xs">{v}</Badge>
-                                  ))}
-                                  {scene.mood && (
-                                    <Badge variant="outline" className="text-xs bg-primary/10">
-                                      Mood: {scene.mood}
-                                    </Badge>
-                                  )}
+                                
+                                {/* Cliffhanger */}
+                                {ep.cliffhanger && (
+                                  <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
+                                    <Label className="text-xs text-primary uppercase">Cliffhanger</Label>
+                                    <p className="text-sm mt-1">{ep.cliffhanger}</p>
+                                  </div>
+                                )}
+                                
+                                {/* Quick stats */}
+                                <div className="grid grid-cols-3 gap-4 pt-2">
+                                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                                    <div className="text-xl font-bold text-primary">{ep.scenes?.length || 0}</div>
+                                    <div className="text-xs text-muted-foreground">Escenas</div>
+                                  </div>
+                                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                                    <div className="text-xl font-bold text-primary">{dialogueCount}</div>
+                                    <div className="text-xs text-muted-foreground">Diálogos</div>
+                                  </div>
+                                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                                    <div className="text-xl font-bold text-primary">{ep.duration_min || '~45'}</div>
+                                    <div className="text-xs text-muted-foreground">Minutos</div>
+                                  </div>
                                 </div>
+                                
+                                <p className="text-center text-sm text-muted-foreground pt-2">
+                                  Cambia a "Guion Completo" para ver todas las escenas con diálogos y poder segmentar.
+                                </p>
+                              </div>
+                            )}
+                            
+                            {/* FULL SCREENPLAY VIEW */}
+                            {viewMode === 'full' && (
+                              <div className="space-y-4">
+                                {/* All scenes with full content */}
+                                {(ep.scenes || []).map((scene: any, sceneIdx: number) => (
+                                  <div key={sceneIdx} className="border rounded-lg overflow-hidden">
+                                    {/* Scene Header - Slugline */}
+                                    <div className="bg-foreground text-background px-4 py-2 font-mono text-sm font-bold">
+                                      {scene.scene_number || sceneIdx + 1}. {scene.slugline || 'SIN SLUGLINE'}
+                                    </div>
+                                    
+                                    <div className="p-4 space-y-3">
+                                      {/* Scene summary */}
+                                      {scene.summary && (
+                                        <p className="text-sm text-muted-foreground italic border-l-2 border-primary/50 pl-3">
+                                          {scene.summary}
+                                        </p>
+                                      )}
 
-                                {/* Characters & Locations in scene */}
-                                {(scene.characters?.length > 0 || scene.locations?.length > 0) && (
-                                  <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
-                                    {scene.characters?.map((c: string, ci: number) => (
-                                      <span key={ci} className="bg-muted px-2 py-0.5 rounded">{c}</span>
-                                    ))}
+                                      {/* Action */}
+                                      {scene.action && (
+                                        <div className="text-sm leading-relaxed">
+                                          {scene.action}
+                                        </div>
+                                      )}
+
+                                      {/* Dialogue - FULL */}
+                                      {scene.dialogue?.length > 0 && (
+                                        <div className="space-y-3 bg-muted/30 rounded-lg p-4">
+                                          {scene.dialogue.map((d: any, di: number) => (
+                                            <div key={di} className="pl-4">
+                                              <div className="font-bold text-sm text-center uppercase tracking-wide">
+                                                {d.character}
+                                              </div>
+                                              {d.parenthetical && (
+                                                <div className="text-xs text-muted-foreground text-center italic">
+                                                  ({d.parenthetical})
+                                                </div>
+                                              )}
+                                              <div className="text-sm text-center max-w-md mx-auto mt-1">
+                                                {d.line}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+
+                                      {/* Technical cues: Music, SFX, VFX */}
+                                      <div className="flex flex-wrap gap-2 pt-2 border-t">
+                                        {scene.music_cue && (
+                                          <Badge variant="outline" className="text-xs">
+                                            <Volume2 className="w-3 h-3 mr-1" />
+                                            {scene.music_cue}
+                                          </Badge>
+                                        )}
+                                        {scene.sfx_cue && (
+                                          <Badge variant="outline" className="text-xs">
+                                            <Zap className="w-3 h-3 mr-1" />
+                                            {scene.sfx_cue}
+                                          </Badge>
+                                        )}
+                                        {scene.vfx?.length > 0 && scene.vfx.map((v: string, vi: number) => (
+                                          <Badge key={vi} variant="secondary" className="text-xs">{v}</Badge>
+                                        ))}
+                                        {scene.mood && (
+                                          <Badge variant="outline" className="text-xs bg-primary/10">
+                                            Mood: {scene.mood}
+                                          </Badge>
+                                        )}
+                                      </div>
+
+                                      {/* Characters in scene */}
+                                      {scene.characters?.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
+                                          {scene.characters.map((c: string, ci: number) => (
+                                            <span key={ci} className="bg-muted px-2 py-0.5 rounded">{c}</span>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+
+                                {(!ep.scenes || ep.scenes.length === 0) && (
+                                  <div className="text-center py-8">
+                                    <AlertTriangle className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                                    <p className="text-muted-foreground">
+                                      {ep.error ? `Error al generar: ${ep.error}` : 'Sin escenas en este episodio'}
+                                    </p>
                                   </div>
                                 )}
                               </div>
-                            </div>
-                          ))}
-
-                          {(!ep.scenes || ep.scenes.length === 0) && (
-                            <p className="text-center text-muted-foreground py-8">Sin escenas en este episodio</p>
-                          )}
-                        </CardContent>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </Card>
-                ))}
+                            )}
+                          </CardContent>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </Card>
+                  );
+                })}
               </div>
 
               {/* QC Notes if available */}

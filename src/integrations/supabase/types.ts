@@ -2314,6 +2314,7 @@ export type Database = {
           mood: Json | null
           objective: string | null
           padding_override: number | null
+          parsed_json: Json | null
           priority: Database["public"]["Enums"]["priority_level"]
           project_id: string
           quality_mode: Database["public"]["Enums"]["quality_mode"]
@@ -2342,6 +2343,7 @@ export type Database = {
           mood?: Json | null
           objective?: string | null
           padding_override?: number | null
+          parsed_json?: Json | null
           priority?: Database["public"]["Enums"]["priority_level"]
           project_id: string
           quality_mode?: Database["public"]["Enums"]["quality_mode"]
@@ -2370,6 +2372,7 @@ export type Database = {
           mood?: Json | null
           objective?: string | null
           padding_override?: number | null
+          parsed_json?: Json | null
           priority?: Database["public"]["Enums"]["priority_level"]
           project_id?: string
           quality_mode?: Database["public"]["Enums"]["quality_mode"]
