@@ -141,18 +141,22 @@ serve(async (req) => {
       }, 400);
     }
 
-    const defaultLocation = getEnv("GCP_LOCATION");
-    const loc = extractLocation(operationName) ?? defaultLocation;
-
-    console.log("Using location:", loc);
+    const loc = extractLocation(operationName);
+    console.log("Extracted location from operationName:", loc);
 
     const token = await getAccessTokenFromServiceAccount();
 
-    // Endpoint correcto: GET https://{loc}-aiplatform.googleapis.com/v1/{operationName}
-    const url = `https://${loc}-aiplatform.googleapis.com/v1/${operationName}`;
-    console.log("Polling URL:", url);
+    // Usar host GLOBAL en lugar de regional para evitar 404
+    // Endpoint oficial: GET https://aiplatform.googleapis.com/v1/{operationName}
+    const url = `https://aiplatform.googleapis.com/v1/${operationName}`;
+    console.log("Polling URL (global host):", url);
 
-    const r = await fetch(url, { headers: { authorization: `Bearer ${token}` } });
+    const r = await fetch(url, { 
+      headers: { 
+        authorization: `Bearer ${token}`,
+        accept: "application/json",
+      } 
+    });
 
     // Loggear body SIEMPRE (para 400/404)
     const text = await r.text();
