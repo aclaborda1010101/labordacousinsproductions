@@ -62,6 +62,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [expandedEpisodes, setExpandedEpisodes] = useState<Set<number>>(new Set([1]));
   const [newSlugline, setNewSlugline] = useState('');
   const [newEpisodeNo, setNewEpisodeNo] = useState('1');
+  const [filterEpisode, setFilterEpisode] = useState<string>('all');
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
   const [duplicateFromEpisode, setDuplicateFromEpisode] = useState('1');
   const [duplicateToEpisode, setDuplicateToEpisode] = useState('2');
@@ -382,17 +383,36 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         <div className="flex items-center gap-2"><Badge variant="hero">HERO</Badge><span className="text-muted-foreground">{t.scenes.qualityModes.HERO}</span></div>
       </div>
 
+      {/* Episode filter */}
+      <div className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg">
+        <Label className="text-sm font-medium">Ver episodio:</Label>
+        <Select value={filterEpisode} onValueChange={setFilterEpisode}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos los episodios</SelectItem>
+            {Array.from({ length: episodesCount }, (_, i) => (
+              <SelectItem key={i + 1} value={String(i + 1)}>
+                Episodio {i + 1}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Add new scene */}
       <div className="flex gap-2">
         <div className="flex items-center gap-2">
-          <Label className="text-sm whitespace-nowrap">Episodio:</Label>
+          <Label className="text-sm whitespace-nowrap">Añadir a Ep:</Label>
           <Select value={newEpisodeNo} onValueChange={setNewEpisodeNo}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[100px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {Array.from({ length: episodesCount }, (_, i) => (
                 <SelectItem key={i + 1} value={String(i + 1)}>
-                  Ep. {i + 1}
+                  {i + 1}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -414,7 +434,9 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             </Button>
           </div>
         ) : (
-          Array.from({ length: episodesCount }, (_, i) => i + 1).map(episodeNo => {
+          Array.from({ length: episodesCount }, (_, i) => i + 1)
+            .filter(epNo => filterEpisode === 'all' || epNo === parseInt(filterEpisode))
+            .map(episodeNo => {
             const episodeScenes = scenesByEpisode[episodeNo] || [];
             const isExpanded = expandedEpisodes.has(episodeNo);
             
