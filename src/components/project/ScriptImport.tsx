@@ -44,11 +44,13 @@ import {
   Import,
   CheckSquare,
   Square,
-  Sparkles
+  Sparkles,
+  Scissors
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs } from '@/lib/autoTargets';
+import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
 
 interface ScriptImportProps {
   projectId: string;
@@ -111,6 +113,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [selectedLocations, setSelectedLocations] = useState<Set<number>>(new Set());
   const [selectedProps, setSelectedProps] = useState<Set<number>>(new Set());
   const [importing, setImporting] = useState(false);
+  
+  // Scene segmentation state
+  const [segmenting, setSegmenting] = useState(false);
+  const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
 
   // Load existing script
   useEffect(() => {
@@ -265,7 +271,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       // Step 4: Generate Screenplay
       updatePipelineStep('screenplay', 'running');
       const { data: screenplayData, error: screenplayError } = await supabase.functions.invoke('script-generate-screenplay', {
-        body: { outline: currentOutline, targets, language }
+        body: { 
+          outline: currentOutline, 
+          targets, 
+          language,
+          referenceScripts: referenceScripts.length > 0 ? referenceScripts : undefined
+        }
       });
 
       if (screenplayError) throw screenplayError;
@@ -415,104 +426,180 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     toast.success('Guion desbloqueado');
   };
 
-  // Export PDF
+  // Export PDF - Professional Screenplay Format
   const exportCompletePDF = () => {
     if (!generatedScript) return;
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    let y = 20;
-
-    doc.setFontSize(24);
-    doc.setFont('helvetica', 'bold');
-    doc.text(generatedScript.title || 'Guion', pageWidth / 2, 60, { align: 'center' });
-
-    if (generatedScript.synopsis) {
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'italic');
-      const synopsisLines = doc.splitTextToSize(generatedScript.synopsis, pageWidth - 60);
-      doc.text(synopsisLines, pageWidth / 2, 100, { align: 'center', maxWidth: pageWidth - 60 });
+    try {
+      exportScreenplayPDF(generatedScript);
+      toast.success('Guion exportado en formato profesional');
+    } catch (err) {
+      console.error('Error exporting PDF:', err);
+      toast.error('Error al exportar PDF');
     }
-
-    // Episodes
-    const episodes = generatedScript.episodes || [{ title: 'Película', scenes: generatedScript.scenes || [] }];
-    episodes.forEach((ep: any, epIdx: number) => {
-      doc.addPage();
-      y = 20;
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.text(ep.title || `Episodio ${epIdx + 1}`, pageWidth / 2, y, { align: 'center' });
-      y += 10;
-
-      (ep.scenes || []).forEach((scene: any, sceneIdx: number) => {
-        if (y > 260) { doc.addPage(); y = 20; }
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Escena ${scene.scene_number || sceneIdx + 1}: ${scene.slugline || ''}`, 20, y);
-        y += 6;
-
-        if (scene.dialogue && scene.dialogue.length > 0) {
-          doc.setFontSize(8);
-          scene.dialogue.forEach((d: any) => {
-            if (y > 270) { doc.addPage(); y = 20; }
-            doc.setFont('helvetica', 'bold');
-            doc.text(`${d.character}:`, 25, y);
-            doc.setFont('helvetica', 'normal');
-            const lineText = doc.splitTextToSize(d.line || '', pageWidth - 55);
-            doc.text(lineText, 50, y);
-            y += Math.max(lineText.length * 4, 5);
-          });
-        }
-        y += 6;
-      });
-    });
-
-    doc.save(`${(generatedScript.title || 'guion').replace(/\s+/g, '_')}.pdf`);
-    toast.success('PDF exportado');
   };
 
-  // Export single episode
+  // Export single episode - Professional Format
   const exportEpisodePDF = (episode: any, epIdx: number) => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    let y = 20;
+    if (!generatedScript) return;
+    try {
+      exportEpisodeScreenplayPDF(generatedScript, epIdx);
+      toast.success(`Episodio ${epIdx + 1} exportado en formato profesional`);
+    } catch (err) {
+      console.error('Error exporting episode PDF:', err);
+      toast.error('Error al exportar episodio');
+    }
+  };
 
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text(episode.title || `Episodio ${epIdx + 1}`, pageWidth / 2, y, { align: 'center' });
-    y += 15;
-
-    if (episode.synopsis) {
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'italic');
-      const synLines = doc.splitTextToSize(episode.synopsis, pageWidth - 40);
-      doc.text(synLines, 20, y);
-      y += synLines.length * 5 + 10;
+  // Segment scenes from script into database
+  const segmentScenesFromEpisode = async (episode: any, episodeNumber: number) => {
+    if (!episode?.scenes?.length) {
+      toast.error('Este episodio no tiene escenas');
+      return;
     }
 
-    (episode.scenes || []).forEach((scene: any, sceneIdx: number) => {
-      if (y > 260) { doc.addPage(); y = 20; }
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Escena ${scene.scene_number || sceneIdx + 1}: ${scene.slugline || ''}`, 20, y);
-      y += 6;
+    setSegmenting(true);
+    try {
+      // Check if scenes already exist for this episode
+      const { data: existingScenes } = await supabase
+        .from('scenes')
+        .select('id')
+        .eq('project_id', projectId)
+        .eq('episode_no', episodeNumber)
+        .limit(1);
 
-      if (scene.dialogue?.length > 0) {
-        doc.setFontSize(8);
-        scene.dialogue.slice(0, 5).forEach((d: any) => {
-          if (y > 270) { doc.addPage(); y = 20; }
-          doc.setFont('helvetica', 'bold');
-          doc.text(`${d.character}:`, 25, y);
-          doc.setFont('helvetica', 'normal');
-          const lineText = doc.splitTextToSize(d.line || '', pageWidth - 55);
-          doc.text(lineText, 50, y);
-          y += Math.max(lineText.length * 4, 5);
-        });
+      if (existingScenes && existingScenes.length > 0) {
+        const confirm = window.confirm(
+          `Ya existen escenas para el Episodio ${episodeNumber}. ¿Deseas reemplazarlas?`
+        );
+        if (!confirm) {
+          setSegmenting(false);
+          return;
+        }
+        // Delete existing scenes for this episode
+        await supabase
+          .from('scenes')
+          .delete()
+          .eq('project_id', projectId)
+          .eq('episode_no', episodeNumber);
       }
-      y += 6;
-    });
 
-    doc.save(`${(episode.title || `episodio_${epIdx + 1}`).replace(/\s+/g, '_')}.pdf`);
-    toast.success(`Episodio ${epIdx + 1} exportado`);
+      // Create scenes from the script data
+      const scenesToInsert = episode.scenes.map((scene: any, idx: number) => ({
+        project_id: projectId,
+        episode_no: episodeNumber,
+        scene_no: scene.scene_number || idx + 1,
+        slugline: scene.slugline || `ESCENA ${idx + 1}`,
+        summary: scene.summary || scene.action || null,
+        time_of_day: extractTimeOfDay(scene.slugline),
+        quality_mode: 'CINE',
+        parsed_json: {
+          dialogue: scene.dialogue || [],
+          action: scene.action || '',
+          music_cue: scene.music_cue || null,
+          sfx_cue: scene.sfx_cue || null,
+          mood: scene.mood || null,
+          characters: scene.characters || [],
+          vfx: scene.vfx || []
+        }
+      }));
+
+      const { error } = await supabase
+        .from('scenes')
+        .insert(scenesToInsert);
+
+      if (error) throw error;
+
+      setSegmentedEpisodes(prev => new Set([...prev, episodeNumber]));
+      toast.success(`${scenesToInsert.length} escenas creadas para Episodio ${episodeNumber}`);
+      
+      if (onScenesCreated) {
+        onScenesCreated();
+      }
+    } catch (err: any) {
+      console.error('Error segmenting scenes:', err);
+      toast.error('Error al segmentar escenas: ' + (err.message || 'Error desconocido'));
+    } finally {
+      setSegmenting(false);
+    }
+  };
+
+  // Segment ALL episodes at once
+  const segmentAllEpisodes = async () => {
+    if (!generatedScript) return;
+    
+    const episodes = generatedScript.episodes || [{ scenes: generatedScript.scenes }];
+    const confirm = window.confirm(
+      `¿Segmentar ${episodes.length} episodio(s) en escenas individuales?\n\nEsto creará las escenas en la base de datos para que puedas añadir planos.`
+    );
+    if (!confirm) return;
+
+    setSegmenting(true);
+    let totalScenes = 0;
+
+    try {
+      for (let i = 0; i < episodes.length; i++) {
+        const ep = episodes[i];
+        const episodeNumber = ep.episode_number || i + 1;
+        
+        if (ep.scenes?.length) {
+          // Delete existing scenes for this episode
+          await supabase
+            .from('scenes')
+            .delete()
+            .eq('project_id', projectId)
+            .eq('episode_no', episodeNumber);
+
+          // Create scenes from the script data
+          const scenesToInsert = ep.scenes.map((scene: any, idx: number) => ({
+            project_id: projectId,
+            episode_no: episodeNumber,
+            scene_no: scene.scene_number || idx + 1,
+            slugline: scene.slugline || `ESCENA ${idx + 1}`,
+            summary: scene.summary || scene.action || null,
+            time_of_day: extractTimeOfDay(scene.slugline),
+            quality_mode: 'CINE',
+            parsed_json: {
+              dialogue: scene.dialogue || [],
+              action: scene.action || '',
+              music_cue: scene.music_cue || null,
+              sfx_cue: scene.sfx_cue || null,
+              mood: scene.mood || null,
+              characters: scene.characters || [],
+              vfx: scene.vfx || []
+            }
+          }));
+
+          const { error } = await supabase
+            .from('scenes')
+            .insert(scenesToInsert);
+
+          if (error) throw error;
+          totalScenes += scenesToInsert.length;
+          setSegmentedEpisodes(prev => new Set([...prev, episodeNumber]));
+        }
+      }
+
+      toast.success(`${totalScenes} escenas creadas en ${episodes.length} episodio(s)`);
+      
+      if (onScenesCreated) {
+        onScenesCreated();
+      }
+    } catch (err: any) {
+      console.error('Error segmenting all episodes:', err);
+      toast.error('Error al segmentar escenas');
+    } finally {
+      setSegmenting(false);
+    }
+  };
+
+  // Helper: Extract time of day from slugline
+  const extractTimeOfDay = (slugline: string): string => {
+    if (!slugline) return 'day';
+    const lower = slugline.toLowerCase();
+    if (lower.includes('noche') || lower.includes('night')) return 'night';
+    if (lower.includes('atardecer') || lower.includes('dusk') || lower.includes('sunset')) return 'dusk';
+    if (lower.includes('amanecer') || lower.includes('dawn') || lower.includes('sunrise')) return 'dawn';
+    return 'day';
   };
 
   // Toggle entity selection
@@ -1028,10 +1115,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     {generatedScript.episodes?.length || 1} episodio(s) • {generatedScript.genre || ''} • {generatedScript.counts?.total_scenes || '?'} escenas totales
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <Button onClick={exportCompletePDF}>
+                <div className="flex gap-2 flex-wrap">
+                  <Button onClick={exportCompletePDF} variant="outline">
                     <FileDown className="w-4 h-4 mr-2" />
-                    Exportar Guion Completo (PDF)
+                    Exportar PDF Profesional
+                  </Button>
+                  <Button onClick={segmentAllEpisodes} disabled={segmenting} variant="gold">
+                    {segmenting ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Segmentando...</>
+                    ) : (
+                      <><Scissors className="w-4 h-4 mr-2" />Segmentar Todas las Escenas</>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -1269,13 +1363,34 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                               <div className="flex gap-2 mt-1">
                                 <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
                                 {ep.duration_min && <Badge variant="outline">{ep.duration_min} min</Badge>}
+                                {segmentedEpisodes.has(ep.episode_number || epIdx + 1) && (
+                                  <Badge variant="default" className="bg-green-600">
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Segmentado
+                                  </Badge>
+                                )}
                               </div>
                             </div>
                           </CollapsibleTrigger>
-                          <Button variant="outline" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
-                            <FileDown className="w-4 h-4 mr-1" />
-                            Exportar Episodio
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => segmentScenesFromEpisode(ep, ep.episode_number || epIdx + 1)}
+                              disabled={segmenting}
+                            >
+                              {segmenting ? (
+                                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                              ) : (
+                                <Scissors className="w-4 h-4 mr-1" />
+                              )}
+                              Segmentar
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
+                              <FileDown className="w-4 h-4 mr-1" />
+                              PDF
+                            </Button>
+                          </div>
                         </div>
                         {ep.synopsis && (
                           <p className="text-sm text-muted-foreground mt-2 ml-8">{ep.synopsis}</p>
