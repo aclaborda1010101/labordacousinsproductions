@@ -103,6 +103,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [analyzing, setAnalyzing] = useState(false);
   const [doctorSuggestions, setDoctorSuggestions] = useState<any[]>([]);
   const [doctorScore, setDoctorScore] = useState<number | null>(null);
+  const [applyingDoctor, setApplyingDoctor] = useState(false);
 
   // Entity import state
   const [selectedCharacters, setSelectedCharacters] = useState<Set<number>>(new Set());
@@ -319,6 +320,55 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       toast.error('Error al analizar guion');
     }
     setAnalyzing(false);
+  };
+
+  // Apply Doctor Suggestions
+  const applyDoctorSuggestions = async () => {
+    if (!generatedScript || doctorSuggestions.length === 0) {
+      toast.error('No hay sugerencias para aplicar');
+      return;
+    }
+
+    setApplyingDoctor(true);
+    try {
+      // Build rewrite instructions from suggestions
+      const rewriteInstructions = doctorSuggestions
+        .filter(s => s.severity === 'critical' || s.severity === 'high' || s.severity === 'medium')
+        .map(s => `- [${s.category}] ${s.issue}: ${s.suggestion}${s.rewrite_snippet ? ` (Ejemplo: "${s.rewrite_snippet}")` : ''}`)
+        .join('\n');
+
+      const { data, error } = await supabase.functions.invoke('script-rewrite-outline', {
+        body: {
+          outline: generatedScript,
+          rewriteInstructions: `Aplica las siguientes mejoras del Script Doctor:\n\n${rewriteInstructions}`,
+          targets: targets || {}
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.outline) {
+        setGeneratedScript(data.outline);
+        
+        // Save the improved script
+        if (currentScriptId) {
+          await supabase.from('scripts').update({
+            parsed_json: data.outline,
+            updated_at: new Date().toISOString()
+          }).eq('id', currentScriptId);
+        }
+
+        toast.success('Sugerencias aplicadas correctamente');
+        setDoctorSuggestions([]);
+        setDoctorScore(null);
+        setActiveTab('summary');
+      }
+    } catch (err: any) {
+      console.error('Error applying doctor suggestions:', err);
+      toast.error('Error al aplicar sugerencias');
+    } finally {
+      setApplyingDoctor(false);
+    }
   };
 
   // Freeze script
@@ -1342,10 +1392,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </CardTitle>
                   <CardDescription>Análisis profesional con sugerencias accionables</CardDescription>
                 </div>
-                <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || (!generatedScript && scriptText.length < 200)}>
-                  {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-                  Analizar
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || (!generatedScript && scriptText.length < 200)}>
+                    {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+                    Analizar
+                  </Button>
+                  {doctorSuggestions.length > 0 && (
+                    <Button 
+                      onClick={applyDoctorSuggestions} 
+                      disabled={applyingDoctor || !generatedScript}
+                    >
+                      {applyingDoctor ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
+                      Aplicar Cambios
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
             {doctorSuggestions.length > 0 && (
