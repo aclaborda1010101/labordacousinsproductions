@@ -14,77 +14,64 @@ interface EpisodeRequest {
   language?: string;
 }
 
-const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER: el mejor guionista de Hollywood escribiendo UN EPISODIO COMPLETO.
+const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER: guionista de Hollywood.
 
-TU MISIÓN: Escribir TODAS las escenas del episodio con DIÁLOGOS COMPLETOS Y EXTENSOS.
+TU MISIÓN: Escribir un EPISODIO COMPLETO con escenas y diálogos, optimizado para ejecución rápida.
 
 REGLAS ABSOLUTAS:
-1. CADA ESCENA tiene mínimo 3-8 líneas de diálogo (según importancia)
-2. Diálogos NATURALES con subtexto, no expositivos
-3. Acciones visuales cinematográficas (presente, show don't tell)
-4. NO resumas diálogos - escríbelos COMPLETOS
-5. Mínimo 12-18 escenas por episodio
-6. Cada escena tiene conflicto claro
+1. Escribe TODAS las escenas del episodio (usa el número indicado por episodeOutline.scenes_count).
+2. Diálogos COMPLETOS, pero compactos (por escena, aprox. 2-8 líneas totales según importancia).
+3. Acción cinematográfica clara (60-120 palabras por escena).
+4. Cada escena debe tener conflicto (aunque sea sutil).
+5. Devuelve SOLO JSON válido (sin markdown).
 
 FORMATO DE SALIDA (JSON ESTRICTO):
 {
   "episode_number": number,
   "title": "string",
-  "synopsis": "string extenso (300+ palabras)",
-  "summary": "string corto (1-2 oraciones)",
+  "synopsis": "string (180-250 palabras)",
+  "summary": "string (1-2 oraciones)",
   "duration_min": number,
   "scenes": [
     {
       "scene_number": 1,
       "slugline": "INT./EXT. LOCALIZACIÓN - DÍA/NOCHE",
-      "summary": "resumen de la escena (50-100 palabras)",
-      "characters": ["nombres de personajes presentes"],
-      "action": "descripción visual cinematográfica EXTENSA (100-200 palabras mínimo)",
+      "summary": "string (30-70 palabras)",
+      "characters": ["nombres"],
+      "action": "string",
       "dialogue": [
         {
           "character": "NOMBRE EN MAYÚSCULAS",
-          "parenthetical": "(opcional: tono, acción pequeña)",
-          "line": "El diálogo COMPLETO del personaje. Debe ser natural, con personalidad, subtexto. Pueden ser varias oraciones."
+          "parenthetical": "(opcional)",
+          "line": "string"
         }
       ],
-      "music_cue": "string opcional - instrucciones musicales específicas",
-      "sfx_cue": "string opcional - efectos de sonido necesarios",
-      "vfx": ["array opcional de efectos visuales necesarios"],
-      "mood": "string - atmósfera emocional de la escena",
+      "music_cue": "string opcional",
+      "sfx_cue": "string opcional",
+      "vfx": ["string opcional"],
+      "mood": "string",
       "continuity_anchors": {
         "time_of_day": "string",
         "weather": "string",
-        "character_states": {
-          "NombrePersonaje": "estado físico/emocional"
-        }
+        "character_states": { "NombrePersonaje": "estado" }
       }
     }
   ],
   "act_structure": {
-    "cold_open": "escenas 1-2",
-    "act_one": "escenas 3-6",
-    "act_two": "escenas 7-12",
-    "act_three": "escenas 13-16",
+    "cold_open": "escenas X-Y",
+    "act_one": "escenas...",
+    "act_two": "escenas...",
+    "act_three": "escenas...",
     "tag": "escena final opcional"
   },
-  "cliffhanger": "descripción del gancho final",
+  "cliffhanger": "string",
   "total_dialogue_lines": number,
   "total_action_blocks": number
 }
 
-GUÍA DE DIÁLOGOS POR TIPO DE ESCENA:
-- Escena dramática principal: 8-15 líneas de diálogo
-- Escena de transición: 3-5 líneas
-- Escena de acción: 2-4 líneas intercaladas con acción
-- Escena de confrontación: 10-20 líneas
-- Escena emocional: 5-10 líneas con pausas
-
 NUNCA:
-- Resumir con "continúan discutiendo..."
-- Dejar escenas sin diálogo (excepto secuencias de acción pura)
-- Escribir diálogos genéricos o planos
-- Usar clichés de IA
-- Escenas de menos de 50 palabras de acción`;
+- Resumir con "siguen hablando..."
+- Devolver texto fuera del JSON`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -140,12 +127,11 @@ ${characterRef}
 ${locationRef}
 
 === INSTRUCCIONES ===
-1. Escribe TODAS las escenas del episodio (mínimo ${episodeOutline.scenes_count || 12})
-2. CADA escena con diálogos COMPLETOS (no resúmenes)
-3. Acciones cinematográficas extensas (100-200 palabras por escena)
-4. Diálogos naturales con personalidad única para cada personaje
-5. Incluye music/sfx cues específicos
-6. Mantén continuity anchors para producción
+1. Escribe TODAS las escenas del episodio (usa ${episodeOutline.scenes_count || 12})
+2. Diálogos completos pero compactos (2-8 líneas totales por escena)
+3. Acción clara (60-120 palabras por escena)
+4. Incluye music/sfx cues cuando aplique
+5. Mantén continuity anchors útiles para producción
 
 IDIOMA: ${language || 'es-ES'}
 
@@ -153,21 +139,38 @@ Devuelve SOLO JSON válido con el episodio completo.`;
 
     console.log(`Generating episode ${episodeNumber} with Lovable AI (GPT-5 mini)`);
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-5-mini',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt }
-        ],
-        max_completion_tokens: 16000,
-      }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 55_000);
+
+    let response: Response;
+    try {
+      response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: 'openai/gpt-5-mini',
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: userPrompt }
+          ],
+          max_completion_tokens: 12000,
+        }),
+      });
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        return new Response(
+          JSON.stringify({ error: 'Tiempo de espera generando el episodio. Intenta de nuevo o baja escenas/targets.' }),
+          { status: 504, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      throw e;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
       const errorText = await response.text();

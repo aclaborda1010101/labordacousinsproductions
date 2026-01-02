@@ -37,151 +37,157 @@ interface OutlineRequest {
   };
 }
 
-const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER: guionista + showrunner + script editor nivel estudio de Hollywood.
+const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER: guionista + showrunner + script editor nivel estudio.
 
-TU MISIÓN: Generar un OUTLINE PROFESIONAL EXTENSO Y DETALLADO que cumpla los targets dados SÍ O SÍ.
+TU MISIÓN: generar un OUTLINE PRODUCIBLE (rápido) y, sobre todo, SEGMENTADO POR EPISODIOS, cumpliendo los targets mínimos.
+
+PRIORIDADES:
+1) Segmentación clara por episodios (episode_outlines).
+2) Cumplir targets (mínimos) sin inventar conteos.
+3) Mantener descripciones compactas para evitar timeouts.
 
 REGLAS CRÍTICAS:
-1. CUMPLE LOS TARGETS EXACTAMENTE. Si el target dice 3 protagonistas, incluye 3 protagonistas.
-2. El outline debe ser EXTREMADAMENTE DETALLADO para generar guiones completos.
-3. Cada beat debe tener conflicto claro, tensión dramática y arco narrativo.
-4. Personajes con arcos definidos, evolución clara y voz única.
-5. CADA EPISODIO necesita su propia sinopsis detallada de 400-600 palabras.
-6. Genera contenido EXTENSO y PROFESIONAL - no escatimes en detalles.
+- NUNCA entregues menos elementos que los targets.
+- Mantén los textos compactos (orientativo):
+  - synopsis serie: 250-400 palabras
+  - synopsis episodio: 120-200 palabras
+  - beat description: 60-120 palabras
+  - character description: 60-90 palabras
+  - character arc: 40-70 palabras
+  - location description: 50-80 palabras
+  - setpiece description: 80-120 palabras
+- Devuelve SOLO JSON válido, sin markdown, sin texto extra.
 
 FORMATO DE SALIDA OBLIGATORIO (JSON ESTRICTO):
 {
   "title": "string",
-  "logline": "string (2-3 frases gancho poderosas)",
-  "synopsis": "string (600-1000 palabras, sinopsis completa de la serie)",
+  "logline": "string (2-3 frases)",
+  "synopsis": "string",
   "genre": "string",
   "tone": "string",
-  "themes": ["array de temas principales desarrollados"],
-  
+  "themes": ["array"],
+
   "beat_sheet": [
     {
       "beat": "Opening Image | Theme Stated | Set-Up | Catalyst | Debate | Break Into Two | B Story | Fun and Games | Midpoint | Bad Guys Close In | All Is Lost | Dark Night of the Soul | Break Into Three | Finale | Final Image",
-      "description": "string MUY detallado (200+ palabras)",
-      "episode": number (para series),
-      "scenes": ["sluglines de escenas en este beat"]
+      "description": "string",
+      "episode": 1,
+      "scenes": ["sluglines"]
     }
   ],
-  
+
   "episode_outlines": [
     {
-      "episode_number": number,
-      "title": "string creativo",
-      "synopsis": "string EXTENSO (400-600 palabras con toda la trama del episodio)",
-      "cold_open": "string detallado (100+ palabras)",
-      "act_breaks": ["descripción detallada de cada corte de acto"],
-      "cliffhanger": "string impactante",
-      "scenes_count": number,
+      "episode_number": 1,
+      "title": "string",
+      "synopsis": "string",
+      "cold_open": "string",
+      "act_breaks": ["string"],
+      "cliffhanger": "string",
+      "scenes_count": 12,
       "key_scenes": [
         {
           "slugline": "INT./EXT. LUGAR - MOMENTO",
-          "description": "Descripción visual y dramática de la escena clave",
+          "description": "string",
           "characters": ["nombres"],
           "conflict": "string",
           "resolution": "string"
         }
       ],
-      "character_development": ["qué aprende/cambia cada personaje en este episodio"],
-      "subplot_progress": ["avance de cada subtrama"]
+      "character_development": ["string"],
+      "subplot_progress": ["string"]
     }
   ],
-  
+
   "character_list": [
     {
       "name": "string",
       "role": "protagonist | antagonist | supporting | recurring | extra_with_lines",
       "archetype": "string",
-      "description": "string EXTENSO (150+ palabras: física, personalidad, motivaciones)",
-      "arc": "string detallado (100+ palabras)",
+      "description": "string",
+      "arc": "string",
       "first_appearance": "string",
-      "relationships": ["string detalladas"],
-      "voice_signature": "cómo habla, muletillas, patrones de diálogo",
-      "secret": "string (qué oculta este personaje)"
+      "relationships": ["string"],
+      "voice_signature": "string",
+      "secret": "string"
     }
   ],
-  
+
   "location_list": [
     {
       "name": "string",
       "type": "INT | EXT | INT/EXT",
-      "description": "string visual DETALLADA (100+ palabras)",
-      "atmosphere": "string sensorial completa",
-      "scenes_estimate": number,
-      "time_variants": ["day", "night", "dawn", "dusk"],
-      "sound_signature": "qué sonidos caracterizan este lugar"
+      "description": "string",
+      "atmosphere": "string",
+      "scenes_estimate": 5,
+      "time_variants": ["day", "night"],
+      "sound_signature": "string"
     }
   ],
-  
+
   "hero_props": [
     {
       "name": "string",
       "importance": "plot_critical | character_defining | symbolic",
-      "description": "string visual detallada",
+      "description": "string",
       "first_appearance": "string",
-      "narrative_function": "string extenso"
+      "narrative_function": "string"
     }
   ],
-  
+
   "setpieces": [
     {
-      "name": "string épico",
-      "episode": number,
-      "description": "string EXTENSO (200+ palabras de acción espectacular)",
+      "name": "string",
+      "episode": 1,
+      "description": "string",
       "characters_involved": ["nombres"],
       "location": "string",
       "stakes": "string",
-      "choreography": "descripción de la secuencia beat por beat"
+      "choreography": "string"
     }
   ],
-  
+
   "subplots": [
     {
       "name": "string",
-      "description": "string extenso",
+      "description": "string",
       "characters": ["nombres"],
-      "arc_episodes": [numbers],
+      "arc_episodes": [1,2],
       "resolution": "string"
     }
   ],
-  
+
   "twists": [
     {
       "name": "string",
-      "episode": number,
-      "scene_approx": number,
+      "episode": 1,
+      "scene_approx": 8,
       "description": "string",
-      "setup": "string (cómo se planta)",
-      "payoff": "string (cómo impacta)"
+      "setup": "string",
+      "payoff": "string"
     }
   ],
-  
+
   "counts": {
-    "protagonists": number,
-    "supporting": number,
-    "extras_with_lines": number,
-    "locations": number,
-    "hero_props": number,
-    "setpieces": number,
-    "subplots": number,
-    "twists": number,
-    "total_scenes": number,
-    "scenes_per_episode": number
+    "protagonists": 0,
+    "supporting": 0,
+    "extras_with_lines": 0,
+    "locations": 0,
+    "hero_props": 0,
+    "setpieces": 0,
+    "subplots": 0,
+    "twists": 0,
+    "total_scenes": 0,
+    "scenes_per_episode": 0
   },
-  
-  "assumptions": ["array de decisiones creativas tomadas"],
-  "missing_info": ["array de info que podría mejorar el outline"]
+
+  "assumptions": ["string"],
+  "missing_info": ["string"]
 }
 
 NUNCA:
 - Inventar conteos falsos
-- Incluir menos elementos que los targets
-- Usar clichés de IA
-- Escribir personajes planos
-- Ser breve o superficial - EXTENSO Y DETALLADO
+- Devolver texto fuera del JSON
 
 IDIOMA: Responde en el idioma indicado.`;
 
@@ -193,6 +199,9 @@ serve(async (req) => {
   try {
     const request: OutlineRequest = await req.json();
     const { idea, format, episodesCount, episodeDurationMin, filmDurationMin, genre, tone, language, references, referenceScripts, targets } = request;
+
+    const safeIdea = idea?.length > 1800 ? `${idea.slice(0, 1800)}…` : idea;
+    const safeReferences = references?.length ? references.slice(0, 600) : references;
 
     if (!idea || !targets) {
       return new Response(
@@ -221,17 +230,18 @@ serve(async (req) => {
       }
     }
 
-    const userPrompt = `GENERA UN OUTLINE PROFESIONAL EXTENSO Y DETALLADO:
+    const userPrompt = `GENERA UN OUTLINE PARA SEGMENTAR EN EPISODIOS (rápido y utilizable):
 
-IDEA: ${idea}
+IDEA (si viene larga, extrae la esencia): ${safeIdea}
 
 FORMATO: ${formatDescription}
 GÉNERO: ${genre}
 TONO: ${tone}
 IDIOMA: ${language}
-${references ? `REFERENCIAS (inspiración, NO copiar): ${references}` : ''}
+${safeReferences ? `REFERENCIAS (inspiración, NO copiar): ${safeReferences}` : ''}
 ${referenceSection}
-TARGETS OBLIGATORIOS (DEBES CUMPLIRLOS):
+
+TARGETS OBLIGATORIOS (DEBES CUMPLIRLOS como mínimos):
 - Protagonistas: ${targets.protagonists_min}
 - Personajes secundarios: ${targets.supporting_min}
 - Extras con frase: ${targets.extras_min}
@@ -243,30 +253,43 @@ TARGETS OBLIGATORIOS (DEBES CUMPLIRLOS):
 ${format === 'series' ? `- Escenas por episodio: ${targets.scenes_per_episode}` : `- Escenas totales: ${targets.scenes_target}`}
 - Ratio diálogo/acción: ${targets.dialogue_action_ratio}
 
-IMPORTANTE: Genera un outline EXTENSO y DETALLADO. Cada episodio necesita una sinopsis de 400-600 palabras.
-Cada personaje necesita descripción completa de 150+ palabras.
-Cada setpiece necesita descripción de 200+ palabras.
-
-Genera el outline cumpliendo TODOS los targets. Devuelve SOLO JSON válido.`;
+IMPORTANTE: Prioriza segmentación por episodios y descripciones compactas. Devuelve SOLO JSON válido.`;
 
     console.log('Generating outline with Lovable AI (GPT-5 mini) for:', idea.substring(0, 100));
     console.log('Targets:', JSON.stringify(targets));
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-5-mini',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt }
-        ],
-        max_completion_tokens: 16000,
-      }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 55_000);
+
+    let response: Response;
+    try {
+      response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: 'openai/gpt-5-mini',
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: userPrompt }
+          ],
+          max_completion_tokens: 8000,
+        }),
+      });
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        return new Response(
+          JSON.stringify({ error: 'Tiempo de espera generando el outline. Reduce la longitud de la idea o baja la complejidad/targets.' }),
+          { status: 504, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      throw e;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
