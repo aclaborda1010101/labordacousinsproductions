@@ -193,6 +193,20 @@ async function makeKlingJwt(accessKey: string, secretKey: string): Promise<strin
   return `${unsigned}.${signature}`;
 }
 
+// Helper: Convert image URL to base64
+async function imageUrlToBase64(imageUrl: string): Promise<string> {
+  console.log('Converting image URL to base64...');
+  const response = await fetch(imageUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch image: ${response.status}`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  const base64 = btoa(String.fromCharCode(...uint8Array));
+  console.log('Image converted to base64 successfully');
+  return base64;
+}
+
 // Generate video with Kling (using JWT AK+SK auth and presets)
 async function generateWithKling(prompt: string, duration: number, keyframeUrl?: string, qualityMode: 'CINE' | 'ULTRA' = 'CINE'): Promise<VideoResult> {
   // Get credentials from secrets
@@ -215,6 +229,9 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
   // Generate JWT token
   const token = await makeKlingJwt(KLING_ACCESS_KEY, KLING_SECRET_KEY);
 
+  // Check if model requires image2video (v2.x models typically do)
+  const requiresImage = KLING_MODEL_NAME.includes('v2');
+  
   const requestBody: Record<string, unknown> = {
     prompt,
     duration: duration.toString(),
@@ -223,11 +240,20 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
     mode
   };
 
+  // For image2video, convert keyframe URL to base64 as per Kling API requirements
   if (keyframeUrl) {
-    requestBody.image_url = keyframeUrl;
+    const imageBase64 = await imageUrlToBase64(keyframeUrl);
+    requestBody.image = imageBase64;
   }
 
-  const endpoint = keyframeUrl ? 'image2video' : 'text2video';
+  // For v2.x models, always use image2video endpoint (they don't support text2video)
+  const useImage2Video = keyframeUrl || requiresImage;
+  const endpoint = useImage2Video ? 'image2video' : 'text2video';
+  
+  // If image2video is required but no keyframe, throw helpful error
+  if (useImage2Video && !keyframeUrl) {
+    throw new Error(`Model ${KLING_MODEL_NAME} requires image2video - keyframeUrl is mandatory`);
+  }
   const createResponse = await fetch(`${KLING_BASE_URL}/v1/videos/${endpoint}`, {
     method: "POST",
     headers: {
@@ -378,14 +404,15 @@ serve(async (req) => {
         let finalKeyframeUrl = keyframeUrl;
         if (!finalKeyframeUrl) {
           console.log('Generating keyframe first...');
-          try {
-            finalKeyframeUrl = await generateImage(
-              `Cinematic keyframe for: ${sceneDescription}. ${shotType} shot composition. Professional film quality, 16:9 aspect ratio.`
-            );
-            console.log('Keyframe generated successfully');
-          } catch (e) {
-            console.warn('Keyframe generation failed:', e);
-          }
+          finalKeyframeUrl = await generateImage(
+            `Cinematic keyframe for: ${sceneDescription}. ${shotType} shot composition. Professional film quality, 16:9 aspect ratio.`
+          );
+          console.log('Keyframe generated successfully');
+        }
+
+        // For Kling engine, keyframe is mandatory (especially for v2.x models)
+        if (engine === 'kling' && !finalKeyframeUrl) {
+          throw new Error('Keyframe is required for Kling video generation');
         }
 
         if (engine === 'veo') {
