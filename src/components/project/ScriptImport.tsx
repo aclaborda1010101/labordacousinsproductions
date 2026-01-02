@@ -950,44 +950,104 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           ) : (
             <>
               {/* Header with export */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
-                  <h3 className="font-semibold text-lg">{generatedScript.title || 'Guion Generado'}</h3>
+                  <h3 className="font-semibold text-xl">{generatedScript.title || 'Guion Generado'}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {generatedScript.episodes?.length || 1} episodio(s) • {generatedScript.genre || ''} • {generatedScript.counts?.total_scenes || '?'} escenas
+                    {generatedScript.episodes?.length || 1} episodio(s) • {generatedScript.genre || ''} • {generatedScript.counts?.total_scenes || '?'} escenas totales
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={exportCompletePDF}>
+                  <Button onClick={exportCompletePDF}>
                     <FileDown className="w-4 h-4 mr-2" />
-                    Exportar Guion Completo
+                    Exportar Guion Completo (PDF)
                   </Button>
                 </div>
               </div>
 
-              {/* Synopsis Card */}
-              {generatedScript.synopsis && (
-                <Card>
-                  <CardHeader><CardTitle className="text-base">Sinopsis General</CardTitle></CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{generatedScript.synopsis}</p>
-                  </CardContent>
-                </Card>
-              )}
+              {/* MASTER SCRIPT OVERVIEW */}
+              <Card className="border-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Film className="w-5 h-5 text-primary" />
+                    Guion Maestro
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Logline & Synopsis */}
+                  {generatedScript.logline && (
+                    <div>
+                      <Label className="text-xs text-muted-foreground uppercase">Logline</Label>
+                      <p className="text-sm font-medium">{generatedScript.logline}</p>
+                    </div>
+                  )}
+                  {generatedScript.synopsis && (
+                    <div>
+                      <Label className="text-xs text-muted-foreground uppercase">Sinopsis</Label>
+                      <p className="text-sm">{generatedScript.synopsis}</p>
+                    </div>
+                  )}
+                  
+                  {/* Genre, Tone, Themes */}
+                  <div className="flex flex-wrap gap-2">
+                    {generatedScript.genre && <Badge>{generatedScript.genre}</Badge>}
+                    {generatedScript.tone && <Badge variant="outline">{generatedScript.tone}</Badge>}
+                    {generatedScript.themes?.map((t: string, i: number) => (
+                      <Badge key={i} variant="secondary">{t}</Badge>
+                    ))}
+                  </div>
 
-              {/* Counts */}
-              {generatedScript.counts && (
-                <div className="grid gap-3 grid-cols-4 md:grid-cols-8">
-                  <CountBadge label="Protagonistas" value={generatedScript.counts.protagonists} />
-                  <CountBadge label="Secundarios" value={generatedScript.counts.supporting} />
-                  <CountBadge label="Localizaciones" value={generatedScript.counts.locations} />
-                  <CountBadge label="Props" value={generatedScript.counts.hero_props} />
-                  <CountBadge label="Setpieces" value={generatedScript.counts.setpieces} />
-                  <CountBadge label="Subtramas" value={generatedScript.counts.subplots} />
-                  <CountBadge label="Giros" value={generatedScript.counts.twists} />
-                  <CountBadge label="Escenas" value={generatedScript.counts.total_scenes} />
-                </div>
-              )}
+                  {/* Counts */}
+                  {generatedScript.counts && (
+                    <div className="grid gap-2 grid-cols-4 md:grid-cols-8">
+                      <CountBadge label="Protagonistas" value={generatedScript.counts.protagonists} />
+                      <CountBadge label="Secundarios" value={generatedScript.counts.supporting} />
+                      <CountBadge label="Extras" value={generatedScript.counts.extras_with_lines} />
+                      <CountBadge label="Localizaciones" value={generatedScript.counts.locations} />
+                      <CountBadge label="Props" value={generatedScript.counts.hero_props} />
+                      <CountBadge label="Setpieces" value={generatedScript.counts.setpieces} />
+                      <CountBadge label="Escenas" value={generatedScript.counts.total_scenes} />
+                      <CountBadge label="Diálogos" value={generatedScript.counts.total_dialogue_lines} />
+                    </div>
+                  )}
+
+                  {/* Music & SFX Design */}
+                  {(generatedScript.music_design?.length > 0 || generatedScript.sfx_design?.length > 0) && (
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {generatedScript.music_design?.length > 0 && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground uppercase flex items-center gap-1">
+                            <Volume2 className="w-3 h-3" /> Diseño Musical
+                          </Label>
+                          <div className="mt-1 space-y-1">
+                            {generatedScript.music_design.map((m: any, i: number) => (
+                              <div key={i} className="text-xs p-2 bg-muted/50 rounded">
+                                <span className="font-medium">{m.name}</span>
+                                <span className="text-muted-foreground"> - {m.description}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {generatedScript.sfx_design?.length > 0 && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground uppercase flex items-center gap-1">
+                            <Zap className="w-3 h-3" /> Diseño SFX
+                          </Label>
+                          <div className="mt-1 space-y-1">
+                            {generatedScript.sfx_design.map((s: any, i: number) => (
+                              <div key={i} className="text-xs p-2 bg-muted/50 rounded">
+                                <span className="font-medium">{s.category}</span>
+                                <span className="text-muted-foreground"> - {s.description}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
               {/* BREAKDOWN - Import Entities */}
               <Card className="border-primary/50">
@@ -1002,11 +1062,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       disabled={importing || (selectedCharacters.size === 0 && selectedLocations.size === 0 && selectedProps.size === 0)}
                     >
                       {importing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Import className="w-4 h-4 mr-2" />}
-                      Importar Seleccionados ({selectedCharacters.size + selectedLocations.size + selectedProps.size})
+                      Importar ({selectedCharacters.size + selectedLocations.size + selectedProps.size})
                     </Button>
                   </div>
                   <CardDescription>
-                    Selecciona personajes, localizaciones y props para añadirlos a la Biblia del proyecto
+                    Selecciona entidades para añadirlas a la Biblia del proyecto
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1019,10 +1079,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           Personajes ({generatedScript.characters?.length || 0})
                         </Label>
                         <Button variant="ghost" size="sm" onClick={selectAllCharacters}>
-                          {selectedCharacters.size === (generatedScript.characters?.length || 0) ? 'Deseleccionar' : 'Seleccionar todos'}
+                          {selectedCharacters.size === (generatedScript.characters?.length || 0) ? 'Ninguno' : 'Todos'}
                         </Button>
                       </div>
-                      <ScrollArea className="h-[200px] border rounded-md p-2">
+                      <ScrollArea className="h-[180px] border rounded-md p-2">
                         {generatedScript.characters?.map((char: any, i: number) => (
                           <div 
                             key={i} 
@@ -1040,7 +1100,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           </div>
                         ))}
                         {(!generatedScript.characters || generatedScript.characters.length === 0) && (
-                          <p className="text-sm text-muted-foreground text-center py-4">Sin personajes detectados</p>
+                          <p className="text-sm text-muted-foreground text-center py-4">Sin personajes</p>
                         )}
                       </ScrollArea>
                     </div>
@@ -1053,10 +1113,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           Localizaciones ({generatedScript.locations?.length || 0})
                         </Label>
                         <Button variant="ghost" size="sm" onClick={selectAllLocations}>
-                          {selectedLocations.size === (generatedScript.locations?.length || 0) ? 'Deseleccionar' : 'Seleccionar todos'}
+                          {selectedLocations.size === (generatedScript.locations?.length || 0) ? 'Ninguno' : 'Todos'}
                         </Button>
                       </div>
-                      <ScrollArea className="h-[200px] border rounded-md p-2">
+                      <ScrollArea className="h-[180px] border rounded-md p-2">
                         {generatedScript.locations?.map((loc: any, i: number) => (
                           <div 
                             key={i} 
@@ -1071,7 +1131,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           </div>
                         ))}
                         {(!generatedScript.locations || generatedScript.locations.length === 0) && (
-                          <p className="text-sm text-muted-foreground text-center py-4">Sin localizaciones detectadas</p>
+                          <p className="text-sm text-muted-foreground text-center py-4">Sin localizaciones</p>
                         )}
                       </ScrollArea>
                     </div>
@@ -1084,10 +1144,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           Props ({generatedScript.props?.length || 0})
                         </Label>
                         <Button variant="ghost" size="sm" onClick={selectAllProps}>
-                          {selectedProps.size === (generatedScript.props?.length || 0) ? 'Deseleccionar' : 'Seleccionar todos'}
+                          {selectedProps.size === (generatedScript.props?.length || 0) ? 'Ninguno' : 'Todos'}
                         </Button>
                       </div>
-                      <ScrollArea className="h-[200px] border rounded-md p-2">
+                      <ScrollArea className="h-[180px] border rounded-md p-2">
                         {generatedScript.props?.map((prop: any, i: number) => (
                           <div 
                             key={i} 
@@ -1102,7 +1162,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           </div>
                         ))}
                         {(!generatedScript.props || generatedScript.props.length === 0) && (
-                          <p className="text-sm text-muted-foreground text-center py-4">Sin props detectados</p>
+                          <p className="text-sm text-muted-foreground text-center py-4">Sin props</p>
                         )}
                       </ScrollArea>
                     </div>
@@ -1110,54 +1170,157 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </CardContent>
               </Card>
 
-              {/* Episodes with individual export */}
-              <div className="space-y-3">
-                <h4 className="font-medium">Episodios / Capítulos</h4>
-                {(generatedScript.episodes || [{ title: generatedScript.title || 'Película', scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => (
-                  <Card key={epIdx}>
+              {/* EPISODES / CHAPTERS - FULL SCREENPLAY VIEW */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold text-lg">Capítulos / Episodios</h4>
+                  <Button variant="outline" size="sm" onClick={() => {
+                    const allExpanded = Object.values(expandedEpisodes).every(v => v);
+                    const newState: Record<number, boolean> = {};
+                    (generatedScript.episodes || [generatedScript]).forEach((_: any, i: number) => { newState[i] = !allExpanded; });
+                    setExpandedEpisodes(newState);
+                  }}>
+                    {Object.values(expandedEpisodes).every(v => v) ? 'Contraer todos' : 'Expandir todos'}
+                  </Button>
+                </div>
+
+                {(generatedScript.episodes || [{ episode_number: 1, title: generatedScript.title || 'Película', synopsis: generatedScript.synopsis, scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => (
+                  <Card key={epIdx} className="overflow-hidden">
                     <Collapsible open={expandedEpisodes[epIdx] ?? false} onOpenChange={(open) => setExpandedEpisodes(prev => ({ ...prev, [epIdx]: open }))}>
-                      <CardHeader className="py-3">
+                      <CardHeader className="bg-muted/30">
                         <div className="flex items-center justify-between w-full">
-                          <CollapsibleTrigger className="flex items-center gap-2">
-                            {expandedEpisodes[epIdx] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                            <span className="font-medium">{ep.title || `Episodio ${epIdx + 1}`}</span>
-                            <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
+                          <CollapsibleTrigger className="flex items-center gap-3 text-left">
+                            {expandedEpisodes[epIdx] ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                            <div>
+                              <span className="font-semibold text-base">
+                                {ep.episode_number ? `Episodio ${ep.episode_number}: ` : ''}{ep.title || `Capítulo ${epIdx + 1}`}
+                              </span>
+                              <div className="flex gap-2 mt-1">
+                                <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
+                                {ep.duration_min && <Badge variant="outline">{ep.duration_min} min</Badge>}
+                              </div>
+                            </div>
                           </CollapsibleTrigger>
-                          <Button variant="ghost" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
+                          <Button variant="outline" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
                             <FileDown className="w-4 h-4 mr-1" />
-                            Exportar
+                            Exportar Episodio
                           </Button>
                         </div>
+                        {ep.synopsis && (
+                          <p className="text-sm text-muted-foreground mt-2 ml-8">{ep.synopsis}</p>
+                        )}
+                        {ep.summary && (
+                          <p className="text-xs text-muted-foreground mt-1 ml-8 italic">{ep.summary}</p>
+                        )}
                       </CardHeader>
+                      
                       <CollapsibleContent>
-                        <CardContent className="pt-0">
-                          {ep.synopsis && <p className="text-sm text-muted-foreground mb-3">{ep.synopsis}</p>}
-                          <div className="space-y-2">
-                            {(ep.scenes || []).slice(0, 10).map((scene: any, sceneIdx: number) => (
-                              <div key={sceneIdx} className="p-2 rounded border text-sm">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Badge variant="outline" className="text-xs">#{scene.scene_number || sceneIdx + 1}</Badge>
-                                  <span className="font-medium">{scene.slugline}</span>
-                                </div>
+                        <CardContent className="pt-4 space-y-4">
+                          {/* All scenes with full content */}
+                          {(ep.scenes || []).map((scene: any, sceneIdx: number) => (
+                            <div key={sceneIdx} className="border rounded-lg overflow-hidden">
+                              {/* Scene Header - Slugline */}
+                              <div className="bg-foreground text-background px-4 py-2 font-mono text-sm font-bold">
+                                {scene.scene_number || sceneIdx + 1}. {scene.slugline || 'SIN SLUGLINE'}
+                              </div>
+                              
+                              <div className="p-4 space-y-3">
+                                {/* Scene summary */}
+                                {scene.summary && (
+                                  <p className="text-sm text-muted-foreground italic border-l-2 border-primary/50 pl-3">
+                                    {scene.summary}
+                                  </p>
+                                )}
+
+                                {/* Action */}
+                                {scene.action && (
+                                  <div className="text-sm leading-relaxed">
+                                    {scene.action}
+                                  </div>
+                                )}
+
+                                {/* Dialogue - FULL */}
                                 {scene.dialogue?.length > 0 && (
-                                  <div className="text-xs text-muted-foreground">
-                                    {scene.dialogue.slice(0, 2).map((d: any, di: number) => (
-                                      <p key={di}><strong>{d.character}:</strong> {d.line?.substring(0, 60)}...</p>
+                                  <div className="space-y-3 bg-muted/30 rounded-lg p-4">
+                                    {scene.dialogue.map((d: any, di: number) => (
+                                      <div key={di} className="pl-4">
+                                        <div className="font-bold text-sm text-center uppercase tracking-wide">
+                                          {d.character}
+                                        </div>
+                                        {d.parenthetical && (
+                                          <div className="text-xs text-muted-foreground text-center italic">
+                                            ({d.parenthetical})
+                                          </div>
+                                        )}
+                                        <div className="text-sm text-center max-w-md mx-auto mt-1">
+                                          {d.line}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Technical cues: Music, SFX, VFX */}
+                                <div className="flex flex-wrap gap-2 pt-2 border-t">
+                                  {scene.music_cue && (
+                                    <Badge variant="outline" className="text-xs">
+                                      <Volume2 className="w-3 h-3 mr-1" />
+                                      {scene.music_cue}
+                                    </Badge>
+                                  )}
+                                  {scene.sfx_cue && (
+                                    <Badge variant="outline" className="text-xs">
+                                      <Zap className="w-3 h-3 mr-1" />
+                                      {scene.sfx_cue}
+                                    </Badge>
+                                  )}
+                                  {scene.vfx?.length > 0 && scene.vfx.map((v: string, vi: number) => (
+                                    <Badge key={vi} variant="secondary" className="text-xs">{v}</Badge>
+                                  ))}
+                                  {scene.mood && (
+                                    <Badge variant="outline" className="text-xs bg-primary/10">
+                                      Mood: {scene.mood}
+                                    </Badge>
+                                  )}
+                                </div>
+
+                                {/* Characters & Locations in scene */}
+                                {(scene.characters?.length > 0 || scene.locations?.length > 0) && (
+                                  <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
+                                    {scene.characters?.map((c: string, ci: number) => (
+                                      <span key={ci} className="bg-muted px-2 py-0.5 rounded">{c}</span>
                                     ))}
                                   </div>
                                 )}
                               </div>
-                            ))}
-                            {(ep.scenes?.length || 0) > 10 && (
-                              <p className="text-sm text-muted-foreground text-center">+{ep.scenes.length - 10} escenas más</p>
-                            )}
-                          </div>
+                            </div>
+                          ))}
+
+                          {(!ep.scenes || ep.scenes.length === 0) && (
+                            <p className="text-center text-muted-foreground py-8">Sin escenas en este episodio</p>
+                          )}
                         </CardContent>
                       </CollapsibleContent>
                     </Collapsible>
                   </Card>
                 ))}
               </div>
+
+              {/* QC Notes if available */}
+              {generatedScript.qc_notes?.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Notas de Producción (QC)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="text-sm space-y-1 list-disc pl-4">
+                      {generatedScript.qc_notes.map((note: string, i: number) => (
+                        <li key={i}>{note}</li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              )}
             </>
           )}
         </TabsContent>
