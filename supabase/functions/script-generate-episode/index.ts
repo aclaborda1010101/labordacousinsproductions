@@ -151,7 +151,7 @@ IDIOMA: ${language || 'es-ES'}
 
 Devuelve SOLO JSON válido con el episodio completo.`;
 
-    console.log(`Generating episode ${episodeNumber} with Lovable AI (GPT-4o)`);
+    console.log(`Generating episode ${episodeNumber} with Lovable AI (GPT-5 mini)`);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -160,12 +160,12 @@ Devuelve SOLO JSON válido con el episodio completo.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-4o',
+        model: 'openai/gpt-5-mini',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.7,
+        max_completion_tokens: 16000,
       }),
     });
 
