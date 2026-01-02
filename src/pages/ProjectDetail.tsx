@@ -23,8 +23,10 @@ import {
   Gauge,
   UserPlus,
   CheckSquare,
-  Layers
+  Layers,
+  Box
 } from 'lucide-react';
+import PropsComponent from '@/components/project/Props';
 import { cn } from '@/lib/utils';
 import BibleOverview from '@/components/project/BibleOverview';
 import StylePack from '@/components/project/StylePack';
@@ -57,6 +59,7 @@ const PROJECT_TABS = [
   { id: 'style', path: '/style', label: 'Estilo Visual', icon: Palette, requiresBible: false },
   { id: 'characters', path: '/characters', label: 'Personajes', icon: Users, requiresBible: false },
   { id: 'locations', path: '/locations', label: 'Localizaciones', icon: MapPin, requiresBible: false },
+  { id: 'props', path: '/props', label: 'Props', icon: Box, requiresBible: false },
   { id: 'script', path: '/script', label: 'Importar Guión', icon: FileText, requiresBible: false },
   { id: 'scenes', path: '/scenes', label: 'Escenas', icon: Clapperboard, requiresBible: true },
   { id: 'renders', path: '/renders', label: 'Cola de Renders', icon: Layers, requiresBible: true },
@@ -198,6 +201,7 @@ export default function ProjectDetail() {
             <Route path="/style" element={<StylePack projectId={project.id} />} />
             <Route path="/characters" element={<Characters projectId={project.id} />} />
             <Route path="/locations" element={<Locations projectId={project.id} />} />
+            <Route path="/props" element={<PropsComponent projectId={project.id} />} />
             <Route path="/script" element={<ScriptImport projectId={project.id} />} />
             <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
             <Route path="/renders" element={<RenderQueue projectId={project.id} />} />

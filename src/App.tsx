@@ -14,6 +14,7 @@ import Projects from "./pages/Projects";
 import NewProject from "./pages/NewProject";
 import ProjectDetail from "./pages/ProjectDetail";
 import Dailies from "./pages/Dailies";
+import Props from "./pages/Props";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dailies />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/projects/:projectId/props"
+        element={
+          <ProtectedRoute>
+            <Props />
           </ProtectedRoute>
         }
       />
