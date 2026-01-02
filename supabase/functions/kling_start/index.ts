@@ -229,15 +229,26 @@ serve(async (req) => {
       });
     }
 
-    const createData = JSON.parse(responseText);
-    const taskId = createData.data?.task_id;
+    // NOTE: task_id can be a very large integer; extracting it via JSON.parse can lose precision.
+    // Prefer a regex extraction from the raw response text.
+    const taskIdMatch = responseText.match(/"task_id"\s*:\s*"?([0-9]+)"?/);
+    const safeTaskId = taskIdMatch?.[1];
+
+    let createData: any = null;
+    try {
+      createData = JSON.parse(responseText);
+    } catch (e) {
+      console.warn('Failed to JSON.parse Kling response (unexpected):', e);
+    }
+
+    const taskId = safeTaskId ?? (createData?.data?.task_id != null ? String(createData.data.task_id) : undefined);
 
     if (!taskId) {
-      console.error('No task ID in Kling response:', createData);
+      console.error('No task ID in Kling response:', createData ?? responseText);
       return new Response(JSON.stringify({
         ok: false,
         error: 'No task ID from Kling',
-        response: createData
+        response: createData ?? responseText
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
