@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuthOrDemo, authErrorResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-demo-key',
 };
 
 interface GenerateShotRequest {
@@ -347,6 +348,10 @@ serve(async (req) => {
   }
 
   try {
+    // Auth check
+    const { userId } = await requireAuthOrDemo(req);
+    console.log("[AUTH] Authenticated user:", userId);
+
     const request: GenerateShotRequest = await req.json();
     const { 
       shotId, 
@@ -459,15 +464,15 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in generate-shot:', error);
     
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const status = errorMessage.includes('Rate limit') ? 429 : 
-                   errorMessage.includes('Payment required') ? 402 : 500;
+    if (error instanceof Error) {
+      return authErrorResponse(error, corsHeaders);
+    }
     
     return new Response(JSON.stringify({
       success: false,
-      error: errorMessage
+      error: 'Unknown error'
     }), {
-      status,
+      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }

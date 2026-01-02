@@ -1,9 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAuthOrDemo, requireProjectAccess, authErrorResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-demo-key",
 };
 
 // PROMPT-ENGINE v3 System Prompt - Deterministic Keyframe Generation with FULL CONTINUITY
@@ -360,6 +361,10 @@ serve(async (req) => {
   }
 
   try {
+    // Auth check
+    const { userId, supabase } = await requireAuthOrDemo(req);
+    console.log("[AUTH] Authenticated user:", userId);
+
     const request: KeyframeRequest = await req.json();
     console.log("=== Generate Keyframe Request ===");
     console.log("Shot ID:", request.shotId);
@@ -368,10 +373,21 @@ serve(async (req) => {
     console.log("Shot details:", JSON.stringify(request.shotDetails || {}));
     console.log("Has previous keyframe:", !!request.previousKeyframeUrl);
 
-    // Initialize Supabase client
+    // Get supabase credentials for storage operations
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Get shot to verify project access
+    const { data: shot } = await supabase
+      .from('shots')
+      .select('scene_id, scenes(project_id)')
+      .eq('id', request.shotId)
+      .single();
+    
+    const projectId = (shot?.scenes as any)?.project_id;
+    if (projectId) {
+      await requireProjectAccess(supabase, userId, projectId);
+    }
 
     // Step 1: Generate deterministic prompt with PROMPT-ENGINE v3
     console.log("Step 1: Generating prompt with PROMPT-ENGINE v3 (with continuity)...");
@@ -463,10 +479,15 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("Generate keyframe error:", error);
+    
+    if (error instanceof Error) {
+      return authErrorResponse(error, corsHeaders);
+    }
+    
     return new Response(
       JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: "Unknown error"
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
