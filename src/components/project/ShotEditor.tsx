@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings, Clock, Upload, CheckCircle2, XCircle, Image as ImageIcon } from 'lucide-react';
 import KeyframeManager from './KeyframeManager';
+import TakesManager from './TakesManager';
 
 interface VeoProgress {
   status: 'idle' | 'starting' | 'generating' | 'uploading' | 'done' | 'error';
@@ -678,17 +679,21 @@ export default function ShotEditor({
         </DialogHeader>
 
         <Tabs defaultValue="details" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="details">
               <Settings className="w-4 h-4 mr-2" />
               Detalles
             </TabsTrigger>
             <TabsTrigger value="keyframes">
-              <Camera className="w-4 h-4 mr-2" />
+              <ImageIcon className="w-4 h-4 mr-2" />
               Keyframes
             </TabsTrigger>
-            <TabsTrigger value="generate">
+            <TabsTrigger value="takes">
               <Video className="w-4 h-4 mr-2" />
+              Takes
+            </TabsTrigger>
+            <TabsTrigger value="generate">
+              <Sparkles className="w-4 h-4 mr-2" />
               Generar
             </TabsTrigger>
           </TabsList>
@@ -988,7 +993,21 @@ export default function ShotEditor({
                 token: sceneLocation.token,
                 reference_urls: sceneLocation.reference_urls as string[] | undefined
               } : undefined}
+              shotDetails={{
+                focalMm: form.focal_mm,
+                cameraHeight: form.camera_height,
+                lightingStyle: form.lighting_style,
+                viewerNotice: form.viewer_notice,
+                aiRisk: form.ai_risk,
+                intention: form.intention,
+                dialogueText: form.dialogue_text,
+                effectiveMode: form.effective_mode
+              }}
             />
+          </TabsContent>
+
+          <TabsContent value="takes" className="space-y-4 mt-4">
+            <TakesManager shotId={shot.id} />
           </TabsContent>
 
           <TabsContent value="generate" className="space-y-4 mt-4">

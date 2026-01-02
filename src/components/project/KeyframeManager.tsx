@@ -50,6 +50,17 @@ interface Location {
   reference_urls?: string[];
 }
 
+interface ShotDetails {
+  focalMm?: number;
+  cameraHeight?: string;
+  lightingStyle?: string;
+  viewerNotice?: string;
+  aiRisk?: string;
+  intention?: string;
+  dialogueText?: string;
+  effectiveMode?: 'CINE' | 'ULTRA';
+}
+
 interface KeyframeManagerProps {
   shotId: string;
   duration: number;
@@ -59,6 +70,7 @@ interface KeyframeManagerProps {
   blocking?: string;
   characters: Character[];
   location?: Location;
+  shotDetails?: ShotDetails;
   stylePack?: {
     description?: string;
     colorPalette?: string[];
@@ -77,6 +89,7 @@ export default function KeyframeManager({
   blocking,
   characters,
   location,
+  shotDetails,
   stylePack,
   onKeyframesChange
 }: KeyframeManagerProps) {
@@ -196,7 +209,24 @@ export default function KeyframeManager({
           } : undefined,
           cameraMovement,
           blocking,
+          // NEW: Pass all shot details for coherent generation
+          shotDetails: {
+            focalMm: shotDetails?.focalMm,
+            cameraHeight: shotDetails?.cameraHeight,
+            lightingStyle: shotDetails?.lightingStyle,
+            viewerNotice: shotDetails?.viewerNotice,
+            aiRisk: shotDetails?.aiRisk,
+            intention: shotDetails?.intention,
+            dialogueText: shotDetails?.dialogueText,
+            effectiveMode: shotDetails?.effectiveMode
+          },
           previousKeyframeUrl: previousKeyframe?.image_url,
+          // NEW: Pass previous keyframe data for continuity
+          previousKeyframeData: previousKeyframe ? {
+            promptText: previousKeyframe.prompt_text,
+            frameGeometry: previousKeyframe.frame_geometry,
+            stagingSnapshot: previousKeyframe.staging_snapshot
+          } : undefined,
           stylePack
         }
       });
