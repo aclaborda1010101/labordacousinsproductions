@@ -176,10 +176,18 @@ serve(async (req) => {
 
     if (!r.ok) return json({ error: "Veo start failed", details: j }, r.status);
 
-    // Returns "name" of the operation (operation id)
+    // CRITICAL: Guardar j.name completo, NO recortarlo
+    const operationName = j?.name;
+    if (!operationName || typeof operationName !== "string") {
+      return json({ error: "Veo did not return operation name", raw: j }, 500);
+    }
+
+    console.log("Operation name (FULL):", operationName);
+
+    // Devolver operationName completo para que el frontend lo guarde así
     return json({
       ok: true,
-      operation: j.name ?? j,
+      operationName,  // <-- ESTO ES LO QUE SE DEBE GUARDAR Y PASAR A veo_poll
       raw: j,
       modelId,
       seconds,
