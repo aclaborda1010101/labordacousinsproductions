@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuthOrDemo, authErrorResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-demo-key',
 };
 
 interface KlingStartRequest {
@@ -121,6 +122,10 @@ serve(async (req) => {
   }
 
   try {
+    // Auth check
+    const { userId } = await requireAuthOrDemo(req);
+    console.log("[AUTH] Authenticated user:", userId);
+
     const { prompt, duration, keyframeUrl, qualityMode = 'CINE' }: KlingStartRequest = await req.json();
 
     const KLING_ACCESS_KEY = Deno.env.get('KLING_ACCESS_KEY');
@@ -239,9 +244,14 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in kling_start:', error);
+    
+    if (error instanceof Error) {
+      return authErrorResponse(error, corsHeaders);
+    }
+    
     return new Response(JSON.stringify({
       ok: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Unknown error'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
