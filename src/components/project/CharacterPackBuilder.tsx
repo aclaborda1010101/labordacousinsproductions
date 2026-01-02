@@ -5,12 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, XCircle, AlertTriangle, 
-  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus, FolderUp, Trash2
+  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus, FolderUp, Trash2, Anchor, Grid
 } from 'lucide-react';
+import { ReferenceAnchorManager } from './ReferenceAnchorManager';
+import { LikenessComparisonView } from './LikenessComparisonView';
 
 // Role-based slot requirements
 // Turnaround views: front/back are required, intermediate angles (1/3, 2/3, 3/4) are optional
@@ -73,6 +76,7 @@ interface CharacterPackBuilderProps {
   characterBio: string;
   characterRole: 'protagonist' | 'recurring' | 'episodic' | 'extra';
   styleToken?: string;
+  projectId?: string;
   onPackComplete?: () => void;
 }
 
@@ -82,6 +86,7 @@ export function CharacterPackBuilder({
   characterBio,
   characterRole,
   styleToken,
+  projectId,
   onPackComplete,
 }: CharacterPackBuilderProps) {
   const [slots, setSlots] = useState<PackSlot[]>([]);
@@ -915,6 +920,14 @@ export function CharacterPackBuilder({
           </Button>
         </div>
 
+        {/* Reference Anchors Section */}
+        {projectId && (
+          <ReferenceAnchorManager 
+            characterId={characterId} 
+            projectId={projectId} 
+          />
+        )}
+
         {/* Slot Groups */}
         {Object.entries(groupedSlots).map(([type, typeSlots]) => {
           const requiredSlots = typeSlots.filter(s => s.required);
@@ -992,6 +1005,10 @@ export function CharacterPackBuilder({
                               <p className="font-medium text-destructive">Fix Notes:</p>
                               <p>{slot.fix_notes}</p>
                             </div>
+                          )}
+                          {/* Likeness Comparison */}
+                          {slot.status === 'approved' && (
+                            <LikenessComparisonView slotId={slot.id} />
                           )}
                           <div className="flex gap-2">
                             <Button 
