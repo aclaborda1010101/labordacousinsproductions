@@ -137,8 +137,37 @@ serve(async (req) => {
       headers: { authorization: `Bearer ${token}` },
     });
 
-    const j = await r.json();
     console.log("Poll response status:", r.status);
+    
+    // Check content type before parsing
+    const contentType = r.headers.get("content-type") || "";
+    const responseText = await r.text();
+    
+    console.log("Poll response content-type:", contentType);
+    console.log("Poll response text (first 500 chars):", responseText.substring(0, 500));
+    
+    // If not JSON, return error with details
+    if (!contentType.includes("application/json")) {
+      console.error("Non-JSON response from Veo API");
+      return json({ 
+        error: "Non-JSON response from Veo API", 
+        status: r.status,
+        contentType,
+        responsePreview: responseText.substring(0, 200)
+      }, 502);
+    }
+    
+    let j;
+    try {
+      j = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("Failed to parse JSON:", parseError);
+      return json({ 
+        error: "Failed to parse API response", 
+        responsePreview: responseText.substring(0, 200)
+      }, 502);
+    }
+    
     console.log("Poll response:", JSON.stringify(j, null, 2));
 
     if (!r.ok) return json({ error: "Poll failed", details: j }, r.status);
