@@ -128,7 +128,11 @@ serve(async (req) => {
 
     const projectId = getEnv("GCP_PROJECT_ID");
     const location = getEnv("GCP_LOCATION");
-    const modelId = Deno.env.get("VEO_MODEL_ID") ?? "veo-3.1-generate-001";
+    // Use default model if VEO_MODEL_ID is not set or is a placeholder
+    const rawModelId = Deno.env.get("VEO_MODEL_ID");
+    const modelId = (rawModelId && rawModelId !== "VEO_MODEL_ID" && !rawModelId.includes("MODEL_ID")) 
+      ? rawModelId 
+      : "veo-3.1-generate-001";
 
     console.log(`Using project: ${projectId}, location: ${location}, model: ${modelId}`);
 
