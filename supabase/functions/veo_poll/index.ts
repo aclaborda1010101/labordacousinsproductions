@@ -127,11 +127,59 @@ serve(async (req) => {
     const location = getEnv("GCP_LOCATION");
     const token = await getAccessTokenFromServiceAccount();
 
-    // operation comes as:
-    // "projects/.../locations/.../publishers/google/models/.../operations/...."
-    const url = `https://${location}-aiplatform.googleapis.com/v1/${operation}`;
-
-    console.log("Polling URL:", url);
+    // Operation name comes as:
+    // "projects/.../locations/.../publishers/google/models/.../operations/..."
+    // We need to extract just the operation path and use the correct endpoint
+    
+    // Try multiple URL formats for compatibility
+    // Format 1: Full path as returned by predictLongRunning
+    let url = `https://${location}-aiplatform.googleapis.com/v1/${operation}`;
+    
+    // If operation contains full URL-like path, extract location from it
+    const locationMatch = operation.match(/locations\/([^\/]+)/);
+    const operationLocation = locationMatch ? locationMatch[1] : location;
+    
+    // Alternative: Use the operation as a direct path
+    // For Veo, the correct endpoint format may be:
+    // https://{location}-aiplatform.googleapis.com/v1/projects/{project}/locations/{location}/operations/{op_id}
+    
+    // Extract operation ID from the full path
+    const opIdMatch = operation.match(/operations\/([^\/]+)$/);
+    const operationId = opIdMatch ? opIdMatch[1] : null;
+    
+    // Extract project ID from the operation path
+    const projectMatch = operation.match(/projects\/([^\/]+)/);
+    const projectId = projectMatch ? projectMatch[1] : null;
+    
+    if (operationId && projectId) {
+      // Try the simpler operations endpoint format first
+      const alternativeUrl = `https://${operationLocation}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${operationLocation}/operations/${operationId}`;
+      console.log("Trying alternative operations URL:", alternativeUrl);
+      
+      const altResponse = await fetch(alternativeUrl, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+      
+      if (altResponse.ok) {
+        console.log("Alternative URL succeeded");
+        url = alternativeUrl;
+        const j = await altResponse.json();
+        console.log("Poll response:", JSON.stringify(j, null, 2));
+        
+        return json({
+          ok: true,
+          done: Boolean(j.done),
+          operation,
+          result: j.response ?? null,
+          metadata: j.metadata ?? null,
+          raw: j,
+        });
+      } else {
+        console.log("Alternative URL failed with status:", altResponse.status);
+      }
+    }
+    
+    console.log("Using original polling URL:", url);
 
     const r = await fetch(url, {
       headers: { authorization: `Bearer ${token}` },
