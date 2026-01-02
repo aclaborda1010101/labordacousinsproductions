@@ -561,8 +561,9 @@ const OPTIONS = {
 interface CharacterVisualDNAEditorProps {
   characterId: string;
   characterName: string;
+  characterBio?: string;
   initialData?: CharacterVisualDNA | null;
-  onSave: (data: CharacterVisualDNA) => void;
+  onSave?: (data?: CharacterVisualDNA) => void;
   onGenerateWithAI?: () => void;
   saving?: boolean;
 }
@@ -647,9 +648,10 @@ const TagList = ({
 };
 
 // ===== MAIN COMPONENT =====
-export function CharacterVisualDNAEditor({
+function CharacterVisualDNAEditor({
   characterId,
   characterName,
+  characterBio,
   initialData,
   onSave,
   onGenerateWithAI,
@@ -720,8 +722,21 @@ export function CharacterVisualDNAEditor({
     }
   };
 
-  const handleSave = () => {
-    onSave(data);
+  const handleSave = async () => {
+    // Save to database
+    try {
+      const { error } = await supabase
+        .from('characters')
+        .update({ profile_json: { ...data, visual_dna: true } })
+        .eq('id', characterId);
+      
+      if (error) throw error;
+      toast.success('Visual DNA guardado');
+      onSave?.(data);
+    } catch (error) {
+      console.error('Error saving Visual DNA:', error);
+      toast.error('Error al guardar Visual DNA');
+    }
   };
 
   // Section Header Component
