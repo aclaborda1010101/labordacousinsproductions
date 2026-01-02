@@ -156,29 +156,84 @@ async function generateWithVeo(prompt: string, duration: number, keyframeUrl?: s
   throw new Error('Veo generation timeout');
 }
 
-// Generate video with Kling 2.0 (external API - may fail)
-async function generateWithKling(prompt: string, duration: number, keyframeUrl?: string): Promise<VideoResult> {
-  const KLING_API_KEY = Deno.env.get('KLING_API_KEY');
-  if (!KLING_API_KEY) throw new Error('KLING_API_KEY not configured');
+// Helper: base64url encoding for JWT
+function base64url(input: Uint8Array): string {
+  return btoa(String.fromCharCode(...input))
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
 
-  console.log('Generating with Kling 2.0...');
+// Helper: HMAC-SHA256 signature
+async function hmacSha256(key: string, data: string): Promise<Uint8Array> {
+  const enc = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(key),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", cryptoKey, enc.encode(data));
+  return new Uint8Array(sig);
+}
 
-  const requestBody: any = {
+// Generate JWT for Kling API (AK+SK authentication)
+async function makeKlingJwt(accessKey: string, secretKey: string): Promise<string> {
+  const header = base64url(new TextEncoder().encode(JSON.stringify({ alg: "HS256", typ: "JWT" })));
+
+  const now = Math.floor(Date.now() / 1000);
+  const payloadObj = {
+    iss: accessKey,
+    exp: now + 1800,  // 30 min
+    nbf: now - 5
+  };
+  const payload = base64url(new TextEncoder().encode(JSON.stringify(payloadObj)));
+
+  const unsigned = `${header}.${payload}`;
+  const signature = base64url(await hmacSha256(secretKey, unsigned));
+  return `${unsigned}.${signature}`;
+}
+
+// Generate video with Kling (using JWT AK+SK auth and presets)
+async function generateWithKling(prompt: string, duration: number, keyframeUrl?: string, qualityMode: 'CINE' | 'ULTRA' = 'CINE'): Promise<VideoResult> {
+  // Get credentials from secrets
+  const KLING_ACCESS_KEY = Deno.env.get('KLING_ACCESS_KEY');
+  const KLING_SECRET_KEY = Deno.env.get('KLING_SECRET_KEY');
+  const KLING_BASE_URL = Deno.env.get('KLING_BASE_URL') || 'https://api.klingai.com';
+  const KLING_MODEL_NAME = Deno.env.get('KLING_DEFAULT_MODEL_NAME') || 'kling-v2';
+  const KLING_MODE_CINE = Deno.env.get('KLING_MODE_CINE') || 'pro';
+  const KLING_MODE_ULTRA = Deno.env.get('KLING_MODE_ULTRA') || 'pro';
+
+  if (!KLING_ACCESS_KEY || !KLING_SECRET_KEY) {
+    throw new Error('KLING_ACCESS_KEY and KLING_SECRET_KEY must be configured');
+  }
+
+  // Select mode based on quality preset
+  const mode = qualityMode === 'ULTRA' ? KLING_MODE_ULTRA : KLING_MODE_CINE;
+
+  console.log(`Generating with Kling (model: ${KLING_MODEL_NAME}, mode: ${mode})...`);
+
+  // Generate JWT token
+  const token = await makeKlingJwt(KLING_ACCESS_KEY, KLING_SECRET_KEY);
+
+  const requestBody: Record<string, unknown> = {
     prompt,
     duration: duration.toString(),
     aspect_ratio: "16:9",
-    model_name: "kling-v2"
+    model_name: KLING_MODEL_NAME,
+    mode
   };
 
   if (keyframeUrl) {
     requestBody.image_url = keyframeUrl;
   }
 
-  const createResponse = await fetch("https://api.klingai.com/v1/videos/image2video", {
+  const endpoint = keyframeUrl ? 'image2video' : 'text2video';
+  const createResponse = await fetch(`${KLING_BASE_URL}/v1/videos/${endpoint}`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${KLING_API_KEY}`,
-      "Content-Type": "application/json"
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Accept": "application/json"
     },
     body: JSON.stringify(requestBody)
   });
@@ -186,13 +241,15 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
   if (!createResponse.ok) {
     const error = await createResponse.text();
     console.error('Kling creation error:', error);
-    throw new Error(`Kling API error: ${createResponse.status}`);
+    throw new Error(`Kling API error: ${createResponse.status} - ${error}`);
   }
 
   const createData = await createResponse.json();
   const taskId = createData.data?.task_id;
 
   if (!taskId) throw new Error('No task ID from Kling');
+
+  console.log(`Kling task created: ${taskId}`);
 
   // Poll for completion
   let attempts = 0;
@@ -201,8 +258,14 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
   while (attempts < maxAttempts) {
     await new Promise(r => setTimeout(r, 5000));
 
-    const statusResponse = await fetch(`https://api.klingai.com/v1/videos/image2video/${taskId}`, {
-      headers: { "Authorization": `Bearer ${KLING_API_KEY}` }
+    // Regenerate JWT for each poll (in case of long running tasks)
+    const pollToken = await makeKlingJwt(KLING_ACCESS_KEY, KLING_SECRET_KEY);
+
+    const statusResponse = await fetch(`${KLING_BASE_URL}/v1/videos/${endpoint}/${taskId}`, {
+      headers: { 
+        "Authorization": `Bearer ${pollToken}`,
+        "Accept": "application/json"
+      }
     });
 
     if (!statusResponse.ok) {
@@ -213,6 +276,8 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
     const statusData = await statusResponse.json();
     const status = statusData.data?.task_status;
 
+    console.log(`Kling task ${taskId} status: ${status} (attempt ${attempts + 1}/${maxAttempts})`);
+
     if (status === 'succeed') {
       const videoUrl = statusData.data?.task_result?.videos?.[0]?.url;
       if (!videoUrl) throw new Error('No video URL in Kling response');
@@ -220,7 +285,7 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
       return {
         videoUrl,
         thumbnailUrl: statusData.data?.task_result?.videos?.[0]?.cover_image_url,
-        metadata: { engine: 'kling', taskId, duration }
+        metadata: { engine: 'kling', taskId, duration, model: KLING_MODEL_NAME, mode }
       };
     }
 
