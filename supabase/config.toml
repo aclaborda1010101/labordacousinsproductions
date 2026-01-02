@@ -74,3 +74,18 @@ verify_jwt = false
 
 [functions.generate-technical-prompt]
 verify_jwt = false
+
+[functions.script-generate-outline]
+verify_jwt = false
+
+[functions.script-qc-outline]
+verify_jwt = false
+
+[functions.script-rewrite-outline]
+verify_jwt = false
+
+[functions.script-generate-screenplay]
+verify_jwt = false
+
+[functions.script-freeze]
+verify_jwt = false
