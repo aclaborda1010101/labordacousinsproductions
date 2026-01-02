@@ -122,52 +122,65 @@ serve(async (req) => {
   try {
     if (req.method !== "POST") return json({ error: "Use POST" }, 405);
 
-    // Aceptar tanto "operationName" (nuevo) como "operation" (legacy) para compatibilidad
     const body = await req.json();
-    const operationName = body.operationName || body.operation;
-    
+    const operationName = body?.operationName;
+
     if (!operationName || typeof operationName !== "string") {
-      return json({ error: "Missing operationName (string)" }, 400);
+      return json({
+        error: "Missing operationName (string)",
+        fix: "Envía operationName exactamente como lo devuelve veo_start (j.name), no UUID.",
+      }, 400);
     }
 
     console.log("Received operationName:", operationName);
 
-    // CRÍTICO: Exigir nombre completo para evitar 404/400
+    // CRÍTICO: Exigir nombre completo para evitar 404/400 por IDs recortados
     if (!operationName.startsWith("projects/")) {
       return json({
         error: "operationName must be full resource name (starts with 'projects/')",
         received: operationName,
-        fix: "Guarda y envía el campo operationName tal cual te lo devuelve veo_start",
+        fix: "Guarda j.name tal cual y pásalo como operationName.",
       }, 400);
     }
 
-    const loc = extractLocation(operationName);
-    console.log("Extracted location from operationName:", loc);
+    const projectId = getEnv("GCP_PROJECT_ID");
+    const defaultLoc = getEnv("GCP_LOCATION");
+    const modelId = Deno.env.get("VEO_MODEL_ID") ?? "veo-3.1-generate-001";
+
+    const loc = extractLocation(operationName) ?? defaultLoc;
+
+    console.log("Using projectId:", projectId);
+    console.log("Using location:", loc);
+    console.log("Using modelId:", modelId);
 
     const token = await getAccessTokenFromServiceAccount();
 
-    // Usar host GLOBAL en lugar de regional para evitar 404
-    // Endpoint oficial: GET https://aiplatform.googleapis.com/v1/{operationName}
-    const url = `https://aiplatform.googleapis.com/v1/${operationName}`;
-    console.log("Polling URL (global host):", url);
+    // ✅ Poll correcto para Veo (publisher models): :fetchPredictOperation
+    const url =
+      `https://${loc}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${loc}` +
+      `/publishers/google/models/${modelId}:fetchPredictOperation`;
 
-    const r = await fetch(url, { 
-      headers: { 
+    console.log("Polling URL (fetchPredictOperation):", url);
+
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
         authorization: `Bearer ${token}`,
+        "content-type": "application/json; charset=utf-8",
         accept: "application/json",
-      } 
+      },
+      body: JSON.stringify({ operationName }),
     });
 
-    // Loggear body SIEMPRE (para 400/404)
     const text = await r.text();
     console.log("Poll response status:", r.status);
     console.log("Poll response body:", text.substring(0, 500));
-    
+
     let responseBody: any = null;
-    try { 
-      responseBody = JSON.parse(text); 
-    } catch { 
-      responseBody = { rawText: text.substring(0, 1000) }; 
+    try {
+      responseBody = JSON.parse(text);
+    } catch {
+      responseBody = { rawText: text.substring(0, 2000) };
     }
 
     if (!r.ok) {
@@ -176,24 +189,18 @@ serve(async (req) => {
         status: r.status,
         url,
         operationName,
+        location: loc,
+        modelId,
         details: responseBody,
-        hint: r.status === 404
-          ? "Si esto es 404, casi siempre es: operationName mal guardado/recortado o región (host) distinta."
-          : r.status === 400
-          ? "Si esto es 400, suele ser nombre de recurso inválido (no uses UUID, usa operationName completo)."
-          : "Error inesperado del API de Vertex AI.",
       }, r.status);
     }
 
-    console.log("Poll successful, done:", responseBody.done);
-
     return json({
       ok: true,
-      done: Boolean(responseBody.done),
-      operationName,
-      location: loc,
-      result: responseBody.response ?? null,
-      metadata: responseBody.metadata ?? null,
+      done: Boolean(responseBody?.done),
+      operationName: responseBody?.name ?? operationName,
+      result: responseBody?.response ?? null,
+      error: responseBody?.error ?? null,
       raw: responseBody,
     });
   } catch (e) {
