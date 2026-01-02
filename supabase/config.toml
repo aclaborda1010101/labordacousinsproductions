@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.qc-visual-identity]
 verify_jwt = false
+
+[functions.veo_start]
+verify_jwt = false
+
+[functions.veo_poll]
+verify_jwt = false
