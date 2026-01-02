@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
 import ShotEditor from './ShotEditor';
+import ShotSuggestionPanel from './ShotSuggestionPanel';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -572,6 +573,19 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                   })}
                                 </div>
                               )}
+
+                              {/* Shot Suggestion Panel */}
+                              <ShotSuggestionPanel
+                                sceneId={scene.id}
+                                sceneSlugline={scene.slugline}
+                                sceneSummary={scene.summary || undefined}
+                                sceneTimeOfDay={scene.time_of_day || undefined}
+                                characters={characters.filter(c => scene.character_ids?.includes(c.id))}
+                                location={locations.find(l => l.id === scene.location_id)}
+                                qualityMode={scene.quality_mode}
+                                existingShotCount={shots[scene.id]?.length || 0}
+                                onShotsAdded={() => fetchShots(scene.id)}
+                              />
 
                               <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
                                 <Sparkles className="w-4 h-4 text-primary mt-0.5" />
