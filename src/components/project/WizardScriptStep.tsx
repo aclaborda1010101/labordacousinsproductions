@@ -319,9 +319,13 @@ export function WizardScriptStep({
     const selected = getSelectedEntities();
     
     try {
+      // First create a map of location names to IDs for linking scenes
+      const locationNameToId: Record<string, string> = {};
+      const characterNameToId: Record<string, string> = {};
+      
       // Create characters
       for (const char of selected.characters) {
-        await supabase.from('characters').insert({
+        const { data: charData } = await supabase.from('characters').insert({
           project_id: targetProjectId,
           name: char.name,
           role: char.description || '',
@@ -336,12 +340,16 @@ export function WizardScriptStep({
             voice_notes: (char as any).voice_notes,
             personality: (char as any).personality
           }
-        });
+        }).select('id').single();
+        
+        if (charData) {
+          characterNameToId[char.name.toLowerCase()] = charData.id;
+        }
       }
       
       // Create locations
       for (const loc of selected.locations) {
-        await supabase.from('locations').insert({
+        const { data: locData } = await supabase.from('locations').insert({
           project_id: targetProjectId,
           name: loc.name,
           description: loc.description || '',
@@ -351,7 +359,11 @@ export function WizardScriptStep({
             scenes_count: loc.scenes_count,
             time_variants: (loc as any).time_variants
           }
-        });
+        }).select('id').single();
+        
+        if (locData) {
+          locationNameToId[loc.name.toLowerCase()] = locData.id;
+        }
       }
       
       // Create props
@@ -368,7 +380,123 @@ export function WizardScriptStep({
         });
       }
       
-      toast.success(`Creados ${selected.characters.length} personajes, ${selected.locations.length} localizaciones, ${selected.props.length} props`);
+      // Create episodes and scenes
+      if (generatedScript.episodes?.length) {
+        for (let epIdx = 0; epIdx < generatedScript.episodes.length; epIdx++) {
+          const episode = generatedScript.episodes[epIdx];
+          
+          // Create episode
+          const { data: episodeData } = await supabase.from('episodes').insert({
+            project_id: targetProjectId,
+            episode_index: epIdx + 1,
+            title: episode.title || `Episodio ${epIdx + 1}`,
+            summary: episode.summary || episode.synopsis || '',
+            duration_target_min: episode.duration_min || targetDuration,
+            status: 'draft'
+          }).select('id').single();
+          
+          // Create scenes for this episode
+          if (episode.scenes?.length && episodeData) {
+            for (let scIdx = 0; scIdx < episode.scenes.length; scIdx++) {
+              const scene = episode.scenes[scIdx];
+              
+              // Try to find matching location
+              let locationId: string | null = null;
+              if (scene.slugline) {
+                const slugLower = scene.slugline.toLowerCase();
+                for (const [locName, locId] of Object.entries(locationNameToId)) {
+                  if (slugLower.includes(locName)) {
+                    locationId = locId;
+                    break;
+                  }
+                }
+              }
+              
+              // Find character IDs mentioned in scene
+              const sceneCharacterIds: string[] = [];
+              if (scene.characters?.length) {
+                for (const charName of scene.characters) {
+                  const charId = characterNameToId[charName.toLowerCase()];
+                  if (charId) sceneCharacterIds.push(charId);
+                }
+              }
+              
+              // Extract time of day from slugline
+              let timeOfDay = 'day';
+              if (scene.slugline) {
+                const slugUpper = scene.slugline.toUpperCase();
+                if (slugUpper.includes('NOCHE') || slugUpper.includes('NIGHT')) {
+                  timeOfDay = 'night';
+                } else if (slugUpper.includes('ATARDECER') || slugUpper.includes('DUSK') || slugUpper.includes('SUNSET')) {
+                  timeOfDay = 'dusk';
+                } else if (slugUpper.includes('AMANECER') || slugUpper.includes('DAWN') || slugUpper.includes('SUNRISE')) {
+                  timeOfDay = 'dawn';
+                }
+              }
+              
+              // Create scene
+              const { data: sceneData } = await supabase.from('scenes').insert({
+                project_id: targetProjectId,
+                episode_no: epIdx + 1,
+                scene_no: scIdx + 1,
+                slugline: scene.slugline || `ESCENA ${scIdx + 1}`,
+                summary: scene.description || scene.action || '',
+                location_id: locationId,
+                character_ids: sceneCharacterIds,
+                time_of_day: timeOfDay,
+                mood: scene.mood ? { primary: scene.mood } : {},
+                beats: scene.dialogue?.map((d, i) => ({
+                  index: i,
+                  type: 'dialogue',
+                  character: d.character,
+                  text: d.line,
+                  parenthetical: d.parenthetical
+                })) || []
+              }).select('id').single();
+              
+              // Create sound/music entries if present
+              if (scene.music_cue && sceneData) {
+                await supabase.from('sound_music').insert({
+                  project_id: targetProjectId,
+                  name: scene.music_cue,
+                  sound_type: 'score',
+                  category: 'music_cue',
+                  description: `Música para escena ${scIdx + 1}`,
+                  location_id: locationId
+                });
+              }
+              
+              // Create VFX/SFX entries
+              if (scene.sfx?.length && sceneData) {
+                for (const sfx of scene.sfx) {
+                  await supabase.from('vfx_sfx').insert({
+                    project_id: targetProjectId,
+                    name: sfx,
+                    effect_type: 'sfx',
+                    description: `SFX para escena ${scIdx + 1}`
+                  });
+                }
+              }
+              
+              if (scene.vfx?.length && sceneData) {
+                for (const vfx of scene.vfx) {
+                  await supabase.from('vfx_sfx').insert({
+                    project_id: targetProjectId,
+                    name: vfx,
+                    effect_type: 'vfx',
+                    description: `VFX para escena ${scIdx + 1}`
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      const episodeCount = generatedScript.episodes?.length || 0;
+      const sceneCount = generatedScript.episodes?.reduce((acc, ep) => acc + (ep.scenes?.length || 0), 0) || 0;
+      
+      toast.success(`Creados: ${selected.characters.length} personajes, ${selected.locations.length} localizaciones, ${selected.props.length} props, ${episodeCount} episodios, ${sceneCount} escenas`);
     } catch (err) {
       console.error('Error creating entities:', err);
       toast.error('Error al crear algunas entidades');
