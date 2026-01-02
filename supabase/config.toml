@@ -33,6 +33,12 @@ verify_jwt = false
 [functions.veo_poll]
 verify_jwt = false
 
+[functions.kling_start]
+verify_jwt = false
+
+[functions.kling_poll]
+verify_jwt = false
+
 [functions.generate-keyframe]
 verify_jwt = false
 
@@ -58,4 +64,13 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.pre-render-qc-gate]
+verify_jwt = false
+
+[functions.batch-generate]
+verify_jwt = false
+
+[functions.generate-visual-dna]
+verify_jwt = false
+
+[functions.generate-technical-prompt]
 verify_jwt = false
