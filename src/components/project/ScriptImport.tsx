@@ -134,7 +134,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         supabase.from('characters').select('id, name').eq('project_id', projectId),
         supabase.from('locations').select('id, name').eq('project_id', projectId),
         supabase.from('projects').select('episodes_count').eq('id', projectId).single(),
-        supabase.from('scripts').select('id, status, raw_text').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1)
+        supabase.from('scripts').select('id, status, raw_text, parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1)
       ]);
       if (charsRes.data) setExistingCharacters(charsRes.data);
       if (locsRes.data) setExistingLocations(locsRes.data);
@@ -144,6 +144,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setCurrentScriptId(script.id);
         setScriptLocked(script.status === 'locked');
         if (script.raw_text) setScriptText(script.raw_text);
+        // Load parsed_json into generatedScript if it exists and has content
+        if (script.parsed_json && typeof script.parsed_json === 'object') {
+          const parsed = script.parsed_json as Record<string, unknown>;
+          // Check if it has meaningful content (episodes or screenplay)
+          if (parsed.episodes || parsed.screenplay || parsed.title) {
+            setGeneratedScript(parsed);
+            setActiveTab('summary'); // Switch to summary tab if script exists
+          }
+        }
       }
     };
     fetchData();
