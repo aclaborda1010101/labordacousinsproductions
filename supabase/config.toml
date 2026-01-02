@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.entity-builder]
 verify_jwt = false
+
+[functions.shot-suggest]
+verify_jwt = false
