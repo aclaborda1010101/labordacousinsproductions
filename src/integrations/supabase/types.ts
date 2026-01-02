@@ -127,6 +127,47 @@ export type Database = {
         }
         Relationships: []
       }
+      character_narrative: {
+        Row: {
+          biography: Json
+          character_arc: Json | null
+          character_id: string
+          created_at: string | null
+          id: string
+          relationships: Json | null
+          updated_at: string | null
+          voice_performance: Json | null
+        }
+        Insert: {
+          biography?: Json
+          character_arc?: Json | null
+          character_id: string
+          created_at?: string | null
+          id?: string
+          relationships?: Json | null
+          updated_at?: string | null
+          voice_performance?: Json | null
+        }
+        Update: {
+          biography?: Json
+          character_arc?: Json | null
+          character_id?: string
+          created_at?: string | null
+          id?: string
+          relationships?: Json | null
+          updated_at?: string | null
+          voice_performance?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_narrative_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: true
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       character_outfits: {
         Row: {
           character_id: string
@@ -243,8 +284,69 @@ export type Database = {
           },
         ]
       }
+      character_visual_dna: {
+        Row: {
+          approved: boolean | null
+          approved_at: string | null
+          approved_by: string | null
+          character_id: string
+          continuity_lock: Json
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          updated_at: string | null
+          version: number
+          version_name: string | null
+          visual_dna: Json
+        }
+        Insert: {
+          approved?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          character_id: string
+          continuity_lock?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+          version?: number
+          version_name?: string | null
+          visual_dna?: Json
+        }
+        Update: {
+          approved?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          character_id?: string
+          continuity_lock?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+          version?: number
+          version_name?: string | null
+          visual_dna?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_visual_dna_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "character_visual_dna_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       characters: {
         Row: {
+          active_visual_dna_id: string | null
           arc: string | null
           bio: string | null
           canon_rules: Json | null
@@ -263,6 +365,7 @@ export type Database = {
           voice_card: Json | null
         }
         Insert: {
+          active_visual_dna_id?: string | null
           arc?: string | null
           bio?: string | null
           canon_rules?: Json | null
@@ -281,6 +384,7 @@ export type Database = {
           voice_card?: Json | null
         }
         Update: {
+          active_visual_dna_id?: string | null
           arc?: string | null
           bio?: string | null
           canon_rules?: Json | null
@@ -299,6 +403,13 @@ export type Database = {
           voice_card?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "characters_active_visual_dna_id_fkey"
+            columns: ["active_visual_dna_id"]
+            isOneToOne: false
+            referencedRelation: "character_visual_dna"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "characters_project_id_fkey"
             columns: ["project_id"]
@@ -2514,6 +2625,11 @@ export type Database = {
           can_render: boolean
         }[]
       }
+      create_visual_dna_version: {
+        Args: { char_id: string; modifications: Json; new_version_name: string }
+        Returns: string
+      }
+      get_active_visual_dna: { Args: { char_id: string }; Returns: Json }
       has_project_access: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
