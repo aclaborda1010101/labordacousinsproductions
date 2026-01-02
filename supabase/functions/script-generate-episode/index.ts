@@ -165,7 +165,6 @@ Devuelve SOLO JSON válido con el episodio completo.`;
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.4,
       }),
     });
 

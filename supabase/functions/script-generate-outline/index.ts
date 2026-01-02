@@ -266,7 +266,6 @@ Genera el outline cumpliendo TODOS los targets. Devuelve SOLO JSON válido.`;
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.35,
       }),
     });
 
