@@ -210,7 +210,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setOutlineApproved(true);
       setPipelineSteps(prev => prev.map(s => 
         s.id === 'outline' || s.id === 'approval' ? { ...s, status: 'success' } :
-        s.id === 'episodes' ? { ...s, status: 'running', label: `Generando episodio ${storedState.currentEpisode || '?'}...` } : s
+        s.id === 'episodes' ? { ...s, status: 'running', label: `Generando episodio ${Math.min(storedState.currentEpisode || 1, storedState.totalEpisodes || episodesCount)} de ${storedState.totalEpisodes || episodesCount}...` } : s
       ));
       toast.info('Generación en segundo plano detectada. Recargando estado...');
     }
@@ -537,10 +537,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         // Update localStorage state for background recovery
         const currentProgress = 10 + Math.round((episodes.length / totalEpisodes) * 75);
+        // Only save next episode if there are more to generate
+        const nextEpisode = epNum < totalEpisodes ? epNum + 1 : totalEpisodes;
         savePipelineState({
-          pipelineRunning: true,
+          pipelineRunning: epNum < totalEpisodes, // Mark as not running if this was the last
           progress: currentProgress,
-          currentEpisode: epNum + 1,
+          currentEpisode: nextEpisode,
           totalEpisodes,
           episodes: [...episodes],
           outline: lightOutline,
