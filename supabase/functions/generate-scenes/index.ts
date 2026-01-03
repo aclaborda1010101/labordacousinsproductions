@@ -11,6 +11,23 @@ interface GenerateScenesRequest {
   episodeNo: number;
   synopsis: string;
   sceneCount?: number;
+  isTeaser?: boolean;
+  teaserType?: '60s' | '30s';
+  teaserData?: {
+    title: string;
+    logline: string;
+    music_cue: string;
+    voiceover_text?: string;
+    scenes: Array<{
+      shot_type: string;
+      duration_sec: number;
+      description: string;
+      character?: string;
+      dialogue_snippet?: string;
+      visual_hook: string;
+      sound_design: string;
+    }>;
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -213,7 +230,7 @@ serve(async (req) => {
   }
 
   try {
-    const { projectId, episodeNo, synopsis, sceneCount = 5 } = await req.json() as GenerateScenesRequest;
+    const { projectId, episodeNo, synopsis, sceneCount = 5, isTeaser, teaserType, teaserData } = await req.json() as GenerateScenesRequest;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -222,7 +239,8 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    console.log(`Generating complete scenes with shots for project ${projectId}, episode ${episodeNo}`);
+    const contentType = isTeaser ? `teaser ${teaserType}` : `episode ${episodeNo}`;
+    console.log(`Generating complete scenes with shots for project ${projectId}, ${contentType}`);
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
@@ -253,7 +271,55 @@ serve(async (req) => {
     const characterList = characters?.map(c => `- ${c.name} (${c.role || 'character'}): ${c.bio || 'No description'}`).join('\n') || 'No characters defined';
     const locationList = locations?.map(l => `- ${l.name}: ${l.description || 'No description'}`).join('\n') || 'No locations defined';
 
-    const userPrompt = `Genera ${sceneCount} escenas COMPLETAS para Episodio ${episodeNo}.
+    // Build user prompt based on content type
+    let userPrompt: string;
+    
+    if (isTeaser && teaserData) {
+      // TEASER MODE - convert teaser shots to scenes
+      const teaserShots = teaserData.scenes.map((shot, idx) => ({
+        shot_no: idx + 1,
+        shot_type: shot.shot_type,
+        duration_sec: shot.duration_sec,
+        description: shot.description,
+        character: shot.character,
+        dialogue: shot.dialogue_snippet,
+        visual_hook: shot.visual_hook,
+        sound_design: shot.sound_design
+      }));
+      
+      userPrompt = `Genera 1 escena COMPLETA para TEASER ${teaserType}.
+
+TÍTULO: ${teaserData.title}
+LOGLINE: ${teaserData.logline}
+MÚSICA: ${teaserData.music_cue}
+${teaserData.voiceover_text ? `VOICE OVER: ${teaserData.voiceover_text}` : ''}
+
+SECUENCIA DE PLANOS DEL TEASER:
+${JSON.stringify(teaserShots, null, 2)}
+
+PERSONAJES DISPONIBLES:
+${characterList}
+
+LOCALIZACIONES DISPONIBLES:
+${locationList}
+
+ESTILO VISUAL:
+- Aspect Ratio: ${stylePack?.aspect_ratio || '16:9'}
+- Lens Style: ${stylePack?.lens_style || 'cinematic'}
+- Visual Tone: ${stylePack?.visual_tone || 'dramatic'}
+
+REQUISITOS:
+1. Crea UNA escena contenedora tipo "TEASER SEQUENCE"
+2. CADA plano del teaser se convierte en un shot de producción
+3. Incluye configuración técnica profesional (cámara, lentes, iluminación)
+4. Las TRANSICIONES son RÁPIDAS estilo tráiler (cortes dinámicos)
+5. Marca shots emocionales como "hero": true
+6. El ritmo es de TRÁILER: rápido, impactante, cinematográfico
+
+Retorna SOLO JSON válido con la estructura de escenas.`;
+    } else {
+      // EPISODE MODE - normal scene generation
+      userPrompt = `Genera ${sceneCount} escenas COMPLETAS para Episodio ${episodeNo}.
 
 SINOPSIS:
 ${synopsis}
@@ -278,6 +344,7 @@ REQUISITOS:
 6. La secuencia respeta continuidad cinematográfica
 
 Retorna SOLO JSON válido, sin texto adicional.`;
+    }
 
     console.log('Calling AI for complete scene generation with shots...');
 
@@ -349,24 +416,37 @@ Retorna SOLO JSON válido, sin texto adicional.`;
       // Find location ID
       const locationId = locationMap.get((scene.location_name || '').toLowerCase()) || null;
 
-      // Insert scene with setup metadata
+      // Insert scene with setup metadata - handle teaser episode numbers
+      const sceneEpisodeNo = isTeaser ? episodeNo : scene.scene_no ? episodeNo : episodeNo;
+      const sceneSlugline = isTeaser 
+        ? `TEASER ${teaserType} - ${scene.slugline || 'PROMOTIONAL SEQUENCE'}` 
+        : scene.slugline;
+
       const { data: insertedScene, error: sceneError } = await supabase
         .from('scenes')
         .insert({
           project_id: projectId,
           episode_no: episodeNo,
-          scene_no: scene.scene_no,
-          slugline: scene.slugline,
-          summary: scene.summary,
+          scene_no: scene.scene_no || 1,
+          slugline: sceneSlugline,
+          summary: scene.summary || (isTeaser ? `Teaser promocional ${teaserType}: ${teaserData?.logline || ''}` : ''),
           time_of_day: scene.time_of_day,
           character_ids: characterIds,
           location_id: locationId,
-          mood: { primary: scene.mood },
-          quality_mode: 'CINE',
+          mood: { primary: scene.mood || (isTeaser ? 'cinematic' : 'dramatic') },
+          quality_mode: isTeaser ? 'ULTRA' : 'CINE',
           // Store scene_setup in parsed_json for production use
           parsed_json: {
             scene_setup: scene.scene_setup || null,
-            generated_with: 'cinematographer_engine_v3'
+            generated_with: 'cinematographer_engine_v3',
+            is_teaser: isTeaser || false,
+            teaser_type: teaserType || null,
+            teaser_metadata: isTeaser ? {
+              title: teaserData?.title,
+              logline: teaserData?.logline,
+              music_cue: teaserData?.music_cue,
+              voiceover_text: teaserData?.voiceover_text
+            } : null
           }
         })
         .select()
@@ -377,7 +457,8 @@ Retorna SOLO JSON válido, sin texto adicional.`;
         continue;
       }
 
-      console.log(`Inserted scene ${scene.scene_no}: ${scene.slugline}`);
+      const sceneLabel = isTeaser ? `teaser ${teaserType}` : `scene ${scene.scene_no}`;
+      console.log(`Inserted ${sceneLabel}: ${sceneSlugline}`);
 
       // Insert shots with full cinematographic data
       if (scene.shots && insertedScene) {
@@ -406,17 +487,17 @@ Retorna SOLO JSON válido, sin texto adicional.`;
               shot_type: shot.shot_type?.toLowerCase() || 'medium',
               dialogue_text: shot.dialogue || null,
               duration_target: shot.duration_sec || 3,
-              hero: shot.hero || false,
-              effective_mode: shot.hero ? 'ULTRA' : 'CINE',
+              hero: shot.hero || isTeaser || false, // All teaser shots are hero quality
+              effective_mode: (shot.hero || isTeaser) ? 'ULTRA' : 'CINE',
               // Store full cinematographic data
               camera: cameraData,
               blocking: blockingData,
-              // Store additional metadata in description or dedicated columns
+              // Store additional metadata
               coverage_type: shot.coverage_type || null,
               story_purpose: shot.story_purpose || null,
-              transition_in: shot.transition?.type || 'CUT',
-              transition_out: shot.transition?.to_next || 'hard_cut',
-              edit_intent: shot.edit_intent || null,
+              transition_in: shot.transition?.type || (isTeaser ? 'MATCH_CUT' : 'CUT'),
+              transition_out: shot.transition?.to_next || (isTeaser ? 'visual_match' : 'hard_cut'),
+              edit_intent: shot.edit_intent || (isTeaser ? { expected_cut: 'hard', hold_ms: 100, rhythm_note: 'Trailer rhythm' } : null),
               ai_risk: shot.ai_risks || [],
               continuity_notes: shot.risk_mitigation || null
             });
@@ -432,14 +513,19 @@ Retorna SOLO JSON válido, sin texto adicional.`;
       insertedScenes.push(insertedScene);
     }
 
-    console.log(`Successfully generated ${insertedScenes.length} scenes with ${totalShotsInserted} shots`);
+    const contentLabel = isTeaser ? `teaser ${teaserType}` : 'scenes';
+    console.log(`Successfully generated ${insertedScenes.length} ${contentLabel} with ${totalShotsInserted} shots`);
 
     return new Response(JSON.stringify({
       success: true,
       scenesGenerated: insertedScenes.length,
       shotsGenerated: totalShotsInserted,
       scenes: insertedScenes,
-      message: `${insertedScenes.length} escenas con ${totalShotsInserted} planos generados automáticamente`
+      isTeaser: isTeaser || false,
+      teaserType: teaserType || null,
+      message: isTeaser 
+        ? `Teaser ${teaserType} generado con ${totalShotsInserted} planos` 
+        : `${insertedScenes.length} escenas con ${totalShotsInserted} planos generados automáticamente`
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
