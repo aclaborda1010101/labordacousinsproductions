@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { logGenerationCost, extractAnthropicTokens, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -349,6 +350,10 @@ Usa la herramienta deliver_episode para entregar el episodio completo.`;
     }
 
     const data = await response.json();
+    
+    // Extract token usage for cost tracking
+    const { inputTokens, outputTokens } = extractAnthropicTokens(data);
+    const startTime = Date.now();
 
     const toolUse = Array.isArray(data?.content)
       ? data.content.find((c: any) => c?.type === 'tool_use' && c?.name === 'deliver_episode')
@@ -415,9 +420,34 @@ Usa la herramienta deliver_episode para entregar el episodio completo.`;
     episode.estimated_page_count = Math.ceil((totalDialogue + totalActionBlocks * 3) / 8);
 
     console.log(`Professional episode ${episodeNumber} generated: ${episode.scenes?.length || 0} scenes, ${totalDialogue} dialogue lines, ~${episode.estimated_page_count} pages`);
+    console.log(`Token usage: ${inputTokens} in / ${outputTokens} out`);
+
+    // Log generation cost with real token counts
+    const userId = extractUserId(req.headers.get('authorization'));
+    if (userId) {
+      await logGenerationCost({
+        userId,
+        projectId: outline.projectId || undefined,
+        slotType: 'episode_script',
+        engine: 'anthropic',
+        model: 'claude-sonnet-4-20250514',
+        durationMs: Date.now() - startTime,
+        success: true,
+        inputTokens,
+        outputTokens,
+        totalTokens: inputTokens + outputTokens,
+        category: 'script',
+        metadata: {
+          episodeNumber,
+          scenesCount: episode.scenes?.length || 0,
+          dialogueLines: totalDialogue,
+          pageCount: episode.estimated_page_count
+        }
+      });
+    }
 
     return new Response(
-      JSON.stringify({ success: true, episode }),
+      JSON.stringify({ success: true, episode, tokenUsage: { input: inputTokens, output: outputTokens } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

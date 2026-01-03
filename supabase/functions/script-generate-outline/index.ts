@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { logGenerationCost, extractAnthropicTokens, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -111,7 +112,7 @@ serve(async (req) => {
 
   try {
     const request: OutlineRequest = await req.json();
-    const { idea, format, episodesCount, episodeDurationMin, filmDurationMin, genre, tone, language, references, referenceScripts, targets } = request;
+    const { projectId, idea, format, episodesCount, episodeDurationMin, filmDurationMin, genre, tone, language, references, referenceScripts, targets } = request;
 
     const safeIdea = idea?.length > 3000 ? `${idea.slice(0, 3000)}…` : idea;
     const safeReferences = references?.length ? references.slice(0, 1200) : references;
@@ -453,6 +454,10 @@ Devuelve el outline completo usando la herramienta deliver_outline.`;
     }
 
     const data = await response.json();
+    
+    // Extract token usage for cost tracking
+    const { inputTokens, outputTokens } = extractAnthropicTokens(data);
+    const startTime = Date.now();
 
     const toolUse = Array.isArray(data?.content)
       ? data.content.find((c: any) => c?.type === 'tool_use' && c?.name === 'deliver_outline')
@@ -506,9 +511,34 @@ Devuelve el outline completo usando la herramienta deliver_outline.`;
     }
 
     console.log('Professional outline generated:', outline.title, 'counts:', JSON.stringify(outline.counts));
+    console.log(`Token usage: ${inputTokens} in / ${outputTokens} out`);
+
+    // Log generation cost with real token counts
+    const userId = extractUserId(req.headers.get('authorization'));
+    if (userId) {
+      await logGenerationCost({
+        userId,
+        projectId,
+        slotType: 'outline',
+        engine: 'anthropic',
+        model: 'claude-sonnet-4-20250514',
+        durationMs: Date.now() - startTime,
+        success: true,
+        inputTokens,
+        outputTokens,
+        totalTokens: inputTokens + outputTokens,
+        category: 'script',
+        metadata: {
+          title: outline.title,
+          episodesCount: outline.episode_outlines?.length || 0,
+          charactersCount: outline.character_list?.length || 0,
+          locationsCount: outline.location_list?.length || 0
+        }
+      });
+    }
 
     return new Response(
-      JSON.stringify({ success: true, outline }),
+      JSON.stringify({ success: true, outline, tokenUsage: { input: inputTokens, output: outputTokens } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
