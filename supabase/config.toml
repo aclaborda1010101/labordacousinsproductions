@@ -107,3 +107,6 @@ verify_jwt = false
 
 [functions.generate-teasers]
 verify_jwt = false
+
+[functions.generate-run]
+verify_jwt = false
