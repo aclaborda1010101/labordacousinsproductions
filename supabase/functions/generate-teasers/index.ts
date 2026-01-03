@@ -193,10 +193,10 @@ Los tiempos de cada plano DEBEN sumar exactamente 60s y 30s respectivamente.`;
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
+        system: systemPrompt,
         tools,
         tool_choice: { type: "tool", name: "generate_teasers" },
         messages: [
-          { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ]
       })
