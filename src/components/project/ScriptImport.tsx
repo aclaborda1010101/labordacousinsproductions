@@ -502,11 +502,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         let synopsisFromClaude: string | null = null;
         let episodeError: string | null = null;
 
+        // CRITICAL: Add delay BEFORE starting episode to respect Anthropic rate limits
+        // Rate limit is 8,000 output tokens/minute, each batch uses ~4,000-6,000 tokens
+        if (epNum > 1) {
+          // Wait extra 30s between episodes to let rate limit window reset
+          const DELAY_BETWEEN_EPISODES = 30000;
+          console.log(`[RATE LIMIT] Waiting ${DELAY_BETWEEN_EPISODES}ms before Episode ${epNum}...`);
+          await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_EPISODES));
+        }
+
         for (let batchIdx = 0; batchIdx < BATCHES_PER_EPISODE; batchIdx++) {
           if (controller.signal.aborted) break;
 
-          // Add dynamic delay between batches to avoid rate limits (429)
-          if (batchIdx > 0) {
+          // Add delay between ALL batches (including first) to avoid rate limits (429)
+          if (batchIdx > 0 || epNum > 1) {
+            console.log(`[RATE LIMIT] Waiting ${DELAY_BETWEEN_BATCHES}ms before batch ${batchIdx + 1}...`);
             await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
           }
 
