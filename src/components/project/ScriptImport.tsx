@@ -51,6 +51,14 @@ import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs } from '@/lib/autoTargets';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
+import {
+  estimateEpisodeMs,
+  formatDurationMs,
+  loadScriptTimingModel,
+  saveScriptTimingModel,
+  updateEpisodeTiming,
+  updateOutlineTiming,
+} from '@/lib/scriptTimingModel';
 
 interface ScriptImportProps {
   projectId: string;
@@ -99,6 +107,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     { id: 'save', label: 'Guardando', status: 'pending' },
   ]);
   const [currentStepLabel, setCurrentStepLabel] = useState<string>('');
+
+  // Timing model (aprende tiempos reales para estimar ETA)
+  const [timingModel, setTimingModel] = useState(() => loadScriptTimingModel());
+  const [episodeStartedAtMs, setEpisodeStartedAtMs] = useState<number | null>(null);
+  const [nowMs, setNowMs] = useState(() => Date.now());
   
   // Light outline state (Pipeline V2)
   const [lightOutline, setLightOutline] = useState<any>(null);
@@ -175,6 +188,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   }, [format, filmDurationMin, episodesCount, episodeDurationMin, complexity, genre, proMode]);
 
+  // Tick para ETA mientras se generan episodios
+  useEffect(() => {
+    if (!pipelineRunning) return;
+    const id = window.setInterval(() => setNowMs(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [pipelineRunning]);
+
   const updatePipelineStep = (stepId: string, status: PipelineStep['status'], label?: string) => {
     setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status, label: label || s.label } : s));
     if (label) setCurrentStepLabel(label);
@@ -194,6 +214,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     updatePipelineStep('outline', 'running');
 
     try {
+      const t0 = Date.now();
       const { data, error } = await supabase.functions.invoke('generate-outline-light', {
         body: {
           idea: ideaText.trim().slice(0, 2000),
@@ -204,9 +225,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           language
         }
       });
+      const durationMs = Date.now() - t0;
 
       if (error) throw error;
       if (!data?.outline) throw new Error('No se generó el outline');
+
+      // Aprendizaje: tiempo real de outline
+      setTimingModel(prev => {
+        const next = updateOutlineTiming(prev, {
+          episodesCount: format === 'series' ? episodesCount : 1,
+          durationMs,
+        });
+        saveScriptTimingModel(next);
+        return next;
+      });
 
       setLightOutline(data.outline);
       updatePipelineStep('outline', 'success');
@@ -259,6 +291,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         updatePipelineStep('episodes', 'running', `Episodio ${i} de ${totalEpisodes}...`);
         toast.info(`Generando episodio ${i}/${totalEpisodes}...`);
 
+        const t0 = Date.now();
+        setEpisodeStartedAtMs(t0);
+
         const { data, error } = await supabase.functions.invoke('generate-episode-detailed', {
           body: {
             outline: lightOutline,
@@ -266,6 +301,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             language
           }
         });
+        const durationMs = Date.now() - t0;
 
         if (error) {
           console.error(`Error generating episode ${i}:`, error);
@@ -280,6 +316,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           });
         } else if (data?.episode) {
           episodes.push(data.episode);
+
+          // Aprendizaje: tiempo real por episodio (normalizado por duración objetivo + complejidad)
+          setTimingModel(prev => {
+            const next = updateEpisodeTiming(prev, {
+              episodeDurationMin,
+              complexity,
+              durationMs,
+            });
+            saveScriptTimingModel(next);
+            return next;
+          });
+
           toast.success(`Episodio ${i} completado ✓`);
         }
 
@@ -341,6 +389,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     } finally {
       setPipelineRunning(false);
       setCurrentEpisodeGenerating(null);
+      setEpisodeStartedAtMs(null);
       setCancelController(null);
     }
   };
@@ -353,7 +402,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
     setPipelineRunning(false);
     setCurrentEpisodeGenerating(null);
+    setEpisodeStartedAtMs(null);
     toast.info('Generación cancelada. Los episodios ya generados se han conservado.');
+  };
+
+  const getEstimatedRemainingMs = () => {
+    if (!pipelineRunning) return 0;
+
+    const perEpMs = estimateEpisodeMs(timingModel, { episodeDurationMin, complexity });
+
+    // Si todavía no tenemos episodio actual, estimamos todo como N * perEpMs
+    if (!currentEpisodeGenerating) {
+      return perEpMs * Math.max(0, totalEpisodesToGenerate);
+    }
+
+    const elapsedCurrent = episodeStartedAtMs ? Math.max(0, nowMs - episodeStartedAtMs) : 0;
+    const remainingCurrent = Math.max(0, perEpMs - elapsedCurrent);
+    const remainingAfterCurrent = Math.max(0, totalEpisodesToGenerate - currentEpisodeGenerating);
+
+    return remainingCurrent + (remainingAfterCurrent * perEpMs);
   };
 
   // Legacy pipeline (keeping for compatibility)
@@ -1011,7 +1078,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       Generando Episodio {currentEpisodeGenerating || '?'} de {totalEpisodesToGenerate}
                     </span>
                     <p className="text-xs text-muted-foreground">
-                      Tiempo estimado restante: ~{(totalEpisodesToGenerate - (currentEpisodeGenerating || 0)) * 30}s
+                      Tiempo estimado restante: {formatDurationMs(getEstimatedRemainingMs())}
                     </p>
                   </div>
                   <span className="text-sm font-bold text-primary">
