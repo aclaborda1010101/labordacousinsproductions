@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -1955,11 +1955,14 @@ function TargetField({ label, value, editable, onChange }: { label: string; valu
   );
 }
 
-function CountBadge({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="text-center p-2 rounded-lg bg-muted/50">
-      <div className="text-lg font-bold text-primary">{value || 0}</div>
-      <div className="text-xs text-muted-foreground">{label}</div>
-    </div>
-  );
-}
+const CountBadge = forwardRef<HTMLDivElement, { label: string; value: number }>(
+  ({ label, value }, ref) => {
+    return (
+      <div ref={ref} className="text-center p-2 rounded-lg bg-muted/50">
+        <div className="text-lg font-bold text-primary">{value || 0}</div>
+        <div className="text-xs text-muted-foreground">{label}</div>
+      </div>
+    );
+  },
+);
+CountBadge.displayName = 'CountBadge';
