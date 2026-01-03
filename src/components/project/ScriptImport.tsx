@@ -60,6 +60,7 @@ import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, GenerationModel, GENERATION_MODELS } from '@/lib/autoTargets';
+import { useCreativeModeOptional } from '@/contexts/CreativeModeContext';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import {
   estimateEpisodeMs,
@@ -109,8 +110,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // MASTER SHOWRUNNER: Narrative mode
   const [narrativeMode, setNarrativeMode] = useState<'serie_adictiva' | 'voz_de_autor' | 'giro_imprevisible'>('serie_adictiva');
   
-  // Generation model selection (speed vs quality)
-  const [generationModel, setGenerationModel] = useState<GenerationModel>('profesional');
+  // Generation model selection (speed vs quality) - default to 'rapido'
+  const [generationModel, setGenerationModel] = useState<GenerationModel>('rapido');
+  
+  // Creative mode context for gating generation models
+  const creativeModeContext = useCreativeModeOptional();
+  const effectiveCreativeMode = creativeModeContext?.effectiveMode ?? 'ASSISTED';
+  
+  // Available generation models based on creative mode
+  // PRO: all models (rapido, profesional, hollywood)
+  // DIRECTOR/ASSISTED: only rapido and profesional
+  const availableGenerationModels: GenerationModel[] = effectiveCreativeMode === 'PRO' 
+    ? ['rapido', 'profesional', 'hollywood']
+    : ['rapido', 'profesional'];
 
   // Auto/Pro mode
   const [proMode, setProMode] = useState(false);
@@ -1958,15 +1970,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   <Select value={generationModel} onValueChange={(v: GenerationModel) => setGenerationModel(v)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="rapido">
-                        {GENERATION_MODELS.rapido.displayName}
-                      </SelectItem>
-                      <SelectItem value="profesional">
-                        {GENERATION_MODELS.profesional.displayName}
-                      </SelectItem>
-                      <SelectItem value="hollywood">
-                        {GENERATION_MODELS.hollywood.displayName}
-                      </SelectItem>
+                      {availableGenerationModels.map((model) => (
+                        <SelectItem key={model} value={model}>
+                          {GENERATION_MODELS[model].displayName}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
@@ -1979,6 +1987,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     <Badge variant="outline" className="text-xs">
                       ~${GENERATION_MODELS[generationModel].costPerEpisodeUsd.toFixed(3)}/ep
                     </Badge>
+                    {effectiveCreativeMode !== 'PRO' && (
+                      <Badge variant="secondary" className="text-xs">
+                        🎬 Hollywood requiere modo PRO
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </CardContent>
