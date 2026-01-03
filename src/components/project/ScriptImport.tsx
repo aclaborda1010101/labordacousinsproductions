@@ -150,6 +150,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     { id: 'outline', label: 'Generando outline rápido', status: 'pending' },
     { id: 'approval', label: 'Aprobación del outline', status: 'pending' },
     { id: 'episodes', label: 'Generando episodios', status: 'pending' },
+    { id: 'teasers', label: 'Generando teasers', status: 'pending' },
     { id: 'save', label: 'Guardando', status: 'pending' },
   ]);
   const [currentStepLabel, setCurrentStepLabel] = useState<string>('');
@@ -172,6 +173,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [outline, setOutline] = useState<any>(null);
   const [qcResult, setQcResult] = useState<any>(null);
   const [generatedScript, setGeneratedScript] = useState<any>(null);
+  const [generatedTeasers, setGeneratedTeasers] = useState<any>(null);
   const [expandedEpisodes, setExpandedEpisodes] = useState<Record<number, boolean>>({});
 
   // Script Doctor state
@@ -532,7 +534,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       updatePipelineStep('episodes', 'success');
 
       // Build complete screenplay
-      const completeScreenplay = {
+      const completeScreenplay: Record<string, any> = {
         title: lightOutline.title,
         logline: lightOutline.logline,
         synopsis: lightOutline.synopsis,
@@ -548,6 +550,35 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       };
 
       setGeneratedScript(completeScreenplay);
+      setPipelineProgress(85);
+
+      // Generate teasers (60s and 30s)
+      updatePipelineStep('teasers', 'running', 'Generando teasers promocionales...');
+      try {
+        const { data: teaserData, error: teaserError } = await supabase.functions.invoke('generate-teasers', {
+          body: {
+            projectId,
+            screenplay: completeScreenplay,
+            language
+          }
+        });
+
+        if (teaserError) {
+          console.error('Teaser generation error:', teaserError);
+          updatePipelineStep('teasers', 'error');
+          toast.warning('Teasers no generados, continuando...');
+        } else if (teaserData?.teasers) {
+          setGeneratedTeasers(teaserData.teasers);
+          // Add teasers to screenplay
+          completeScreenplay.teasers = teaserData.teasers;
+          updatePipelineStep('teasers', 'success');
+          toast.success('Teasers generados (60s + 30s)');
+        }
+      } catch (teaserErr) {
+        console.error('Teaser exception:', teaserErr);
+        updatePipelineStep('teasers', 'error');
+      }
+
       setPipelineProgress(90);
 
       // Save to DB
@@ -1864,6 +1895,126 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   )}
                 </CardContent>
               </Card>
+
+              {/* TEASERS Section */}
+              {(generatedScript?.teasers || generatedTeasers) && (
+                <Card className="border-amber-500/50">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Film className="w-5 h-5 text-amber-500" />
+                      Teasers Promocionales
+                    </CardTitle>
+                    <CardDescription>
+                      Teasers auto-generados para promoción: 60 segundos y 30 segundos
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {/* Teaser 60s */}
+                      {(generatedScript?.teasers?.teaser60 || generatedTeasers?.teaser60) && (
+                        <Card className="bg-gradient-to-br from-amber-500/10 to-orange-500/10">
+                          <CardHeader className="pb-2">
+                            <div className="flex items-center justify-between">
+                              <Badge variant="outline" className="bg-amber-500/20">60 segundos</Badge>
+                              <Badge variant="secondary">{(generatedScript?.teasers?.teaser60?.scenes || generatedTeasers?.teaser60?.scenes)?.length || 0} planos</Badge>
+                            </div>
+                            <CardTitle className="text-sm mt-2">
+                              {generatedScript?.teasers?.teaser60?.title || generatedTeasers?.teaser60?.title || 'Teaser Principal'}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="text-sm space-y-3">
+                            <div>
+                              <Label className="text-xs text-muted-foreground">Tagline</Label>
+                              <p className="italic">"{generatedScript?.teasers?.teaser60?.logline || generatedTeasers?.teaser60?.logline}"</p>
+                            </div>
+                            <div>
+                              <Label className="text-xs text-muted-foreground">Música</Label>
+                              <p>{generatedScript?.teasers?.teaser60?.music_cue || generatedTeasers?.teaser60?.music_cue}</p>
+                            </div>
+                            {(generatedScript?.teasers?.teaser60?.voiceover_text || generatedTeasers?.teaser60?.voiceover_text) && (
+                              <div>
+                                <Label className="text-xs text-muted-foreground">Voice Over</Label>
+                                <p className="italic text-muted-foreground">"{generatedScript?.teasers?.teaser60?.voiceover_text || generatedTeasers?.teaser60?.voiceover_text}"</p>
+                              </div>
+                            )}
+                            <Collapsible>
+                              <CollapsibleTrigger className="text-xs text-primary flex items-center gap-1 hover:underline">
+                                <ChevronDown className="w-3 h-3" />
+                                Ver secuencia de planos
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-2 space-y-2">
+                                {(generatedScript?.teasers?.teaser60?.scenes || generatedTeasers?.teaser60?.scenes)?.map((shot: any, idx: number) => (
+                                  <div key={idx} className="p-2 bg-muted/50 rounded text-xs">
+                                    <div className="flex items-center justify-between mb-1">
+                                      <Badge variant="outline" className="text-[10px]">{shot.shot_type}</Badge>
+                                      <span className="text-muted-foreground">{shot.duration_sec}s</span>
+                                    </div>
+                                    <p>{shot.description}</p>
+                                    {shot.dialogue_snippet && (
+                                      <p className="italic text-muted-foreground mt-1">"{shot.dialogue_snippet}"</p>
+                                    )}
+                                  </div>
+                                ))}
+                              </CollapsibleContent>
+                            </Collapsible>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {/* Teaser 30s */}
+                      {(generatedScript?.teasers?.teaser30 || generatedTeasers?.teaser30) && (
+                        <Card className="bg-gradient-to-br from-red-500/10 to-pink-500/10">
+                          <CardHeader className="pb-2">
+                            <div className="flex items-center justify-between">
+                              <Badge variant="outline" className="bg-red-500/20">30 segundos</Badge>
+                              <Badge variant="secondary">{(generatedScript?.teasers?.teaser30?.scenes || generatedTeasers?.teaser30?.scenes)?.length || 0} planos</Badge>
+                            </div>
+                            <CardTitle className="text-sm mt-2">
+                              {generatedScript?.teasers?.teaser30?.title || generatedTeasers?.teaser30?.title || 'Teaser Corto'}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="text-sm space-y-3">
+                            <div>
+                              <Label className="text-xs text-muted-foreground">Tagline</Label>
+                              <p className="italic">"{generatedScript?.teasers?.teaser30?.logline || generatedTeasers?.teaser30?.logline}"</p>
+                            </div>
+                            <div>
+                              <Label className="text-xs text-muted-foreground">Música</Label>
+                              <p>{generatedScript?.teasers?.teaser30?.music_cue || generatedTeasers?.teaser30?.music_cue}</p>
+                            </div>
+                            {(generatedScript?.teasers?.teaser30?.voiceover_text || generatedTeasers?.teaser30?.voiceover_text) && (
+                              <div>
+                                <Label className="text-xs text-muted-foreground">Voice Over</Label>
+                                <p className="italic text-muted-foreground">"{generatedScript?.teasers?.teaser30?.voiceover_text || generatedTeasers?.teaser30?.voiceover_text}"</p>
+                              </div>
+                            )}
+                            <Collapsible>
+                              <CollapsibleTrigger className="text-xs text-primary flex items-center gap-1 hover:underline">
+                                <ChevronDown className="w-3 h-3" />
+                                Ver secuencia de planos
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-2 space-y-2">
+                                {(generatedScript?.teasers?.teaser30?.scenes || generatedTeasers?.teaser30?.scenes)?.map((shot: any, idx: number) => (
+                                  <div key={idx} className="p-2 bg-muted/50 rounded text-xs">
+                                    <div className="flex items-center justify-between mb-1">
+                                      <Badge variant="outline" className="text-[10px]">{shot.shot_type}</Badge>
+                                      <span className="text-muted-foreground">{shot.duration_sec}s</span>
+                                    </div>
+                                    <p>{shot.description}</p>
+                                    {shot.dialogue_snippet && (
+                                      <p className="italic text-muted-foreground mt-1">"{shot.dialogue_snippet}"</p>
+                                    )}
+                                  </div>
+                                ))}
+                              </CollapsibleContent>
+                            </Collapsible>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* BREAKDOWN - Import Entities */}
               <Card className="border-primary/50">
