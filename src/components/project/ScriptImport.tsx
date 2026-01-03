@@ -1785,18 +1785,31 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </div>
 
-                {/* Episodes */}
+                {/* Episodes - Editable Titles */}
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Episodios ({lightOutline.episode_beats?.length || 0})
+                    Episodios ({lightOutline.episode_beats?.length || 0}) 
+                    <span className="ml-2 text-[10px] font-normal normal-case text-muted-foreground/70">
+                      (haz clic en el título para editarlo)
+                    </span>
                   </Label>
                   <div className="space-y-2">
-                    {lightOutline.episode_beats?.map((ep: any) => (
+                    {lightOutline.episode_beats?.map((ep: any, idx: number) => (
                       <div key={ep.episode} className="p-2 bg-muted/30 rounded border">
-                        <div className="font-medium text-sm">
-                          Ep {ep.episode}: {ep.title}
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm shrink-0">Ep {ep.episode}:</span>
+                          <Input
+                            value={ep.title || ''}
+                            onChange={(e) => {
+                              const newBeats = [...(lightOutline.episode_beats || [])];
+                              newBeats[idx] = { ...newBeats[idx], title: e.target.value };
+                              setLightOutline({ ...lightOutline, episode_beats: newBeats });
+                            }}
+                            className="h-7 text-sm font-medium border-transparent bg-transparent hover:border-input focus:border-input transition-colors"
+                            placeholder="Título del episodio..."
+                          />
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">{ep.summary}</p>
+                        <p className="text-xs text-muted-foreground mt-1 pl-12">{ep.summary}</p>
                       </div>
                     ))}
                   </div>
