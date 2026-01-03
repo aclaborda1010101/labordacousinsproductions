@@ -277,13 +277,34 @@ Devuelve SOLO el JSON válido del outline.`;
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Anthropic API error:', response.status, errorText);
+
+      const lower = errorText.toLowerCase();
+
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+          JSON.stringify({ error: 'Claude: límite de tasa alcanzado. Intenta de nuevo en 1-2 minutos.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      throw new Error(`Anthropic API error: ${response.status}`);
+
+      if (response.status === 400 && lower.includes('credit balance is too low')) {
+        return new Response(
+          JSON.stringify({ error: 'Claude: créditos insuficientes en tu cuenta. Cambia la API key por una con saldo o recarga créditos en Anthropic.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (response.status === 401 || response.status === 403) {
+        return new Response(
+          JSON.stringify({ error: 'Claude: API key inválida o sin permisos.' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ error: `Claude API error (${response.status}): ${errorText}` }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const data = await response.json();

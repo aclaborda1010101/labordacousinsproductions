@@ -389,7 +389,32 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     } catch (error: any) {
       console.error('Pipeline error:', error);
-      toast.error(error.message || 'Error en el pipeline de generación');
+
+      let message = error?.message || 'Error en el pipeline de generación';
+
+      // FunctionsHttpError: intenta leer el body JSON devuelto por la función
+      if (error?.name === 'FunctionsHttpError' && error?.context && typeof error.context?.clone === 'function') {
+        try {
+          const resp: Response = error.context as Response;
+          const cloned = resp.clone();
+
+          let body: any = null;
+          try {
+            body = await cloned.json();
+          } catch {
+            const text = await cloned.text();
+            body = text ? { error: text } : null;
+          }
+
+          if (body?.error) message = body.error;
+          else if (body?.message) message = body.message;
+          else message = `Error (${resp.status}) en la función de backend.`;
+        } catch {
+          // ignore
+        }
+      }
+
+      toast.error(message);
       const currentStep = pipelineSteps.find(s => s.status === 'running');
       if (currentStep) updatePipelineStep(currentStep.id, 'error');
     } finally {
