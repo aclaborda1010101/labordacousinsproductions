@@ -16,7 +16,13 @@ import {
   Settings, 
   BarChart3,
   Calendar,
-  Zap
+  Zap,
+  Film,
+  Users,
+  MapPin,
+  FileText,
+  ImageIcon,
+  Sparkles
 } from 'lucide-react';
 
 interface CostDashboardProps {
@@ -37,6 +43,15 @@ interface BudgetSettings {
   pause_on_exceed: boolean;
 }
 
+interface CostBreakdown {
+  scripts: number;
+  characters: number;
+  locations: number;
+  keyframes: number;
+  shots: number;
+  other: number;
+}
+
 export function CostDashboard({ projectId }: CostDashboardProps) {
   const [usage, setUsage] = useState<UsageData | null>(null);
   const [budget, setBudget] = useState<BudgetSettings>({
@@ -48,10 +63,23 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
   const [todayCost, setTodayCost] = useState(0);
   const [loading, setLoading] = useState(true);
   const [savingBudget, setSavingBudget] = useState(false);
+  const [costBreakdown, setCostBreakdown] = useState<CostBreakdown>({
+    scripts: 0,
+    characters: 0,
+    locations: 0,
+    keyframes: 0,
+    shots: 0,
+    other: 0
+  });
+  const [generationStats, setGenerationStats] = useState<{
+    total: number;
+    byType: Record<string, number>;
+    byEngine: Record<string, number>;
+  }>({ total: 0, byType: {}, byEngine: {} });
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [projectId]);
 
   const loadData = async () => {
     setLoading(true);
@@ -87,13 +115,69 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
       const today = new Date().toISOString().slice(0, 10);
       const { data: todayLogs } = await supabase
         .from('generation_logs')
-        .select('cost_usd')
+        .select('cost_usd, slot_type, engine')
         .eq('user_id', user.id)
         .gte('created_at', today);
 
       if (todayLogs) {
         const total = todayLogs.reduce((sum, log) => sum + (Number(log.cost_usd) || 0), 0);
         setTodayCost(total);
+      }
+
+      // Get cost breakdown by type (this month)
+      const monthStart = new Date();
+      monthStart.setDate(1);
+      monthStart.setHours(0, 0, 0, 0);
+
+      const { data: monthLogs } = await supabase
+        .from('generation_logs')
+        .select('cost_usd, slot_type, engine')
+        .eq('user_id', user.id)
+        .gte('created_at', monthStart.toISOString());
+
+      if (monthLogs) {
+        const breakdown: CostBreakdown = {
+          scripts: 0,
+          characters: 0,
+          locations: 0,
+          keyframes: 0,
+          shots: 0,
+          other: 0
+        };
+        const byType: Record<string, number> = {};
+        const byEngine: Record<string, number> = {};
+
+        monthLogs.forEach(log => {
+          const cost = Number(log.cost_usd) || 0;
+          const slotType = log.slot_type?.toLowerCase() || 'other';
+          const engine = log.engine || 'unknown';
+
+          // Aggregate by type for display
+          byType[slotType] = (byType[slotType] || 0) + 1;
+          byEngine[engine] = (byEngine[engine] || 0) + 1;
+
+          // Categorize costs
+          if (slotType.includes('script') || slotType.includes('episode') || slotType.includes('outline')) {
+            breakdown.scripts += cost;
+          } else if (slotType.includes('character') || slotType.includes('portrait') || slotType.includes('turnaround')) {
+            breakdown.characters += cost;
+          } else if (slotType.includes('location') || slotType.includes('environment')) {
+            breakdown.locations += cost;
+          } else if (slotType.includes('keyframe')) {
+            breakdown.keyframes += cost;
+          } else if (slotType.includes('shot') || slotType.includes('render')) {
+            breakdown.shots += cost;
+          } else {
+            breakdown.other += cost;
+          }
+        });
+
+        setCostBreakdown(breakdown);
+        setGenerationStats({
+          total: monthLogs.length,
+          byType,
+          byEngine
+        });
       }
     } catch (error) {
       console.error('Error loading cost data:', error);
@@ -117,10 +201,10 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
         }, { onConflict: 'user_id' });
 
       if (error) throw error;
-      toast.success('Budget settings saved');
+      toast.success('Configuración de presupuesto guardada');
     } catch (error) {
       console.error('Error saving budget:', error);
-      toast.error('Failed to save budget settings');
+      toast.error('Error al guardar configuración');
     } finally {
       setSavingBudget(false);
     }
@@ -136,6 +220,31 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
 
   const isNearLimit = monthlyUsagePercent >= budget.alert_threshold_percent;
   const isOverLimit = monthlyUsagePercent >= 100;
+
+  const totalBreakdownCost = Object.values(costBreakdown).reduce((a, b) => a + b, 0);
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'scripts': return <FileText className="h-4 w-4" />;
+      case 'characters': return <Users className="h-4 w-4" />;
+      case 'locations': return <MapPin className="h-4 w-4" />;
+      case 'keyframes': return <ImageIcon className="h-4 w-4" />;
+      case 'shots': return <Film className="h-4 w-4" />;
+      default: return <Sparkles className="h-4 w-4" />;
+    }
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      scripts: 'Guiones (Claude)',
+      characters: 'Personajes (FAL)',
+      locations: 'Localizaciones (FAL)',
+      keyframes: 'Keyframes (FAL)',
+      shots: 'Shots/Renders',
+      other: 'Otros'
+    };
+    return labels[category] || category;
+  };
 
   if (loading) {
     return (
@@ -154,16 +263,16 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
           <div>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5" />
-              Cost Dashboard
+              Motor de Costes
             </CardTitle>
             <CardDescription>
-              Track generation costs and set budget limits
+              Seguimiento de costes de IA y límites de presupuesto
             </CardDescription>
           </div>
           {isNearLimit && (
             <Badge variant={isOverLimit ? "destructive" : "secondary"} className="flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" />
-              {isOverLimit ? 'Over Budget' : 'Near Limit'}
+              {isOverLimit ? 'Presupuesto excedido' : 'Cerca del límite'}
             </Badge>
           )}
         </div>
@@ -174,11 +283,15 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
           <TabsList className="mb-4">
             <TabsTrigger value="overview">
               <BarChart3 className="h-4 w-4 mr-1" />
-              Overview
+              Resumen
+            </TabsTrigger>
+            <TabsTrigger value="breakdown">
+              <Sparkles className="h-4 w-4 mr-1" />
+              Desglose por IA
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-1" />
-              Budget Settings
+              Configuración
             </TabsTrigger>
           </TabsList>
 
@@ -189,7 +302,7 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                 <CardContent className="pt-4">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
                     <Calendar className="h-4 w-4" />
-                    Today
+                    Hoy
                   </div>
                   <div className="text-2xl font-bold mt-1">
                     ${todayCost.toFixed(2)}
@@ -205,7 +318,7 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                 <CardContent className="pt-4">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
                     <TrendingUp className="h-4 w-4" />
-                    This Month
+                    Este Mes
                   </div>
                   <div className="text-2xl font-bold mt-1">
                     ${(usage?.total_cost_usd || 0).toFixed(2)}
@@ -221,13 +334,13 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                 <CardContent className="pt-4">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
                     <Zap className="h-4 w-4" />
-                    Generations
+                    Generaciones
                   </div>
                   <div className="text-2xl font-bold mt-1">
-                    {usage?.generations_count || 0}
+                    {generationStats.total || usage?.generations_count || 0}
                   </div>
                   <div className="text-xs text-muted-foreground mt-2">
-                    This month
+                    Este mes
                   </div>
                 </CardContent>
               </Card>
@@ -236,15 +349,15 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                 <CardContent className="pt-4">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
                     <DollarSign className="h-4 w-4" />
-                    Avg Cost
+                    Coste Medio
                   </div>
                   <div className="text-2xl font-bold mt-1">
-                    ${usage?.generations_count 
-                      ? ((usage.generations_cost_usd || 0) / usage.generations_count).toFixed(3) 
+                    ${generationStats.total > 0
+                      ? ((usage?.generations_cost_usd || 0) / generationStats.total).toFixed(3) 
                       : '0.00'}
                   </div>
                   <div className="text-xs text-muted-foreground mt-2">
-                    Per generation
+                    Por generación
                   </div>
                 </CardContent>
               </Card>
@@ -254,7 +367,7 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
             <Card>
               <CardContent className="pt-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Monthly Budget Usage</span>
+                  <span className="text-sm font-medium">Uso del Presupuesto Mensual</span>
                   <span className="text-sm text-muted-foreground">
                     ${(usage?.total_cost_usd || 0).toFixed(2)} / ${budget.monthly_limit_usd.toFixed(2)}
                   </span>
@@ -264,8 +377,8 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                   className={`h-3 ${isOverLimit ? '[&>div]:bg-destructive' : isNearLimit ? '[&>div]:bg-yellow-500' : ''}`}
                 />
                 <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                  <span>{monthlyUsagePercent.toFixed(1)}% used</span>
-                  <span>${(budget.monthly_limit_usd - (usage?.total_cost_usd || 0)).toFixed(2)} remaining</span>
+                  <span>{monthlyUsagePercent.toFixed(1)}% usado</span>
+                  <span>${(budget.monthly_limit_usd - (usage?.total_cost_usd || 0)).toFixed(2)} restante</span>
                 </div>
               </CardContent>
             </Card>
@@ -278,13 +391,13 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                   <div>
                     <p className="font-medium">
                       {isOverLimit 
-                        ? 'You have exceeded your monthly budget!' 
-                        : `You've used ${monthlyUsagePercent.toFixed(0)}% of your monthly budget`}
+                        ? '¡Has excedido tu presupuesto mensual!' 
+                        : `Has usado ${monthlyUsagePercent.toFixed(0)}% de tu presupuesto mensual`}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {budget.pause_on_exceed 
-                        ? 'New generations are paused until next month.' 
-                        : 'Consider adjusting your budget in settings.'}
+                        ? 'Las generaciones están pausadas hasta el próximo mes.' 
+                        : 'Considera ajustar tu presupuesto en configuración.'}
                     </p>
                   </div>
                 </CardContent>
@@ -292,10 +405,104 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
             )}
           </TabsContent>
 
+          <TabsContent value="breakdown" className="space-y-4">
+            {/* Cost Breakdown by Category */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Desglose por Tipo de IA</CardTitle>
+                <CardDescription>Costes del mes actual por categoría</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {Object.entries(costBreakdown)
+                  .filter(([_, cost]) => cost > 0)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([category, cost]) => {
+                    const percent = totalBreakdownCost > 0 ? (cost / totalBreakdownCost) * 100 : 0;
+                    return (
+                      <div key={category} className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            {getCategoryIcon(category)}
+                            <span>{getCategoryLabel(category)}</span>
+                          </div>
+                          <span className="font-medium">${cost.toFixed(2)}</span>
+                        </div>
+                        <Progress value={percent} className="h-2" />
+                        <div className="text-xs text-muted-foreground text-right">
+                          {percent.toFixed(1)}% del total
+                        </div>
+                      </div>
+                    );
+                  })}
+                
+                {totalBreakdownCost === 0 && (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Sparkles className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p>No hay costes registrados este mes</p>
+                    <p className="text-xs mt-1">Los costes se registrarán automáticamente al generar contenido</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Generation Stats by Engine */}
+            {Object.keys(generationStats.byEngine).length > 0 && (
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Generaciones por Motor</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(generationStats.byEngine)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([engine, count]) => (
+                        <div key={engine} className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                          <span className="text-sm truncate">{engine}</span>
+                          <Badge variant="secondary">{count}</Badge>
+                        </div>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Cost Estimations */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Tarifas de Referencia</CardTitle>
+                <CardDescription>Costes aproximados por tipo de generación</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-2 text-sm">
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span className="flex items-center gap-2"><FileText className="h-4 w-4" /> Episodio (Claude)</span>
+                    <span className="font-mono">~$0.15-0.30</span>
+                  </div>
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span className="flex items-center gap-2"><Users className="h-4 w-4" /> Imagen personaje (FAL)</span>
+                    <span className="font-mono">~$0.02-0.05</span>
+                  </div>
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span className="flex items-center gap-2"><MapPin className="h-4 w-4" /> Imagen localización (FAL)</span>
+                    <span className="font-mono">~$0.03-0.08</span>
+                  </div>
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span className="flex items-center gap-2"><ImageIcon className="h-4 w-4" /> Keyframe (FAL)</span>
+                    <span className="font-mono">~$0.02-0.04</span>
+                  </div>
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span className="flex items-center gap-2"><Film className="h-4 w-4" /> Video 5s (Kling/Veo)</span>
+                    <span className="font-mono">~$0.10-0.25</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="settings" className="space-y-4">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="daily-limit">Daily Limit (USD)</Label>
+                <Label htmlFor="daily-limit">Límite Diario (USD)</Label>
                 <Input
                   id="daily-limit"
                   type="number"
@@ -304,12 +511,12 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                   onChange={(e) => setBudget({ ...budget, daily_limit_usd: parseFloat(e.target.value) || 0 })}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Maximum spend per day before alerts trigger
+                  Gasto máximo por día antes de alertas
                 </p>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="monthly-limit">Monthly Limit (USD)</Label>
+                <Label htmlFor="monthly-limit">Límite Mensual (USD)</Label>
                 <Input
                   id="monthly-limit"
                   type="number"
@@ -318,12 +525,12 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                   onChange={(e) => setBudget({ ...budget, monthly_limit_usd: parseFloat(e.target.value) || 0 })}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Total budget for the calendar month
+                  Presupuesto total para el mes
                 </p>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="alert-threshold">Alert Threshold (%)</Label>
+                <Label htmlFor="alert-threshold">Umbral de Alerta (%)</Label>
                 <Input
                   id="alert-threshold"
                   type="number"
@@ -333,15 +540,15 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                   onChange={(e) => setBudget({ ...budget, alert_threshold_percent: parseInt(e.target.value) || 80 })}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Show warning when usage exceeds this percentage
+                  Mostrar advertencia al superar este porcentaje
                 </p>
               </div>
 
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <Label>Pause on Exceed</Label>
+                  <Label>Pausar al Exceder</Label>
                   <p className="text-xs text-muted-foreground">
-                    Automatically pause generations when budget is exceeded
+                    Pausar automáticamente las generaciones al exceder el presupuesto
                   </p>
                 </div>
                 <Switch
@@ -351,7 +558,7 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
               </div>
 
               <Button onClick={saveBudgetSettings} disabled={savingBudget}>
-                {savingBudget ? 'Saving...' : 'Save Budget Settings'}
+                {savingBudget ? 'Guardando...' : 'Guardar Configuración'}
               </Button>
             </div>
           </TabsContent>

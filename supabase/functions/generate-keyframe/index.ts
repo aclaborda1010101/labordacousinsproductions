@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireAuthOrDemo, requireProjectAccess, authErrorResponse } from "../_shared/auth.ts";
+import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -390,6 +391,8 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const startTime = Date.now();
+  
   try {
     // Auth check
     const { userId, supabase } = await requireAuthOrDemo(req);
@@ -477,6 +480,22 @@ serve(async (req) => {
     }
 
     console.log("=== Keyframe generated successfully ===");
+    
+    // Log generation cost (reuse userId from auth)
+    if (userId) {
+      await logGenerationCost({
+        userId,
+        slotType: 'keyframe',
+        engine: FAL_MODEL,
+        durationMs: Date.now() - startTime,
+        success: true,
+        metadata: {
+          shotId: request.shotId,
+          frameType: request.frameType
+        }
+      });
+    }
+    
     return new Response(
       JSON.stringify({
         success: true,
