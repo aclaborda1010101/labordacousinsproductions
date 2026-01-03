@@ -239,22 +239,26 @@ export function calculateDynamicBatches(
   let baseScenesPerBatch: number;
   let delayMs: number;
   
+  // CRITICAL: Anthropic has 8,000 output tokens/minute limit
+  // Each batch generates ~4,000-6,000 tokens, so we need ~45-60s between calls
+  // Using conservative delays to prevent 429 errors
+  
   if (complexityScore <= 30) {
     baseBatches = 3;
-    baseScenesPerBatch = 7;
-    delayMs = 1500;
+    baseScenesPerBatch = 5; // Reduced from 7 to lower token output
+    delayMs = 45000; // 45 seconds between batches
   } else if (complexityScore <= 60) {
-    baseBatches = 5;
-    baseScenesPerBatch = 5;
-    delayMs = 2000;
-  } else if (complexityScore <= 80) {
-    baseBatches = 6;
+    baseBatches = 4;
     baseScenesPerBatch = 4;
-    delayMs = 2500;
-  } else {
-    baseBatches = 8;
+    delayMs = 50000; // 50 seconds between batches
+  } else if (complexityScore <= 80) {
+    baseBatches = 5;
     baseScenesPerBatch = 3;
-    delayMs = 3000;
+    delayMs = 55000; // 55 seconds between batches
+  } else {
+    baseBatches = 6;
+    baseScenesPerBatch = 3;
+    delayMs = 60000; // 60 seconds between batches (full minute)
   }
   
   // Apply duration multiplier to batches (not scenes per batch, to avoid token issues)
