@@ -418,8 +418,33 @@ serve(async (req) => {
 
     console.log('Visual DNA extracted:', JSON.stringify(visualDNA).substring(0, 500));
 
-    // Save Visual DNA to database
-    const { error: dnaError } = await supabase.from('character_visual_dna').upsert({
+    // Save Visual DNA to database - first check if exists and deactivate old versions
+    const { data: existingDNA } = await supabase
+      .from('character_visual_dna')
+      .select('id, version')
+      .eq('character_id', characterId)
+      .eq('is_active', true);
+
+    // Deactivate existing active versions
+    if (existingDNA && existingDNA.length > 0) {
+      await supabase
+        .from('character_visual_dna')
+        .update({ is_active: false })
+        .eq('character_id', characterId);
+    }
+
+    // Determine next version number
+    const { data: maxVersion } = await supabase
+      .from('character_visual_dna')
+      .select('version')
+      .eq('character_id', characterId)
+      .order('version', { ascending: false })
+      .limit(1);
+
+    const nextVersion = (maxVersion?.[0]?.version || 0) + 1;
+
+    // Insert new Visual DNA version
+    const { error: dnaError } = await supabase.from('character_visual_dna').insert({
       character_id: characterId,
       visual_dna: visualDNA,
       continuity_lock: {
@@ -437,16 +462,16 @@ serve(async (req) => {
         ],
         extracted_from_references: true
       },
-      version: 1,
+      version: nextVersion,
       version_name: 'Reference Extraction',
       is_active: true,
       approved: false
-    }, {
-      onConflict: 'character_id'
     });
 
     if (dnaError) {
       console.error('Error saving Visual DNA:', dnaError);
+    } else {
+      console.log(`Visual DNA saved as version ${nextVersion}`);
     }
 
     // Create reference anchors

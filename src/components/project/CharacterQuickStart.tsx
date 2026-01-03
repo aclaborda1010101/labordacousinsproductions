@@ -5,11 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Upload, Sparkles, Loader2, CheckCircle, User, Camera, 
-  Shirt, RefreshCw, XCircle, Zap, ImagePlus
+  Shirt, RefreshCw, XCircle, Zap, ImagePlus, Edit, Eye, Check
 } from 'lucide-react';
 
 interface CharacterQuickStartProps {
@@ -24,16 +27,17 @@ interface GeneratedSlot {
   status: 'pending' | 'generating' | 'success' | 'error';
   image_url?: string;
   error?: string;
+  slotId?: string;
 }
 
 const SLOT_PIPELINE = [
-  { type: 'closeup', name: 'Identity Closeup', icon: User },
-  { type: 'turnaround', viewAngle: 'front', name: 'Front View', icon: Camera },
-  { type: 'turnaround', viewAngle: 'side', name: 'Side View', icon: Camera },
-  { type: 'turnaround', viewAngle: 'back', name: 'Back View', icon: Camera },
-  { type: 'expression', emotion: 'neutral', name: 'Neutral', icon: User },
-  { type: 'expression', emotion: 'happy', name: 'Happy', icon: User },
-  { type: 'expression', emotion: 'angry', name: 'Angry', icon: User },
+  { type: 'closeup', name: 'Identity Closeup', icon: User, required: true },
+  { type: 'turnaround', viewAngle: 'front', name: 'Front View', icon: Camera, required: true },
+  { type: 'turnaround', viewAngle: 'side', name: 'Side View', icon: Camera, required: false },
+  { type: 'turnaround', viewAngle: 'back', name: 'Back View', icon: Camera, required: false },
+  { type: 'expression', emotion: 'neutral', name: 'Neutral', icon: User, required: true },
+  { type: 'expression', emotion: 'happy', name: 'Happy', icon: User, required: false },
+  { type: 'expression', emotion: 'angry', name: 'Angry', icon: User, required: false },
 ];
 
 export function CharacterQuickStart({ 
@@ -50,13 +54,16 @@ export function CharacterQuickStart({
   const [celebrityMix, setCelebrityMix] = useState('');
   
   // Pipeline state
-  const [step, setStep] = useState<'upload' | 'analyzing' | 'generating' | 'complete'>('upload');
+  const [step, setStep] = useState<'upload' | 'analyzing' | 'validating' | 'generating' | 'complete'>('upload');
   const [analyzing, setAnalyzing] = useState(false);
   const [visualDNA, setVisualDNA] = useState<any>(null);
+  const [editableVisualDNA, setEditableVisualDNA] = useState<any>(null);
   const [generating, setGenerating] = useState(false);
   const [currentSlotIndex, setCurrentSlotIndex] = useState(0);
   const [completedSlots, setCompletedSlots] = useState<GeneratedSlot[]>([]);
   const [cancelController, setCancelController] = useState<AbortController | null>(null);
+  const [uploadedFaceUrl, setUploadedFaceUrl] = useState<string | null>(null);
+  const [uploadedBodyUrl, setUploadedBodyUrl] = useState<string | null>(null);
 
   const faceInputRef = useRef<HTMLInputElement>(null);
   const bodyInputRef = useRef<HTMLInputElement>(null);
@@ -112,6 +119,9 @@ export function CharacterQuickStart({
         `${projectId}/${characterId}/reference_body_${timestamp}.jpg`
       );
 
+      setUploadedFaceUrl(faceUrl);
+      setUploadedBodyUrl(bodyUrl);
+
       toast.info('Analizando referencias con IA...');
 
       // Call analysis function
@@ -130,11 +140,11 @@ export function CharacterQuickStart({
       if (!data?.success) throw new Error(data?.error || 'Error en análisis');
 
       setVisualDNA(data.visualDNA);
-      toast.success('Visual DNA extraído correctamente');
+      setEditableVisualDNA(data.visualDNA);
+      toast.success('Visual DNA extraído - Revisa y valida los valores');
       
-      // Auto-continue to generation
-      setStep('generating');
-      await generatePackPipeline();
+      // Go to validation step instead of auto-generating
+      setStep('validating');
 
     } catch (err: any) {
       console.error('Analysis error:', err);
@@ -143,6 +153,96 @@ export function CharacterQuickStart({
     } finally {
       setAnalyzing(false);
     }
+  };
+
+  const handleValidateAndGenerate = async () => {
+    try {
+      // Save the validated Visual DNA
+      toast.info('Guardando Visual DNA validado...');
+      
+      const { error: saveError } = await supabase
+        .from('character_visual_dna')
+        .upsert({
+          character_id: characterId,
+          visual_dna: editableVisualDNA,
+          version: 1,
+          version_name: 'Quick Start',
+          is_active: true,
+          continuity_lock: {
+            never_change: [],
+            allowed_variants: [],
+            must_avoid: [],
+            version_notes: 'Generated via Quick Start'
+          }
+        }, { 
+          onConflict: 'character_id,version',
+          ignoreDuplicates: false 
+        });
+
+      if (saveError) {
+        console.error('Save DNA error:', saveError);
+        // Try insert without upsert
+        await supabase
+          .from('character_visual_dna')
+          .insert({
+            character_id: characterId,
+            visual_dna: editableVisualDNA,
+            version: 1,
+            version_name: 'Quick Start',
+            is_active: true,
+            continuity_lock: {
+              never_change: [],
+              allowed_variants: [],
+              must_avoid: [],
+              version_notes: 'Generated via Quick Start'
+            }
+          });
+      }
+
+      toast.success('Visual DNA guardado');
+      
+      // Now start generation
+      setStep('generating');
+      await generatePackPipeline();
+
+    } catch (err: any) {
+      console.error('Validation save error:', err);
+      toast.error('Error al guardar Visual DNA');
+    }
+  };
+
+  const createOrGetSlot = async (slotConfig: typeof SLOT_PIPELINE[0], index: number): Promise<string> => {
+    // Check if slot already exists
+    const { data: existingSlot } = await supabase
+      .from('character_pack_slots')
+      .select('id')
+      .eq('character_id', characterId)
+      .eq('slot_type', slotConfig.type)
+      .eq('view_angle', slotConfig.viewAngle || null)
+      .eq('expression_name', slotConfig.emotion || null)
+      .single();
+
+    if (existingSlot) {
+      return existingSlot.id;
+    }
+
+    // Create new slot
+    const { data: newSlot, error } = await supabase
+      .from('character_pack_slots')
+      .insert({
+        character_id: characterId,
+        slot_type: slotConfig.type,
+        slot_index: index,
+        view_angle: slotConfig.viewAngle || null,
+        expression_name: slotConfig.emotion || null,
+        status: 'pending',
+        required: slotConfig.required
+      })
+      .select('id')
+      .single();
+
+    if (error) throw error;
+    return newSlot.id;
   };
 
   const generatePackPipeline = async () => {
@@ -174,11 +274,16 @@ export function CharacterQuickStart({
         toast.info(`Generando ${slotConfig.name}...`);
 
         try {
+          // Create or get the slot ID first
+          const slotId = await createOrGetSlot(slotConfig, i);
+          
+          // Call generate-character with slotId to use proper slot flow
           const { data, error } = await supabase.functions.invoke('generate-character', {
             body: {
+              slotId,
               characterId,
               characterName,
-              characterBio: '', // Will use Visual DNA
+              characterBio: '',
               slotType: slotConfig.type,
               viewAngle: slotConfig.viewAngle,
               expressionName: slotConfig.emotion,
@@ -189,12 +294,14 @@ export function CharacterQuickStart({
 
           if (error) throw error;
 
-          if (data?.success) {
+          if (data?.success || data?.imageUrl) {
+            const imageUrl = data.imageUrl || data.image_url;
             setCompletedSlots(prev => prev.map((s, idx) => 
               idx === i ? { 
                 ...s, 
                 status: 'success', 
-                image_url: data.image_url 
+                image_url: imageUrl,
+                slotId 
               } : s
             ));
             toast.success(`${slotConfig.name} ✓`);
@@ -250,13 +357,49 @@ export function CharacterQuickStart({
     setBodyPreview(null);
     setCelebrityMix('');
     setVisualDNA(null);
+    setEditableVisualDNA(null);
     setCompletedSlots([]);
     setCurrentSlotIndex(0);
+    setUploadedFaceUrl(null);
+    setUploadedBodyUrl(null);
+  };
+
+  const updateDNAField = (path: string[], value: any) => {
+    setEditableVisualDNA((prev: any) => {
+      const newDNA = JSON.parse(JSON.stringify(prev));
+      let current = newDNA;
+      for (let i = 0; i < path.length - 1; i++) {
+        if (!current[path[i]]) current[path[i]] = {};
+        current = current[path[i]];
+      }
+      current[path[path.length - 1]] = value;
+      return newDNA;
+    });
   };
 
   const progress = step === 'generating' 
     ? Math.round(((currentSlotIndex + 1) / SLOT_PIPELINE.length) * 100)
     : step === 'complete' ? 100 : 0;
+
+  // Helper to render editable field
+  const EditableField = ({ label, path, type = 'text' }: { label: string; path: string[]; type?: 'text' | 'number' }) => {
+    let value = editableVisualDNA;
+    for (const key of path) {
+      value = value?.[key];
+    }
+    
+    return (
+      <div className="space-y-1">
+        <Label className="text-xs text-muted-foreground">{label}</Label>
+        <Input
+          value={value || ''}
+          onChange={(e) => updateDNAField(path, type === 'number' ? Number(e.target.value) : e.target.value)}
+          type={type}
+          className="h-8 text-sm"
+        />
+      </div>
+    );
+  };
 
   return (
     <Card className="border-2 border-primary/20 bg-primary/5">
@@ -395,7 +538,7 @@ export function CharacterQuickStart({
               ) : (
                 <>
                   <Sparkles className="mr-2" />
-                  Generar Character Pack
+                  Analizar Referencias
                 </>
               )}
             </Button>
@@ -415,7 +558,111 @@ export function CharacterQuickStart({
           </div>
         )}
 
-        {/* STEP 3: GENERATING */}
+        {/* STEP 3: VALIDATING VISUAL DNA */}
+        {step === 'validating' && editableVisualDNA && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium flex items-center gap-2">
+                  <Eye className="w-4 h-4" />
+                  Revisa el Visual DNA Extraído
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Valida o modifica los valores antes de generar el pack
+                </p>
+              </div>
+              <div className="flex gap-2">
+                {facePreview && (
+                  <img src={facePreview} alt="Face" className="w-12 h-12 rounded-lg object-cover" />
+                )}
+                {bodyPreview && (
+                  <img src={bodyPreview} alt="Body" className="w-12 h-12 rounded-lg object-cover" />
+                )}
+              </div>
+            </div>
+
+            <Tabs defaultValue="physical" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="physical">Físico</TabsTrigger>
+                <TabsTrigger value="face">Rostro</TabsTrigger>
+                <TabsTrigger value="hair">Cabello</TabsTrigger>
+                <TabsTrigger value="celebrity">Likeness</TabsTrigger>
+              </TabsList>
+
+              <ScrollArea className="h-[300px] mt-4">
+                <TabsContent value="physical" className="space-y-4 pr-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <EditableField label="Edad" path={['physical_identity', 'age_exact_for_prompt']} type="number" />
+                    <EditableField label="Género" path={['physical_identity', 'gender_presentation']} />
+                    <EditableField label="Etnia" path={['physical_identity', 'ethnicity', 'primary']} />
+                    <EditableField label="Tono de Piel" path={['physical_identity', 'ethnicity', 'skin_tone_description']} />
+                    <EditableField label="Altura (cm)" path={['physical_identity', 'height', 'cm']} type="number" />
+                    <EditableField label="Tipo de Cuerpo" path={['physical_identity', 'body_type', 'somatotype']} />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="face" className="space-y-4 pr-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <EditableField label="Forma de Cara" path={['face', 'shape']} />
+                    <EditableField label="Color de Ojos" path={['face', 'eyes', 'color_base']} />
+                    <EditableField label="Forma de Ojos" path={['face', 'eyes', 'shape']} />
+                    <EditableField label="Cejas" path={['face', 'eyes', 'eyebrows', 'shape']} />
+                    <EditableField label="Forma de Nariz" path={['face', 'nose', 'bridge', 'shape']} />
+                    <EditableField label="Labios" path={['face', 'mouth', 'lips', 'fullness_upper']} />
+                    <EditableField label="Mandíbula" path={['face', 'jaw_chin', 'jawline', 'shape']} />
+                    <EditableField label="Pómulos" path={['face', 'cheekbones', 'prominence']} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Barba/Vello Facial</Label>
+                    <EditableField label="" path={['face', 'facial_hair', 'type']} />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="hair" className="space-y-4 pr-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <EditableField label="Longitud" path={['hair', 'head_hair', 'length', 'type']} />
+                    <EditableField label="Textura" path={['hair', 'head_hair', 'texture', 'type']} />
+                    <EditableField label="Color Base" path={['hair', 'head_hair', 'color', 'natural_base']} />
+                    <EditableField label="Estilo" path={['hair', 'head_hair', 'style', 'overall_shape']} />
+                    <EditableField label="Línea del Cabello" path={['hair', 'head_hair', 'hairline', 'front']} />
+                    <EditableField label="% Canas" path={['hair', 'head_hair', 'color', 'grey_white', 'percentage']} type="number" />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="celebrity" className="space-y-4 pr-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <EditableField label="Celebridad Principal" path={['visual_references', 'celebrity_likeness', 'primary', 'name']} />
+                    <EditableField label="% Parecido" path={['visual_references', 'celebrity_likeness', 'primary', 'percentage']} type="number" />
+                    <EditableField label="Celebridad Secundaria" path={['visual_references', 'celebrity_likeness', 'secondary', 'name']} />
+                    <EditableField label="% Parecido" path={['visual_references', 'celebrity_likeness', 'secondary', 'percentage']} type="number" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Descripción de la Combinación</Label>
+                    <Textarea
+                      value={editableVisualDNA?.visual_references?.celebrity_likeness?.combination_description || ''}
+                      onChange={(e) => updateDNAField(['visual_references', 'celebrity_likeness', 'combination_description'], e.target.value)}
+                      rows={3}
+                      className="text-sm"
+                    />
+                  </div>
+                </TabsContent>
+              </ScrollArea>
+            </Tabs>
+
+            <div className="flex gap-3 pt-4">
+              <Button variant="outline" onClick={() => setStep('upload')} className="flex-1">
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Volver
+              </Button>
+              <Button onClick={handleValidateAndGenerate} className="flex-1">
+                <Check className="w-4 h-4 mr-2" />
+                Validar y Generar Pack
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: GENERATING */}
         {step === 'generating' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -476,7 +723,7 @@ export function CharacterQuickStart({
           </div>
         )}
 
-        {/* STEP 4: COMPLETE */}
+        {/* STEP 5: COMPLETE */}
         {step === 'complete' && (
           <div className="space-y-4">
             <div className="text-center py-4">
