@@ -149,10 +149,33 @@ Devuelve SOLO el JSON válido con el episodio completo.`;
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 12000,
+        temperature: 0.3,
         system: SYSTEM_PROMPT,
-        messages: [
-          { role: 'user', content: userPrompt }
+        tools: [
+          {
+            name: 'deliver_episode',
+            description: 'Return the episode as a structured object.',
+            input_schema: {
+              type: 'object',
+              properties: {
+                episode_number: { type: 'number' },
+                title: { type: 'string' },
+                synopsis: { type: 'string' },
+                summary: { type: 'string' },
+                duration_min: { type: 'number' },
+                scenes: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                act_structure: { type: 'object', additionalProperties: true },
+                cliffhanger: { type: 'string' },
+                total_dialogue_lines: { type: 'number' },
+                total_action_blocks: { type: 'number' },
+              },
+              required: ['episode_number', 'title', 'synopsis', 'summary', 'duration_min', 'scenes', 'act_structure', 'cliffhanger'],
+              additionalProperties: true,
+            },
+          },
         ],
+        tool_choice: { type: 'tool', name: 'deliver_episode' },
+        messages: [{ role: 'user', content: userPrompt }],
       }),
     });
 
@@ -190,24 +213,57 @@ Devuelve SOLO el JSON válido con el episodio completo.`;
     }
 
     const data = await response.json();
-    const content = data.content?.[0]?.text;
 
-    if (!content) {
-      throw new Error('No content from Anthropic API');
-    }
+    const toolUse = Array.isArray(data?.content)
+      ? data.content.find((c: any) => c?.type === 'tool_use' && c?.name === 'deliver_episode')
+      : null;
 
-    // Parse JSON from response
-    let episode;
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        episode = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
+    let episode: any = toolUse?.input;
+
+    // Fallback: si el modelo no devuelve tool_use, intenta extraer JSON del texto
+    if (!episode) {
+      const textBlock = Array.isArray(data?.content)
+        ? data.content.find((c: any) => c?.type === 'text')
+        : null;
+
+      const content = textBlock?.text ?? data?.content?.[0]?.text;
+
+      if (!content) {
+        return new Response(
+          JSON.stringify({ error: 'Claude no devolvió contenido.' }),
+          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
-    } catch (parseError) {
-      console.error('Parse error:', parseError, 'Content:', content.substring(0, 500));
-      throw new Error('Failed to parse episode JSON');
+
+      const fenceMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+      const candidateRaw =
+        fenceMatch?.[1]?.trim() ??
+        (() => {
+          const start = content.indexOf('{');
+          const end = content.lastIndexOf('}');
+          if (start === -1 || end === -1 || end <= start) return null;
+          return content.slice(start, end + 1);
+        })();
+
+      if (!candidateRaw) {
+        return new Response(
+          JSON.stringify({ error: 'Claude devolvió una respuesta sin JSON.' }),
+          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Reparación mínima: elimina comas finales comunes
+      const candidate = candidateRaw.replace(/,\s*([}\]])/g, '$1');
+
+      try {
+        episode = JSON.parse(candidate);
+      } catch (parseError) {
+        console.error('Parse error:', parseError, 'Content:', content.substring(0, 700));
+        return new Response(
+          JSON.stringify({ error: 'Claude devolvió un JSON inválido. Intenta generar de nuevo.' }),
+          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // Count dialogue lines
