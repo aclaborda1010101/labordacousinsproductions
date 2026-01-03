@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
+import { generateRun, updateRunStatus } from '@/lib/generateRun';
 import { toast } from 'sonner';
 import { 
   Loader2, 
@@ -187,10 +188,27 @@ export default function KeyframeManager({
         .filter(kf => kf.timestamp_sec < slot.timestampSec && kf.image_url)
         .sort((a, b) => b.timestamp_sec - a.timestamp_sec)[0];
 
-      const response = await supabase.functions.invoke('generate-keyframe', {
-        body: {
+      // Get project_id from shot -> scene -> project
+      const { data: shotData } = await supabase
+        .from('shots')
+        .select('scene_id, scenes(project_id)')
+        .eq('id', shotId)
+        .single();
+      
+      const projectId = (shotData?.scenes as any)?.project_id || 'unknown';
+
+      // Use unified generateRun gateway
+      const result = await generateRun({
+        projectId,
+        type: 'keyframe',
+        phase: 'exploration', // MVP default
+        engine: 'nano-banana',
+        engineSelectedBy: 'auto',
+        engineReason: 'Default keyframe engine',
+        prompt: sceneDescription,
+        context: `${shotType} shot, ${slot.frameType} frame at ${slot.timestampSec}s`,
+        params: {
           shotId,
-          sceneDescription,
           shotType,
           duration,
           frameType: slot.frameType,
@@ -209,7 +227,6 @@ export default function KeyframeManager({
           } : undefined,
           cameraMovement,
           blocking,
-          // NEW: Pass all shot details for coherent generation
           shotDetails: {
             focalMm: shotDetails?.focalMm,
             cameraHeight: shotDetails?.cameraHeight,
@@ -221,7 +238,6 @@ export default function KeyframeManager({
             effectiveMode: shotDetails?.effectiveMode
           },
           previousKeyframeUrl: previousKeyframe?.image_url,
-          // NEW: Pass previous keyframe data for continuity
           previousKeyframeData: previousKeyframe ? {
             promptText: previousKeyframe.prompt_text,
             frameGeometry: previousKeyframe.frame_geometry,
@@ -231,24 +247,22 @@ export default function KeyframeManager({
         }
       });
 
-      if (response.error) throw response.error;
-
-      if (response.data?.success) {
-        // Refresh keyframes
-        const { data: updated } = await supabase
-          .from('keyframes')
-          .select('*')
-          .eq('shot_id', shotId)
-          .order('timestamp_sec', { ascending: true });
-
-        const typedKeyframes = (updated || []) as unknown as Keyframe[];
-
-        setKeyframes(typedKeyframes);
-        onKeyframesChange?.(typedKeyframes);
-        toast.success(`Keyframe ${slot.frameType} generado`);
-      } else {
-        throw new Error(response.data?.error || 'Generation failed');
+      if (!result.ok) {
+        throw new Error(result.error || 'Generation failed');
       }
+
+      // Refresh keyframes
+      const { data: updated } = await supabase
+        .from('keyframes')
+        .select('*')
+        .eq('shot_id', shotId)
+        .order('timestamp_sec', { ascending: true });
+
+      const typedKeyframes = (updated || []) as unknown as Keyframe[];
+
+      setKeyframes(typedKeyframes);
+      onKeyframesChange?.(typedKeyframes);
+      toast.success(`Keyframe ${slot.frameType} generado (runId: ${result.runId?.slice(0, 8)})`);
     } catch (error) {
       console.error('Error generating keyframe:', error);
       toast.error('Error al generar keyframe');

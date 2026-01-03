@@ -1871,13 +1871,25 @@ export type Database = {
           context: string | null
           created_at: string
           engine: string
+          engine_reason: string | null
+          engine_selected_by: string | null
+          error: string | null
+          generation_time_ms: number | null
           id: string
           input_intent: string
+          is_canon: boolean | null
+          model: string | null
           negative_prompt: string | null
           output_text: string | null
+          output_type: string | null
           output_url: string | null
+          payload: Json | null
+          phase: string | null
           project_id: string
+          prompt: string | null
           rule_plan: Json | null
+          run_type: string | null
+          status: string | null
           suggestions: Json | null
           triggered_rules: string[] | null
           used_asset_ids: string[] | null
@@ -1889,13 +1901,25 @@ export type Database = {
           context?: string | null
           created_at?: string
           engine: string
+          engine_reason?: string | null
+          engine_selected_by?: string | null
+          error?: string | null
+          generation_time_ms?: number | null
           id?: string
           input_intent: string
+          is_canon?: boolean | null
+          model?: string | null
           negative_prompt?: string | null
           output_text?: string | null
+          output_type?: string | null
           output_url?: string | null
+          payload?: Json | null
+          phase?: string | null
           project_id: string
+          prompt?: string | null
           rule_plan?: Json | null
+          run_type?: string | null
+          status?: string | null
           suggestions?: Json | null
           triggered_rules?: string[] | null
           used_asset_ids?: string[] | null
@@ -1907,13 +1931,25 @@ export type Database = {
           context?: string | null
           created_at?: string
           engine?: string
+          engine_reason?: string | null
+          engine_selected_by?: string | null
+          error?: string | null
+          generation_time_ms?: number | null
           id?: string
           input_intent?: string
+          is_canon?: boolean | null
+          model?: string | null
           negative_prompt?: string | null
           output_text?: string | null
+          output_type?: string | null
           output_url?: string | null
+          payload?: Json | null
+          phase?: string | null
           project_id?: string
+          prompt?: string | null
           rule_plan?: Json | null
+          run_type?: string | null
+          status?: string | null
           suggestions?: Json | null
           triggered_rules?: string[] | null
           used_asset_ids?: string[] | null
