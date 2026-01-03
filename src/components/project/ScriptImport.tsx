@@ -97,7 +97,38 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [proMode, setProMode] = useState(false);
   const [targets, setTargets] = useState<CalculatedTargets | null>(null);
 
-  // Pipeline V2 state
+  // Pipeline V2 state - with localStorage persistence
+  const PIPELINE_STORAGE_KEY = `script_pipeline_${projectId}`;
+  
+  const loadPipelineState = () => {
+    try {
+      const stored = localStorage.getItem(PIPELINE_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Check if pipeline is still running (less than 30 min old)
+        if (parsed.startedAt && Date.now() - parsed.startedAt < 30 * 60 * 1000) {
+          return parsed;
+        }
+      }
+    } catch {}
+    return null;
+  };
+
+  const savePipelineState = (state: any) => {
+    try {
+      localStorage.setItem(PIPELINE_STORAGE_KEY, JSON.stringify({
+        ...state,
+        startedAt: state.startedAt || Date.now()
+      }));
+    } catch {}
+  };
+
+  const clearPipelineState = () => {
+    try {
+      localStorage.removeItem(PIPELINE_STORAGE_KEY);
+    } catch {}
+  };
+
   const [pipelineRunning, setPipelineRunning] = useState(false);
   const [pipelineProgress, setPipelineProgress] = useState(0);
   const [currentEpisodeGenerating, setCurrentEpisodeGenerating] = useState<number | null>(null);
@@ -111,6 +142,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     { id: 'save', label: 'Guardando', status: 'pending' },
   ]);
   const [currentStepLabel, setCurrentStepLabel] = useState<string>('');
+  const [backgroundGeneration, setBackgroundGeneration] = useState(false);
 
   // Timing model (aprende tiempos reales para estimar ETA)
   const [timingModel, setTimingModel] = useState(() => loadScriptTimingModel());
@@ -146,6 +178,83 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Scene segmentation state
   const [segmenting, setSegmenting] = useState(false);
   const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
+
+  // Restore pipeline state on mount and poll for updates
+  useEffect(() => {
+    const storedState = loadPipelineState();
+    if (storedState && storedState.pipelineRunning) {
+      setBackgroundGeneration(true);
+      setPipelineRunning(true);
+      setPipelineProgress(storedState.progress || 0);
+      setCurrentEpisodeGenerating(storedState.currentEpisode || null);
+      setTotalEpisodesToGenerate(storedState.totalEpisodes || 0);
+      setGeneratedEpisodesList(storedState.episodes || []);
+      setLightOutline(storedState.outline || null);
+      setOutlineApproved(true);
+      setPipelineSteps(prev => prev.map(s => 
+        s.id === 'outline' || s.id === 'approval' ? { ...s, status: 'success' } :
+        s.id === 'episodes' ? { ...s, status: 'running', label: `Generando episodio ${storedState.currentEpisode || '?'}...` } : s
+      ));
+      toast.info('Generación en segundo plano detectada. Recargando estado...');
+    }
+  }, [projectId]);
+
+  // Poll for script updates when background generation is active
+  useEffect(() => {
+    if (!backgroundGeneration) return;
+    
+    const pollInterval = setInterval(async () => {
+      const { data: scriptData } = await supabase
+        .from('scripts')
+        .select('parsed_json, created_at')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      
+      if (scriptData?.parsed_json) {
+        const parsed = scriptData.parsed_json as Record<string, unknown>;
+        const episodes = (parsed.episodes as any[]) || [];
+        
+        if (episodes.length > 0) {
+          const storedState = loadPipelineState();
+          const previousCount = storedState?.episodes?.length || 0;
+          
+          if (episodes.length > previousCount) {
+            // New episodes detected!
+            setGeneratedEpisodesList(episodes);
+            setGeneratedScript(parsed);
+            
+            const progress = 10 + Math.round((episodes.length / (storedState?.totalEpisodes || episodesCount)) * 75);
+            setPipelineProgress(progress);
+            setCurrentEpisodeGenerating(episodes.length + 1);
+            
+            toast.success(`Episodio ${episodes.length} generado en segundo plano`);
+            
+            // Update stored state
+            savePipelineState({
+              ...storedState,
+              episodes,
+              progress,
+              currentEpisode: episodes.length + 1
+            });
+          }
+          
+          // Check if complete
+          if (episodes.length >= (storedState?.totalEpisodes || episodesCount)) {
+            setBackgroundGeneration(false);
+            setPipelineRunning(false);
+            setPipelineProgress(100);
+            clearPipelineState();
+            setPipelineSteps(prev => prev.map(s => ({ ...s, status: 'success' })));
+            toast.success('¡Generación en segundo plano completada!');
+          }
+        }
+      }
+    }, 5000); // Poll every 5 seconds
+    
+    return () => clearInterval(pollInterval);
+  }, [backgroundGeneration, projectId, episodesCount]);
 
   // Load existing script
   useEffect(() => {
@@ -283,6 +392,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     const totalEpisodes = lightOutline.episode_beats?.length || episodesCount;
     setTotalEpisodesToGenerate(totalEpisodes);
 
+    // Save initial pipeline state for background recovery
+    savePipelineState({
+      pipelineRunning: true,
+      progress: 10,
+      currentEpisode: 1,
+      totalEpisodes,
+      episodes: [],
+      outline: lightOutline,
+      startedAt: Date.now()
+    });
+
     // Total batches = 3 per episode
     const totalBatches = totalEpisodes * 3;
     let completedBatches = 0;
@@ -380,6 +500,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         episodes.push(episode);
         setGeneratedEpisodesList([...episodes]);
 
+        // Update localStorage state for background recovery
+        const currentProgress = 10 + Math.round((episodes.length / totalEpisodes) * 75);
+        savePipelineState({
+          pipelineRunning: true,
+          progress: currentProgress,
+          currentEpisode: epNum + 1,
+          totalEpisodes,
+          episodes: [...episodes],
+          outline: lightOutline,
+          startedAt: loadPipelineState()?.startedAt || Date.now()
+        });
+
         if (!episodeError) {
           toast.success(`Episodio ${epNum} completado ✓ (${episode.scenes.length} escenas)`);
         }
@@ -440,6 +572,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setCurrentEpisodeGenerating(null);
       setEpisodeStartedAtMs(null);
       setCancelController(null);
+      setBackgroundGeneration(false);
+      clearPipelineState(); // Clear localStorage on completion
     }
   };
 
@@ -452,6 +586,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setPipelineRunning(false);
     setCurrentEpisodeGenerating(null);
     setEpisodeStartedAtMs(null);
+    setBackgroundGeneration(false);
+    clearPipelineState();
     toast.info('Generación cancelada. Los episodios ya generados se han conservado.');
   };
 
