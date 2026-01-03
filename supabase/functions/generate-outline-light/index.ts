@@ -416,6 +416,29 @@ serve(async (req) => {
       }
     }
 
+    // Episode count: prefer explicit mention in the idea (e.g. "8 capítulos"), otherwise use UI selection
+    const defaultEpisodesCount = format === 'series'
+      ? Math.max(1, Number(episodesCount || 6))
+      : 1;
+
+    const extractEpisodeCountFromIdea = (text: string): number | null => {
+      if (!text) return null;
+      const normalized = text.toLowerCase();
+      const m = normalized.match(/(?:^|[^0-9])(\d{1,3})\s*(episodios?|cap[ií]tulos?)\b/);
+      if (!m) return null;
+      const n = Number(m[1]);
+      if (!Number.isFinite(n) || n <= 0) return null;
+      return n;
+    };
+
+    const explicitEpisodesCount = format === 'series'
+      ? extractEpisodeCountFromIdea(idea)
+      : null;
+
+    const desiredEpisodesCount = format === 'series'
+      ? (explicitEpisodesCount ?? defaultEpisodesCount)
+      : 1;
+
     // Select narrative mode prompt
     const modePrompt = NARRATIVE_MODE_PROMPTS[narrativeMode as keyof typeof NARRATIVE_MODE_PROMPTS] || NARRATIVE_MODE_PROMPTS.serie_adictiva;
 
@@ -429,7 +452,7 @@ DENSIDAD NARRATIVA (OBLIGATORIO CUMPLIR)
 - Extras con líneas de diálogo: MÍNIMO ${densityTargets.extras_min || 15}
 - Localizaciones distintas: MÍNIMO ${densityTargets.locations_min || 8}
 - Props clave (objetos importantes para la trama): MÍNIMO ${densityTargets.hero_props_min || 5}
-- Setpieces (escenas de alto impacto visual): MÍNIMO ${densityTargets.setpieces_min || 4}
+- Setpieces (escenas de alto impacto visual): MÍNNIMO ${densityTargets.setpieces_min || 4}
 - Subtramas activas: MÍNIMO ${densityTargets.subplots_min || 3}
 - Giros/twists por episodio: MÍNIMO ${densityTargets.twists_min || 2}
 ${densityTargets.scenes_per_episode ? `- Escenas por episodio: OBJETIVO ${densityTargets.scenes_per_episode}` : ''}
@@ -452,21 +475,16 @@ Idioma de respuesta: ${language || 'es-ES'}`;
 IDEA: ${idea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
-FORMATO POR DEFECTO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
+FORMATO: ${format === 'series' ? `Serie de ${desiredEpisodesCount} episodios` : 'Película'}
 MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-EXTRACCIÓN DE NÚMERO DE EPISODIOS (PRIORIDAD MÁXIMA)
+REGLA DURA DE EPISODIOS (OBLIGATORIO)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-ANTES de generar, analiza la IDEA buscando menciones de cantidad de episodios/capítulos:
-- "8 episodios", "8 capítulos", "serie de 10 episodios", "5 capítulos", etc.
-- Si la IDEA menciona un número específico de episodios/capítulos → USA ESE NÚMERO (ignora el FORMATO POR DEFECTO)
-- Si la IDEA NO menciona cantidad → usa el FORMATO POR DEFECTO (${episodesCount || 6})
-
-Ejemplos:
-- IDEA: "Una serie de 8 capítulos sobre..." → Genera EXACTAMENTE 8 episodios
-- IDEA: "Drama en 12 episodios..." → Genera EXACTAMENTE 12 episodios
-- IDEA: "Una historia sobre un detective" (sin número) → Usa ${episodesCount || 6} episodios
+- "Capítulos" = EPISODIOS.
+- Debes generar EXACTAMENTE ${desiredEpisodesCount} episodios.
+- episode_beats debe contener EXACTAMENTE ${desiredEpisodesCount} elementos numerados 1..${desiredEpisodesCount}.
+- Si tu salida no tiene ${desiredEpisodesCount} beats, es INCORRECTA y debes rehacerla.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 EXTRACCIÓN DE ENTIDADES (PRIORIDAD MÁXIMA)
@@ -502,7 +520,9 @@ MÍNIMOS POR DEFECTO (si la idea no especifica más):
 Usa la herramienta deliver_outline para entregar el resultado.
 Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
 
-    console.log(`[OUTLINE] Generating with ${modelConfig.apiModel} (${modelConfig.provider}) | Mode: ${narrativeMode || 'serie_adictiva'}...`);
+    console.log(
+      `[OUTLINE] Generating with ${modelConfig.apiModel} (${modelConfig.provider}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${desiredEpisodesCount}...`
+    );
 
     // Call the appropriate API
     let outline: any;
@@ -512,19 +532,71 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       outline = await callAnthropic(apiKey, systemPrompt, userPrompt, modelConfig);
     }
 
-    // Add narrative mode to outline if not present
-    if (!outline.narrative_mode) {
-      outline.narrative_mode = narrativeMode || 'serie_adictiva';
-    }
+    const expectedEpisodes = format === 'series' ? desiredEpisodesCount : 1;
 
-    // Validate episode_beats
-    if (!outline.episode_beats || outline.episode_beats.length === 0) {
-      outline.episode_beats = Array.from({ length: episodesCount || 1 }, (_, i) => ({
+    const buildPlaceholderBeats = (count: number) =>
+      Array.from({ length: count }, (_, i) => ({
         episode: i + 1,
         title: `Episodio ${i + 1}`,
         summary: 'Por generar',
         cliffhanger: 'Por definir'
       }));
+
+    const hasEpisodeBeats = Array.isArray(outline?.episode_beats) && outline.episode_beats.length > 0;
+
+    // If AI returned wrong number of episode beats, retry once with explicit correction
+    if (format === 'series' && hasEpisodeBeats && outline.episode_beats.length !== expectedEpisodes) {
+      console.warn(
+        `[OUTLINE QC] episode_beats mismatch (got ${outline.episode_beats.length}, expected ${expectedEpisodes}). Retrying once...`
+      );
+
+      const retryPrompt = `${userPrompt}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+CORRECCIÓN OBLIGATORIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Tu respuesta anterior devolvió ${outline.episode_beats.length} episodios, pero deben ser EXACTAMENTE ${expectedEpisodes}.
+Reescribe el OUTLINE COMPLETO cumpliendo EXACTAMENTE ${expectedEpisodes} episodios.
+episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expectedEpisodes}).`;
+
+      try {
+        const retried = modelConfig.provider === 'openai'
+          ? await callOpenAI(apiKey, systemPrompt, retryPrompt, modelConfig)
+          : await callAnthropic(apiKey, systemPrompt, retryPrompt, modelConfig);
+
+        if (Array.isArray(retried?.episode_beats) && retried.episode_beats.length > 0) {
+          outline = retried;
+        }
+      } catch (e) {
+        console.warn('[OUTLINE QC] Retry failed, will enforce beats length locally:', e);
+      }
+    }
+
+    // Final enforcement: guarantee episode_beats length and minimal shape
+    if (!Array.isArray(outline?.episode_beats) || outline.episode_beats.length === 0) {
+      outline.episode_beats = buildPlaceholderBeats(expectedEpisodes);
+    } else if (format === 'series') {
+      const trimmed = outline.episode_beats.slice(0, expectedEpisodes);
+      while (trimmed.length < expectedEpisodes) {
+        trimmed.push({
+          episode: trimmed.length + 1,
+          title: `Episodio ${trimmed.length + 1}`,
+          summary: 'Por generar',
+          cliffhanger: 'Por definir'
+        });
+      }
+      outline.episode_beats = trimmed.map((b: any, i: number) => ({
+        ...b,
+        episode: i + 1,
+        title: b?.title || `Episodio ${i + 1}`,
+        summary: b?.summary || 'Por generar',
+        cliffhanger: b?.cliffhanger || 'Por definir'
+      }));
+    }
+
+    // Add narrative mode to outline if not present
+    if (!outline.narrative_mode) {
+      outline.narrative_mode = narrativeMode || 'serie_adictiva';
     }
 
     // QC Check: Ensure each episode has cliffhanger
