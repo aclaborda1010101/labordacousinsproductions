@@ -49,7 +49,9 @@ import {
   Trash2,
   Book,
   History,
-  RotateCcw
+  RotateCcw,
+  Video,
+  Play
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -2361,8 +2363,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                                 {(ep.scenes || []).map((scene: any, sceneIdx: number) => (
                                   <div key={sceneIdx} className="border rounded-lg overflow-hidden">
                                     {/* Scene Header - Slugline */}
-                                    <div className="bg-foreground text-background px-4 py-2 font-mono text-sm font-bold">
-                                      {scene.scene_number || sceneIdx + 1}. {scene.slugline || 'SIN SLUGLINE'}
+                                    <div className="bg-foreground text-background px-4 py-2 font-mono text-sm font-bold flex items-center justify-between">
+                                      <span>{scene.scene_number || sceneIdx + 1}. {scene.slugline || 'SIN SLUGLINE'}</span>
+                                      {segmentedEpisodes.has(epIdx + 1) && (
+                                        <Button
+                                          size="sm"
+                                          variant="secondary"
+                                          className="h-7 text-xs bg-background text-foreground hover:bg-muted"
+                                          onClick={() => navigate(`/projects/${projectId}/scenes?episode=${epIdx + 1}&scene=${scene.scene_number || sceneIdx + 1}`)}
+                                        >
+                                          <Video className="w-3 h-3 mr-1" />
+                                          Producir
+                                        </Button>
+                                      )}
                                     </div>
                                     
                                     <div className="p-4 space-y-3">
