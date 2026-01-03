@@ -248,6 +248,11 @@ El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para
   }
 }
 
+// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
+// See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
+// nano-banana-pro = google/gemini-2.5-flash-image (maximum character consistency for Veo input)
+const KEYFRAME_IMAGE_ENGINE = 'google/gemini-2.5-flash-image';
+
 async function generateImageWithNanoBananaPro(
   prompt: string,
   negativePrompt: string,
@@ -258,7 +263,7 @@ async function generateImageWithNanoBananaPro(
     throw new Error("LOVABLE_API_KEY is not configured");
   }
 
-  console.log("Generating keyframe image with nano-banana-pro (Gemini 3 Pro Image)...");
+  console.log(`Generating keyframe image with ${KEYFRAME_IMAGE_ENGINE}...`);
   console.log("Prompt:", prompt.substring(0, 200) + "...");
 
   // Build message content with optional reference images
@@ -286,7 +291,7 @@ async function generateImageWithNanoBananaPro(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-3-pro-image-preview",
+      model: KEYFRAME_IMAGE_ENGINE,
       messages: [
         {
           role: "user",

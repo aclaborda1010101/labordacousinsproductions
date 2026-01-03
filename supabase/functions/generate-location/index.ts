@@ -116,6 +116,9 @@ Requirements:
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
+      // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
+      // See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
+      // Ideal: FLUX (not available in gateway), using gemini-3-pro-image for cinematic quality
       body: JSON.stringify({
         model: "google/gemini-3-pro-image-preview",
         messages: [
