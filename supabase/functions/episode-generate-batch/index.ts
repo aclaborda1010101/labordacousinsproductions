@@ -7,14 +7,35 @@ const corsHeaders = {
 };
 
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
-// See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
-// Scripts use Claude claude-sonnet-4-20250514 for professional screenplay quality
 const SCRIPT_MODEL = "claude-sonnet-4-20250514";
+
+// MASTER SHOWRUNNER: Narrative mode specific instructions
+const NARRATIVE_MODE_SCENE_RULES = {
+  serie_adictiva: `REGLAS SERIE ADICTIVA:
+- Cada escena debe tener CONFLICTO visible (no implícito)
+- Diálogos con SUBTEXTO: lo no dicho importa tanto como lo dicho
+- Termina escenas con TENSIÓN o PREGUNTA sin resolver
+- Ritmo ALTO: entra tarde, sal temprano
+- Si es la última escena del batch 2: CLIFFHANGER del episodio`,
+
+  voz_de_autor: `REGLAS VOZ DE AUTOR:
+- Mantén el TEMPO narrativo del outline (si es lento, respétalo)
+- Diálogos con DENSIDAD literaria (no explicativos)
+- Acciones que REVELAN en lugar de exponer
+- Cada escena debe resonar con los TEMAS del outline
+- Si hay iconos recurrentes, úsalos visualmente`,
+
+  giro_imprevisible: `REGLAS GIRO IMPREVISIBLE:
+- Incluye información que PARECE significar una cosa pero significa otra
+- Planta SEMILLAS de giros futuros (foreshadowing sutil)
+- Al menos una escena debe tener DOBLE LECTURA
+- Personajes pueden mentir o tener información que el espectador no tiene
+- Si es la última escena del batch 2: giro o revelación parcial que recontextualice`
+};
 
 /**
  * Genera UN SOLO batch de escenas (5 escenas).
  * El frontend llama 3 veces: batch 0 (1-5), batch 1 (6-10), batch 2 (11-15).
- * Esto evita timeouts de requests largas.
  */
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -24,7 +45,7 @@ serve(async (req) => {
   const startedAt = Date.now();
 
   try {
-    const { outline, episodeNumber, language, batchIndex, previousScenes } = await req.json();
+    const { outline, episodeNumber, language, batchIndex, previousScenes, narrativeMode } = await req.json();
 
     if (!outline || !episodeNumber || typeof batchIndex !== "number") {
       return new Response(
@@ -47,15 +68,16 @@ serve(async (req) => {
     // Calculate scene range for this batch
     const sceneStart = batchIndex * 5 + 1;
     const sceneEnd = sceneStart + 4;
+    const isLastBatch = batchIndex === 2;
 
-    console.log(`[EP${episodeNumber} BATCH${batchIndex}] Generating scenes ${sceneStart}-${sceneEnd}...`);
+    console.log(`[EP${episodeNumber} BATCH${batchIndex}] Generating scenes ${sceneStart}-${sceneEnd} | Mode: ${narrativeMode || 'serie_adictiva'}...`);
 
     const charactersRef = outline.main_characters
-      ?.map((c: any) => `- ${c.name} (${c.role || "personaje"}): ${c.description || ""}`)
+      ?.map((c: any) => `- ${c.name} (${c.role || "personaje"}): ${c.description || ""} ${c.secret ? `[SECRETO: ${c.secret}]` : ''}`)
       .join("\n") || "";
 
     const locationsRef = outline.main_locations
-      ?.map((l: any) => `- ${l.name} (${l.type || "INT"}): ${l.description || ""}`)
+      ?.map((l: any) => `- ${l.name} (${l.type || "INT"}): ${l.description || ""} ${l.atmosphere ? `[Atmósfera: ${l.atmosphere}]` : ''}`)
       .join("\n") || "";
 
     const priorSummary = Array.isArray(previousScenes)
@@ -67,12 +89,25 @@ serve(async (req) => {
     const seriesTitle = outline.title || "Sin título";
     const episodeTitle = episodeBeat.title || `Episodio ${episodeNumber}`;
     const episodeBeatSummary = episodeBeat.summary || "Por definir";
+    const episodeCliffhanger = episodeBeat.cliffhanger || "";
+    const episodeIrreversible = episodeBeat.irreversible_event || "";
 
-    const prompt = `Eres un guionista profesional de series premium.
+    // Get narrative mode rules
+    const modeRules = NARRATIVE_MODE_SCENE_RULES[narrativeMode as keyof typeof NARRATIVE_MODE_SCENE_RULES] || NARRATIVE_MODE_SCENE_RULES.serie_adictiva;
+
+    const prompt = `Eres MASTER_SHOWRUNNER_ENGINE: guionista de series premium de nivel estudio.
 
 SERIE: ${seriesTitle}
 EPISODIO ${episodeNumber}: ${episodeTitle}
+MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
+
 SINOPSIS DEL EPISODIO: ${episodeBeatSummary}
+${episodeCliffhanger ? `CLIFFHANGER PLANIFICADO: ${episodeCliffhanger}` : ''}
+${episodeIrreversible ? `EVENTO IRREVERSIBLE: ${episodeIrreversible}` : ''}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+${modeRules}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PERSONAJES DISPONIBLES:
 ${charactersRef || "- (Crear personajes necesarios)"}
@@ -85,21 +120,29 @@ IDIOMA DE LOS DIÁLOGOS: ${language || "es-ES"}
 ${priorSummary ? `ESCENAS YA GENERADAS (para continuidad):\n${priorSummary}\n` : ""}
 
 TAREA: Genera EXACTAMENTE 5 escenas (números ${sceneStart} a ${sceneEnd}).
+${isLastBatch ? '\n⚠️ ÚLTIMA BATCH: La escena 15 DEBE contener el CLIFFHANGER del episodio.' : ''}
 
-REQUISITOS POR ESCENA:
-- scene_number: debe estar entre ${sceneStart} y ${sceneEnd}
-- slugline: formato "INT./EXT. LOCALIZACIÓN - DÍA/NOCHE"
-- action: 80-160 palabras de descripción visual cinematográfica
-- dialogue: MÍNIMO 6 intercambios de diálogo
-- Cada escena debe tener conflicto dramático claro
-- mood, music_cue, sfx_cue, duration_estimate_sec
+REQUISITOS QC POR ESCENA:
+✓ scene_number: entre ${sceneStart} y ${sceneEnd}
+✓ slugline: "INT./EXT. LOCALIZACIÓN - DÍA/NOCHE"
+✓ action: 80-160 palabras de descripción VISUAL cinematográfica
+✓ dialogue: MÍNIMO 6 intercambios (con subtexto, no exposición)
+✓ conflict: ¿Cuál es el conflicto de esta escena?
+✓ consequence: ¿Qué cambia después de esta escena?
+✓ mood, music_cue, sfx_cue, duration_estimate_sec
+
+PROHIBIDO:
+✗ Escenas de "transición" sin conflicto
+✗ Diálogos explicativos o expositivos
+✗ Acciones vagas ("hablan sobre X")
+✗ Cerrar escenas sin tensión
 
 Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
 
     const tools = [
       {
         name: "generate_scene_batch",
-        description: "Genera exactamente 5 escenas consecutivas del episodio",
+        description: "Genera exactamente 5 escenas cinematográficas con calidad MASTER SHOWRUNNER",
         input_schema: {
           type: "object",
           properties: {
@@ -116,8 +159,10 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
                   scene_number: { type: "number" },
                   slugline: { type: "string" },
                   summary: { type: "string" },
-                  action: { type: "string", description: "80-160 palabras" },
+                  action: { type: "string", description: "80-160 palabras VISUALES" },
                   characters: { type: "array", items: { type: "string" } },
+                  conflict: { type: "string", description: "El conflicto central de esta escena" },
+                  consequence: { type: "string", description: "Qué cambia después de esta escena" },
                   dialogue: {
                     type: "array",
                     items: {
@@ -135,8 +180,9 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
                   vfx: { type: "array", items: { type: "string" } },
                   mood: { type: "string" },
                   duration_estimate_sec: { type: "number" },
+                  is_cliffhanger: { type: "boolean", description: "True si esta escena es el cliffhanger del episodio" }
                 },
-                required: ["scene_number", "slugline", "action", "characters", "dialogue", "mood", "duration_estimate_sec"],
+                required: ["scene_number", "slugline", "action", "characters", "dialogue", "conflict", "mood", "duration_estimate_sec"],
               },
             },
           },
@@ -148,7 +194,7 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
     // Try up to 2 attempts
     let lastError: string | null = null;
     for (let attempt = 1; attempt <= 2; attempt++) {
-      const temperature = attempt === 1 ? 0.7 : 0.5;
+      const temperature = attempt === 1 ? 0.75 : 0.6;
 
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -159,7 +205,7 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
         },
         body: JSON.stringify({
           model: SCRIPT_MODEL,
-          max_tokens: 5000,
+          max_tokens: 6000,
           temperature,
           tools,
           tool_choice: { type: "tool", name: "generate_scene_batch" },
@@ -220,8 +266,14 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
         continue;
       }
 
+      // QC Check: Ensure scenes have conflict
+      const scenesWithoutConflict = scenes.filter((s: any) => !s.conflict || s.conflict.length < 10);
+      if (scenesWithoutConflict.length > 2) {
+        console.warn(`[EP${episodeNumber} BATCH${batchIndex}] QC Warning: ${scenesWithoutConflict.length} scenes without clear conflict`);
+      }
+
       const durationMs = Date.now() - startedAt;
-      console.log(`[EP${episodeNumber} BATCH${batchIndex}] ✅ Success in ${durationMs}ms`);
+      console.log(`[EP${episodeNumber} BATCH${batchIndex}] ✅ Success in ${durationMs}ms | Mode: ${narrativeMode || 'serie_adictiva'}`);
 
       // Log generation cost
       const userId = extractUserId(req.headers.get('authorization'));
@@ -235,7 +287,8 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
           metadata: {
             episodeNumber,
             batchIndex,
-            scenesGenerated: 5
+            scenesGenerated: 5,
+            narrativeMode: narrativeMode || 'serie_adictiva'
           }
         });
       }
@@ -249,6 +302,7 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
           synopsis: toolUse.input.synopsis || null,
           scenes,
           durationMs,
+          narrativeMode: narrativeMode || 'serie_adictiva'
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );

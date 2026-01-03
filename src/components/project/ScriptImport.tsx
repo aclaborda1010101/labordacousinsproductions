@@ -89,6 +89,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [language, setLanguage] = useState('es-ES');
   const [references, setReferences] = useState('');
   const [complexity, setComplexity] = useState<'simple' | 'medium' | 'high'>('medium');
+  
+  // MASTER SHOWRUNNER: Narrative mode
+  const [narrativeMode, setNarrativeMode] = useState<'serie_adictiva' | 'voz_de_autor' | 'giro_imprevisible'>('serie_adictiva');
 
   // Auto/Pro mode
   const [proMode, setProMode] = useState(false);
@@ -223,7 +226,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           format,
           genre,
           tone,
-          language
+          language,
+          narrativeMode
         }
       });
       const durationMs = Date.now() - t0;
@@ -310,15 +314,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           setEpisodeStartedAtMs(t0);
 
           try {
-            const { data, error } = await supabase.functions.invoke('episode-generate-batch', {
-              body: {
-                outline: lightOutline,
-                episodeNumber: epNum,
-                language,
-                batchIndex: batchIdx,
-                previousScenes: allScenes,
-              }
-            });
+              const { data, error } = await supabase.functions.invoke('episode-generate-batch', {
+                body: {
+                  outline: lightOutline,
+                  episodeNumber: epNum,
+                  language,
+                  batchIndex: batchIdx,
+                  previousScenes: allScenes,
+                  narrativeMode
+                }
+              });
 
             const batchDurationMs = Date.now() - t0;
 
@@ -1321,6 +1326,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     value={references}
                     onChange={(e) => setReferences(e.target.value)}
                   />
+                </div>
+
+                {/* MASTER SHOWRUNNER: Modo Narrativo */}
+                <div className="space-y-2 pt-4 border-t">
+                  <Label className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Modo Narrativo
+                  </Label>
+                  <Select value={narrativeMode} onValueChange={(v: 'serie_adictiva' | 'voz_de_autor' | 'giro_imprevisible') => setNarrativeMode(v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="serie_adictiva">
+                        🔥 Serie Adictiva
+                      </SelectItem>
+                      <SelectItem value="voz_de_autor">
+                        ✍️ Voz de Autor
+                      </SelectItem>
+                      <SelectItem value="giro_imprevisible">
+                        🔀 Giro Imprevisible
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    {narrativeMode === 'serie_adictiva' && 'Ritmo alto, cliffhangers potentes, eventos irreversibles cada episodio.'}
+                    {narrativeMode === 'voz_de_autor' && 'Respeta el ADN del texto original, densidad literaria, temas recurrentes.'}
+                    {narrativeMode === 'giro_imprevisible' && 'Giros estructurales, narradores no fiables, recontextualizaciones (Mr. Robot, Dark).'}
+                  </p>
                 </div>
               </CardContent>
             </Card>
