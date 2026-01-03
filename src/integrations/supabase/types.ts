@@ -1034,6 +1034,146 @@ export type Database = {
           },
         ]
       }
+      editorial_decisions_log: {
+        Row: {
+          created_at: string
+          decision_type: string
+          engine_id: string
+          id: string
+          metadata: Json | null
+          modified_prompt: string | null
+          original_intent: string | null
+          outcome: string | null
+          project_id: string
+          rules_applied: string[] | null
+          user_action: string | null
+        }
+        Insert: {
+          created_at?: string
+          decision_type: string
+          engine_id: string
+          id?: string
+          metadata?: Json | null
+          modified_prompt?: string | null
+          original_intent?: string | null
+          outcome?: string | null
+          project_id: string
+          rules_applied?: string[] | null
+          user_action?: string | null
+        }
+        Update: {
+          created_at?: string
+          decision_type?: string
+          engine_id?: string
+          id?: string
+          metadata?: Json | null
+          modified_prompt?: string | null
+          original_intent?: string | null
+          outcome?: string | null
+          project_id?: string
+          rules_applied?: string[] | null
+          user_action?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "editorial_decisions_log_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      editorial_source_central: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          enforcement_level: string
+          id: string
+          is_active: boolean
+          priority: number
+          rule_key: string
+          rule_name: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          enforcement_level?: string
+          id?: string
+          is_active?: boolean
+          priority?: number
+          rule_key: string
+          rule_name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          enforcement_level?: string
+          id?: string
+          is_active?: boolean
+          priority?: number
+          rule_key?: string
+          rule_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      editorial_source_engines: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          engine_display_name: string
+          engine_id: string
+          id: string
+          is_active: boolean
+          negative_patterns: string[] | null
+          priority: number
+          prompt_modification: string | null
+          rule_key: string
+          rule_name: string
+          updated_at: string
+          validation_checks: Json | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          engine_display_name: string
+          engine_id: string
+          id?: string
+          is_active?: boolean
+          negative_patterns?: string[] | null
+          priority?: number
+          prompt_modification?: string | null
+          rule_key: string
+          rule_name: string
+          updated_at?: string
+          validation_checks?: Json | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          engine_display_name?: string
+          engine_id?: string
+          id?: string
+          is_active?: boolean
+          negative_patterns?: string[] | null
+          priority?: number
+          prompt_modification?: string | null
+          rule_key?: string
+          rule_name?: string
+          updated_at?: string
+          validation_checks?: Json | null
+        }
+        Relationships: []
+      }
       engine_tests: {
         Row: {
           character_id: string | null
@@ -1972,6 +2112,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      project_editorial_config: {
+        Row: {
+          central_rule_overrides: Json | null
+          created_at: string
+          custom_central_rules: Json | null
+          custom_engine_rules: Json | null
+          engine_rule_overrides: Json | null
+          id: string
+          preferred_engines: Json | null
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          central_rule_overrides?: Json | null
+          created_at?: string
+          custom_central_rules?: Json | null
+          custom_engine_rules?: Json | null
+          engine_rule_overrides?: Json | null
+          id?: string
+          preferred_engines?: Json | null
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          central_rule_overrides?: Json | null
+          created_at?: string
+          custom_central_rules?: Json | null
+          custom_engine_rules?: Json | null
+          engine_rule_overrides?: Json | null
+          id?: string
+          preferred_engines?: Json | null
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_editorial_config_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       project_members: {
         Row: {
