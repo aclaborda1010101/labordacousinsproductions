@@ -1031,11 +1031,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           const insertedScene = insertedScenes[i];
           const originalScene = episode.scenes[i];
           const shotsToInsert: any[] = [];
+          const sceneNo = originalScene.scene_number || (i + 1);
+          const shotLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+          let shotIndex = 0;
           
           // Create establishing shot
+          const estLetter = shotLetters[shotIndex++] || String(shotIndex);
           shotsToInsert.push({
             scene_id: insertedScene.id,
             shot_no: 1,
+            name: `${sceneNo}${estLetter} - Establishing Wide`,
             shot_type: 'wide',
             duration_target: 4,
             hero: false,
@@ -1050,20 +1055,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           // Create shots from dialogue
           const dialogues = originalScene.dialogue || [];
           dialogues.forEach((d: any, dIdx: number) => {
+            const letter = shotLetters[shotIndex++] || String(shotIndex);
+            const charName = d.character || 'Character';
+            const isOTS = dIdx % 2 !== 0;
+            const shotTypeName = isOTS ? 'OTS' : 'CU';
             shotsToInsert.push({
               scene_id: insertedScene.id,
               shot_no: dIdx + 2,
-              shot_type: dIdx % 2 === 0 ? 'medium' : 'closeup',
+              name: `${sceneNo}${letter} - ${charName} ${shotTypeName}`,
+              shot_type: isOTS ? 'medium' : 'closeup',
               duration_target: Math.min(Math.max(3, Math.ceil((d.line?.length || 20) / 25)), 8),
               hero: false,
               effective_mode: 'CINE',
               dialogue_text: d.line || null,
-              coverage_type: dIdx % 2 === 0 ? 'Single' : 'OTS',
+              coverage_type: isOTS ? 'OTS' : 'Single',
               story_purpose: 'dialogue_focus',
               transition_in: 'CUT',
               transition_out: 'hard_cut',
               blocking: {
-                subject_positions: d.character || 'Character in frame',
+                subject_positions: charName,
                 action: d.parenthetical || 'Speaking'
               }
             });
@@ -1071,9 +1081,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           
           // Add action shot if there's action text
           if (originalScene.action && dialogues.length > 0) {
+            const letter = shotLetters[shotIndex++] || String(shotIndex);
             shotsToInsert.push({
               scene_id: insertedScene.id,
               shot_no: shotsToInsert.length + 1,
+              name: `${sceneNo}${letter} - Action`,
               shot_type: 'medium',
               duration_target: 3,
               hero: false,
