@@ -164,6 +164,57 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
  * More complex scripts = more batches = fewer scenes per batch = less tokens per call
  * This prevents timeouts and 429 rate limit errors
  */
+// Generation model types
+export type GenerationModel = 'rapido' | 'profesional' | 'hollywood';
+
+export interface GenerationModelConfig {
+  model: GenerationModel;
+  displayName: string;
+  description: string;
+  apiModel: string;
+  provider: 'openai' | 'anthropic';
+  delayBetweenBatchesMs: number;
+  delayBetweenEpisodesMs: number;
+  estimatedTimePerEpisodeMin: number;
+  costPerEpisodeUsd: number;
+}
+
+export const GENERATION_MODELS: Record<GenerationModel, GenerationModelConfig> = {
+  rapido: {
+    model: 'rapido',
+    displayName: '⚡ Rápido',
+    description: 'GPT-4o-mini - 1-5 min/episodio, $0.007',
+    apiModel: 'gpt-4o-mini',
+    provider: 'openai',
+    delayBetweenBatchesMs: 2000, // 2 seconds
+    delayBetweenEpisodesMs: 3000, // 3 seconds
+    estimatedTimePerEpisodeMin: 0.5,
+    costPerEpisodeUsd: 0.007
+  },
+  profesional: {
+    model: 'profesional',
+    displayName: '🎬 Profesional',
+    description: 'GPT-4o - 5-15 min total, $0.11',
+    apiModel: 'gpt-4o',
+    provider: 'openai',
+    delayBetweenBatchesMs: 5000, // 5 seconds
+    delayBetweenEpisodesMs: 8000, // 8 seconds
+    estimatedTimePerEpisodeMin: 1.5,
+    costPerEpisodeUsd: 0.11
+  },
+  hollywood: {
+    model: 'hollywood',
+    displayName: '🏆 Hollywood',
+    description: 'Claude Sonnet - 2-3 hrs, máxima calidad literaria',
+    apiModel: 'claude-sonnet-4-20250514',
+    provider: 'anthropic',
+    delayBetweenBatchesMs: 50000, // 50 seconds (rate limit)
+    delayBetweenEpisodesMs: 30000, // 30 seconds
+    estimatedTimePerEpisodeMin: 15,
+    costPerEpisodeUsd: 0.16
+  }
+};
+
 export interface BatchConfig {
   batchesPerEpisode: number;
   scenesPerBatch: number;
@@ -171,62 +222,31 @@ export interface BatchConfig {
   estimatedScenesTotal: number;
 }
 
+/**
+ * Calculate dynamic batch config based on complexity, duration, and model
+ */
 export function calculateDynamicBatches(
   targets: CalculatedTargets,
   complexity: 'simple' | 'medium' | 'high',
-  ambitionSliders?: { humor: number; darkness: number; realism: number; worldIntensity: number },
-  episodeDurationMin?: number
+  episodeBeats?: any[],
+  durationMin?: number,
+  generationModel: GenerationModel = 'hollywood'
 ): BatchConfig {
-  // Base scenes per episode from targets
-  const baseScenesPerEpisode = targets.scenes_per_episode || 20;
+  // Duration scaling factor: more duration = more batches
+  const baseDuration = 45; // Default episode duration
+  const actualDuration = durationMin || baseDuration;
+  const durationMultiplier = Math.max(0.7, Math.min(2, actualDuration / baseDuration));
   
-  // Episode duration factor: longer episodes = more scenes = more batches needed
-  // Base reference: 20-25 min episode = 1x multiplier
-  // Short (< 15 min) = 0.6x, Medium (15-30 min) = 1x, Long (30-45 min) = 1.4x, Very long (45+ min) = 1.8x
-  const duration = episodeDurationMin || 25;
-  let durationMultiplier = 1;
-  if (duration < 15) {
-    durationMultiplier = 0.6;
-  } else if (duration <= 30) {
-    durationMultiplier = 1;
-  } else if (duration <= 45) {
-    durationMultiplier = 1.4;
-  } else {
-    durationMultiplier = 1.8;
-  }
+  // Base complexity score (0-100)
+  let complexityScore = complexity === 'simple' ? 20 : complexity === 'medium' ? 50 : 80;
   
-  // Calculate complexity score (0-100)
-  let complexityScore = 0;
-  
-  // From complexity level
-  switch (complexity) {
-    case 'simple': complexityScore += 20; break;
-    case 'medium': complexityScore += 40; break;
-    case 'high': complexityScore += 60; break;
-  }
-  
-  // From character density
-  const characterDensity = (targets.protagonists_min || 0) + (targets.supporting_min || 0);
-  if (characterDensity > 15) complexityScore += 15;
-  else if (characterDensity > 10) complexityScore += 10;
-  else if (characterDensity > 5) complexityScore += 5;
-  
-  // From locations
-  if ((targets.locations_min || 0) > 15) complexityScore += 10;
-  else if ((targets.locations_min || 0) > 10) complexityScore += 5;
-  
-  // From subplots and twists
-  complexityScore += Math.min((targets.subplots_min || 0) * 3, 12);
-  complexityScore += Math.min((targets.twists_min || 0) * 2, 8);
-  
-  // From ambition sliders (if provided)
-  if (ambitionSliders) {
-    const avgAmbition = (
-      (ambitionSliders.humor || 50) + 
-      (ambitionSliders.darkness || 50) + 
-      (ambitionSliders.realism || 50) + 
-      (ambitionSliders.worldIntensity || 50)
-    ) / 4;
+  // Adjust based on episode beats if available
+  if (episodeBeats && episodeBeats.length > 0) {
+    const avgAmbition = episodeBeats.reduce((sum, beat) => {
+      const amb = beat.ambition_score || beat.complexity || 50;
+      return sum + amb;
+    }, 0) / episodeBeats.length;
+    
     // Add up to 15 points for high ambition
     complexityScore += Math.round((avgAmbition - 50) / 50 * 15);
   }
@@ -234,31 +254,26 @@ export function calculateDynamicBatches(
   // Clamp to 0-100
   complexityScore = Math.max(0, Math.min(100, complexityScore));
   
+  // Get model-specific delay config
+  const modelConfig = GENERATION_MODELS[generationModel];
+  const delayMs = modelConfig.delayBetweenBatchesMs;
+  
   // Base batches based on complexity score
   let baseBatches: number;
   let baseScenesPerBatch: number;
-  let delayMs: number;
-  
-  // CRITICAL: Anthropic has 8,000 output tokens/minute limit
-  // Each batch generates ~4,000-6,000 tokens, so we need ~45-60s between calls
-  // Using conservative delays to prevent 429 errors
   
   if (complexityScore <= 30) {
     baseBatches = 3;
-    baseScenesPerBatch = 5; // Reduced from 7 to lower token output
-    delayMs = 45000; // 45 seconds between batches
+    baseScenesPerBatch = 5;
   } else if (complexityScore <= 60) {
     baseBatches = 4;
     baseScenesPerBatch = 4;
-    delayMs = 50000; // 50 seconds between batches
   } else if (complexityScore <= 80) {
     baseBatches = 5;
     baseScenesPerBatch = 3;
-    delayMs = 55000; // 55 seconds between batches
   } else {
     baseBatches = 6;
     baseScenesPerBatch = 3;
-    delayMs = 60000; // 60 seconds between batches (full minute)
   }
   
   // Apply duration multiplier to batches (not scenes per batch, to avoid token issues)
