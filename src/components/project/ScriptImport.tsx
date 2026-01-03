@@ -285,13 +285,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   useEffect(() => {
     const fetchData = async () => {
       const [projectRes, scriptsRes] = await Promise.all([
-        supabase.from('projects').select('episodes_count, format').eq('id', projectId).single(),
+        supabase.from('projects').select('episodes_count, format, target_duration_min').eq('id', projectId).single(),
         supabase.from('scripts').select('id, status, raw_text, parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1)
       ]);
       
       if (projectRes.data) {
         setEpisodesCount(projectRes.data.episodes_count || 6);
         setFormat(projectRes.data.format === 'film' ? 'film' : 'series');
+        // Sync duration from project settings
+        const projectDuration = projectRes.data.target_duration_min;
+        if (projectDuration) {
+          setEpisodeDurationMin(projectDuration);
+          setFilmDurationMin(projectDuration);
+        }
       }
       
       if (scriptsRes.data && scriptsRes.data.length > 0) {
@@ -1774,7 +1780,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         <Select value={String(episodesCount)} onValueChange={(v) => setEpisodesCount(Number(v))}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            {[4, 6, 8, 10, 12].map(n => (
+                            {[3, 4, 6, 8, 10, 12].map(n => (
                               <SelectItem key={n} value={String(n)}>{n} episodios</SelectItem>
                             ))}
                           </SelectContent>
