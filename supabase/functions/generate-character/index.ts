@@ -21,11 +21,14 @@ interface SlotGenerateRequest {
   characterId: string;
   characterName: string;
   characterBio: string;
-  slotType: 'turnaround' | 'expression' | 'outfit' | 'closeup' | 'base_look';
+  slotType: 'turnaround' | 'expression' | 'outfit' | 'closeup' | 'base_look' | 'anchor_closeup';
   viewAngle?: string;
   expressionName?: string;
   outfitDescription?: string;
   styleToken?: string;
+  useReferenceAnchoring?: boolean;
+  referenceWeight?: number;
+  allowTextToImage?: boolean; // Allow generation without reference (creates anchor)
 }
 
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
@@ -341,6 +344,117 @@ function buildBaseLookPrompt(visualDNA: VisualDNA): string {
   return buildCloseupPrompt(visualDNA);
 }
 
+// Build a standalone prompt for text-to-image (no reference)
+function buildStandaloneCharacterPrompt(characterName: string, characterBio: string, visualDNA: VisualDNA): string {
+  const physical = visualDNA.physical_identity;
+  const face = visualDNA.face;
+  const hair = visualDNA.hair?.head_hair;
+  const skin = visualDNA.skin;
+  
+  const ageStr = physical?.age_exact_for_prompt ? `${physical.age_exact_for_prompt} years old` : '';
+  const genderStr = physical?.gender_presentation || '';
+  const ethnicityStr = physical?.ethnicity?.primary || '';
+  const skinTone = physical?.ethnicity?.skin_tone_description || '';
+  const hairColor = hair?.color?.natural_base || '';
+  const hairLength = hair?.length?.type || '';
+  const hairTexture = hair?.texture?.type || '';
+  const eyeColor = face?.eyes?.color_base || '';
+  const faceShape = face?.shape || '';
+  const bodyType = physical?.body_type?.somatotype || '';
+  
+  return `Professional portrait photograph of a fictional character for film production.
+
+CHARACTER: ${characterName}
+DESCRIPTION: ${characterBio}
+
+PHYSICAL ATTRIBUTES:
+${ageStr ? `- Age: ${ageStr}` : ''}
+${genderStr ? `- Gender presentation: ${genderStr}` : ''}
+${ethnicityStr ? `- Ethnicity: ${ethnicityStr}` : ''}
+${skinTone ? `- Skin tone: ${skinTone}` : ''}
+${hairColor ? `- Hair color: ${hairColor}` : ''}
+${hairLength ? `- Hair length: ${hairLength}` : ''}
+${hairTexture ? `- Hair texture: ${hairTexture}` : ''}
+${eyeColor ? `- Eye color: ${eyeColor}` : ''}
+${faceShape ? `- Face shape: ${faceShape}` : ''}
+${bodyType ? `- Body type: ${bodyType}` : ''}
+
+SHOT REQUIREMENTS:
+- Professional identity closeup (head and shoulders)
+- Direct eye contact with camera
+- 85mm lens equivalent, f/2.8
+- Shallow depth of field
+- Neutral expression, approachable
+
+LIGHTING:
+- Soft key light at 45 degrees
+- Fill light for even skin tones
+- Subtle rim light for separation
+- Natural, flattering light
+
+TECHNICAL SPECS:
+- Professional headshot quality
+- Sharp focus on eyes
+- Natural skin tones
+- Clean, neutral background
+- 8K resolution
+- Photorealistic, cinematic quality
+
+AVOID: AI artifacts, unnatural features, morphed faces, extra limbs, blurry details`;
+}
+
+// ============================================
+// TEXT-TO-IMAGE GENERATION (NO REFERENCE)
+// ============================================
+async function generateWithoutReference(
+  prompt: string
+): Promise<{ imageUrl: string }> {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) {
+    throw new Error('LOVABLE_API_KEY is not configured');
+  }
+
+  console.log(`[TEXT-TO-IMAGE] Generating with ${IMAGE_ENGINE}...`);
+  console.log(`[TEXT-TO-IMAGE] Prompt length: ${prompt.length} chars`);
+
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: IMAGE_ENGINE,
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      modalities: ['image', 'text']
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('[TEXT-TO-IMAGE] Error:', response.status, errorText);
+    throw new Error(`Image generation failed: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  console.log('[TEXT-TO-IMAGE] Response received');
+
+  const imageUrl = extractImageFromResponse(data);
+  
+  if (!imageUrl) {
+    console.error('[TEXT-TO-IMAGE] No image in response:', JSON.stringify(data).substring(0, 500));
+    throw new Error('No image generated in response');
+  }
+
+  console.log('[TEXT-TO-IMAGE] Image generated successfully');
+  return { imageUrl };
+}
+
 // ============================================
 // REFERENCE-BASED GENERATION WITH LOVABLE AI
 // ============================================
@@ -395,7 +509,6 @@ async function generateWithReference(
   const data = await response.json();
   console.log('[REFERENCE-GEN] Response received');
 
-  // Extract image from response
   const imageUrl = extractImageFromResponse(data);
   
   if (!imageUrl) {
@@ -639,11 +752,17 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     a.anchor_type === 'identity_primary' || a.anchor_type === 'face_front'
   ) || referenceAnchors?.[0];
 
-  if (!primaryAnchor?.image_url) {
+  const hasReference = !!primaryAnchor?.image_url;
+  
+  // DECISION: Use reference or generate from text
+  const isIdentitySlot = request.slotType === 'anchor_closeup' || request.slotType === 'base_look' || request.slotType === 'closeup';
+  const allowTextToImage = request.allowTextToImage !== false; // Default to true
+  
+  if (!hasReference && !allowTextToImage) {
     throw new Error('No reference image found for this character. Please upload reference photos first.');
   }
 
-  console.log(`Using reference image: ${primaryAnchor.anchor_type} - ${primaryAnchor.image_url.substring(0, 50)}...`);
+  console.log(`Has reference: ${hasReference}, Allow text-to-image: ${allowTextToImage}, Is identity slot: ${isIdentitySlot}`);
 
   // Get slot details
   const { data: slot, error: slotError } = await supabase
@@ -657,35 +776,93 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     throw new Error(`Slot not found: ${request.slotId}`);
   }
 
-  // Build prompt based on slot type
+  let imageUrl: string;
   let prompt: string;
-  switch (request.slotType) {
-    case 'turnaround':
-      prompt = buildTurnaroundPrompt(visualDNA, request.viewAngle || 'front');
-      break;
-    case 'expression':
-      prompt = buildExpressionPrompt(visualDNA, request.expressionName || 'neutral');
-      break;
-    case 'outfit':
-      prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit');
-      break;
-    case 'closeup':
-      prompt = buildCloseupPrompt(visualDNA);
-      break;
-    case 'base_look':
-      prompt = buildBaseLookPrompt(visualDNA);
-      break;
-    default:
-      prompt = buildCloseupPrompt(visualDNA);
+  let generationMode: 'reference' | 'text-to-image';
+  let createdAnchorId: string | null = null;
+
+  if (hasReference) {
+    // === REFERENCE-BASED GENERATION ===
+    generationMode = 'reference';
+    console.log(`Using reference image: ${primaryAnchor.anchor_type} - ${primaryAnchor.image_url.substring(0, 50)}...`);
+    
+    // Build prompt based on slot type
+    switch (request.slotType) {
+      case 'turnaround':
+        prompt = buildTurnaroundPrompt(visualDNA, request.viewAngle || 'front');
+        break;
+      case 'expression':
+        prompt = buildExpressionPrompt(visualDNA, request.expressionName || 'neutral');
+        break;
+      case 'outfit':
+        prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit');
+        break;
+      case 'closeup':
+      case 'anchor_closeup':
+        prompt = buildCloseupPrompt(visualDNA);
+        break;
+      case 'base_look':
+        prompt = buildBaseLookPrompt(visualDNA);
+        break;
+      default:
+        prompt = buildCloseupPrompt(visualDNA);
+    }
+    
+    const result = await generateWithReference(primaryAnchor.image_url, prompt);
+    imageUrl = result.imageUrl;
+    
+  } else {
+    // === TEXT-TO-IMAGE GENERATION (No Reference) ===
+    generationMode = 'text-to-image';
+    console.log(`No reference found. Generating identity with text-to-image for: ${request.characterName}`);
+    
+    // Build standalone prompt (includes character bio/description)
+    prompt = buildStandaloneCharacterPrompt(request.characterName, request.characterBio, visualDNA);
+    
+    const result = await generateWithoutReference(prompt);
+    imageUrl = result.imageUrl;
+    
+    // Create the generated image as primary reference anchor for future generations
+    if (isIdentitySlot && imageUrl) {
+      console.log('[TEXT-TO-IMAGE] Creating reference anchor from generated image...');
+      
+      const { data: newAnchor, error: anchorError } = await supabase
+        .from('reference_anchors')
+        .insert({
+          character_id: request.characterId,
+          anchor_type: 'identity_primary',
+          image_url: imageUrl,
+          is_active: true,
+          priority: 1,
+          approved: false, // Requires user approval
+          metadata: {
+            source: 'auto_generated',
+            generated_at: new Date().toISOString(),
+            engine: IMAGE_ENGINE,
+            note: 'Auto-generated identity. Approve to use for future generations.'
+          }
+        })
+        .select('id')
+        .single();
+      
+      if (anchorError) {
+        console.error('Failed to create reference anchor:', anchorError);
+      } else {
+        createdAnchorId = newAnchor.id;
+        console.log(`[TEXT-TO-IMAGE] Created reference anchor: ${createdAnchorId}`);
+      }
+    }
   }
 
   console.log('Generated prompt:', prompt.substring(0, 200) + '...');
 
-  // Generate with reference image
-  const { imageUrl } = await generateWithReference(primaryAnchor.image_url, prompt);
-
-  // Run QC with reference comparison
-  const qcResult = await runQC(imageUrl, request.slotType, request.characterName, primaryAnchor.image_url);
+  // Run QC (with reference comparison if available)
+  const qcResult = await runQC(
+    imageUrl, 
+    request.slotType, 
+    request.characterName, 
+    hasReference ? primaryAnchor.image_url : undefined
+  );
   console.log(`QC Score: ${qcResult.score}, Passed: ${qcResult.passed}`);
 
   const durationMs = Date.now() - startTime;
@@ -696,14 +873,16 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     .update({
       image_url: imageUrl,
       prompt_text: prompt,
-      reference_anchor_id: primaryAnchor.id,
+      reference_anchor_id: hasReference ? primaryAnchor.id : createdAnchorId,
       qc_score: qcResult.score,
       qc_issues: qcResult.issues,
       fix_notes: qcResult.fixNotes,
       status: qcResult.passed ? 'generated' : 'needs_review',
       generation_metadata: {
         engine: IMAGE_ENGINE,
-        reference_used: primaryAnchor.id,
+        generation_mode: generationMode,
+        reference_used: hasReference ? primaryAnchor.id : null,
+        created_anchor: createdAnchorId,
         generated_at: new Date().toISOString(),
         duration_ms: durationMs
       },
@@ -735,7 +914,9 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     metadata: {
       qcScore: qcResult.score,
       qcPassed: qcResult.passed,
-      referenceUsed: primaryAnchor.id
+      generationMode,
+      referenceUsed: hasReference ? primaryAnchor.id : null,
+      createdAnchor: createdAnchorId
     }
   });
 
@@ -745,7 +926,9 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     prompt,
     qc: qcResult,
     slotId: request.slotId,
-    referenceUsed: primaryAnchor.id
+    generationMode,
+    referenceUsed: hasReference ? primaryAnchor.id : null,
+    createdAnchor: createdAnchorId
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
