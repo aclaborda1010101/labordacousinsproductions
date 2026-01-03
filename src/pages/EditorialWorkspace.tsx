@@ -235,6 +235,7 @@ export default function EditorialWorkspace() {
               <GenerationResult
                 run={lastRun}
                 validation={lastValidation}
+                phase={currentProject.phase}
                 onAccept={handleAccept}
                 onRegenerate={handleRegenerate}
                 onEdit={handleEdit}
