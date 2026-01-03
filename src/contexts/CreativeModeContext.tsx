@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { 
+  CreativeMode, 
+  ModeCapabilities, 
+  modeCapabilities, 
+  getCapabilities 
+} from '@/lib/modeCapabilities';
 
-export type CreativeMode = 'ASSISTED' | 'DIRECTOR' | 'PRO';
+// Re-export CreativeMode type
+export type { CreativeMode } from '@/lib/modeCapabilities';
 
 interface CreativeModeContextType {
   projectMode: CreativeMode;
@@ -20,6 +27,12 @@ interface CreativeModeContextType {
   // Mode descriptions
   getModeDescription: (mode: CreativeMode) => string;
   getModeTooltip: (mode: CreativeMode) => string;
+  
+  // Mode capabilities (new)
+  capabilities: ModeCapabilities;
+  isUIVisible: (key: keyof ModeCapabilities['ui']) => boolean;
+  canEdit: (key: keyof ModeCapabilities['edit']) => boolean;
+  getBehavior: (key: keyof ModeCapabilities['behavior']) => boolean;
 }
 
 const MODE_HIERARCHY: Record<CreativeMode, number> = {
@@ -149,6 +162,9 @@ export function CreativeModeProvider({
   // Calculate effective mode
   const sceneOverride = currentSceneId ? sceneOverrides[currentSceneId] : null;
   const effectiveMode = sceneOverride ?? projectMode;
+  
+  // Get capabilities for current mode
+  const capabilities = getCapabilities(effectiveMode);
 
   // Helper to check if a field should be editable based on mode
   const canEditField = useCallback((field: string, requiredMode: CreativeMode): boolean => {
@@ -164,6 +180,19 @@ export function CreativeModeProvider({
     }
     return MODE_HIERARCHY[effectiveMode] >= MODE_HIERARCHY[requiredMode];
   }, [effectiveMode]);
+  
+  // New capability-based helpers
+  const isUIVisible = useCallback((key: keyof ModeCapabilities['ui']): boolean => {
+    return capabilities.ui[key];
+  }, [capabilities]);
+  
+  const canEdit = useCallback((key: keyof ModeCapabilities['edit']): boolean => {
+    return capabilities.edit[key];
+  }, [capabilities]);
+  
+  const getBehavior = useCallback((key: keyof ModeCapabilities['behavior']): boolean => {
+    return capabilities.behavior[key];
+  }, [capabilities]);
 
   const getModeDescription = useCallback((mode: CreativeMode): string => {
     return MODE_DESCRIPTIONS[mode];
@@ -188,6 +217,10 @@ export function CreativeModeProvider({
         isFieldVisible,
         getModeDescription,
         getModeTooltip,
+        capabilities,
+        isUIVisible,
+        canEdit,
+        getBehavior,
       }}
     >
       {children}
