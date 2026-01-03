@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2 } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,6 +21,7 @@ import { EntityQCBadge } from './QCStatusBadge';
 import CharacterVisualDNAEditor from './CharacterVisualDNAEditor';
 import { CharacterNarrativeEditor } from './CharacterNarrativeEditor';
 import { TechnicalPromptGenerator } from './TechnicalPromptGenerator';
+import { CharacterQuickStart } from './CharacterQuickStart';
 
 interface CharactersProps { projectId: string; }
 
@@ -59,6 +60,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showOutfitDialog, setShowOutfitDialog] = useState<string | null>(null);
   const [showPackBuilder, setShowPackBuilder] = useState<string | null>(null);
+  const [showQuickStart, setShowQuickStart] = useState<string | null>(null);
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
   const [generatingProfile, setGeneratingProfile] = useState<string | null>(null);
@@ -742,15 +744,25 @@ export default function Characters({ projectId }: CharactersProps) {
                       </div>
                       <div className="flex gap-1">
                         {character.character_role && (
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setShowPackBuilder(character.id)}
-                            className="mr-2"
-                          >
-                            <Package className="w-4 h-4 mr-1" />
-                            Pack Builder
-                          </Button>
+                          <>
+                            <Button 
+                              variant="gold" 
+                              size="sm"
+                              onClick={() => setShowQuickStart(character.id)}
+                              title="Quick Setup: Sube 2 fotos y genera el pack completo"
+                            >
+                              <Zap className="w-4 h-4 mr-1" />
+                              Quick
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setShowPackBuilder(character.id)}
+                            >
+                              <Package className="w-4 h-4 mr-1" />
+                              Pack
+                            </Button>
+                          </>
                         )}
                         <Button 
                           variant="outline" 
@@ -1238,6 +1250,28 @@ export default function Characters({ projectId }: CharactersProps) {
                 onPackComplete={() => {
                   fetchCharacters();
                   toast.success('Character Pack completado');
+                }}
+              />
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Start Dialog - Reference-First Workflow */}
+      <Dialog open={!!showQuickStart} onOpenChange={() => setShowQuickStart(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {showQuickStart && (() => {
+            const char = characters.find(c => c.id === showQuickStart);
+            if (!char) return null;
+            return (
+              <CharacterQuickStart
+                characterId={char.id}
+                characterName={char.name}
+                projectId={projectId}
+                onComplete={() => {
+                  fetchCharacters();
+                  setShowQuickStart(null);
+                  toast.success('Character Pack generado con Reference-First Workflow');
                 }}
               />
             );
