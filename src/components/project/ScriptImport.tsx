@@ -83,6 +83,7 @@ import {
   updateBatchTiming,
   updateOutlineTiming,
 } from '@/lib/scriptTimingModel';
+import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
 
 interface ScriptImportProps {
   projectId: string;
@@ -629,7 +630,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           setEpisodeStartedAtMs(t0);
 
           try {
-              const { data, error } = await supabase.functions.invoke('episode-generate-batch', {
+            const invokeBatch = async () => {
+              if (controller.signal.aborted) {
+                throw new Error('Aborted');
+              }
+              return await supabase.functions.invoke('episode-generate-batch', {
                 body: {
                   outline: lightOutline,
                   episodeNumber: epNum,
@@ -642,9 +647,30 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   totalBatches: BATCHES_PER_EPISODE,
                   isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1,
                   // Model selection for speed/quality
-                  generationModel
-                }
+                  generationModel,
+                },
               });
+            };
+
+            const { data, error } = await retryWithBackoff(invokeBatch, {
+              maxRetries: 2,
+              initialDelayMs: 1500,
+              maxDelayMs: 12000,
+              retryOn: (e) => {
+                if (controller.signal.aborted) return false;
+                return (
+                  isRetryableError(e) ||
+                  (e instanceof Error &&
+                    /Failed to send a request to the Edge Function|Failed to fetch/i.test(e.message))
+                );
+              },
+              onRetry: (attempt, err, nextDelayMs) => {
+                console.warn(
+                  `[${batchLabel}] Reintentando (${attempt}) en ${Math.round(nextDelayMs)}ms...`,
+                  err
+                );
+              },
+            });
 
             const batchDurationMs = Date.now() - t0;
 
