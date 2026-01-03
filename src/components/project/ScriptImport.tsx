@@ -291,6 +291,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           const parsed = script.parsed_json as Record<string, unknown>;
           if (parsed.episodes || parsed.screenplay || parsed.title) {
             setGeneratedScript(parsed);
+            // Load teasers from parsed_json if they exist
+            if (parsed.teasers) {
+              setGeneratedTeasers(parsed.teasers);
+            }
             setActiveTab('summary');
           }
         }
@@ -585,18 +589,46 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       updatePipelineStep('save', 'running');
       const screenplayText = JSON.stringify(completeScreenplay, null, 2);
 
-      const { data: savedScript, error: saveError } = await supabase.from('scripts').upsert({
-        id: currentScriptId || undefined,
-        project_id: projectId,
-        raw_text: screenplayText,
-        parsed_json: completeScreenplay as any,
-        status: 'draft',
-        version: 1
-      }, { onConflict: 'id' }).select().single();
+      let savedScript;
+      let saveError;
+
+      if (currentScriptId) {
+        // Update existing script
+        const result = await supabase.from('scripts')
+          .update({
+            raw_text: screenplayText,
+            parsed_json: completeScreenplay as any,
+            status: 'draft',
+          })
+          .eq('id', currentScriptId)
+          .select()
+          .single();
+        savedScript = result.data;
+        saveError = result.error;
+      } else {
+        // Insert new script
+        const result = await supabase.from('scripts')
+          .insert({
+            project_id: projectId,
+            raw_text: screenplayText,
+            parsed_json: completeScreenplay as any,
+            status: 'draft',
+            version: 1
+          })
+          .select()
+          .single();
+        savedScript = result.data;
+        saveError = result.error;
+      }
 
       if (saveError) throw saveError;
       setCurrentScriptId(savedScript.id);
       setScriptText(screenplayText);
+      
+      // Also save teasers separately in generatedTeasers state for immediate UI update
+      if (completeScreenplay.teasers) {
+        setGeneratedTeasers(completeScreenplay.teasers);
+      }
 
       updatePipelineStep('save', 'success');
       setPipelineProgress(100);
