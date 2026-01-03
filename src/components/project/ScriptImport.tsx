@@ -85,18 +85,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [proMode, setProMode] = useState(false);
   const [targets, setTargets] = useState<CalculatedTargets | null>(null);
 
-  // Pipeline state
+  // Pipeline V2 state
   const [pipelineRunning, setPipelineRunning] = useState(false);
   const [pipelineProgress, setPipelineProgress] = useState(0);
   const [currentEpisodeGenerating, setCurrentEpisodeGenerating] = useState<number | null>(null);
+  const [totalEpisodesToGenerate, setTotalEpisodesToGenerate] = useState(0);
+  const [generatedEpisodesList, setGeneratedEpisodesList] = useState<any[]>([]);
+  const [cancelController, setCancelController] = useState<AbortController | null>(null);
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([
-    { id: 'targets', label: 'Calculando targets', status: 'pending' },
-    { id: 'outline', label: 'Generando outline', status: 'pending' },
-    { id: 'qc', label: 'QC del outline', status: 'pending' },
+    { id: 'outline', label: 'Generando outline rápido', status: 'pending' },
+    { id: 'approval', label: 'Aprobación del outline', status: 'pending' },
     { id: 'episodes', label: 'Generando episodios', status: 'pending' },
     { id: 'save', label: 'Guardando', status: 'pending' },
   ]);
   const [currentStepLabel, setCurrentStepLabel] = useState<string>('');
+  
+  // Light outline state (Pipeline V2)
+  const [lightOutline, setLightOutline] = useState<any>(null);
+  const [outlineApproved, setOutlineApproved] = useState(false);
+  const [generatingOutline, setGeneratingOutline] = useState(false);
   
   // Episode view mode: summary vs full screenplay
   const [episodeViewMode, setEpisodeViewMode] = useState<Record<number, 'summary' | 'full'>>({});
@@ -173,198 +180,137 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     if (label) setCurrentStepLabel(label);
   };
 
-  // Main pipeline: Generate Script "Listo para Rodar" - NEW: Episode by Episode
-  const runFullPipeline = async () => {
+  // PIPELINE V2: Step 1 - Generate Light Outline (fast ~10s)
+  const generateLightOutline = async () => {
     if (!ideaText.trim()) {
       toast.error('Escribe una idea para generar el guion');
       return;
     }
 
-    if (!targets) {
-      toast.error('Los targets no están calculados');
-      return;
-    }
-
-    setPipelineRunning(true);
-    setPipelineProgress(0);
+    setGeneratingOutline(true);
+    setLightOutline(null);
+    setOutlineApproved(false);
     setPipelineSteps(prev => prev.map(s => ({ ...s, status: 'pending' })));
+    updatePipelineStep('outline', 'running');
 
     try {
-      // Step 1: Targets (already calculated) + Load References
-      updatePipelineStep('targets', 'running');
-      setPipelineProgress(5);
-      
-      // Fetch reference scripts from library
-      const { data: refScriptsData } = await supabase
-        .from('reference_scripts')
-        .select('title, content, genre, notes')
-        .or(`project_id.eq.${projectId},is_global.eq.true`)
-        .order('created_at', { ascending: false })
-        .limit(2);
-      
-      const referenceScripts = refScriptsData || [];
-      
-      updatePipelineStep('targets', 'success');
-      setPipelineProgress(10);
-
-      // Step 2: Generate DETAILED Outline
-      updatePipelineStep('outline', 'running', 'Segmentando episodios (outline)...');
-      toast.info('Generando outline (segmentación por episodios)...');
-
-      const normalizedIdea = ideaText.trim();
-      const ideaForGeneration = normalizedIdea.length > 1800 ? normalizedIdea.slice(0, 1800) : normalizedIdea;
-      if (normalizedIdea.length > 1800) {
-        toast.info('Idea muy larga: usando un extracto para evitar que se quede colgado.');
-      }
-
-      const referencesForGeneration = references?.length > 600 ? references.slice(0, 600) : references;
-
-      const { data: outlineData, error: outlineError } = await supabase.functions.invoke('script-generate-outline', {
+      const { data, error } = await supabase.functions.invoke('generate-outline-light', {
         body: {
-          projectId,
-          idea: ideaForGeneration,
+          idea: ideaText.trim().slice(0, 2000),
+          episodesCount: format === 'series' ? episodesCount : 1,
           format,
-          episodesCount: format === 'series' ? episodesCount : undefined,
-          episodeDurationMin: format === 'series' ? episodeDurationMin : undefined,
-          filmDurationMin: format === 'film' ? filmDurationMin : undefined,
           genre,
           tone,
-          language,
-          references: referencesForGeneration,
-          referenceScripts: referenceScripts.length > 0 ? referenceScripts : undefined,
-          targets
+          language
         }
       });
 
-      if (outlineError) throw outlineError;
-      if (!outlineData?.outline) throw new Error('No se generó el outline');
-      
-      let currentOutline = outlineData.outline;
-      setOutline(currentOutline);
+      if (error) throw error;
+      if (!data?.outline) throw new Error('No se generó el outline');
+
+      setLightOutline(data.outline);
       updatePipelineStep('outline', 'success');
-      setPipelineProgress(25);
+      updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+      toast.success('Outline generado. Revísalo y apruébalo para continuar.');
 
-      // Step 3: QC Outline
-      updatePipelineStep('qc', 'running');
-      let qcPassed = false;
-      let retryCount = 0;
-      const maxRetries = 2;
+    } catch (err: any) {
+      console.error('Error generating light outline:', err);
+      updatePipelineStep('outline', 'error');
+      toast.error(err.message || 'Error al generar outline');
+    } finally {
+      setGeneratingOutline(false);
+    }
+  };
 
-      while (!qcPassed && retryCount <= maxRetries) {
-        const { data: qcData, error: qcError } = await supabase.functions.invoke('script-qc-outline', {
-          body: { outline: currentOutline, targets }
-        });
+  // PIPELINE V2: Step 2 - Regenerate Outline
+  const regenerateOutline = () => {
+    setLightOutline(null);
+    setOutlineApproved(false);
+    generateLightOutline();
+  };
 
-        if (qcError) throw qcError;
-        setQcResult(qcData);
+  // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes
+  const approveAndGenerateEpisodes = async () => {
+    if (!lightOutline) return;
 
-        if (qcData?.passes) {
-          qcPassed = true;
-        } else if (retryCount < maxRetries && qcData?.rewrite_instructions) {
-          toast.info(`QC no aprobado, reintentando (${retryCount + 1}/${maxRetries})...`);
-          const { data: rewriteData, error: rewriteError } = await supabase.functions.invoke('script-rewrite-outline', {
-            body: { outline: currentOutline, rewriteInstructions: qcData.rewrite_instructions, targets }
-          });
-          if (rewriteError) throw rewriteError;
-          if (rewriteData?.outline) {
-            currentOutline = rewriteData.outline;
-            setOutline(currentOutline);
-          }
-          retryCount++;
-        } else {
-          updatePipelineStep('qc', 'error');
-          toast.error('El outline no cumple los targets después de varios intentos');
-          setPipelineRunning(false);
-          return;
+    setOutlineApproved(true);
+    updatePipelineStep('approval', 'success');
+    updatePipelineStep('episodes', 'running');
+    setPipelineRunning(true);
+    setPipelineProgress(10);
+    setGeneratedEpisodesList([]);
+
+    const controller = new AbortController();
+    setCancelController(controller);
+
+    const totalEpisodes = lightOutline.episode_beats?.length || episodesCount;
+    setTotalEpisodesToGenerate(totalEpisodes);
+
+    try {
+      const episodes: any[] = [];
+
+      for (let i = 1; i <= totalEpisodes; i++) {
+        if (controller.signal.aborted) {
+          toast.info('Generación cancelada');
+          break;
         }
-      }
 
-      updatePipelineStep('qc', 'success');
-      setPipelineProgress(35);
+        setCurrentEpisodeGenerating(i);
+        updatePipelineStep('episodes', 'running', `Episodio ${i} de ${totalEpisodes}...`);
+        toast.info(`Generando episodio ${i}/${totalEpisodes}...`);
 
-      // Step 4: Generate EACH EPISODE separately with full dialogue
-      updatePipelineStep('episodes', 'running', 'Preparando episodios...');
-      
-      const episodeOutlines = currentOutline.episode_outlines || [{ 
-        episode_number: 1, 
-        title: currentOutline.title,
-        synopsis: currentOutline.synopsis,
-        scenes_count: currentOutline.counts?.total_scenes || 15
-      }];
-      
-      const totalEpisodes = episodeOutlines.length;
-      const generatedEpisodes: any[] = [];
-      
-      for (let i = 0; i < totalEpisodes; i++) {
-        const epOutline = episodeOutlines[i];
-        const episodeNum = epOutline.episode_number || i + 1;
-        setCurrentEpisodeGenerating(episodeNum);
-        
-        // Update step label with current episode
-        updatePipelineStep('episodes', 'running', `Episodio ${episodeNum} de ${totalEpisodes}...`);
-        toast.info(`Generando episodio ${episodeNum}/${totalEpisodes}...`);
-        
-        const { data: episodeData, error: episodeError } = await supabase.functions.invoke('script-generate-episode', {
+        const { data, error } = await supabase.functions.invoke('generate-episode-detailed', {
           body: {
-            outline: currentOutline,
-            episodeNumber: episodeNum,
-            episodeOutline: epOutline,
-            characters: currentOutline.character_list || [],
-            locations: currentOutline.location_list || [],
+            outline: lightOutline,
+            episodeNumber: i,
             language
           }
         });
-        
-        if (episodeError) {
-          console.error(`Error generating episode ${episodeNum}:`, episodeError);
-          toast.error(`Error en episodio ${episodeNum}: ${episodeError.message}`);
-          // Continue with next episode instead of failing completely
-          generatedEpisodes.push({
-            episode_number: episodeNum,
-            title: epOutline.title || `Episodio ${episodeNum}`,
-            synopsis: epOutline.synopsis,
-            summary: epOutline.synopsis?.substring(0, 200),
+
+        if (error) {
+          console.error(`Error generating episode ${i}:`, error);
+          toast.error(`Error en episodio ${i}: ${error.message}`);
+          // Continue with next episode
+          episodes.push({
+            episode_number: i,
+            title: lightOutline.episode_beats?.[i - 1]?.title || `Episodio ${i}`,
+            synopsis: lightOutline.episode_beats?.[i - 1]?.summary || '',
             scenes: [],
-            error: episodeError.message
+            error: error.message
           });
-        } else if (episodeData?.episode) {
-          generatedEpisodes.push(episodeData.episode);
+        } else if (data?.episode) {
+          episodes.push(data.episode);
+          toast.success(`Episodio ${i} completado ✓`);
         }
-        
-        // Update progress
-        const episodeProgress = 35 + Math.round((i + 1) / totalEpisodes * 50);
-        setPipelineProgress(episodeProgress);
+
+        setGeneratedEpisodesList([...episodes]);
+        const progress = 10 + Math.round((i / totalEpisodes) * 70);
+        setPipelineProgress(progress);
       }
-      
+
       setCurrentEpisodeGenerating(null);
-      
-      // Build complete screenplay object
-      const completeScreenplay = {
-        title: currentOutline.title,
-        logline: currentOutline.logline,
-        synopsis: currentOutline.synopsis,
-        genre: currentOutline.genre,
-        tone: currentOutline.tone,
-        themes: currentOutline.themes,
-        characters: currentOutline.character_list,
-        locations: currentOutline.location_list,
-        props: currentOutline.hero_props,
-        episodes: generatedEpisodes,
-        music_design: currentOutline.music_design || [],
-        sfx_design: currentOutline.sfx_design || [],
-        vfx_requirements: currentOutline.vfx_requirements || [],
-        counts: {
-          ...currentOutline.counts,
-          total_dialogue_lines: generatedEpisodes.reduce((sum, ep) => sum + (ep.total_dialogue_lines || 0), 0)
-        },
-        qc_notes: currentOutline.assumptions || []
-      };
-      
-      setGeneratedScript(completeScreenplay);
       updatePipelineStep('episodes', 'success');
+
+      // Build complete screenplay
+      const completeScreenplay = {
+        title: lightOutline.title,
+        logline: lightOutline.logline,
+        synopsis: lightOutline.synopsis,
+        genre: lightOutline.genre,
+        tone: lightOutline.tone,
+        characters: lightOutline.main_characters,
+        locations: lightOutline.main_locations,
+        episodes,
+        counts: {
+          total_scenes: episodes.reduce((sum, ep) => sum + (ep.scenes?.length || 0), 0),
+          total_dialogue_lines: episodes.reduce((sum, ep) => sum + (ep.total_dialogue_lines || 0), 0)
+        }
+      };
+
+      setGeneratedScript(completeScreenplay);
       setPipelineProgress(90);
 
-      // Step 5: Save to DB
+      // Save to DB
       updatePipelineStep('save', 'running');
       const screenplayText = JSON.stringify(completeScreenplay, null, 2);
 
@@ -384,43 +330,36 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       updatePipelineStep('save', 'success');
       setPipelineProgress(100);
 
-      toast.success(`¡Guion completo generado! ${generatedEpisodes.length} episodios con diálogos extensos.`);
+      const successCount = episodes.filter(ep => !ep.error).length;
+      toast.success(`¡Guion generado! ${successCount}/${totalEpisodes} episodios completados.`);
       setActiveTab('summary');
 
     } catch (error: any) {
       console.error('Pipeline error:', error);
-
-      let message = error?.message || 'Error en el pipeline de generación';
-
-      // FunctionsHttpError: intenta leer el body JSON devuelto por la función
-      if (error?.name === 'FunctionsHttpError' && error?.context && typeof error.context?.clone === 'function') {
-        try {
-          const resp: Response = error.context as Response;
-          const cloned = resp.clone();
-
-          let body: any = null;
-          try {
-            body = await cloned.json();
-          } catch {
-            const text = await cloned.text();
-            body = text ? { error: text } : null;
-          }
-
-          if (body?.error) message = body.error;
-          else if (body?.message) message = body.message;
-          else message = `Error (${resp.status}) en la función de backend.`;
-        } catch {
-          // ignore
-        }
-      }
-
-      toast.error(message);
-      const currentStep = pipelineSteps.find(s => s.status === 'running');
-      if (currentStep) updatePipelineStep(currentStep.id, 'error');
+      toast.error(error.message || 'Error en la generación');
+      updatePipelineStep('episodes', 'error');
     } finally {
       setPipelineRunning(false);
       setCurrentEpisodeGenerating(null);
+      setCancelController(null);
     }
+  };
+
+  // PIPELINE V2: Cancel generation
+  const cancelGeneration = () => {
+    if (cancelController) {
+      cancelController.abort();
+      setCancelController(null);
+    }
+    setPipelineRunning(false);
+    setCurrentEpisodeGenerating(null);
+    toast.info('Generación cancelada. Los episodios ya generados se han conservado.');
+  };
+
+  // Legacy pipeline (keeping for compatibility)
+  const runFullPipeline = async () => {
+    // Redirect to new V2 flow
+    generateLightOutline();
   };
 
   // Script Doctor
@@ -910,37 +849,38 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         {/* GENERATE TAB */}
         <TabsContent value="generate" className="space-y-4">
-          {/* CTA Principal */}
+          {/* CTA Principal - Pipeline V2 */}
           <Card className="border-primary/50 bg-gradient-to-r from-primary/5 to-transparent">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
                   <h3 className="font-semibold text-lg flex items-center gap-2">
                     <Rocket className="w-5 h-5 text-primary" />
-                    Generar Guion Listo para Rodar
+                    Pipeline V2: Generación por Pasos
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Pipeline automático: Targets → Outline → QC → Screenplay completo
+                    1. Outline rápido (~10s) → 2. Apruebas → 3. Episodios uno a uno con progreso
                   </p>
                 </div>
-                <Button 
-                  variant="gold" 
-                  size="lg"
-                  onClick={runFullPipeline} 
-                  disabled={pipelineRunning || !ideaText.trim()}
-                >
-                  {pipelineRunning ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generando...</>
-                  ) : (
-                    <><Wand2 className="w-4 h-4 mr-2" />Generar Guion Completo</>
-                  )}
-                </Button>
+                {!lightOutline && !pipelineRunning && (
+                  <Button 
+                    variant="gold" 
+                    size="lg"
+                    onClick={generateLightOutline} 
+                    disabled={generatingOutline || !ideaText.trim()}
+                  >
+                    {generatingOutline ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generando Outline...</>
+                    ) : (
+                      <><Sparkles className="w-4 h-4 mr-2" />Paso 1: Generar Outline</>
+                    )}
+                  </Button>
+                )}
               </div>
 
-              {/* Pipeline Progress */}
-              {pipelineRunning && (
+              {/* Pipeline Steps Indicator */}
+              {(generatingOutline || lightOutline || pipelineRunning) && (
                 <div className="mt-4 space-y-3">
-                  <Progress value={pipelineProgress} className="h-2" />
                   <div className="flex gap-2 flex-wrap items-center">
                     {pipelineSteps.map(step => (
                       <Badge 
@@ -955,16 +895,161 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </Badge>
                     ))}
                   </div>
-                  {currentEpisodeGenerating !== null && (
-                    <div className="flex items-center gap-2 text-sm font-medium text-primary">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Escribiendo diálogos del Episodio {currentEpisodeGenerating}...</span>
-                    </div>
-                  )}
                 </div>
               )}
             </CardContent>
           </Card>
+
+          {/* OUTLINE APPROVAL CARD - Pipeline V2 Step 2 */}
+          {lightOutline && !outlineApproved && (
+            <Card className="border-2 border-amber-500/50 bg-amber-500/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-amber-500" />
+                  Outline Generado: Revisa y Aprueba
+                </CardTitle>
+                <CardDescription>
+                  Revisa el outline antes de generar los episodios completos
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Title & Logline */}
+                <div className="p-4 bg-background rounded-lg border">
+                  <h3 className="font-bold text-xl mb-2">{lightOutline.title}</h3>
+                  <p className="text-muted-foreground italic">{lightOutline.logline}</p>
+                  <div className="flex gap-2 mt-3">
+                    <Badge variant="secondary">{lightOutline.genre}</Badge>
+                    <Badge variant="outline">{lightOutline.tone}</Badge>
+                  </div>
+                </div>
+
+                {/* Synopsis */}
+                {lightOutline.synopsis && (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground">Sinopsis</Label>
+                    <p className="text-sm mt-1">{lightOutline.synopsis}</p>
+                  </div>
+                )}
+
+                {/* Characters */}
+                <div>
+                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                    Personajes ({lightOutline.main_characters?.length || 0})
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {lightOutline.main_characters?.map((char: any, i: number) => (
+                      <Badge key={i} variant={char.role === 'protagonist' ? 'default' : 'secondary'}>
+                        {char.name} ({char.role})
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Locations */}
+                <div>
+                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                    Localizaciones ({lightOutline.main_locations?.length || 0})
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {lightOutline.main_locations?.map((loc: any, i: number) => (
+                      <Badge key={i} variant="outline">
+                        {loc.type}. {loc.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Episodes */}
+                <div>
+                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                    Episodios ({lightOutline.episode_beats?.length || 0})
+                  </Label>
+                  <div className="space-y-2">
+                    {lightOutline.episode_beats?.map((ep: any) => (
+                      <div key={ep.episode} className="p-2 bg-muted/30 rounded border">
+                        <div className="font-medium text-sm">
+                          Ep {ep.episode}: {ep.title}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{ep.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button 
+                    variant="gold" 
+                    size="lg"
+                    className="flex-1"
+                    onClick={approveAndGenerateEpisodes}
+                    disabled={pipelineRunning}
+                  >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    ✅ Aprobar y Generar Episodios
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={regenerateOutline}
+                    disabled={generatingOutline}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Regenerar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* EPISODE GENERATION PROGRESS - Pipeline V2 Step 3 */}
+          {pipelineRunning && (
+            <Card className="border-2 border-blue-500/50 bg-blue-500/5">
+              <CardContent className="pt-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-medium">
+                      Generando Episodio {currentEpisodeGenerating || '?'} de {totalEpisodesToGenerate}
+                    </span>
+                    <p className="text-xs text-muted-foreground">
+                      Tiempo estimado restante: ~{(totalEpisodesToGenerate - (currentEpisodeGenerating || 0)) * 30}s
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-primary">
+                    {pipelineProgress}%
+                  </span>
+                </div>
+                <Progress value={pipelineProgress} className="h-3" />
+                
+                {/* Completed Episodes */}
+                {generatedEpisodesList.length > 0 && (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">Completados:</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {generatedEpisodesList.map((ep, i) => (
+                        <Badge 
+                          key={i} 
+                          variant={ep.error ? 'destructive' : 'default'}
+                          className="flex items-center gap-1"
+                        >
+                          {ep.error ? <XCircle className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                          Ep {ep.episode_number}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={cancelGeneration}
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Cancelar Generación
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Idea & Format */}
