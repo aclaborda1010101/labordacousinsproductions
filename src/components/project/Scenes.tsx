@@ -84,6 +84,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     sceneCount: '5',
   });
   const [episodesCount, setEpisodesCount] = useState(1);
+  const [scriptEpisodes, setScriptEpisodes] = useState<any[]>([]);
 
   const fetchScenes = async () => {
     const { data } = await supabase.from('scenes').select('*').eq('project_id', projectId).order('episode_no').order('scene_no');
@@ -131,6 +132,15 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     });
     supabase.from('locations').select('id, name, token, reference_urls').eq('project_id', projectId).then(({ data }) => {
       if (data) setLocations(data);
+    });
+    // Load script to get episode synopses
+    supabase.from('scripts').select('parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).single().then(({ data }) => {
+      if (data?.parsed_json) {
+        const parsed = data.parsed_json as any;
+        if (parsed.episodes) {
+          setScriptEpisodes(parsed.episodes);
+        }
+      }
     });
   }, [projectId]);
 
@@ -692,7 +702,17 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
       )}
 
       {/* AI Generation Dialog */}
-      <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
+      <Dialog open={showAIDialog} onOpenChange={(open) => {
+        setShowAIDialog(open);
+        if (open) {
+          // Auto-load synopsis from script when dialog opens
+          const epNo = parseInt(aiForm.episodeNo);
+          const scriptEp = scriptEpisodes.find((ep: any) => (ep.episode_number || 1) === epNo) || scriptEpisodes[epNo - 1];
+          if (scriptEp?.synopsis) {
+            setAiForm(prev => ({ ...prev, synopsis: scriptEp.synopsis }));
+          }
+        }
+      }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -700,7 +720,9 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
               Generar Escenas con IA
             </DialogTitle>
             <DialogDescription>
-              La IA utilizará los personajes y localizaciones de tu bible para crear escenas coherentes
+              {scriptEpisodes.length > 0 
+                ? 'La sinopsis se carga automáticamente del guión. Puedes editarla si lo deseas.'
+                : 'La IA utilizará los personajes y localizaciones de tu bible para crear escenas coherentes'}
             </DialogDescription>
           </DialogHeader>
           
@@ -710,17 +732,29 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                 <Label>Episodio</Label>
                 <Select 
                   value={aiForm.episodeNo} 
-                  onValueChange={v => setAiForm({...aiForm, episodeNo: v})}
+                  onValueChange={v => {
+                    const epNo = parseInt(v);
+                    const scriptEp = scriptEpisodes.find((ep: any) => (ep.episode_number || 1) === epNo) || scriptEpisodes[epNo - 1];
+                    setAiForm({
+                      ...aiForm, 
+                      episodeNo: v,
+                      synopsis: scriptEp?.synopsis || aiForm.synopsis
+                    });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Array.from({ length: episodesCount }, (_, i) => (
-                      <SelectItem key={i + 1} value={String(i + 1)}>
-                        Episodio {i + 1}
-                      </SelectItem>
-                    ))}
+                    {Array.from({ length: episodesCount }, (_, i) => {
+                      const scriptEp = scriptEpisodes.find((ep: any) => (ep.episode_number || 1) === i + 1) || scriptEpisodes[i];
+                      const hasSynopsis = !!scriptEp?.synopsis;
+                      return (
+                        <SelectItem key={i + 1} value={String(i + 1)}>
+                          Episodio {i + 1} {hasSynopsis && '✓'}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -744,16 +778,38 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             </div>
             
             <div className="space-y-2">
-              <Label>Sinopsis del Episodio *</Label>
+              <div className="flex items-center justify-between">
+                <Label>Sinopsis del Episodio {scriptEpisodes.length > 0 && <span className="text-xs text-green-500 ml-2">(del guión)</span>}</Label>
+                {scriptEpisodes.length > 0 && !aiForm.synopsis && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => {
+                      const epNo = parseInt(aiForm.episodeNo);
+                      const scriptEp = scriptEpisodes.find((ep: any) => (ep.episode_number || 1) === epNo) || scriptEpisodes[epNo - 1];
+                      if (scriptEp?.synopsis) {
+                        setAiForm(prev => ({ ...prev, synopsis: scriptEp.synopsis }));
+                        toast.success('Sinopsis cargada del guión');
+                      }
+                    }}
+                  >
+                    Cargar del guión
+                  </Button>
+                )}
+              </div>
               <Textarea 
                 value={aiForm.synopsis}
                 onChange={e => setAiForm({...aiForm, synopsis: e.target.value})}
-                placeholder="Describe qué ocurre en este episodio: la trama principal, conflictos, giros importantes..."
+                placeholder={scriptEpisodes.length > 0 
+                  ? "La sinopsis se carga automáticamente al seleccionar un episodio con guión..." 
+                  : "Describe qué ocurre en este episodio: la trama principal, conflictos, giros importantes..."}
                 rows={5}
               />
-              <p className="text-xs text-muted-foreground">
-                Una sinopsis detallada ayuda a generar escenas más coherentes con tu historia
-              </p>
+              {!aiForm.synopsis && scriptEpisodes.length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  💡 Tip: Si generas un guión primero, la sinopsis se cargará automáticamente aquí
+                </p>
+              )}
             </div>
           </div>
 
