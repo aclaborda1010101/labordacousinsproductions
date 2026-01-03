@@ -238,18 +238,26 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             setGeneratedEpisodesList(episodes);
             setGeneratedScript(parsed);
             
-            const progress = 10 + Math.round((episodes.length / (storedState?.totalEpisodes || episodesCount)) * 75);
+            const totalEps = storedState?.totalEpisodes || episodesCount;
+            const progress = 10 + Math.round((episodes.length / totalEps) * 75);
             setPipelineProgress(progress);
-            setCurrentEpisodeGenerating(episodes.length + 1);
+            
+            // Only set currentEpisodeGenerating if there are more episodes to generate
+            if (episodes.length < totalEps) {
+              setCurrentEpisodeGenerating(episodes.length + 1);
+            } else {
+              // All episodes done, clear the counter
+              setCurrentEpisodeGenerating(null);
+            }
             
             toast.success(`Episodio ${episodes.length} generado en segundo plano`);
             
-            // Update stored state
+            // Update stored state - cap currentEpisode to totalEpisodes
             savePipelineState({
               ...storedState,
               episodes,
               progress,
-              currentEpisode: episodes.length + 1
+              currentEpisode: Math.min(episodes.length + 1, totalEps)
             });
           }
           
@@ -1492,7 +1500,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-sm font-medium">
-                      Generando Episodio {currentEpisodeGenerating || '?'} de {totalEpisodesToGenerate}
+                      {currentEpisodeGenerating && currentEpisodeGenerating <= totalEpisodesToGenerate
+                        ? `Generando Episodio ${currentEpisodeGenerating} de ${totalEpisodesToGenerate}`
+                        : generatedEpisodesList.length >= totalEpisodesToGenerate
+                          ? 'Finalizando generación...'
+                          : `Procesando episodios (${generatedEpisodesList.length}/${totalEpisodesToGenerate})...`
+                      }
                     </span>
                     <p className="text-xs text-muted-foreground">
                       Tiempo estimado restante: {formatDurationMs(getEstimatedRemainingMs())}
