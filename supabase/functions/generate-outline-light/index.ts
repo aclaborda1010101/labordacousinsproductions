@@ -5,14 +5,37 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface LightOutlineRequest {
-  idea: string;
-  episodesCount?: number;
-  format?: 'film' | 'series';
-  genre?: string;
-  tone?: string;
-  language?: string;
-}
+const OUTLINE_SYSTEM_PROMPT = `Eres un guionista profesional. Genera un OUTLINE conciso para una serie o película.
+
+Responde SOLO JSON válido con esta estructura EXACTA:
+{
+  "title": "string",
+  "logline": "string (1 frase que vende)",
+  "synopsis": "string (100-200 palabras)",
+  "genre": "string",
+  "tone": "string",
+  "main_characters": [
+    {
+      "name": "string",
+      "role": "protagonist|antagonist|support",
+      "description": "string (1 línea física + personalidad)"
+    }
+  ],
+  "main_locations": [
+    {
+      "name": "string",
+      "type": "INT|EXT",
+      "description": "string (1 línea)"
+    }
+  ],
+  "episode_beats": [
+    {
+      "episode": number,
+      "title": "string",
+      "summary": "string (2-3 frases de qué pasa)"
+    }
+  ]
+}`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -20,183 +43,130 @@ serve(async (req) => {
   }
 
   try {
-    const { idea, episodesCount = 6, format = 'series', genre = 'drama', tone = 'Cinematográfico realista', language = 'es-ES' }: LightOutlineRequest = await req.json();
+    const { idea, genre, tone, format, episodesCount, language } = await req.json();
 
-    if (!idea?.trim()) {
+    if (!idea) {
       return new Response(
-        JSON.stringify({ error: 'Se requiere una idea' }),
+        JSON.stringify({ error: 'Idea requerida' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY no está configurada');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY no configurada');
     }
+    
+    const userPrompt = `Genera un OUTLINE para:
 
-    const safeIdea = idea.length > 2000 ? idea.slice(0, 2000) : idea;
+IDEA: ${idea}
+GÉNERO: ${genre || 'Drama'}
+TONO: ${tone || 'Realista'}
+FORMATO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
+IDIOMA: ${language || 'es-ES'}
 
-    const systemPrompt = `Eres un guionista experto. Genera outlines CONCISOS pero evocadores.
-Tu trabajo: transformar ideas en estructuras narrativas claras y emocionantes.
-Responde siempre usando la herramienta provide_outline.
-Idioma: ${language}`;
+CONSTRAINTS:
+- Personajes principales: MÍNIMO 5
+- Localizaciones: MÍNIMO 5
+- Si es serie: un beat por episodio
 
-    const userPrompt = `Genera un outline BÁSICO para esta idea:
+Responde SOLO el JSON sin explicaciones.`;
 
-IDEA: ${safeIdea}
+    console.log('[OUTLINE] Generating...');
 
-FORMATO: ${format === 'series' ? `Serie de ${episodesCount} episodios` : 'Película'}
-GÉNERO: ${genre}
-TONO: ${tone}
-
-Crea un outline atractivo con:
-- Título memorable
-- Logline que enganche (1-2 frases)
-- Synopsis breve (100-150 palabras)
-- 3-6 personajes principales con descripción corta
-- 3-6 localizaciones clave
-- Beats de cada episodio (título + resumen de 2-3 frases)
-
-Usa la herramienta provide_outline para entregar el resultado.`;
-
-    console.log('Generating light outline for:', safeIdea.substring(0, 80));
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 3000,
-        temperature: 0.7,
-        system: systemPrompt,
-        tools: [
-          {
-            name: 'provide_outline',
-            description: 'Entrega el outline básico estructurado.',
-            input_schema: {
-              type: 'object',
-              properties: {
-                title: { type: 'string', description: 'Título atractivo' },
-                logline: { type: 'string', description: '1-2 frases que vendan la serie' },
-                genre: { type: 'string' },
-                tone: { type: 'string' },
-                synopsis: { type: 'string', description: '100-150 palabras resumen general' },
-                main_characters: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      name: { type: 'string' },
-                      role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting'] },
-                      description: { type: 'string', description: '1-2 líneas: físico + personalidad' }
-                    },
-                    required: ['name', 'role', 'description']
-                  }
-                },
-                main_locations: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      name: { type: 'string' },
-                      type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT'] },
-                      description: { type: 'string', description: '1-2 líneas' }
-                    },
-                    required: ['name', 'type', 'description']
-                  }
-                },
-                episode_beats: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      episode: { type: 'number' },
-                      title: { type: 'string' },
-                      summary: { type: 'string', description: '2-3 frases de qué pasa' }
-                    },
-                    required: ['episode', 'title', 'summary']
-                  }
-                }
-              },
-              required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'episode_beats']
-            }
-          }
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: OUTLINE_SYSTEM_PROMPT },
+          { role: 'user', content: userPrompt }
         ],
-        tool_choice: { type: 'tool', name: 'provide_outline' },
-        messages: [{ role: 'user', content: userPrompt }]
+        temperature: 0.7,
+        max_tokens: 3000
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Anthropic API error:', response.status, errorText);
-
+      console.error('[OUTLINE ERROR]', response.status, errorText);
+      
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: 'Límite de tasa alcanzado. Intenta en 1-2 minutos.' }),
+          JSON.stringify({ error: 'Rate limit alcanzado. Espera un momento.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-
-      if (response.status === 400 && errorText.toLowerCase().includes('credit')) {
+      if (response.status === 402) {
         return new Response(
-          JSON.stringify({ error: 'Créditos insuficientes en la cuenta de Claude.' }),
+          JSON.stringify({ error: 'Créditos agotados.' }),
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-
-      return new Response(
-        JSON.stringify({ error: `Error de Claude (${response.status})` }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      
+      throw new Error(`API error: ${response.status}`);
     }
 
     const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
 
-    const toolUse = Array.isArray(data?.content)
-      ? data.content.find((c: any) => c?.type === 'tool_use' && c?.name === 'provide_outline')
-      : null;
-
-    let outline = toolUse?.input;
-
-    if (!outline) {
-      // Fallback: try to parse JSON from text
-      const textBlock = data?.content?.find((c: any) => c?.type === 'text');
-      const content = textBlock?.text ?? '';
-      const start = content.indexOf('{');
-      const end = content.lastIndexOf('}');
-      if (start !== -1 && end > start) {
-        try {
-          outline = JSON.parse(content.slice(start, end + 1).replace(/,\s*([}\]])/g, '$1'));
-        } catch {
-          return new Response(
-            JSON.stringify({ error: 'Claude devolvió formato inválido.' }),
-            { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-      } else {
-        return new Response(
-          JSON.stringify({ error: 'Claude no devolvió outline.' }),
-          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+    if (!content) {
+      throw new Error('No content received');
     }
 
-    console.log('Light outline generated:', outline.title, '|', outline.main_characters?.length, 'chars,', outline.episode_beats?.length, 'episodes');
+    // Parse JSON - handle markdown code blocks
+    let outline;
+    try {
+      let jsonStr = content;
+      
+      // Remove markdown code blocks if present
+      const codeBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (codeBlockMatch) {
+        jsonStr = codeBlockMatch[1].trim();
+      }
+      
+      // Find JSON object
+      const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        outline = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON found in response');
+      }
+    } catch (parseError) {
+      console.error('[OUTLINE PARSE ERROR]', parseError);
+      console.error('[RAW CONTENT]', content.substring(0, 500));
+      throw new Error('Failed to parse outline JSON');
+    }
+
+    // Validate and ensure episode_beats
+    if (!outline.episode_beats || outline.episode_beats.length === 0) {
+      outline.episode_beats = Array.from({ length: episodesCount || 1 }, (_, i) => ({
+        episode: i + 1,
+        title: `Episodio ${i + 1}`,
+        summary: 'Por generar'
+      }));
+    }
+
+    console.log('[OUTLINE] Success:', outline.title, '| Characters:', outline.main_characters?.length, '| Episodes:', outline.episode_beats?.length);
 
     return new Response(
-      JSON.stringify({ success: true, outline }),
+      JSON.stringify({
+        success: true,
+        outline
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Error in generate-outline-light:', error);
+    console.error('[OUTLINE ERROR]', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Error desconocido' }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
