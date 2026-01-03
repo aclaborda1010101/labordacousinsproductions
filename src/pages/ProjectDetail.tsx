@@ -42,6 +42,8 @@ import QCEngine from '@/components/project/QCEngine';
 import ScriptImport from '@/components/project/ScriptImport';
 import RenderQueue from '@/components/project/RenderQueue';
 import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
+import { CreativeModeProvider } from '@/contexts/CreativeModeContext';
+import { CreativeModeSelector } from '@/components/project/CreativeModeSelector';
 
 interface Project {
   id: string;
@@ -122,113 +124,116 @@ export default function ProjectDetail() {
   const formatLabel = project.format === 'series' ? 'Serie' : project.format === 'mini' ? 'Miniserie' : 'Película';
 
   return (
-    <AppLayout>
-      <PageHeader title={project.title} description={`${formatLabel} • ${project.episodes_count} episodios`}>
-        <Badge variant={bibleReady ? 'pass' : 'pending'}>
-          Biblia: {project.bible_completeness_score}%
-        </Badge>
-        <NotificationCenter projectId={project.id} />
-        <Button variant="outline" size="icon" onClick={() => setShowSettings(true)}>
-          <Settings className="w-4 h-4" />
-        </Button>
-      </PageHeader>
+    <CreativeModeProvider projectId={project.id}>
+      <AppLayout>
+        <PageHeader title={project.title} description={`${formatLabel} • ${project.episodes_count} episodios`}>
+          <CreativeModeSelector compact showDescription={false} />
+          <Badge variant={bibleReady ? 'pass' : 'pending'}>
+            Biblia: {project.bible_completeness_score}%
+          </Badge>
+          <NotificationCenter projectId={project.id} />
+          <Button variant="outline" size="icon" onClick={() => setShowSettings(true)}>
+            <Settings className="w-4 h-4" />
+          </Button>
+        </PageHeader>
 
-      {/* Project Settings Dialog */}
-      <ProjectSettings
-        project={project}
-        open={showSettings}
-        onOpenChange={setShowSettings}
-        onUpdate={(updated) => setProject({ ...project, ...updated })}
-      />
+        {/* Project Settings Dialog */}
+        <ProjectSettings
+          project={project}
+          open={showSettings}
+          onOpenChange={setShowSettings}
+          onUpdate={(updated) => setProject({ ...project, ...updated })}
+        />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Project sidebar navigation */}
-        <nav className="w-56 bg-sidebar border-r border-sidebar-border shrink-0 overflow-y-auto">
-          <div className="p-3 space-y-1">
-            {PROJECT_TABS.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = currentPath === tab.path || 
-                (tab.path === '' && currentPath === '/bible');
-              const isLocked = tab.requiresBible && !bibleReady;
-              
-              return (
-                <Link
-                  key={tab.id}
-                  to={isLocked ? '#' : `/projects/${projectId}${tab.path}`}
-                  onClick={(e) => isLocked && e.preventDefault()}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
-                    isActive 
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground" 
-                      : isLocked
-                        ? "text-muted-foreground cursor-not-allowed opacity-50"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-                  )}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="flex-1">{tab.label}</span>
-                  {isLocked ? (
-                    <Lock className="w-3.5 h-3.5" />
-                  ) : isActive ? (
-                    <ChevronRight className="w-4 h-4 opacity-50" />
-                  ) : null}
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Bible gate warning */}
-          {!bibleReady && (
-            <div className="m-3 p-3 rounded-lg bg-warning/10 border border-warning/20">
-              <div className="flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-warning mt-0.5 shrink-0" />
-                <div className="text-xs">
-                  <p className="font-medium text-warning">Biblia Incompleta</p>
-                  <p className="text-muted-foreground mt-0.5">
-                    Completa tu biblia de producción para desbloquear escenas.
-                  </p>
-                </div>
-              </div>
+        <div className="flex-1 flex overflow-hidden">
+          {/* Project sidebar navigation */}
+          <nav className="w-56 bg-sidebar border-r border-sidebar-border shrink-0 overflow-y-auto">
+            <div className="p-3 space-y-1">
+              {PROJECT_TABS.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = currentPath === tab.path || 
+                  (tab.path === '' && currentPath === '/bible');
+                const isLocked = tab.requiresBible && !bibleReady;
+                
+                return (
+                  <Link
+                    key={tab.id}
+                    to={isLocked ? '#' : `/projects/${projectId}${tab.path}`}
+                    onClick={(e) => isLocked && e.preventDefault()}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                      isActive 
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground" 
+                        : isLocked
+                          ? "text-muted-foreground cursor-not-allowed opacity-50"
+                          : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="flex-1">{tab.label}</span>
+                    {isLocked ? (
+                      <Lock className="w-3.5 h-3.5" />
+                    ) : isActive ? (
+                      <ChevronRight className="w-4 h-4 opacity-50" />
+                    ) : null}
+                  </Link>
+                );
+              })}
             </div>
-          )}
-        </nav>
 
-        {/* Content area */}
-        <div className="flex-1 overflow-auto">
-          <Routes>
-            <Route path="/" element={<BibleOverview project={project} setProject={setProject} />} />
-            <Route path="/bible" element={<BibleOverview project={project} setProject={setProject} />} />
-            <Route path="/style" element={<StylePack projectId={project.id} />} />
-            <Route path="/characters" element={<Characters projectId={project.id} />} />
-            <Route path="/locations" element={<Locations projectId={project.id} />} />
-            <Route path="/props" element={<PropsComponent projectId={project.id} />} />
-            <Route path="/script" element={<ScriptImport projectId={project.id} />} />
-            <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
-            <Route path="/renders" element={<RenderQueue projectId={project.id} />} />
-            <Route path="/cost" element={<CostEngine projectId={project.id} />} />
-            <Route path="/qc" element={<QCEngine projectId={project.id} />} />
-            <Route path="/approvals" element={<ApprovalWorkflow projectId={project.id} />} />
-            <Route path="/team" element={<TeamMembers projectId={project.id} ownerId={project.owner_id} />} />
-            <Route path="*" element={
-              <div className="flex-1 flex items-center justify-center p-8">
-                <div className="text-center">
-                  <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Completa tu Biblia primero
-                  </h3>
-                  <p className="text-muted-foreground max-w-md">
-                    Construye el canon de tu producción con estilo, personajes y localizaciones 
-                    antes de proceder con el guión y los renders.
-                  </p>
+            {/* Bible gate warning */}
+            {!bibleReady && (
+              <div className="m-3 p-3 rounded-lg bg-warning/10 border border-warning/20">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-warning mt-0.5 shrink-0" />
+                  <div className="text-xs">
+                    <p className="font-medium text-warning">Biblia Incompleta</p>
+                    <p className="text-muted-foreground mt-0.5">
+                      Completa tu biblia de producción para desbloquear escenas.
+                    </p>
+                  </div>
                 </div>
               </div>
-            } />
-          </Routes>
-        </div>
-      </div>
+            )}
+          </nav>
 
-      {/* Realtime collaboration overlay */}
-      <RealtimeCollaboration projectId={project.id} currentSection={currentSection} />
-    </AppLayout>
+          {/* Content area */}
+          <div className="flex-1 overflow-auto">
+            <Routes>
+              <Route path="/" element={<BibleOverview project={project} setProject={setProject} />} />
+              <Route path="/bible" element={<BibleOverview project={project} setProject={setProject} />} />
+              <Route path="/style" element={<StylePack projectId={project.id} />} />
+              <Route path="/characters" element={<Characters projectId={project.id} />} />
+              <Route path="/locations" element={<Locations projectId={project.id} />} />
+              <Route path="/props" element={<PropsComponent projectId={project.id} />} />
+              <Route path="/script" element={<ScriptImport projectId={project.id} />} />
+              <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
+              <Route path="/renders" element={<RenderQueue projectId={project.id} />} />
+              <Route path="/cost" element={<CostEngine projectId={project.id} />} />
+              <Route path="/qc" element={<QCEngine projectId={project.id} />} />
+              <Route path="/approvals" element={<ApprovalWorkflow projectId={project.id} />} />
+              <Route path="/team" element={<TeamMembers projectId={project.id} ownerId={project.owner_id} />} />
+              <Route path="*" element={
+                <div className="flex-1 flex items-center justify-center p-8">
+                  <div className="text-center">
+                    <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      Completa tu Biblia primero
+                    </h3>
+                    <p className="text-muted-foreground max-w-md">
+                      Construye el canon de tu producción con estilo, personajes y localizaciones 
+                      antes de proceder con el guión y los renders.
+                    </p>
+                  </div>
+                </div>
+              } />
+            </Routes>
+          </div>
+        </div>
+
+        {/* Realtime collaboration overlay */}
+        <RealtimeCollaboration projectId={project.id} currentSection={currentSection} />
+      </AppLayout>
+    </CreativeModeProvider>
   );
 }
