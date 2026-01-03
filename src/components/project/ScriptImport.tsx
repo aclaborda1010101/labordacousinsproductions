@@ -1016,14 +1016,97 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         }
       }));
 
-      const { error } = await supabase
+      const { data: insertedScenes, error } = await supabase
         .from('scenes')
-        .insert(scenesToInsert);
+        .insert(scenesToInsert)
+        .select();
 
       if (error) throw error;
 
+      // Generate shots automatically from dialogue and action
+      if (insertedScenes && insertedScenes.length > 0) {
+        let totalShotsCreated = 0;
+        
+        for (let i = 0; i < insertedScenes.length; i++) {
+          const insertedScene = insertedScenes[i];
+          const originalScene = episode.scenes[i];
+          const shotsToInsert: any[] = [];
+          
+          // Create establishing shot
+          shotsToInsert.push({
+            scene_id: insertedScene.id,
+            shot_no: 1,
+            shot_type: 'wide',
+            duration_target: 4,
+            hero: false,
+            effective_mode: 'CINE',
+            dialogue_text: null,
+            coverage_type: 'Master',
+            story_purpose: 'establish_geography',
+            transition_in: 'CUT',
+            transition_out: 'hard_cut'
+          });
+          
+          // Create shots from dialogue
+          const dialogues = originalScene.dialogue || [];
+          dialogues.forEach((d: any, dIdx: number) => {
+            shotsToInsert.push({
+              scene_id: insertedScene.id,
+              shot_no: dIdx + 2,
+              shot_type: dIdx % 2 === 0 ? 'medium' : 'closeup',
+              duration_target: Math.min(Math.max(3, Math.ceil((d.line?.length || 20) / 25)), 8),
+              hero: false,
+              effective_mode: 'CINE',
+              dialogue_text: d.line || null,
+              coverage_type: dIdx % 2 === 0 ? 'Single' : 'OTS',
+              story_purpose: 'dialogue_focus',
+              transition_in: 'CUT',
+              transition_out: 'hard_cut',
+              blocking: {
+                subject_positions: d.character || 'Character in frame',
+                action: d.parenthetical || 'Speaking'
+              }
+            });
+          });
+          
+          // Add action shot if there's action text
+          if (originalScene.action && dialogues.length > 0) {
+            shotsToInsert.push({
+              scene_id: insertedScene.id,
+              shot_no: shotsToInsert.length + 1,
+              shot_type: 'medium',
+              duration_target: 3,
+              hero: false,
+              effective_mode: 'CINE',
+              dialogue_text: null,
+              coverage_type: 'Master',
+              story_purpose: 'reveal_information',
+              transition_in: 'CUT',
+              transition_out: 'hard_cut',
+              blocking: {
+                action: originalScene.action.substring(0, 200)
+              }
+            });
+          }
+          
+          // Insert shots for this scene
+          if (shotsToInsert.length > 0) {
+            const { error: shotError } = await supabase
+              .from('shots')
+              .insert(shotsToInsert);
+            
+            if (!shotError) {
+              totalShotsCreated += shotsToInsert.length;
+            }
+          }
+        }
+        
+        toast.success(`${insertedScenes.length} escenas con ${totalShotsCreated} planos creados para Episodio ${episodeNumber}`);
+      } else {
+        toast.success(`${scenesToInsert.length} escenas creadas para Episodio ${episodeNumber}`);
+      }
+
       setSegmentedEpisodes(prev => new Set([...prev, episodeNumber]));
-      toast.success(`${scenesToInsert.length} escenas creadas para Episodio ${episodeNumber}`);
       
       if (onScenesCreated) {
         onScenesCreated();
@@ -1042,12 +1125,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     
     const episodes = generatedScript.episodes || [{ scenes: generatedScript.scenes }];
     const confirm = window.confirm(
-      `¿Segmentar ${episodes.length} episodio(s) en escenas individuales?\n\nEsto creará las escenas en la base de datos para que puedas añadir planos.`
+      `¿Segmentar ${episodes.length} episodio(s) en escenas con planos?\n\nEsto creará las escenas Y los planos automáticamente basados en los diálogos.`
     );
     if (!confirm) return;
 
     setSegmenting(true);
     let totalScenes = 0;
+    let totalShots = 0;
 
     try {
       for (let i = 0; i < episodes.length; i++) {
@@ -1082,17 +1166,88 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             }
           }));
 
-          const { error } = await supabase
+          const { data: insertedScenes, error } = await supabase
             .from('scenes')
-            .insert(scenesToInsert);
+            .insert(scenesToInsert)
+            .select();
 
           if (error) throw error;
-          totalScenes += scenesToInsert.length;
+          totalScenes += insertedScenes?.length || 0;
+          
+          // Generate shots for each scene
+          if (insertedScenes && insertedScenes.length > 0) {
+            for (let j = 0; j < insertedScenes.length; j++) {
+              const insertedScene = insertedScenes[j];
+              const originalScene = ep.scenes[j];
+              const shotsToInsert: any[] = [];
+              
+              // Establishing shot
+              shotsToInsert.push({
+                scene_id: insertedScene.id,
+                shot_no: 1,
+                shot_type: 'wide',
+                duration_target: 4,
+                hero: false,
+                effective_mode: 'CINE',
+                dialogue_text: null,
+                coverage_type: 'Master',
+                story_purpose: 'establish_geography',
+                transition_in: 'CUT',
+                transition_out: 'hard_cut'
+              });
+              
+              // Shots from dialogue
+              const dialogues = originalScene.dialogue || [];
+              dialogues.forEach((d: any, dIdx: number) => {
+                shotsToInsert.push({
+                  scene_id: insertedScene.id,
+                  shot_no: dIdx + 2,
+                  shot_type: dIdx % 2 === 0 ? 'medium' : 'closeup',
+                  duration_target: Math.min(Math.max(3, Math.ceil((d.line?.length || 20) / 25)), 8),
+                  hero: false,
+                  effective_mode: 'CINE',
+                  dialogue_text: d.line || null,
+                  coverage_type: dIdx % 2 === 0 ? 'Single' : 'OTS',
+                  story_purpose: 'dialogue_focus',
+                  transition_in: 'CUT',
+                  transition_out: 'hard_cut',
+                  blocking: {
+                    subject_positions: d.character || 'Character in frame',
+                    action: d.parenthetical || 'Speaking'
+                  }
+                });
+              });
+              
+              // Action shot
+              if (originalScene.action && dialogues.length > 0) {
+                shotsToInsert.push({
+                  scene_id: insertedScene.id,
+                  shot_no: shotsToInsert.length + 1,
+                  shot_type: 'medium',
+                  duration_target: 3,
+                  hero: false,
+                  effective_mode: 'CINE',
+                  dialogue_text: null,
+                  coverage_type: 'Master',
+                  story_purpose: 'reveal_information',
+                  transition_in: 'CUT',
+                  transition_out: 'hard_cut',
+                  blocking: { action: originalScene.action.substring(0, 200) }
+                });
+              }
+              
+              if (shotsToInsert.length > 0) {
+                const { error: shotError } = await supabase.from('shots').insert(shotsToInsert);
+                if (!shotError) totalShots += shotsToInsert.length;
+              }
+            }
+          }
+          
           setSegmentedEpisodes(prev => new Set([...prev, episodeNumber]));
         }
       }
 
-      toast.success(`${totalScenes} escenas creadas en ${episodes.length} episodio(s)`);
+      toast.success(`${totalScenes} escenas con ${totalShots} planos creados en ${episodes.length} episodio(s)`);
       
       if (onScenesCreated) {
         onScenesCreated();
