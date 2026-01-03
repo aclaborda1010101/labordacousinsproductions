@@ -30,6 +30,14 @@ interface GeneratedSlot {
   slotId?: string;
 }
 
+// 4 mandatory Identity Pack slots
+const IDENTITY_PACK_SLOTS = [
+  { value: 'face_front', label: 'Rostro Frontal', icon: User, required: true },
+  { value: 'face_side', label: 'Rostro Perfil', icon: User, required: true },
+  { value: 'body_front', label: 'Cuerpo Frontal', icon: Camera, required: true },
+  { value: 'body_side', label: 'Cuerpo Lateral', icon: Camera, required: true },
+];
+
 const SLOT_PIPELINE = [
   { type: 'closeup', name: 'Identity Closeup', icon: User, required: true },
   { type: 'turnaround', viewAngle: 'front', name: 'Front View', icon: Camera, required: true },
@@ -46,11 +54,19 @@ export function CharacterQuickStart({
   projectId,
   onComplete 
 }: CharacterQuickStartProps) {
-  // Upload state
-  const [faceImage, setFaceImage] = useState<File | null>(null);
-  const [bodyImage, setBodyImage] = useState<File | null>(null);
-  const [facePreview, setFacePreview] = useState<string | null>(null);
-  const [bodyPreview, setBodyPreview] = useState<string | null>(null);
+  // Upload state - 4 mandatory images
+  const [identityImages, setIdentityImages] = useState<{[key: string]: File | null}>({
+    face_front: null,
+    face_side: null,
+    body_front: null,
+    body_side: null
+  });
+  const [identityPreviews, setIdentityPreviews] = useState<{[key: string]: string | null}>({
+    face_front: null,
+    face_side: null,
+    body_front: null,
+    body_side: null
+  });
   const [celebrityMix, setCelebrityMix] = useState('');
   
   // Pipeline state
@@ -62,27 +78,19 @@ export function CharacterQuickStart({
   const [currentSlotIndex, setCurrentSlotIndex] = useState(0);
   const [completedSlots, setCompletedSlots] = useState<GeneratedSlot[]>([]);
   const [cancelController, setCancelController] = useState<AbortController | null>(null);
-  const [uploadedFaceUrl, setUploadedFaceUrl] = useState<string | null>(null);
-  const [uploadedBodyUrl, setUploadedBodyUrl] = useState<string | null>(null);
+  const [uploadedUrls, setUploadedUrls] = useState<{[key: string]: string}>({});
 
-  const faceInputRef = useRef<HTMLInputElement>(null);
-  const bodyInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRefs = useRef<{[key: string]: HTMLInputElement | null}>({});
 
-  const handleFaceUpload = (file: File | null) => {
+  const handleImageUpload = (file: File | null, slotKey: string) => {
     if (!file) return;
-    setFaceImage(file);
+    setIdentityImages(prev => ({ ...prev, [slotKey]: file }));
     const reader = new FileReader();
-    reader.onloadend = () => setFacePreview(reader.result as string);
+    reader.onloadend = () => setIdentityPreviews(prev => ({ ...prev, [slotKey]: reader.result as string }));
     reader.readAsDataURL(file);
   };
 
-  const handleBodyUpload = (file: File | null) => {
-    if (!file) return;
-    setBodyImage(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setBodyPreview(reader.result as string);
-    reader.readAsDataURL(file);
-  };
+  const allImagesUploaded = IDENTITY_PACK_SLOTS.every(slot => identityImages[slot.value] !== null);
 
   const uploadToStorage = async (file: File, path: string): Promise<string> => {
     const { data, error } = await supabase.storage
@@ -99,8 +107,8 @@ export function CharacterQuickStart({
   };
 
   const handleAnalyze = async () => {
-    if (!faceImage || !bodyImage) {
-      toast.error('Sube ambas imágenes (rostro y cuerpo)');
+    if (!allImagesUploaded) {
+      toast.error('Sube las 4 imágenes de referencia requeridas');
       return;
     }
 
@@ -108,29 +116,34 @@ export function CharacterQuickStart({
     setStep('analyzing');
 
     try {
-      // Upload images to storage
+      // Upload all 4 images to storage
       const timestamp = Date.now();
-      const faceUrl = await uploadToStorage(
-        faceImage, 
-        `${projectId}/${characterId}/reference_face_${timestamp}.jpg`
-      );
-      const bodyUrl = await uploadToStorage(
-        bodyImage, 
-        `${projectId}/${characterId}/reference_body_${timestamp}.jpg`
-      );
+      const urls: {[key: string]: string} = {};
+      
+      for (const slot of IDENTITY_PACK_SLOTS) {
+        const file = identityImages[slot.value];
+        if (file) {
+          const url = await uploadToStorage(
+            file, 
+            `${projectId}/${characterId}/${slot.value}_${timestamp}.jpg`
+          );
+          urls[slot.value] = url;
+        }
+      }
 
-      setUploadedFaceUrl(faceUrl);
-      setUploadedBodyUrl(bodyUrl);
+      setUploadedUrls(urls);
 
       toast.info('Analizando referencias con IA...');
 
-      // Call analysis function
+      // Call analysis function with all 4 images
       const { data, error } = await supabase.functions.invoke('analyze-character-references', {
         body: {
           characterId,
           projectId,
-          faceImageUrl: faceUrl,
-          bodyImageUrl: bodyUrl,
+          faceImageUrl: urls.face_front,
+          faceSideImageUrl: urls.face_side,
+          bodyImageUrl: urls.body_front,
+          bodySideImageUrl: urls.body_side,
           celebrityMix: celebrityMix || undefined,
           characterName
         }
@@ -351,17 +364,24 @@ export function CharacterQuickStart({
 
   const resetFlow = () => {
     setStep('upload');
-    setFaceImage(null);
-    setBodyImage(null);
-    setFacePreview(null);
-    setBodyPreview(null);
+    setIdentityImages({
+      face_front: null,
+      face_side: null,
+      body_front: null,
+      body_side: null
+    });
+    setIdentityPreviews({
+      face_front: null,
+      face_side: null,
+      body_front: null,
+      body_side: null
+    });
     setCelebrityMix('');
     setVisualDNA(null);
     setEditableVisualDNA(null);
     setCompletedSlots([]);
     setCurrentSlotIndex(0);
-    setUploadedFaceUrl(null);
-    setUploadedBodyUrl(null);
+    setUploadedUrls({});
   };
 
   const updateDNAField = (path: string[], value: any) => {
@@ -409,7 +429,7 @@ export function CharacterQuickStart({
           Quick Character Setup
         </CardTitle>
         <CardDescription>
-          Sube 2 imágenes de referencia y generamos el pack completo automáticamente
+          Sube las 4 imágenes de referencia requeridas y generamos el pack completo automáticamente
         </CardDescription>
       </CardHeader>
 
@@ -417,94 +437,57 @@ export function CharacterQuickStart({
         {/* STEP 1: UPLOAD */}
         {step === 'upload' && (
           <>
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Face Upload */}
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  Referencia de Rostro
-                  <Badge variant="destructive" className="text-xs">Requerido</Badge>
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  Closeup del rostro, buena iluminación, expresión neutral
-                </p>
-                
-                <div 
-                  onClick={() => faceInputRef.current?.click()}
-                  className={`
-                    border-2 border-dashed rounded-lg p-4 text-center cursor-pointer
-                    transition-colors hover:border-primary/50 hover:bg-primary/5
-                    ${facePreview ? 'border-green-500/50' : 'border-muted-foreground/30'}
-                  `}
-                >
-                  {facePreview ? (
-                    <img 
-                      src={facePreview} 
-                      alt="Face preview" 
-                      className="w-32 h-32 object-cover rounded-lg mx-auto"
+            {/* 4 Identity Pack Images - 2x2 Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {IDENTITY_PACK_SLOTS.map((slot) => {
+                const SlotIcon = slot.icon;
+                const preview = identityPreviews[slot.value];
+                return (
+                  <div key={slot.value} className="space-y-2">
+                    <Label className="flex items-center gap-2 text-sm">
+                      <SlotIcon className="w-4 h-4" />
+                      {slot.label}
+                      <Badge variant="destructive" className="text-xs">Requerido</Badge>
+                    </Label>
+                    
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      ref={(el) => { fileInputRefs.current[slot.value] = el; }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file, slot.value);
+                        e.target.value = '';
+                      }}
                     />
-                  ) : (
-                    <div className="py-8 space-y-2">
-                      <ImagePlus className="w-8 h-8 mx-auto text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Click para subir
-                      </p>
+                    
+                    <div 
+                      onClick={() => fileInputRefs.current[slot.value]?.click()}
+                      className={`
+                        border-2 border-dashed rounded-lg p-2 text-center cursor-pointer
+                        transition-colors hover:border-primary/50 hover:bg-primary/5 h-32
+                        ${preview ? 'border-green-500/50' : 'border-muted-foreground/30'}
+                      `}
+                    >
+                      {preview ? (
+                        <img 
+                          src={preview} 
+                          alt={slot.label} 
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <div className="h-full flex flex-col items-center justify-center gap-1">
+                          <ImagePlus className="w-6 h-6 text-muted-foreground" />
+                          <p className="text-xs text-muted-foreground">
+                            Click para subir
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                
-                <input
-                  ref={faceInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleFaceUpload(e.target.files?.[0] || null)}
-                />
-              </div>
-
-              {/* Body Upload */}
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2">
-                  <Camera className="w-4 h-4" />
-                  Referencia de Cuerpo
-                  <Badge variant="destructive" className="text-xs">Requerido</Badge>
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  Full body, outfit visible, pose de pie
-                </p>
-                
-                <div 
-                  onClick={() => bodyInputRef.current?.click()}
-                  className={`
-                    border-2 border-dashed rounded-lg p-4 text-center cursor-pointer
-                    transition-colors hover:border-primary/50 hover:bg-primary/5
-                    ${bodyPreview ? 'border-green-500/50' : 'border-muted-foreground/30'}
-                  `}
-                >
-                  {bodyPreview ? (
-                    <img 
-                      src={bodyPreview} 
-                      alt="Body preview" 
-                      className="w-32 h-48 object-cover rounded-lg mx-auto"
-                    />
-                  ) : (
-                    <div className="py-8 space-y-2">
-                      <ImagePlus className="w-8 h-8 mx-auto text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Click para subir
-                      </p>
-                    </div>
-                  )}
-                </div>
-                
-                <input
-                  ref={bodyInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleBodyUpload(e.target.files?.[0] || null)}
-                />
-              </div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Celebrity Mix (Optional) */}
@@ -526,7 +509,7 @@ export function CharacterQuickStart({
             {/* Generate Button */}
             <Button 
               onClick={handleAnalyze}
-              disabled={!faceImage || !bodyImage || analyzing}
+              disabled={!allImagesUploaded || analyzing}
               size="lg"
               className="w-full"
             >
@@ -572,11 +555,11 @@ export function CharacterQuickStart({
                 </p>
               </div>
               <div className="flex gap-2">
-                {facePreview && (
-                  <img src={facePreview} alt="Face" className="w-12 h-12 rounded-lg object-cover" />
+                {identityPreviews.face_front && (
+                  <img src={identityPreviews.face_front} alt="Face" className="w-12 h-12 rounded-lg object-cover" />
                 )}
-                {bodyPreview && (
-                  <img src={bodyPreview} alt="Body" className="w-12 h-12 rounded-lg object-cover" />
+                {identityPreviews.body_front && (
+                  <img src={identityPreviews.body_front} alt="Body" className="w-12 h-12 rounded-lg object-cover" />
                 )}
               </div>
             </div>
