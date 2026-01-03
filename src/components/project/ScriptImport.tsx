@@ -200,21 +200,44 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   useEffect(() => {
     const storedState = loadPipelineState();
     if (storedState && storedState.pipelineRunning) {
-      setBackgroundGeneration(true);
-      setPipelineRunning(true);
+      const totalEps = storedState.totalEpisodes || episodesCount;
+      const storedEpisodes = (storedState.episodes as any[]) || [];
+      const episodesDone = storedEpisodes.length;
+      const isStillRunning = episodesDone < totalEps;
+      const safeCurrentEpisode = Math.min(storedState.currentEpisode || 1, totalEps);
+
+      setBackgroundGeneration(isStillRunning);
+      setPipelineRunning(isStillRunning);
       setPipelineProgress(storedState.progress || 0);
-      setCurrentEpisodeGenerating(storedState.currentEpisode || null);
-      setTotalEpisodesToGenerate(storedState.totalEpisodes || 0);
-      setGeneratedEpisodesList(storedState.episodes || []);
+      setCurrentEpisodeGenerating(isStillRunning ? safeCurrentEpisode : null);
+      setTotalEpisodesToGenerate(totalEps);
+      setGeneratedEpisodesList(storedEpisodes);
       setLightOutline(storedState.outline || null);
       setOutlineApproved(true);
-      setPipelineSteps(prev => prev.map(s => 
+
+      setPipelineSteps(prev => prev.map(s =>
         s.id === 'outline' || s.id === 'approval' ? { ...s, status: 'success' } :
-        s.id === 'episodes' ? { ...s, status: 'running', label: `Generando episodio ${Math.min(storedState.currentEpisode || 1, storedState.totalEpisodes || episodesCount)} de ${storedState.totalEpisodes || episodesCount}...` } : s
+        s.id === 'episodes'
+          ? isStillRunning
+            ? { ...s, status: 'running', label: `Generando episodio ${safeCurrentEpisode} de ${totalEps}...` }
+            : { ...s, status: 'success', label: 'Episodios generados' }
+          : s
       ));
+
+      // If we detect a stale state (e.g. currentEpisode > totalEpisodes), persist a corrected snapshot
+      if (!isStillRunning) {
+        savePipelineState({
+          ...storedState,
+          pipelineRunning: false,
+          currentEpisode: totalEps,
+          totalEpisodes: totalEps,
+          episodes: storedEpisodes,
+        });
+      }
+
       toast.info('Generación en segundo plano detectada. Recargando estado...');
     }
-  }, [projectId]);
+  }, [projectId, episodesCount]);
 
   // Poll for script updates when background generation is active
   useEffect(() => {
