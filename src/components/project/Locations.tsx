@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp, Copy, BookOpen } from 'lucide-react';
+import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp, Copy, BookOpen, Play, PlayCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -36,6 +36,8 @@ export default function Locations({ projectId }: LocationsProps) {
   const [saving, setSaving] = useState(false);
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [generatingProfile, setGeneratingProfile] = useState<string | null>(null);
+  const [autoGenerating, setAutoGenerating] = useState<string | null>(null);
+  const [autoGeneratingAll, setAutoGeneratingAll] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -238,6 +240,103 @@ export default function Locations({ projectId }: LocationsProps) {
     }
   };
 
+  // Auto-generate location pack
+  const autoGenerateLocationPack = async (location: Location) => {
+    setAutoGenerating(location.id);
+    toast.info(`Generando pack para ${location.name}...`);
+    
+    try {
+      // First generate Bible profile if not exists
+      if (!location.profile_json) {
+        await generateProfileWithEntityBuilder(location);
+      }
+      
+      // Generate location slots via edge function
+      const slots = [
+        { slot_type: 'establishing', view_angle: 'wide', time_of_day: 'day' },
+        { slot_type: 'establishing', view_angle: 'wide', time_of_day: 'night' },
+        { slot_type: 'detail', view_angle: '3/4', time_of_day: 'day' },
+      ];
+      
+      for (const slotConfig of slots) {
+        // Create or get slot
+        const { data: existingSlot } = await supabase
+          .from('location_pack_slots')
+          .select('id')
+          .eq('location_id', location.id)
+          .eq('slot_type', slotConfig.slot_type)
+          .eq('view_angle', slotConfig.view_angle)
+          .eq('time_of_day', slotConfig.time_of_day)
+          .single();
+
+        let slotId = existingSlot?.id;
+
+        if (!slotId) {
+          const { data: newSlot, error } = await supabase
+            .from('location_pack_slots')
+            .insert({
+              location_id: location.id,
+              slot_type: slotConfig.slot_type,
+              view_angle: slotConfig.view_angle,
+              time_of_day: slotConfig.time_of_day,
+              status: 'pending',
+              required: true
+            })
+            .select('id')
+            .single();
+
+          if (error) continue;
+          slotId = newSlot.id;
+        }
+
+        // Generate image
+        await supabase.functions.invoke('generate-location', {
+          body: {
+            slotId,
+            locationId: location.id,
+            locationName: location.name,
+            locationDescription: location.description || '',
+            slotType: slotConfig.slot_type,
+            viewAngle: slotConfig.view_angle,
+            timeOfDay: slotConfig.time_of_day
+          }
+        });
+      }
+      
+      toast.success(`Pack de ${location.name} generado`);
+      fetchLocations();
+    } catch (error) {
+      console.error('Auto-generate location error:', error);
+      toast.error('Error en generación de localización');
+    } finally {
+      setAutoGenerating(null);
+    }
+  };
+
+  // Auto-generate ALL locations
+  const autoGenerateAllLocations = async () => {
+    if (locations.length === 0) {
+      toast.info('No hay localizaciones para generar');
+      return;
+    }
+
+    if (!confirm(`¿Generar packs para ${locations.length} localizaciones? Esto puede tardar varios minutos.`)) {
+      return;
+    }
+
+    setAutoGeneratingAll(true);
+    
+    for (let i = 0; i < locations.length; i++) {
+      const loc = locations[i];
+      toast.info(`Generando ${i + 1}/${locations.length}: ${loc.name}`);
+      await autoGenerateLocationPack(loc);
+    }
+    
+    setAutoGeneratingAll(false);
+    toast.success(`${locations.length} localizaciones generadas`);
+    fetchLocations();
+  };
+
   if (loading) {
     return (
       <div className="p-6 flex justify-center">
@@ -253,10 +352,26 @@ export default function Locations({ projectId }: LocationsProps) {
           <h2 className="text-2xl font-bold text-foreground">Localizaciones</h2>
           <p className="text-muted-foreground">Define los escenarios y ambientes de tu producción</p>
         </div>
-        <Button variant="gold" onClick={() => setShowAddDialog(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Añadir Localización
-        </Button>
+        <div className="flex gap-2">
+          {locations.length > 0 && (
+            <Button 
+              variant="outline" 
+              onClick={autoGenerateAllLocations}
+              disabled={autoGeneratingAll}
+            >
+              {autoGeneratingAll ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <PlayCircle className="w-4 h-4 mr-2" />
+              )}
+              Generar Todas
+            </Button>
+          )}
+          <Button variant="gold" onClick={() => setShowAddDialog(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Añadir Localización
+          </Button>
+        </div>
       </div>
       
       <div className="grid gap-4 md:grid-cols-2">
@@ -364,12 +479,25 @@ export default function Locations({ projectId }: LocationsProps) {
                       </div>
                       <div className="flex gap-1">
                         <Button 
+                          variant="gold" 
+                          size="sm"
+                          onClick={() => autoGenerateLocationPack(location)}
+                          disabled={autoGenerating === location.id}
+                          title="Generar pack automáticamente"
+                        >
+                          {autoGenerating === location.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                          ) : (
+                            <Play className="w-4 h-4 mr-1" />
+                          )}
+                          Generar
+                        </Button>
+                        <Button 
                           variant="outline" 
                           size="sm"
                           onClick={() => generateProfileWithEntityBuilder(location)}
                           disabled={generatingProfile === location.id}
                           title="Generar Perfil Bible"
-                          className="mr-1"
                         >
                           {generatingProfile === location.id ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-1" />
