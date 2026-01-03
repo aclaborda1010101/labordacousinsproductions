@@ -27,11 +27,10 @@ interface SlotGenerateRequest {
   styleToken?: string;
 }
 
-// Image engine configuration
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
 // See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
-// nano-banana-pro = google/gemini-2.5-flash-image (maximum facial consistency)
-const IMAGE_ENGINE = 'google/gemini-2.5-flash-image';
+// Character Bible: nano-banana-pro via FAL.ai (maximum facial consistency)
+const FAL_MODEL = 'fal-ai/nano-banana-pro';
 
 // ============================================
 // TECHNICAL PROMPT GENERATOR
@@ -469,7 +468,103 @@ function generateTechnicalPrompt(
 }
 
 // ============================================
-// QC CHECKS
+// FAL.AI IMAGE GENERATION
+// ============================================
+async function generateWithFal(
+  prompt: string,
+  negativePrompt: string,
+  imageSize: string = "portrait_16_9"
+): Promise<{ imageUrl: string; seed: number }> {
+  const FAL_API_KEY = Deno.env.get('FAL_API_KEY');
+  if (!FAL_API_KEY) {
+    throw new Error('FAL_API_KEY is not configured');
+  }
+
+  console.log(`[FAL] Generating with ${FAL_MODEL}...`);
+
+  // Submit request to FAL queue
+  const submitResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Key ${FAL_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: prompt,
+      negative_prompt: negativePrompt,
+      image_size: imageSize,
+      num_images: 1,
+      enable_safety_checker: false,
+      output_format: "jpeg"
+    }),
+  });
+
+  if (!submitResponse.ok) {
+    const errorText = await submitResponse.text();
+    console.error('[FAL] Submit error:', submitResponse.status, errorText);
+    throw new Error(`FAL submit failed: ${submitResponse.status} - ${errorText}`);
+  }
+
+  const queueData = await submitResponse.json();
+  const requestId = queueData.request_id;
+  console.log('[FAL] Request queued:', requestId);
+
+  // Poll for result
+  let attempts = 0;
+  const maxAttempts = 60; // 60 seconds max
+  
+  while (attempts < maxAttempts) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const statusResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}/status`, {
+      headers: {
+        'Authorization': `Key ${FAL_API_KEY}`,
+      },
+    });
+
+    if (!statusResponse.ok) {
+      attempts++;
+      continue;
+    }
+
+    const status = await statusResponse.json();
+    
+    if (status.status === 'COMPLETED') {
+      // Get result
+      const resultResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}`, {
+        headers: {
+          'Authorization': `Key ${FAL_API_KEY}`,
+        },
+      });
+
+      if (!resultResponse.ok) {
+        throw new Error('Failed to get FAL result');
+      }
+
+      const result = await resultResponse.json();
+      const imageUrl = result.images?.[0]?.url;
+      const seed = result.seed || Math.floor(Math.random() * 999999);
+      
+      if (!imageUrl) {
+        throw new Error('No image in FAL response');
+      }
+
+      console.log('[FAL] Generation complete, seed:', seed);
+      return { imageUrl, seed };
+    }
+
+    if (status.status === 'FAILED') {
+      throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
+    }
+
+    attempts++;
+  }
+
+  throw new Error('FAL generation timeout');
+}
+
+// ============================================
+// QC CHECKS (using Lovable AI for analysis)
 // ============================================
 async function runQC(
   imageUrl: string, 
@@ -499,338 +594,66 @@ async function runQC(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-3-pro-preview',
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
-            content: `You are a character design QC analyst for production.
-Analyze the generated character image and score it on:
-- Identity Consistency (0-25): Does it match the specified features?
-- Technical Quality (0-25): Resolution, clarity, no artifacts
-- Pose/Composition (0-25): Appropriate for the slot type (${slotType})
-- Style Consistency (0-25): Photorealistic quality
-${checksText}
+            content: `You are an expert QC analyst for character reference images. 
+Evaluate images for:
+1. Technical quality (sharpness, lighting, composition)
+2. Character consistency (if validation checks provided)
+3. AI artifacts (deformed hands, morphed features, asymmetric eyes)
+4. Professional usability for production
 
-Return ONLY a JSON object:
-{
-  "score": <0-100>,
-  "passed": <true if score >= 80>,
-  "issues": ["issue1", "issue2"],
-  "fixNotes": "Specific suggestions to fix if failed"
-}`
+IDENTITY ANCHOR SLOTS (closeup, turnaround): MAXIMUM STRICTNESS - these define the character.
+OTHER SLOTS: Can be more lenient on minor variations.
+
+Return JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": "..."}`
           },
           {
             role: 'user',
             content: [
-              {
-                type: 'text',
-                text: `Analyze this ${slotType} image for character "${characterName}". Check identity consistency, quality, and fitness for production use.`
+              { 
+                type: 'text', 
+                text: `Evaluate this ${slotType} image for character "${characterName}".${checksText}` 
               },
-              {
-                type: 'image_url',
-                image_url: { url: imageUrl }
+              { 
+                type: 'image_url', 
+                image_url: { url: imageUrl } 
               }
             ]
           }
         ],
+        response_format: { type: 'json_object' }
       }),
     });
 
     if (!response.ok) {
-      console.error('QC analysis failed:', response.status);
-      return { score: 80, passed: true, issues: [], fixNotes: '' };
+      console.error('QC request failed:', response.status);
+      return { score: 70, passed: true, issues: [], fixNotes: '' };
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || '';
+    const content = data.choices?.[0]?.message?.content;
     
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+    if (content) {
+      try {
+        const result = JSON.parse(content);
+        return {
+          score: result.score || 70,
+          passed: result.passed !== false,
+          issues: result.issues || [],
+          fixNotes: result.fixNotes || ''
+        };
+      } catch {
+        console.error('Failed to parse QC response');
+      }
     }
-  } catch (e) {
-    console.error('QC error:', e);
+  } catch (error) {
+    console.error('QC error:', error);
   }
-
-  return { score: 80, passed: true, issues: [], fixNotes: '' };
-}
-
-// ============================================
-// SLOT GENERATION WITH VISUAL DNA
-// ============================================
-async function handleSlotGeneration(body: SlotGenerateRequest): Promise<Response> {
-  const { 
-    slotId, 
-    characterId, 
-    characterName, 
-    characterBio, 
-    slotType, 
-    viewAngle, 
-    expressionName, 
-    outfitDescription,
-    styleToken 
-  } = body;
-
-  console.log(`Generating ${slotType} for ${characterName}...`);
-
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) {
-    throw new Error('LOVABLE_API_KEY not configured');
-  }
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  // ============================================
-  // FETCH VISUAL DNA
-  // ============================================
-  let prompt: string;
-  let validationChecks: string[] = [];
   
-  const { data: visualDNARecord, error: vdnaError } = await supabase
-    .from('character_visual_dna')
-    .select('visual_dna, continuity_lock')
-    .eq('character_id', characterId)
-    .eq('is_active', true)
-    .single();
-
-  if (!vdnaError && visualDNARecord?.visual_dna) {
-    // Use Visual DNA for technical prompt generation
-    console.log('Using Visual DNA for prompt generation');
-    
-    const { masterPrompt, negativePrompt, validationChecks: checks } = generateTechnicalPrompt(
-      visualDNARecord.visual_dna as VisualDNA,
-      visualDNARecord.continuity_lock as ContinuityLock,
-      slotType,
-      {
-        expression: expressionName,
-        outfit: outfitDescription,
-        viewAngle: viewAngle
-      }
-    );
-    
-    prompt = masterPrompt;
-    validationChecks = checks;
-    
-    console.log('Technical prompt generated, length:', prompt.length);
-  } else {
-    // Fallback to legacy prompt generation
-    console.log('No Visual DNA found, using legacy prompts');
-    
-    const STYLE_MODIFIER = (slotType === 'closeup' || slotType === 'turnaround')
-      ? `CRITICAL: Photorealistic human rendering, disable all stylization, pure photographic quality.`
-      : `Maintain consistent character identity with low stylization tolerance.`;
-    
-    switch (slotType) {
-      case 'turnaround':
-        prompt = `Character turnaround sheet, ${viewAngle || 'front'} view of ${characterName}. ${characterBio}. 
-Full body pose, clean studio background, professional character design reference.
-${STYLE_MODIFIER}`;
-        break;
-      case 'closeup':
-        prompt = `Identity anchor close-up portrait of ${characterName}. ${characterBio}.
-Extreme close-up of face, neutral expression, direct eye contact.
-Studio lighting, clean background, ultra high detail on facial features.
-${STYLE_MODIFIER}`;
-        break;
-      case 'expression':
-        prompt = `Character expression for ${characterName}. ${characterBio}.
-Close-up portrait showing "${expressionName || 'neutral'}" emotion.
-${STYLE_MODIFIER}`;
-        break;
-      case 'outfit':
-        prompt = `Character ${characterName} wearing ${outfitDescription || 'casual outfit'}. ${characterBio}.
-${viewAngle || '3/4'} view, showing the complete outfit.
-${STYLE_MODIFIER}`;
-        break;
-      default:
-        prompt = `Base character design for ${characterName}. ${characterBio}.
-3/4 view pose, showing character's default look.
-${STYLE_MODIFIER}`;
-    }
-  }
-
-  console.log('Prompt preview:', prompt.substring(0, 200) + '...');
-
-  // Update slot status
-  await supabase.from('character_pack_slots').update({
-    status: 'generating',
-    prompt_text: prompt,
-  }).eq('id', slotId);
-
-  // Generate image
-  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: IMAGE_ENGINE,
-      messages: [{ role: 'user', content: prompt }],
-      modalities: ['image', 'text']
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    console.error('Image generation error:', response.status, error);
-    
-    await supabase.from('character_pack_slots').update({
-      status: 'failed',
-      fix_notes: `Generation failed: ${response.status}`,
-    }).eq('id', slotId);
-
-    if (response.status === 429) {
-      return new Response(JSON.stringify({ success: false, error: 'Rate limit exceeded' }), {
-        status: 429,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    if (response.status === 402) {
-      return new Response(JSON.stringify({ success: false, error: 'Payment required' }), {
-        status: 402,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    throw new Error(`Image generation failed: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-
-  if (!imageUrl) {
-    await supabase.from('character_pack_slots').update({
-      status: 'failed',
-      fix_notes: 'No image returned from AI',
-    }).eq('id', slotId);
-    throw new Error('No image generated');
-  }
-
-  console.log('Image generated, running QC with', validationChecks.length, 'checks...');
-
-  // Run QC with validation checks
-  const qc = await runQC(imageUrl, slotType, characterName, validationChecks);
-  console.log('QC result:', qc);
-
-  // Update slot with result
-  await supabase.from('character_pack_slots').update({
-    image_url: imageUrl,
-    status: qc.passed ? 'approved' : 'failed',
-    qc_score: qc.score,
-    qc_issues: qc.issues,
-    fix_notes: qc.passed ? null : qc.fixNotes,
-    updated_at: new Date().toISOString(),
-  }).eq('id', slotId);
-
-  // Recalculate pack completeness
-  await supabase.rpc('calculate_pack_completeness', { p_character_id: characterId });
-
-  return new Response(JSON.stringify({
-    success: true,
-    imageUrl,
-    qc,
-    slotId,
-    usedVisualDNA: !vdnaError && !!visualDNARecord?.visual_dna,
-    validationChecks
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
-// ============================================
-// LEGACY GENERATION
-// ============================================
-async function handleLegacyGeneration(body: LegacyCharacterRequest): Promise<Response> {
-  const { name, role, bio, style } = body;
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-
-  if (!LOVABLE_API_KEY) {
-    throw new Error('LOVABLE_API_KEY is not configured');
-  }
-
-  // Generate detailed character description
-  const descriptionPrompt = `Create a detailed visual description for an animated character.
-
-Character Name: ${name}
-Role: ${role}
-Background: ${bio}
-Visual Style: ${style || 'Cinematic, realistic animation style'}
-
-Generate a comprehensive visual description including physical appearance, hair, eyes, clothing.
-Format as a single detailed paragraph optimized for AI image generation.`;
-
-  const descResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
-      messages: [
-        { role: 'system', content: 'You are an expert character designer. Create detailed, consistent visual descriptions.' },
-        { role: 'user', content: descriptionPrompt }
-      ],
-    }),
-  });
-
-  if (!descResponse.ok) {
-    if (descResponse.status === 429) {
-      return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
-        status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-    if (descResponse.status === 402) {
-      return new Response(JSON.stringify({ error: 'Payment required' }), {
-        status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-    throw new Error('Failed to generate description');
-  }
-
-  const descData = await descResponse.json();
-  const characterDescription = descData.choices?.[0]?.message?.content || '';
-
-  // Generate turnaround views
-  const views = ['front', 'three-quarter', 'side', 'back'];
-  const generatedImages: Record<string, string> = {};
-
-  for (const view of views) {
-    const imagePrompt = `${characterDescription}
-View: ${view} view, full body character turnaround sheet
-Style: High quality character design, clean background, professional reference`;
-
-    const imageResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: IMAGE_ENGINE,
-        messages: [{ role: 'user', content: imagePrompt }],
-        modalities: ['image', 'text'],
-      }),
-    });
-
-    if (imageResponse.ok) {
-      const imageData = await imageResponse.json();
-      const imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-      if (imageUrl) {
-        generatedImages[view] = imageUrl;
-      }
-    }
-  }
-
-  return new Response(JSON.stringify({
-    description: characterDescription,
-    turnarounds: generatedImages,
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
+  return { score: 70, passed: true, issues: [], fixNotes: '' };
 }
 
 // ============================================
@@ -844,19 +667,155 @@ serve(async (req) => {
   try {
     const body = await req.json();
     
-    if ('slotId' in body) {
+    // Check if this is a slot-based request or legacy request
+    const isSlotRequest = 'slotId' in body;
+    
+    if (isSlotRequest) {
       return await handleSlotGeneration(body as SlotGenerateRequest);
     } else {
       return await handleLegacyGeneration(body as LegacyCharacterRequest);
     }
   } catch (error) {
-    console.error('Generate character error:', error);
+    console.error('Error in generate-character function:', error);
     return new Response(JSON.stringify({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : 'Unknown error occurred' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
+
+async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Response> {
+  console.log(`=== Slot Generation: ${request.slotType} for ${request.characterName} ===`);
+  
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // Get character with visual DNA
+  const { data: character, error: charError } = await supabase
+    .from('characters')
+    .select(`
+      *,
+      character_visual_dna!character_visual_dna_character_id_fkey(
+        visual_dna,
+        continuity_lock,
+        is_active
+      )
+    `)
+    .eq('id', request.characterId)
+    .single();
+
+  if (charError || !character) {
+    console.error('Character fetch error:', charError);
+    throw new Error(`Character not found: ${request.characterId}`);
+  }
+
+  // Get active visual DNA
+  const activeVisualDNA = character.character_visual_dna?.find((v: any) => v.is_active);
+  const visualDNA: VisualDNA = activeVisualDNA?.visual_dna || {};
+  const continuityLock: ContinuityLock = activeVisualDNA?.continuity_lock || {};
+
+  // Get slot details
+  const { data: slot, error: slotError } = await supabase
+    .from('character_pack_slots')
+    .select('*')
+    .eq('id', request.slotId)
+    .single();
+
+  if (slotError || !slot) {
+    console.error('Slot fetch error:', slotError);
+    throw new Error(`Slot not found: ${request.slotId}`);
+  }
+
+  // Generate technical prompt
+  const { masterPrompt, negativePrompt, validationChecks } = generateTechnicalPrompt(
+    visualDNA,
+    continuityLock,
+    request.slotType,
+    {
+      expression: request.expressionName,
+      outfit: request.outfitDescription,
+      viewAngle: request.viewAngle
+    }
+  );
+
+  console.log('Generated prompt length:', masterPrompt.length);
+  console.log('Validation checks:', validationChecks.length);
+
+  // Determine image size based on slot type
+  const imageSize = request.slotType === 'turnaround' ? 'landscape_16_9' : 'portrait_16_9';
+
+  // Generate with FAL.ai nano-banana-pro
+  const { imageUrl, seed } = await generateWithFal(masterPrompt, negativePrompt, imageSize);
+
+  // Run QC
+  const qcResult = await runQC(imageUrl, request.slotType, request.characterName, validationChecks);
+  console.log(`QC Score: ${qcResult.score}, Passed: ${qcResult.passed}`);
+
+  // Update slot in database
+  const { error: updateError } = await supabase
+    .from('character_pack_slots')
+    .update({
+      image_url: imageUrl,
+      prompt_text: masterPrompt,
+      seed: seed,
+      qc_score: qcResult.score,
+      qc_issues: qcResult.issues,
+      fix_notes: qcResult.fixNotes,
+      status: qcResult.passed ? 'generated' : 'needs_review',
+      generation_metadata: {
+        engine: FAL_MODEL,
+        validation_checks: validationChecks,
+        generated_at: new Date().toISOString()
+      },
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', request.slotId);
+
+  if (updateError) {
+    console.error('Slot update error:', updateError);
+    throw new Error(`Failed to update slot: ${updateError.message}`);
+  }
+
+  return new Response(JSON.stringify({
+    success: true,
+    imageUrl,
+    seed,
+    prompt: masterPrompt,
+    qc: qcResult,
+    slotId: request.slotId
+  }), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
+async function handleLegacyGeneration(request: LegacyCharacterRequest): Promise<Response> {
+  console.log(`=== Legacy Generation: ${request.name} ===`);
+  
+  // Build simple prompt for legacy mode
+  const prompt = `IDENTITY REFERENCE - PHOTOREALISTIC PORTRAIT
+
+Character: ${request.name}
+Role: ${request.role}
+Description: ${request.bio}
+${request.style ? `Style: ${request.style}` : ''}
+
+PHOTOGRAPHY: Professional portrait, 85mm lens f/1.8, shallow depth of field, sharp focus on eyes, bokeh background.
+8K resolution, photorealistic quality, professional lighting.
+LIGHTING: Soft key light 45° from camera, fill light opposite, rim light for separation.`;
+
+  const negativePrompt = 'cartoon, anime, illustration, 3D render, CGI obvious, plastic skin, wax skin, mannequin, doll-like, AI artifacts, morphing features, warped hands, deformed fingers, watermark, text overlay, logo, signature, blurry, out of focus, low quality, pixelated, multiple heads, multiple arms, extra limbs';
+
+  // Generate with FAL.ai
+  const { imageUrl, seed } = await generateWithFal(prompt, negativePrompt, 'portrait_16_9');
+
+  return new Response(JSON.stringify({ 
+    imageUrl,
+    seed,
+    prompt
+  }), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}

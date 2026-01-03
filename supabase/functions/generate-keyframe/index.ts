@@ -123,6 +123,11 @@ interface KeyframeRequest {
   };
 }
 
+// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
+// See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
+// Keyframes: nano-banana-pro via FAL.ai (maximum character consistency for Veo input)
+const FAL_MODEL = 'fal-ai/nano-banana-pro';
+
 async function generateKeyframePrompt(request: KeyframeRequest): Promise<{
   prompt_text: string;
   negative_prompt: string;
@@ -248,103 +253,123 @@ El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para
   }
 }
 
-// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
-// See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
-// nano-banana-pro = google/gemini-2.5-flash-image (maximum character consistency for Veo input)
-const KEYFRAME_IMAGE_ENGINE = 'google/gemini-2.5-flash-image';
-
-async function generateImageWithNanoBananaPro(
+async function generateWithFal(
   prompt: string,
-  negativePrompt: string,
-  referenceImages: string[] = []
-): Promise<string> {
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  if (!LOVABLE_API_KEY) {
-    throw new Error("LOVABLE_API_KEY is not configured");
+  negativePrompt: string
+): Promise<{ imageUrl: string; seed: number }> {
+  const FAL_API_KEY = Deno.env.get("FAL_API_KEY");
+  if (!FAL_API_KEY) {
+    throw new Error("FAL_API_KEY is not configured");
   }
 
-  console.log(`Generating keyframe image with ${KEYFRAME_IMAGE_ENGINE}...`);
-  console.log("Prompt:", prompt.substring(0, 200) + "...");
+  console.log(`[FAL] Generating keyframe with ${FAL_MODEL}...`);
 
-  // Build message content with optional reference images
-  const content: Array<{ type: string; text?: string; image_url?: { url: string } }> = [
-    {
-      type: "text",
-      text: `${prompt}\n\nIMPORTANT - NEGATIVE CONSTRAINTS (DO NOT include): ${negativePrompt}\n\nMAINTAIN STRICT CONTINUITY with any reference images provided.`
-    }
-  ];
-
-  // Add reference images if provided (for consistency) - prioritize previous keyframe
-  for (const refUrl of referenceImages.slice(0, 3)) {
-    if (refUrl && refUrl.startsWith('http')) {
-      content.push({
-        type: "image_url",
-        image_url: { url: refUrl }
-      });
-    }
-  }
-
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
+  // Submit request to FAL queue
+  const submitResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}`, {
+    method: 'POST',
     headers: {
-      Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      "Content-Type": "application/json",
+      'Authorization': `Key ${FAL_API_KEY}`,
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: KEYFRAME_IMAGE_ENGINE,
-      messages: [
-        {
-          role: "user",
-          content: content.length === 1 ? content[0].text : content
-        }
-      ],
-      modalities: ["image", "text"]
+      prompt: prompt,
+      negative_prompt: negativePrompt,
+      image_size: "landscape_16_9",
+      num_images: 1,
+      enable_safety_checker: false,
+      output_format: "jpeg"
     }),
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Image generation failed:", response.status, errorText);
-    throw new Error(`Image generation failed: ${response.status}`);
+  if (!submitResponse.ok) {
+    const errorText = await submitResponse.text();
+    console.error('[FAL] Submit error:', submitResponse.status, errorText);
+    throw new Error(`FAL submit failed: ${submitResponse.status} - ${errorText}`);
   }
 
-  const data = await response.json();
-  const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  const queueData = await submitResponse.json();
+  const requestId = queueData.request_id;
+  console.log('[FAL] Request queued:', requestId);
 
-  if (!imageUrl) {
-    console.error("No image in response:", JSON.stringify(data).substring(0, 500));
-    throw new Error("No image generated");
+  // Poll for result
+  let attempts = 0;
+  const maxAttempts = 60;
+  
+  while (attempts < maxAttempts) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const statusResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}/status`, {
+      headers: {
+        'Authorization': `Key ${FAL_API_KEY}`,
+      },
+    });
+
+    if (!statusResponse.ok) {
+      attempts++;
+      continue;
+    }
+
+    const status = await statusResponse.json();
+    
+    if (status.status === 'COMPLETED') {
+      const resultResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}`, {
+        headers: {
+          'Authorization': `Key ${FAL_API_KEY}`,
+        },
+      });
+
+      if (!resultResponse.ok) {
+        throw new Error('Failed to get FAL result');
+      }
+
+      const result = await resultResponse.json();
+      const imageUrl = result.images?.[0]?.url;
+      const seed = result.seed || Math.floor(Math.random() * 999999);
+      
+      if (!imageUrl) {
+        throw new Error('No image in FAL response');
+      }
+
+      console.log('[FAL] Keyframe generation complete, seed:', seed);
+      return { imageUrl, seed };
+    }
+
+    if (status.status === 'FAILED') {
+      throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
+    }
+
+    attempts++;
   }
 
-  console.log("Image generated successfully (base64 length:", imageUrl.length, ")");
-  return imageUrl;
+  throw new Error('FAL generation timeout');
 }
 
 async function uploadImageToStorage(
   supabaseUrl: string,
   supabaseKey: string,
-  base64Data: string,
+  imageUrl: string,
   shotId: string,
   frameType: string,
   timestampSec: number
 ): Promise<string> {
+  // Download image from FAL
+  const imageResponse = await fetch(imageUrl);
+  if (!imageResponse.ok) {
+    throw new Error('Failed to download image from FAL');
+  }
+  const imageBlob = await imageResponse.blob();
+  const imageBuffer = await imageBlob.arrayBuffer();
+  const bytes = new Uint8Array(imageBuffer);
+
   // Create a fresh client for storage operations
   const storageClient = createClient(supabaseUrl, supabaseKey);
   
-  // Extract base64 content
-  const base64Content = base64Data.replace(/^data:image\/\w+;base64,/, '');
-  const binaryString = atob(base64Content);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-
-  const fileName = `keyframes/${shotId}/${frameType}_${timestampSec}s_${Date.now()}.png`;
+  const fileName = `keyframes/${shotId}/${frameType}_${timestampSec}s_${Date.now()}.jpg`;
 
   const { data, error } = await storageClient.storage
     .from('renders')
     .upload(fileName, bytes, {
-      contentType: 'image/png',
+      contentType: 'image/jpeg',
       upsert: true
     });
 
@@ -400,43 +425,26 @@ serve(async (req) => {
     console.log("Prompt generated:", promptData.prompt_text.substring(0, 150) + "...");
     console.log("Continuity locks:", JSON.stringify(promptData.continuity_locks || {}));
 
-    // Step 2: Collect reference images for consistency
-    // IMPORTANT: Previous keyframe comes FIRST for continuity
-    const referenceImages: string[] = [];
-    if (request.previousKeyframeUrl) {
-      referenceImages.push(request.previousKeyframeUrl);
-    }
-    for (const char of request.characters) {
-      if (char.referenceUrl) {
-        referenceImages.push(char.referenceUrl);
-      }
-    }
-    if (request.location?.referenceUrl) {
-      referenceImages.push(request.location.referenceUrl);
-    }
-
-    // Step 3: Generate image with nano-banana-pro (Gemini 3 Pro Image)
-    console.log("Step 2: Generating image with nano-banana-pro...");
-    console.log("Reference images:", referenceImages.length);
-    const imageBase64 = await generateImageWithNanoBananaPro(
+    // Step 2: Generate image with FAL nano-banana-pro
+    console.log("Step 2: Generating image with FAL nano-banana-pro...");
+    const { imageUrl: falImageUrl, seed } = await generateWithFal(
       promptData.prompt_text,
-      promptData.negative_prompt,
-      referenceImages
+      promptData.negative_prompt
     );
 
-    // Step 4: Upload to storage
+    // Step 3: Upload to storage
     console.log("Step 3: Uploading to storage...");
     const imageUrl = await uploadImageToStorage(
       supabaseUrl,
       supabaseKey,
-      imageBase64,
+      falImageUrl,
       request.shotId,
       request.frameType,
       request.timestampSec
     );
     console.log("Image uploaded:", imageUrl);
 
-    // Step 5: Save keyframe to database with continuity data
+    // Step 4: Save keyframe to database with continuity data
     console.log("Step 4: Saving keyframe to database...");
     const { data: keyframe, error: dbError } = await supabase
       .from('keyframes')
@@ -450,12 +458,14 @@ serve(async (req) => {
         staging_snapshot: promptData.staging_snapshot,
         negative_constraints: promptData.negative_constraints,
         determinism: promptData.determinism,
+        seed: seed,
         locks: {
           negative_prompt: promptData.negative_prompt,
           continuity_locks: promptData.continuity_locks,
           characters: request.characters.map(c => c.id),
           location: request.location?.id,
-          shot_details: request.shotDetails
+          shot_details: request.shotDetails,
+          engine: FAL_MODEL
         }
       })
       .select()
@@ -470,29 +480,23 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        keyframe: {
-          id: keyframe.id,
-          imageUrl,
-          timestampSec: request.timestampSec,
-          frameType: request.frameType,
-          promptText: promptData.prompt_text,
-          continuityLocks: promptData.continuity_locks
-        }
+        keyframe,
+        prompt: promptData.prompt_text,
+        seed,
+        engine: FAL_MODEL
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-
   } catch (error) {
-    console.error("Generate keyframe error:", error);
+    console.error("Error in generate-keyframe:", error);
     
-    if (error instanceof Error) {
-      return authErrorResponse(error, corsHeaders);
+    if (error instanceof Error && error.message.includes('AUTH')) {
+      return authErrorResponse(new Error(error.message), corsHeaders);
     }
     
     return new Response(
       JSON.stringify({
-        success: false,
-        error: "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

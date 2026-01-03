@@ -19,6 +19,11 @@ interface LocationGenerationRequest {
   };
 }
 
+// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
+// See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
+// Locations: flux-1.1-pro-ultra via FAL.ai (cinematic architecture, atmospheres)
+const FAL_MODEL = 'fal-ai/flux-pro/v1.1-ultra';
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -37,9 +42,9 @@ serve(async (req) => {
 
     console.log(`Generating location image for: ${locationName}, view: ${viewAngle}, time: ${timeOfDay}, weather: ${weather}`);
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+    const FAL_API_KEY = Deno.env.get('FAL_API_KEY');
+    if (!FAL_API_KEY) {
+      throw new Error('FAL_API_KEY is not configured');
     }
 
     // Build the view angle description
@@ -88,8 +93,8 @@ serve(async (req) => {
       styleContext += ` Apply visual style token: ${styleToken}.`;
     }
 
-    // Construct the full prompt
-    const prompt = `Create a high-quality cinematic location reference image for film/animation production.
+    // Construct the full prompt (FLUX-optimized)
+    const prompt = `Cinematic film still, photorealistic location reference.
 
 Location: ${locationName}
 Description: ${locationDescription}
@@ -99,83 +104,114 @@ Lighting: ${timeDesc}
 Weather: ${weatherDesc}
 ${styleContext}
 
-Requirements:
-- Photorealistic quality suitable for film production reference
-- Consistent with the location description and mood
-- High detail in textures and materials
-- Proper architectural and environmental accuracy
-- Cinematic composition and framing
-- Ultra high resolution, 16:9 aspect ratio`;
+Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphic lens characteristics, natural color grading, film-like depth of field, architectural accuracy, environmental storytelling.`;
 
-    console.log('Generating with prompt:', prompt);
+    console.log('Generating with FAL FLUX prompt:', prompt.substring(0, 200) + '...');
 
-    // Generate using Gemini 3 Pro Image (nano banana pro)
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
+    // Submit to FAL queue
+    const submitResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}`, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
+        'Authorization': `Key ${FAL_API_KEY}`,
+        'Content-Type': 'application/json',
       },
-      // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
-      // See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
-      // Ideal: FLUX (not available in gateway), using gemini-3-pro-image for cinematic quality
       body: JSON.stringify({
-        model: "google/gemini-3-pro-image-preview",
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        modalities: ["image", "text"]
+        prompt: prompt,
+        aspect_ratio: "16:9",
+        safety_tolerance: "6",
+        output_format: "jpeg",
+        raw: false
       }),
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
+    if (!submitResponse.ok) {
+      if (submitResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Payment required. Please add credits to continue." }), {
+      if (submitResponse.status === 402) {
+        return new Response(JSON.stringify({ error: "Payment required. Please add FAL credits." }), {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      throw new Error(`AI gateway error: ${response.status}`);
+      const errorText = await submitResponse.text();
+      console.error("FAL submit error:", submitResponse.status, errorText);
+      throw new Error(`FAL submit failed: ${submitResponse.status}`);
     }
 
-    const data = await response.json();
-    console.log('Generation response received');
+    const queueData = await submitResponse.json();
+    const requestId = queueData.request_id;
+    console.log('[FAL] Request queued:', requestId);
 
-    // Extract image from response
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    // Poll for result
+    let attempts = 0;
+    const maxAttempts = 120; // 2 minutes max for FLUX ultra
     
-    if (!imageUrl) {
-      console.error('No image in response:', JSON.stringify(data));
-      throw new Error('No image generated');
+    while (attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const statusResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}/status`, {
+        headers: {
+          'Authorization': `Key ${FAL_API_KEY}`,
+        },
+      });
+
+      if (!statusResponse.ok) {
+        attempts++;
+        continue;
+      }
+
+      const status = await statusResponse.json();
+      
+      if (status.status === 'COMPLETED') {
+        // Get result
+        const resultResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}`, {
+          headers: {
+            'Authorization': `Key ${FAL_API_KEY}`,
+          },
+        });
+
+        if (!resultResponse.ok) {
+          throw new Error('Failed to get FAL result');
+        }
+
+        const result = await resultResponse.json();
+        const imageUrl = result.images?.[0]?.url;
+        const seed = result.seed || Math.floor(Math.random() * 999999);
+        
+        if (!imageUrl) {
+          throw new Error('No image in FAL response');
+        }
+
+        console.log('[FAL] Location generation complete');
+        
+        return new Response(JSON.stringify({ 
+          imageUrl,
+          seed,
+          prompt,
+          metadata: {
+            viewAngle,
+            timeOfDay,
+            weather,
+            engine: FAL_MODEL,
+            generatedAt: new Date().toISOString()
+          }
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (status.status === 'FAILED') {
+        throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
+      }
+
+      attempts++;
     }
 
-    // Generate a seed for reproducibility (mock - we can't control actual seed in Gemini)
-    const seed = Math.floor(Math.random() * 999999);
-
-    return new Response(JSON.stringify({ 
-      imageUrl,
-      seed,
-      prompt,
-      metadata: {
-        viewAngle,
-        timeOfDay,
-        weather,
-        generatedAt: new Date().toISOString()
-      }
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    throw new Error('FAL generation timeout');
 
   } catch (error) {
     console.error('Error in generate-location function:', error);
