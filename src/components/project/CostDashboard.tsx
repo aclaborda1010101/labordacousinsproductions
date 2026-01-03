@@ -76,6 +76,11 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
     byType: Record<string, number>;
     byEngine: Record<string, number>;
   }>({ total: 0, byType: {}, byEngine: {} });
+  const [tokenStats, setTokenStats] = useState<{
+    totalInput: number;
+    totalOutput: number;
+    byCategory: Record<string, { input: number; output: number; cost: number; count: number }>;
+  }>({ totalInput: 0, totalOutput: 0, byCategory: {} });
 
   useEffect(() => {
     loadData();
@@ -131,7 +136,7 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
 
       const { data: monthLogs } = await supabase
         .from('generation_logs')
-        .select('cost_usd, slot_type, engine')
+        .select('cost_usd, slot_type, engine, category, input_tokens, output_tokens, model')
         .eq('user_id', user.id)
         .gte('created_at', monthStart.toISOString());
 
@@ -146,20 +151,41 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
         };
         const byType: Record<string, number> = {};
         const byEngine: Record<string, number> = {};
+        
+        // Token stats with category breakdown
+        let totalInput = 0;
+        let totalOutput = 0;
+        const byCategory: Record<string, { input: number; output: number; cost: number; count: number }> = {};
 
         monthLogs.forEach(log => {
           const cost = Number(log.cost_usd) || 0;
           const slotType = log.slot_type?.toLowerCase() || 'other';
           const engine = log.engine || 'unknown';
+          const category = (log as any).category || 'other';
+          const inputTokens = Number((log as any).input_tokens) || 0;
+          const outputTokens = Number((log as any).output_tokens) || 0;
+
+          // Aggregate tokens
+          totalInput += inputTokens;
+          totalOutput += outputTokens;
+          
+          // Category breakdown
+          if (!byCategory[category]) {
+            byCategory[category] = { input: 0, output: 0, cost: 0, count: 0 };
+          }
+          byCategory[category].input += inputTokens;
+          byCategory[category].output += outputTokens;
+          byCategory[category].cost += cost;
+          byCategory[category].count += 1;
 
           // Aggregate by type for display
           byType[slotType] = (byType[slotType] || 0) + 1;
           byEngine[engine] = (byEngine[engine] || 0) + 1;
 
           // Categorize costs
-          if (slotType.includes('script') || slotType.includes('episode') || slotType.includes('outline')) {
+          if (slotType.includes('script') || slotType.includes('episode') || slotType.includes('outline') || slotType.includes('teaser')) {
             breakdown.scripts += cost;
-          } else if (slotType.includes('character') || slotType.includes('portrait') || slotType.includes('turnaround')) {
+          } else if (slotType.includes('character') || slotType.includes('portrait') || slotType.includes('turnaround') || slotType.includes('identity')) {
             breakdown.characters += cost;
           } else if (slotType.includes('location') || slotType.includes('environment')) {
             breakdown.locations += cost;
@@ -177,6 +203,11 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
           total: monthLogs.length,
           byType,
           byEngine
+        });
+        setTokenStats({
+          totalInput,
+          totalOutput,
+          byCategory
         });
       }
     } catch (error) {
@@ -288,6 +319,10 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
             <TabsTrigger value="breakdown">
               <Sparkles className="h-4 w-4 mr-1" />
               Desglose por IA
+            </TabsTrigger>
+            <TabsTrigger value="tokens">
+              <Zap className="h-4 w-4 mr-1" />
+              Tokens
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-1" />
@@ -493,6 +528,116 @@ export function CostDashboard({ projectId }: CostDashboardProps) {
                   <div className="flex justify-between p-2 bg-muted/30 rounded">
                     <span className="flex items-center gap-2"><Film className="h-4 w-4" /> Video 5s (Kling/Veo)</span>
                     <span className="font-mono">~$0.10-0.25</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="tokens" className="space-y-4">
+            {/* Token Usage Summary */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <Card>
+                <CardContent className="pt-4">
+                  <div className="text-muted-foreground text-sm">Tokens de Entrada</div>
+                  <div className="text-2xl font-bold mt-1">
+                    {(tokenStats.totalInput / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    ~${((tokenStats.totalInput / 1000) * 0.003).toFixed(2)} USD
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-4">
+                  <div className="text-muted-foreground text-sm">Tokens de Salida</div>
+                  <div className="text-2xl font-bold mt-1">
+                    {(tokenStats.totalOutput / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    ~${((tokenStats.totalOutput / 1000) * 0.015).toFixed(2)} USD
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-4">
+                  <div className="text-muted-foreground text-sm">Tokens Totales</div>
+                  <div className="text-2xl font-bold mt-1">
+                    {((tokenStats.totalInput + tokenStats.totalOutput) / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Este mes
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Token Breakdown by Category */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Uso de Tokens por Categoría</CardTitle>
+                <CardDescription>Tokens consumidos y coste real basado en uso</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {Object.entries(tokenStats.byCategory)
+                  .filter(([_, data]) => data.count > 0)
+                  .sort(([, a], [, b]) => b.cost - a.cost)
+                  .map(([category, data]) => (
+                    <div key={category} className="p-3 bg-muted/30 rounded-lg space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {getCategoryIcon(category)}
+                          <span className="font-medium capitalize">{getCategoryLabel(category)}</span>
+                          <Badge variant="outline" className="text-xs">{data.count} gen</Badge>
+                        </div>
+                        <span className="font-bold">${data.cost.toFixed(3)}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                        <div>
+                          <span className="block text-foreground font-medium">{(data.input / 1000).toFixed(1)}K</span>
+                          Entrada
+                        </div>
+                        <div>
+                          <span className="block text-foreground font-medium">{(data.output / 1000).toFixed(1)}K</span>
+                          Salida
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                
+                {Object.keys(tokenStats.byCategory).length === 0 && (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Zap className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p>No hay datos de tokens este mes</p>
+                    <p className="text-xs mt-1">Los tokens se registrarán automáticamente al generar contenido</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Token Pricing Reference */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Precios por Token</CardTitle>
+                <CardDescription>Tarifas actuales por 1000 tokens</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-2 text-sm">
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span>Claude Sonnet (Entrada)</span>
+                    <span className="font-mono">$0.003/1K</span>
+                  </div>
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span>Claude Sonnet (Salida)</span>
+                    <span className="font-mono">$0.015/1K</span>
+                  </div>
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span>GPT-4o (Entrada)</span>
+                    <span className="font-mono">$0.005/1K</span>
+                  </div>
+                  <div className="flex justify-between p-2 bg-muted/30 rounded">
+                    <span>GPT-4o (Salida)</span>
+                    <span className="font-mono">$0.015/1K</span>
                   </div>
                 </div>
               </CardContent>

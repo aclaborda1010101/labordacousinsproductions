@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { logGenerationCost, extractAnthropicTokens, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -209,6 +210,10 @@ Los tiempos de cada plano DEBEN sumar exactamente 60s y 30s respectivamente.`;
     }
 
     const data = await response.json();
+    
+    // Extract token usage for cost tracking
+    const { inputTokens, outputTokens } = extractAnthropicTokens(data);
+    
     const toolUseBlock = data.content?.find((block: any) => block.type === 'tool_use');
 
     if (!toolUseBlock?.input) {
@@ -227,9 +232,32 @@ Los tiempos de cada plano DEBEN sumar exactamente 60s y 30s respectivamente.`;
     };
 
     console.log(`[TEASERS] Generated: 60s (${teasers.teaser60.scenes.length} shots), 30s (${teasers.teaser30.scenes.length} shots)`);
+    console.log(`[TEASERS] Token usage: ${inputTokens} in / ${outputTokens} out`);
+
+    // Log generation cost with token counts
+    const userId = extractUserId(req.headers.get('authorization'));
+    if (userId) {
+      await logGenerationCost({
+        userId,
+        projectId,
+        slotType: 'teasers',
+        engine: 'anthropic',
+        model: 'claude-sonnet-4-20250514',
+        durationMs: Date.now() - Date.now(), // Minimal since we don't track start time here
+        success: true,
+        inputTokens,
+        outputTokens,
+        totalTokens: inputTokens + outputTokens,
+        category: 'script',
+        metadata: {
+          teaser60Shots: teasers.teaser60.scenes.length,
+          teaser30Shots: teasers.teaser30.scenes.length
+        }
+      });
+    }
 
     return new Response(
-      JSON.stringify({ success: true, teasers }),
+      JSON.stringify({ success: true, teasers, tokenUsage: { input: inputTokens, output: outputTokens } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
