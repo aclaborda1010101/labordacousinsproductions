@@ -1,25 +1,22 @@
 export type ScriptTimingComplexity = 'simple' | 'medium' | 'high';
 
-export interface ScriptTimingModelV1 {
-  version: 1;
+export interface ScriptTimingModelV2 {
+  version: 2;
   outline_ms_per_episode: number;
-  episode_ms_per_minute: number;
+  batch_ms_avg: number;  // Tiempo promedio por batch (5 escenas)
   samples_outline: number;
-  samples_episode: number;
+  samples_batch: number;
   updated_at: number;
 }
 
-const STORAGE_KEY = 'script_timing_model_v1';
+const STORAGE_KEY = 'script_timing_model_v2';
 
-const DEFAULT_MODEL: ScriptTimingModelV1 = {
-  version: 1,
-  // Outline suele ser rápido; lo aproximamos por episodio para escalar con N episodios.
+const DEFAULT_MODEL: ScriptTimingModelV2 = {
+  version: 2,
   outline_ms_per_episode: 1600,
-  // Tiempo por minuto de duración objetivo del episodio (se ajusta con “aprendizaje”).
-  // Default conservador: ~90s para un episodio de 45 min.
-  episode_ms_per_minute: 2000,
+  batch_ms_avg: 25000, // ~25s por batch de 5 escenas (conservador)
   samples_outline: 0,
-  samples_episode: 0,
+  samples_batch: 0,
   updated_at: Date.now(),
 };
 
@@ -37,21 +34,21 @@ export function getComplexityMultiplier(complexity: ScriptTimingComplexity): num
   }
 }
 
-export function loadScriptTimingModel(): ScriptTimingModelV1 {
+export function loadScriptTimingModel(): ScriptTimingModelV2 {
   if (typeof window === 'undefined') return DEFAULT_MODEL;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_MODEL;
     const parsed = JSON.parse(raw);
-    if (parsed?.version !== 1) return DEFAULT_MODEL;
+    if (parsed?.version !== 2) return DEFAULT_MODEL;
 
     return {
       ...DEFAULT_MODEL,
       ...parsed,
-      outline_ms_per_episode: clamp(Number(parsed.outline_ms_per_episode ?? DEFAULT_MODEL.outline_ms_per_episode), 200, 30000),
-      episode_ms_per_minute: clamp(Number(parsed.episode_ms_per_minute ?? DEFAULT_MODEL.episode_ms_per_minute), 200, 60000),
+      outline_ms_per_episode: clamp(Number(parsed.outline_ms_per_episode ?? DEFAULT_MODEL.outline_ms_per_episode), 200, 60000),
+      batch_ms_avg: clamp(Number(parsed.batch_ms_avg ?? DEFAULT_MODEL.batch_ms_avg), 5000, 120000),
       samples_outline: clamp(Number(parsed.samples_outline ?? 0), 0, 100000),
-      samples_episode: clamp(Number(parsed.samples_episode ?? 0), 0, 100000),
+      samples_batch: clamp(Number(parsed.samples_batch ?? 0), 0, 100000),
       updated_at: Number(parsed.updated_at ?? Date.now()),
     };
   } catch {
@@ -59,7 +56,7 @@ export function loadScriptTimingModel(): ScriptTimingModelV1 {
   }
 }
 
-export function saveScriptTimingModel(model: ScriptTimingModelV1) {
+export function saveScriptTimingModel(model: ScriptTimingModelV2) {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...model, updated_at: Date.now() }));
@@ -71,9 +68,9 @@ export function saveScriptTimingModel(model: ScriptTimingModelV1) {
 const ema = (prev: number, next: number, alpha: number) => alpha * next + (1 - alpha) * prev;
 
 export function updateOutlineTiming(
-  prev: ScriptTimingModelV1,
+  prev: ScriptTimingModelV2,
   params: { episodesCount: number; durationMs: number },
-): ScriptTimingModelV1 {
+): ScriptTimingModelV2 {
   const alpha = 0.25;
   const perEpisode = params.durationMs / Math.max(1, params.episodesCount);
   const nextVal = clamp(perEpisode, 200, 60000);
@@ -86,33 +83,51 @@ export function updateOutlineTiming(
   };
 }
 
-export function updateEpisodeTiming(
-  prev: ScriptTimingModelV1,
-  params: { episodeDurationMin: number; complexity: ScriptTimingComplexity; durationMs: number },
-): ScriptTimingModelV1 {
-  const alpha = 0.25;
+export function updateBatchTiming(
+  prev: ScriptTimingModelV2,
+  params: { durationMs: number; complexity: ScriptTimingComplexity },
+): ScriptTimingModelV2 {
+  const alpha = 0.3; // Aprende más rápido ya que es por batch
   const mult = getComplexityMultiplier(params.complexity);
-  const perMinute = params.durationMs / Math.max(1, params.episodeDurationMin) / mult;
-  const nextVal = clamp(perMinute, 200, 60000);
+  const normalizedMs = params.durationMs / mult;
+  const nextVal = clamp(normalizedMs, 5000, 120000);
 
   return {
     ...prev,
-    episode_ms_per_minute: prev.samples_episode === 0 ? nextVal : ema(prev.episode_ms_per_minute, nextVal, alpha),
-    samples_episode: prev.samples_episode + 1,
+    batch_ms_avg: prev.samples_batch === 0 ? nextVal : ema(prev.batch_ms_avg, nextVal, alpha),
+    samples_batch: prev.samples_batch + 1,
     updated_at: Date.now(),
   };
 }
 
-export function estimateOutlineMs(model: ScriptTimingModelV1, episodesCount: number) {
+// Legacy compatibility
+export function updateEpisodeTiming(
+  prev: ScriptTimingModelV2,
+  params: { episodeDurationMin: number; complexity: ScriptTimingComplexity; durationMs: number },
+): ScriptTimingModelV2 {
+  // Convert to batch timing (3 batches per episode)
+  const batchMs = params.durationMs / 3;
+  return updateBatchTiming(prev, { durationMs: batchMs, complexity: params.complexity });
+}
+
+export function estimateOutlineMs(model: ScriptTimingModelV2, episodesCount: number) {
   return model.outline_ms_per_episode * Math.max(1, episodesCount);
 }
 
+export function estimateBatchMs(
+  model: ScriptTimingModelV2,
+  complexity: ScriptTimingComplexity,
+) {
+  const mult = getComplexityMultiplier(complexity);
+  return model.batch_ms_avg * mult;
+}
+
 export function estimateEpisodeMs(
-  model: ScriptTimingModelV1,
+  model: ScriptTimingModelV2,
   params: { episodeDurationMin: number; complexity: ScriptTimingComplexity },
 ) {
-  const mult = getComplexityMultiplier(params.complexity);
-  return model.episode_ms_per_minute * Math.max(1, params.episodeDurationMin) * mult;
+  // 3 batches per episode
+  return estimateBatchMs(model, params.complexity) * 3;
 }
 
 export function formatDurationMs(ms: number): string {
@@ -127,3 +142,6 @@ export function formatDurationMs(ms: number): string {
   const remMin = minutes % 60;
   return `~${hours}h ${remMin}m`;
 }
+
+// Export V2 as V1 for backwards compat
+export type ScriptTimingModelV1 = ScriptTimingModelV2;

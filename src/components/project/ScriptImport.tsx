@@ -53,10 +53,11 @@ import { calculateAutoTargets, CalculatedTargets, TargetInputs } from '@/lib/aut
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import {
   estimateEpisodeMs,
+  estimateBatchMs,
   formatDurationMs,
   loadScriptTimingModel,
   saveScriptTimingModel,
-  updateEpisodeTiming,
+  updateBatchTiming,
   updateOutlineTiming,
 } from '@/lib/scriptTimingModel';
 
@@ -261,7 +262,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     generateLightOutline();
   };
 
-  // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes
+  // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
   const approveAndGenerateEpisodes = async () => {
     if (!lightOutline) return;
 
@@ -278,62 +279,105 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     const totalEpisodes = lightOutline.episode_beats?.length || episodesCount;
     setTotalEpisodesToGenerate(totalEpisodes);
 
+    // Total batches = 3 per episode
+    const totalBatches = totalEpisodes * 3;
+    let completedBatches = 0;
+
     try {
       const episodes: any[] = [];
 
-      for (let i = 1; i <= totalEpisodes; i++) {
+      for (let epNum = 1; epNum <= totalEpisodes; epNum++) {
         if (controller.signal.aborted) {
           toast.info('Generación cancelada');
           break;
         }
 
-        setCurrentEpisodeGenerating(i);
-        updatePipelineStep('episodes', 'running', `Episodio ${i} de ${totalEpisodes}...`);
-        toast.info(`Generando episodio ${i}/${totalEpisodes}...`);
+        setCurrentEpisodeGenerating(epNum);
+        const episodeBeat = lightOutline.episode_beats?.[epNum - 1];
 
-        const t0 = Date.now();
-        setEpisodeStartedAtMs(t0);
+        // Generate episode in 3 batches (0, 1, 2)
+        const allScenes: any[] = [];
+        let synopsisFromClaude: string | null = null;
+        let episodeError: string | null = null;
 
-        const { data, error } = await supabase.functions.invoke('generate-episode-detailed', {
-          body: {
-            outline: lightOutline,
-            episodeNumber: i,
-            language
-          }
-        });
-        const durationMs = Date.now() - t0;
+        for (let batchIdx = 0; batchIdx < 3; batchIdx++) {
+          if (controller.signal.aborted) break;
 
-        if (error) {
-          console.error(`Error generating episode ${i}:`, error);
-          toast.error(`Error en episodio ${i}: ${error.message}`);
-          // Continue with next episode
-          episodes.push({
-            episode_number: i,
-            title: lightOutline.episode_beats?.[i - 1]?.title || `Episodio ${i}`,
-            synopsis: lightOutline.episode_beats?.[i - 1]?.summary || '',
-            scenes: [],
-            error: error.message
-          });
-        } else if (data?.episode) {
-          episodes.push(data.episode);
+          const batchLabel = `Ep${epNum} batch ${batchIdx + 1}/3`;
+          updatePipelineStep('episodes', 'running', `${batchLabel} (escenas ${batchIdx * 5 + 1}-${batchIdx * 5 + 5})...`);
 
-          // Aprendizaje: tiempo real por episodio (normalizado por duración objetivo + complejidad)
-          setTimingModel(prev => {
-            const next = updateEpisodeTiming(prev, {
-              episodeDurationMin,
-              complexity,
-              durationMs,
+          const t0 = Date.now();
+          setEpisodeStartedAtMs(t0);
+
+          try {
+            const { data, error } = await supabase.functions.invoke('episode-generate-batch', {
+              body: {
+                outline: lightOutline,
+                episodeNumber: epNum,
+                language,
+                batchIndex: batchIdx,
+                previousScenes: allScenes,
+              }
             });
-            saveScriptTimingModel(next);
-            return next;
-          });
 
-          toast.success(`Episodio ${i} completado ✓`);
+            const batchDurationMs = Date.now() - t0;
+
+            if (error) {
+              console.error(`Error in ${batchLabel}:`, error);
+              episodeError = error.message;
+              toast.error(`Error en ${batchLabel}: ${error.message}`);
+              break;
+            }
+
+            if (data?.scenes && Array.isArray(data.scenes)) {
+              allScenes.push(...data.scenes);
+              if (data.synopsis && !synopsisFromClaude) {
+                synopsisFromClaude = data.synopsis;
+              }
+
+              // Learn batch timing
+              setTimingModel(prev => {
+                const next = updateBatchTiming(prev, {
+                  durationMs: batchDurationMs,
+                  complexity,
+                });
+                saveScriptTimingModel(next);
+                return next;
+              });
+
+              completedBatches++;
+              const progress = 10 + Math.round((completedBatches / totalBatches) * 75);
+              setPipelineProgress(progress);
+
+              console.log(`[${batchLabel}] ✓ ${data.scenes.length} scenes in ${batchDurationMs}ms`);
+            } else {
+              episodeError = 'No scenes returned';
+              break;
+            }
+          } catch (err: any) {
+            console.error(`Exception in ${batchLabel}:`, err);
+            episodeError = err.message || 'Unknown error';
+            break;
+          }
         }
 
+        // Build episode object
+        const episode = {
+          episode_number: epNum,
+          title: episodeBeat?.title || `Episodio ${epNum}`,
+          synopsis: synopsisFromClaude || episodeBeat?.summary || '',
+          scenes: allScenes.sort((a, b) => a.scene_number - b.scene_number),
+          total_dialogue_lines: allScenes.reduce((sum, s) => sum + (s.dialogue?.length || 0), 0),
+          duration_min: Math.round(allScenes.reduce((sum, s) => sum + (s.duration_estimate_sec || 90), 0) / 60),
+          error: episodeError,
+        };
+
+        episodes.push(episode);
         setGeneratedEpisodesList([...episodes]);
-        const progress = 10 + Math.round((i / totalEpisodes) * 70);
-        setPipelineProgress(progress);
+
+        if (!episodeError) {
+          toast.success(`Episodio ${epNum} completado ✓ (${episode.scenes.length} escenas)`);
+        }
       }
 
       setCurrentEpisodeGenerating(null);
@@ -409,18 +453,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const getEstimatedRemainingMs = () => {
     if (!pipelineRunning) return 0;
 
-    const perEpMs = estimateEpisodeMs(timingModel, { episodeDurationMin, complexity });
+    const perBatchMs = estimateBatchMs(timingModel, complexity);
+    const totalBatches = totalEpisodesToGenerate * 3;
 
-    // Si todavía no tenemos episodio actual, estimamos todo como N * perEpMs
-    if (!currentEpisodeGenerating) {
-      return perEpMs * Math.max(0, totalEpisodesToGenerate);
-    }
+    // Calculate completed batches from progress (10-85% = batches phase)
+    const batchProgress = Math.max(0, pipelineProgress - 10);
+    const completedBatches = Math.round((batchProgress / 75) * totalBatches);
+    const remainingBatches = Math.max(0, totalBatches - completedBatches);
 
     const elapsedCurrent = episodeStartedAtMs ? Math.max(0, nowMs - episodeStartedAtMs) : 0;
-    const remainingCurrent = Math.max(0, perEpMs - elapsedCurrent);
-    const remainingAfterCurrent = Math.max(0, totalEpisodesToGenerate - currentEpisodeGenerating);
+    const remainingCurrent = Math.max(0, perBatchMs - elapsedCurrent);
 
-    return remainingCurrent + (remainingAfterCurrent * perEpMs);
+    return remainingCurrent + (Math.max(0, remainingBatches - 1) * perBatchMs);
   };
 
   // Legacy pipeline (keeping for compatibility)
