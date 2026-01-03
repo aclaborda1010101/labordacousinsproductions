@@ -174,10 +174,26 @@ export interface BatchConfig {
 export function calculateDynamicBatches(
   targets: CalculatedTargets,
   complexity: 'simple' | 'medium' | 'high',
-  ambitionSliders?: { humor: number; darkness: number; realism: number; worldIntensity: number }
+  ambitionSliders?: { humor: number; darkness: number; realism: number; worldIntensity: number },
+  episodeDurationMin?: number
 ): BatchConfig {
   // Base scenes per episode from targets
   const baseScenesPerEpisode = targets.scenes_per_episode || 20;
+  
+  // Episode duration factor: longer episodes = more scenes = more batches needed
+  // Base reference: 20-25 min episode = 1x multiplier
+  // Short (< 15 min) = 0.6x, Medium (15-30 min) = 1x, Long (30-45 min) = 1.4x, Very long (45+ min) = 1.8x
+  const duration = episodeDurationMin || 25;
+  let durationMultiplier = 1;
+  if (duration < 15) {
+    durationMultiplier = 0.6;
+  } else if (duration <= 30) {
+    durationMultiplier = 1;
+  } else if (duration <= 45) {
+    durationMultiplier = 1.4;
+  } else {
+    durationMultiplier = 1.8;
+  }
   
   // Calculate complexity score (0-100)
   let complexityScore = 0;
@@ -218,33 +234,32 @@ export function calculateDynamicBatches(
   // Clamp to 0-100
   complexityScore = Math.max(0, Math.min(100, complexityScore));
   
-  // Determine batches based on complexity score
-  // Low complexity (0-30): 3 batches, 7 scenes each = 21 scenes
-  // Medium complexity (31-60): 5 batches, 5 scenes each = 25 scenes  
-  // High complexity (61-80): 6 batches, 4 scenes each = 24 scenes
-  // Very high complexity (81+): 8 batches, 3 scenes each = 24 scenes
-  
-  let batchesPerEpisode: number;
-  let scenesPerBatch: number;
+  // Base batches based on complexity score
+  let baseBatches: number;
+  let baseScenesPerBatch: number;
   let delayMs: number;
   
   if (complexityScore <= 30) {
-    batchesPerEpisode = 3;
-    scenesPerBatch = 7;
-    delayMs = 1500; // Less delay needed for simpler batches
+    baseBatches = 3;
+    baseScenesPerBatch = 7;
+    delayMs = 1500;
   } else if (complexityScore <= 60) {
-    batchesPerEpisode = 5;
-    scenesPerBatch = 5;
+    baseBatches = 5;
+    baseScenesPerBatch = 5;
     delayMs = 2000;
   } else if (complexityScore <= 80) {
-    batchesPerEpisode = 6;
-    scenesPerBatch = 4;
+    baseBatches = 6;
+    baseScenesPerBatch = 4;
     delayMs = 2500;
   } else {
-    batchesPerEpisode = 8;
-    scenesPerBatch = 3;
-    delayMs = 3000; // More delay for very complex batches
+    baseBatches = 8;
+    baseScenesPerBatch = 3;
+    delayMs = 3000;
   }
+  
+  // Apply duration multiplier to batches (not scenes per batch, to avoid token issues)
+  const batchesPerEpisode = Math.max(2, Math.min(12, Math.round(baseBatches * durationMultiplier)));
+  const scenesPerBatch = baseScenesPerBatch; // Keep scenes per batch stable for token safety
   
   return {
     batchesPerEpisode,
