@@ -512,8 +512,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
           const sceneStart = batchIdx * SCENES_PER_BATCH + 1;
           const sceneEnd = sceneStart + SCENES_PER_BATCH - 1;
+          // Clean label for internal logging only - UI shows percentage
           const batchLabel = `Ep${epNum} batch ${batchIdx + 1}/${BATCHES_PER_EPISODE}`;
-          updatePipelineStep('episodes', 'running', `${batchLabel} (escenas ${sceneStart}-${sceneEnd})...`);
+          // UI message: just "Episodio X" - no batch details
+          updatePipelineStep('episodes', 'running', `Episodio ${epNum} de ${totalEpisodes}`);
 
           const t0 = Date.now();
           setEpisodeStartedAtMs(t0);
@@ -1769,65 +1771,67 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           )}
 
-          {/* EPISODE GENERATION PROGRESS - Pipeline V2 Step 3 */}
+          {/* EPISODE GENERATION PROGRESS - Clean Commercial UI */}
           {pipelineRunning && (
             <Card className="border-2 border-blue-500/50 bg-blue-500/5">
               <CardContent className="pt-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-sm font-medium">
-                      {currentEpisodeGenerating && currentEpisodeGenerating <= totalEpisodesToGenerate
-                        ? `Generando Episodio ${currentEpisodeGenerating} de ${totalEpisodesToGenerate}`
-                        : generatedEpisodesList.length >= totalEpisodesToGenerate
-                          ? 'Finalizando generación...'
-                          : `Procesando episodios (${generatedEpisodesList.length}/${totalEpisodesToGenerate})...`
-                      }
-                    </span>
-                    <p className="text-xs text-muted-foreground">
-                      Tiempo estimado restante: {formatDurationMs(getEstimatedRemainingMs())}
-                    </p>
-                  </div>
-                  <span className="text-sm font-bold text-primary">
+                {/* Main Progress Display */}
+                <div className="text-center space-y-2">
+                  <div className="text-4xl font-bold text-primary">
                     {pipelineProgress}%
-                  </span>
-                </div>
-                <Progress value={pipelineProgress} className="h-3" />
-                
-                {/* Background Mode Notice */}
-                <div className="p-2 bg-blue-500/10 rounded border border-blue-500/20">
-                  <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-2">
-                    <Rocket className="w-3 h-3" />
-                    Puedes navegar a otras secciones. La generación continuará en segundo plano.
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {pipelineProgress < 100 
+                      ? `Generando guion • ${formatDurationMs(getEstimatedRemainingMs())} restante`
+                      : 'Finalizando...'}
                   </p>
                 </div>
                 
-                {/* Completed Episodes */}
-                {generatedEpisodesList.length > 0 && (
-                  <div>
-                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">Completados:</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {generatedEpisodesList.map((ep, i) => (
-                        <Badge 
-                          key={i} 
-                          variant={ep.error ? 'destructive' : 'default'}
-                          className="flex items-center gap-1"
-                        >
-                          {ep.error ? <XCircle className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
-                          Ep {ep.episode_number}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <Progress value={pipelineProgress} className="h-3" />
+                
+                {/* Episode Pills - Visual Progress */}
+                <div className="flex justify-center gap-1 flex-wrap">
+                  {Array.from({ length: totalEpisodesToGenerate }, (_, i) => {
+                    const epNum = i + 1;
+                    const isCompleted = generatedEpisodesList.some(ep => ep.episode_number === epNum);
+                    const isCurrentlyGenerating = currentEpisodeGenerating === epNum;
+                    const hasError = generatedEpisodesList.find(ep => ep.episode_number === epNum)?.error;
+                    
+                    return (
+                      <div
+                        key={i}
+                        className={`
+                          w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all
+                          ${isCompleted && !hasError ? 'bg-green-500 text-white' : ''}
+                          ${hasError ? 'bg-red-500 text-white' : ''}
+                          ${isCurrentlyGenerating ? 'bg-blue-500 text-white animate-pulse' : ''}
+                          ${!isCompleted && !isCurrentlyGenerating ? 'bg-muted text-muted-foreground' : ''}
+                        `}
+                      >
+                        {isCompleted && !hasError ? <CheckCircle className="w-4 h-4" /> : epNum}
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                {/* Background Mode Notice */}
+                <div className="p-2 bg-blue-500/10 rounded border border-blue-500/20">
+                  <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center justify-center gap-2">
+                    <Rocket className="w-3 h-3" />
+                    Puedes navegar libremente. La generación continúa en segundo plano.
+                  </p>
+                </div>
 
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={cancelGeneration}
-                >
-                  <XCircle className="w-4 h-4 mr-2" />
-                  Cancelar Generación
-                </Button>
+                <div className="flex justify-center">
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={cancelGeneration}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Cancelar
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )}
