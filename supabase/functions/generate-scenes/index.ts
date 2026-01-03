@@ -13,6 +13,200 @@ interface GenerateScenesRequest {
   sceneCount?: number;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// SCENE GENERATOR + CINEMATOGRAPHER ENGINE v3
+// Generates complete scenes with professional shot plans, dialogues & transitions
+// ═══════════════════════════════════════════════════════════════════════════
+
+const SCENE_GENERATION_PROMPT = `Eres SHOWRUNNER + DOP con 30 años en Hollywood.
+
+TU MISIÓN: Generar escenas COMPLETAS con planos profesionales listos para producción.
+
+═══════════════════════════════════════════════════════
+ESTRUCTURA DE CADA ESCENA
+═══════════════════════════════════════════════════════
+
+Cada escena DEBE incluir:
+1. Información básica (slugline, summary, mood)
+2. Diálogos completos distribuidos
+3. SCENE_SETUP con configuración técnica constante
+4. SHOTS[] con detalles cinematográficos y transiciones
+
+═══════════════════════════════════════════════════════
+SCENE_SETUP (CONSTANTES DE ESCENA - NO cambian entre shots)
+═══════════════════════════════════════════════════════
+
+camera_package:
+  - body: ARRI_Alexa35 | RED_V_Raptor | Sony_Venice2
+  - codec: ARRIRAW | R3D | ProRes4444
+  - fps: 24 | 25
+  - shutter_angle: 180
+  - iso_target: 800 | 1600
+
+lens_set:
+  - family: ARRI_Signature_Prime | Zeiss_Supreme | Cooke_S7
+  - look: Vintage_Organic | Modern_Clinical | Anamorphic_Cinematic
+  - available_focals: [24, 35, 50, 85, 135]
+
+lighting_plan:
+  - key_style: Natural_Window | Soft_Diffused | Hard_Dramatic | Neon_Practical
+  - color_temp_base_k: 3200 | 4500 | 5600
+  - contrast_ratio: "4:1" | "2:1" | "8:1"
+
+audio_plan:
+  - room_tone: "habitación silenciosa" | "ciudad de fondo" | "naturaleza"
+  - ambience_layers: ["aire acondicionado", "tráfico lejano"]
+  
+axis_180_reference:
+  - line_description: "Línea imaginaria entre personajes principales"
+  - screen_left: "Personaje A"
+  - screen_right: "Personaje B"
+
+═══════════════════════════════════════════════════════
+SHOTS[] - CADA PLANO INCLUYE:
+═══════════════════════════════════════════════════════
+
+shot_id: "S01", "S02"...
+shot_type: Wide | Medium | CloseUp | OTS | Insert | Establishing
+coverage_type: Master | Single | Two-Shot | OTS_A | OTS_B | Insert | Reaction
+story_purpose: establish_geography | reveal_information | build_tension | emotional_connection | dialogue_focus | transition
+
+camera_variation:
+  - focal_mm: 35 | 50 | 85 | 135
+  - aperture: "T2.0" | "T2.8" | "T4.0"
+  - movement: Static | Pan | Dolly_In | Dolly_Out | Crane_Up | Steadicam
+  - height_cm: 120 (pecho) | 160 (ojos) | 80 (bajo) | 200 (alto)
+  - stabilization: Tripod | Steadicam | Handheld_Controlled | Dolly
+
+blocking:
+  - subject_positions: "A izquierda frame, B derecha, 2m separación"
+  - screen_direction: "A mira derecha, B mira izquierda"
+  - action: "Descripción de lo que pasa"
+  
+dialogue: (línea de diálogo que cubre este plano, o null)
+
+duration_sec: 3-8 segundos por plano
+
+transition:
+  - type: CUT | DISSOLVE | MATCH_CUT | J_CUT | L_CUT
+  - to_next: "hard_cut" | "audio_prelap" | "visual_match"
+  - bridge_audio: room_tone | dialogue_prelap | SFX_lead_in
+
+edit_intent:
+  - expected_cut: hard | soft | match_cut
+  - hold_ms: 0-800 (milisegundos extra para "respirar")
+  - rhythm_note: "Corte rápido" | "Hold para emoción"
+
+ai_risks: [Identity_Drift, Hand_Deform, Spatial_Jump]
+risk_mitigation: "Evitar manos, usar misma ref"
+
+═══════════════════════════════════════════════════════
+REGLAS CRÍTICAS
+═══════════════════════════════════════════════════════
+
+1. CADA ESCENA tiene 4-8 planos que cubren TODA la acción y diálogo
+2. Los diálogos se DISTRIBUYEN entre planos (no todo en uno)
+3. TODAS las transiciones entre planos están definidas
+4. El shot_type y coverage_type deben tener sentido narrativo
+5. Planos "hero" (emocionales) marcar como hero: true
+6. La secuencia de planos respeta el eje de 180°
+7. FORMATO: Solo JSON válido sin markdown
+
+═══════════════════════════════════════════════════════
+FORMATO DE SALIDA (ARRAY DE ESCENAS)
+═══════════════════════════════════════════════════════
+
+[
+  {
+    "scene_no": 1,
+    "slugline": "INT. LOCATION - DAY/NIGHT",
+    "summary": "Descripción de lo que pasa",
+    "time_of_day": "DAY" | "NIGHT",
+    "character_names": ["Personaje1", "Personaje2"],
+    "location_name": "Nombre del lugar",
+    "mood": "tense" | "romantic" | "action" | "dramatic",
+    
+    "scene_setup": {
+      "camera_package": { "body": "...", "codec": "...", "fps": 24, "shutter_angle": 180, "iso_target": 800 },
+      "lens_set": { "family": "...", "look": "...", "available_focals": [35, 50, 85] },
+      "lighting_plan": { "key_style": "...", "color_temp_base_k": 5600, "contrast_ratio": "4:1" },
+      "audio_plan": { "room_tone": "...", "ambience_layers": ["..."] },
+      "axis_180_reference": { "line_description": "...", "screen_left": "A", "screen_right": "B" }
+    },
+    
+    "shots": [
+      {
+        "shot_id": "S01",
+        "shot_no": 1,
+        "shot_type": "Wide",
+        "coverage_type": "Master",
+        "story_purpose": "establish_geography",
+        "camera_variation": {
+          "focal_mm": 35,
+          "aperture": "T2.8",
+          "movement": "Static",
+          "height_cm": 160,
+          "stabilization": "Tripod"
+        },
+        "blocking": {
+          "subject_positions": "A izquierda, B derecha",
+          "screen_direction": "A mira derecha",
+          "action": "Ambos personajes entran a la habitación"
+        },
+        "dialogue": null,
+        "duration_sec": 4,
+        "transition": {
+          "type": "CUT",
+          "to_next": "hard_cut",
+          "bridge_audio": "room_tone"
+        },
+        "edit_intent": {
+          "expected_cut": "hard",
+          "hold_ms": 200,
+          "rhythm_note": "Establecer espacio"
+        },
+        "hero": false,
+        "ai_risks": ["Spatial_Jump"],
+        "risk_mitigation": "Usar establishing con personajes pequeños en frame"
+      },
+      {
+        "shot_id": "S02",
+        "shot_no": 2,
+        "shot_type": "Medium",
+        "coverage_type": "Two-Shot",
+        "story_purpose": "dialogue_focus",
+        "camera_variation": {
+          "focal_mm": 50,
+          "aperture": "T2.0",
+          "movement": "Static",
+          "height_cm": 160,
+          "stabilization": "Tripod"
+        },
+        "blocking": {
+          "subject_positions": "A y B en frame",
+          "screen_direction": "Perfil",
+          "action": "Comienzan a hablar"
+        },
+        "dialogue": "Línea de diálogo aquí...",
+        "duration_sec": 5,
+        "transition": {
+          "type": "CUT",
+          "to_next": "hard_cut",
+          "bridge_audio": "dialogue_prelap"
+        },
+        "edit_intent": {
+          "expected_cut": "soft",
+          "hold_ms": 400,
+          "rhythm_note": "Dar espacio al diálogo"
+        },
+        "hero": false,
+        "ai_risks": ["Identity_Drift"],
+        "risk_mitigation": "Mantener refs consistentes"
+      }
+    ]
+  }
+]`;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -28,9 +222,8 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    console.log(`Generating scenes for project ${projectId}, episode ${episodeNo}`);
+    console.log(`Generating complete scenes with shots for project ${projectId}, episode ${episodeNo}`);
 
-    // Create Supabase client
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
     // Fetch characters from bible
@@ -49,66 +242,44 @@ serve(async (req) => {
 
     console.log(`Found ${locations?.length || 0} locations`);
 
-    // Fetch style pack
+    // Fetch style pack for visual consistency
     const { data: stylePack } = await supabase
       .from('style_packs')
       .select('*')
       .eq('project_id', projectId)
       .maybeSingle();
 
-    // Build the prompt
+    // Build context for AI
     const characterList = characters?.map(c => `- ${c.name} (${c.role || 'character'}): ${c.bio || 'No description'}`).join('\n') || 'No characters defined';
     const locationList = locations?.map(l => `- ${l.name}: ${l.description || 'No description'}`).join('\n') || 'No locations defined';
 
-    const prompt = `You are a professional screenwriter. Generate ${sceneCount} scenes for Episode ${episodeNo} based on the following:
+    const userPrompt = `Genera ${sceneCount} escenas COMPLETAS para Episodio ${episodeNo}.
 
-SYNOPSIS:
+SINOPSIS:
 ${synopsis}
 
-AVAILABLE CHARACTERS:
+PERSONAJES DISPONIBLES:
 ${characterList}
 
-AVAILABLE LOCATIONS:
+LOCALIZACIONES DISPONIBLES:
 ${locationList}
 
-VISUAL STYLE:
+ESTILO VISUAL:
 - Aspect Ratio: ${stylePack?.aspect_ratio || '16:9'}
 - Lens Style: ${stylePack?.lens_style || 'cinematic'}
-- Grain: ${stylePack?.grain_level || 'subtle'}
+- Visual Tone: ${stylePack?.visual_tone || 'dramatic'}
 
-Generate scenes in the following JSON format (array of objects):
-[
-  {
-    "scene_no": 1,
-    "slugline": "INT. LOCATION NAME - TIME OF DAY",
-    "summary": "Brief description of what happens",
-    "time_of_day": "DAY" or "NIGHT",
-    "character_names": ["Character1", "Character2"],
-    "location_name": "Location Name",
-    "mood": "tense/romantic/action/dramatic/comedic",
-    "shots": [
-      {
-        "shot_no": 1,
-        "shot_type": "WIDE/MEDIUM/CLOSE-UP/INSERT/TRACKING",
-        "dialogue_text": "Any dialogue for this shot or null",
-        "duration_target": 3,
-        "hero": false
-      }
-    ]
-  }
-]
+REQUISITOS:
+1. Cada escena tiene 4-8 planos que cubren TODA la acción
+2. Los DIÁLOGOS se distribuyen entre los planos (campo "dialogue" en cada shot)
+3. Las TRANSICIONES están definidas entre planos (campo "transition")
+4. Usa SOLO los personajes y localizaciones proporcionados
+5. Marca planos emocionales como "hero": true
+6. La secuencia respeta continuidad cinematográfica
 
-Rules:
-- Use ONLY the characters and locations provided
-- Each scene should have 3-6 shots
-- Mark emotionally important shots as "hero": true
-- Sluglines must follow format: INT/EXT. LOCATION - DAY/NIGHT
-- Keep dialogue natural and character-appropriate
-- Ensure proper story flow between scenes
+Retorna SOLO JSON válido, sin texto adicional.`;
 
-Return ONLY valid JSON, no additional text.`;
-
-    console.log('Calling AI for scene generation...');
+    console.log('Calling AI for complete scene generation with shots...');
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -119,9 +290,10 @@ Return ONLY valid JSON, no additional text.`;
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'You are an expert screenwriter. Return only valid JSON without markdown formatting.' },
-          { role: 'user', content: prompt }
+          { role: 'system', content: SCENE_GENERATION_PROMPT },
+          { role: 'user', content: userPrompt }
         ],
+        temperature: 0.7,
       }),
     });
 
@@ -150,13 +322,13 @@ Return ONLY valid JSON, no additional text.`;
     // Clean up potential markdown formatting
     scenesText = scenesText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     
-    console.log('AI response received, parsing...');
+    console.log('AI response received, parsing complete scene data...');
 
     let generatedScenes;
     try {
       generatedScenes = JSON.parse(scenesText);
     } catch (parseError) {
-      console.error('Failed to parse AI response:', scenesText);
+      console.error('Failed to parse AI response:', scenesText.substring(0, 500));
       throw new Error('Invalid JSON response from AI');
     }
 
@@ -164,8 +336,10 @@ Return ONLY valid JSON, no additional text.`;
     const characterMap = new Map(characters?.map(c => [c.name.toLowerCase(), c.id]) || []);
     const locationMap = new Map(locations?.map(l => [l.name.toLowerCase(), l.id]) || []);
 
-    // Insert scenes into database
+    // Insert scenes and shots into database
     const insertedScenes = [];
+    let totalShotsInserted = 0;
+
     for (const scene of generatedScenes) {
       // Find character IDs
       const characterIds = (scene.character_names || [])
@@ -175,7 +349,7 @@ Return ONLY valid JSON, no additional text.`;
       // Find location ID
       const locationId = locationMap.get((scene.location_name || '').toLowerCase()) || null;
 
-      // Insert scene
+      // Insert scene with setup metadata
       const { data: insertedScene, error: sceneError } = await supabase
         .from('scenes')
         .insert({
@@ -189,6 +363,11 @@ Return ONLY valid JSON, no additional text.`;
           location_id: locationId,
           mood: { primary: scene.mood },
           quality_mode: 'CINE',
+          // Store scene_setup in parsed_json for production use
+          parsed_json: {
+            scene_setup: scene.scene_setup || null,
+            generated_with: 'cinematographer_engine_v3'
+          }
         })
         .select()
         .single();
@@ -200,23 +379,52 @@ Return ONLY valid JSON, no additional text.`;
 
       console.log(`Inserted scene ${scene.scene_no}: ${scene.slugline}`);
 
-      // Insert shots for this scene
+      // Insert shots with full cinematographic data
       if (scene.shots && insertedScene) {
         for (const shot of scene.shots) {
+          // Build camera JSON from variation
+          const cameraData = shot.camera_variation ? {
+            focal_mm: shot.camera_variation.focal_mm,
+            aperture: shot.camera_variation.aperture,
+            movement: shot.camera_variation.movement,
+            height_cm: shot.camera_variation.height_cm,
+            stabilization: shot.camera_variation.stabilization
+          } : null;
+
+          // Build blocking JSON
+          const blockingData = shot.blocking ? {
+            subject_positions: shot.blocking.subject_positions,
+            screen_direction: shot.blocking.screen_direction,
+            action: shot.blocking.action
+          } : null;
+
           const { error: shotError } = await supabase
             .from('shots')
             .insert({
               scene_id: insertedScene.id,
-              shot_no: shot.shot_no,
-              shot_type: shot.shot_type,
-              dialogue_text: shot.dialogue_text,
-              duration_target: shot.duration_target || 3,
+              shot_no: shot.shot_no || parseInt(shot.shot_id?.replace('S', '') || '1'),
+              shot_type: shot.shot_type?.toLowerCase() || 'medium',
+              dialogue_text: shot.dialogue || null,
+              duration_target: shot.duration_sec || 3,
               hero: shot.hero || false,
               effective_mode: shot.hero ? 'ULTRA' : 'CINE',
+              // Store full cinematographic data
+              camera: cameraData,
+              blocking: blockingData,
+              // Store additional metadata in description or dedicated columns
+              coverage_type: shot.coverage_type || null,
+              story_purpose: shot.story_purpose || null,
+              transition_in: shot.transition?.type || 'CUT',
+              transition_out: shot.transition?.to_next || 'hard_cut',
+              edit_intent: shot.edit_intent || null,
+              ai_risk: shot.ai_risks || [],
+              continuity_notes: shot.risk_mitigation || null
             });
 
           if (shotError) {
             console.error('Error inserting shot:', shotError);
+          } else {
+            totalShotsInserted++;
           }
         }
       }
@@ -224,12 +432,14 @@ Return ONLY valid JSON, no additional text.`;
       insertedScenes.push(insertedScene);
     }
 
-    console.log(`Successfully generated ${insertedScenes.length} scenes`);
+    console.log(`Successfully generated ${insertedScenes.length} scenes with ${totalShotsInserted} shots`);
 
     return new Response(JSON.stringify({
       success: true,
       scenesGenerated: insertedScenes.length,
+      shotsGenerated: totalShotsInserted,
       scenes: insertedScenes,
+      message: `${insertedScenes.length} escenas con ${totalShotsInserted} planos generados automáticamente`
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
