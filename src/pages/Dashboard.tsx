@@ -7,6 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useUserProfileOptional } from '@/contexts/UserProfileContext';
+import { ProfileOnboardingModal } from '@/components/onboarding/ProfileOnboardingModal';
+import { UserProfileBadge } from '@/components/onboarding/UserProfileBadge';
 import { 
   Plus, 
   Film, 
@@ -31,8 +34,13 @@ interface Project {
 export default function Dashboard() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const profileContext = useUserProfileOptional();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const needsOnboarding = profileContext?.needsOnboarding ?? false;
+  const completeOnboarding = profileContext?.completeOnboarding;
+  const setDeclaredProfile = profileContext?.setDeclaredProfile;
 
   useEffect(() => {
     async function fetchProjects() {
@@ -82,13 +90,26 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
+      {/* Onboarding modal for new users */}
+      {needsOnboarding && completeOnboarding && (
+        <ProfileOnboardingModal
+          open={needsOnboarding}
+          onComplete={completeOnboarding}
+          onSkip={() => setDeclaredProfile?.('CREATOR')}
+          showSkip={true}
+        />
+      )}
+
       <PageHeader title={t.dashboard.title} description={t.dashboard.subtitle}>
-        <Button variant="gold" asChild>
-          <Link to="/projects/new">
-            <Plus className="w-4 h-4" />
-            {t.projects.newProject}
-          </Link>
-        </Button>
+        <div className="flex items-center gap-3">
+          <UserProfileBadge />
+          <Button variant="gold" asChild>
+            <Link to="/projects/new">
+              <Plus className="w-4 h-4" />
+              {t.projects.newProject}
+            </Link>
+          </Button>
+        </div>
       </PageHeader>
 
       <div className="flex-1 overflow-auto p-6">

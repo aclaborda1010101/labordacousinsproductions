@@ -2005,6 +2005,65 @@ export type Database = {
           },
         ]
       }
+      project_user_profiles: {
+        Row: {
+          coherence_violations: number | null
+          created_at: string
+          guidance_level: string
+          help_requests_count: number | null
+          id: string
+          last_metrics_updated: string | null
+          phase_overrides: Json | null
+          phases_completed_solo: number | null
+          project_id: string
+          structural_reversions: number | null
+          updated_at: string
+          user_id: string
+          warnings_accepted_count: number | null
+          warnings_ignored_count: number | null
+        }
+        Insert: {
+          coherence_violations?: number | null
+          created_at?: string
+          guidance_level?: string
+          help_requests_count?: number | null
+          id?: string
+          last_metrics_updated?: string | null
+          phase_overrides?: Json | null
+          phases_completed_solo?: number | null
+          project_id: string
+          structural_reversions?: number | null
+          updated_at?: string
+          user_id: string
+          warnings_accepted_count?: number | null
+          warnings_ignored_count?: number | null
+        }
+        Update: {
+          coherence_violations?: number | null
+          created_at?: string
+          guidance_level?: string
+          help_requests_count?: number | null
+          id?: string
+          last_metrics_updated?: string | null
+          phase_overrides?: Json | null
+          phases_completed_solo?: number | null
+          project_id?: string
+          structural_reversions?: number | null
+          updated_at?: string
+          user_id?: string
+          warnings_accepted_count?: number | null
+          warnings_ignored_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_user_profiles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           bible_completeness_score: number | null
@@ -3088,6 +3147,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_experience_profiles: {
+        Row: {
+          created_at: string
+          declared_profile: string
+          id: string
+          inference_confidence: number | null
+          inferred_profile: string
+          last_activity_at: string | null
+          onboarding_answers: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          declared_profile?: string
+          id?: string
+          inference_confidence?: number | null
+          inferred_profile?: string
+          last_activity_at?: string | null
+          onboarding_answers?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          declared_profile?: string
+          id?: string
+          inference_confidence?: number | null
+          inferred_profile?: string
+          last_activity_at?: string | null
+          onboarding_answers?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -3108,6 +3203,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_telemetry_signals: {
+        Row: {
+          context: Json | null
+          created_at: string
+          id: string
+          project_id: string | null
+          signal_type: string
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          signal_type: string
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          signal_type?: string
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_telemetry_signals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_usage: {
         Row: {
