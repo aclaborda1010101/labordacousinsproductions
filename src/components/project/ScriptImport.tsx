@@ -45,8 +45,13 @@ import {
   CheckSquare,
   Square,
   Sparkles,
-  Scissors
+  Scissors,
+  Trash2,
+  Book,
+  History,
+  RotateCcw
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs } from '@/lib/autoTargets';
@@ -73,10 +78,16 @@ interface PipelineStep {
 }
 
 export default function ScriptImport({ projectId, onScenesCreated }: ScriptImportProps) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('generate');
   const [scriptText, setScriptText] = useState('');
   const [scriptLocked, setScriptLocked] = useState(false);
   const [currentScriptId, setCurrentScriptId] = useState<string | null>(null);
+  
+  // Script history state
+  const [scriptHistory, setScriptHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [deletingScript, setDeletingScript] = useState(false);
 
   // Form state
   const [ideaText, setIdeaText] = useState('');
@@ -751,6 +762,94 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     toast.success('Guion desbloqueado');
   };
 
+  // Delete current script
+  const deleteCurrentScript = async () => {
+    if (!currentScriptId) {
+      toast.error('No hay guion para eliminar');
+      return;
+    }
+
+    const confirm = window.confirm(
+      '¿Estás seguro de que deseas eliminar este guion? Esta acción no se puede deshacer.'
+    );
+    if (!confirm) return;
+
+    setDeletingScript(true);
+    try {
+      const { error } = await supabase
+        .from('scripts')
+        .delete()
+        .eq('id', currentScriptId);
+
+      if (error) throw error;
+
+      // Clear local state
+      setCurrentScriptId(null);
+      setGeneratedScript(null);
+      setScriptText('');
+      setScriptLocked(false);
+      setLightOutline(null);
+      setOutlineApproved(false);
+      setActiveTab('generate');
+      
+      // Reload history
+      await loadScriptHistory();
+      
+      toast.success('Guion eliminado correctamente');
+    } catch (err: any) {
+      console.error('Error deleting script:', err);
+      toast.error('Error al eliminar guion');
+    } finally {
+      setDeletingScript(false);
+    }
+  };
+
+  // Load script history
+  const loadScriptHistory = async () => {
+    setLoadingHistory(true);
+    try {
+      const { data, error } = await supabase
+        .from('scripts')
+        .select('id, status, raw_text, parsed_json, created_at')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setScriptHistory(data || []);
+    } catch (err: any) {
+      console.error('Error loading script history:', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  // Restore script from history
+  const restoreScriptFromHistory = async (script: any) => {
+    const confirm = window.confirm(
+      `¿Restaurar el guion del ${new Date(script.created_at).toLocaleString()}? El guion actual será reemplazado.`
+    );
+    if (!confirm) return;
+
+    setCurrentScriptId(script.id);
+    setScriptLocked(script.status === 'locked');
+    if (script.raw_text) setScriptText(script.raw_text);
+    if (script.parsed_json && typeof script.parsed_json === 'object') {
+      const parsed = script.parsed_json as Record<string, unknown>;
+      if (parsed.episodes || parsed.screenplay || parsed.title) {
+        setGeneratedScript(parsed);
+        setActiveTab('summary');
+      }
+    }
+    toast.success('Guion restaurado');
+  };
+
+  // Load history when switching to history tab
+  useEffect(() => {
+    if (activeTab === 'history') {
+      loadScriptHistory();
+    }
+  }, [activeTab]);
+
   // Export PDF - Professional Screenplay Format
   const exportCompletePDF = () => {
     if (!generatedScript) return;
@@ -1057,14 +1156,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Guion (Generar / Importar)</h2>
           <p className="text-sm text-muted-foreground">
             Pipeline completo: Idea → Outline → QC → Guion → Freeze
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Edit Bible Button */}
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate(`/projects/${projectId}/`)}
+          >
+            <Book className="w-4 h-4 mr-2" />
+            Editar Biblia
+          </Button>
+          
           {generatedScript && (
             <>
               <Button 
@@ -1078,6 +1187,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               <Button variant="outline" size="sm" onClick={analyzeWithDoctor} disabled={analyzing}>
                 {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
                 Script Doctor
+              </Button>
+              {/* Delete Script Button */}
+              <Button 
+                variant="destructive" 
+                size="sm"
+                onClick={deleteCurrentScript}
+                disabled={deletingScript}
+              >
+                {deletingScript ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                Eliminar Guion
               </Button>
             </>
           )}
@@ -1106,7 +1225,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="generate" className="flex items-center gap-2">
             <Lightbulb className="w-4 h-4" />
             Generar
@@ -1122,6 +1241,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           <TabsTrigger value="summary" className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Resumen
+          </TabsTrigger>
+          <TabsTrigger value="history" className="flex items-center gap-2">
+            <History className="w-4 h-4" />
+            Histórico
           </TabsTrigger>
           <TabsTrigger value="doctor" className="flex items-center gap-2">
             <Stethoscope className="w-4 h-4" />
@@ -2195,6 +2318,127 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </ScrollArea>
               </CardContent>
             )}
+          </Card>
+        </TabsContent>
+
+        {/* HISTORY TAB */}
+        <TabsContent value="history" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Histórico de Guiones
+              </CardTitle>
+              <CardDescription>
+                Versiones anteriores de guiones generados para este proyecto
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingHistory ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : scriptHistory.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <History className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No hay guiones en el histórico</p>
+                  <p className="text-sm mt-1">Los guiones generados aparecerán aquí</p>
+                </div>
+              ) : (
+                <ScrollArea className="h-[500px]">
+                  <div className="space-y-3">
+                    {scriptHistory.map((script, idx) => {
+                      const parsed = script.parsed_json as Record<string, unknown> | null;
+                      const title = parsed?.title as string || 'Sin título';
+                      const episodeCount = (parsed?.episodes as any[])?.length || 0;
+                      const isCurrentScript = script.id === currentScriptId;
+                      
+                      return (
+                        <div 
+                          key={script.id} 
+                          className={`p-4 rounded-lg border transition-colors ${
+                            isCurrentScript 
+                              ? 'border-primary bg-primary/5' 
+                              : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-medium truncate">{title}</h4>
+                                {isCurrentScript && (
+                                  <Badge variant="default" className="shrink-0">Actual</Badge>
+                                )}
+                                <Badge 
+                                  variant={script.status === 'locked' ? 'secondary' : 'outline'}
+                                  className="shrink-0"
+                                >
+                                  {script.status === 'locked' ? (
+                                    <><Lock className="w-3 h-3 mr-1" />Congelado</>
+                                  ) : (
+                                    'Borrador'
+                                  )}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                {new Date(script.created_at).toLocaleString('es-ES', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                              <div className="flex gap-2 mt-2">
+                                {episodeCount > 0 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {episodeCount} episodio{episodeCount !== 1 ? 's' : ''}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-2 shrink-0">
+                              {!isCurrentScript && (
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => restoreScriptFromHistory(script)}
+                                >
+                                  <RotateCcw className="w-4 h-4 mr-2" />
+                                  Restaurar
+                                </Button>
+                              )}
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={async () => {
+                                  const confirm = window.confirm('¿Eliminar este guion del histórico?');
+                                  if (!confirm) return;
+                                  
+                                  await supabase.from('scripts').delete().eq('id', script.id);
+                                  
+                                  if (script.id === currentScriptId) {
+                                    setCurrentScriptId(null);
+                                    setGeneratedScript(null);
+                                    setScriptText('');
+                                    setScriptLocked(false);
+                                  }
+                                  
+                                  await loadScriptHistory();
+                                  toast.success('Guion eliminado del histórico');
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4 text-destructive" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </ScrollArea>
+              )}
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
