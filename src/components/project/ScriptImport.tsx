@@ -493,6 +493,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         for (let batchIdx = 0; batchIdx < BATCHES_PER_EPISODE; batchIdx++) {
           if (controller.signal.aborted) break;
 
+          // Add delay between batches to avoid rate limits (429)
+          if (batchIdx > 0) {
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 2s delay
+          }
+
           const batchLabel = `Ep${epNum} batch ${batchIdx + 1}/${BATCHES_PER_EPISODE}`;
           updatePipelineStep('episodes', 'running', `${batchLabel} (escenas ${batchIdx * 5 + 1}-${batchIdx * 5 + 5})...`);
 
@@ -3198,19 +3203,18 @@ const CountBadge = forwardRef<HTMLDivElement, { label: string; value: number }>(
 CountBadge.displayName = 'CountBadge';
 
 // Density comparison card: shows achieved vs target
-function DensityCompareCard({ 
-  label, 
-  achieved, 
-  target 
-}: { 
+const DensityCompareCard = forwardRef<HTMLDivElement, { 
   label: string; 
   achieved: number; 
   target?: number;
-}) {
+}>(({ label, achieved, target }, ref) => {
   const meetsTarget = target ? achieved >= target : true;
   
   return (
-    <div className={`p-2 rounded-lg text-center ${meetsTarget ? 'bg-green-500/10 border border-green-500/30' : 'bg-orange-500/10 border border-orange-500/30'}`}>
+    <div 
+      ref={ref}
+      className={`p-2 rounded-lg text-center ${meetsTarget ? 'bg-green-500/10 border border-green-500/30' : 'bg-orange-500/10 border border-orange-500/30'}`}
+    >
       <div className="text-xs text-muted-foreground mb-1">{label}</div>
       <div className="flex items-center justify-center gap-1">
         <span className={`text-lg font-bold ${meetsTarget ? 'text-green-600' : 'text-orange-600'}`}>
@@ -3234,4 +3238,6 @@ function DensityCompareCard({
       )}
     </div>
   );
-}
+});
+
+DensityCompareCard.displayName = 'DensityCompareCard';
