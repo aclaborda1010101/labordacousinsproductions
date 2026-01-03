@@ -1,5 +1,6 @@
 import { useState, useEffect, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { invokeWithTimeout } from '@/lib/supabaseFetchWithTimeout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -411,8 +412,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     try {
       const t0 = Date.now();
-      const { data, error } = await supabase.functions.invoke('generate-outline-light', {
-        body: {
+      // Use extended timeout (120s) for Claude-based outline generation
+      const { data, error } = await invokeWithTimeout<{ outline: typeof lightOutline }>(
+        'generate-outline-light',
+        {
           idea: ideaText.trim().slice(0, 2000),
           episodesCount: format === 'series' ? episodesCount : 1,
           format,
@@ -421,8 +424,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           language,
           narrativeMode,
           densityTargets: targets // Pass density targets to enforce
-        }
-      });
+        },
+        120000 // 2 minutes timeout for Claude
+      );
       const durationMs = Date.now() - t0;
 
       if (error) throw error;
