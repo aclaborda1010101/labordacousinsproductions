@@ -101,3 +101,6 @@ verify_jwt = false
 
 [functions.analyze-character-references]
 verify_jwt = false
+
+[functions.episode-generate-batch]
+verify_jwt = false
