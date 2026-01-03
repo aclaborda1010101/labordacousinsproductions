@@ -452,8 +452,21 @@ Idioma de respuesta: ${language || 'es-ES'}`;
 IDEA: ${idea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
-FORMATO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
+FORMATO POR DEFECTO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
 MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTRACCIÓN DE NÚMERO DE EPISODIOS (PRIORIDAD MÁXIMA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+ANTES de generar, analiza la IDEA buscando menciones de cantidad de episodios/capítulos:
+- "8 episodios", "8 capítulos", "serie de 10 episodios", "5 capítulos", etc.
+- Si la IDEA menciona un número específico de episodios/capítulos → USA ESE NÚMERO (ignora el FORMATO POR DEFECTO)
+- Si la IDEA NO menciona cantidad → usa el FORMATO POR DEFECTO (${episodesCount || 6})
+
+Ejemplos:
+- IDEA: "Una serie de 8 capítulos sobre..." → Genera EXACTAMENTE 8 episodios
+- IDEA: "Drama en 12 episodios..." → Genera EXACTAMENTE 12 episodios
+- IDEA: "Una historia sobre un detective" (sin número) → Usa ${episodesCount || 6} episodios
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 EXTRACCIÓN DE ENTIDADES (PRIORIDAD MÁXIMA)
