@@ -6,20 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, ArrowRight, Check, Film, Tv, Clapperboard, Loader2, 
-  Zap, Users, MapPin, FileText, DollarSign,
-  Globe, Settings2, Sparkles
+  FileText, DollarSign, Globe, Settings2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { EngineShootout } from '@/components/project/EngineShootout';
-import { WizardScriptStep, GeneratedScript } from '@/components/project/WizardScriptStep';
+import ScriptImport from '@/components/project/ScriptImport';
 
 type ProjectFormat = 'series' | 'mini' | 'film';
 
@@ -45,15 +41,6 @@ interface ProjectDraft {
   masterLanguage: string;
   targetLanguages: string[];
   budgetCap: string;
-  scriptMode: 'idea' | 'import' | 'skip';
-  scriptIdea: string;
-  scriptGenre: string;
-  scriptTone: string;
-  scriptText: string;
-  generatedScript: GeneratedScript | null;
-  shootoutCharacter: { name: string; bio: string };
-  shootoutLocation: { name: string; description: string };
-  shootoutScene: string;
   currentStep: number;
   savedAt: string;
 }
@@ -76,20 +63,6 @@ export default function NewProject() {
   const [targetLanguages, setTargetLanguages] = useState<string[]>(['es']);
   const [budgetCap, setBudgetCap] = useState<string>('');
 
-  // Script/Idea
-  const [scriptMode, setScriptMode] = useState<'idea' | 'import' | 'skip'>('idea');
-  const [scriptIdea, setScriptIdea] = useState('');
-  const [scriptGenre, setScriptGenre] = useState('drama');
-  const [scriptTone, setScriptTone] = useState('Cinematográfico realista');
-  const [scriptText, setScriptText] = useState('');
-  const [generatedScript, setGeneratedScript] = useState<GeneratedScript | null>(null);
-
-  // Engine Shootout setup data
-  const [shootoutCharacter, setShootoutCharacter] = useState({ name: '', bio: '' });
-  const [shootoutLocation, setShootoutLocation] = useState({ name: '', description: '' });
-  const [shootoutScene, setShootoutScene] = useState('');
-  const [engineTestCompleted, setEngineTestCompleted] = useState(false);
-
   // Load draft on mount
   useEffect(() => {
     const savedDraft = localStorage.getItem(STORAGE_KEY);
@@ -105,17 +78,14 @@ export default function NewProject() {
 
   // Save draft on changes
   useEffect(() => {
-    if (title || scriptIdea || shootoutCharacter.name) {
+    if (title) {
       const draft: ProjectDraft = {
         title, format, episodesCount, targetDuration, masterLanguage, targetLanguages, budgetCap,
-        scriptMode, scriptIdea, scriptGenre, scriptTone, scriptText, generatedScript,
-        shootoutCharacter, shootoutLocation, shootoutScene, currentStep, savedAt: new Date().toISOString(),
+        currentStep, savedAt: new Date().toISOString(),
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
     }
-  }, [title, format, episodesCount, targetDuration, masterLanguage, targetLanguages, budgetCap, 
-      scriptMode, scriptIdea, scriptGenre, scriptTone, scriptText, generatedScript,
-      shootoutCharacter, shootoutLocation, shootoutScene, currentStep]);
+  }, [title, format, episodesCount, targetDuration, masterLanguage, targetLanguages, budgetCap, currentStep]);
 
   const restoreDraft = () => {
     const savedDraft = localStorage.getItem(STORAGE_KEY);
@@ -129,15 +99,6 @@ export default function NewProject() {
         setMasterLanguage(draft.masterLanguage);
         setTargetLanguages(draft.targetLanguages);
         setBudgetCap(draft.budgetCap);
-        setScriptMode(draft.scriptMode || 'idea');
-        setScriptIdea(draft.scriptIdea || '');
-        setScriptGenre(draft.scriptGenre || 'drama');
-        setScriptTone(draft.scriptTone || 'Cinematográfico realista');
-        setScriptText(draft.scriptText || '');
-        setGeneratedScript(draft.generatedScript || null);
-        setShootoutCharacter(draft.shootoutCharacter);
-        setShootoutLocation(draft.shootoutLocation);
-        setShootoutScene(draft.shootoutScene);
         setCurrentStep(draft.currentStep);
         toast.success('Borrador restaurado');
       } catch (e) {
@@ -162,8 +123,6 @@ export default function NewProject() {
     { id: 'language', title: 'Idiomas', description: 'Localización', icon: Globe },
     { id: 'budget', title: 'Presupuesto', description: 'Límites', icon: DollarSign },
     { id: 'script', title: 'Guion', description: 'Idea o importar', icon: FileText },
-    { id: 'shootout-setup', title: 'Engine Test', description: 'Personaje y loc', icon: Users },
-    { id: 'shootout', title: 'Shootout', description: 'Comparativa IA', icon: Zap },
   ];
 
   const FORMAT_OPTIONS = [
@@ -178,9 +137,7 @@ export default function NewProject() {
       case 1: return episodesCount >= 1 && targetDuration >= 1;
       case 2: return masterLanguage.length > 0;
       case 3: return true;
-      case 4: return scriptMode === 'skip' || (scriptMode === 'idea' && scriptIdea.trim().length >= 10) || (scriptMode === 'import' && scriptText.trim().length >= 100);
-      case 5: return shootoutCharacter.name.trim().length >= 2 && shootoutLocation.name.trim().length >= 2 && shootoutScene.trim().length >= 10;
-      case 6: return engineTestCompleted;
+      case 4: return true; // Script step - always allow proceeding
       default: return false;
     }
   };
@@ -195,8 +152,9 @@ export default function NewProject() {
   };
 
   const handleNext = async () => {
-    if (currentStep === 5 && !createdProjectId) {
-      await createProjectWithSetup();
+    if (currentStep === 3 && !createdProjectId) {
+      // Before going to script step, create the project
+      await createProject();
     } else if (currentStep < WIZARD_STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     }
@@ -204,7 +162,7 @@ export default function NewProject() {
 
   const handleBack = () => { if (currentStep > 0) setCurrentStep(currentStep - 1); };
 
-  const createProjectWithSetup = async () => {
+  const createProject = async () => {
     if (!user) return;
     setSaving(true);
     try {
@@ -229,96 +187,22 @@ export default function NewProject() {
 
       // Create episodes if series/mini
       if (format !== 'film') {
-        const episodesToCreate = generatedScript?.episodes?.length 
-          ? generatedScript.episodes.map((ep, idx) => ({
-              project_id: project.id,
-              episode_index: idx + 1,
-              title: ep.title || `Episodio ${idx + 1}`,
-              summary: ep.summary || null,
-            }))
-          : Array.from({ length: episodesCount }, (_, i) => ({
-              project_id: project.id,
-              episode_index: i + 1,
-              title: `Episodio ${i + 1}`,
-            }));
+        const episodesToCreate = Array.from({ length: episodesCount }, (_, i) => ({
+          project_id: project.id,
+          episode_index: i + 1,
+          title: `Episodio ${i + 1}`,
+        }));
         await supabase.from('episodes').insert(episodesToCreate);
-      }
-
-      // Create script if we have one
-      if ((scriptMode === 'idea' && generatedScript?.screenplay) || (scriptMode === 'import' && scriptText)) {
-        await supabase.from('scripts').insert([{
-          project_id: project.id,
-          raw_text: scriptMode === 'import' ? scriptText : generatedScript?.screenplay || null,
-          parsed_json: generatedScript ? JSON.parse(JSON.stringify(generatedScript)) : {},
-          status: 'draft',
-          version: 1,
-        }]);
-      }
-
-      // Create characters from generated script
-      if (generatedScript?.characters?.length) {
-        const charsToCreate = generatedScript.characters.map((char, idx) => ({
-          project_id: project.id,
-          name: char.name,
-          role: char.role || (idx === 0 ? 'protagonist' : 'recurring'),
-          bio: char.description || null,
-          character_role: idx === 0 ? 'protagonist' as const : 'recurring' as const,
-        }));
-        await supabase.from('characters').insert(charsToCreate);
-      }
-
-      // Create locations from generated script
-      if (generatedScript?.locations?.length) {
-        const locsToCreate = generatedScript.locations.map((loc) => ({
-          project_id: project.id,
-          name: loc.name,
-          description: loc.description || null,
-        }));
-        await supabase.from('locations').insert(locsToCreate);
-      }
-
-      // Create the shootout test character if not from script
-      if (!generatedScript?.characters?.length && shootoutCharacter.name) {
-        await supabase.from('characters').insert({
-          project_id: project.id,
-          name: shootoutCharacter.name.trim(),
-          bio: shootoutCharacter.bio || null,
-          role: 'protagonist',
-        });
-      }
-
-      // Create the shootout test location if not from script
-      if (!generatedScript?.locations?.length && shootoutLocation.name) {
-        await supabase.from('locations').insert({
-          project_id: project.id,
-          name: shootoutLocation.name.trim(),
-          description: shootoutLocation.description || null,
-        });
       }
 
       setCreatedProjectId(project.id);
       setCurrentStep(currentStep + 1);
-      toast.success('Proyecto creado. Iniciando Engine Shootout...');
+      toast.success('Proyecto creado. Configura tu guion.');
     } catch (error) {
       console.error('Error creating project:', error);
       toast.error('Error al crear el proyecto');
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleShootoutComplete = async (winningEngine: string) => {
-    if (!createdProjectId) return;
-    try {
-      await supabase.from('projects').update({
-        preferred_engine: winningEngine,
-        engine_test_completed: true,
-      }).eq('id', createdProjectId);
-      
-      setEngineTestCompleted(true);
-      toast.success(`Engine Shootout completado. Motor preferido: ${winningEngine}`);
-    } catch (error) {
-      console.error('Error saving engine preference:', error);
     }
   };
 
@@ -341,7 +225,7 @@ export default function NewProject() {
       </PageHeader>
 
       <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Progress steps - CLICKABLE */}
           <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2">
             {WIZARD_STEPS.map((step, index) => {
@@ -557,149 +441,43 @@ export default function NewProject() {
               </div>
             )}
 
-            {/* Step 4: Script/Idea - Using new component */}
-            {currentStep === 4 && (
-              <WizardScriptStep
-                format={format}
-                episodesCount={episodesCount}
-                targetDuration={targetDuration}
-                masterLanguage={masterLanguage}
-                scriptMode={scriptMode}
-                setScriptMode={setScriptMode}
-                scriptIdea={scriptIdea}
-                setScriptIdea={setScriptIdea}
-                scriptGenre={scriptGenre}
-                setScriptGenre={setScriptGenre}
-                scriptTone={scriptTone}
-                setScriptTone={setScriptTone}
-                scriptText={scriptText}
-                setScriptText={setScriptText}
-                generatedScript={generatedScript}
-                setGeneratedScript={setGeneratedScript}
-                onShootoutDataReady={(char, loc) => {
-                  setShootoutCharacter(char);
-                  setShootoutLocation(loc);
-                }}
-                setProjectTitle={setTitle}
-              />
-            )}
-
-            {/* Step 5: Shootout Setup */}
-            {currentStep === 5 && (
-              <div className="space-y-6 animate-fade-in">
-                <div>
-                  <h2 className="text-xl font-semibold text-foreground mb-1 flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-amber-500" />
-                    Engine Shootout - Configuración
-                  </h2>
-                  <p className="text-muted-foreground">
-                    {generatedScript ? 'Hemos pre-rellenado con datos del guion. Ajusta si es necesario.' : 'Define 1 personaje, 1 localización y 1 micro-escena (8s) para comparar motores de IA'}
-                  </p>
-                </div>
-
-                <div className="space-y-4 p-4 rounded-lg bg-muted/30 border border-border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-4 h-4 text-primary" />
-                    <Label className="text-base font-medium">Personaje de Prueba</Label>
-                  </div>
-                  <div className="space-y-3 pl-6">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="char-name" className="text-sm">Nombre *</Label>
-                      <Input 
-                        id="char-name"
-                        value={shootoutCharacter.name} 
-                        onChange={e => setShootoutCharacter({...shootoutCharacter, name: e.target.value})}
-                        placeholder="Ej: Elena Varga"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="char-bio" className="text-sm">Descripción</Label>
-                      <Textarea 
-                        id="char-bio"
-                        value={shootoutCharacter.bio}
-                        onChange={e => setShootoutCharacter({...shootoutCharacter, bio: e.target.value})}
-                        placeholder="Describe la apariencia física del personaje..."
-                        rows={2}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4 p-4 rounded-lg bg-muted/30 border border-border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <MapPin className="w-4 h-4 text-primary" />
-                    <Label className="text-base font-medium">Localización de Prueba</Label>
-                  </div>
-                  <div className="space-y-3 pl-6">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="loc-name" className="text-sm">Nombre *</Label>
-                      <Input 
-                        id="loc-name"
-                        value={shootoutLocation.name} 
-                        onChange={e => setShootoutLocation({...shootoutLocation, name: e.target.value})}
-                        placeholder="Ej: Café nocturno"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="loc-desc" className="text-sm">Descripción</Label>
-                      <Textarea 
-                        id="loc-desc"
-                        value={shootoutLocation.description}
-                        onChange={e => setShootoutLocation({...shootoutLocation, description: e.target.value})}
-                        placeholder="Describe el ambiente, iluminación, detalles..."
-                        rows={2}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    <Label className="text-base font-medium">Micro-escena (8 segundos) *</Label>
-                  </div>
-                  <Textarea 
-                    value={shootoutScene}
-                    onChange={e => setShootoutScene(e.target.value)}
-                    placeholder="Describe una acción corta: 'Elena entra al café, mira alrededor buscando a alguien, se sienta en una mesa junto a la ventana'"
-                    rows={3}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Esta micro-escena se renderizará con Veo 3.1 y Kling 2.0 para comparar resultados
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Step 6: Shootout */}
-            {currentStep === 6 && createdProjectId && (
-              <div className="animate-fade-in">
-                <EngineShootout 
+            {/* Step 4: Script - Using ScriptImport */}
+            {currentStep === 4 && createdProjectId && (
+              <div className="animate-fade-in -m-8">
+                <ScriptImport 
                   projectId={createdProjectId} 
-                  onComplete={handleShootoutComplete}
+                  onScenesCreated={() => {
+                    toast.success('Escenas creadas correctamente');
+                  }}
                 />
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-between mt-8">
-            <Button variant="outline" onClick={handleBack} disabled={currentStep === 0 || (currentStep === 6 && !engineTestCompleted)}>
-              <ArrowLeft className="w-4 h-4 mr-2" />Atrás
-            </Button>
-            
-            {currentStep < WIZARD_STEPS.length - 1 ? (
+          {/* Navigation buttons - hide on script step */}
+          {currentStep < 4 && (
+            <div className="flex items-center justify-between mt-8">
+              <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
+                <ArrowLeft className="w-4 h-4 mr-2" />Atrás
+              </Button>
+              
               <Button variant="gold" onClick={handleNext} disabled={!canProceed() || saving}>
                 {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-                {currentStep === 5 ? 'Crear y Ejecutar Shootout' : 'Siguiente'}
+                {currentStep === 3 ? 'Crear Proyecto y Configurar Guion' : 'Siguiente'}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-            ) : (
-              <Button variant="gold" onClick={handleFinish} disabled={!engineTestCompleted}>
+            </div>
+          )}
+
+          {/* Finish button on script step */}
+          {currentStep === 4 && createdProjectId && (
+            <div className="flex items-center justify-end mt-8">
+              <Button variant="gold" onClick={handleFinish}>
                 <Check className="w-4 h-4 mr-2" />
                 Finalizar y Abrir Proyecto
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </AppLayout>
