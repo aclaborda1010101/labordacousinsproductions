@@ -357,8 +357,8 @@ export default function NewProject() {
                   <div className="space-y-2">
                     <Label htmlFor="episodes">Número de episodios</Label>
                     <div className="flex items-center gap-4">
-                      <Input id="episodes" type="number" min={1} max={100} value={episodesCount} onChange={(e) => setEpisodesCount(parseInt(e.target.value) || 1)} className="w-24" />
-                      <span className="text-muted-foreground">episodios</span>
+                      <Input id="episodes" type="number" min={format === 'mini' ? 3 : 1} max={format === 'mini' ? 6 : 100} value={episodesCount} onChange={(e) => setEpisodesCount(parseInt(e.target.value) || (format === 'mini' ? 3 : 1))} className="w-24" />
+                      <span className="text-muted-foreground">episodios {format === 'mini' && '(3-6)'}</span>
                     </div>
                   </div>
                 )}
