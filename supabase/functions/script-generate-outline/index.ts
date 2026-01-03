@@ -267,10 +267,57 @@ Devuelve SOLO el JSON válido del outline.`;
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
+        temperature: 0.3,
         system: SYSTEM_PROMPT,
-        messages: [
-          { role: 'user', content: userPrompt }
+        tools: [
+          {
+            name: 'deliver_outline',
+            description: 'Return the outline as a structured object.',
+            input_schema: {
+              type: 'object',
+              properties: {
+                title: { type: 'string' },
+                logline: { type: 'string' },
+                synopsis: { type: 'string' },
+                genre: { type: 'string' },
+                tone: { type: 'string' },
+                themes: { type: 'array', items: { type: 'string' } },
+                beat_sheet: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                episode_outlines: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                character_list: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                location_list: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                hero_props: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                setpieces: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                subplots: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                twists: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                counts: { type: 'object', additionalProperties: true },
+                assumptions: { type: 'array', items: { type: 'string' } },
+                missing_info: { type: 'array', items: { type: 'string' } },
+              },
+              required: [
+                'title',
+                'logline',
+                'synopsis',
+                'genre',
+                'tone',
+                'themes',
+                'episode_outlines',
+                'character_list',
+                'location_list',
+                'hero_props',
+                'setpieces',
+                'subplots',
+                'twists',
+                'counts',
+                'assumptions',
+                'missing_info',
+              ],
+              additionalProperties: true,
+            },
+          },
         ],
+        tool_choice: { type: 'tool', name: 'deliver_outline' },
+        messages: [{ role: 'user', content: userPrompt }],
       }),
     });
 
@@ -308,24 +355,57 @@ Devuelve SOLO el JSON válido del outline.`;
     }
 
     const data = await response.json();
-    const content = data.content?.[0]?.text;
 
-    if (!content) {
-      throw new Error('No content from Anthropic API');
-    }
+    const toolUse = Array.isArray(data?.content)
+      ? data.content.find((c: any) => c?.type === 'tool_use' && c?.name === 'deliver_outline')
+      : null;
 
-    // Parse JSON from response
-    let outline;
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        outline = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
+    let outline: any = toolUse?.input;
+
+    // Fallback: si el modelo no devuelve tool_use, intenta extraer JSON del texto
+    if (!outline) {
+      const textBlock = Array.isArray(data?.content)
+        ? data.content.find((c: any) => c?.type === 'text')
+        : null;
+
+      const content = textBlock?.text ?? data?.content?.[0]?.text;
+
+      if (!content) {
+        return new Response(
+          JSON.stringify({ error: 'Claude no devolvió contenido.' }),
+          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
-    } catch (parseError) {
-      console.error('Parse error:', parseError, 'Content:', content.substring(0, 500));
-      throw new Error('Failed to parse outline JSON');
+
+      const fenceMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+      const candidateRaw =
+        fenceMatch?.[1]?.trim() ??
+        (() => {
+          const start = content.indexOf('{');
+          const end = content.lastIndexOf('}');
+          if (start === -1 || end === -1 || end <= start) return null;
+          return content.slice(start, end + 1);
+        })();
+
+      if (!candidateRaw) {
+        return new Response(
+          JSON.stringify({ error: 'Claude devolvió una respuesta sin JSON.' }),
+          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Reparación mínima: elimina comas finales comunes
+      const candidate = candidateRaw.replace(/,\s*([}\]])/g, '$1');
+
+      try {
+        outline = JSON.parse(candidate);
+      } catch (parseError) {
+        console.error('Parse error:', parseError, 'Content:', content.substring(0, 700));
+        return new Response(
+          JSON.stringify({ error: 'Claude devolvió un JSON inválido. Intenta generar de nuevo.' }),
+          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     console.log('Outline generated:', outline.title, 'counts:', JSON.stringify(outline.counts));
