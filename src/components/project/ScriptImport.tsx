@@ -1552,26 +1552,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         </div>
       </div>
 
-      {/* Pipeline Status */}
-      <div className="flex gap-2 p-3 bg-muted/30 rounded-lg items-center overflow-x-auto">
-        <span className="text-xs font-medium text-muted-foreground shrink-0">Pipeline:</span>
-        {['Draft', 'Outline', 'QC', 'Screenplay', 'Doctor', 'Freeze', 'Breakdown'].map((step, i) => (
-          <Badge 
-            key={step} 
-            variant={
-              (step === 'Draft' && !outline && !generatedScript) ||
-              (step === 'Outline' && outline && !generatedScript) ||
-              (step === 'Screenplay' && generatedScript && !scriptLocked) ||
-              (step === 'Freeze' && scriptLocked)
-                ? 'default' 
-                : 'outline'
-            }
-            className="shrink-0"
-          >
-            {step}
-          </Badge>
-        ))}
-      </div>
+      {/* Pipeline Status - Hidden for cleaner UI */}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-6">
@@ -1604,19 +1585,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         {/* GENERATE TAB */}
         <TabsContent value="generate" className="space-y-4">
           {/* CTA Principal - Pipeline V2 */}
-          <Card className="border-primary/50 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                  <h3 className="font-semibold text-lg flex items-center gap-2">
-                    <Rocket className="w-5 h-5 text-primary" />
-                    Pipeline V2: Generación por Pasos
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    1. Outline rápido (~10s) → 2. Apruebas → 3. Episodios uno a uno con progreso
-                  </p>
-                </div>
-                {!lightOutline && !pipelineRunning && (
+          {/* Generate Outline Button - Only show when no outline and not running */}
+          {!lightOutline && !pipelineRunning && (
+            <Card className="border-primary/50 bg-gradient-to-r from-primary/5 to-transparent">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-primary" />
+                      Genera tu guion
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Describe tu idea y generaremos un outline para tu aprobación
+                    </p>
+                  </div>
                   <Button 
                     variant="gold" 
                     size="lg"
@@ -1624,35 +1606,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     disabled={generatingOutline || !ideaText.trim()}
                   >
                     {generatingOutline ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generando Outline...</>
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generando...</>
                     ) : (
-                      <><Sparkles className="w-4 h-4 mr-2" />Paso 1: Generar Outline</>
+                      <><Sparkles className="w-4 h-4 mr-2" />Generar Outline</>
                     )}
                   </Button>
-                )}
-              </div>
-
-              {/* Pipeline Steps Indicator */}
-              {(generatingOutline || lightOutline || pipelineRunning) && (
-                <div className="mt-4 space-y-3">
-                  <div className="flex gap-2 flex-wrap items-center">
-                    {pipelineSteps.map(step => (
-                      <Badge 
-                        key={step.id}
-                        variant={step.status === 'success' ? 'default' : step.status === 'error' ? 'destructive' : 'outline'}
-                        className="flex items-center gap-1"
-                      >
-                        {step.status === 'running' && <Loader2 className="w-3 h-3 animate-spin" />}
-                        {step.status === 'success' && <CheckCircle className="w-3 h-3" />}
-                        {step.status === 'error' && <XCircle className="w-3 h-3" />}
-                        {step.label}
-                      </Badge>
-                    ))}
-                  </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* OUTLINE APPROVAL CARD - Pipeline V2 Step 2 */}
           {lightOutline && !outlineApproved && (
@@ -1790,28 +1752,31 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <Progress value={pipelineProgress} className="h-3" />
                 
                 {/* Episode Pills - Visual Progress */}
-                <div className="flex justify-center gap-1 flex-wrap">
-                  {Array.from({ length: totalEpisodesToGenerate }, (_, i) => {
-                    const epNum = i + 1;
-                    const isCompleted = generatedEpisodesList.some(ep => ep.episode_number === epNum);
-                    const isCurrentlyGenerating = currentEpisodeGenerating === epNum;
-                    const hasError = generatedEpisodesList.find(ep => ep.episode_number === epNum)?.error;
-                    
-                    return (
-                      <div
-                        key={i}
-                        className={`
-                          w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all
-                          ${isCompleted && !hasError ? 'bg-green-500 text-white' : ''}
-                          ${hasError ? 'bg-red-500 text-white' : ''}
-                          ${isCurrentlyGenerating ? 'bg-blue-500 text-white animate-pulse' : ''}
-                          ${!isCompleted && !isCurrentlyGenerating ? 'bg-muted text-muted-foreground' : ''}
-                        `}
-                      >
-                        {isCompleted && !hasError ? <CheckCircle className="w-4 h-4" /> : epNum}
-                      </div>
-                    );
-                  })}
+                <div className="space-y-2">
+                  <p className="text-xs text-center text-muted-foreground font-medium uppercase tracking-wide">Episodios</p>
+                  <div className="flex justify-center gap-1 flex-wrap">
+                    {Array.from({ length: totalEpisodesToGenerate }, (_, i) => {
+                      const epNum = i + 1;
+                      const isCompleted = generatedEpisodesList.some(ep => ep.episode_number === epNum);
+                      const isCurrentlyGenerating = currentEpisodeGenerating === epNum;
+                      const hasError = generatedEpisodesList.find(ep => ep.episode_number === epNum)?.error;
+                      
+                      return (
+                        <div
+                          key={i}
+                          className={`
+                            w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all
+                            ${isCompleted && !hasError ? 'bg-green-500 text-white' : ''}
+                            ${hasError ? 'bg-red-500 text-white' : ''}
+                            ${isCurrentlyGenerating ? 'bg-blue-500 text-white animate-pulse' : ''}
+                            ${!isCompleted && !isCurrentlyGenerating ? 'bg-muted text-muted-foreground' : ''}
+                          `}
+                        >
+                          {isCompleted && !hasError ? <CheckCircle className="w-4 h-4" /> : epNum}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
                 
                 {/* Background Mode Notice */}
