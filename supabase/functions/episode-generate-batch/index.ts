@@ -5,6 +5,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
+// See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
+// Scripts use Claude claude-sonnet-4-20250514 for professional screenplay quality
+const SCRIPT_MODEL = "claude-sonnet-4-20250514";
+
 /**
  * Genera UN SOLO batch de escenas (5 escenas).
  * El frontend llama 3 veces: batch 0 (1-5), batch 1 (6-10), batch 2 (11-15).
@@ -152,7 +157,7 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
           "content-type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: SCRIPT_MODEL,
           max_tokens: 5000,
           temperature,
           tools,

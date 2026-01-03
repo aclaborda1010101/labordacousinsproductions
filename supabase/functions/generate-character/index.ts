@@ -28,7 +28,10 @@ interface SlotGenerateRequest {
 }
 
 // Image engine configuration
-const IMAGE_ENGINE = 'google/gemini-3-pro-image-preview';
+// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
+// See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
+// nano-banana-pro = google/gemini-2.5-flash-image (maximum facial consistency)
+const IMAGE_ENGINE = 'google/gemini-2.5-flash-image';
 
 // ============================================
 // TECHNICAL PROMPT GENERATOR
