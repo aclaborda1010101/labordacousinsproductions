@@ -87,6 +87,14 @@ const IDENTITY_PACK_SLOTS = [
   },
 ];
 
+// DB constraint only allows legacy anchor_type values; map Identity Pack slots to them.
+const IDENTITY_SLOT_TO_ANCHOR_TYPE: Record<string, string> = {
+  face_front: 'identity_primary',
+  face_side: 'identity_secondary',
+  body_front: 'turnaround_front',
+  body_side: 'turnaround_side',
+};
+
 export function ReferenceAnchorManager({ characterId, projectId, onPackComplete }: ReferenceAnchorManagerProps) {
   const [anchors, setAnchors] = useState<ReferenceAnchor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,9 +107,10 @@ export function ReferenceAnchorManager({ characterId, projectId, onPackComplete 
 
   // Check pack completeness and notify parent
   useEffect(() => {
-    const completeSlots = IDENTITY_PACK_SLOTS.filter(slot => 
-      anchors.some(a => a.anchor_type === slot.value && a.is_active)
-    );
+    const completeSlots = IDENTITY_PACK_SLOTS.filter((slot) => {
+      const dbType = IDENTITY_SLOT_TO_ANCHOR_TYPE[slot.value];
+      return anchors.some((a) => a.anchor_type === dbType && a.is_active);
+    });
     const isComplete = completeSlots.length === IDENTITY_PACK_SLOTS.length;
     onPackComplete?.(isComplete);
   }, [anchors, onPackComplete]);
@@ -133,28 +142,35 @@ export function ReferenceAnchorManager({ characterId, projectId, onPackComplete 
     }
   };
 
-  const handleFileSelect = async (file: File, anchorType: string) => {
+  const handleFileSelect = async (file: File, slotValue: string) => {
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    const slotConfig = IDENTITY_PACK_SLOTS.find(s => s.value === anchorType);
+    const slotConfig = IDENTITY_PACK_SLOTS.find((s) => s.value === slotValue);
     if (!slotConfig) return;
 
-    setUploading(anchorType);
+    const dbAnchorType = IDENTITY_SLOT_TO_ANCHOR_TYPE[slotValue];
+    if (!dbAnchorType) {
+      toast.error('Tipo de referencia no soportado');
+      return;
+    }
+
+    setUploading(slotValue);
     try {
-      // Delete existing anchor of this type first
-      const existingAnchor = anchors.find(a => a.anchor_type === anchorType);
-      if (existingAnchor) {
-        await supabase
-          .from('reference_anchors')
-          .delete()
-          .eq('id', existingAnchor.anchor_id);
-      }
+      // Delete any existing anchors of this DB type first (avoid duplicates)
+      const { error: deleteError } = await supabase
+        .from('reference_anchors')
+        .delete()
+        .eq('character_id', characterId)
+        .eq('anchor_type', dbAnchorType);
+
+      if (deleteError) throw deleteError;
 
       // 1. Upload to storage
-      const fileName = `${characterId}/${anchorType}_${Date.now()}.${file.name.split('.').pop()}`;
+      const ext = file.name.split('.').pop() || 'jpg';
+      const fileName = `${projectId}/${characterId}/${slotValue}_${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from('character-references')
         .upload(fileName, file, { upsert: true });
@@ -171,21 +187,26 @@ export function ReferenceAnchorManager({ characterId, projectId, onPackComplete 
         .from('reference_anchors')
         .insert({
           character_id: characterId,
-          anchor_type: anchorType,
+          anchor_type: dbAnchorType,
           image_url: publicUrl,
           priority: slotConfig.priority,
           is_active: true,
           approved: true,
-          approved_at: new Date().toISOString()
+          approved_at: new Date().toISOString(),
+          metadata: {
+            slot: slotValue,
+            source: 'user_upload',
+            type: slotValue.startsWith('face_') ? 'face' : 'body',
+          },
         });
 
       if (insertError) throw insertError;
 
       toast.success(`${slotConfig.label} uploaded successfully!`);
       loadAnchors();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Upload error:', err);
-      toast.error('Failed to upload reference');
+      toast.error(err?.message || 'Failed to upload reference');
     } finally {
       setUploading(null);
     }
@@ -218,12 +239,15 @@ export function ReferenceAnchorManager({ characterId, projectId, onPackComplete 
     }
   };
 
-  const getAnchorForType = (type: string) => 
-    anchors.find(a => a.anchor_type === type);
+  const getAnchorForSlot = (slotValue: string) => {
+    const dbType = IDENTITY_SLOT_TO_ANCHOR_TYPE[slotValue];
+    return anchors.find((a) => a.anchor_type === dbType);
+  };
 
-  const completedCount = IDENTITY_PACK_SLOTS.filter(slot => 
-    anchors.some(a => a.anchor_type === slot.value && a.is_active)
-  ).length;
+  const completedCount = IDENTITY_PACK_SLOTS.filter((slot) => {
+    const dbType = IDENTITY_SLOT_TO_ANCHOR_TYPE[slot.value];
+    return anchors.some((a) => a.anchor_type === dbType && a.is_active);
+  }).length;
 
   const isPackComplete = completedCount === IDENTITY_PACK_SLOTS.length;
 
@@ -278,7 +302,7 @@ export function ReferenceAnchorManager({ characterId, projectId, onPackComplete 
         {/* 2x2 Grid for Identity Pack */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {IDENTITY_PACK_SLOTS.map((slot) => {
-            const existingAnchor = getAnchorForType(slot.value);
+            const existingAnchor = getAnchorForSlot(slot.value);
             const isUploading = uploading === slot.value;
 
             return (
