@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { UserProfileProvider } from "@/contexts/UserProfileContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Pages
@@ -116,11 +117,13 @@ const App = () => (
       <TooltipProvider>
         <LanguageProvider>
           <AuthProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
+            <UserProfileProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </UserProfileProvider>
           </AuthProvider>
         </LanguageProvider>
       </TooltipProvider>
