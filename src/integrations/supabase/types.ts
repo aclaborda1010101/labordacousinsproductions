@@ -2012,6 +2012,7 @@ export type Database = {
           budget_cap_project_eur: number | null
           budget_cap_scene_eur: number | null
           created_at: string
+          creative_mode: string | null
           engine_test_completed: boolean | null
           episodes_count: number
           format: Database["public"]["Enums"]["project_format"]
@@ -2030,6 +2031,7 @@ export type Database = {
           budget_cap_project_eur?: number | null
           budget_cap_scene_eur?: number | null
           created_at?: string
+          creative_mode?: string | null
           engine_test_completed?: boolean | null
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
@@ -2048,6 +2050,7 @@ export type Database = {
           budget_cap_project_eur?: number | null
           budget_cap_scene_eur?: number | null
           created_at?: string
+          creative_mode?: string | null
           engine_test_completed?: boolean | null
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
@@ -2434,6 +2437,7 @@ export type Database = {
           max_attempts_override: number | null
           mood: Json | null
           objective: string | null
+          override_mode: string | null
           padding_override: number | null
           parsed_json: Json | null
           priority: Database["public"]["Enums"]["priority_level"]
@@ -2463,6 +2467,7 @@ export type Database = {
           max_attempts_override?: number | null
           mood?: Json | null
           objective?: string | null
+          override_mode?: string | null
           padding_override?: number | null
           parsed_json?: Json | null
           priority?: Database["public"]["Enums"]["priority_level"]
@@ -2492,6 +2497,7 @@ export type Database = {
           max_attempts_override?: number | null
           mood?: Json | null
           objective?: string | null
+          override_mode?: string | null
           padding_override?: number | null
           parsed_json?: Json | null
           priority?: Database["public"]["Enums"]["priority_level"]
