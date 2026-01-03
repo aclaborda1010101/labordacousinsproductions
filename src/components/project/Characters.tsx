@@ -22,6 +22,8 @@ import CharacterVisualDNAEditor from './CharacterVisualDNAEditor';
 import { CharacterNarrativeEditor } from './CharacterNarrativeEditor';
 import { TechnicalPromptGenerator } from './TechnicalPromptGenerator';
 import { CharacterQuickStart } from './CharacterQuickStart';
+import { CharacterCreationWizard } from './CharacterCreationWizard';
+import { ProductionModePanel } from './ProductionModePanel';
 
 interface CharactersProps { projectId: string; }
 
@@ -61,6 +63,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [showOutfitDialog, setShowOutfitDialog] = useState<string | null>(null);
   const [showPackBuilder, setShowPackBuilder] = useState<string | null>(null);
   const [showQuickStart, setShowQuickStart] = useState<string | null>(null);
+  const [showCreationWizard, setShowCreationWizard] = useState(false);
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
   const [generatingProfile, setGeneratingProfile] = useState<string | null>(null);
@@ -525,9 +528,9 @@ export default function Characters({ projectId }: CharactersProps) {
           <h2 className="text-2xl font-bold text-foreground">{t.characters.title}</h2>
           <p className="text-muted-foreground">{t.characters.subtitle}</p>
         </div>
-        <Button variant="gold" onClick={() => setShowAddDialog(true)}>
+        <Button variant="gold" onClick={() => setShowCreationWizard(true)}>
           <Plus className="w-4 h-4 mr-2" />
-          Añadir Personaje
+          Crear Personaje
         </Button>
       </div>
 
@@ -611,9 +614,9 @@ export default function Characters({ projectId }: CharactersProps) {
               <p className="text-muted-foreground mb-4">
                 Añade personajes para mantener la consistencia visual en tu producción
               </p>
-              <Button variant="gold" onClick={() => setShowAddDialog(true)}>
+              <Button variant="gold" onClick={() => setShowCreationWizard(true)}>
                 <Plus className="w-4 h-4 mr-2" />
-                Añadir Primer Personaje
+                Crear Primer Personaje
               </Button>
             </CardContent>
           </Card>
@@ -1276,6 +1279,21 @@ export default function Characters({ projectId }: CharactersProps) {
               />
             );
           })()}
+        </DialogContent>
+      </Dialog>
+
+      {/* Character Creation Wizard - Step-by-step guided flow */}
+      <Dialog open={showCreationWizard} onOpenChange={setShowCreationWizard}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          <CharacterCreationWizard
+            projectId={projectId}
+            onComplete={(characterId) => {
+              fetchCharacters();
+              setShowCreationWizard(false);
+              toast.success('¡Personaje creado correctamente!');
+            }}
+            onCancel={() => setShowCreationWizard(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>

@@ -366,6 +366,7 @@ export type Database = {
       characters: {
         Row: {
           active_visual_dna_id: string | null
+          approved_for_production: boolean | null
           arc: string | null
           bio: string | null
           canon_rules: Json | null
@@ -373,11 +374,18 @@ export type Database = {
           created_at: string
           expressions: Json | null
           id: string
+          lora_trained_at: string | null
+          lora_training_id: string | null
+          lora_training_status: string | null
+          lora_trigger_word: string | null
+          lora_url: string | null
           name: string
           pack_completeness_score: number | null
+          production_ready_slots: number | null
           profile_json: Json | null
           project_id: string
           role: string | null
+          slot_config: Json | null
           token: string | null
           turnaround_urls: Json | null
           updated_at: string
@@ -385,6 +393,7 @@ export type Database = {
         }
         Insert: {
           active_visual_dna_id?: string | null
+          approved_for_production?: boolean | null
           arc?: string | null
           bio?: string | null
           canon_rules?: Json | null
@@ -392,11 +401,18 @@ export type Database = {
           created_at?: string
           expressions?: Json | null
           id?: string
+          lora_trained_at?: string | null
+          lora_training_id?: string | null
+          lora_training_status?: string | null
+          lora_trigger_word?: string | null
+          lora_url?: string | null
           name: string
           pack_completeness_score?: number | null
+          production_ready_slots?: number | null
           profile_json?: Json | null
           project_id: string
           role?: string | null
+          slot_config?: Json | null
           token?: string | null
           turnaround_urls?: Json | null
           updated_at?: string
@@ -404,6 +420,7 @@ export type Database = {
         }
         Update: {
           active_visual_dna_id?: string | null
+          approved_for_production?: boolean | null
           arc?: string | null
           bio?: string | null
           canon_rules?: Json | null
@@ -411,11 +428,18 @@ export type Database = {
           created_at?: string
           expressions?: Json | null
           id?: string
+          lora_trained_at?: string | null
+          lora_training_id?: string | null
+          lora_training_status?: string | null
+          lora_trigger_word?: string | null
+          lora_url?: string | null
           name?: string
           pack_completeness_score?: number | null
+          production_ready_slots?: number | null
           profile_json?: Json | null
           project_id?: string
           role?: string | null
+          slot_config?: Json | null
           token?: string | null
           turnaround_urls?: Json | null
           updated_at?: string
@@ -1803,6 +1827,68 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lora_training_logs: {
+        Row: {
+          character_id: string | null
+          completed_at: string | null
+          cost_usd: number | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          images_used: number | null
+          progress_percentage: number | null
+          replicate_training_id: string | null
+          replicate_version: string | null
+          started_at: string | null
+          status: string | null
+          training_images_urls: string[] | null
+          training_steps: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          character_id?: string | null
+          completed_at?: string | null
+          cost_usd?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          images_used?: number | null
+          progress_percentage?: number | null
+          replicate_training_id?: string | null
+          replicate_version?: string | null
+          started_at?: string | null
+          status?: string | null
+          training_images_urls?: string[] | null
+          training_steps?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          character_id?: string | null
+          completed_at?: string | null
+          cost_usd?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          images_used?: number | null
+          progress_percentage?: number | null
+          replicate_training_id?: string | null
+          replicate_version?: string | null
+          started_at?: string | null
+          status?: string | null
+          training_images_urls?: string[] | null
+          training_steps?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lora_training_logs_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
             referencedColumns: ["id"]
           },
         ]
