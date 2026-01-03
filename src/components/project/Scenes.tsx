@@ -443,6 +443,14 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos los episodios</SelectItem>
+            {/* Teasers (negative episode numbers) */}
+            {scenes.some(s => s.episode_no === -1) && (
+              <SelectItem value="-1">🎬 Teaser 60s</SelectItem>
+            )}
+            {scenes.some(s => s.episode_no === -2) && (
+              <SelectItem value="-2">🎬 Teaser 30s</SelectItem>
+            )}
+            {/* Regular episodes */}
             {Array.from({ length: episodesCount }, (_, i) => (
               <SelectItem key={i + 1} value={String(i + 1)}>
                 Episodio {i + 1}
@@ -485,54 +493,74 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             </Button>
           </div>
         ) : (
-          Array.from({ length: episodesCount }, (_, i) => i + 1)
-            .filter(epNo => filterEpisode === 'all' || epNo === parseInt(filterEpisode))
-            .map(episodeNo => {
-            const episodeScenes = scenesByEpisode[episodeNo] || [];
-            const isExpanded = expandedEpisodes.has(episodeNo);
+          // Build episode list including teasers (negative episode numbers) + regular episodes
+          (() => {
+            const teaserEpisodes: number[] = [];
+            if (scenes.some(s => s.episode_no === -1)) teaserEpisodes.push(-1);
+            if (scenes.some(s => s.episode_no === -2)) teaserEpisodes.push(-2);
+            const regularEpisodes = Array.from({ length: episodesCount }, (_, i) => i + 1);
+            const allEpisodes = [...teaserEpisodes, ...regularEpisodes];
             
-            return (
-              <div key={episodeNo} className="panel overflow-hidden">
-                {/* Episode header */}
-                <div 
-                  className="p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/30 transition-colors border-b border-border"
-                  onClick={() => toggleEpisode(episodeNo)}
-                >
-                  {isExpanded ? <ChevronDown className="w-5 h-5 text-primary" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <Film className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">Episodio {episodeNo}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {episodeScenes.length} escenas • {episodeScenes.reduce((sum, s) => sum + (shots[s.id]?.length || 0), 0)} shots
-                    </p>
-                  </div>
-                  {/* Duration counter */}
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="w-4 h-4" />
-                    <span>{formatDuration(getEpisodeDuration(episodeNo))}</span>
-                  </div>
-                  <Badge variant={episodeScenes.length > 0 ? 'default' : 'secondary'}>
-                    {episodeScenes.length > 0 ? 'Con contenido' : 'Vacío'}
-                  </Badge>
-                  {/* Regenerate Episode Button */}
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const scriptEp = scriptEpisodes.find((ep: any) => (ep.episode_number || 1) === episodeNo) || scriptEpisodes[episodeNo - 1];
-                      setRegenerateEpisodeNo(episodeNo);
-                      setRegenerateEpisodeSynopsis(scriptEp?.synopsis || '');
-                      setShowRegenerateDialog(true);
-                    }}
-                    className="gap-1.5"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Regenerar
-                  </Button>
-                </div>
+            return allEpisodes
+              .filter(epNo => filterEpisode === 'all' || epNo === parseInt(filterEpisode))
+              .map(episodeNo => {
+                const episodeScenes = scenesByEpisode[episodeNo] || [];
+                const isExpanded = expandedEpisodes.has(episodeNo);
+                const isTeaser = episodeNo < 0;
+                const teaserLabel = episodeNo === -1 ? 'Teaser 60s' : episodeNo === -2 ? 'Teaser 30s' : '';
+                
+                return (
+                  <div key={episodeNo} className={cn("panel overflow-hidden", isTeaser && "border-amber-500/50")}>
+                    {/* Episode header */}
+                    <div 
+                      className={cn(
+                        "p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/30 transition-colors border-b border-border",
+                        isTeaser && "bg-gradient-to-r from-amber-500/10 to-orange-500/10"
+                      )}
+                      onClick={() => toggleEpisode(episodeNo)}
+                    >
+                      {isExpanded ? <ChevronDown className="w-5 h-5 text-primary" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
+                      <div className={cn(
+                        "w-12 h-12 rounded-lg flex items-center justify-center shrink-0",
+                        isTeaser ? "bg-amber-500/20" : "bg-primary/10"
+                      )}>
+                        {isTeaser ? <Video className="w-6 h-6 text-amber-500" /> : <Film className="w-6 h-6 text-primary" />}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground">
+                          {isTeaser ? `🎬 ${teaserLabel}` : `Episodio ${episodeNo}`}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {episodeScenes.length} escenas • {episodeScenes.reduce((sum, s) => sum + (shots[s.id]?.length || 0), 0)} shots
+                        </p>
+                      </div>
+                      {/* Duration counter */}
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4" />
+                        <span>{formatDuration(getEpisodeDuration(episodeNo))}</span>
+                      </div>
+                      <Badge variant={episodeScenes.length > 0 ? 'default' : 'secondary'} className={isTeaser ? "bg-amber-500/20 text-amber-700" : ""}>
+                        {episodeScenes.length > 0 ? (isTeaser ? 'Promocional' : 'Con contenido') : 'Vacío'}
+                      </Badge>
+                      {/* Regenerate Episode Button - only for regular episodes */}
+                      {!isTeaser && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const scriptEp = scriptEpisodes.find((ep: any) => (ep.episode_number || 1) === episodeNo) || scriptEpisodes[episodeNo - 1];
+                            setRegenerateEpisodeNo(episodeNo);
+                            setRegenerateEpisodeSynopsis(scriptEp?.synopsis || '');
+                            setShowRegenerateDialog(true);
+                          }}
+                          className="gap-1.5"
+                        >
+                          <RefreshCw className="w-4 h-4" />
+                          Regenerar
+                        </Button>
+                      )}
+                    </div>
 
                 {/* Episode scenes */}
                 {isExpanded && (
@@ -697,7 +725,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                 )}
               </div>
             );
-          })
+          });
+          })()
         )}
       </div>
 
