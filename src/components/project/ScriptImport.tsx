@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import ReferenceScriptLibrary from './ReferenceScriptLibrary';
+import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
 import { 
   FileText, 
   Wand2, 
@@ -195,6 +196,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Scene segmentation state
   const [segmenting, setSegmenting] = useState(false);
   const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
+  
+  // Episode regeneration state
+  const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
+  const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
+  const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
 
   // Restore pipeline state on mount and poll for updates
   useEffect(() => {
@@ -2562,6 +2568,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                               </div>
                             </CollapsibleTrigger>
                             <div className="flex gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setRegenerateEpisodeNo(episodeNum);
+                                  setRegenerateEpisodeSynopsis(ep.synopsis || '');
+                                  setShowRegenerateDialog(true);
+                                }}
+                              >
+                                <RefreshCw className="w-4 h-4 mr-1" />
+                                Regenerar
+                              </Button>
                               <Button variant="outline" size="sm" onClick={() => exportEpisodePDF(ep, epIdx)}>
                                 <FileDown className="w-4 h-4 mr-1" />
                                 PDF
@@ -3048,6 +3067,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Episode Regenerate Dialog */}
+      <EpisodeRegenerateDialog
+        open={showRegenerateDialog}
+        onOpenChange={setShowRegenerateDialog}
+        projectId={projectId}
+        episodeNo={regenerateEpisodeNo}
+        episodeSynopsis={regenerateEpisodeSynopsis}
+        existingSceneCount={0}
+        onRegenerated={() => {
+          // Refresh the script data after regeneration
+          supabase.from('scripts').select('id, status, raw_text, parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).single().then(({ data }) => {
+            if (data?.parsed_json && typeof data.parsed_json === 'object') {
+              const parsed = data.parsed_json as Record<string, unknown>;
+              if (parsed.episodes || parsed.screenplay || parsed.title) {
+                setGeneratedScript(parsed);
+              }
+            }
+          });
+        }}
+      />
     </div>
   );
 }
