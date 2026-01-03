@@ -18,6 +18,56 @@ interface DialogueLine {
   line: string;
 }
 
+interface Shot {
+  shot_number?: number;
+  shot_type?: string;
+  duration_sec?: number;
+  action?: string;
+  dialogue?: DialogueLine[];
+  camera_variation?: {
+    focal_mm?: number;
+    aperture?: string;
+    movement?: string;
+    height?: string;
+    stabilization?: string;
+    body?: string;
+    lens?: string;
+  };
+  blocking?: {
+    subject_positions?: string;
+    screen_direction?: string;
+    action?: string;
+    timing_breakdown?: string;
+  };
+  lighting?: {
+    style?: string;
+    color_temp?: string;
+    key_light_direction?: string;
+  };
+  sound_design?: {
+    room_tone?: string;
+    ambience?: string;
+    foley?: string;
+  };
+  edit_intent?: {
+    expected_cut?: string;
+    hold_ms?: number;
+    rhythm_note?: string;
+    viewer_notice?: string;
+    intention?: string;
+  };
+  keyframe_hints?: {
+    start_frame?: string;
+    end_frame?: string;
+    mid_frames?: string[];
+  };
+  continuity?: {
+    wardrobe_notes?: string;
+    props_in_frame?: string[];
+    match_to_previous?: string;
+  };
+}
+
 interface Scene {
   scene_number?: number;
   slugline: string;
@@ -28,6 +78,10 @@ interface Scene {
   music_cue?: string;
   sfx_cue?: string;
   mood?: string;
+  shots?: Shot[]; // Production shots
+  pacing?: string;
+  conflict?: string;
+  scene_objective?: string;
 }
 
 interface Episode {
@@ -47,6 +101,12 @@ interface ScreenplayData {
   characters?: any[];
   locations?: any[];
   props?: any[];
+}
+
+// Export mode option
+interface ExportOptions {
+  episodeOnly?: number;
+  includeProductionDetails?: boolean; // Include shots, camera, lighting info
 }
 
 // Page dimensions (US Letter in pts at 72 DPI)
@@ -69,13 +129,14 @@ const PARENTHETICAL_LEFT = 216; // 3" from left edge
 // Line heights
 const LINE_HEIGHT = 12; // Courier 12pt = 12 line height
 
-export function exportScreenplayPDF(screenplay: ScreenplayData, options?: { episodeOnly?: number }) {
+export function exportScreenplayPDF(screenplay: ScreenplayData, options?: ExportOptions) {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'pt',
     format: 'letter'
   });
 
+  const includeProduction = options?.includeProductionDetails ?? true; // Default to include production details
   let currentY = MARGIN_TOP;
   let pageNumber = 1;
 
@@ -97,36 +158,36 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: { epis
   };
 
   // Helper: Write text line
-  const writeLine = (text: string, x: number, options?: { bold?: boolean; italic?: boolean; uppercase?: boolean }) => {
-    const style = options?.bold ? 'bold' : options?.italic ? 'italic' : 'normal';
+  const writeLine = (text: string, x: number, opts?: { bold?: boolean; italic?: boolean; uppercase?: boolean; fontSize?: number }) => {
+    const style = opts?.bold ? 'bold' : opts?.italic ? 'italic' : 'normal';
     doc.setFont('Courier', style);
-    doc.setFontSize(12);
-    const displayText = options?.uppercase ? text.toUpperCase() : text;
+    doc.setFontSize(opts?.fontSize || 12);
+    const displayText = opts?.uppercase ? text.toUpperCase() : text;
     doc.text(displayText, x, currentY);
-    currentY += LINE_HEIGHT;
+    currentY += opts?.fontSize || LINE_HEIGHT;
   };
 
   // Helper: Write wrapped text
-  const writeWrapped = (text: string, x: number, maxWidth: number, options?: { bold?: boolean; italic?: boolean; uppercase?: boolean }) => {
-    const style = options?.bold ? 'bold' : options?.italic ? 'italic' : 'normal';
+  const writeWrapped = (text: string, x: number, maxWidth: number, opts?: { bold?: boolean; italic?: boolean; uppercase?: boolean; fontSize?: number }) => {
+    const style = opts?.bold ? 'bold' : opts?.italic ? 'italic' : 'normal';
     doc.setFont('Courier', style);
-    doc.setFontSize(12);
-    const displayText = options?.uppercase ? text.toUpperCase() : text;
+    doc.setFontSize(opts?.fontSize || 12);
+    const displayText = opts?.uppercase ? text.toUpperCase() : text;
     const lines = doc.splitTextToSize(displayText, maxWidth);
     
     for (const line of lines) {
       checkPageBreak();
       doc.text(line, x, currentY);
-      currentY += LINE_HEIGHT;
+      currentY += opts?.fontSize || LINE_HEIGHT;
     }
   };
 
   // Helper: Write centered text
-  const writeCentered = (text: string, options?: { bold?: boolean; italic?: boolean; uppercase?: boolean }) => {
-    const style = options?.bold ? 'bold' : options?.italic ? 'italic' : 'normal';
+  const writeCentered = (text: string, opts?: { bold?: boolean; italic?: boolean; uppercase?: boolean }) => {
+    const style = opts?.bold ? 'bold' : opts?.italic ? 'italic' : 'normal';
     doc.setFont('Courier', style);
     doc.setFontSize(12);
-    const displayText = options?.uppercase ? text.toUpperCase() : text;
+    const displayText = opts?.uppercase ? text.toUpperCase() : text;
     const textWidth = doc.getTextWidth(displayText);
     const x = (PAGE_WIDTH - textWidth) / 2;
     doc.text(displayText, x, currentY);
@@ -189,6 +250,136 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: { epis
     const textWidth = doc.getTextWidth(text);
     doc.text(text, PAGE_WIDTH - MARGIN_RIGHT - textWidth, currentY);
     currentY += LINE_HEIGHT;
+  };
+
+  // Write production shot with technical details
+  const writeProductionShot = (shot: Shot, shotIdx: number, runningTime: number) => {
+    checkPageBreak(8);
+    
+    // Shot header with type and timing
+    const shotType = shot.shot_type || 'SHOT';
+    const duration = shot.duration_sec || 0;
+    const tc = `${Math.floor(runningTime / 60)}:${String(runningTime % 60).padStart(2, '0')}`;
+    const shotHeader = `${String(shotIdx + 1).padStart(2, '0')}. ${shotType.toUpperCase()} — ${duration}s (TC: ${tc})`;
+    
+    writeLine(shotHeader, MARGIN_LEFT, { bold: true, fontSize: 11 });
+
+    // Camera variation details
+    if (shot.camera_variation) {
+      const cam = shot.camera_variation;
+      const camDetails: string[] = [];
+      if (cam.focal_mm) camDetails.push(`${cam.focal_mm}mm`);
+      if (cam.aperture) camDetails.push(cam.aperture);
+      if (cam.movement) camDetails.push(cam.movement);
+      if (cam.height) camDetails.push(cam.height);
+      if (cam.stabilization) camDetails.push(cam.stabilization);
+      
+      if (camDetails.length > 0) {
+        writeWrapped(`[CÁMARA: ${camDetails.join(' | ')}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+      
+      if (cam.body || cam.lens) {
+        const gear = [cam.body, cam.lens].filter(Boolean).join(' + ');
+        writeWrapped(`[EQUIPO: ${gear}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+    }
+
+    // Blocking details
+    if (shot.blocking) {
+      const block = shot.blocking;
+      if (block.subject_positions || block.screen_direction) {
+        const blockDetails = [block.subject_positions, block.screen_direction].filter(Boolean).join(' — ');
+        writeWrapped(`[BLOCKING: ${blockDetails}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+      if (block.action) {
+        writeWrapped(block.action, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { fontSize: 11 });
+      }
+    }
+
+    // Action/description of shot
+    if (shot.action && !shot.blocking?.action) {
+      writeWrapped(shot.action, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { fontSize: 11 });
+    }
+
+    // Lighting details
+    if (shot.lighting) {
+      const light = shot.lighting;
+      const lightDetails: string[] = [];
+      if (light.style) lightDetails.push(light.style);
+      if (light.color_temp) lightDetails.push(light.color_temp);
+      if (light.key_light_direction) lightDetails.push(`Key: ${light.key_light_direction}`);
+      
+      if (lightDetails.length > 0) {
+        writeWrapped(`[LUZ: ${lightDetails.join(' | ')}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+    }
+
+    // Sound design
+    if (shot.sound_design) {
+      const sound = shot.sound_design;
+      const soundDetails: string[] = [];
+      if (sound.room_tone) soundDetails.push(`Tono: ${sound.room_tone}`);
+      if (sound.ambience) soundDetails.push(`Ambiente: ${sound.ambience}`);
+      if (sound.foley) soundDetails.push(`Foley: ${sound.foley}`);
+      
+      if (soundDetails.length > 0) {
+        writeWrapped(`[SONIDO: ${soundDetails.join(' | ')}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+    }
+
+    // Edit intent
+    if (shot.edit_intent) {
+      const edit = shot.edit_intent;
+      const editDetails: string[] = [];
+      if (edit.expected_cut) editDetails.push(`Corte: ${edit.expected_cut}`);
+      if (edit.hold_ms) editDetails.push(`Hold: ${edit.hold_ms}ms`);
+      if (edit.rhythm_note) editDetails.push(edit.rhythm_note);
+      
+      if (editDetails.length > 0) {
+        writeWrapped(`[EDICIÓN: ${editDetails.join(' | ')}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+      
+      if (edit.viewer_notice) {
+        writeWrapped(`[ATENCIÓN: ${edit.viewer_notice}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+    }
+
+    // Keyframe hints
+    if (shot.keyframe_hints) {
+      const kf = shot.keyframe_hints;
+      if (kf.start_frame || kf.end_frame) {
+        const kfDetails = [`Inicio: ${kf.start_frame || 'auto'}`, `Fin: ${kf.end_frame || 'auto'}`];
+        if (kf.mid_frames?.length) kfDetails.push(`Intermedios: ${kf.mid_frames.length}`);
+        writeWrapped(`[KEYFRAMES: ${kfDetails.join(' | ')}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+    }
+
+    // Continuity notes
+    if (shot.continuity) {
+      const cont = shot.continuity;
+      const contDetails: string[] = [];
+      if (cont.wardrobe_notes) contDetails.push(`Vestuario: ${cont.wardrobe_notes}`);
+      if (cont.props_in_frame?.length) contDetails.push(`Props: ${cont.props_in_frame.join(', ')}`);
+      if (cont.match_to_previous) contDetails.push(`Match: ${cont.match_to_previous}`);
+      
+      if (contDetails.length > 0) {
+        writeWrapped(`[CONTINUIDAD: ${contDetails.join(' | ')}]`, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 10 });
+      }
+    }
+
+    // Shot dialogue
+    if (shot.dialogue && Array.isArray(shot.dialogue) && shot.dialogue.length > 0) {
+      for (const d of shot.dialogue) {
+        if (d && d.character && d.line) {
+          doc.setFont('Courier', 'bold');
+          doc.setFontSize(11);
+          writeLine(`${d.character.toUpperCase()}:`, MARGIN_LEFT + 30, { bold: true, fontSize: 11 });
+          writeWrapped(`"${d.line}"`, MARGIN_LEFT + 40, TEXT_WIDTH - 60, { italic: true, fontSize: 11 });
+        }
+      }
+    }
+
+    currentY += LINE_HEIGHT / 2;
   };
 
   // ========== TITLE PAGE ==========
@@ -265,17 +456,48 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: { epis
       // Slugline
       writeSlugline(scene.slugline || 'INT. LOCALIZACIÓN - DÍA', scene.scene_number);
 
-      // Action/Description - check multiple possible field names
-      const actionText = scene.action || scene.description || scene.summary || '';
-      if (actionText) {
-        writeAction(actionText);
+      // Scene metadata (pacing, conflict, objective)
+      if (includeProduction && (scene.pacing || scene.conflict || scene.scene_objective)) {
+        const metadata: string[] = [];
+        if (scene.pacing) metadata.push(`Ritmo: ${scene.pacing}`);
+        if (scene.conflict) metadata.push(`Conflicto: ${scene.conflict}`);
+        if (scene.scene_objective) metadata.push(`Objetivo: ${scene.scene_objective}`);
+        
+        if (metadata.length > 0) {
+          writeWrapped(`[${metadata.join(' | ')}]`, MARGIN_LEFT, TEXT_WIDTH, { italic: true, fontSize: 10 });
+          currentY += LINE_HEIGHT / 2;
+        }
       }
 
-      // Dialogue
-      if (scene.dialogue && Array.isArray(scene.dialogue) && scene.dialogue.length > 0) {
-        for (const d of scene.dialogue) {
-          if (d && d.character && d.line) {
-            writeDialogue(d);
+      // If scene has production shots, write them with full details
+      if (includeProduction && scene.shots && Array.isArray(scene.shots) && scene.shots.length > 0) {
+        currentY += LINE_HEIGHT / 2;
+        writeLine('DESGLOSE DE PLANOS:', MARGIN_LEFT, { bold: true, uppercase: true, fontSize: 11 });
+        currentY += LINE_HEIGHT / 2;
+        
+        let runningTime = 0;
+        for (let shotIdx = 0; shotIdx < scene.shots.length; shotIdx++) {
+          const shot = scene.shots[shotIdx];
+          runningTime += shot.duration_sec || 0;
+          writeProductionShot(shot, shotIdx, runningTime);
+        }
+        
+        // Total scene duration
+        currentY += LINE_HEIGHT / 2;
+        writeLine(`DURACIÓN ESCENA: ${runningTime}s`, MARGIN_LEFT, { bold: true, fontSize: 10 });
+      } else {
+        // Fallback: standard screenplay format (action + dialogue)
+        const actionText = scene.action || scene.description || scene.summary || '';
+        if (actionText) {
+          writeAction(actionText);
+        }
+
+        // Dialogue
+        if (scene.dialogue && Array.isArray(scene.dialogue) && scene.dialogue.length > 0) {
+          for (const d of scene.dialogue) {
+            if (d && d.character && d.line) {
+              writeDialogue(d);
+            }
           }
         }
       }
@@ -314,6 +536,14 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: { epis
 // Export for a single episode
 export function exportEpisodeScreenplayPDF(screenplay: ScreenplayData, episodeIndex: number) {
   return exportScreenplayPDF(screenplay, { episodeOnly: episodeIndex });
+}
+
+// Export production version with full shot details
+export function exportProductionScreenplayPDF(screenplay: ScreenplayData, episodeIndex?: number) {
+  return exportScreenplayPDF(screenplay, { 
+    episodeOnly: episodeIndex, 
+    includeProductionDetails: true 
+  });
 }
 
 // ========== TEASER PDF EXPORT ==========
