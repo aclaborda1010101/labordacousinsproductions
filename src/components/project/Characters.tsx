@@ -357,7 +357,7 @@ export default function Characters({ projectId }: CharactersProps) {
       slotId = newSlot.id;
     }
 
-    // Generate image
+    // Generate image - allowTextToImage enables generation without pre-uploaded photos
     const { data, error } = await supabase.functions.invoke('generate-character', {
       body: {
         slotId,
@@ -368,7 +368,8 @@ export default function Characters({ projectId }: CharactersProps) {
         viewAngle,
         expressionName,
         useReferenceAnchoring: true,
-        referenceWeight: 0.75
+        referenceWeight: 0.75,
+        allowTextToImage: true // Generate from text if no reference photos exist
       }
     });
 
