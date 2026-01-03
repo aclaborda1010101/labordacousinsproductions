@@ -14,6 +14,88 @@ export type Database = {
   }
   public: {
     Tables: {
+      asset_characters: {
+        Row: {
+          created_at: string
+          fixed_traits: string[] | null
+          id: string
+          name: string
+          project_id: string
+          reference_image_url: string | null
+          traits_text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fixed_traits?: string[] | null
+          id?: string
+          name: string
+          project_id: string
+          reference_image_url?: string | null
+          traits_text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fixed_traits?: string[] | null
+          id?: string
+          name?: string
+          project_id?: string
+          reference_image_url?: string | null
+          traits_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_characters_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "editorial_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_locations: {
+        Row: {
+          created_at: string
+          fixed_elements: string[] | null
+          id: string
+          name: string
+          project_id: string
+          reference_image_url: string | null
+          traits_text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fixed_elements?: string[] | null
+          id?: string
+          name: string
+          project_id: string
+          reference_image_url?: string | null
+          traits_text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fixed_elements?: string[] | null
+          id?: string
+          name?: string
+          project_id?: string
+          reference_image_url?: string | null
+          traits_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_locations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "editorial_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audio_layers: {
         Row: {
           ambience_layers: Json
@@ -1084,6 +1166,111 @@ export type Database = {
           },
         ]
       }
+      editorial_projects: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          phase: Database["public"]["Enums"]["editorial_project_phase"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+          phase?: Database["public"]["Enums"]["editorial_project_phase"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          phase?: Database["public"]["Enums"]["editorial_project_phase"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      editorial_rules_config: {
+        Row: {
+          action_on_fail: Database["public"]["Enums"]["editorial_action_on_fail"]
+          action_on_fail_production:
+            | Database["public"]["Enums"]["editorial_action_on_fail"]
+            | null
+          active_default: boolean
+          applies_in_exploration: boolean
+          applies_in_production: boolean
+          applies_to: string[] | null
+          created_at: string
+          description: string
+          disable_reasons: string[] | null
+          id: string
+          must_avoid: string[] | null
+          must_include: string[] | null
+          name: string
+          negative_prompt_snippets: string[] | null
+          rule_code: string
+          rule_type: Database["public"]["Enums"]["editorial_rule_type"]
+          scope: string[] | null
+          severity: Database["public"]["Enums"]["editorial_rule_severity"]
+          toggleable: boolean
+          user_message_template: string
+          validation_method: Database["public"]["Enums"]["editorial_validation_method"]
+        }
+        Insert: {
+          action_on_fail?: Database["public"]["Enums"]["editorial_action_on_fail"]
+          action_on_fail_production?:
+            | Database["public"]["Enums"]["editorial_action_on_fail"]
+            | null
+          active_default?: boolean
+          applies_in_exploration?: boolean
+          applies_in_production?: boolean
+          applies_to?: string[] | null
+          created_at?: string
+          description: string
+          disable_reasons?: string[] | null
+          id?: string
+          must_avoid?: string[] | null
+          must_include?: string[] | null
+          name: string
+          negative_prompt_snippets?: string[] | null
+          rule_code: string
+          rule_type: Database["public"]["Enums"]["editorial_rule_type"]
+          scope?: string[] | null
+          severity?: Database["public"]["Enums"]["editorial_rule_severity"]
+          toggleable?: boolean
+          user_message_template: string
+          validation_method?: Database["public"]["Enums"]["editorial_validation_method"]
+        }
+        Update: {
+          action_on_fail?: Database["public"]["Enums"]["editorial_action_on_fail"]
+          action_on_fail_production?:
+            | Database["public"]["Enums"]["editorial_action_on_fail"]
+            | null
+          active_default?: boolean
+          applies_in_exploration?: boolean
+          applies_in_production?: boolean
+          applies_to?: string[] | null
+          created_at?: string
+          description?: string
+          disable_reasons?: string[] | null
+          id?: string
+          must_avoid?: string[] | null
+          must_include?: string[] | null
+          name?: string
+          negative_prompt_snippets?: string[] | null
+          rule_code?: string
+          rule_type?: Database["public"]["Enums"]["editorial_rule_type"]
+          scope?: string[] | null
+          severity?: Database["public"]["Enums"]["editorial_rule_severity"]
+          toggleable?: boolean
+          user_message_template?: string
+          validation_method?: Database["public"]["Enums"]["editorial_validation_method"]
+        }
+        Relationships: []
+      }
       editorial_source_central: {
         Row: {
           category: string
@@ -1678,6 +1865,71 @@ export type Database = {
           },
         ]
       }
+      generation_runs: {
+        Row: {
+          composed_prompt: string
+          context: string | null
+          created_at: string
+          engine: string
+          id: string
+          input_intent: string
+          negative_prompt: string | null
+          output_text: string | null
+          output_url: string | null
+          project_id: string
+          rule_plan: Json | null
+          suggestions: Json | null
+          triggered_rules: string[] | null
+          used_asset_ids: string[] | null
+          verdict: Database["public"]["Enums"]["generation_verdict"]
+          warnings: Json | null
+        }
+        Insert: {
+          composed_prompt: string
+          context?: string | null
+          created_at?: string
+          engine: string
+          id?: string
+          input_intent: string
+          negative_prompt?: string | null
+          output_text?: string | null
+          output_url?: string | null
+          project_id: string
+          rule_plan?: Json | null
+          suggestions?: Json | null
+          triggered_rules?: string[] | null
+          used_asset_ids?: string[] | null
+          verdict?: Database["public"]["Enums"]["generation_verdict"]
+          warnings?: Json | null
+        }
+        Update: {
+          composed_prompt?: string
+          context?: string | null
+          created_at?: string
+          engine?: string
+          id?: string
+          input_intent?: string
+          negative_prompt?: string | null
+          output_text?: string | null
+          output_url?: string | null
+          project_id?: string
+          rule_plan?: Json | null
+          suggestions?: Json | null
+          triggered_rules?: string[] | null
+          used_asset_ids?: string[] | null
+          verdict?: Database["public"]["Enums"]["generation_verdict"]
+          warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generation_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "editorial_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           attempts: number | null
@@ -2113,6 +2365,47 @@ export type Database = {
         }
         Relationships: []
       }
+      project_bibles: {
+        Row: {
+          created_at: string
+          facts: Json | null
+          id: string
+          period: string | null
+          project_id: string
+          rating: string | null
+          tone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          facts?: Json | null
+          id?: string
+          period?: string | null
+          project_id: string
+          rating?: string | null
+          tone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          facts?: Json | null
+          id?: string
+          period?: string | null
+          project_id?: string
+          rating?: string | null
+          tone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_bibles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "editorial_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_editorial_config: {
         Row: {
           central_rule_overrides: Json | null
@@ -2185,6 +2478,48 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_rule_overrides: {
+        Row: {
+          created_at: string
+          disable_reason: string | null
+          id: string
+          is_active: boolean
+          project_id: string
+          rule_id: string
+        }
+        Insert: {
+          created_at?: string
+          disable_reason?: string | null
+          id?: string
+          is_active: boolean
+          project_id: string
+          rule_id: string
+        }
+        Update: {
+          created_at?: string
+          disable_reason?: string | null
+          id?: string
+          is_active?: boolean
+          project_id?: string
+          rule_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_rule_overrides_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "editorial_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_rule_overrides_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "editorial_rules_config"
             referencedColumns: ["id"]
           },
         ]
@@ -3298,6 +3633,48 @@ export type Database = {
           },
         ]
       }
+      telemetry_events: {
+        Row: {
+          created_at: string
+          event_type: Database["public"]["Enums"]["telemetry_event_type"]
+          id: string
+          payload: Json | null
+          project_id: string
+          run_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: Database["public"]["Enums"]["telemetry_event_type"]
+          id?: string
+          payload?: Json | null
+          project_id: string
+          run_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["telemetry_event_type"]
+          id?: string
+          payload?: Json | null
+          project_id?: string
+          run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telemetry_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "editorial_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telemetry_events_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_budgets: {
         Row: {
           alert_threshold_percent: number | null
@@ -3698,10 +4075,26 @@ export type Database = {
       approval_status: "pending" | "approved" | "rejected"
       character_role: "protagonist" | "recurring" | "episodic" | "extra"
       dailies_decision: "SELECT" | "FIX" | "REJECT" | "NONE"
+      editorial_action_on_fail:
+        | "reject_regenerate"
+        | "reject_explain"
+        | "warn"
+        | "suggest"
+      editorial_project_phase: "exploracion" | "produccion"
+      editorial_rule_severity: "1" | "2" | "3" | "4" | "5"
+      editorial_rule_type: "A" | "B" | "D"
+      editorial_validation_method:
+        | "prompt_check"
+        | "output_text_check"
+        | "output_vision_check"
+        | "bible_contradiction_check"
+        | "none"
+      generation_verdict: "approved" | "warn" | "regenerate"
       job_status: "queued" | "running" | "succeeded" | "failed" | "blocked"
       priority_level: "P0" | "P1" | "P2"
       project_format: "series" | "mini" | "film"
       quality_mode: "CINE" | "ULTRA"
+      telemetry_event_type: "accept" | "reject" | "regenerate" | "edit"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3841,10 +4234,28 @@ export const Constants = {
       approval_status: ["pending", "approved", "rejected"],
       character_role: ["protagonist", "recurring", "episodic", "extra"],
       dailies_decision: ["SELECT", "FIX", "REJECT", "NONE"],
+      editorial_action_on_fail: [
+        "reject_regenerate",
+        "reject_explain",
+        "warn",
+        "suggest",
+      ],
+      editorial_project_phase: ["exploracion", "produccion"],
+      editorial_rule_severity: ["1", "2", "3", "4", "5"],
+      editorial_rule_type: ["A", "B", "D"],
+      editorial_validation_method: [
+        "prompt_check",
+        "output_text_check",
+        "output_vision_check",
+        "bible_contradiction_check",
+        "none",
+      ],
+      generation_verdict: ["approved", "warn", "regenerate"],
       job_status: ["queued", "running", "succeeded", "failed", "blocked"],
       priority_level: ["P0", "P1", "P2"],
       project_format: ["series", "mini", "film"],
       quality_mode: ["CINE", "ULTRA"],
+      telemetry_event_type: ["accept", "reject", "regenerate", "edit"],
     },
   },
 } as const
