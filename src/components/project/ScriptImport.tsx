@@ -472,8 +472,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       startedAt: Date.now()
     });
 
-    // Calculate dynamic batch configuration based on complexity
-    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity);
+    // Calculate dynamic batch configuration based on complexity AND episode duration
+    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin);
     setBatchConfig(dynamicBatchConfig);
     
     const BATCHES_PER_EPISODE = dynamicBatchConfig.batchesPerEpisode;
@@ -2027,7 +2027,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     
                     {/* Dynamic Batch Configuration Preview */}
                     {(() => {
-                      const batchPreview = calculateDynamicBatches(targets, complexity);
+                      const batchPreview = calculateDynamicBatches(targets, complexity, undefined, episodeDurationMin);
                       return (
                         <div className="col-span-2 pt-2 border-t mt-2">
                           <Label className="text-xs text-muted-foreground flex items-center gap-1">
