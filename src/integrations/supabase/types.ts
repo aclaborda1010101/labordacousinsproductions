@@ -2688,6 +2688,7 @@ export type Database = {
       }
       shots: {
         Row: {
+          ai_risk: Json | null
           approval_status: Database["public"]["Enums"]["approval_status"] | null
           approved: boolean | null
           assigned_role: Database["public"]["Enums"]["app_role"] | null
@@ -2695,9 +2696,12 @@ export type Database = {
           blocking: Json | null
           blocking_timestamps: Json | null
           camera: Json | null
+          continuity_notes: string | null
+          coverage_type: string | null
           created_at: string
           dialogue_text: string | null
           duration_target: number | null
+          edit_intent: Json | null
           effective_mode: Database["public"]["Enums"]["quality_mode"]
           engine: string | null
           estimated_cost: Json | null
@@ -2710,10 +2714,14 @@ export type Database = {
           shot_no: number
           shot_type: string
           sound_plan: Json | null
+          story_purpose: string | null
+          transition_in: string | null
+          transition_out: string | null
           updated_at: string
           validation_status: string | null
         }
         Insert: {
+          ai_risk?: Json | null
           approval_status?:
             | Database["public"]["Enums"]["approval_status"]
             | null
@@ -2723,9 +2731,12 @@ export type Database = {
           blocking?: Json | null
           blocking_timestamps?: Json | null
           camera?: Json | null
+          continuity_notes?: string | null
+          coverage_type?: string | null
           created_at?: string
           dialogue_text?: string | null
           duration_target?: number | null
+          edit_intent?: Json | null
           effective_mode?: Database["public"]["Enums"]["quality_mode"]
           engine?: string | null
           estimated_cost?: Json | null
@@ -2738,10 +2749,14 @@ export type Database = {
           shot_no: number
           shot_type?: string
           sound_plan?: Json | null
+          story_purpose?: string | null
+          transition_in?: string | null
+          transition_out?: string | null
           updated_at?: string
           validation_status?: string | null
         }
         Update: {
+          ai_risk?: Json | null
           approval_status?:
             | Database["public"]["Enums"]["approval_status"]
             | null
@@ -2751,9 +2766,12 @@ export type Database = {
           blocking?: Json | null
           blocking_timestamps?: Json | null
           camera?: Json | null
+          continuity_notes?: string | null
+          coverage_type?: string | null
           created_at?: string
           dialogue_text?: string | null
           duration_target?: number | null
+          edit_intent?: Json | null
           effective_mode?: Database["public"]["Enums"]["quality_mode"]
           engine?: string | null
           estimated_cost?: Json | null
@@ -2766,6 +2784,9 @@ export type Database = {
           shot_no?: number
           shot_type?: string
           sound_plan?: Json | null
+          story_purpose?: string | null
+          transition_in?: string | null
+          transition_out?: string | null
           updated_at?: string
           validation_status?: string | null
         }
