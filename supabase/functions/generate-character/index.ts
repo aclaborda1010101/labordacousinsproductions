@@ -30,12 +30,11 @@ interface SlotGenerateRequest {
 
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
 // See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
-// Character Bible: nano-banana-pro via FAL.ai (maximum facial consistency)
-const FAL_MODEL = 'fal-ai/nano-banana-pro';
+// Character generation now uses nano-banana-pro via Lovable AI for reference-based generation
+const IMAGE_ENGINE = 'google/gemini-2.5-flash-image-preview'; // nano-banana-pro
 
 // ============================================
-// TECHNICAL PROMPT GENERATOR
-// Converts Visual DNA to engine-ready prompts
+// VISUAL DNA TYPES
 // ============================================
 
 interface VisualDNA {
@@ -48,6 +47,7 @@ interface VisualDNA {
       skin_tone_hex_approx?: string;
     };
     height?: { cm?: number };
+    weight_kg?: number;
     body_type?: {
       somatotype?: string;
       posture?: string;
@@ -133,435 +133,315 @@ interface VisualDNA {
       combination_description?: string;
     };
   };
-}
-
-interface ContinuityLock {
-  never_change?: string[];
-  must_avoid?: string[];
-  allowed_variants?: string[];
-}
-
-function formatField(value: string | undefined): string {
-  if (!value) return '';
-  return value.replace(/_/g, ' ');
-}
-
-function buildSubjectDescription(physical: VisualDNA['physical_identity']): string {
-  if (!physical) return '';
-  const parts: string[] = [];
-  
-  if (physical.gender_presentation) {
-    parts.push(`${formatField(physical.gender_presentation)} presenting`);
-  }
-  if (physical.age_exact_for_prompt) {
-    parts.push(`age ${physical.age_exact_for_prompt}`);
-  }
-  if (physical.ethnicity?.primary) {
-    parts.push(`${formatField(physical.ethnicity.primary)} ethnicity`);
-  }
-  if (physical.ethnicity?.skin_tone_description) {
-    const hex = physical.ethnicity.skin_tone_hex_approx || '';
-    parts.push(`${physical.ethnicity.skin_tone_description} skin ${hex ? `(${hex})` : ''}`);
-  }
-  if (physical.height?.cm) {
-    const heightFt = Math.floor(physical.height.cm / 30.48);
-    const heightIn = Math.round((physical.height.cm / 2.54) % 12);
-    parts.push(`${physical.height.cm}cm (${heightFt}'${heightIn}") height`);
-  }
-  if (physical.body_type?.somatotype) {
-    parts.push(`${formatField(physical.body_type.somatotype)} build`);
-  }
-  
-  return parts.join(', ');
-}
-
-function buildFaceDescription(face: VisualDNA['face']): string {
-  if (!face) return '';
-  const sections: string[] = [];
-  
-  if (face.shape) {
-    sections.push(`FACE: ${formatField(face.shape)} shape`);
-  }
-  
-  if (face.eyes) {
-    const eyes = face.eyes;
-    const eyeDesc = [
-      formatField(eyes.shape),
-      formatField(eyes.size),
-      'eyes'
-    ].filter(Boolean).join(' ');
-    
-    const colorDesc = eyes.color_description || formatField(eyes.color_base);
-    const hex = eyes.color_hex_approx || '';
-    
-    sections.push(`EYES: ${eyeDesc}, ${colorDesc} ${hex ? `(${hex})` : ''}`);
-    
-    if (eyes.eyebrows) {
-      sections.push(`EYEBROWS: ${eyes.eyebrows.thickness || ''} ${formatField(eyes.eyebrows.shape)}, ${eyes.eyebrows.color || ''}`);
-    }
-  }
-  
-  if (face.nose) {
-    const bridge = face.nose.bridge;
-    const tip = face.nose.tip;
-    sections.push(`NOSE: ${formatField(bridge?.height)} ${formatField(bridge?.shape)} bridge, ${formatField(tip?.shape)} tip`);
-  }
-  
-  if (face.mouth?.lips) {
-    const lips = face.mouth.lips;
-    sections.push(`LIPS: ${lips.fullness_upper || ''} upper, ${lips.fullness_lower || ''} lower, ${formatField(lips.shape?.cupids_bow)} cupid's bow`);
-  }
-  
-  if (face.jaw_chin) {
-    const jaw = face.jaw_chin;
-    sections.push(`JAW: ${formatField(jaw.jawline?.shape)}, ${formatField(jaw.jawline?.definition)}`);
-    sections.push(`CHIN: ${formatField(jaw.chin?.shape)}, ${formatField(jaw.chin?.projection)}`);
-  }
-  
-  if (face.cheekbones) {
-    sections.push(`CHEEKBONES: ${formatField(face.cheekbones.prominence)}, ${formatField(face.cheekbones.position)}`);
-  }
-  
-  if (face.facial_hair && face.facial_hair.type !== 'clean_shaven_smooth') {
-    const fh = face.facial_hair;
-    const length = fh.length_mm ? `${fh.length_mm}mm` : '';
-    const grey = fh.color?.grey_percentage ? ` with ${fh.color.grey_percentage}% grey` : '';
-    sections.push(`FACIAL HAIR: ${formatField(fh.type)} ${length}, ${formatField(fh.density)}, ${fh.color?.base || ''}${grey}`);
-  }
-  
-  // Distinctive marks
-  if (face.distinctive_marks) {
-    const marks = face.distinctive_marks;
-    if (marks.scars && marks.scars.length > 0) {
-      const scarDesc = marks.scars.map(s => `${s.size_cm || ''}cm scar on ${s.location}`).join(', ');
-      sections.push(`SCARS: ${scarDesc}`);
-    }
-    
-    const wrinkles = marks.wrinkles_lines;
-    if (wrinkles) {
-      const wrinkleDesc: string[] = [];
-      if (wrinkles.forehead?.horizontal_lines && wrinkles.forehead.horizontal_lines !== 'none') {
-        wrinkleDesc.push(`${formatField(wrinkles.forehead.horizontal_lines)} forehead lines`);
-      }
-      if (wrinkles.eyes?.crows_feet && wrinkles.eyes.crows_feet !== 'none') {
-        wrinkleDesc.push(`${formatField(wrinkles.eyes.crows_feet)} crow's feet`);
-      }
-      if (wrinkleDesc.length > 0) {
-        sections.push(`AGING: ${wrinkleDesc.join(', ')}`);
-      }
-    }
-  }
-  
-  return sections.join('.\n');
-}
-
-function buildHairDescription(hair: VisualDNA['hair']): string {
-  if (!hair?.head_hair) return '';
-  const h = hair.head_hair;
-  const sections: string[] = [];
-  
-  const length = h.length?.measurement_cm 
-    ? `${h.length.measurement_cm}cm` 
-    : formatField(h.length?.type);
-  
-  sections.push(`HAIR: ${length} length, ${formatField(h.texture?.type)} texture, ${formatField(h.thickness?.density)} density`);
-  
-  const greyPct = h.color?.grey_white?.percentage || 0;
-  const colorDesc = greyPct > 0
-    ? `${h.color?.natural_base} (${h.color?.hex_approx_base || ''}) with ${greyPct}% ${formatField(h.color?.grey_white?.pattern)} grey`
-    : `${h.color?.natural_base} (${h.color?.hex_approx_base || ''})`;
-  sections.push(`COLOR: ${colorDesc}`);
-  
-  if (h.style?.overall_shape) {
-    sections.push(`STYLE: ${h.style.overall_shape}, ${formatField(h.style.grooming_level)}`);
-  }
-  
-  if (h.style?.fringe_bangs && h.style.fringe_bangs !== 'none_forehead_exposed') {
-    sections.push(`BANGS: ${formatField(h.style.fringe_bangs)}`);
-  }
-  
-  if (h.hairline?.front && h.hairline.front !== 'straight_juvenile') {
-    sections.push(`HAIRLINE: ${formatField(h.hairline.front)}`);
-  }
-  
-  return sections.join('.\n');
-}
-
-function buildSkinDescription(skin: VisualDNA['skin']): string {
-  if (!skin) return '';
-  const parts: string[] = [];
-  
-  if (skin.texture?.overall) {
-    parts.push(`${formatField(skin.texture.overall)} skin texture`);
-  }
-  if (skin.condition?.clarity && skin.condition.clarity !== 'perfectly_clear') {
-    parts.push(`${formatField(skin.condition.clarity)} clarity`);
-  }
-  if (skin.condition?.hyperpigmentation?.freckles && skin.condition.hyperpigmentation.freckles !== 'none') {
-    parts.push(`${formatField(skin.condition.hyperpigmentation.freckles)} freckles`);
-  }
-  if (skin.undertone?.type) {
-    parts.push(`${formatField(skin.undertone.type)} undertone`);
-  }
-  
-  return parts.join(', ');
-}
-
-function buildCelebrityReference(likeness: VisualDNA['visual_references'] | undefined): string {
-  if (!likeness?.celebrity_likeness) return '';
-  
-  const cel = likeness.celebrity_likeness;
-  const primary = cel.primary;
-  if (!primary?.name) return '';
-  
-  const parts: string[] = [];
-  parts.push(`${primary.percentage || 60}% ${primary.name}`);
-  
-  if (cel.secondary?.name) {
-    parts.push(`${cel.secondary.percentage || 30}% ${cel.secondary.name}`);
-  }
-  
-  if (cel.tertiary?.name) {
-    parts.push(`${cel.tertiary.percentage || 10}% ${cel.tertiary.name}`);
-  }
-  
-  const combined = parts.join(' + ');
-  const desc = cel.combination_description || '';
-  
-  return `CELEBRITY LIKENESS: ${combined}.\n${desc}`;
-}
-
-function generateTechnicalPrompt(
-  visualDNA: VisualDNA,
-  continuityLock: ContinuityLock | undefined,
-  slotType: string,
-  options: {
-    expression?: string;
-    outfit?: string;
-    viewAngle?: string;
-  }
-): { masterPrompt: string; negativePrompt: string; validationChecks: string[] } {
-  
-  const subjectDesc = buildSubjectDescription(visualDNA.physical_identity);
-  const faceDesc = buildFaceDescription(visualDNA.face);
-  const hairDesc = buildHairDescription(visualDNA.hair);
-  const skinDesc = buildSkinDescription(visualDNA.skin);
-  const celebrityRef = buildCelebrityReference(visualDNA.visual_references);
-  
-  // Build master prompt
-  const lines: string[] = [];
-  
-  if (slotType === 'closeup' || slotType === 'turnaround') {
-    lines.push('IDENTITY REFERENCE - PHOTOREALISTIC PORTRAIT');
-    lines.push('Critical: This is an identity anchor. Maximum accuracy required.');
-    lines.push('');
-  } else {
-    lines.push('CINEMATIC CHARACTER SHOT - PHOTOREALISTIC');
-    lines.push('');
-  }
-  
-  lines.push('SUBJECT:');
-  lines.push(subjectDesc);
-  lines.push('');
-  
-  lines.push(faceDesc);
-  lines.push('');
-  
-  lines.push(hairDesc);
-  lines.push('');
-  
-  lines.push('SKIN: ' + skinDesc);
-  lines.push('');
-  
-  if (celebrityRef) {
-    lines.push(celebrityRef);
-    lines.push('');
-  }
-  
-  if (options.expression) {
-    lines.push(`EXPRESSION: ${options.expression} emotion`);
-    lines.push('');
-  }
-  
-  if (options.viewAngle) {
-    lines.push(`VIEW: ${options.viewAngle} angle`);
-    lines.push('');
-  }
-  
-  if (options.outfit) {
-    lines.push(`OUTFIT: ${options.outfit}`);
-    lines.push('');
-  }
-  
-  // Photography specs
-  if (slotType === 'closeup') {
-    lines.push('PHOTOGRAPHY: Professional portrait, 85mm lens f/1.8, shallow depth of field, sharp focus on eyes, bokeh background');
-  } else if (slotType === 'turnaround') {
-    lines.push('PHOTOGRAPHY: Character turnaround reference, 50mm lens f/4, even lighting, full body in frame, clean studio background');
-  } else {
-    lines.push('PHOTOGRAPHY: Cinematic shot, 35mm lens f/2.8, natural depth of field');
-  }
-  
-  lines.push('8K resolution, photorealistic quality, professional lighting');
-  lines.push('');
-  
-  lines.push('LIGHTING: Soft key light 45° from camera, fill light opposite, rim light for separation');
-  
-  // Build negative prompt
-  const negatives: string[] = [
-    'cartoon', 'anime', 'illustration', '3D render', 'CGI obvious',
-    'plastic skin', 'wax skin', 'mannequin', 'doll-like',
-    'AI artifacts', 'morphing features', 'warped hands', 'deformed fingers',
-    'floating elements', 'disjointed anatomy',
-    'watermark', 'text overlay', 'logo', 'signature',
-    'blurry', 'out of focus', 'low quality', 'pixelated',
-    'multiple heads', 'multiple arms', 'extra limbs',
-    'asymmetric eyes', 'different eye colors'
-  ];
-  
-  // Add continuity lock avoidances
-  if (continuityLock?.must_avoid) {
-    negatives.push(...continuityLock.must_avoid);
-  }
-  
-  // Add specific violations
-  if (visualDNA.physical_identity?.age_exact_for_prompt) {
-    negatives.push(`not age ${visualDNA.physical_identity.age_exact_for_prompt}`);
-  }
-  if (visualDNA.face?.eyes?.color_base) {
-    negatives.push(`eyes not ${formatField(visualDNA.face.eyes.color_base)}`);
-  }
-  
-  // Build validation checks
-  const checks: string[] = [];
-  
-  if (visualDNA.physical_identity?.age_exact_for_prompt) {
-    checks.push(`Subject appears age ${visualDNA.physical_identity.age_exact_for_prompt} (±2 years)`);
-  }
-  if (visualDNA.face?.eyes?.color_base) {
-    checks.push(`Eyes are ${formatField(visualDNA.face.eyes.color_base)}`);
-  }
-  if (visualDNA.face?.shape) {
-    checks.push(`Face shape is ${formatField(visualDNA.face.shape)}`);
-  }
-  if (visualDNA.face?.facial_hair?.type) {
-    checks.push(`${formatField(visualDNA.face.facial_hair.type)} facial hair present`);
-  }
-  if (visualDNA.hair?.head_hair?.color?.natural_base) {
-    checks.push(`Hair is ${visualDNA.hair.head_hair.color.natural_base}`);
-  }
-  if (visualDNA.visual_references?.celebrity_likeness?.primary?.name) {
-    const cel = visualDNA.visual_references.celebrity_likeness.primary;
-    checks.push(`Resembles ${cel.name} (${cel.percentage || 60}% likeness)`);
-  }
-  
-  if (slotType === 'closeup' || slotType === 'turnaround') {
-    checks.push('Sharp focus on eyes (critical)');
-    checks.push('No hand deformities visible');
-    checks.push('No AI artifacts in face');
-  }
-  
-  return {
-    masterPrompt: lines.join('\n').trim(),
-    negativePrompt: negatives.join(', '),
-    validationChecks: checks
+  default_outfit?: {
+    description?: string;
   };
 }
 
 // ============================================
-// FAL.AI IMAGE GENERATION
+// REFERENCE-BASED PROMPT BUILDERS
 // ============================================
-async function generateWithFal(
-  prompt: string,
-  negativePrompt: string,
-  imageSize: string = "portrait_16_9"
-): Promise<{ imageUrl: string; seed: number }> {
-  const FAL_API_KEY = Deno.env.get('FAL_API_KEY');
-  if (!FAL_API_KEY) {
-    throw new Error('FAL_API_KEY is not configured');
+
+function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string): string {
+  const angleInstructions: Record<string, string> = {
+    'front': 'front view, facing camera directly, standing straight, arms at sides',
+    'side': 'side profile view, 90 degrees to camera, standing straight, arms at sides',
+    'back': 'back view, facing away from camera, standing straight, arms at sides',
+    '3/4': '3/4 view, 45 degrees angle, standing straight, arms at sides'
+  };
+
+  const angle = angleInstructions[viewAngle] || angleInstructions.front;
+  const physical = visualDNA.physical_identity;
+  const hair = visualDNA.hair?.head_hair;
+  const face = visualDNA.face;
+
+  return `This same person, ${angle}.
+
+PHYSICAL CONTEXT:
+- Height: ${physical?.height?.cm || 'average'} cm
+- Build: ${physical?.body_type?.somatotype || 'average'}
+- Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
+
+POSE REQUIREMENTS:
+- Full body shot (head to toe in frame)
+- Standing straight, neutral pose
+- Arms relaxed at sides
+- Weight evenly distributed
+- Natural, confident posture
+
+OUTFIT:
+${visualDNA.default_outfit?.description || 'Casual outfit as shown in reference'}
+
+CONSISTENCY REQUIREMENTS (CRITICAL):
+- Keep EXACT same face structure and features
+- Keep EXACT same hair color (${hair?.color?.natural_base || 'as shown'}${hair?.color?.grey_white?.percentage ? `, with ${hair.color.grey_white.percentage}% grey` : ''})
+- Keep EXACT same skin tone (${physical?.ethnicity?.skin_tone_description || 'as shown'})
+- Keep EXACT same age appearance (${physical?.age_exact_for_prompt || 'as shown'})
+- Keep EXACT same facial hair (${face?.facial_hair?.type || 'as shown'})
+- Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
+
+Only change: camera angle to ${viewAngle} view
+
+TECHNICAL SPECS:
+- Full body turnaround reference shot
+- 50mm lens equivalent, f/4
+- Clean studio background (neutral grey or white)
+- Even lighting, no harsh shadows
+- Sharp focus throughout
+- Professional character design quality
+- 8K resolution`;
+}
+
+function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string): string {
+  const expressionInstructions: Record<string, string> = {
+    'neutral': 'neutral, calm expression, relaxed face',
+    'happy': 'smiling, happy expression, genuine joy, natural smile',
+    'sad': 'sad, melancholic expression, downcast eyes',
+    'angry': 'angry, intense expression, furrowed brow',
+    'surprised': 'surprised, wide eyes, raised eyebrows',
+    'focused': 'focused, determined expression, slight squint',
+    'worried': 'worried, concerned expression, tense face',
+    'laughing': 'laughing, open mouth smile, crinkled eyes',
+    'serious': 'serious, stern expression, no smile'
+  };
+
+  const expression = expressionInstructions[expressionName] || expressionInstructions.neutral;
+  const physical = visualDNA.physical_identity;
+  const face = visualDNA.face;
+  const hair = visualDNA.hair?.head_hair;
+
+  return `This same person, ${expression}.
+
+PHYSICAL CONTEXT:
+- Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
+- Face shape: ${face?.shape || 'as shown'}
+- Eye color: ${face?.eyes?.color_base || 'as shown'}
+
+SHOT REQUIREMENTS:
+- Medium close-up (shoulders up)
+- Direct eye contact with camera
+- 85mm lens equivalent, f/2.8
+- Shallow depth of field (blurred background)
+
+CONSISTENCY REQUIREMENTS (CRITICAL):
+- Keep EXACT same face structure and all facial features
+- Keep EXACT same hair color and style (${hair?.color?.natural_base || 'as shown'}${hair?.color?.grey_white?.percentage ? `, including ${hair.color.grey_white.percentage}% grey/silver tones` : ''})
+- Keep EXACT same skin tone and texture
+- Keep EXACT same age appearance (${physical?.age_exact_for_prompt || 'as shown'})
+- Keep EXACT same facial hair (${face?.facial_hair?.type || 'as shown'}${face?.facial_hair?.color?.base ? `, ${face.facial_hair.color.base} color` : ''})
+- Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
+- Keep ALL distinctive features (wrinkles, lines, marks as shown in reference)
+
+Only change: facial expression to ${expressionName}
+
+TECHNICAL SPECS:
+- Professional headshot quality
+- Soft studio lighting
+- Neutral background
+- Sharp focus on eyes
+- Natural skin tones
+- 8K quality`;
+}
+
+function buildOutfitPrompt(visualDNA: VisualDNA, outfitDescription: string): string {
+  const physical = visualDNA.physical_identity;
+  const hair = visualDNA.hair?.head_hair;
+  const face = visualDNA.face;
+
+  return `This same person, wearing: ${outfitDescription}.
+
+PHYSICAL CONTEXT:
+- Height: ${physical?.height?.cm || 'average'} cm
+- Build: ${physical?.body_type?.somatotype || 'average'}
+- Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
+
+SHOT REQUIREMENTS:
+- Full body or 3/4 length shot (depends on outfit)
+- Standing naturally
+- Neutral pose showing the outfit clearly
+- 50mm lens, f/4
+
+OUTFIT DETAILS:
+${outfitDescription}
+
+STYLING CONTEXT:
+- Outfit should fit the character's age (${physical?.age_exact_for_prompt || 'as shown'})
+- Outfit should fit the character's build (${physical?.body_type?.somatotype || 'as shown'})
+- Natural, realistic clothing physics (no AI artifacts)
+
+CONSISTENCY REQUIREMENTS (CRITICAL):
+- Keep EXACT same face
+- Keep EXACT same hair (${hair?.color?.natural_base || 'as shown'}${hair?.color?.grey_white?.percentage ? `, with ${hair.color.grey_white.percentage}% grey` : ''}, ${hair?.length?.type || 'as shown'})
+- Keep EXACT same skin tone
+- Keep EXACT same age appearance
+- Keep EXACT same body proportions
+- Keep EXACT same facial hair
+
+Only change: outfit/clothing
+
+TECHNICAL SPECS:
+- Clean background
+- Even lighting
+- Sharp focus
+- Professional fashion photography quality
+- Natural pose
+- 8K resolution`;
+}
+
+function buildCloseupPrompt(visualDNA: VisualDNA): string {
+  const physical = visualDNA.physical_identity;
+  const face = visualDNA.face;
+  const hair = visualDNA.hair?.head_hair;
+
+  return `This same person, professional identity closeup.
+
+PHYSICAL CONTEXT:
+- Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
+- Face shape: ${face?.shape || 'as shown'}
+- Eye color: ${face?.eyes?.color_base || 'as shown'}
+- Skin tone: ${physical?.ethnicity?.skin_tone_description || 'as shown'}
+
+SHOT REQUIREMENTS:
+- Tight headshot (face fills frame)
+- Direct eye contact with camera
+- 85mm lens, f/2.8
+- Sharp focus on eyes
+- Soft focus on background
+
+LIGHTING:
+- Soft key light at 45°
+- Fill light for even skin tones
+- Subtle rim light for separation
+- Natural, flattering light
+
+CONSISTENCY REQUIREMENTS (CRITICAL):
+- Keep EXACT same face structure and all features
+- Keep EXACT same hair color and texture (${hair?.color?.natural_base || 'as shown'}${hair?.color?.grey_white?.percentage ? `, with ${hair.color.grey_white.percentage}% grey/silver` : ''})
+- Keep EXACT same skin tone and texture
+- Keep EXACT same age appearance (${physical?.age_exact_for_prompt || 'as shown'})
+- Keep EXACT same facial hair (${face?.facial_hair?.type || 'as shown'})
+- Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
+- Keep EXACT same distinctive features (wrinkles, lines as shown in reference)
+
+EXPRESSION:
+- Neutral, professional
+- Slight warmth in eyes
+- Relaxed face
+- Natural, approachable
+
+TECHNICAL SPECS:
+- Professional headshot quality
+- Sharp detail in eyes, skin texture
+- Natural skin tones
+- Clean background
+- 8K resolution`;
+}
+
+function buildBaseLookPrompt(visualDNA: VisualDNA): string {
+  return buildCloseupPrompt(visualDNA);
+}
+
+// ============================================
+// REFERENCE-BASED GENERATION WITH LOVABLE AI
+// ============================================
+async function generateWithReference(
+  referenceImageUrl: string,
+  prompt: string
+): Promise<{ imageUrl: string }> {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) {
+    throw new Error('LOVABLE_API_KEY is not configured');
   }
 
-  console.log(`[FAL] Generating with ${FAL_MODEL}...`);
+  console.log(`[REFERENCE-GEN] Generating with ${IMAGE_ENGINE}...`);
+  console.log(`[REFERENCE-GEN] Reference image: ${referenceImageUrl.substring(0, 100)}...`);
+  console.log(`[REFERENCE-GEN] Prompt length: ${prompt.length} chars`);
 
-  // Submit request to FAL queue
-  const submitResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}`, {
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Key ${FAL_API_KEY}`,
+      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: prompt,
-      negative_prompt: negativePrompt,
-      image_size: imageSize,
-      num_images: 1,
-      enable_safety_checker: false,
-      output_format: "jpeg"
-    }),
+      model: IMAGE_ENGINE,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: { 
+                url: referenceImageUrl
+              }
+            },
+            {
+              type: 'text',
+              text: prompt
+            }
+          ]
+        }
+      ],
+      modalities: ['image', 'text']
+    })
   });
 
-  if (!submitResponse.ok) {
-    const errorText = await submitResponse.text();
-    console.error('[FAL] Submit error:', submitResponse.status, errorText);
-    throw new Error(`FAL submit failed: ${submitResponse.status} - ${errorText}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('[REFERENCE-GEN] Error:', response.status, errorText);
+    throw new Error(`Image generation failed: ${response.status} - ${errorText}`);
   }
 
-  const queueData = await submitResponse.json();
-  const requestId = queueData.request_id;
-  console.log('[FAL] Request queued:', requestId);
+  const data = await response.json();
+  console.log('[REFERENCE-GEN] Response received');
 
-  // Poll for result
-  let attempts = 0;
-  const maxAttempts = 60; // 60 seconds max
+  // Extract image from response
+  const imageUrl = extractImageFromResponse(data);
   
-  while (attempts < maxAttempts) {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const statusResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}/status`, {
-      headers: {
-        'Authorization': `Key ${FAL_API_KEY}`,
-      },
-    });
-
-    if (!statusResponse.ok) {
-      attempts++;
-      continue;
-    }
-
-    const status = await statusResponse.json();
-    
-    if (status.status === 'COMPLETED') {
-      // Get result
-      const resultResponse = await fetch(`https://queue.fal.run/${FAL_MODEL}/requests/${requestId}`, {
-        headers: {
-          'Authorization': `Key ${FAL_API_KEY}`,
-        },
-      });
-
-      if (!resultResponse.ok) {
-        throw new Error('Failed to get FAL result');
-      }
-
-      const result = await resultResponse.json();
-      const imageUrl = result.images?.[0]?.url;
-      const seed = result.seed || Math.floor(Math.random() * 999999);
-      
-      if (!imageUrl) {
-        throw new Error('No image in FAL response');
-      }
-
-      console.log('[FAL] Generation complete, seed:', seed);
-      return { imageUrl, seed };
-    }
-
-    if (status.status === 'FAILED') {
-      throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
-    }
-
-    attempts++;
+  if (!imageUrl) {
+    console.error('[REFERENCE-GEN] No image in response:', JSON.stringify(data).substring(0, 500));
+    throw new Error('No image generated in response');
   }
 
-  throw new Error('FAL generation timeout');
+  console.log('[REFERENCE-GEN] Image generated successfully');
+  return { imageUrl };
+}
+
+function extractImageFromResponse(data: any): string | null {
+  // Check for images array in message (nano-banana format)
+  if (data.choices?.[0]?.message?.images?.[0]?.image_url?.url) {
+    return data.choices[0].message.images[0].image_url.url;
+  }
+
+  // Check for content as array with image blocks
+  const content = data.choices?.[0]?.message?.content;
+  if (Array.isArray(content)) {
+    const imageBlock = content.find((block: any) => 
+      block.type === 'image_url' || block.type === 'image'
+    );
+    if (imageBlock?.image_url?.url) {
+      return imageBlock.image_url.url;
+    }
+    if (imageBlock?.url) {
+      return imageBlock.url;
+    }
+  }
+
+  // Check for direct URL in content
+  if (typeof content === 'string') {
+    if (content.startsWith('http')) {
+      return content;
+    }
+    if (content.startsWith('data:image')) {
+      return content;
+    }
+    // If it looks like base64 without header
+    if (content.length > 1000 && !content.includes(' ')) {
+      return `data:image/png;base64,${content}`;
+    }
+  }
+
+  return null;
 }
 
 // ============================================
@@ -571,7 +451,7 @@ async function runQC(
   imageUrl: string, 
   slotType: string, 
   characterName: string,
-  validationChecks?: string[]
+  referenceImageUrl?: string
 ): Promise<{
   score: number;
   passed: boolean;
@@ -584,9 +464,49 @@ async function runQC(
   }
 
   try {
-    const checksText = validationChecks?.length 
-      ? `\n\nSPECIFIC VALIDATION CHECKS:\n${validationChecks.map((c, i) => `${i+1}. ${c}`).join('\n')}`
-      : '';
+    const content: any[] = [
+      { 
+        type: 'text', 
+        text: `Evaluate this ${slotType} image for character "${characterName}".
+        
+Check for:
+1. Does the generated image look like the SAME PERSON as the reference?
+2. Are the key facial features preserved (face shape, eyes, nose, mouth)?
+3. Is the hair color and style preserved (including any grey/silver tones)?
+4. Is the skin tone consistent?
+5. Are there any AI artifacts (deformed hands, morphed features)?
+6. Is the technical quality professional?
+
+Return JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": "..."}
+Score 80+ = passed. Lower = needs review.` 
+      },
+      { 
+        type: 'image_url', 
+        image_url: { url: imageUrl } 
+      }
+    ];
+
+    // Add reference image if available for comparison
+    if (referenceImageUrl) {
+      content.splice(1, 0, {
+        type: 'image_url',
+        image_url: { url: referenceImageUrl }
+      });
+      content[0] = {
+        type: 'text',
+        text: `Compare these two images. The FIRST image is the REFERENCE (the real person). The SECOND image is the GENERATED image.
+        
+Evaluate if the generated image looks like the SAME PERSON:
+1. Does the face structure match?
+2. Are the eyes, nose, mouth similar?
+3. Is the hair color preserved (including grey/silver if present)?
+4. Is the skin tone consistent?
+5. Any AI artifacts or distortions?
+
+Return JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": "..."}
+Score 80+ = passed. Lower = needs review.`
+      };
+    }
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -600,29 +520,13 @@ async function runQC(
           {
             role: 'system',
             content: `You are an expert QC analyst for character reference images. 
-Evaluate images for:
-1. Technical quality (sharpness, lighting, composition)
-2. Character consistency (if validation checks provided)
-3. AI artifacts (deformed hands, morphed features, asymmetric eyes)
-4. Professional usability for production
-
-IDENTITY ANCHOR SLOTS (closeup, turnaround): MAXIMUM STRICTNESS - these define the character.
-OTHER SLOTS: Can be more lenient on minor variations.
-
-Return JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": "..."}`
+Your job is to verify that generated images maintain the EXACT likeness of the reference person.
+Be STRICT about facial features, hair color (especially grey/silver tones), and age appearance.
+Return ONLY valid JSON.`
           },
           {
             role: 'user',
-            content: [
-              { 
-                type: 'text', 
-                text: `Evaluate this ${slotType} image for character "${characterName}".${checksText}` 
-              },
-              { 
-                type: 'image_url', 
-                image_url: { url: imageUrl } 
-              }
-            ]
+            content: content
           }
         ],
         response_format: { type: 'json_object' }
@@ -635,14 +539,14 @@ Return JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": 
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const responseContent = data.choices?.[0]?.message?.content;
     
-    if (content) {
+    if (responseContent) {
       try {
-        const result = JSON.parse(content);
+        const result = JSON.parse(responseContent);
         return {
           score: result.score || 70,
-          passed: result.passed !== false,
+          passed: result.passed !== false && (result.score || 70) >= 80,
           issues: result.issues || [],
           fixNotes: result.fixNotes || ''
         };
@@ -689,6 +593,7 @@ serve(async (req) => {
 
 async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Response> {
   console.log(`=== Slot Generation: ${request.slotType} for ${request.characterName} ===`);
+  const startTime = Date.now();
   
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -716,7 +621,29 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
   // Get active visual DNA
   const activeVisualDNA = character.character_visual_dna?.find((v: any) => v.is_active);
   const visualDNA: VisualDNA = activeVisualDNA?.visual_dna || {};
-  const continuityLock: ContinuityLock = activeVisualDNA?.continuity_lock || {};
+
+  // Get reference anchors (user-uploaded photos)
+  const { data: referenceAnchors, error: refError } = await supabase
+    .from('reference_anchors')
+    .select('*')
+    .eq('character_id', request.characterId)
+    .eq('is_active', true)
+    .order('priority', { ascending: true });
+
+  if (refError) {
+    console.error('Reference anchors fetch error:', refError);
+  }
+
+  // Get the primary reference image (first uploaded photo)
+  const primaryAnchor = referenceAnchors?.find(a => 
+    a.anchor_type === 'identity_primary' || a.anchor_type === 'face_front'
+  ) || referenceAnchors?.[0];
+
+  if (!primaryAnchor?.image_url) {
+    throw new Error('No reference image found for this character. Please upload reference photos first.');
+  }
+
+  console.log(`Using reference image: ${primaryAnchor.anchor_type} - ${primaryAnchor.image_url.substring(0, 50)}...`);
 
   // Get slot details
   const { data: slot, error: slotError } = await supabase
@@ -730,46 +657,55 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     throw new Error(`Slot not found: ${request.slotId}`);
   }
 
-  // Generate technical prompt
-  const { masterPrompt, negativePrompt, validationChecks } = generateTechnicalPrompt(
-    visualDNA,
-    continuityLock,
-    request.slotType,
-    {
-      expression: request.expressionName,
-      outfit: request.outfitDescription,
-      viewAngle: request.viewAngle
-    }
-  );
+  // Build prompt based on slot type
+  let prompt: string;
+  switch (request.slotType) {
+    case 'turnaround':
+      prompt = buildTurnaroundPrompt(visualDNA, request.viewAngle || 'front');
+      break;
+    case 'expression':
+      prompt = buildExpressionPrompt(visualDNA, request.expressionName || 'neutral');
+      break;
+    case 'outfit':
+      prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit');
+      break;
+    case 'closeup':
+      prompt = buildCloseupPrompt(visualDNA);
+      break;
+    case 'base_look':
+      prompt = buildBaseLookPrompt(visualDNA);
+      break;
+    default:
+      prompt = buildCloseupPrompt(visualDNA);
+  }
 
-  console.log('Generated prompt length:', masterPrompt.length);
-  console.log('Validation checks:', validationChecks.length);
+  console.log('Generated prompt:', prompt.substring(0, 200) + '...');
 
-  // Determine image size based on slot type
-  const imageSize = request.slotType === 'turnaround' ? 'landscape_16_9' : 'portrait_16_9';
+  // Generate with reference image
+  const { imageUrl } = await generateWithReference(primaryAnchor.image_url, prompt);
 
-  // Generate with FAL.ai nano-banana-pro
-  const { imageUrl, seed } = await generateWithFal(masterPrompt, negativePrompt, imageSize);
-
-  // Run QC
-  const qcResult = await runQC(imageUrl, request.slotType, request.characterName, validationChecks);
+  // Run QC with reference comparison
+  const qcResult = await runQC(imageUrl, request.slotType, request.characterName, primaryAnchor.image_url);
   console.log(`QC Score: ${qcResult.score}, Passed: ${qcResult.passed}`);
+
+  const durationMs = Date.now() - startTime;
 
   // Update slot in database
   const { error: updateError } = await supabase
     .from('character_pack_slots')
     .update({
       image_url: imageUrl,
-      prompt_text: masterPrompt,
-      seed: seed,
+      prompt_text: prompt,
+      reference_anchor_id: primaryAnchor.id,
       qc_score: qcResult.score,
       qc_issues: qcResult.issues,
       fix_notes: qcResult.fixNotes,
       status: qcResult.passed ? 'generated' : 'needs_review',
       generation_metadata: {
-        engine: FAL_MODEL,
-        validation_checks: validationChecks,
-        generated_at: new Date().toISOString()
+        engine: IMAGE_ENGINE,
+        reference_used: primaryAnchor.id,
+        generated_at: new Date().toISOString(),
+        duration_ms: durationMs
       },
       updated_at: new Date().toISOString()
     })
@@ -788,27 +724,28 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     .single();
 
   await logGenerationCost({
-    userId: '', // Will be filled by service role context
+    userId: '',
     projectId: charData?.project_id,
     characterId: request.characterId,
     slotId: request.slotId,
     slotType: `character_${request.slotType}`,
-    engine: FAL_MODEL,
-    durationMs: Date.now() - Date.now(), // Will be replaced with actual timing
+    engine: IMAGE_ENGINE,
+    durationMs: durationMs,
     success: true,
     metadata: {
       qcScore: qcResult.score,
-      qcPassed: qcResult.passed
+      qcPassed: qcResult.passed,
+      referenceUsed: primaryAnchor.id
     }
   });
 
   return new Response(JSON.stringify({
     success: true,
     imageUrl,
-    seed,
-    prompt: masterPrompt,
+    prompt,
     qc: qcResult,
-    slotId: request.slotId
+    slotId: request.slotId,
+    referenceUsed: primaryAnchor.id
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
@@ -817,28 +754,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
 async function handleLegacyGeneration(request: LegacyCharacterRequest): Promise<Response> {
   console.log(`=== Legacy Generation: ${request.name} ===`);
   
-  // Build simple prompt for legacy mode
-  const prompt = `IDENTITY REFERENCE - PHOTOREALISTIC PORTRAIT
-
-Character: ${request.name}
-Role: ${request.role}
-Description: ${request.bio}
-${request.style ? `Style: ${request.style}` : ''}
-
-PHOTOGRAPHY: Professional portrait, 85mm lens f/1.8, shallow depth of field, sharp focus on eyes, bokeh background.
-8K resolution, photorealistic quality, professional lighting.
-LIGHTING: Soft key light 45° from camera, fill light opposite, rim light for separation.`;
-
-  const negativePrompt = 'cartoon, anime, illustration, 3D render, CGI obvious, plastic skin, wax skin, mannequin, doll-like, AI artifacts, morphing features, warped hands, deformed fingers, watermark, text overlay, logo, signature, blurry, out of focus, low quality, pixelated, multiple heads, multiple arms, extra limbs';
-
-  // Generate with FAL.ai
-  const { imageUrl, seed } = await generateWithFal(prompt, negativePrompt, 'portrait_16_9');
-
+  // For legacy requests without reference, return an error asking to use the new flow
   return new Response(JSON.stringify({ 
-    imageUrl,
-    seed,
-    prompt
+    error: 'Legacy generation is deprecated. Please upload reference photos and use the new character pack builder.',
+    suggestion: 'Upload 4 reference photos (face front, face side, body front, body side) to enable high-quality generation.'
   }), {
+    status: 400,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
