@@ -143,17 +143,27 @@ const OUTLINE_TOOL_SCHEMA = {
     tone: { type: 'string' },
     narrative_mode: { type: 'string', description: 'Modo narrativo aplicado' },
     synopsis: { type: 'string', description: '150-250 palabras. NO resumen, sino PROMESA narrativa' },
+    extracted_entities: {
+      type: 'object',
+      description: 'Entidades identificadas explícitamente en la idea del usuario',
+      properties: {
+        characters_from_idea: { type: 'array', items: { type: 'string' }, description: 'Nombres de personajes mencionados en la idea' },
+        locations_from_idea: { type: 'array', items: { type: 'string' }, description: 'Lugares mencionados en la idea' },
+        props_from_idea: { type: 'array', items: { type: 'string' }, description: 'Objetos importantes mencionados en la idea' }
+      }
+    },
     main_characters: {
       type: 'array',
       items: {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting'] },
+          role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting', 'recurring'] },
           description: { type: 'string', description: 'Físico + personalidad + FLAW' },
           secret: { type: 'string', description: 'Qué oculta este personaje' },
           want: { type: 'string', description: 'Deseo consciente' },
-          need: { type: 'string', description: 'Necesidad inconsciente' }
+          need: { type: 'string', description: 'Necesidad inconsciente' },
+          from_idea: { type: 'boolean', description: 'True si este personaje fue mencionado explícitamente en la idea' }
         },
         required: ['name', 'role', 'description']
       }
@@ -166,9 +176,25 @@ const OUTLINE_TOOL_SCHEMA = {
           name: { type: 'string' },
           type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT'] },
           description: { type: 'string' },
-          atmosphere: { type: 'string', description: 'Qué SIENTE el espectador aquí' }
+          atmosphere: { type: 'string', description: 'Qué SIENTE el espectador aquí' },
+          from_idea: { type: 'boolean', description: 'True si esta locación fue mencionada explícitamente en la idea' }
         },
         required: ['name', 'type', 'description']
+      }
+    },
+    main_props: {
+      type: 'array',
+      description: 'Objetos importantes para la trama (armas, documentos, objetos simbólicos, vehículos)',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          importance: { type: 'string', enum: ['hero', 'key', 'recurring'] },
+          description: { type: 'string' },
+          narrative_function: { type: 'string', description: 'Por qué este objeto es importante para la trama' },
+          from_idea: { type: 'boolean', description: 'True si este prop fue mencionado explícitamente en la idea' }
+        },
+        required: ['name', 'importance', 'description']
       }
     },
     episode_beats: {
@@ -199,7 +225,7 @@ const OUTLINE_TOOL_SCHEMA = {
     },
     qc_status: { type: 'string', enum: ['pass', 'fail'], description: 'Auto-QC: pass si cumple todas las reglas' }
   },
-  required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'episode_beats', 'qc_status']
+  required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'main_props', 'episode_beats', 'qc_status']
 };
 
 // OpenAI API call
@@ -423,17 +449,35 @@ GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
 FORMATO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
 MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTRACCIÓN DE ENTIDADES (PRIORIDAD MÁXIMA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+ANTES de generar el outline, analiza la IDEA y extrae:
+1. PERSONAJES: Cualquier nombre propio o rol específico mencionado (ej: "María", "el detective", "un hacker")
+2. LOCACIONES: Cualquier lugar específico mencionado (ej: "Nueva York", "una fábrica abandonada", "el hospital")
+3. PROPS: Objetos específicos mencionados que podrían ser importantes (ej: "un diario", "el arma del crimen", "las cartas")
+
+REGLA CRÍTICA: Las entidades mencionadas en la IDEA tienen PRIORIDAD ABSOLUTA.
+- Si la idea menciona 8 personajes, deben aparecer los 8, aunque la densidad pida solo 3.
+- Si la idea menciona 12 locaciones, deben aparecer las 12.
+- Los targets de densidad son MÍNIMOS, no límites. La idea siempre gana.
+
+Para cada entidad que crees, marca from_idea: true si fue mencionada explícitamente en la idea.
+Incluye en extracted_entities TODOS los nombres/lugares/objetos que identificaste.
 ${densityTargets ? `
-DENSIDAD REQUERIDA:
+DENSIDAD MÍNIMA REQUERIDA (si la idea no especifica más):
 - ${densityTargets.protagonists_min}+ protagonistas
 - ${densityTargets.supporting_min}+ secundarios  
 - ${densityTargets.locations_min}+ localizaciones
+- ${densityTargets.hero_props_min || 5}+ props clave
 - ${densityTargets.subplots_min}+ subtramas
 - ${densityTargets.twists_min}+ giros por episodio
 ` : `
-CONSTRAINTS OBLIGATORIOS:
+MÍNIMOS POR DEFECTO (si la idea no especifica más):
 - Personajes principales: MÍNIMO 5
-- Localizaciones: MÍNIMO 5`}
+- Localizaciones: MÍNIMO 5
+- Props clave: MÍNIMO 3`}
 - Si es serie: un beat con cliffhanger por episodio
 - Cada episodio DEBE tener un evento irreversible
 
@@ -473,12 +517,31 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       }
     });
 
+    // Ensure main_props exists (may be empty if not provided by AI)
+    if (!outline.main_props) {
+      outline.main_props = [];
+    }
+
+    // Count entities from idea
+    const entitiesFromIdea = {
+      characters: outline.main_characters?.filter((c: any) => c.from_idea)?.length || 0,
+      locations: outline.main_locations?.filter((l: any) => l.from_idea)?.length || 0,
+      props: outline.main_props?.filter((p: any) => p.from_idea)?.length || 0
+    };
+
     if (qcIssues.length > 0) {
       console.warn('[OUTLINE QC]', qcIssues);
       outline.qc_warnings = qcIssues;
     }
 
-    console.log('[OUTLINE] Success:', outline.title, '| Model:', modelConfig.apiModel, '| Mode:', outline.narrative_mode, '| Characters:', outline.main_characters?.length, '| Episodes:', outline.episode_beats?.length);
+    console.log('[OUTLINE] Success:', outline.title, 
+      '| Model:', modelConfig.apiModel, 
+      '| Mode:', outline.narrative_mode, 
+      '| Characters:', outline.main_characters?.length, `(${entitiesFromIdea.characters} from idea)`,
+      '| Locations:', outline.main_locations?.length, `(${entitiesFromIdea.locations} from idea)`,
+      '| Props:', outline.main_props?.length, `(${entitiesFromIdea.props} from idea)`,
+      '| Episodes:', outline.episode_beats?.length
+    );
 
     return new Response(
       JSON.stringify({ success: true, outline, model: modelConfig.apiModel }),
