@@ -181,6 +181,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [doctorSuggestions, setDoctorSuggestions] = useState<any[]>([]);
   const [doctorScore, setDoctorScore] = useState<number | null>(null);
   const [applyingDoctor, setApplyingDoctor] = useState(false);
+  const [selectedSuggestions, setSelectedSuggestions] = useState<Set<number>>(new Set());
 
   // Entity import state
   const [selectedCharacters, setSelectedCharacters] = useState<Set<number>>(new Set());
@@ -712,8 +713,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (error) throw error;
       if (data?.analysis) {
         setDoctorScore(data.analysis.overall_assessment?.score || null);
-        setDoctorSuggestions(data.analysis.suggestions || []);
-        toast.success(`Análisis completado: ${data.analysis.suggestions?.length || 0} sugerencias`);
+        const suggestions = data.analysis.suggestions || [];
+        setDoctorSuggestions(suggestions);
+        // Pre-select critical and high severity by default
+        const preSelected = new Set<number>();
+        suggestions.forEach((s: any, i: number) => {
+          if (s.severity === 'critical' || s.severity === 'high') {
+            preSelected.add(i);
+          }
+        });
+        setSelectedSuggestions(preSelected);
+        toast.success(`Análisis completado: ${suggestions.length} sugerencias`);
       }
     } catch (err: any) {
       console.error('Error analyzing script:', err);
@@ -724,16 +734,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
   // Apply Doctor Suggestions - MERGE with existing script to preserve episodes/scenes
   const applyDoctorSuggestions = async () => {
-    if (!generatedScript || doctorSuggestions.length === 0) {
-      toast.error('No hay sugerencias para aplicar');
+    if (!generatedScript || selectedSuggestions.size === 0) {
+      toast.error('Selecciona al menos una sugerencia para aplicar');
       return;
     }
 
     setApplyingDoctor(true);
     try {
-      // Build rewrite instructions from suggestions
+      // Build rewrite instructions from SELECTED suggestions only
       const rewriteInstructions = doctorSuggestions
-        .filter(s => s.severity === 'critical' || s.severity === 'high' || s.severity === 'medium')
+        .filter((_, i) => selectedSuggestions.has(i))
         .map(s => `- [${s.category}] ${s.issue}: ${s.suggestion}${s.rewrite_snippet ? ` (Ejemplo: "${s.rewrite_snippet}")` : ''}`)
         .join('\n');
 
@@ -788,10 +798,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           }).eq('id', currentScriptId);
         }
 
-        toast.success('Sugerencias aplicadas - Episodios y escenas preservados');
-        setDoctorSuggestions([]);
-        setDoctorScore(null);
-        setActiveTab('summary');
+        toast.success(`${selectedSuggestions.size} sugerencias aplicadas - Episodios y escenas preservados`);
+        // Remove applied suggestions from list
+        const remainingSuggestions = doctorSuggestions.filter((_, i) => !selectedSuggestions.has(i));
+        setDoctorSuggestions(remainingSuggestions);
+        setSelectedSuggestions(new Set());
+        if (remainingSuggestions.length === 0) {
+          setDoctorScore(null);
+          setActiveTab('summary');
+        }
       }
     } catch (err: any) {
       console.error('Error applying doctor suggestions:', err);
@@ -2484,10 +2499,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   {doctorSuggestions.length > 0 && (
                     <Button 
                       onClick={applyDoctorSuggestions} 
-                      disabled={applyingDoctor || !generatedScript}
+                      disabled={applyingDoctor || !generatedScript || selectedSuggestions.size === 0}
                     >
                       {applyingDoctor ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
-                      Aplicar Cambios
+                      Aplicar ({selectedSuggestions.size})
                     </Button>
                   )}
                 </div>
@@ -2495,18 +2510,87 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </CardHeader>
             {doctorSuggestions.length > 0 && (
               <CardContent>
+                {/* Select all / none controls */}
+                <div className="flex items-center justify-between mb-3 pb-3 border-b">
+                  <span className="text-sm text-muted-foreground">
+                    {selectedSuggestions.size} de {doctorSuggestions.length} seleccionadas
+                  </span>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setSelectedSuggestions(new Set(doctorSuggestions.map((_, i) => i)))}
+                    >
+                      Seleccionar todas
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setSelectedSuggestions(new Set())}
+                    >
+                      Ninguna
+                    </Button>
+                  </div>
+                </div>
                 <ScrollArea className="h-[400px]">
                   <div className="space-y-3">
                     {doctorSuggestions.map((s: any, i: number) => (
-                      <div key={i} className="p-3 rounded-lg border">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge className={getSeverityColor(s.severity)}>{s.severity}</Badge>
-                          <Badge variant="outline">{s.category}</Badge>
-                        </div>
-                        <p className="font-medium text-sm">{s.issue}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{s.reason}</p>
-                        <div className="mt-2 p-2 bg-primary/5 rounded text-sm">
-                          <strong>Sugerencia:</strong> {s.suggestion}
+                      <div 
+                        key={i} 
+                        className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                          selectedSuggestions.has(i) 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-muted-foreground'
+                        }`}
+                        onClick={() => {
+                          const newSelected = new Set(selectedSuggestions);
+                          if (newSelected.has(i)) {
+                            newSelected.delete(i);
+                          } else {
+                            newSelected.add(i);
+                          }
+                          setSelectedSuggestions(newSelected);
+                        }}
+                      >
+                        <div className="flex items-start gap-3">
+                          <Checkbox 
+                            checked={selectedSuggestions.has(i)}
+                            onCheckedChange={(checked) => {
+                              const newSelected = new Set(selectedSuggestions);
+                              if (checked) {
+                                newSelected.add(i);
+                              } else {
+                                newSelected.delete(i);
+                              }
+                              setSelectedSuggestions(newSelected);
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge className={getSeverityColor(s.severity)}>{s.severity}</Badge>
+                              <Badge variant="outline">{s.category}</Badge>
+                              {s.location && (
+                                <span className="text-xs text-muted-foreground">{s.location}</span>
+                              )}
+                            </div>
+                            <p className="font-medium text-sm">{s.issue}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{s.reason}</p>
+                            <div className="mt-2 p-2 bg-primary/5 rounded text-sm">
+                              <strong>Sugerencia:</strong> {s.suggestion}
+                            </div>
+                            {s.rewrite_snippet && (
+                              <div className="mt-2 p-2 bg-muted rounded text-xs font-mono">
+                                <strong>Ejemplo:</strong> "{s.rewrite_snippet}"
+                              </div>
+                            )}
+                            {s.impact && (
+                              <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                                ✓ {s.impact}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
