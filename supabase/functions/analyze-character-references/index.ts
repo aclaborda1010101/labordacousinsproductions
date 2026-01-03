@@ -9,23 +9,28 @@ const corsHeaders = {
 interface AnalyzeRequest {
   characterId: string;
   projectId: string;
-  faceImageUrl: string;
-  bodyImageUrl: string;
+  faceImageUrl: string;       // face_front
+  faceSideImageUrl?: string;  // face_side
+  bodyImageUrl: string;       // body_front
+  bodySideImageUrl?: string;  // body_side
   celebrityMix?: string;
   characterName?: string;
 }
 
-const ANALYSIS_PROMPT = `Analiza estas 2 imágenes de referencia y extrae el Visual DNA completo para un personaje.
+const ANALYSIS_PROMPT = `Analiza estas imágenes de referencia del Identity Pack y extrae el Visual DNA completo para un personaje.
 
-IMAGEN 1: Closeup de rostro
-IMAGEN 2: Full body / cuerpo completo
+IMAGEN 1: Rostro Frontal (Face Front) - Closeup frontal, expresión neutra
+IMAGEN 2: Rostro Perfil (Face Side) - Perfil lateral 90º
+IMAGEN 3: Cuerpo Frontal (Body Front) - Full body de frente
+IMAGEN 4: Cuerpo Lateral (Body Side) - Full body de perfil
 
-Analiza DETALLADAMENTE y responde usando la herramienta extract_visual_dna.
+Analiza DETALLADAMENTE cada imagen y responde usando la herramienta extract_visual_dna.
 
 IMPORTANTE:
 - Sé MUY ESPECÍFICO con colores (usa HEX codes)
 - Estima edad con precisión
 - Describe características faciales con detalle técnico
+- Analiza proporciones corporales y postura
 - Incluye cualquier marca distintiva visible`;
 
 serve(async (req) => {
@@ -38,7 +43,9 @@ serve(async (req) => {
       characterId, 
       projectId, 
       faceImageUrl, 
+      faceSideImageUrl,
       bodyImageUrl, 
+      bodySideImageUrl,
       celebrityMix,
       characterName 
     }: AnalyzeRequest = await req.json();
@@ -61,18 +68,36 @@ serve(async (req) => {
 
     console.log(`Analyzing references for character ${characterId}`);
 
-    // Build content array with images
+    // Build content array with all 4 images
     const content: any[] = [
       { type: 'text', text: ANALYSIS_PROMPT },
       { 
         type: 'image_url', 
         image_url: { url: faceImageUrl }
-      },
-      { 
-        type: 'image_url', 
-        image_url: { url: bodyImageUrl }
       }
     ];
+
+    // Add optional face side
+    if (faceSideImageUrl) {
+      content.push({ 
+        type: 'image_url', 
+        image_url: { url: faceSideImageUrl }
+      });
+    }
+
+    // Add body front
+    content.push({ 
+      type: 'image_url', 
+      image_url: { url: bodyImageUrl }
+    });
+
+    // Add optional body side
+    if (bodySideImageUrl) {
+      content.push({ 
+        type: 'image_url', 
+        image_url: { url: bodySideImageUrl }
+      });
+    }
 
     if (celebrityMix) {
       content.push({
@@ -474,27 +499,51 @@ serve(async (req) => {
       console.log(`Visual DNA saved as version ${nextVersion}`);
     }
 
-    // Create reference anchors
+    // Create reference anchors for all 4 identity pack images
     const anchorsToInsert = [
       {
         character_id: characterId,
-        anchor_type: 'identity_primary',
+        anchor_type: 'face_front',
         image_url: faceImageUrl,
         priority: 1,
         is_active: true,
         approved: true,
-        metadata: { source: 'user_upload', type: 'face_closeup' }
+        metadata: { source: 'quick_start', type: 'identity_pack' }
       },
       {
         character_id: characterId,
-        anchor_type: 'turnaround_front',
+        anchor_type: 'body_front',
         image_url: bodyImageUrl,
+        priority: 3,
+        is_active: true,
+        approved: true,
+        metadata: { source: 'quick_start', type: 'identity_pack' }
+      }
+    ];
+
+    if (faceSideImageUrl) {
+      anchorsToInsert.push({
+        character_id: characterId,
+        anchor_type: 'face_side',
+        image_url: faceSideImageUrl,
         priority: 2,
         is_active: true,
         approved: true,
-        metadata: { source: 'user_upload', type: 'full_body' }
-      }
-    ];
+        metadata: { source: 'quick_start', type: 'identity_pack' }
+      });
+    }
+
+    if (bodySideImageUrl) {
+      anchorsToInsert.push({
+        character_id: characterId,
+        anchor_type: 'body_side',
+        image_url: bodySideImageUrl,
+        priority: 4,
+        is_active: true,
+        approved: true,
+        metadata: { source: 'quick_start', type: 'identity_pack' }
+      });
+    }
 
     const { error: anchorError } = await supabase
       .from('reference_anchors')
@@ -524,8 +573,8 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         visualDNA,
-        anchorsCreated: 2,
-        message: 'Visual DNA extraído y anchors creados'
+        anchorsCreated: anchorsToInsert.length,
+        message: `Visual DNA extraído y ${anchorsToInsert.length} anchors creados`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
