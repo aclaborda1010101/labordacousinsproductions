@@ -5,38 +5,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const OUTLINE_SYSTEM_PROMPT = `Eres un guionista profesional. Genera un OUTLINE conciso para una serie o película.
-
-Responde SOLO JSON válido con esta estructura EXACTA:
-{
-  "title": "string",
-  "logline": "string (1 frase que vende)",
-  "synopsis": "string (100-200 palabras)",
-  "genre": "string",
-  "tone": "string",
-  "main_characters": [
-    {
-      "name": "string",
-      "role": "protagonist|antagonist|support",
-      "description": "string (1 línea física + personalidad)"
-    }
-  ],
-  "main_locations": [
-    {
-      "name": "string",
-      "type": "INT|EXT",
-      "description": "string (1 línea)"
-    }
-  ],
-  "episode_beats": [
-    {
-      "episode": number,
-      "title": "string",
-      "summary": "string (2-3 frases de qué pasa)"
-    }
-  ]
-}`;
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -52,42 +20,98 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY no configurada');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY no configurada');
     }
-    
+
+    const systemPrompt = `Eres un guionista profesional. Genera un OUTLINE conciso para una serie o película.
+Responde SIEMPRE usando la herramienta deliver_outline.
+Idioma: ${language || 'es-ES'}`;
+
     const userPrompt = `Genera un OUTLINE para:
 
 IDEA: ${idea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
 FORMATO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
-IDIOMA: ${language || 'es-ES'}
 
 CONSTRAINTS:
 - Personajes principales: MÍNIMO 5
 - Localizaciones: MÍNIMO 5
 - Si es serie: un beat por episodio
 
-Responde SOLO el JSON sin explicaciones.`;
+Usa la herramienta deliver_outline para entregar el resultado.`;
 
-    console.log('[OUTLINE] Generating...');
+    console.log('[OUTLINE] Generating with Claude...');
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: OUTLINE_SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt }
-        ],
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
         temperature: 0.7,
-        max_tokens: 3000
+        system: systemPrompt,
+        tools: [
+          {
+            name: 'deliver_outline',
+            description: 'Entrega el outline estructurado.',
+            input_schema: {
+              type: 'object',
+              properties: {
+                title: { type: 'string', description: 'Título atractivo' },
+                logline: { type: 'string', description: '1-2 frases que vendan la serie' },
+                genre: { type: 'string' },
+                tone: { type: 'string' },
+                synopsis: { type: 'string', description: '100-200 palabras resumen general' },
+                main_characters: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string' },
+                      role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting'] },
+                      description: { type: 'string', description: '1-2 líneas: físico + personalidad' }
+                    },
+                    required: ['name', 'role', 'description']
+                  }
+                },
+                main_locations: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string' },
+                      type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT'] },
+                      description: { type: 'string', description: '1-2 líneas' }
+                    },
+                    required: ['name', 'type', 'description']
+                  }
+                },
+                episode_beats: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      episode: { type: 'number' },
+                      title: { type: 'string' },
+                      summary: { type: 'string', description: '2-3 frases de qué pasa' }
+                    },
+                    required: ['episode', 'title', 'summary']
+                  }
+                }
+              },
+              required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'episode_beats']
+            }
+          }
+        ],
+        tool_choice: { type: 'tool', name: 'deliver_outline' },
+        messages: [{ role: 'user', content: userPrompt }]
       })
     });
 
@@ -101,48 +125,39 @@ Responde SOLO el JSON sin explicaciones.`;
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      if (response.status === 402) {
+      if (response.status === 400 && errorText.toLowerCase().includes('credit')) {
         return new Response(
-          JSON.stringify({ error: 'Créditos agotados.' }),
+          JSON.stringify({ error: 'Créditos insuficientes en la cuenta de Claude.' }),
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`Claude API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
 
-    if (!content) {
-      throw new Error('No content received');
-    }
+    // Extract tool use result
+    const toolUse = data.content?.find((c: any) => c.type === 'tool_use' && c.name === 'deliver_outline');
+    let outline = toolUse?.input;
 
-    // Parse JSON - handle markdown code blocks
-    let outline;
-    try {
-      let jsonStr = content;
-      
-      // Remove markdown code blocks if present
-      const codeBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (codeBlockMatch) {
-        jsonStr = codeBlockMatch[1].trim();
-      }
-      
-      // Find JSON object
-      const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (!outline) {
+      // Fallback: try to parse JSON from text
+      const textBlock = data.content?.find((c: any) => c.type === 'text');
+      const content = textBlock?.text ?? '';
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        outline = JSON.parse(jsonMatch[0]);
+        try {
+          outline = JSON.parse(jsonMatch[0]);
+        } catch {
+          throw new Error('No se pudo parsear el outline');
+        }
       } else {
-        throw new Error('No JSON found in response');
+        throw new Error('Claude no devolvió outline');
       }
-    } catch (parseError) {
-      console.error('[OUTLINE PARSE ERROR]', parseError);
-      console.error('[RAW CONTENT]', content.substring(0, 500));
-      throw new Error('Failed to parse outline JSON');
     }
 
-    // Validate and ensure episode_beats
+    // Validate episode_beats
     if (!outline.episode_beats || outline.episode_beats.length === 0) {
       outline.episode_beats = Array.from({ length: episodesCount || 1 }, (_, i) => ({
         episode: i + 1,
@@ -154,19 +169,14 @@ Responde SOLO el JSON sin explicaciones.`;
     console.log('[OUTLINE] Success:', outline.title, '| Characters:', outline.main_characters?.length, '| Episodes:', outline.episode_beats?.length);
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        outline
-      }),
+      JSON.stringify({ success: true, outline }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('[OUTLINE ERROR]', error);
     return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
