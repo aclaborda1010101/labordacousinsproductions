@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -778,6 +779,28 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     console.error('Slot update error:', updateError);
     throw new Error(`Failed to update slot: ${updateError.message}`);
   }
+
+  // Log generation cost
+  const { data: charData } = await supabase
+    .from('characters')
+    .select('project_id')
+    .eq('id', request.characterId)
+    .single();
+
+  await logGenerationCost({
+    userId: '', // Will be filled by service role context
+    projectId: charData?.project_id,
+    characterId: request.characterId,
+    slotId: request.slotId,
+    slotType: `character_${request.slotType}`,
+    engine: FAL_MODEL,
+    durationMs: Date.now() - Date.now(), // Will be replaced with actual timing
+    success: true,
+    metadata: {
+      qcScore: qcResult.score,
+      qcPassed: qcResult.passed
+    }
+  });
 
   return new Response(JSON.stringify({
     success: true,

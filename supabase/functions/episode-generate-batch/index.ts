@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -221,6 +222,23 @@ Usa la herramienta generate_scene_batch para devolver las 5 escenas.`;
 
       const durationMs = Date.now() - startedAt;
       console.log(`[EP${episodeNumber} BATCH${batchIndex}] ✅ Success in ${durationMs}ms`);
+
+      // Log generation cost
+      const userId = extractUserId(req.headers.get('authorization'));
+      if (userId) {
+        await logGenerationCost({
+          userId,
+          slotType: `script_episode_batch`,
+          engine: SCRIPT_MODEL,
+          durationMs,
+          success: true,
+          metadata: {
+            episodeNumber,
+            batchIndex,
+            scenesGenerated: 5
+          }
+        });
+      }
 
       return new Response(
         JSON.stringify({

@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
+import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -187,6 +187,19 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
         }
 
         console.log('[FAL] Location generation complete');
+        
+        // Log generation cost
+        const userId = extractUserId(req.headers.get('authorization'));
+        if (userId) {
+          await logGenerationCost({
+            userId,
+            slotType: 'location_image',
+            engine: FAL_MODEL,
+            durationMs: attempts * 1000,
+            success: true,
+            metadata: { viewAngle, timeOfDay, weather }
+          });
+        }
         
         return new Response(JSON.stringify({ 
           imageUrl,

@@ -499,7 +499,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setAnalyzing(false);
   };
 
-  // Apply Doctor Suggestions
+  // Apply Doctor Suggestions - MERGE with existing script to preserve episodes/scenes
   const applyDoctorSuggestions = async () => {
     if (!generatedScript || doctorSuggestions.length === 0) {
       toast.error('No hay sugerencias para aplicar');
@@ -525,17 +525,47 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (error) throw error;
 
       if (data?.outline) {
-        setGeneratedScript(data.outline);
+        // CRITICAL: Merge the improved outline with existing full screenplay
+        // The rewrite only returns outline-level data, not full episodes with scenes
+        const mergedScript = {
+          ...generatedScript, // Keep all existing data (episodes, scenes, dialogue)
+          // Override only the outline-level improvements
+          title: data.outline.title || generatedScript.title,
+          genre: data.outline.genre || generatedScript.genre,
+          tone: data.outline.tone || generatedScript.tone,
+          themes: data.outline.themes || generatedScript.themes,
+          premise: data.outline.premise || generatedScript.premise,
+          logline: data.outline.logline || generatedScript.logline,
+          synopsis: data.outline.synopsis || generatedScript.synopsis,
+          // Update characters if improved (but keep existing if more detailed)
+          characters: data.outline.main_characters?.length > 0 
+            ? data.outline.main_characters 
+            : generatedScript.characters,
+          // Update locations if improved
+          locations: data.outline.main_locations?.length > 0
+            ? data.outline.main_locations
+            : generatedScript.locations,
+          // Update episode titles/summaries but PRESERVE scenes
+          episodes: generatedScript.episodes?.map((ep: any, idx: number) => ({
+            ...ep, // Keep all existing scene data
+            title: data.outline.episode_beats?.[idx]?.title || ep.title,
+            synopsis: data.outline.episode_beats?.[idx]?.summary || ep.synopsis,
+          })) || generatedScript.episodes,
+          // Keep existing counts (they're based on actual generated content)
+          counts: generatedScript.counts,
+        };
+        
+        setGeneratedScript(mergedScript);
         
         // Save the improved script
         if (currentScriptId) {
           await supabase.from('scripts').update({
-            parsed_json: data.outline,
+            parsed_json: mergedScript,
             updated_at: new Date().toISOString()
           }).eq('id', currentScriptId);
         }
 
-        toast.success('Sugerencias aplicadas correctamente');
+        toast.success('Sugerencias aplicadas - Episodios y escenas preservados');
         setDoctorSuggestions([]);
         setDoctorScore(null);
         setActiveTab('summary');
@@ -1087,6 +1117,22 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </div>
 
+                {/* Time Warning */}
+                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                      <p className="font-medium text-amber-700 dark:text-amber-400">
+                        Tiempo de generación: ~{(lightOutline.episode_beats?.length || episodesCount) * 5} minutos
+                      </p>
+                      <p className="text-muted-foreground text-xs mt-1">
+                        Cada episodio tarda aproximadamente 5 minutos en generarse. 
+                        Puedes navegar a otras secciones mientras se genera - el proceso continuará en segundo plano.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t">
                   <Button 
@@ -1130,6 +1176,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </span>
                 </div>
                 <Progress value={pipelineProgress} className="h-3" />
+                
+                {/* Background Mode Notice */}
+                <div className="p-2 bg-blue-500/10 rounded border border-blue-500/20">
+                  <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                    <Rocket className="w-3 h-3" />
+                    Puedes navegar a otras secciones. La generación continuará en segundo plano.
+                  </p>
+                </div>
                 
                 {/* Completed Episodes */}
                 {generatedEpisodesList.length > 0 && (
