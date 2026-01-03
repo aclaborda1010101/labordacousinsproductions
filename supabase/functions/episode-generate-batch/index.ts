@@ -6,8 +6,36 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
-const SCRIPT_MODEL = "claude-sonnet-4-20250514";
+// ⚠️ MODEL CONFIG - Supports multiple models based on generationModel parameter
+type GenerationModelType = 'rapido' | 'profesional' | 'hollywood';
+
+interface ModelConfig {
+  apiModel: string;
+  provider: 'openai' | 'anthropic';
+  maxTokens: number;
+  temperature: number;
+}
+
+const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
+  rapido: {
+    apiModel: 'gpt-4o-mini',
+    provider: 'openai',
+    maxTokens: 16000,
+    temperature: 0.7
+  },
+  profesional: {
+    apiModel: 'gpt-4o',
+    provider: 'openai',
+    maxTokens: 16000,
+    temperature: 0.75
+  },
+  hollywood: {
+    apiModel: 'claude-sonnet-4-20250514',
+    provider: 'anthropic',
+    maxTokens: 12000,
+    temperature: 0.75
+  }
+};
 
 // MASTER SHOWRUNNER: Narrative mode specific instructions
 const NARRATIVE_MODE_SCENE_RULES = {
@@ -110,10 +138,290 @@ EJEMPLOS CORRECTOS vs INCORRECTOS
 
 NUNCA uses términos genéricos como "normal", "standard", "moves", "lighting". Siempre sé ESPECÍFICO.`;
 
+// Tool schema for structured output
+const getToolSchema = (scenesPerBatch: number) => ({
+  name: "generate_shoot_ready_scenes",
+  description: `Genera exactamente ${scenesPerBatch} escenas SHOOT-READY con especificaciones técnicas COMPLETAS para producción profesional`,
+  parameters: {
+    type: "object",
+    properties: {
+      synopsis: { 
+        type: "string", 
+        description: "Sinopsis del episodio (100-200 palabras)" 
+      },
+      scenes: {
+        type: "array",
+        description: `Exactamente ${scenesPerBatch} escenas con formato SHOOT-READY`,
+        items: {
+          type: "object",
+          properties: {
+            scene_number: { type: "number" },
+            slugline: { type: "string", description: "INT./EXT. LOCALIZACIÓN - DÍA/NOCHE" },
+            summary: { type: "string", description: "Resumen de 50-80 palabras" },
+            duration_seconds: { type: "number", description: "Duración estimada en segundos" },
+            camera_specs: {
+              type: "object",
+              properties: {
+                lens: { type: "string" },
+                aperture: { type: "string" },
+                framing: { type: "string" },
+                movement: { type: "string" },
+                movement_type: { type: "string" },
+                frame_rate: { type: "number" },
+                aspect_ratio: { type: "string" }
+              },
+              required: ["lens", "aperture", "framing", "movement", "movement_type", "frame_rate"]
+            },
+            visual_specifics: {
+              type: "array",
+              items: { type: "string" },
+              minItems: 3,
+              maxItems: 8
+            },
+            action_blocks: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  camera_angle: { type: "string" },
+                  subject: { type: "string" },
+                  action_text: { type: "string" }
+                },
+                required: ["camera_angle", "action_text"]
+              },
+              minItems: 6
+            },
+            sound_specifics: {
+              type: "object",
+              properties: {
+                dialogue_recording_notes: { type: "string" },
+                room_tone: { type: "string" },
+                ambience: { type: "array", items: { type: "string" } },
+                foley: { type: "array", items: { type: "string" } },
+                sfx: { type: "array", items: { type: "string" } },
+                music_cue: { type: "string" },
+                sound_perspective: { type: "string" }
+              },
+              required: ["room_tone", "ambience", "sound_perspective"]
+            },
+            lighting_specs: {
+              type: "object",
+              properties: {
+                setup: { type: "string" },
+                key_light: {
+                  type: "object",
+                  properties: {
+                    position: { type: "string" },
+                    quality: { type: "string" },
+                    intensity: { type: "string" }
+                  },
+                  required: ["position", "quality", "intensity"]
+                },
+                fill_light: {
+                  type: "object",
+                  properties: {
+                    present: { type: "boolean" },
+                    ratio: { type: "string" }
+                  }
+                },
+                rim_light: {
+                  type: "object",
+                  properties: {
+                    present: { type: "boolean" },
+                    position: { type: "string" }
+                  }
+                },
+                practicals: { type: "array", items: { type: "string" } },
+                color_temperature: { type: "string" },
+                mood: { type: "string" }
+              },
+              required: ["setup", "key_light", "color_temperature", "mood"]
+            },
+            dialogue: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  character: { type: "string" },
+                  parenthetical: { type: "string" },
+                  line: { type: "string" },
+                  action_before: { type: "string" },
+                  action_after: { type: "string" }
+                },
+                required: ["character", "line"]
+              }
+            },
+            vfx_notes: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  description: { type: "string" },
+                  timing: { type: "string" },
+                  complexity: { type: "string" }
+                }
+              }
+            },
+            color_grading: {
+              type: "object",
+              properties: {
+                lut_base: { type: "string" },
+                saturation: { type: "string" },
+                contrast: { type: "string" },
+                tone: { type: "string" },
+                notes: { type: "string" }
+              },
+              required: ["saturation", "contrast", "tone"]
+            },
+            transition: {
+              type: "object",
+              properties: {
+                type: { type: "string" },
+                duration: { type: "string" },
+                description: { type: "string" }
+              },
+              required: ["type"]
+            },
+            characters: { type: "array", items: { type: "string" } },
+            conflict: { type: "string" },
+            consequence: { type: "string" },
+            mood: { type: "string" },
+            is_cliffhanger: { type: "boolean" }
+          },
+          required: [
+            "scene_number",
+            "slugline",
+            "camera_specs",
+            "visual_specifics",
+            "action_blocks",
+            "sound_specifics",
+            "lighting_specs",
+            "color_grading",
+            "transition",
+            "characters",
+            "dialogue",
+            "conflict",
+            "mood"
+          ]
+        }
+      }
+    },
+    required: ["scenes"]
+  }
+});
+
+// Call OpenAI API
+async function callOpenAI(
+  apiKey: string,
+  modelConfig: ModelConfig,
+  systemPrompt: string,
+  userPrompt: string,
+  toolSchema: any,
+  signal: AbortSignal
+): Promise<any> {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: modelConfig.apiModel,
+      max_tokens: modelConfig.maxTokens,
+      temperature: modelConfig.temperature,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      tools: [{
+        type: "function",
+        function: toolSchema
+      }],
+      tool_choice: { type: "function", function: { name: toolSchema.name } }
+    }),
+    signal
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`OpenAI API Error:`, response.status, errorText);
+    throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
+  
+  if (!toolCall?.function?.arguments) {
+    throw new Error("No tool call in OpenAI response");
+  }
+
+  return JSON.parse(toolCall.function.arguments);
+}
+
+// Call Anthropic API
+async function callAnthropic(
+  apiKey: string,
+  modelConfig: ModelConfig,
+  systemPrompt: string,
+  userPrompt: string,
+  toolSchema: any,
+  signal: AbortSignal
+): Promise<any> {
+  // Convert OpenAI tool schema to Anthropic format
+  const anthropicTool = {
+    name: toolSchema.name,
+    description: toolSchema.description,
+    input_schema: toolSchema.parameters
+  };
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: modelConfig.apiModel,
+      max_tokens: modelConfig.maxTokens,
+      temperature: modelConfig.temperature,
+      system: systemPrompt,
+      tools: [anthropicTool],
+      tool_choice: { type: "tool", name: toolSchema.name },
+      messages: [{ role: "user", content: userPrompt }],
+    }),
+    signal
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Anthropic API Error:`, response.status, errorText);
+    
+    if (response.status === 429) {
+      throw { status: 429, message: "Rate limit alcanzado", retryable: true };
+    }
+    if (response.status === 400 && errorText.toLowerCase().includes("credit")) {
+      throw { status: 402, message: "Créditos insuficientes en Claude" };
+    }
+    
+    throw new Error(`Anthropic API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const toolUse = data?.content?.find(
+    (b: any) => b?.type === "tool_use" && b?.name === toolSchema.name
+  );
+
+  if (!toolUse?.input) {
+    throw new Error("No tool_use in Anthropic response");
+  }
+
+  return toolUse.input;
+}
+
 /**
  * Genera UN SOLO batch de escenas con formato SHOOT-READY.
- * Soporta configuración dinámica: scenesPerBatch, totalBatches, isLastBatch
- * Por defecto: 5 escenas por batch si no se especifica.
+ * Soporta múltiples modelos: GPT-4o-mini (rápido), GPT-4o (profesional), Claude (hollywood)
  */
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -132,11 +440,18 @@ serve(async (req) => {
       batchIndex, 
       previousScenes, 
       narrativeMode,
-      // Dynamic batch config (optional, defaults to 5 scenes per batch)
       scenesPerBatch = 5,
       totalBatches = 5,
-      isLastBatch: isLastBatchParam
+      isLastBatch: isLastBatchParam,
+    // NEW: Generation model selection
+      generationModel: rawGenerationModel = 'hollywood'
     } = await req.json();
+
+    // Validate generation model
+    const validModels: GenerationModelType[] = ['rapido', 'profesional', 'hollywood'];
+    const generationModel: GenerationModelType = validModels.includes(rawGenerationModel) 
+      ? rawGenerationModel 
+      : 'hollywood';
 
     if (!outline || !episodeNumber || typeof batchIndex !== "number") {
       clearTimeout(timeoutId);
@@ -155,8 +470,18 @@ serve(async (req) => {
       );
     }
 
-    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY no configurada");
+    // Get model configuration
+    const modelConfig = MODEL_CONFIGS[generationModel] || MODEL_CONFIGS.hollywood;
+    console.log(`[EP${episodeNumber} BATCH${batchIndex}] Using model: ${modelConfig.apiModel} (${generationModel})`);
+
+    // Get API key based on provider
+    const apiKey = modelConfig.provider === 'openai' 
+      ? Deno.env.get("OPENAI_API_KEY")
+      : Deno.env.get("ANTHROPIC_API_KEY");
+      
+    if (!apiKey) {
+      throw new Error(`${modelConfig.provider === 'openai' ? 'OPENAI_API_KEY' : 'ANTHROPIC_API_KEY'} no configurada`);
+    }
 
     // Calculate scene range for this batch using dynamic config
     const SCENES_PER_BATCH = Math.max(1, Math.min(10, scenesPerBatch)); // Clamp 1-10
@@ -164,7 +489,7 @@ serve(async (req) => {
     const sceneEnd = sceneStart + SCENES_PER_BATCH - 1;
     const isLastBatch = isLastBatchParam ?? (batchIndex === totalBatches - 1);
 
-    console.log(`[EP${episodeNumber} BATCH${batchIndex}] Generating SHOOT-READY scenes ${sceneStart}-${sceneEnd} (${SCENES_PER_BATCH} scenes) | Mode: ${narrativeMode || 'serie_adictiva'}...`);
+    console.log(`[EP${episodeNumber} BATCH${batchIndex}] Generating SHOOT-READY scenes ${sceneStart}-${sceneEnd} (${SCENES_PER_BATCH} scenes) | Mode: ${narrativeMode || 'serie_adictiva'} | Model: ${generationModel}...`);
 
     const charactersRef = outline.main_characters
       ?.map((c: any) => `- ${c.name} (${c.role || "personaje"}): ${c.description || ""} ${c.secret ? `[SECRETO: ${c.secret}]` : ''}`)
@@ -221,380 +546,44 @@ IDIOMA: ${language || "es-ES"}
 
 Usa la herramienta generate_shoot_ready_scenes para devolver las ${SCENES_PER_BATCH} escenas con formato profesional.`;
 
-    // SHOOT-READY TOOL SCHEMA
-    const tools = [
-      {
-        name: "generate_shoot_ready_scenes",
-        description: `Genera exactamente ${SCENES_PER_BATCH} escenas SHOOT-READY con especificaciones técnicas COMPLETAS para producción profesional`,
-        input_schema: {
-          type: "object",
-          properties: {
-            synopsis: { 
-              type: "string", 
-              description: "Sinopsis del episodio (100-200 palabras)" 
-            },
-            scenes: {
-              type: "array",
-              description: `Exactamente ${SCENES_PER_BATCH} escenas con formato SHOOT-READY`,
-              minItems: SCENES_PER_BATCH,
-              maxItems: SCENES_PER_BATCH,
-              items: {
-                type: "object",
-                properties: {
-                  scene_number: { type: "number" },
-                  slugline: { type: "string", description: "INT./EXT. LOCALIZACIÓN - DÍA/NOCHE" },
-                  summary: { type: "string", description: "Resumen de 50-80 palabras" },
-                  duration_seconds: { type: "number", description: "Duración estimada en segundos" },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // CAMERA SPECIFICATIONS (REQUIRED)
-                  // ═══════════════════════════════════════════════════
-                  camera_specs: {
-                    type: "object",
-                    description: "Especificaciones técnicas completas de cámara",
-                    properties: {
-                      lens: {
-                        type: "string",
-                        description: "Lente específico",
-                        enum: ["14mm ultra-wide", "24mm wide", "35mm wide-standard", "50mm standard", "85mm portrait", "100mm macro", "135mm telephoto", "200mm telephoto"]
-                      },
-                      aperture: {
-                        type: "string",
-                        description: "Apertura f-stop",
-                        enum: ["f/1.4", "f/1.8", "f/2.0", "f/2.8", "f/4", "f/5.6", "f/8", "f/11"]
-                      },
-                      framing: {
-                        type: "string",
-                        description: "Tipo de encuadre",
-                        enum: ["ELS (Extreme Long Shot)", "LS (Long Shot)", "MLS (Medium Long Shot)", "MS (Medium Shot)", "MCU (Medium Close-Up)", "CU (Close-Up)", "ECU (Extreme Close-Up)", "OTS (Over The Shoulder)", "POV (Point of View)", "TWO-SHOT", "INSERT"]
-                      },
-                      movement: {
-                        type: "string",
-                        description: "Descripción específica del movimiento de cámara (ej: 'Dolly in 6 inches over 3 seconds')"
-                      },
-                      movement_type: {
-                        type: "string",
-                        enum: ["static", "dolly in", "dolly out", "dolly left/right", "crane up", "crane down", "pan left", "pan right", "tilt up", "tilt down", "handheld", "steadicam", "drone", "tracking shot", "whip pan", "zoom in", "zoom out"]
-                      },
-                      frame_rate: {
-                        type: "number",
-                        description: "Frames por segundo",
-                        enum: [24, 30, 60, 120]
-                      },
-                      aspect_ratio: {
-                        type: "string",
-                        enum: ["2.39:1", "16:9", "4:3", "1:1"]
-                      }
-                    },
-                    required: ["lens", "aperture", "framing", "movement", "movement_type", "frame_rate"]
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // VISUAL SPECIFICS (REQUIRED)
-                  // ═══════════════════════════════════════════════════
-                  visual_specifics: {
-                    type: "array",
-                    description: "Elementos visuales específicos ejecutables (mínimo 3, máximo 8). NO emociones abstractas.",
-                    items: { type: "string" },
-                    minItems: 3,
-                    maxItems: 8
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // ACTION BLOCKS (REQUIRED)
-                  // ═══════════════════════════════════════════════════
-                  action_blocks: {
-                    type: "array",
-                    description: "Bloques de acción con ángulos de cámara específicos (mínimo 6)",
-                    items: {
-                      type: "object",
-                      properties: {
-                        camera_angle: {
-                          type: "string",
-                          description: "Ángulo de cámara para este beat",
-                          enum: ["WIDE", "MEDIUM", "CLOSE ON", "EXTREME CLOSE-UP", "OVER SHOULDER", "POV", "TWO-SHOT", "INSERT", "TRACKING SHOT", "CRANE SHOT", "ESTABLISHING SHOT", "AERIAL SHOT"]
-                        },
-                        subject: {
-                          type: "string",
-                          description: "Sujeto del encuadre"
-                        },
-                        action_text: {
-                          type: "string",
-                          description: "Descripción de la acción (máx 4 líneas, un beat visual)"
-                        }
-                      },
-                      required: ["camera_angle", "action_text"]
-                    },
-                    minItems: 6
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // SOUND DESIGN (REQUIRED)
-                  // ═══════════════════════════════════════════════════
-                  sound_specifics: {
-                    type: "object",
-                    description: "Especificaciones detalladas de diseño de sonido",
-                    properties: {
-                      dialogue_recording_notes: {
-                        type: "string",
-                        description: "Notas para grabación de diálogo (ADR, reverb, etc.)"
-                      },
-                      room_tone: {
-                        type: "string",
-                        description: "Room tone / ambiente base del espacio"
-                      },
-                      ambience: {
-                        type: "array",
-                        description: "Capas de ambiente (mínimo 2)",
-                        items: { type: "string" },
-                        minItems: 2
-                      },
-                      foley: {
-                        type: "array",
-                        description: "Sonidos foley específicos necesarios",
-                        items: { type: "string" }
-                      },
-                      sfx: {
-                        type: "array",
-                        description: "Efectos de sonido específicos",
-                        items: { type: "string" }
-                      },
-                      music_cue: {
-                        type: "string",
-                        description: "Descripción de música si aplica"
-                      },
-                      sound_perspective: {
-                        type: "string",
-                        description: "Perspectiva sonora",
-                        enum: ["close", "medium", "distant", "POV"]
-                      }
-                    },
-                    required: ["room_tone", "ambience", "sound_perspective"]
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // LIGHTING (REQUIRED)
-                  // ═══════════════════════════════════════════════════
-                  lighting_specs: {
-                    type: "object",
-                    description: "Especificaciones completas de iluminación",
-                    properties: {
-                      setup: {
-                        type: "string",
-                        enum: ["natural", "three-point", "high-key", "low-key", "silhouette", "practical only", "mixed", "custom"]
-                      },
-                      key_light: {
-                        type: "object",
-                        properties: {
-                          position: {
-                            type: "string",
-                            enum: ["45° left", "45° right", "90° left", "90° right", "overhead", "below (uplighting)", "Rembrandt", "Butterfly", "Split"]
-                          },
-                          quality: {
-                            type: "string",
-                            enum: ["soft", "hard", "diffused", "direct"]
-                          },
-                          intensity: {
-                            type: "string",
-                            enum: ["low", "medium", "high"]
-                          }
-                        },
-                        required: ["position", "quality", "intensity"]
-                      },
-                      fill_light: {
-                        type: "object",
-                        properties: {
-                          present: { type: "boolean" },
-                          ratio: { type: "string", description: "Ratio de fill (ej: '1:2', '1:4')" }
-                        }
-                      },
-                      rim_light: {
-                        type: "object",
-                        properties: {
-                          present: { type: "boolean" },
-                          position: { type: "string", enum: ["back left", "back right", "directly behind", "none"] }
-                        }
-                      },
-                      practicals: {
-                        type: "array",
-                        description: "Luces prácticas en escena",
-                        items: { type: "string" }
-                      },
-                      color_temperature: {
-                        type: "string",
-                        enum: ["2700K (warm tungsten)", "3200K (tungsten)", "4000K (cool white)", "5600K (daylight)", "6500K (overcast)", "7000K+ (cool blue)"]
-                      },
-                      mood: {
-                        type: "string",
-                        description: "Descripción del mood de iluminación (mínimo 15 palabras)"
-                      }
-                    },
-                    required: ["setup", "key_light", "color_temperature", "mood"]
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // DIALOGUE
-                  // ═══════════════════════════════════════════════════
-                  dialogue: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        character: { type: "string" },
-                        parenthetical: { type: "string" },
-                        line: { type: "string" },
-                        action_before: { type: "string", description: "Beat de acción antes del diálogo" },
-                        action_after: { type: "string", description: "Beat de acción después del diálogo" }
-                      },
-                      required: ["character", "line"]
-                    }
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // VFX NOTES
-                  // ═══════════════════════════════════════════════════
-                  vfx_notes: {
-                    type: "array",
-                    description: "Requerimientos VFX con timing",
-                    items: {
-                      type: "object",
-                      properties: {
-                        description: { type: "string" },
-                        timing: { type: "string" },
-                        complexity: { type: "string", enum: ["simple", "medium", "complex"] }
-                      }
-                    }
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // COLOR GRADING
-                  // ═══════════════════════════════════════════════════
-                  color_grading: {
-                    type: "object",
-                    properties: {
-                      lut_base: { type: "string", description: "LUT base o estilo de color" },
-                      saturation: { type: "string", enum: ["desaturated", "normal", "saturated", "hyper-saturated"] },
-                      contrast: { type: "string", enum: ["low", "normal", "high"] },
-                      tone: { type: "string", description: "Tono de color específico (ej: 'cool blue teal shadows')" },
-                      notes: { type: "string", description: "Notas específicas de color grading" }
-                    },
-                    required: ["saturation", "contrast", "tone"]
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // TRANSITION
-                  // ═══════════════════════════════════════════════════
-                  transition: {
-                    type: "object",
-                    properties: {
-                      type: {
-                        type: "string",
-                        enum: ["CUT TO", "HARD CUT", "SMASH CUT", "MATCH CUT", "JUMP CUT", "CROSS DISSOLVE", "FADE TO BLACK", "FADE FROM BLACK", "FADE TO WHITE", "WIPE", "IRIS IN/OUT"]
-                      },
-                      duration: { type: "string", description: "Duración de transición (ej: '0.5s', '2s')" },
-                      description: { type: "string", description: "Notas específicas de transición" }
-                    },
-                    required: ["type"]
-                  },
-                  
-                  // ═══════════════════════════════════════════════════
-                  // NARRATIVE FIELDS
-                  // ═══════════════════════════════════════════════════
-                  characters: { type: "array", items: { type: "string" } },
-                  conflict: { type: "string", description: "Conflicto central de la escena" },
-                  consequence: { type: "string", description: "Qué cambia después de esta escena" },
-                  mood: { type: "string" },
-                  is_cliffhanger: { type: "boolean", description: "True si es el cliffhanger del episodio" }
-                },
-                required: [
-                  "scene_number",
-                  "slugline",
-                  "camera_specs",
-                  "visual_specifics",
-                  "action_blocks",
-                  "sound_specifics",
-                  "lighting_specs",
-                  "color_grading",
-                  "transition",
-                  "characters",
-                  "dialogue",
-                  "conflict",
-                  "mood"
-                ]
-              }
-            }
-          },
-          required: ["scenes"]
-        }
-      }
-    ];
+    // Get tool schema
+    const toolSchema = getToolSchema(SCENES_PER_BATCH);
 
     // Try up to 2 attempts
     let lastError: string | null = null;
     for (let attempt = 1; attempt <= 2; attempt++) {
-      const temperature = attempt === 1 ? 0.75 : 0.6;
+      // Adjust temperature for retries
+      const attemptConfig = { 
+        ...modelConfig, 
+        temperature: attempt === 1 ? modelConfig.temperature : modelConfig.temperature - 0.15 
+      };
 
       try {
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "x-api-key": ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            model: SCRIPT_MODEL,
-            max_tokens: 12000, // Increased for SHOOT-READY format
-            temperature,
-            system: SHOOT_READY_SYSTEM_PROMPT,
-            tools,
-            tool_choice: { type: "tool", name: "generate_shoot_ready_scenes" },
-            messages: [{ role: "user", content: userPrompt }],
-          }),
-          signal: controller.signal
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`[EP${episodeNumber} BATCH${batchIndex}] API Error:`, response.status, errorText);
-
-          if (response.status === 429) {
-            clearTimeout(timeoutId);
-            return new Response(
-              JSON.stringify({ error: "Rate limit alcanzado. Espera un momento.", retryable: true }),
-              { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-
-          if (response.status === 400 && errorText.toLowerCase().includes("credit")) {
-            clearTimeout(timeoutId);
-            return new Response(
-              JSON.stringify({ error: "Créditos insuficientes en Claude." }),
-              { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-
-          lastError = `Claude API error: ${response.status}`;
-          continue;
+        let result: any;
+        
+        if (modelConfig.provider === 'openai') {
+          result = await callOpenAI(
+            apiKey,
+            attemptConfig,
+            SHOOT_READY_SYSTEM_PROMPT,
+            userPrompt,
+            toolSchema,
+            controller.signal
+          );
+        } else {
+          result = await callAnthropic(
+            apiKey,
+            attemptConfig,
+            SHOOT_READY_SYSTEM_PROMPT,
+            userPrompt,
+            toolSchema,
+            controller.signal
+          );
         }
 
-        const data = await response.json();
-        const toolUse = data?.content?.find(
-          (b: any) => b?.type === "tool_use" && b?.name === "generate_shoot_ready_scenes"
-        );
-
-        if (!toolUse?.input?.scenes) {
-          console.error(`[EP${episodeNumber} BATCH${batchIndex}] No tool_use.scenes`, {
-            stop_reason: data?.stop_reason,
-            content_types: data?.content?.map((b: any) => b.type),
-          });
-          lastError = "No scenes in tool_use response";
-          continue;
-        }
-
-        const scenes = toolUse.input.scenes;
+        const scenes = result?.scenes;
         if (!Array.isArray(scenes) || scenes.length !== SCENES_PER_BATCH) {
-          console.error(`[EP${episodeNumber} BATCH${batchIndex}] Invalid scenes count:`, scenes.length, `expected ${SCENES_PER_BATCH}`);
+          console.error(`[EP${episodeNumber} BATCH${batchIndex}] Invalid scenes count:`, scenes?.length, `expected ${SCENES_PER_BATCH}`);
           lastError = `Expected ${SCENES_PER_BATCH} scenes, got ${scenes?.length || 0}`;
           continue;
         }
@@ -617,7 +606,7 @@ Usa la herramienta generate_shoot_ready_scenes para devolver las ${SCENES_PER_BA
 
         clearTimeout(timeoutId);
         const durationMs = Date.now() - startedAt;
-        console.log(`[EP${episodeNumber} BATCH${batchIndex}] ✅ SHOOT-READY Success in ${durationMs}ms | Mode: ${narrativeMode || 'serie_adictiva'}`);
+        console.log(`[EP${episodeNumber} BATCH${batchIndex}] ✅ SHOOT-READY Success in ${durationMs}ms | Model: ${generationModel} | Provider: ${modelConfig.provider}`);
 
         // Log generation cost
         const userId = extractUserId(req.headers.get('authorization'));
@@ -625,15 +614,17 @@ Usa la herramienta generate_shoot_ready_scenes para devolver las ${SCENES_PER_BA
           await logGenerationCost({
             userId,
             slotType: `script_episode_batch_shoot_ready`,
-            engine: SCRIPT_MODEL,
+            engine: modelConfig.apiModel,
             durationMs,
             success: true,
             metadata: {
               episodeNumber,
               batchIndex,
-              scenesGenerated: 5,
+              scenesGenerated: SCENES_PER_BATCH,
               narrativeMode: narrativeMode || 'serie_adictiva',
-              format: 'shoot-ready'
+              format: 'shoot-ready',
+              generationModel,
+              provider: modelConfig.provider
             }
           });
         }
@@ -644,20 +635,37 @@ Usa la herramienta generate_shoot_ready_scenes para devolver las ${SCENES_PER_BA
             batchIndex,
             sceneStart,
             sceneEnd,
-            synopsis: toolUse.input.synopsis || null,
+            synopsis: result.synopsis || null,
             scenes,
             durationMs,
             narrativeMode: narrativeMode || 'serie_adictiva',
-            format: 'shoot-ready'
+            format: 'shoot-ready',
+            model: modelConfig.apiModel,
+            provider: modelConfig.provider
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
-      } catch (fetchError) {
+      } catch (fetchError: any) {
+        if (fetchError?.status === 429) {
+          clearTimeout(timeoutId);
+          return new Response(
+            JSON.stringify({ error: "Rate limit alcanzado. Espera un momento.", retryable: true }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        if (fetchError?.status === 402) {
+          clearTimeout(timeoutId);
+          return new Response(
+            JSON.stringify({ error: fetchError.message }),
+            { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
         if (fetchError instanceof Error && fetchError.name === 'AbortError') {
           lastError = "Request timeout (150s)";
           console.error(`[EP${episodeNumber} BATCH${batchIndex}] Timeout after 150s`);
         } else {
-          throw fetchError;
+          lastError = fetchError?.message || "Unknown error";
+          console.error(`[EP${episodeNumber} BATCH${batchIndex}] Error:`, fetchError);
         }
       }
     }

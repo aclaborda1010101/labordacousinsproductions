@@ -59,7 +59,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig } from '@/lib/autoTargets';
+import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, GenerationModel, GENERATION_MODELS } from '@/lib/autoTargets';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import {
   estimateEpisodeMs,
@@ -108,6 +108,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // MASTER SHOWRUNNER: Narrative mode
   const [narrativeMode, setNarrativeMode] = useState<'serie_adictiva' | 'voz_de_autor' | 'giro_imprevisible'>('serie_adictiva');
+  
+  // Generation model selection (speed vs quality)
+  const [generationModel, setGenerationModel] = useState<GenerationModel>('profesional');
 
   // Auto/Pro mode
   const [proMode, setProMode] = useState(false);
@@ -472,15 +475,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       startedAt: Date.now()
     });
 
-    // Calculate dynamic batch configuration based on complexity AND episode duration
-    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin);
+    // Calculate dynamic batch configuration based on complexity, episode duration, AND generation model
+    const modelConfig = GENERATION_MODELS[generationModel];
+    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, generationModel);
     setBatchConfig(dynamicBatchConfig);
     
     const BATCHES_PER_EPISODE = dynamicBatchConfig.batchesPerEpisode;
     const SCENES_PER_BATCH = dynamicBatchConfig.scenesPerBatch;
     const DELAY_BETWEEN_BATCHES = dynamicBatchConfig.delayBetweenBatchesMs;
+    const DELAY_BETWEEN_EPISODES = modelConfig.delayBetweenEpisodesMs;
     
-    console.log(`[DYNAMIC BATCHES] Complexity: ${complexity} | Config: ${BATCHES_PER_EPISODE} batches × ${SCENES_PER_BATCH} scenes = ${dynamicBatchConfig.estimatedScenesTotal} scenes/episode | Delay: ${DELAY_BETWEEN_BATCHES}ms`);
+    console.log(`[DYNAMIC BATCHES] Model: ${generationModel} | Complexity: ${complexity} | Config: ${BATCHES_PER_EPISODE} batches × ${SCENES_PER_BATCH} scenes = ${dynamicBatchConfig.estimatedScenesTotal} scenes/episode | Batch delay: ${DELAY_BETWEEN_BATCHES}ms | Episode delay: ${DELAY_BETWEEN_EPISODES}ms`);
     
     const totalBatches = totalEpisodes * BATCHES_PER_EPISODE;
     let completedBatches = 0;
@@ -502,21 +507,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         let synopsisFromClaude: string | null = null;
         let episodeError: string | null = null;
 
-        // CRITICAL: Add delay BEFORE starting episode to respect Anthropic rate limits
-        // Rate limit is 8,000 output tokens/minute, each batch uses ~4,000-6,000 tokens
+        // Add delay BEFORE starting episode based on model's rate limits
         if (epNum > 1) {
-          // Wait extra 30s between episodes to let rate limit window reset
-          const DELAY_BETWEEN_EPISODES = 30000;
-          console.log(`[RATE LIMIT] Waiting ${DELAY_BETWEEN_EPISODES}ms before Episode ${epNum}...`);
+          console.log(`[${generationModel.toUpperCase()}] Waiting ${DELAY_BETWEEN_EPISODES}ms before Episode ${epNum}...`);
           await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_EPISODES));
         }
 
         for (let batchIdx = 0; batchIdx < BATCHES_PER_EPISODE; batchIdx++) {
           if (controller.signal.aborted) break;
 
-          // Add delay between ALL batches (including first) to avoid rate limits (429)
-          if (batchIdx > 0 || epNum > 1) {
-            console.log(`[RATE LIMIT] Waiting ${DELAY_BETWEEN_BATCHES}ms before batch ${batchIdx + 1}...`);
+          // Add delay between batches based on model's rate limits
+          if (batchIdx > 0) {
+            console.log(`[${generationModel.toUpperCase()}] Waiting ${DELAY_BETWEEN_BATCHES}ms before batch ${batchIdx + 1}...`);
             await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
           }
 
@@ -539,10 +541,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   batchIndex: batchIdx,
                   previousScenes: allScenes,
                   narrativeMode,
-                  // NEW: Dynamic batch config
+                  // Dynamic batch config
                   scenesPerBatch: SCENES_PER_BATCH,
                   totalBatches: BATCHES_PER_EPISODE,
-                  isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1
+                  isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1,
+                  // Model selection for speed/quality
+                  generationModel
                 }
               });
 
@@ -1944,6 +1948,39 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     {narrativeMode === 'giro_imprevisible' && 'Giros estructurales, narradores no fiables, recontextualizaciones (Mr. Robot, Dark).'}
                   </p>
                 </div>
+                
+                {/* Generation Model Selector */}
+                <div className="space-y-2 pt-4 border-t">
+                  <Label className="flex items-center gap-2">
+                    <Rocket className="w-4 h-4 text-primary" />
+                    Velocidad de Generación
+                  </Label>
+                  <Select value={generationModel} onValueChange={(v: GenerationModel) => setGenerationModel(v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="rapido">
+                        {GENERATION_MODELS.rapido.displayName}
+                      </SelectItem>
+                      <SelectItem value="profesional">
+                        {GENERATION_MODELS.profesional.displayName}
+                      </SelectItem>
+                      <SelectItem value="hollywood">
+                        {GENERATION_MODELS.hollywood.displayName}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    {GENERATION_MODELS[generationModel].description}
+                  </p>
+                  <div className="flex gap-2 flex-wrap mt-1">
+                    <Badge variant="outline" className="text-xs">
+                      ~{GENERATION_MODELS[generationModel].estimatedTimePerEpisodeMin} min/ep
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      ~${GENERATION_MODELS[generationModel].costPerEpisodeUsd.toFixed(3)}/ep
+                    </Badge>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -2002,12 +2039,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     
                     {/* Dynamic Batch Configuration Preview */}
                     {(() => {
-                      const batchPreview = calculateDynamicBatches(targets, complexity, undefined, episodeDurationMin);
+                      const batchPreview = calculateDynamicBatches(targets, complexity, undefined, episodeDurationMin, generationModel);
+                      const modelCfg = GENERATION_MODELS[generationModel];
+                      const totalTimeMin = episodesCount * modelCfg.estimatedTimePerEpisodeMin;
+                      const totalCost = episodesCount * modelCfg.costPerEpisodeUsd;
                       return (
                         <div className="col-span-2 pt-2 border-t mt-2">
                           <Label className="text-xs text-muted-foreground flex items-center gap-1">
                             <Settings2 className="w-3 h-3" />
-                            Configuración Dinámica de Batches
+                            Estimación con {modelCfg.displayName}
                           </Label>
                           <div className="flex flex-wrap gap-2 mt-1">
                             <Badge variant="outline" className="text-xs">
@@ -2019,13 +2059,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                             <Badge variant="outline" className="text-xs bg-primary/10">
                               ~{batchPreview.estimatedScenesTotal} escenas/episodio
                             </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              {batchPreview.delayBetweenBatchesMs}ms delay
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            <Badge variant="secondary" className="text-xs">
+                              ⏱️ ~{totalTimeMin < 60 ? `${totalTimeMin.toFixed(0)} min` : `${(totalTimeMin / 60).toFixed(1)} hrs`} total
+                            </Badge>
+                            <Badge variant="secondary" className="text-xs">
+                              💰 ~${totalCost.toFixed(2)} total
                             </Badge>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Ajustado automáticamente según complejidad para optimizar tokens y evitar timeouts.
-                          </p>
                         </div>
                       );
                     })()}
