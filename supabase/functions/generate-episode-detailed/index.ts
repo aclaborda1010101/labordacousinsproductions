@@ -5,39 +5,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const EPISODE_SYSTEM_PROMPT = `Eres un guionista profesional. Escribe el guión COMPLETO de un episodio.
-
-Responde SOLO JSON válido con esta estructura EXACTA:
-{
-  "episode_number": number,
-  "title": "string",
-  "synopsis": "string (150-300 palabras)",
-  "scenes": [
-    {
-      "scene_number": number,
-      "slugline": "INT./EXT. LOCALIZACIÓN - DÍA/NOCHE",
-      "description": "string (100-200 palabras de acción visual)",
-      "characters": ["NOMBRE1", "NOMBRE2"],
-      "dialogue": [
-        {
-          "character": "NOMBRE",
-          "parenthetical": "(opcional)",
-          "line": "Diálogo completo"
-        }
-      ],
-      "mood": "string",
-      "duration_estimate_sec": number
-    }
-  ],
-  "total_duration_min": number
-}
-
-CRÍTICO:
-- MÍNIMO 15 escenas
-- Cada escena con diálogo debe tener MÍNIMO 6 intercambios
-- NO omitas escenas
-- NO uses "FADE IN/FADE OUT" genéricos`;
-
 function generateScreenplayText(episode: any): string {
   let text = `EPISODIO ${episode.episode_number}: ${episode.title?.toUpperCase() || 'SIN TÍTULO'}\n\n`;
   text += `${episode.synopsis || ''}\n\n`;
@@ -53,15 +20,12 @@ function generateScreenplayText(episode: any): string {
     if (scene.dialogue && scene.dialogue.length > 0) {
       for (const line of scene.dialogue) {
         text += `                    ${line.character || 'PERSONAJE'}\n`;
-        
         if (line.parenthetical) {
           text += `              ${line.parenthetical}\n`;
         }
-        
         text += `          ${line.line || ''}\n\n`;
       }
     }
-
     text += '\n';
   }
 
@@ -93,9 +57,9 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY no configurada');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY no configurada');
     }
 
     const charactersRef = outline.main_characters?.map((c: any) => 
@@ -105,6 +69,16 @@ serve(async (req) => {
     const locationsRef = outline.main_locations?.map((l: any) => 
       `- ${l.name} (${l.type}): ${l.description}`
     ).join('\n') || '';
+
+    const systemPrompt = `Eres un guionista profesional. Escribe el guión COMPLETO de un episodio.
+Responde SIEMPRE usando la herramienta deliver_episode.
+Idioma: ${language || 'es-ES'}
+
+CRÍTICO:
+- MÍNIMO 15 escenas
+- Cada escena con diálogo: MÍNIMO 6 intercambios
+- NO omitas escenas
+- Acción cinematográfica detallada`;
 
     const userPrompt = `Escribe el guión COMPLETO del episodio:
 
@@ -118,39 +92,72 @@ ${charactersRef}
 LOCALIZACIONES DISPONIBLES:
 ${locationsRef}
 
-IDIOMA: ${language || 'es-ES'}
-
-CONSTRAINTS OBLIGATORIOS:
-- MÍNIMO 15 escenas
-- Cada escena con diálogo: MÍNIMO 6 intercambios
-- USA los personajes del outline
-- USA las localizaciones del outline
-- Acción cinematográfica (100-200 palabras por escena)
-- Conflicto en CADA escena
-
 ESTRUCTURA:
 - Acto 1 (escenas 1-5): Setup
 - Acto 2 (escenas 6-12): Complicaciones
 - Acto 3 (escenas 13-15): Resolución
 
-Responde SOLO el JSON completo.`;
+Usa la herramienta deliver_episode para entregar el resultado.`;
 
-    console.log(`[EPISODE ${episodeNumber}] Generating with Gemini Pro...`);
+    console.log(`[EPISODE ${episodeNumber}] Generating with Claude...`);
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
-        messages: [
-          { role: 'system', content: EPISODE_SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt }
-        ],
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
         temperature: 0.8,
-        max_tokens: 10000
+        system: systemPrompt,
+        tools: [
+          {
+            name: 'deliver_episode',
+            description: 'Entrega el episodio completo con escenas.',
+            input_schema: {
+              type: 'object',
+              properties: {
+                episode_number: { type: 'number' },
+                title: { type: 'string' },
+                synopsis: { type: 'string', description: '150-300 palabras' },
+                scenes: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      scene_number: { type: 'number' },
+                      slugline: { type: 'string', description: 'INT./EXT. LOCALIZACIÓN - DÍA/NOCHE' },
+                      description: { type: 'string', description: '100-200 palabras de acción visual' },
+                      characters: { type: 'array', items: { type: 'string' } },
+                      dialogue: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            character: { type: 'string' },
+                            parenthetical: { type: 'string' },
+                            line: { type: 'string' }
+                          },
+                          required: ['character', 'line']
+                        }
+                      },
+                      mood: { type: 'string' },
+                      duration_estimate_sec: { type: 'number' }
+                    },
+                    required: ['scene_number', 'slugline', 'description', 'characters', 'dialogue', 'mood']
+                  }
+                },
+                total_duration_min: { type: 'number' }
+              },
+              required: ['episode_number', 'title', 'synopsis', 'scenes']
+            }
+          }
+        ],
+        tool_choice: { type: 'tool', name: 'deliver_episode' },
+        messages: [{ role: 'user', content: userPrompt }]
       })
     });
 
@@ -164,50 +171,41 @@ Responde SOLO el JSON completo.`;
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      if (response.status === 402) {
+      if (response.status === 400 && errorText.toLowerCase().includes('credit')) {
         return new Response(
-          JSON.stringify({ error: 'Créditos agotados.' }),
+          JSON.stringify({ error: 'Créditos insuficientes en la cuenta de Claude.' }),
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`Claude API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
 
-    if (!content) {
-      throw new Error('No content received');
-    }
+    // Extract tool use result
+    const toolUse = data.content?.find((c: any) => c.type === 'tool_use' && c.name === 'deliver_episode');
+    let episode = toolUse?.input;
 
-    // Parse JSON - handle markdown code blocks
-    let episode;
-    try {
-      let jsonStr = content;
-      
-      // Remove markdown code blocks if present
-      const codeBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (codeBlockMatch) {
-        jsonStr = codeBlockMatch[1].trim();
-      }
-      
-      // Find JSON object
-      const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (!episode) {
+      // Fallback: try to parse JSON from text
+      const textBlock = data.content?.find((c: any) => c.type === 'text');
+      const content = textBlock?.text ?? '';
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        episode = JSON.parse(jsonMatch[0]);
+        try {
+          episode = JSON.parse(jsonMatch[0]);
+        } catch {
+          throw new Error('No se pudo parsear el episodio');
+        }
       } else {
-        throw new Error('No JSON found in response');
+        throw new Error('Claude no devolvió episodio');
       }
-    } catch (parseError) {
-      console.error(`[EPISODE ${episodeNumber} PARSE ERROR]`, parseError);
-      console.error('[RAW CONTENT]', content.substring(0, 1000));
-      throw new Error('Failed to parse episode JSON');
     }
 
     // Validate scenes
     if (!episode.scenes || episode.scenes.length === 0) {
-      throw new Error('Episode has no scenes');
+      throw new Error('El episodio no tiene escenas');
     }
 
     if (episode.scenes.length < 10) {
@@ -224,22 +222,17 @@ Responde SOLO el JSON completo.`;
       );
     }
 
-    console.log(`[EPISODE ${episodeNumber}] Success: ${episode.scenes.length} scenes`);
+    console.log(`[EPISODE ${episodeNumber}] Success: ${episode.scenes.length} scenes, ${episode.total_duration_min} min`);
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        episode
-      }),
+      JSON.stringify({ success: true, episode }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('[EPISODE ERROR]', error);
     return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
