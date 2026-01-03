@@ -1956,15 +1956,7 @@ export type Database = {
           verdict?: Database["public"]["Enums"]["generation_verdict"]
           warnings?: Json | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "generation_runs_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "editorial_projects"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       jobs: {
         Row: {
