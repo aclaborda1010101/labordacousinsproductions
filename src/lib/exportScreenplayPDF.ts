@@ -23,6 +23,7 @@ interface Scene {
   slugline: string;
   summary?: string;
   action?: string;
+  description?: string; // Alternative field name from API
   dialogue?: DialogueLine[];
   music_cue?: string;
   sfx_cue?: string;
@@ -253,21 +254,29 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: { epis
     writeTransition('FADE IN:');
 
     // Scenes
-    for (const scene of episode.scenes || []) {
+    const scenesArray = episode.scenes || [];
+    
+    if (scenesArray.length === 0) {
+      // No scenes - write placeholder
+      writeAction('(Episodio sin escenas generadas - regenere el contenido)');
+    }
+    
+    for (const scene of scenesArray) {
       // Slugline
       writeSlugline(scene.slugline || 'INT. LOCALIZACIÓN - DÍA', scene.scene_number);
 
-      // Action/Description
-      if (scene.action) {
-        writeAction(scene.action);
-      } else if (scene.summary) {
-        writeAction(scene.summary);
+      // Action/Description - check multiple possible field names
+      const actionText = scene.action || scene.description || scene.summary || '';
+      if (actionText) {
+        writeAction(actionText);
       }
 
       // Dialogue
-      if (scene.dialogue && scene.dialogue.length > 0) {
+      if (scene.dialogue && Array.isArray(scene.dialogue) && scene.dialogue.length > 0) {
         for (const d of scene.dialogue) {
-          writeDialogue(d);
+          if (d && d.character && d.line) {
+            writeDialogue(d);
+          }
         }
       }
 

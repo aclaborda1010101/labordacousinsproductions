@@ -35,49 +35,111 @@ serve(async (req) => {
     
     const charactersRef = outline.main_characters?.map((c: any) => 
       `• ${c.name} (${c.role}): ${c.description}`
-    ).join('\n') || '';
+    ).join('\n') || 'Sin personajes definidos';
 
     const locationsRef = outline.main_locations?.map((l: any) => 
-      `• ${l.name} (${l.type}): ${l.description}`
-    ).join('\n') || '';
+      `• ${l.type}. ${l.name}: ${l.description}`
+    ).join('\n') || 'Sin localizaciones definidas';
 
-    const systemPrompt = `Eres un guionista profesional. Escribes episodios COMPLETOS con diálogo extenso y acción cinematográfica.
+    const systemPrompt = `Eres un GUIONISTA PROFESIONAL de Hollywood. Escribes GUIONES COMPLETOS con formato screenplay estándar.
 
-REGLAS:
-- MÍNIMO 15 escenas por episodio
-- MÍNIMO 8 líneas de diálogo por escena con diálogo
-- Acción descriptiva de 80-150 palabras por escena
-- Cada escena tiene: slugline, acción, diálogos, mood
-- Diálogos NATURALES, no expositivos
-- Usa los personajes y localizaciones del outline
+=== REGLAS ABSOLUTAS ===
+1. MÍNIMO 15 ESCENAS por episodio - NO MENOS
+2. MÍNIMO 8 LÍNEAS DE DIÁLOGO por escena con personajes hablando
+3. ACCIÓN DESCRIPTIVA de 100-200 palabras por escena (visual, cinematográfica)
+4. NO uses "FADE IN/FADE OUT" como contenido - eso lo añadimos nosotros
+5. Cada escena tiene: slugline, acción, diálogos, mood
+6. Diálogos NATURALES y con subtexto, NO expositivos
+7. CONFLICTO en cada escena - algo está en juego
+8. USA los personajes y localizaciones del outline
 
-Idioma: ${language}`;
+=== FORMATO DE DIÁLOGO ===
+Cada línea de diálogo incluye:
+- character: Nombre en MAYÚSCULAS
+- parenthetical: (acotación de actuación, opcional)
+- line: El diálogo completo
 
-    const userPrompt = `Escribe el EPISODIO ${episodeNumber} COMPLETO:
+Idioma de escritura: ${language}`;
 
-=== SERIE ===
+    const userPrompt = `ESCRIBE EL GUIÓN COMPLETO DEL EPISODIO ${episodeNumber}.
+
+=== INFORMACIÓN DE LA SERIE ===
 Título: "${outline.title}"
-Género: ${outline.genre}
-Tono: ${outline.tone}
-Logline: ${outline.logline}
+Género: ${outline.genre || 'Drama'}
+Tono: ${outline.tone || 'Cinematográfico'}
+Logline: ${outline.logline || ''}
 
 === EPISODIO ${episodeNumber}: "${episodeBeat?.title || `Episodio ${episodeNumber}`}" ===
-Beat: ${episodeBeat?.summary || 'Desarrollar trama principal'}
+Resumen del beat: ${episodeBeat?.summary || 'Desarrollar la trama principal del episodio.'}
 
-=== PERSONAJES DISPONIBLES ===
+=== PERSONAJES A USAR ===
 ${charactersRef}
 
-=== LOCALIZACIONES DISPONIBLES ===
+=== LOCALIZACIONES A USAR ===
 ${locationsRef}
 
-=== INSTRUCCIONES ===
-1. Escribe MÍNIMO 15 escenas completas
-2. Cada escena con diálogo debe tener 8-20 líneas
-3. Acción descriptiva y cinematográfica (80-150 palabras por escena)
-4. Usa sluglines profesionales: INT./EXT. LOCALIZACIÓN - DÍA/NOCHE
-5. Incluye mood/atmósfera de cada escena
+=== ESTRUCTURA REQUERIDA ===
+ACTO 1 (Escenas 1-5): Setup, mundo ordinario, incidente incitador
+ACTO 2A (Escenas 6-8): Complicaciones, obstáculos iniciales  
+ACTO 2B (Escenas 9-12): Midpoint, giro, stakes aumentan
+ACTO 3 (Escenas 13-15+): Clímax, resolución del episodio, hook para siguiente
 
-Usa la herramienta deliver_episode para entregar el episodio.`;
+=== EJEMPLO DE ESCENA CORRECTA ===
+{
+  "scene_number": 1,
+  "slugline": "EXT. CERN - CAMPUS PRINCIPAL - AMANECER",
+  "action": "El complejo del CERN emerge de la neblina matinal. Los edificios científicos se alzan como catedrales del conocimiento. Un grupo de investigadores camina apresuradamente hacia el edificio principal, sus rostros marcados por la urgencia. ELENA VÁSQUEZ, 38, cabello oscuro recogido, bata de laboratorio sobre ropa casual, consulta su tablet mientras camina sin aminorar el paso. A su lado, PIERRE DUBOIS, 52, calvicie incipiente, gafas de montura gruesa, intenta seguirle el ritmo mientras revisa un informe impreso.",
+  "characters_present": ["ELENA VÁSQUEZ", "PIERRE DUBOIS"],
+  "dialogue": [
+    {
+      "character": "ELENA VÁSQUEZ",
+      "parenthetical": "sin levantar la vista del tablet",
+      "line": "Pierre, los datos no tienen sentido. Las mediciones de esta madrugada... es como si las constantes fundamentales hubieran cambiado."
+    },
+    {
+      "character": "PIERRE DUBOIS",
+      "parenthetical": "ajustándose las gafas, nervioso",
+      "line": "He revisado los instrumentos tres veces. No es un error de calibración. Algo ocurrió a las 3:47 AM, tiempo universal."
+    },
+    {
+      "character": "ELENA VÁSQUEZ",
+      "line": "¿Algo? Pierre, las lecturas sugieren una alteración cuántica a escala planetaria. Eso es imposible."
+    },
+    {
+      "character": "PIERRE DUBOIS",
+      "parenthetical": "deteniéndose en seco",
+      "line": "Imposible era la palabra favorita de la física antes del amanecer de hoy."
+    },
+    {
+      "character": "ELENA VÁSQUEZ",
+      "parenthetical": "con una mezcla de fascinación y miedo",
+      "line": "¿Estás diciendo que alguien o algo reescribió las leyes de la física?"
+    },
+    {
+      "character": "PIERRE DUBOIS",
+      "line": "No solo las reescribió. Las seleccionó. La energía cinética de los proyectiles... específicamente anulada."
+    },
+    {
+      "character": "ELENA VÁSQUEZ",
+      "parenthetical": "susurrando",
+      "line": "Alguien apagó las armas. Todas las armas del mundo."
+    },
+    {
+      "character": "PIERRE DUBOIS",
+      "line": "Y lo hizo en una sola noche, como si fuera tan simple como apagar un interruptor."
+    }
+  ],
+  "mood": "Tensión creciente, asombro científico mezclado con inquietud existencial",
+  "duration_estimate_sec": 120
+}
+
+=== IMPORTANTE ===
+- ESCRIBE 15+ ESCENAS COMPLETAS
+- CADA ESCENA CON DIÁLOGO EXTENSO (8+ líneas)
+- ACCIÓN VISUAL Y CINEMATOGRÁFICA
+- USA la herramienta deliver_episode para entregar
+
+GENERA AHORA EL EPISODIO COMPLETO.`;
 
     console.log(`Generating detailed episode ${episodeNumber} for "${outline.title}"`);
 
@@ -90,49 +152,53 @@ Usa la herramienta deliver_episode para entregar el episodio.`;
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 8000,
-        temperature: 0.8,
+        max_tokens: 12000,
+        temperature: 0.85,
         system: systemPrompt,
         tools: [
           {
             name: 'deliver_episode',
-            description: 'Entrega el episodio completo estructurado.',
+            description: 'Entrega el episodio completo con todas las escenas, diálogos y acción.',
             input_schema: {
               type: 'object',
               properties: {
                 episode_number: { type: 'number' },
-                title: { type: 'string' },
-                synopsis: { type: 'string', description: 'Resumen del episodio (100-200 palabras)' },
+                title: { type: 'string', description: 'Título del episodio' },
+                synopsis: { type: 'string', description: 'Resumen del episodio (150-250 palabras)' },
                 scenes: {
                   type: 'array',
+                  description: 'MÍNIMO 15 escenas completas',
                   items: {
                     type: 'object',
                     properties: {
                       scene_number: { type: 'number' },
-                      slugline: { type: 'string', description: 'INT./EXT. LOCATION - TIME' },
-                      description: { type: 'string', description: '80-150 palabras de acción visual' },
-                      characters_present: { type: 'array', items: { type: 'string' } },
+                      slugline: { type: 'string', description: 'INT./EXT. LOCALIZACIÓN - MOMENTO DEL DÍA' },
+                      action: { type: 'string', description: 'Descripción visual de 100-200 palabras. Acción, movimiento, atmósfera.' },
+                      characters_present: { 
+                        type: 'array', 
+                        items: { type: 'string' },
+                        description: 'Nombres de personajes en la escena'
+                      },
                       dialogue: {
                         type: 'array',
+                        description: 'MÍNIMO 8 líneas de diálogo para escenas con personajes',
                         items: {
                           type: 'object',
                           properties: {
-                            character: { type: 'string' },
-                            parenthetical: { type: 'string' },
-                            line: { type: 'string' }
+                            character: { type: 'string', description: 'Nombre del personaje en MAYÚSCULAS' },
+                            parenthetical: { type: 'string', description: 'Acotación de actuación (opcional)' },
+                            line: { type: 'string', description: 'El texto del diálogo' }
                           },
                           required: ['character', 'line']
                         }
                       },
-                      mood: { type: 'string' },
-                      duration_estimate_sec: { type: 'number' }
+                      mood: { type: 'string', description: 'Atmósfera emocional de la escena' },
+                      duration_estimate_sec: { type: 'number', description: 'Duración estimada en segundos (60-180)' }
                     },
-                    required: ['scene_number', 'slugline', 'description', 'characters_present', 'mood']
+                    required: ['scene_number', 'slugline', 'action', 'characters_present', 'mood']
                   }
                 },
-                total_duration_min: { type: 'number' },
-                total_scenes: { type: 'number' },
-                total_dialogue_lines: { type: 'number' }
+                total_duration_min: { type: 'number', description: 'Duración total estimada del episodio' }
               },
               required: ['episode_number', 'title', 'synopsis', 'scenes', 'total_duration_min']
             }
@@ -198,13 +264,18 @@ Usa la herramienta deliver_episode para entregar el episodio.`;
       }
     }
 
-    // Calculate stats
+    // Calculate stats and ensure consistent field naming
     let totalDialogue = 0;
-    if (episode.scenes) {
+    if (episode.scenes && Array.isArray(episode.scenes)) {
       for (const scene of episode.scenes) {
+        // Ensure 'action' field exists (some responses might use 'description')
+        if (!scene.action && scene.description) {
+          scene.action = scene.description;
+        }
         totalDialogue += scene.dialogue?.length || 0;
       }
     }
+    
     episode.total_scenes = episode.scenes?.length || 0;
     episode.total_dialogue_lines = totalDialogue;
 
