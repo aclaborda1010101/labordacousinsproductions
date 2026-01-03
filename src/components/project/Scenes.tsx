@@ -8,13 +8,14 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
 import ShotEditor from './ShotEditor';
 import ShotSuggestionPanel from './ShotSuggestionPanel';
+import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -85,6 +86,9 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   });
   const [episodesCount, setEpisodesCount] = useState(1);
   const [scriptEpisodes, setScriptEpisodes] = useState<any[]>([]);
+  const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
+  const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
+  const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
 
   const fetchScenes = async () => {
     const { data } = await supabase.from('scenes').select('*').eq('project_id', projectId).order('episode_no').order('scene_no');
@@ -512,6 +516,22 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                   <Badge variant={episodeScenes.length > 0 ? 'default' : 'secondary'}>
                     {episodeScenes.length > 0 ? 'Con contenido' : 'Vacío'}
                   </Badge>
+                  {/* Regenerate Episode Button */}
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const scriptEp = scriptEpisodes.find((ep: any) => (ep.episode_number || 1) === episodeNo) || scriptEpisodes[episodeNo - 1];
+                      setRegenerateEpisodeNo(episodeNo);
+                      setRegenerateEpisodeSynopsis(scriptEp?.synopsis || '');
+                      setShowRegenerateDialog(true);
+                    }}
+                    className="gap-1.5"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Regenerar
+                  </Button>
                 </div>
 
                 {/* Episode scenes */}
@@ -948,6 +968,20 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Episode Regenerate Dialog */}
+      <EpisodeRegenerateDialog
+        open={showRegenerateDialog}
+        onOpenChange={setShowRegenerateDialog}
+        projectId={projectId}
+        episodeNo={regenerateEpisodeNo}
+        episodeSynopsis={regenerateEpisodeSynopsis}
+        existingSceneCount={(scenesByEpisode[regenerateEpisodeNo] || []).length}
+        onRegenerated={() => {
+          fetchScenes();
+          setExpandedEpisodes(prev => new Set(prev).add(regenerateEpisodeNo));
+        }}
+      />
     </div>
   );
 }
