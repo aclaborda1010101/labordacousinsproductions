@@ -8,7 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Plus, Box, Loader2, Trash2, Edit2, Save, X, Copy, 
-  Search, ChevronDown, ChevronUp, Wand2, BookOpen
+  Search, ChevronDown, ChevronUp, Wand2, BookOpen, Play, PlayCircle
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -77,6 +77,7 @@ export default function Props({ projectId }: PropsComponentProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [generatingBible, setGeneratingBible] = useState<string | null>(null);
+  const [autoGeneratingAll, setAutoGeneratingAll] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -318,6 +319,32 @@ export default function Props({ projectId }: PropsComponentProps) {
     }
   };
 
+  // Auto-generate ALL props
+  const autoGenerateAllProps = async () => {
+    const propsToGenerate = props.filter(p => !p.profile_json);
+    
+    if (propsToGenerate.length === 0) {
+      toast.info('Todos los props ya tienen perfil Bible');
+      return;
+    }
+
+    if (!confirm(`¿Generar perfiles Bible para ${propsToGenerate.length} props? Esto puede tardar varios minutos.`)) {
+      return;
+    }
+
+    setAutoGeneratingAll(true);
+    
+    for (let i = 0; i < propsToGenerate.length; i++) {
+      const prop = propsToGenerate[i];
+      toast.info(`Generando ${i + 1}/${propsToGenerate.length}: ${prop.name}`);
+      await generateBibleProfile(prop);
+    }
+    
+    setAutoGeneratingAll(false);
+    toast.success(`${propsToGenerate.length} props generados`);
+    fetchProps();
+  };
+
   const filteredProps = props.filter(p => {
     if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     if (typeFilter !== 'all' && p.prop_type !== typeFilter) return false;
@@ -342,10 +369,26 @@ export default function Props({ projectId }: PropsComponentProps) {
           <h2 className="text-2xl font-bold text-foreground">Props</h2>
           <p className="text-muted-foreground">Gestiona los objetos y accesorios de tu producción</p>
         </div>
-        <Button variant="gold" onClick={() => setShowAddDialog(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Añadir Prop
-        </Button>
+        <div className="flex gap-2">
+          {props.length > 0 && (
+            <Button 
+              variant="outline" 
+              onClick={autoGenerateAllProps}
+              disabled={autoGeneratingAll}
+            >
+              {autoGeneratingAll ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <PlayCircle className="w-4 h-4 mr-2" />
+              )}
+              Generar Todos
+            </Button>
+          )}
+          <Button variant="gold" onClick={() => setShowAddDialog(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Añadir Prop
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filters */}

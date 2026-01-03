@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -67,6 +67,9 @@ export default function Characters({ projectId }: CharactersProps) {
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
   const [generatingProfile, setGeneratingProfile] = useState<string | null>(null);
+  const [autoGenerating, setAutoGenerating] = useState<string | null>(null);
+  const [autoGeneratingAll, setAutoGeneratingAll] = useState(false);
+  const [autoGenProgress, setAutoGenProgress] = useState<{current: number; total: number; phase: string} | null>(null);
   
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -236,6 +239,169 @@ export default function Characters({ projectId }: CharactersProps) {
     } finally {
       setGenerating(null);
     }
+  };
+
+  // Auto-generate full character pack from script data
+  const autoGenerateCharacterPack = async (character: Character) => {
+    setAutoGenerating(character.id);
+    setAutoGenProgress({ current: 0, total: 7, phase: 'Inicializando...' });
+    
+    try {
+      // Phase 1: Generate Visual DNA if not exists
+      setAutoGenProgress({ current: 1, total: 7, phase: 'Generando Visual DNA...' });
+      toast.info('Generando Visual DNA con IA...');
+      
+      const visualDNAResponse = await supabase.functions.invoke('generate-visual-dna', {
+        body: {
+          characterId: character.id,
+          characterName: character.name,
+        }
+      });
+      
+      if (visualDNAResponse.error) {
+        console.warn('Visual DNA generation error:', visualDNAResponse.error);
+      } else if (visualDNAResponse.data?.visualDNA) {
+        // Save Visual DNA
+        await supabase
+          .from('character_visual_dna')
+          .upsert({
+            character_id: character.id,
+            visual_dna: visualDNAResponse.data.visualDNA,
+            version: 1,
+            version_name: 'Auto-Generated',
+            is_active: true,
+            continuity_lock: {
+              never_change: [],
+              allowed_variants: [],
+              must_avoid: [],
+              version_notes: 'Generated via auto-generate'
+            }
+          }, { 
+            onConflict: 'character_id,version',
+            ignoreDuplicates: false 
+          });
+      }
+      
+      // Phase 2: Generate Identity Closeup
+      setAutoGenProgress({ current: 2, total: 7, phase: 'Generando Identity Closeup...' });
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'anchor_closeup', null, null, 0);
+      
+      // Phase 3: Generate Front View
+      setAutoGenProgress({ current: 3, total: 7, phase: 'Generando Vista Frontal...' });
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'front', null, 1);
+      
+      // Phase 4: Generate Side View
+      setAutoGenProgress({ current: 4, total: 7, phase: 'Generando Vista Lateral...' });
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'side', null, 2);
+      
+      // Phase 5: Generate Back View
+      setAutoGenProgress({ current: 5, total: 7, phase: 'Generando Vista Trasera...' });
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'back', null, 3);
+      
+      // Phase 6: Generate Neutral Expression
+      setAutoGenProgress({ current: 6, total: 7, phase: 'Generando Expresión Neutral...' });
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'expression', null, 'neutral', 4);
+      
+      // Phase 7: Update completeness
+      setAutoGenProgress({ current: 7, total: 7, phase: 'Finalizando...' });
+      await supabase.rpc('calculate_pack_completeness', { p_character_id: character.id });
+      
+      toast.success(`Pack de ${character.name} generado correctamente`);
+      fetchCharacters();
+    } catch (error) {
+      console.error('Auto-generate error:', error);
+      toast.error('Error en generación automática');
+    } finally {
+      setAutoGenerating(null);
+      setAutoGenProgress(null);
+    }
+  };
+
+  const generateSlotForCharacter = async (
+    charId: string, 
+    charName: string, 
+    charBio: string, 
+    slotType: string, 
+    viewAngle: string | null, 
+    expressionName: string | null,
+    slotIndex: number
+  ) => {
+    // Create or get slot
+    const { data: existingSlot } = await supabase
+      .from('character_pack_slots')
+      .select('id')
+      .eq('character_id', charId)
+      .eq('slot_type', slotType)
+      .eq('view_angle', viewAngle)
+      .eq('expression_name', expressionName)
+      .single();
+
+    let slotId = existingSlot?.id;
+
+    if (!slotId) {
+      const { data: newSlot, error } = await supabase
+        .from('character_pack_slots')
+        .insert({
+          character_id: charId,
+          slot_type: slotType,
+          slot_index: slotIndex,
+          view_angle: viewAngle,
+          expression_name: expressionName,
+          status: 'pending',
+          required: true
+        })
+        .select('id')
+        .single();
+
+      if (error) throw error;
+      slotId = newSlot.id;
+    }
+
+    // Generate image
+    const { data, error } = await supabase.functions.invoke('generate-character', {
+      body: {
+        slotId,
+        characterId: charId,
+        characterName: charName,
+        characterBio: charBio,
+        slotType,
+        viewAngle,
+        expressionName,
+        useReferenceAnchoring: true,
+        referenceWeight: 0.75
+      }
+    });
+
+    if (error) throw error;
+    return data;
+  };
+
+  // Auto-generate ALL characters
+  const autoGenerateAllCharacters = async () => {
+    const charactersToGenerate = characters.filter(c => 
+      c.character_role && (!c.pack_completeness_score || c.pack_completeness_score < 50)
+    );
+    
+    if (charactersToGenerate.length === 0) {
+      toast.info('No hay personajes pendientes de generar');
+      return;
+    }
+
+    if (!confirm(`¿Generar packs para ${charactersToGenerate.length} personajes? Esto puede tardar varios minutos.`)) {
+      return;
+    }
+
+    setAutoGeneratingAll(true);
+    
+    for (let i = 0; i < charactersToGenerate.length; i++) {
+      const char = charactersToGenerate[i];
+      toast.info(`Generando ${i + 1}/${charactersToGenerate.length}: ${char.name}`);
+      await autoGenerateCharacterPack(char);
+    }
+    
+    setAutoGeneratingAll(false);
+    toast.success(`${charactersToGenerate.length} personajes generados`);
+    fetchCharacters();
   };
 
   // Generate full profile with Entity Builder
@@ -528,10 +694,26 @@ export default function Characters({ projectId }: CharactersProps) {
           <h2 className="text-2xl font-bold text-foreground">{t.characters.title}</h2>
           <p className="text-muted-foreground">{t.characters.subtitle}</p>
         </div>
-        <Button variant="gold" onClick={() => setShowCreationWizard(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Crear Personaje
-        </Button>
+        <div className="flex gap-2">
+          {characters.length > 0 && (
+            <Button 
+              variant="outline" 
+              onClick={autoGenerateAllCharacters}
+              disabled={autoGeneratingAll}
+            >
+              {autoGeneratingAll ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <PlayCircle className="w-4 h-4 mr-2" />
+              )}
+              Generar Todos
+            </Button>
+          )}
+          <Button variant="gold" onClick={() => setShowCreationWizard(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Crear Personaje
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -745,18 +927,30 @@ export default function Characters({ projectId }: CharactersProps) {
                           <p className="text-sm text-muted-foreground line-clamp-2">{character.bio}</p>
                         )}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 flex-wrap">
                         {character.character_role && (
                           <>
+                            {/* Auto Generate Button - Main action */}
                             <Button 
                               variant="gold" 
                               size="sm"
-                              onClick={() => setShowQuickStart(character.id)}
-                              title="Quick Setup: Sube 2 fotos y genera el pack completo"
+                              onClick={() => autoGenerateCharacterPack(character)}
+                              disabled={autoGenerating === character.id}
+                              title="Generar pack automáticamente con IA"
                             >
-                              <Zap className="w-4 h-4 mr-1" />
-                              Quick
+                              {autoGenerating === character.id ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                                  {autoGenProgress?.phase?.slice(0, 15) || 'Generando...'}
+                                </>
+                              ) : (
+                                <>
+                                  <Play className="w-4 h-4 mr-1" />
+                                  Generar
+                                </>
+                              )}
                             </Button>
+                            {/* Pack Builder - Manual mode */}
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -765,6 +959,19 @@ export default function Characters({ projectId }: CharactersProps) {
                               <Package className="w-4 h-4 mr-1" />
                               Pack
                             </Button>
+                            {/* LoRA/Quick - Only show when pack is ≥90% complete */}
+                            {(character.pack_completeness_score || 0) >= 90 && (
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => setShowQuickStart(character.id)}
+                                title="Modo Producción: Entrenar LoRA para máxima consistencia"
+                                className="border-amber-500/50 text-amber-600 hover:bg-amber-50"
+                              >
+                                <Zap className="w-4 h-4 mr-1" />
+                                LoRA
+                              </Button>
+                            )}
                           </>
                         )}
                         <Button 
@@ -773,7 +980,6 @@ export default function Characters({ projectId }: CharactersProps) {
                           onClick={() => generateProfileWithEntityBuilder(character)}
                           disabled={generatingProfile === character.id}
                           title="Generar Perfil Bible"
-                          className="mr-1"
                         >
                           {generatingProfile === character.id ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-1" />
@@ -781,19 +987,6 @@ export default function Characters({ projectId }: CharactersProps) {
                             <BookOpen className="w-4 h-4 mr-1" />
                           )}
                           Bible
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => generateCharacterAI(character)}
-                          disabled={generating === character.id}
-                          title="Generar imágenes con IA"
-                        >
-                          {generating === character.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Sparkles className="w-4 h-4 text-primary" />
-                          )}
                         </Button>
                         <Button 
                           variant="ghost" 
