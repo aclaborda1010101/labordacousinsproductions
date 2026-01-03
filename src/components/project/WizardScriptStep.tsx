@@ -154,17 +154,32 @@ const TONE_OPTIONS = [
   { value: 'Estilizado y visual', label: 'Estilizado y visual' },
 ];
 
-const PROGRESS_STAGES = [
-  { key: 'init', label: 'Inicializando...', progress: 5 },
-  { key: 'analyzing', label: 'Analizando idea y género...', progress: 15 },
-  { key: 'structure', label: 'Creando estructura narrativa...', progress: 30 },
-  { key: 'characters', label: 'Desarrollando personajes...', progress: 45 },
-  { key: 'locations', label: 'Definiendo localizaciones...', progress: 55 },
-  { key: 'episodes', label: 'Escribiendo episodios...', progress: 70 },
-  { key: 'screenplay', label: 'Generando guion completo...', progress: 85 },
-  { key: 'finalizing', label: 'Finalizando...', progress: 95 },
-  { key: 'done', label: '¡Completado!', progress: 100 },
-];
+// Dynamic progress stages based on format and episode count
+const getProgressStages = (format: string, episodesCount: number) => {
+  if (format === 'film') {
+    return [
+      { key: 'outline', label: 'Generando outline...', progress: 20 },
+      { key: 'episode', label: 'Generando película...', progress: 60 },
+      { key: 'done', label: '✓ Guion completo', progress: 100 },
+    ];
+  } else {
+    const stages = [
+      { key: 'outline', label: 'Generando outline...', progress: 10 },
+    ];
+    
+    const episodeProgress = 80 / episodesCount;
+    for (let i = 1; i <= episodesCount; i++) {
+      stages.push({
+        key: `episode_${i}`,
+        label: `Episodio ${i} de ${episodesCount}...`,
+        progress: 10 + (episodeProgress * i),
+      });
+    }
+    
+    stages.push({ key: 'done', label: '✓ Guion completo', progress: 100 });
+    return stages;
+  }
+};
 
 export function WizardScriptStep({
   format,
@@ -213,7 +228,11 @@ export function WizardScriptStep({
     }
   }, [generatedScript]);
 
-  const generateScriptFromIdea = async () => {
+  // Get dynamic progress stages
+  const PROGRESS_STAGES = getProgressStages(format, format === 'film' ? 1 : episodesCount);
+
+  // New pipeline: generate outline first, then episodes one by one
+  const generateScriptWithPipeline = async () => {
     if (!scriptIdea.trim()) {
       toast.error('Escribe una idea para generar el guion');
       return;
@@ -222,68 +241,118 @@ export function WizardScriptStep({
     setGenerating(true);
     setProgressStage(0);
 
-    // Simulate progress stages
-    const progressInterval = setInterval(() => {
-      setProgressStage(prev => {
-        if (prev < PROGRESS_STAGES.length - 2) return prev + 1;
-        return prev;
-      });
-    }, 3000);
-
     try {
-      const { data, error } = await supabase.functions.invoke('script-generate', {
+      // STEP 1: Generate outline (fast, ~10-15s)
+      console.log('[PIPELINE] Step 1: Generating outline...');
+      
+      const { data: outlineData, error: outlineError } = await supabase.functions.invoke('generate-outline-light', {
         body: {
           idea: scriptIdea,
           genre: scriptGenre,
           tone: scriptTone,
           format: format === 'film' ? 'film' : 'series',
           episodesCount: format === 'film' ? 1 : episodesCount,
-          episodeDurationMin: targetDuration,
           language: masterLanguage === 'es' ? 'es-ES' : masterLanguage,
         }
       });
 
-      clearInterval(progressInterval);
-
-      if (error) throw error;
-
-      if (data?.script) {
-        setProgressStage(PROGRESS_STAGES.length - 1);
-        setGeneratedScript(data.script);
-        
-        // Auto-fill title
-        if (data.script.title && setProjectTitle) {
-          setProjectTitle(data.script.title);
-        }
-        
-        // Auto-fill shootout data
-        if (data.script.characters?.length > 0) {
-          const mainChar = data.script.characters[0];
-          const mainLoc = data.script.locations?.[0];
-          onShootoutDataReady(
-            { name: mainChar.name, bio: mainChar.description || '' },
-            { name: mainLoc?.name || 'Localización principal', description: mainLoc?.description || '' }
-          );
-        }
-        
-        toast.success('Guion generado correctamente');
-      } else {
-        toast.error('No se pudo generar el guion');
+      if (outlineError) throw outlineError;
+      if (!outlineData?.outline) {
+        throw new Error('No outline generated');
       }
+
+      const outline = outlineData.outline;
+      console.log('[PIPELINE] Outline generated:', outline.title);
+      setProgressStage(1); // Move to first episode stage
+
+      // STEP 2: Generate episodes one by one
+      const episodes = [];
+      const totalEpisodes = outline.episode_beats?.length || 1;
+
+      for (let i = 0; i < totalEpisodes; i++) {
+        const episodeNumber = i + 1;
+        console.log(`[PIPELINE] Step 2.${episodeNumber}: Generating episode ${episodeNumber}...`);
+        
+        // Update progress stage
+        setProgressStage(1 + i);
+        
+        const { data: episodeData, error: episodeError } = await supabase.functions.invoke('generate-episode-detailed', {
+          body: {
+            outline,
+            episodeNumber,
+            language: masterLanguage === 'es' ? 'es-ES' : masterLanguage
+          }
+        });
+
+        if (episodeError) {
+          console.error(`[PIPELINE] Episode ${episodeNumber} failed:`, episodeError);
+          toast.error(`Error generando episodio ${episodeNumber}`);
+          continue;
+        }
+
+        if (episodeData?.episode) {
+          episodes.push(episodeData.episode);
+          console.log(`[PIPELINE] Episode ${episodeNumber} generated: ${episodeData.episode.scenes?.length || 0} scenes`);
+          toast.success(`Episodio ${episodeNumber} generado (${episodeData.episode.scenes?.length || 0} escenas)`);
+        }
+      }
+
+      // Combine everything into the final script
+      const completeScript = {
+        title: outline.title,
+        logline: outline.logline,
+        synopsis: outline.synopsis,
+        genre: outline.genre,
+        tone: outline.tone,
+        episodes,
+        characters: outline.main_characters?.map((c: any) => ({
+          name: c.name,
+          role: c.role,
+          description: c.description
+        })),
+        locations: outline.main_locations?.map((l: any) => ({
+          name: l.name,
+          type: l.type,
+          description: l.description
+        }))
+      };
+
+      setProgressStage(PROGRESS_STAGES.length - 1);
+      setGeneratedScript(completeScript);
+
+      // Auto-fill title
+      if (completeScript.title && setProjectTitle) {
+        setProjectTitle(completeScript.title);
+      }
+
+      // Auto-fill shootout data
+      if (completeScript.characters?.length > 0) {
+        const mainChar = completeScript.characters[0];
+        const mainLoc = completeScript.locations?.[0];
+        onShootoutDataReady(
+          { name: mainChar.name, bio: mainChar.description || '' },
+          { name: mainLoc?.name || 'Localización principal', description: mainLoc?.description || '' }
+        );
+      }
+
+      toast.success('Guion completo generado');
+
     } catch (err: any) {
-      console.error('Error generating script:', err);
-      clearInterval(progressInterval);
+      console.error('[PIPELINE ERROR]', err);
       if (err.message?.includes('429')) {
         toast.error('Rate limit alcanzado. Espera un momento.');
       } else if (err.message?.includes('402')) {
         toast.error('Créditos agotados.');
       } else {
-        toast.error('Error al generar guion');
+        toast.error(`Error: ${err.message || 'Error al generar guion'}`);
       }
     }
     
     setGenerating(false);
   };
+
+  // Keep the old function as fallback
+  const generateScriptFromIdea = generateScriptWithPipeline;
 
   const toggleEntitySelection = (type: keyof EntitySelection, key: string) => {
     setEntitySelection(prev => ({
@@ -817,7 +886,7 @@ export function WizardScriptStep({
     toast.success(`Episodio ${index + 1} exportado con guión completo`);
   };
 
-  const currentProgress = PROGRESS_STAGES[progressStage];
+  const currentProgress = PROGRESS_STAGES[progressStage] || PROGRESS_STAGES[0];
 
   return (
     <div className="space-y-6 animate-fade-in">
