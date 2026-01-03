@@ -1409,57 +1409,78 @@ export type Database = {
       }
       generation_logs: {
         Row: {
+          category: string | null
           character_id: string | null
           cost_usd: number | null
           created_at: string | null
           duration_ms: number | null
           engine: string | null
+          episode_id: string | null
           error_message: string | null
           from_cache: boolean | null
           id: string
+          input_tokens: number | null
           metadata: Json | null
+          model: string | null
+          output_tokens: number | null
           project_id: string | null
           prompt_hash: string | null
           qc_score: number | null
+          scene_id: string | null
           slot_id: string | null
           slot_type: string | null
           success: boolean | null
+          total_tokens: number | null
           user_id: string | null
         }
         Insert: {
+          category?: string | null
           character_id?: string | null
           cost_usd?: number | null
           created_at?: string | null
           duration_ms?: number | null
           engine?: string | null
+          episode_id?: string | null
           error_message?: string | null
           from_cache?: boolean | null
           id?: string
+          input_tokens?: number | null
           metadata?: Json | null
+          model?: string | null
+          output_tokens?: number | null
           project_id?: string | null
           prompt_hash?: string | null
           qc_score?: number | null
+          scene_id?: string | null
           slot_id?: string | null
           slot_type?: string | null
           success?: boolean | null
+          total_tokens?: number | null
           user_id?: string | null
         }
         Update: {
+          category?: string | null
           character_id?: string | null
           cost_usd?: number | null
           created_at?: string | null
           duration_ms?: number | null
           engine?: string | null
+          episode_id?: string | null
           error_message?: string | null
           from_cache?: boolean | null
           id?: string
+          input_tokens?: number | null
           metadata?: Json | null
+          model?: string | null
+          output_tokens?: number | null
           project_id?: string | null
           prompt_hash?: string | null
           qc_score?: number | null
+          scene_id?: string | null
           slot_id?: string | null
           slot_type?: string | null
           success?: boolean | null
+          total_tokens?: number | null
           user_id?: string | null
         }
         Relationships: [
@@ -1471,10 +1492,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "generation_logs_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "generation_logs_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generation_logs_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
             referencedColumns: ["id"]
           },
         ]
