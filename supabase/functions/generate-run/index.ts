@@ -54,13 +54,30 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+    // Forward the caller's auth token when invoking downstream functions (they require a real user JWT)
+    const authHeader = req.headers.get('authorization') ?? req.headers.get('Authorization') ?? '';
+    if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')) {
+      return new Response(JSON.stringify({
+        ok: false,
+        error: 'Missing Authorization header'
+      } as GenerateRunResponse), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceKey);
+    const supabaseAuthed = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
 
     console.log(`[generate-run] Starting: type=${body.type}, engine=${body.engine}, project=${body.projectId}`);
 
     // 2) Create initial record in generation_runs
-    const { data: runData, error: insertError } = await supabase
+    const { data: runData, error: insertError } = await supabaseAdmin
       .from('generation_runs')
       .insert({
         project_id: body.projectId,
@@ -154,7 +171,7 @@ serve(async (req) => {
     console.log(`[generate-run] Invoking ${functionName}...`);
 
     // Call the existing Edge Function
-    const { data: fnResponse, error: fnError } = await supabase.functions.invoke(functionName, {
+    const { data: fnResponse, error: fnError } = await supabaseAuthed.functions.invoke(functionName, {
       body: functionBody
     });
 
@@ -184,7 +201,7 @@ serve(async (req) => {
     const generationTimeMs = Date.now() - startTime;
 
     // 5) Update generation_runs with success
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('generation_runs')
       .update({
         output_url: outputUrl,
