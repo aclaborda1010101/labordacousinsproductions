@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -54,6 +55,7 @@ interface Render {
 
 export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const { t } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [shots, setShots] = useState<Record<string, Shot[]>>({});
@@ -131,6 +133,41 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
       if (data) setLocations(data);
     });
   }, [projectId]);
+
+  // Handle URL params to auto-open episode and scene
+  useEffect(() => {
+    const episodeParam = searchParams.get('episode');
+    const sceneParam = searchParams.get('scene');
+    
+    if (episodeParam) {
+      const episodeNo = parseInt(episodeParam);
+      // Expand the episode
+      setExpandedEpisodes(prev => new Set(prev).add(episodeNo));
+      setFilterEpisode(episodeParam);
+      
+      if (sceneParam && scenes.length > 0) {
+        const sceneNo = parseInt(sceneParam);
+        // Find the scene
+        const scene = scenes.find(s => s.episode_no === episodeNo && s.scene_no === sceneNo);
+        if (scene) {
+          // Expand the scene
+          setExpandedScenes(prev => new Set(prev).add(scene.id));
+          if (!shots[scene.id]) fetchShots(scene.id);
+          
+          // Scroll to the scene after a short delay
+          setTimeout(() => {
+            const sceneElement = document.getElementById(`scene-${scene.id}`);
+            if (sceneElement) {
+              sceneElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 300);
+        }
+        
+        // Clear the URL params after processing
+        setSearchParams({});
+      }
+    }
+  }, [scenes, searchParams]);
 
   const toggleEpisode = (episodeNo: number) => {
     const newExpanded = new Set(expandedEpisodes);
@@ -477,7 +514,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                       </div>
                     ) : (
                       episodeScenes.map(scene => (
-                        <div key={scene.id} className="rounded-lg border border-border bg-card overflow-hidden">
+                        <div key={scene.id} id={`scene-${scene.id}`} className="rounded-lg border border-border bg-card overflow-hidden">
                           <div className="p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleScene(scene.id)}>
                             {expandedScenes.has(scene.id) ? <ChevronDown className="w-5 h-5 text-muted-foreground" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
                             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"><span className="font-mono text-primary font-bold">{scene.scene_no}</span></div>
