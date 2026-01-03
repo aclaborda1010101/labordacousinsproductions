@@ -110,7 +110,7 @@ serve(async (req) => {
   }
 
   try {
-    const { idea, genre, tone, format, episodesCount, language, narrativeMode } = await req.json();
+    const { idea, genre, tone, format, episodesCount, language, narrativeMode, densityTargets } = await req.json();
 
     if (!idea) {
       return new Response(
@@ -127,12 +127,32 @@ serve(async (req) => {
     // Select narrative mode prompt
     const modePrompt = NARRATIVE_MODE_PROMPTS[narrativeMode as keyof typeof NARRATIVE_MODE_PROMPTS] || NARRATIVE_MODE_PROMPTS.serie_adictiva;
 
+    // Build density constraints from targets
+    const densityConstraints = densityTargets ? `
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+DENSIDAD NARRATIVA (OBLIGATORIO CUMPLIR)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Protagonistas: MÍNIMO ${densityTargets.protagonists_min || 3}
+- Personajes secundarios: MÍNIMO ${densityTargets.supporting_min || 10}
+- Extras con líneas de diálogo: MÍNIMO ${densityTargets.extras_min || 15}
+- Localizaciones distintas: MÍNIMO ${densityTargets.locations_min || 8}
+- Props clave (objetos importantes para la trama): MÍNIMO ${densityTargets.hero_props_min || 5}
+- Setpieces (escenas de alto impacto visual): MÍNIMO ${densityTargets.setpieces_min || 4}
+- Subtramas activas: MÍNIMO ${densityTargets.subplots_min || 3}
+- Giros/twists por episodio: MÍNIMO ${densityTargets.twists_min || 2}
+${densityTargets.scenes_per_episode ? `- Escenas por episodio: OBJETIVO ${densityTargets.scenes_per_episode}` : ''}
+${densityTargets.scenes_target ? `- Escenas totales: OBJETIVO ${densityTargets.scenes_target}` : ''}
+- Ratio diálogo/acción: ${densityTargets.dialogue_action_ratio || '55/45'}
+
+IMPORTANTE: El outline DEBE cumplir estos mínimos para pasar QC. Si no los cumples, el outline será rechazado.
+` : '';
+
     const systemPrompt = `${MASTER_SHOWRUNNER_CORE}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${modePrompt}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+${densityConstraints}
 Idioma de respuesta: ${language || 'es-ES'}`;
 
     const userPrompt = `Genera un OUTLINE profesional para:
@@ -142,10 +162,17 @@ GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
 FORMATO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
 MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
-
+${densityTargets ? `
+DENSIDAD REQUERIDA:
+- ${densityTargets.protagonists_min}+ protagonistas
+- ${densityTargets.supporting_min}+ secundarios  
+- ${densityTargets.locations_min}+ localizaciones
+- ${densityTargets.subplots_min}+ subtramas
+- ${densityTargets.twists_min}+ giros por episodio
+` : `
 CONSTRAINTS OBLIGATORIOS:
 - Personajes principales: MÍNIMO 5
-- Localizaciones: MÍNIMO 5
+- Localizaciones: MÍNIMO 5`}
 - Si es serie: un beat con cliffhanger por episodio
 - Cada episodio DEBE tener un evento irreversible
 

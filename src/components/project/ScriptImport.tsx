@@ -400,7 +400,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           genre,
           tone,
           language,
-          narrativeMode
+          narrativeMode,
+          densityTargets: targets // Pass density targets to enforce
         }
       });
       const durationMs = Date.now() - t0;
@@ -586,19 +587,40 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setCurrentEpisodeGenerating(null);
       updatePipelineStep('episodes', 'success');
 
-      // Build complete screenplay
+      // Calculate actual counts from generated content
+      const protagonistsCount = lightOutline.main_characters?.filter((c: any) => c.role === 'protagonist').length || 0;
+      const supportingCount = lightOutline.main_characters?.filter((c: any) => c.role === 'supporting' || c.role === 'antagonist').length || 0;
+      const locationsCount = lightOutline.main_locations?.length || 0;
+      const totalScenes = episodes.reduce((sum, ep) => sum + (ep.scenes?.length || 0), 0);
+      const totalDialogueLines = episodes.reduce((sum, ep) => sum + (ep.total_dialogue_lines || 0), 0);
+
+      // Build complete screenplay with density metrics
       const completeScreenplay: Record<string, any> = {
         title: lightOutline.title,
         logline: lightOutline.logline,
         synopsis: lightOutline.synopsis,
         genre: lightOutline.genre,
         tone: lightOutline.tone,
+        narrative_mode: lightOutline.narrative_mode || narrativeMode,
         characters: lightOutline.main_characters,
         locations: lightOutline.main_locations,
         episodes,
+        // Store both targets and actual achieved values
+        density_targets: targets,
+        density_achieved: {
+          protagonists: protagonistsCount,
+          supporting: supportingCount,
+          locations: locationsCount,
+          total_scenes: totalScenes,
+          scenes_per_episode: Math.round(totalScenes / episodes.length),
+          dialogue_lines: totalDialogueLines,
+        },
         counts: {
-          total_scenes: episodes.reduce((sum, ep) => sum + (ep.scenes?.length || 0), 0),
-          total_dialogue_lines: episodes.reduce((sum, ep) => sum + (ep.total_dialogue_lines || 0), 0)
+          total_scenes: totalScenes,
+          total_dialogue_lines: totalDialogueLines,
+          protagonists: protagonistsCount,
+          supporting: supportingCount,
+          locations: locationsCount,
         }
       };
 
@@ -2111,17 +2133,68 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     ))}
                   </div>
 
-                  {/* Counts */}
-                  {generatedScript.counts && (
-                    <div className="grid gap-2 grid-cols-4 md:grid-cols-8">
-                      <CountBadge label="Protagonistas" value={generatedScript.counts.protagonists} />
-                      <CountBadge label="Secundarios" value={generatedScript.counts.supporting} />
-                      <CountBadge label="Extras" value={generatedScript.counts.extras_with_lines} />
-                      <CountBadge label="Localizaciones" value={generatedScript.counts.locations} />
-                      <CountBadge label="Props" value={generatedScript.counts.hero_props} />
-                      <CountBadge label="Setpieces" value={generatedScript.counts.setpieces} />
-                      <CountBadge label="Escenas" value={generatedScript.counts.total_scenes} />
-                      <CountBadge label="Diálogos" value={generatedScript.counts.total_dialogue_lines} />
+                  {/* Narrative Mode Badge */}
+                  {generatedScript.narrative_mode && (
+                    <div className="mb-4">
+                      <Badge variant="outline" className="bg-primary/10">
+                        {generatedScript.narrative_mode === 'serie_adictiva' && '🔥 Serie Adictiva'}
+                        {generatedScript.narrative_mode === 'voz_de_autor' && '✍️ Voz de Autor'}
+                        {generatedScript.narrative_mode === 'giro_imprevisible' && '🔀 Giro Imprevisible'}
+                      </Badge>
+                    </div>
+                  )}
+
+                  {/* Density: Targets vs Achieved */}
+                  {(generatedScript.density_targets || generatedScript.counts) && (
+                    <div className="space-y-3">
+                      <Label className="text-xs text-muted-foreground uppercase flex items-center gap-2">
+                        <Settings2 className="w-3 h-3" />
+                        Densidad Narrativa
+                      </Label>
+                      <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
+                        <DensityCompareCard 
+                          label="Protagonistas" 
+                          achieved={generatedScript.counts?.protagonists || generatedScript.density_achieved?.protagonists || 0} 
+                          target={generatedScript.density_targets?.protagonists_min}
+                        />
+                        <DensityCompareCard 
+                          label="Secundarios" 
+                          achieved={generatedScript.counts?.supporting || generatedScript.density_achieved?.supporting || 0} 
+                          target={generatedScript.density_targets?.supporting_min}
+                        />
+                        <DensityCompareCard 
+                          label="Localizaciones" 
+                          achieved={generatedScript.counts?.locations || generatedScript.density_achieved?.locations || 0} 
+                          target={generatedScript.density_targets?.locations_min}
+                        />
+                        <DensityCompareCard 
+                          label="Escenas Totales" 
+                          achieved={generatedScript.counts?.total_scenes || generatedScript.density_achieved?.total_scenes || 0} 
+                          target={generatedScript.density_targets?.scenes_per_episode ? (generatedScript.density_targets.scenes_per_episode * (generatedScript.episodes?.length || 1)) : generatedScript.density_targets?.scenes_target}
+                        />
+                      </div>
+                      <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
+                        <DensityCompareCard 
+                          label="Props Clave" 
+                          achieved={generatedScript.counts?.hero_props || 0} 
+                          target={generatedScript.density_targets?.hero_props_min}
+                        />
+                        <DensityCompareCard 
+                          label="Setpieces" 
+                          achieved={generatedScript.counts?.setpieces || 0} 
+                          target={generatedScript.density_targets?.setpieces_min}
+                        />
+                        <DensityCompareCard 
+                          label="Diálogos" 
+                          achieved={generatedScript.counts?.total_dialogue_lines || 0} 
+                        />
+                        {generatedScript.density_targets?.dialogue_action_ratio && (
+                          <div className="p-2 bg-muted/30 rounded-lg text-center">
+                            <div className="text-xs text-muted-foreground">Ratio D/A</div>
+                            <div className="text-sm font-medium">{generatedScript.density_targets.dialogue_action_ratio}</div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -3122,3 +3195,42 @@ const CountBadge = forwardRef<HTMLDivElement, { label: string; value: number }>(
   },
 );
 CountBadge.displayName = 'CountBadge';
+
+// Density comparison card: shows achieved vs target
+function DensityCompareCard({ 
+  label, 
+  achieved, 
+  target 
+}: { 
+  label: string; 
+  achieved: number; 
+  target?: number;
+}) {
+  const meetsTarget = target ? achieved >= target : true;
+  
+  return (
+    <div className={`p-2 rounded-lg text-center ${meetsTarget ? 'bg-green-500/10 border border-green-500/30' : 'bg-orange-500/10 border border-orange-500/30'}`}>
+      <div className="text-xs text-muted-foreground mb-1">{label}</div>
+      <div className="flex items-center justify-center gap-1">
+        <span className={`text-lg font-bold ${meetsTarget ? 'text-green-600' : 'text-orange-600'}`}>
+          {achieved}
+        </span>
+        {target !== undefined && (
+          <>
+            <span className="text-muted-foreground text-xs">/</span>
+            <span className="text-xs text-muted-foreground">{target}</span>
+          </>
+        )}
+      </div>
+      {target !== undefined && (
+        <div className="text-[10px] mt-1">
+          {meetsTarget ? (
+            <span className="text-green-600">✓ Cumple</span>
+          ) : (
+            <span className="text-orange-600">↓ {target - achieved} más</span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
