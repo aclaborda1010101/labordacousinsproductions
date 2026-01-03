@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import ReferenceScriptLibrary from './ReferenceScriptLibrary';
 import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
@@ -558,6 +559,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         }
 
         // Build episode object
+        // Only mark as error if NO scenes were generated - partial success is NOT an error
+        const hasScenes = allScenes.length > 0;
+        const effectiveError = hasScenes ? null : episodeError;
+        
         const episode = {
           episode_number: epNum,
           title: episodeBeat?.title || `Episodio ${epNum}`,
@@ -565,7 +570,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           scenes: allScenes.sort((a, b) => a.scene_number - b.scene_number),
           total_dialogue_lines: allScenes.reduce((sum, s) => sum + (s.dialogue?.length || 0), 0),
           duration_min: Math.round(allScenes.reduce((sum, s) => sum + (s.duration_estimate_sec || 90), 0) / 60),
-          error: episodeError,
+          error: effectiveError,
+          // Track partial completion info for transparency
+          batches_completed: completedBatches,
+          batches_total: BATCHES_PER_EPISODE,
+          partial_error: hasScenes && episodeError ? episodeError : null,
         };
 
         episodes.push(episode);
@@ -2631,12 +2640,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                                   <Badge variant="secondary">{ep.scenes?.length || 0} escenas</Badge>
                                   <Badge variant="outline">{dialogueCount} diálogos</Badge>
                                   {ep.duration_min && <Badge variant="outline">{ep.duration_min} min</Badge>}
+                                  {/* Show batch completion status */}
+                                  {ep.batches_total && ep.batches_completed < ep.batches_total && (
+                                    <Badge variant="outline" className="bg-amber-500/20 text-amber-700 border-amber-500/30">
+                                      {ep.batches_completed}/{ep.batches_total} batches
+                                    </Badge>
+                                  )}
                                   {segmentedEpisodes.has(episodeNum) && (
                                     <Badge variant="default" className="bg-green-600">
                                       <CheckCircle className="w-3 h-3 mr-1" />
                                       Segmentado
                                     </Badge>
                                   )}
+                                  {/* Show partial error as warning, not blocking error */}
+                                  {ep.partial_error && (
+                                    <Tooltip>
+                                      <TooltipTrigger>
+                                        <Badge variant="outline" className="bg-amber-500/20 text-amber-700 border-amber-500/30">
+                                          <AlertTriangle className="w-3 h-3 mr-1" />
+                                          Parcial
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p className="max-w-xs text-sm">{ep.partial_error}</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  )}
+                                  {/* Only show error badge if NO scenes were generated */}
                                   {ep.error && (
                                     <Badge variant="destructive">
                                       <AlertTriangle className="w-3 h-3 mr-1" />
