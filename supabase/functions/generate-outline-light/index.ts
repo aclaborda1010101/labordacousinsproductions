@@ -5,13 +5,112 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
+const SCRIPT_MODEL = "claude-sonnet-4-20250514";
+
+// MASTER SHOWRUNNER ENGINE - Narrative Mode System Prompts
+const NARRATIVE_MODE_PROMPTS = {
+  serie_adictiva: `MODO: SERIE ADICTIVA 🔥
+  
+Objetivo: Enganchar desde el primer episodio.
+- Ritmo ALTO, sin escenas de relleno
+- Estructura clara con escalada de tensión
+- Cliffhanger POTENTE al final de cada episodio
+- Al menos 1 evento IRREVERSIBLE por episodio
+- Claridad narrativa sin simplismo
+
+REGLAS QC:
+- Cada episodio DEBE terminar con algo que obligue a ver el siguiente
+- Cada episodio DEBE cambiar el estado del mundo (algo irreversible ocurre)
+- PROHIBIDO cerrar episodios con "resolución cómoda"`,
+
+  voz_de_autor: `MODO: VOZ DE AUTOR ✍️
+  
+Objetivo: Respetar y amplificar la identidad del texto original.
+
+ANTES de escribir, debes identificar el AUTHOR_DNA:
+- Tempo narrativo (rápido/lento/variable)
+- Densidad léxica (minimalista/denso/poético)
+- Temas recurrentes
+- Iconos visuales característicos
+- Reglas del mundo (qué puede/no puede ocurrir)
+
+REGLAS:
+- El AUTHOR_DNA se inyecta en TODAS las escenas
+- Los conceptos deben expresarse mediante ACCIONES visibles
+- Los personajes centrales son columna vertebral, no decoración
+- Mantén la poesía del lenguaje original`,
+
+  giro_imprevisible: `MODO: GIRO IMPREVISIBLE 🔀
+  
+Objetivo: Sorprender y reconfigurar la percepción del espectador.
+Inspiración: Trance, Ocean's Eleven, The Prestige, Mr. Robot, Dark
+
+REGLAS:
+- El espectador cree entender algo que NO es cierto
+- Al menos 1 GIRO ESTRUCTURAL por episodio
+- Al menos 1 RECONTEXTUALIZACIÓN mayor por arco
+- Uso de narradores NO FIABLES
+- Información OMITIDA estratégicamente
+- Escenas que engañan (muestran una cosa, significan otra)
+- PROHIBIDA narrativa lineal simple
+
+TÉCNICAS OBLIGATORIAS:
+- Foreshadowing que solo se entiende en retrospectiva
+- Escenas que adquieren nuevo significado después del giro
+- Personajes con motivaciones ocultas`
+};
+
+const MASTER_SHOWRUNNER_CORE = `Eres MASTER_SHOWRUNNER_ENGINE.
+
+NO eres un generador de texto.
+Eres un showrunner, guionista jefe y supervisor narrativo de nivel estudio.
+
+Tu función es diseñar series y películas:
+- ADICTIVAS
+- Con identidad CLARA
+- Con consecuencias IRREVERSIBLES
+- Que NO parezcan escritas por una IA
+
+NUNCA:
+- Escribas narrativa genérica tipo "TV premium"
+- Uses plantillas previsibles
+- Conviertas ideas en exposición o lore
+- Cierres episodios sin intriga real
+
+SIEMPRE:
+- Convierte ideas en ACCIONES
+- Convierte conceptos en DECISIONES
+- Convierte decisiones en CONSECUENCIAS
+- Cambia el estado del mundo en cada episodio
+- Deja al espectador con NECESIDAD de continuar
+
+REGLAS QC (OBLIGATORIO):
+
+Cada EPISODIO debe:
+✓ Terminar con un cliffhanger REAL
+✓ Cambiar el estado del mundo
+✓ Incluir al menos UNO de:
+  • Revelación que cambia todo
+  • Pérdida irreversible
+  • Decisión sin retorno
+  • Información que recontextualiza lo anterior
+
+Cada ESCENA debe:
+✓ Tener OBJETIVO claro
+✓ Tener CONFLICTO
+✓ Forzar una DECISIÓN
+✓ Generar CONSECUENCIA
+
+Si alguna regla no se cumple → REESCRIBIR.`;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { idea, genre, tone, format, episodesCount, language } = await req.json();
+    const { idea, genre, tone, format, episodesCount, language, narrativeMode } = await req.json();
 
     if (!idea) {
       return new Response(
@@ -25,25 +124,35 @@ serve(async (req) => {
       throw new Error('ANTHROPIC_API_KEY no configurada');
     }
 
-    const systemPrompt = `Eres un guionista profesional. Genera un OUTLINE conciso para una serie o película.
-Responde SIEMPRE usando la herramienta deliver_outline.
-Idioma: ${language || 'es-ES'}`;
+    // Select narrative mode prompt
+    const modePrompt = NARRATIVE_MODE_PROMPTS[narrativeMode as keyof typeof NARRATIVE_MODE_PROMPTS] || NARRATIVE_MODE_PROMPTS.serie_adictiva;
 
-    const userPrompt = `Genera un OUTLINE para:
+    const systemPrompt = `${MASTER_SHOWRUNNER_CORE}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+${modePrompt}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Idioma de respuesta: ${language || 'es-ES'}`;
+
+    const userPrompt = `Genera un OUTLINE profesional para:
 
 IDEA: ${idea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
 FORMATO: ${format === 'series' ? `${episodesCount || 6} episodios` : 'Película'}
+MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
 
-CONSTRAINTS:
+CONSTRAINTS OBLIGATORIOS:
 - Personajes principales: MÍNIMO 5
 - Localizaciones: MÍNIMO 5
-- Si es serie: un beat por episodio
+- Si es serie: un beat con cliffhanger por episodio
+- Cada episodio DEBE tener un evento irreversible
 
-Usa la herramienta deliver_outline para entregar el resultado.`;
+Usa la herramienta deliver_outline para entregar el resultado.
+Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
 
-    console.log('[OUTLINE] Generating with Claude...');
+    console.log(`[OUTLINE] Generating with ${SCRIPT_MODEL} | Mode: ${narrativeMode || 'serie_adictiva'}...`);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -53,22 +162,23 @@ Usa la herramienta deliver_outline para entregar el resultado.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 3000,
-        temperature: 0.7,
+        model: SCRIPT_MODEL,
+        max_tokens: 4000,
+        temperature: 0.8,
         system: systemPrompt,
         tools: [
           {
             name: 'deliver_outline',
-            description: 'Entrega el outline estructurado.',
+            description: 'Entrega el outline estructurado con estilo MASTER SHOWRUNNER.',
             input_schema: {
               type: 'object',
               properties: {
-                title: { type: 'string', description: 'Título atractivo' },
-                logline: { type: 'string', description: '1-2 frases que vendan la serie' },
+                title: { type: 'string', description: 'Título evocador y memorable' },
+                logline: { type: 'string', description: '1-2 frases que VENDAN la serie con intriga' },
                 genre: { type: 'string' },
                 tone: { type: 'string' },
-                synopsis: { type: 'string', description: '100-200 palabras resumen general' },
+                narrative_mode: { type: 'string', description: 'Modo narrativo aplicado' },
+                synopsis: { type: 'string', description: '150-250 palabras. NO resumen, sino PROMESA narrativa' },
                 main_characters: {
                   type: 'array',
                   items: {
@@ -76,7 +186,10 @@ Usa la herramienta deliver_outline para entregar el resultado.`;
                     properties: {
                       name: { type: 'string' },
                       role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting'] },
-                      description: { type: 'string', description: '1-2 líneas: físico + personalidad' }
+                      description: { type: 'string', description: 'Físico + personalidad + FLAW' },
+                      secret: { type: 'string', description: 'Qué oculta este personaje' },
+                      want: { type: 'string', description: 'Deseo consciente' },
+                      need: { type: 'string', description: 'Necesidad inconsciente' }
                     },
                     required: ['name', 'role', 'description']
                   }
@@ -88,7 +201,8 @@ Usa la herramienta deliver_outline para entregar el resultado.`;
                     properties: {
                       name: { type: 'string' },
                       type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT'] },
-                      description: { type: 'string', description: '1-2 líneas' }
+                      description: { type: 'string' },
+                      atmosphere: { type: 'string', description: 'Qué SIENTE el espectador aquí' }
                     },
                     required: ['name', 'type', 'description']
                   }
@@ -100,13 +214,28 @@ Usa la herramienta deliver_outline para entregar el resultado.`;
                     properties: {
                       episode: { type: 'number' },
                       title: { type: 'string' },
-                      summary: { type: 'string', description: '2-3 frases de qué pasa' }
+                      summary: { type: 'string', description: '3-4 frases: qué pasa + conflicto + consecuencia' },
+                      irreversible_event: { type: 'string', description: 'El evento que cambia todo este episodio' },
+                      cliffhanger: { type: 'string', description: 'Cómo termina el episodio (debe generar NECESIDAD de ver más)' }
                     },
-                    required: ['episode', 'title', 'summary']
+                    required: ['episode', 'title', 'summary', 'cliffhanger']
                   }
-                }
+                },
+                author_dna: {
+                  type: 'object',
+                  description: 'Solo para modo voz_de_autor',
+                  properties: {
+                    tempo: { type: 'string' },
+                    density: { type: 'string' },
+                    lexicon: { type: 'string' },
+                    poetry_level: { type: 'string' },
+                    core_themes: { type: 'array', items: { type: 'string' } },
+                    recurring_icons: { type: 'array', items: { type: 'string' } }
+                  }
+                },
+                qc_status: { type: 'string', enum: ['pass', 'fail'], description: 'Auto-QC: pass si cumple todas las reglas' }
               },
-              required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'episode_beats']
+              required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'episode_beats', 'qc_status']
             }
           }
         ],
@@ -157,16 +286,35 @@ Usa la herramienta deliver_outline para entregar el resultado.`;
       }
     }
 
+    // Add narrative mode to outline if not present
+    if (!outline.narrative_mode) {
+      outline.narrative_mode = narrativeMode || 'serie_adictiva';
+    }
+
     // Validate episode_beats
     if (!outline.episode_beats || outline.episode_beats.length === 0) {
       outline.episode_beats = Array.from({ length: episodesCount || 1 }, (_, i) => ({
         episode: i + 1,
         title: `Episodio ${i + 1}`,
-        summary: 'Por generar'
+        summary: 'Por generar',
+        cliffhanger: 'Por definir'
       }));
     }
 
-    console.log('[OUTLINE] Success:', outline.title, '| Characters:', outline.main_characters?.length, '| Episodes:', outline.episode_beats?.length);
+    // QC Check: Ensure each episode has cliffhanger
+    const qcIssues: string[] = [];
+    outline.episode_beats.forEach((ep: any, i: number) => {
+      if (!ep.cliffhanger || ep.cliffhanger.length < 10) {
+        qcIssues.push(`Episodio ${i + 1}: falta cliffhanger efectivo`);
+      }
+    });
+
+    if (qcIssues.length > 0) {
+      console.warn('[OUTLINE QC]', qcIssues);
+      outline.qc_warnings = qcIssues;
+    }
+
+    console.log('[OUTLINE] Success:', outline.title, '| Mode:', outline.narrative_mode, '| Characters:', outline.main_characters?.length, '| Episodes:', outline.episode_beats?.length);
 
     return new Response(
       JSON.stringify({ success: true, outline }),
