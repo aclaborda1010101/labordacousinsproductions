@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Upload, Star, Check, X, Trash2, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Upload, Check, X, Trash2, Loader2, Image as ImageIcon, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface ReferenceAnchor {
   anchor_id: string;
@@ -19,18 +19,75 @@ interface ReferenceAnchor {
 interface ReferenceAnchorManagerProps {
   characterId: string;
   projectId: string;
+  onPackComplete?: (complete: boolean) => void;
 }
 
-const ANCHOR_TYPES = [
-  { value: 'identity_primary', label: 'Identity Primary', description: 'Main identity reference (highest priority)' },
-  { value: 'identity_secondary', label: 'Identity Secondary', description: 'Secondary identity reference' },
-  { value: 'expression_neutral', label: 'Neutral Expression', description: 'Neutral expression anchor' },
-  { value: 'turnaround_front', label: 'Front View', description: 'Front view anchor' },
-  { value: 'turnaround_side', label: 'Side View', description: 'Side view anchor' },
-  { value: 'outfit_default', label: 'Default Outfit', description: 'Default outfit anchor' },
+// Identity Pack: exactly 4 canonical reference images
+const IDENTITY_PACK_SLOTS = [
+  { 
+    value: 'face_front', 
+    label: 'Face – Front', 
+    category: 'PRIMARY IDENTITY',
+    required: true,
+    priority: 1,
+    description: 'Frontal face portrait, neutral expression, eyes at camera',
+    rules: [
+      'Full face visible',
+      'Hairline and hairstyle clearly visible',
+      'Beard as final canonical version',
+      'Soft, even lighting',
+      'Plain, neutral background',
+      'NO sunglasses, NO hats, NO strong expressions'
+    ],
+    purpose: 'Lock facial identity and hair'
+  },
+  { 
+    value: 'face_side', 
+    label: 'Face – Side Profile', 
+    category: 'IDENTITY SECONDARY',
+    required: true,
+    priority: 2,
+    description: 'Full side profile (90º), head straight, neutral expression',
+    rules: [
+      'Ear, nose, forehead clearly visible',
+      'Same hairstyle and beard as frontal',
+      'Same lighting and background style'
+    ],
+    purpose: 'Lock skull shape, nose, forehead, and jawline'
+  },
+  { 
+    value: 'body_front', 
+    label: 'Body – Front', 
+    category: 'BODY CANON',
+    required: true,
+    priority: 3,
+    description: 'Full body standing upright, facing camera',
+    rules: [
+      'Arms relaxed at sides',
+      'Neutral posture',
+      'Simple clothing (t-shirt + jeans preferred)',
+      'No dramatic pose',
+      'Plain background'
+    ],
+    purpose: 'Lock height, body proportions, and general build'
+  },
+  { 
+    value: 'body_side', 
+    label: 'Body – Side', 
+    category: 'BODY SECONDARY',
+    required: true,
+    priority: 4,
+    description: 'Full body side view, natural posture',
+    rules: [
+      'Same clothing as front body',
+      'No exaggerated pose',
+      'Same background and lighting'
+    ],
+    purpose: 'Lock body depth, posture, and silhouette'
+  },
 ];
 
-export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnchorManagerProps) {
+export function ReferenceAnchorManager({ characterId, projectId, onPackComplete }: ReferenceAnchorManagerProps) {
   const [anchors, setAnchors] = useState<ReferenceAnchor[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState<string | null>(null);
@@ -39,6 +96,15 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
   useEffect(() => {
     loadAnchors();
   }, [characterId]);
+
+  // Check pack completeness and notify parent
+  useEffect(() => {
+    const completeSlots = IDENTITY_PACK_SLOTS.filter(slot => 
+      anchors.some(a => a.anchor_type === slot.value && a.is_active)
+    );
+    const isComplete = completeSlots.length === IDENTITY_PACK_SLOTS.length;
+    onPackComplete?.(isComplete);
+  }, [anchors, onPackComplete]);
 
   const loadAnchors = async () => {
     setLoading(true);
@@ -55,8 +121,8 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
         anchor_id: a.id,
         image_url: a.image_url,
         anchor_type: a.anchor_type,
-        priority: a.priority,
-        usage_count: a.usage_count,
+        priority: a.priority ?? 100,
+        usage_count: a.usage_count ?? 0,
         is_active: a.is_active,
         approved: a.approved
       })));
@@ -73,8 +139,20 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
       return;
     }
 
+    const slotConfig = IDENTITY_PACK_SLOTS.find(s => s.value === anchorType);
+    if (!slotConfig) return;
+
     setUploading(anchorType);
     try {
+      // Delete existing anchor of this type first
+      const existingAnchor = anchors.find(a => a.anchor_type === anchorType);
+      if (existingAnchor) {
+        await supabase
+          .from('reference_anchors')
+          .delete()
+          .eq('id', existingAnchor.anchor_id);
+      }
+
       // 1. Upload to storage
       const fileName = `${characterId}/${anchorType}_${Date.now()}.${file.name.split('.').pop()}`;
       const { error: uploadError } = await supabase.storage
@@ -88,14 +166,14 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
         .from('character-references')
         .getPublicUrl(fileName);
 
-      // 3. Create anchor
+      // 3. Create anchor with correct priority
       const { error: insertError } = await supabase
         .from('reference_anchors')
         .insert({
           character_id: characterId,
           anchor_type: anchorType,
           image_url: publicUrl,
-          priority: anchorType === 'identity_primary' ? 1 : 100,
+          priority: slotConfig.priority,
           is_active: true,
           approved: true,
           approved_at: new Date().toISOString()
@@ -103,34 +181,13 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
 
       if (insertError) throw insertError;
 
-      toast.success(`${anchorType.replace(/_/g, ' ')} anchor created!`);
+      toast.success(`${slotConfig.label} uploaded successfully!`);
       loadAnchors();
     } catch (err) {
       console.error('Upload error:', err);
       toast.error('Failed to upload reference');
     } finally {
       setUploading(null);
-    }
-  };
-
-  const handleSetPrimary = async (anchorId: string) => {
-    try {
-      // Set all anchors for this character to priority 100
-      await supabase
-        .from('reference_anchors')
-        .update({ priority: 100 })
-        .eq('character_id', characterId);
-
-      // Set this anchor as priority 1
-      await supabase
-        .from('reference_anchors')
-        .update({ priority: 1 })
-        .eq('id', anchorId);
-
-      toast.success('Primary anchor updated!');
-      loadAnchors();
-    } catch (err) {
-      toast.error('Failed to update priority');
     }
   };
 
@@ -164,6 +221,12 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
   const getAnchorForType = (type: string) => 
     anchors.find(a => a.anchor_type === type);
 
+  const completedCount = IDENTITY_PACK_SLOTS.filter(slot => 
+    anchors.some(a => a.anchor_type === slot.value && a.is_active)
+  ).length;
+
+  const isPackComplete = completedCount === IDENTITY_PACK_SLOTS.length;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -175,31 +238,78 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <ImageIcon className="h-5 w-5" />
-          Reference Anchors
-        </CardTitle>
-        <CardDescription>
-          Upload reference images to guide generation with 70% influence
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <ImageIcon className="h-5 w-5" />
+              Identity Pack
+            </CardTitle>
+            <CardDescription>
+              Upload exactly 4 canonical reference images to lock character identity
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge 
+              variant={isPackComplete ? 'default' : 'secondary'}
+              className={isPackComplete ? 'bg-green-600' : ''}
+            >
+              {completedCount}/{IDENTITY_PACK_SLOTS.length}
+            </Badge>
+            {isPackComplete && (
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
+            )}
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Anchor Type Upload Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {ANCHOR_TYPES.map((type) => {
-            const existingAnchor = getAnchorForType(type.value);
-            const isUploading = uploading === type.value;
+        {/* Validation Alert */}
+        {!isPackComplete && (
+          <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-medium text-amber-600">Identity Pack Incomplete</p>
+              <p className="text-muted-foreground mt-1">
+                Upload all 4 reference images before generating. These become the ONLY source of truth for this character.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* 2x2 Grid for Identity Pack */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {IDENTITY_PACK_SLOTS.map((slot) => {
+            const existingAnchor = getAnchorForType(slot.value);
+            const isUploading = uploading === slot.value;
 
             return (
-              <div key={type.value} className="relative">
+              <div key={slot.value} className="space-y-2">
+                {/* Slot Header */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Badge variant="outline" className="text-xs mb-1">
+                      {slot.category}
+                    </Badge>
+                    <h4 className="font-medium">{slot.label}</h4>
+                  </div>
+                  {existingAnchor && (
+                    <Badge 
+                      variant={existingAnchor.is_active ? 'default' : 'secondary'}
+                      className={existingAnchor.is_active ? 'bg-green-600' : ''}
+                    >
+                      {existingAnchor.is_active ? 'Active' : 'Disabled'}
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Image Upload Area */}
                 <input
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  ref={(el) => { fileInputRefs.current[type.value] = el; }}
+                  ref={(el) => { fileInputRefs.current[slot.value] = el; }}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file) handleFileSelect(file, type.value);
+                    if (file) handleFileSelect(file, slot.value);
                     e.target.value = '';
                   }}
                 />
@@ -208,19 +318,18 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
                   <div className="relative group">
                     <img
                       src={existingAnchor.image_url}
-                      alt={type.label}
-                      className="w-full h-32 object-cover rounded-lg border"
+                      alt={slot.label}
+                      className="w-full h-48 object-cover rounded-lg border-2 border-border"
                     />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
-                      {existingAnchor.priority !== 1 && (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => handleSetPrimary(existingAnchor.anchor_id)}
-                        >
-                          <Star className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => fileInputRefs.current[slot.value]?.click()}
+                      >
+                        <Upload className="h-4 w-4 mr-1" />
+                        Replace
+                      </Button>
                       <Button
                         size="sm"
                         variant="secondary"
@@ -236,51 +345,54 @@ export function ReferenceAnchorManager({ characterId, projectId }: ReferenceAnch
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                    <div className="absolute top-2 left-2 flex gap-1">
-                      {existingAnchor.priority === 1 && (
-                        <Badge className="bg-yellow-500 text-white">Primary</Badge>
-                      )}
-                      {!existingAnchor.is_active && (
-                        <Badge variant="secondary">Disabled</Badge>
-                      )}
-                    </div>
-                    <div className="absolute bottom-2 right-2">
-                      <Badge variant="outline" className="bg-background/80 text-xs">
-                        Used {existingAnchor.usage_count}x
-                      </Badge>
-                    </div>
                   </div>
                 ) : (
                   <Button
                     variant="outline"
-                    className="w-full h-32 flex flex-col gap-2"
-                    onClick={() => fileInputRefs.current[type.value]?.click()}
+                    className="w-full h-48 flex flex-col gap-3 border-dashed border-2"
+                    onClick={() => fileInputRefs.current[slot.value]?.click()}
                     disabled={isUploading}
                   >
                     {isUploading ? (
-                      <Loader2 className="h-6 w-6 animate-spin" />
+                      <Loader2 className="h-8 w-8 animate-spin" />
                     ) : (
-                      <Upload className="h-6 w-6" />
+                      <>
+                        <Upload className="h-8 w-8 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Click to upload</span>
+                      </>
                     )}
-                    <span className="text-xs text-center">{type.label}</span>
                   </Button>
                 )}
-                
-                <p className="text-xs text-muted-foreground mt-1 text-center">
-                  {type.description}
-                </p>
+
+                {/* Slot Description & Rules */}
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>{slot.description}</p>
+                  <details className="cursor-pointer">
+                    <summary className="text-primary hover:underline">View requirements</summary>
+                    <ul className="mt-2 ml-4 space-y-0.5 list-disc">
+                      {slot.rules.map((rule, i) => (
+                        <li key={i}>{rule}</li>
+                      ))}
+                    </ul>
+                    <p className="mt-2 font-medium text-foreground/80">Purpose: {slot.purpose}</p>
+                  </details>
+                </div>
               </div>
             );
           })}
         </div>
 
-        {anchors.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p>No reference anchors yet.</p>
-            <p className="text-sm">Upload images above to improve generation consistency.</p>
-          </div>
-        )}
+        {/* Critical Rules Summary */}
+        <div className="p-4 rounded-lg bg-muted/50 border space-y-2 text-xs">
+          <p className="font-medium text-sm">Critical Rules</p>
+          <ul className="list-disc ml-4 space-y-1 text-muted-foreground">
+            <li>All images must depict the <strong>SAME PERSON</strong></li>
+            <li>All images must be neutral and non-artistic</li>
+            <li>Haircut and beard must be consistent across all 4 images</li>
+            <li>Clothing in body shots must be identical</li>
+            <li>NO outdoor photos, NO cinematic lighting, NO expressive poses</li>
+          </ul>
+        </div>
       </CardContent>
     </Card>
   );
