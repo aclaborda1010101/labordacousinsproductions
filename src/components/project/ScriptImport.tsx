@@ -59,7 +59,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { calculateAutoTargets, CalculatedTargets, TargetInputs } from '@/lib/autoTargets';
+import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig } from '@/lib/autoTargets';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import {
   estimateEpisodeMs,
@@ -198,6 +198,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [segmenting, setSegmenting] = useState(false);
   const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
   
+  // Dynamic batch configuration
+  const [batchConfig, setBatchConfig] = useState<BatchConfig | null>(null);
+
   // Episode regeneration state
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
@@ -469,8 +472,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       startedAt: Date.now()
     });
 
-    // Total batches = 5 per episode (25 scenes total, smaller batches to avoid timeouts)
-    const BATCHES_PER_EPISODE = 5;
+    // Calculate dynamic batch configuration based on complexity
+    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity);
+    setBatchConfig(dynamicBatchConfig);
+    
+    const BATCHES_PER_EPISODE = dynamicBatchConfig.batchesPerEpisode;
+    const SCENES_PER_BATCH = dynamicBatchConfig.scenesPerBatch;
+    const DELAY_BETWEEN_BATCHES = dynamicBatchConfig.delayBetweenBatchesMs;
+    
+    console.log(`[DYNAMIC BATCHES] Complexity: ${complexity} | Config: ${BATCHES_PER_EPISODE} batches × ${SCENES_PER_BATCH} scenes = ${dynamicBatchConfig.estimatedScenesTotal} scenes/episode | Delay: ${DELAY_BETWEEN_BATCHES}ms`);
+    
     const totalBatches = totalEpisodes * BATCHES_PER_EPISODE;
     let completedBatches = 0;
 
@@ -486,7 +497,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setCurrentEpisodeGenerating(epNum);
         const episodeBeat = lightOutline.episode_beats?.[epNum - 1];
 
-        // Generate episode in 5 batches (0-4) = 25 scenes total
+        // Generate episode with dynamic batch count
         const allScenes: any[] = [];
         let synopsisFromClaude: string | null = null;
         let episodeError: string | null = null;
@@ -494,13 +505,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         for (let batchIdx = 0; batchIdx < BATCHES_PER_EPISODE; batchIdx++) {
           if (controller.signal.aborted) break;
 
-          // Add delay between batches to avoid rate limits (429)
+          // Add dynamic delay between batches to avoid rate limits (429)
           if (batchIdx > 0) {
-            await new Promise(resolve => setTimeout(resolve, 2000)); // 2s delay
+            await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
           }
 
+          const sceneStart = batchIdx * SCENES_PER_BATCH + 1;
+          const sceneEnd = sceneStart + SCENES_PER_BATCH - 1;
           const batchLabel = `Ep${epNum} batch ${batchIdx + 1}/${BATCHES_PER_EPISODE}`;
-          updatePipelineStep('episodes', 'running', `${batchLabel} (escenas ${batchIdx * 5 + 1}-${batchIdx * 5 + 5})...`);
+          updatePipelineStep('episodes', 'running', `${batchLabel} (escenas ${sceneStart}-${sceneEnd})...`);
 
           const t0 = Date.now();
           setEpisodeStartedAtMs(t0);
@@ -513,7 +526,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   language,
                   batchIndex: batchIdx,
                   previousScenes: allScenes,
-                  narrativeMode
+                  narrativeMode,
+                  // NEW: Dynamic batch config
+                  scenesPerBatch: SCENES_PER_BATCH,
+                  totalBatches: BATCHES_PER_EPISODE,
+                  isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1
                 }
               });
 
@@ -2003,6 +2020,36 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       <Label className="text-xs text-muted-foreground">Ratio Diálogo/Acción</Label>
                       <Badge variant="secondary" className="mt-1">{targets.dialogue_action_ratio}</Badge>
                     </div>
+                    
+                    {/* Dynamic Batch Configuration Preview */}
+                    {(() => {
+                      const batchPreview = calculateDynamicBatches(targets, complexity);
+                      return (
+                        <div className="col-span-2 pt-2 border-t mt-2">
+                          <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Settings2 className="w-3 h-3" />
+                            Configuración Dinámica de Batches
+                          </Label>
+                          <div className="flex flex-wrap gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs">
+                              {batchPreview.batchesPerEpisode} batches/episodio
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              {batchPreview.scenesPerBatch} escenas/batch
+                            </Badge>
+                            <Badge variant="outline" className="text-xs bg-primary/10">
+                              ~{batchPreview.estimatedScenesTotal} escenas/episodio
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              {batchPreview.delayBetweenBatchesMs}ms delay
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Ajustado automáticamente según complejidad para optimizar tokens y evitar timeouts.
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </CardContent>
