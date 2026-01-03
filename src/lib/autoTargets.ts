@@ -158,3 +158,98 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
     };
   }
 }
+
+/**
+ * Calculate optimal batch configuration based on narrative complexity
+ * More complex scripts = more batches = fewer scenes per batch = less tokens per call
+ * This prevents timeouts and 429 rate limit errors
+ */
+export interface BatchConfig {
+  batchesPerEpisode: number;
+  scenesPerBatch: number;
+  delayBetweenBatchesMs: number;
+  estimatedScenesTotal: number;
+}
+
+export function calculateDynamicBatches(
+  targets: CalculatedTargets,
+  complexity: 'simple' | 'medium' | 'high',
+  ambitionSliders?: { humor: number; darkness: number; realism: number; worldIntensity: number }
+): BatchConfig {
+  // Base scenes per episode from targets
+  const baseScenesPerEpisode = targets.scenes_per_episode || 20;
+  
+  // Calculate complexity score (0-100)
+  let complexityScore = 0;
+  
+  // From complexity level
+  switch (complexity) {
+    case 'simple': complexityScore += 20; break;
+    case 'medium': complexityScore += 40; break;
+    case 'high': complexityScore += 60; break;
+  }
+  
+  // From character density
+  const characterDensity = (targets.protagonists_min || 0) + (targets.supporting_min || 0);
+  if (characterDensity > 15) complexityScore += 15;
+  else if (characterDensity > 10) complexityScore += 10;
+  else if (characterDensity > 5) complexityScore += 5;
+  
+  // From locations
+  if ((targets.locations_min || 0) > 15) complexityScore += 10;
+  else if ((targets.locations_min || 0) > 10) complexityScore += 5;
+  
+  // From subplots and twists
+  complexityScore += Math.min((targets.subplots_min || 0) * 3, 12);
+  complexityScore += Math.min((targets.twists_min || 0) * 2, 8);
+  
+  // From ambition sliders (if provided)
+  if (ambitionSliders) {
+    const avgAmbition = (
+      (ambitionSliders.humor || 50) + 
+      (ambitionSliders.darkness || 50) + 
+      (ambitionSliders.realism || 50) + 
+      (ambitionSliders.worldIntensity || 50)
+    ) / 4;
+    // Add up to 15 points for high ambition
+    complexityScore += Math.round((avgAmbition - 50) / 50 * 15);
+  }
+  
+  // Clamp to 0-100
+  complexityScore = Math.max(0, Math.min(100, complexityScore));
+  
+  // Determine batches based on complexity score
+  // Low complexity (0-30): 3 batches, 7 scenes each = 21 scenes
+  // Medium complexity (31-60): 5 batches, 5 scenes each = 25 scenes  
+  // High complexity (61-80): 6 batches, 4 scenes each = 24 scenes
+  // Very high complexity (81+): 8 batches, 3 scenes each = 24 scenes
+  
+  let batchesPerEpisode: number;
+  let scenesPerBatch: number;
+  let delayMs: number;
+  
+  if (complexityScore <= 30) {
+    batchesPerEpisode = 3;
+    scenesPerBatch = 7;
+    delayMs = 1500; // Less delay needed for simpler batches
+  } else if (complexityScore <= 60) {
+    batchesPerEpisode = 5;
+    scenesPerBatch = 5;
+    delayMs = 2000;
+  } else if (complexityScore <= 80) {
+    batchesPerEpisode = 6;
+    scenesPerBatch = 4;
+    delayMs = 2500;
+  } else {
+    batchesPerEpisode = 8;
+    scenesPerBatch = 3;
+    delayMs = 3000; // More delay for very complex batches
+  }
+  
+  return {
+    batchesPerEpisode,
+    scenesPerBatch,
+    delayBetweenBatchesMs: delayMs,
+    estimatedScenesTotal: batchesPerEpisode * scenesPerBatch
+  };
+}

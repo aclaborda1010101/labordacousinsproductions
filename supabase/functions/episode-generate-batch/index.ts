@@ -111,8 +111,9 @@ EJEMPLOS CORRECTOS vs INCORRECTOS
 NUNCA uses términos genéricos como "normal", "standard", "moves", "lighting". Siempre sé ESPECÍFICO.`;
 
 /**
- * Genera UN SOLO batch de escenas (5 escenas) con formato SHOOT-READY.
- * El frontend llama 3 veces: batch 0 (1-5), batch 1 (6-10), batch 2 (11-15).
+ * Genera UN SOLO batch de escenas con formato SHOOT-READY.
+ * Soporta configuración dinámica: scenesPerBatch, totalBatches, isLastBatch
+ * Por defecto: 5 escenas por batch si no se especifica.
  */
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -124,7 +125,18 @@ serve(async (req) => {
   const timeoutId = setTimeout(() => controller.abort(), 150000); // 150s timeout
 
   try {
-    const { outline, episodeNumber, language, batchIndex, previousScenes, narrativeMode } = await req.json();
+    const { 
+      outline, 
+      episodeNumber, 
+      language, 
+      batchIndex, 
+      previousScenes, 
+      narrativeMode,
+      // Dynamic batch config (optional, defaults to 5 scenes per batch)
+      scenesPerBatch = 5,
+      totalBatches = 5,
+      isLastBatch: isLastBatchParam
+    } = await req.json();
 
     if (!outline || !episodeNumber || typeof batchIndex !== "number") {
       clearTimeout(timeoutId);
@@ -146,12 +158,13 @@ serve(async (req) => {
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
     if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY no configurada");
 
-    // Calculate scene range for this batch
-    const sceneStart = batchIndex * 5 + 1;
-    const sceneEnd = sceneStart + 4;
-    const isLastBatch = batchIndex === 2;
+    // Calculate scene range for this batch using dynamic config
+    const SCENES_PER_BATCH = Math.max(1, Math.min(10, scenesPerBatch)); // Clamp 1-10
+    const sceneStart = batchIndex * SCENES_PER_BATCH + 1;
+    const sceneEnd = sceneStart + SCENES_PER_BATCH - 1;
+    const isLastBatch = isLastBatchParam ?? (batchIndex === totalBatches - 1);
 
-    console.log(`[EP${episodeNumber} BATCH${batchIndex}] Generating SHOOT-READY scenes ${sceneStart}-${sceneEnd} | Mode: ${narrativeMode || 'serie_adictiva'}...`);
+    console.log(`[EP${episodeNumber} BATCH${batchIndex}] Generating SHOOT-READY scenes ${sceneStart}-${sceneEnd} (${SCENES_PER_BATCH} scenes) | Mode: ${narrativeMode || 'serie_adictiva'}...`);
 
     const charactersRef = outline.main_characters
       ?.map((c: any) => `- ${c.name} (${c.role || "personaje"}): ${c.description || ""} ${c.secret ? `[SECRETO: ${c.secret}]` : ''}`)
@@ -198,21 +211,21 @@ ${locationsRef || "- (Crear localizaciones necesarias)"}
 
 ${priorSummary ? `ESCENAS YA GENERADAS (para continuidad):\n${priorSummary}\n` : ""}
 
-TAREA: Genera EXACTAMENTE 5 escenas SHOOT-READY (números ${sceneStart} a ${sceneEnd}).
-${isLastBatch ? '\n⚠️ ÚLTIMA BATCH: La escena 15 DEBE contener el CLIFFHANGER del episodio.' : ''}
+TAREA: Genera EXACTAMENTE ${SCENES_PER_BATCH} escenas SHOOT-READY (números ${sceneStart} a ${sceneEnd}).
+${isLastBatch ? `\n⚠️ ÚLTIMA BATCH: La escena ${sceneEnd} DEBE contener el CLIFFHANGER del episodio.` : ''}
 
 CRITICAL: Cada escena debe ser EJECUTABLE DIRECTAMENTE por un Director de Fotografía.
 Incluye TODAS las especificaciones técnicas: camera_specs, visual_specifics, action_blocks, sound_specifics, lighting_specs, color_grading, transition.
 
 IDIOMA: ${language || "es-ES"}
 
-Usa la herramienta generate_shoot_ready_scenes para devolver las 5 escenas con formato profesional.`;
+Usa la herramienta generate_shoot_ready_scenes para devolver las ${SCENES_PER_BATCH} escenas con formato profesional.`;
 
     // SHOOT-READY TOOL SCHEMA
     const tools = [
       {
         name: "generate_shoot_ready_scenes",
-        description: "Genera exactamente 5 escenas SHOOT-READY con especificaciones técnicas COMPLETAS para producción profesional",
+        description: `Genera exactamente ${SCENES_PER_BATCH} escenas SHOOT-READY con especificaciones técnicas COMPLETAS para producción profesional`,
         input_schema: {
           type: "object",
           properties: {
@@ -222,7 +235,9 @@ Usa la herramienta generate_shoot_ready_scenes para devolver las 5 escenas con f
             },
             scenes: {
               type: "array",
-              description: "Exactamente 5 escenas con formato SHOOT-READY",
+              description: `Exactamente ${SCENES_PER_BATCH} escenas con formato SHOOT-READY`,
+              minItems: SCENES_PER_BATCH,
+              maxItems: SCENES_PER_BATCH,
               items: {
                 type: "object",
                 properties: {
@@ -578,9 +593,9 @@ Usa la herramienta generate_shoot_ready_scenes para devolver las 5 escenas con f
         }
 
         const scenes = toolUse.input.scenes;
-        if (!Array.isArray(scenes) || scenes.length !== 5) {
-          console.error(`[EP${episodeNumber} BATCH${batchIndex}] Invalid scenes count:`, scenes.length);
-          lastError = `Expected 5 scenes, got ${scenes?.length || 0}`;
+        if (!Array.isArray(scenes) || scenes.length !== SCENES_PER_BATCH) {
+          console.error(`[EP${episodeNumber} BATCH${batchIndex}] Invalid scenes count:`, scenes.length, `expected ${SCENES_PER_BATCH}`);
+          lastError = `Expected ${SCENES_PER_BATCH} scenes, got ${scenes?.length || 0}`;
           continue;
         }
 
