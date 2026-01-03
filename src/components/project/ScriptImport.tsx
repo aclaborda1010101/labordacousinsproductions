@@ -51,7 +51,8 @@ import {
   History,
   RotateCcw,
   Video,
-  Play
+  Play,
+  Clapperboard
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -1962,13 +1963,91 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               {(generatedScript?.teasers || generatedTeasers) && (
                 <Card className="border-amber-500/50">
                   <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Film className="w-5 h-5 text-amber-500" />
-                      Teasers Promocionales
-                    </CardTitle>
-                    <CardDescription>
-                      Teasers auto-generados para promoción: 60 segundos y 30 segundos
-                    </CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <Film className="w-5 h-5 text-amber-500" />
+                          Teasers Promocionales
+                        </CardTitle>
+                        <CardDescription>
+                          Teasers auto-generados para promoción: 60 segundos y 30 segundos
+                        </CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const teaserData = generatedScript?.teasers || generatedTeasers;
+                            if (teaserData) {
+                              import('@/lib/exportScreenplayPDF').then(({ exportTeaserPDF }) => {
+                                exportTeaserPDF(generatedScript?.title || 'Proyecto', teaserData);
+                                toast.success('PDF de teasers exportado');
+                              });
+                            }
+                          }}
+                        >
+                          <FileDown className="w-4 h-4 mr-1" />
+                          PDF
+                        </Button>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={async () => {
+                            const teaserData = generatedScript?.teasers || generatedTeasers;
+                            if (!teaserData) return;
+                            
+                            setSegmenting(true);
+                            try {
+                              // Generate scenes for teaser 60s
+                              if (teaserData.teaser60) {
+                                toast.info('Generando escenas para Teaser 60s...');
+                                const { error: err60 } = await supabase.functions.invoke('generate-scenes', {
+                                  body: {
+                                    projectId,
+                                    episodeNo: -1, // Special episode number for teaser 60s
+                                    synopsis: `TEASER 60s: ${teaserData.teaser60.logline}. ${teaserData.teaser60.scenes?.map((s: any) => s.description).join(' ')}`,
+                                    sceneCount: teaserData.teaser60.scenes?.length || 6,
+                                    isTeaser: true,
+                                    teaserType: '60s',
+                                    teaserData: teaserData.teaser60
+                                  }
+                                });
+                                if (err60) throw err60;
+                              }
+                              
+                              // Generate scenes for teaser 30s
+                              if (teaserData.teaser30) {
+                                toast.info('Generando escenas para Teaser 30s...');
+                                const { error: err30 } = await supabase.functions.invoke('generate-scenes', {
+                                  body: {
+                                    projectId,
+                                    episodeNo: -2, // Special episode number for teaser 30s
+                                    synopsis: `TEASER 30s: ${teaserData.teaser30.logline}. ${teaserData.teaser30.scenes?.map((s: any) => s.description).join(' ')}`,
+                                    sceneCount: teaserData.teaser30.scenes?.length || 4,
+                                    isTeaser: true,
+                                    teaserType: '30s',
+                                    teaserData: teaserData.teaser30
+                                  }
+                                });
+                                if (err30) throw err30;
+                              }
+                              
+                              toast.success('Escenas de teasers generadas. Ve al módulo de Escenas.');
+                            } catch (err) {
+                              console.error('Error generating teaser scenes:', err);
+                              toast.error('Error al generar escenas de teasers');
+                            } finally {
+                              setSegmenting(false);
+                            }
+                          }}
+                          disabled={segmenting}
+                        >
+                          {segmenting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Clapperboard className="w-4 h-4 mr-1" />}
+                          Generar Escenas
+                        </Button>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-6 md:grid-cols-2">
@@ -1978,7 +2057,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           <CardHeader className="pb-2">
                             <div className="flex items-center justify-between">
                               <Badge variant="outline" className="bg-amber-500/20">60 segundos</Badge>
-                              <Badge variant="secondary">{(generatedScript?.teasers?.teaser60?.scenes || generatedTeasers?.teaser60?.scenes)?.length || 0} planos</Badge>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="secondary">{(generatedScript?.teasers?.teaser60?.scenes || generatedTeasers?.teaser60?.scenes)?.length || 0} planos</Badge>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                  onClick={() => {
+                                    const teaserData = generatedScript?.teasers || generatedTeasers;
+                                    if (teaserData) {
+                                      import('@/lib/exportScreenplayPDF').then(({ exportTeaserPDF }) => {
+                                        exportTeaserPDF(generatedScript?.title || 'Proyecto', teaserData, { teaserType: '60' });
+                                        toast.success('PDF Teaser 60s exportado');
+                                      });
+                                    }
+                                  }}
+                                >
+                                  <FileDown className="w-3 h-3" />
+                                </Button>
+                              </div>
                             </div>
                             <CardTitle className="text-sm mt-2">
                               {generatedScript?.teasers?.teaser60?.title || generatedTeasers?.teaser60?.title || 'Teaser Principal'}
@@ -2029,7 +2126,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           <CardHeader className="pb-2">
                             <div className="flex items-center justify-between">
                               <Badge variant="outline" className="bg-red-500/20">30 segundos</Badge>
-                              <Badge variant="secondary">{(generatedScript?.teasers?.teaser30?.scenes || generatedTeasers?.teaser30?.scenes)?.length || 0} planos</Badge>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="secondary">{(generatedScript?.teasers?.teaser30?.scenes || generatedTeasers?.teaser30?.scenes)?.length || 0} planos</Badge>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                  onClick={() => {
+                                    const teaserData = generatedScript?.teasers || generatedTeasers;
+                                    if (teaserData) {
+                                      import('@/lib/exportScreenplayPDF').then(({ exportTeaserPDF }) => {
+                                        exportTeaserPDF(generatedScript?.title || 'Proyecto', teaserData, { teaserType: '30' });
+                                        toast.success('PDF Teaser 30s exportado');
+                                      });
+                                    }
+                                  }}
+                                >
+                                  <FileDown className="w-3 h-3" />
+                                </Button>
+                              </div>
                             </div>
                             <CardTitle className="text-sm mt-2">
                               {generatedScript?.teasers?.teaser30?.title || generatedTeasers?.teaser30?.title || 'Teaser Corto'}
