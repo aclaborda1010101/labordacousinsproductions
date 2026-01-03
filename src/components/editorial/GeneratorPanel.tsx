@@ -1,8 +1,10 @@
 /**
- * Pantalla: Generador con Pipeline Editorial
+ * Pantalla: Generador con Pipeline Editorial v0.2
+ * - Selector de motor automático con razón visible
+ * - Integración con engineSelector y editorialValidator
  */
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,14 +14,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sparkles, User, MapPin, BookOpen, Wand2 } from 'lucide-react';
-import type { 
-  AssetCharacter, 
-  AssetLocation, 
-  ProjectBible,
-  EditorialProjectPhase,
-  MVP_ENGINES 
-} from '@/lib/editorialMVPTypes';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Sparkles, User, MapPin, BookOpen, Wand2, Info, Cpu } from 'lucide-react';
+import { selectEngine, getEngineSelectionExplanation } from '@/lib/engineSelector';
+import { ENGINE_CONFIGS, type Engine, type ProjectPhase } from '@/lib/editorialTypes';
+import type { AssetCharacter, AssetLocation, ProjectBible, EditorialProjectPhase } from '@/lib/editorialMVPTypes';
 
 interface GeneratorPanelProps {
   characters: AssetCharacter[];
@@ -31,14 +30,10 @@ interface GeneratorPanelProps {
     context: string;
     selectedAssetIds: string[];
     engine: string;
+    engineSelection: ReturnType<typeof selectEngine>;
   }) => Promise<void>;
   isGenerating: boolean;
 }
-
-const ENGINES = [
-  { id: 'nano-banana', name: 'Nano Banana Pro', type: 'image' },
-  { id: 'flux-ultra', name: 'FLUX Pro Ultra', type: 'image' }
-];
 
 export function GeneratorPanel({
   characters,
@@ -51,7 +46,18 @@ export function GeneratorPanel({
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
-  const [engine, setEngine] = useState(ENGINES[0].id);
+  const [userEngineOverride, setUserEngineOverride] = useState<Engine | null>(null);
+
+  // Convertir fase del MVP a fase del selector
+  const selectorPhase: ProjectPhase = phase === 'exploracion' ? 'exploration' : 'production';
+
+  // Selección automática de motor
+  const engineSelection = useMemo(
+    () => selectEngine(intent, selectorPhase, userEngineOverride, context),
+    [intent, selectorPhase, userEngineOverride, context]
+  );
+
+  const engineMeta = ENGINE_CONFIGS.find(e => e.id === engineSelection.engine);
 
   const toggleAsset = (id: string) => {
     setSelectedAssetIds(prev => 
@@ -67,7 +73,8 @@ export function GeneratorPanel({
       intent: intent.trim(),
       context: context.trim(),
       selectedAssetIds,
-      engine
+      engine: engineSelection.engine,
+      engineSelection
     });
   };
 
@@ -85,7 +92,7 @@ export function GeneratorPanel({
               Generar
             </CardTitle>
             <CardDescription>
-              Describe lo que quieres crear. El sistema traducirá tu intención respetando las reglas editoriales.
+              Describe lo que quieres crear. El sistema seleccionará el motor óptimo y traducirá tu intención respetando las reglas editoriales.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -95,7 +102,7 @@ export function GeneratorPanel({
                 id="intent"
                 value={intent}
                 onChange={(e) => setIntent(e.target.value)}
-                placeholder="Ej: Elena sentada en el café, mirando por la ventana con expresión pensativa, luz de atardecer..."
+                placeholder="Ej: Retrato de Leonardo en el laboratorio, plano medio, luz fría, expresión concentrada..."
                 rows={4}
                 className="mt-1"
               />
@@ -107,7 +114,7 @@ export function GeneratorPanel({
                 id="context"
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
-                placeholder="Ej: Es el momento justo después de recibir la llamada. Todavía no sabe qué va a hacer..."
+                placeholder="Ej: Es de noche. Está nervioso. Acaba de descubrir una anomalía en los datos..."
                 rows={2}
                 className="mt-1"
               />
@@ -116,20 +123,78 @@ export function GeneratorPanel({
               </p>
             </div>
 
-            <div>
-              <Label>Motor de generación</Label>
-              <Select value={engine} onValueChange={setEngine}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ENGINES.map(e => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Selector de motor con explicación */}
+            <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="flex items-center gap-2">
+                  <Cpu className="h-4 w-4" />
+                  Motor de generación
+                </Label>
+                <Select 
+                  value={userEngineOverride ?? 'auto'} 
+                  onValueChange={(v) => setUserEngineOverride(v === 'auto' ? null : v as Engine)}
+                >
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="auto">Auto</SelectItem>
+                    <SelectItem value="nano-banana">nano-banana</SelectItem>
+                    <SelectItem value="flux">FLUX</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Badge de motor seleccionado */}
+              <div className="flex items-center gap-3">
+                <div className={`px-3 py-2 rounded-lg border ${
+                  engineSelection.engine === 'flux' 
+                    ? 'bg-purple-50 border-purple-200 dark:bg-purple-950/30 dark:border-purple-800' 
+                    : 'bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-sm">
+                      {engineMeta?.name ?? engineSelection.engine}
+                    </span>
+                    <Badge variant="outline" className="text-xs">
+                      {engineSelection.selectedBy === 'auto' ? 'Auto' : 'Manual'}
+                    </Badge>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>{engineSelection.reason}</p>
+                          {engineSelection.alternativeEngine && (
+                            <p className="mt-1 text-xs opacity-80">
+                              Alternativa: {engineSelection.alternativeEngine} — {engineSelection.alternativeReason}
+                            </p>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {engineMeta?.notes}
+                  </p>
+                </div>
+
+                {/* Confianza */}
+                <div className="text-center">
+                  <div className="text-lg font-bold">
+                    {Math.round(engineSelection.confidence * 100)}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">confianza</div>
+                </div>
+              </div>
+
+              {/* Alternativa sugerida */}
+              {engineSelection.alternativeEngine && (
+                <p className="text-xs text-muted-foreground">
+                  💡 Alternativa: <strong>{engineSelection.alternativeEngine}</strong> — {engineSelection.alternativeReason}
+                </p>
+              )}
             </div>
 
             <Separator />
@@ -143,12 +208,12 @@ export function GeneratorPanel({
               {isGenerating ? (
                 <>
                   <Sparkles className="h-4 w-4 mr-2 animate-spin" />
-                  Generando...
+                  Generando con {engineMeta?.name}...
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Generar
+                  Generar con {engineMeta?.name}
                 </>
               )}
             </Button>
@@ -268,6 +333,12 @@ export function GeneratorPanel({
                 {phase === 'exploracion' ? 'Exploración' : 'Producción'}
               </Badge>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {phase === 'exploracion' 
+                ? 'Tolerancia alta. Reglas B como advertencia.'
+                : 'Tolerancia baja. Reglas B más estrictas.'
+              }
+            </p>
           </CardContent>
         </Card>
       </div>
