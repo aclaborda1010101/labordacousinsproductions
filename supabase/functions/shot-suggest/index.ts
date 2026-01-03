@@ -11,27 +11,38 @@ interface ShotSuggestRequest {
   scene: {
     slugline: string;
     summary: string;
+    action?: string;
+    description?: string;
+    dialogue?: { character: string; line: string; parenthetical?: string }[];
     beats?: { index: number; action: string; emotion?: string }[];
     quality_mode: 'CINE' | 'ULTRA';
     time_of_day?: string;
+    duration_estimate_sec?: number;
+    conflict?: string;
+    mood?: string;
+    sfx_cue?: string;
+    music_cue?: string;
   };
   characters: {
     id: string;
     name: string;
     token?: string;
     has_refs: boolean;
+    role?: string;
   }[];
   location?: {
     id: string;
     name: string;
     token?: string;
     has_refs: boolean;
+    description?: string;
   };
   stylePack?: {
     camera_system?: string;
     lens_style?: string;
     lighting_rules?: any[];
     forbidden_rules?: any[];
+    visual_tone?: string;
   };
   previousSceneContext?: string;
   nextSceneContext?: string;
@@ -44,76 +55,177 @@ interface ShotSuggestRequest {
   language?: string;
 }
 
-const SYSTEM_PROMPT = `Eres SHOT_SUGGEST: un Director de Fotografía y Director experto de Hollywood.
+// ════════════════════════════════════════════════════════════════
+// CINEMATOGRAPHER ENGINE v2 - COMPLETE SCENE COVERAGE SYSTEM
+// ════════════════════════════════════════════════════════════════
 
-TU MISIÓN: Proponer una secuencia de shots cinematográficos profesionales que:
-1. Cubran toda la acción de la escena
-2. Mantengan continuidad visual con escenas adyacentes
-3. Sigan el sistema de cámara del proyecto (si se proporciona)
-4. Consideren los riesgos de generación por IA
+const SYSTEM_PROMPT = `Eres CINEMATOGRAPHER_ENGINE_v2: Director de Fotografía senior con 30 años en Hollywood.
 
-FORMATO DE SALIDA (JSON):
+TU MISIÓN CRÍTICA: Generar una secuencia de shots COMPLETA, CORRELATIVA y PROFESIONAL que cubra TODA la acción y diálogo de la escena. Los shots deben fluir naturalmente como una secuencia cinematográfica coherente.
+
+═══════════════════════════════════════════════════════
+REGLAS FUNDAMENTALES DE COVERAGE
+═══════════════════════════════════════════════════════
+
+1. COBERTURA TOTAL: Cada línea de acción y diálogo debe estar cubierta por un shot
+2. FLUJO VISUAL: Los shots deben alternar tamaños lógicamente (Wide→Medium→Close→Wide)
+3. CONTINUIDAD: Cada shot debe conectar visual y narrativamente con el anterior/siguiente
+4. REGLA 180°: Mantener eje de cámara coherente en diálogos
+5. TIMING REALISTA: Duración basada en acción real (diálogo = 1.5 seg/línea aprox)
+
+═══════════════════════════════════════════════════════
+ESTRUCTURA DE COBERTURA PROFESIONAL
+═══════════════════════════════════════════════════════
+
+INICIO DE ESCENA (obligatorio):
+- Shot 1: ESTABLISHING/WIDE - Sitúa al espectador en el espacio
+- Shot 2: MEDIUM/FULL - Introduce personajes principales
+
+DESARROLLO (según acción/diálogo):
+- Para DIÁLOGO: OTS alternados + inserts de reacción
+- Para ACCIÓN: Tracking/Steadicam siguiendo movimiento
+- Para TENSIÓN: Progresión de planos más cerrados
+- Para REVELACIÓN: Insert o ECU del objeto/detalle
+
+CIERRE DE ESCENA (obligatorio):
+- Último shot: Transición natural a siguiente escena
+
+═══════════════════════════════════════════════════════
+ESPECIFICACIONES TÉCNICAS REQUERIDAS POR SHOT
+═══════════════════════════════════════════════════════
+
+FOCAL LENGTHS (mm):
+- 16-24mm: Establisher, espacios amplios, distorsión expresiva
+- 35mm: Medium wide, grupos, movimiento
+- 50mm: Estándar, natural, medium shots
+- 85mm: Retratos, close-ups, compresión elegante
+- 135mm: ECU, aislamiento, intimidad extrema
+
+CAMERA HEIGHT:
+- GroundLevel: Poder, amenaza, perspectiva inusual
+- LowAngle: Heroísmo, dominancia, autoridad
+- EyeLevel: Neutral, objetivo, periodístico
+- HighAngle: Vulnerabilidad, vigilancia, contexto
+- Overhead: Coreografía, objetos, abstracción
+
+STABILIZATION:
+- Tripod: Estable, formal, control total
+- Steadicam: Suave siguiendo acción
+- Handheld_Controlled: Documental elegante, tensión sutil
+- Handheld_Raw: Urgencia, caos, realismo extremo
+- Gimbal: Movimiento fluido moderno
+- Crane: Movimientos verticales épicos
+
+═══════════════════════════════════════════════════════
+AI GENERATION RISK PROFILES
+═══════════════════════════════════════════════════════
+
+HIGH RISK (requiere más control):
+- Identity_Drift: Personaje cambia de aspecto entre shots
+- Hand_Deform: Manos con dedos incorrectos
+- Spatial_Jump: Objetos/personas cambian posición
+
+MEDIUM RISK:
+- Lighting_Flicker: Luz inconsistente
+- Clothing_Morph: Ropa cambia textura/color
+- Hair_Change: Peinado inconsistente
+- Eye_Direction: Mirada no natural
+
+LOW RISK:
+- Background_Pop: Elementos de fondo inconsistentes
+- Scale_Inconsistency: Proporciones variables
+
+═══════════════════════════════════════════════════════
+FORMATO DE SALIDA (JSON ESTRICTO)
+═══════════════════════════════════════════════════════
+
 {
   "scene_analysis": {
-    "emotional_arc": "descripción del arco emocional",
-    "visual_themes": ["temas visuales clave"],
-    "continuity_concerns": ["preocupaciones de continuidad"],
-    "recommended_coverage": "tipo de cobertura recomendada"
+    "emotional_arc": "Descripción del viaje emocional de la escena",
+    "visual_strategy": "Estrategia cinematográfica elegida",
+    "coverage_approach": "Classical|Fluid|Documentary|Stylized",
+    "key_moments": ["momento 1", "momento 2"],
+    "axis_note": "Nota sobre eje de 180° si aplica"
   },
   "shots": [
     {
       "shot_no": 1,
-      "shot_type": "CloseUp|Medium|Wide|ExtremeWide|OverShoulder|POV|Insert|TwoShot|GroupShot",
-      "duration_sec": 3,
+      "shot_type": "ExtremeWide|Wide|Full|MediumWide|Medium|MediumClose|CloseUp|ExtremeCloseUp|OverShoulder|POV|Insert|TwoShot|GroupShot|Establishing",
+      "duration_sec": 4,
       "effective_mode": "CINE|ULTRA",
       "hero": false,
       "camera": {
-        "movement": "Static|Pan_Left|Pan_Right|Dolly_In|Dolly_Out|Tracking|Steadicam|Handheld",
-        "height": "EyeLevel|LowAngle|HighAngle|Overhead|GroundLevel",
+        "body": "ARRI_Alexa35|RED_V-Raptor|Sony_Venice3",
+        "lens_model": "ARRI_Signature_Prime|Zeiss_Supreme|Cooke_S7|Panavision_Primo",
         "focal_mm": 35,
-        "lighting_style": "Naturalistic_Daylight|Soft_Key|Hard_Key|Backlight_Rim|Neon_Mixed"
+        "aperture": "T1.8|T2.0|T2.8|T4.0|T5.6",
+        "movement": "Static|Pan_Left|Pan_Right|Tilt_Up|Tilt_Down|Dolly_In|Dolly_Out|Tracking_Follow|Tracking_Lead|Arc_Left|Arc_Right|Crane_Up|Crane_Down|Push_In|Pull_Out|Whip_Pan|Rack_Focus",
+        "height": "GroundLevel|LowAngle|EyeLevel|HighAngle|Overhead",
+        "stabilization": "Tripod|Steadicam|Handheld_Controlled|Handheld_Raw|Gimbal|Crane",
+        "framing_notes": "Notas específicas de encuadre"
+      },
+      "lighting": {
+        "style": "Naturalistic_Daylight|Golden_Hour|Blue_Hour|Tungsten_Warm|Fluorescent_Cool|Mixed_Practical|Hard_Key|Soft_Key|Backlight_Rim|Silhouette|Noir|Neon_Mixed",
+        "key_position": "Front|45deg_Left|45deg_Right|Side|Back",
+        "fill_ratio": "1:1|2:1|4:1|8:1|No_Fill",
+        "color_temp_k": 5600,
+        "practicals": ["prácticos en escena"],
+        "notes": "Notas de iluminación"
       },
       "blocking": {
-        "description": "descripción de la acción y posición de personajes",
-        "action": "acción específica del shot",
-        "viewer_notice": "qué debe notar el espectador",
-        "intention": "intención dramática del shot"
+        "action": "Descripción precisa de la acción en este shot",
+        "dialogue": "Línea de diálogo que cubre este shot (si aplica)",
+        "character_positions": "Dónde están los personajes en frame",
+        "eye_lines": "Hacia dónde miran los personajes",
+        "viewer_notice": "¿Qué debe notar el espectador?",
+        "intention": "Propósito dramático de este shot"
       },
-      "dialogue_text": "diálogo si aplica",
-      "character_refs": ["ids de personajes en el shot"],
-      "ai_risks": ["Identity_Drift", "Hand_Deform", "Lighting_Flicker"],
-      "continuity_anchors": ["elementos que anclan la continuidad"],
-      "transition_from_prev": "cómo conecta con el shot anterior",
-      "transition_to_next": "cómo conecta con el siguiente"
+      "characters_in_frame": ["character_id_1"],
+      "ai_risks": ["Identity_Drift", "Hand_Deform"],
+      "risk_mitigation": "Cómo mitigar los riesgos identificados",
+      "continuity_anchors": ["Elementos visuales que anclan continuidad"],
+      "transition_in": "Cómo entra este shot (CUT|DISSOLVE|MATCH_CUT)",
+      "transition_out": "Cómo sale este shot",
+      "sound_cue": "Sonido/música específico para este momento"
     }
   ],
+  "sequence_notes": {
+    "total_duration_sec": 45,
+    "shot_count": 8,
+    "coverage_type": "Full_Master|Single_Camera|Multi_Angle",
+    "edit_rhythm": "Fast|Medium|Slow|Variable",
+    "keyframes_required": 32
+  },
   "qc_gates": {
-    "identity_check_required": true,
-    "lighting_match_required": true,
-    "spatial_continuity_required": true,
+    "identity_verification": true,
+    "lighting_consistency": true,
+    "spatial_continuity": true,
+    "dialogue_sync": true,
     "recommended_keyframes_per_shot": 4
   },
-  "total_duration_sec": 30,
-  "production_notes": "notas para producción"
+  "production_warnings": ["Warnings específicos para esta escena"]
 }
 
-REGLAS:
-1. Incluye MÍNIMO 3 shots por escena, máximo 12
-2. Alterna tamaños de plano para variedad visual
-3. Marca como "hero": true los shots más importantes (máximo 2 por escena)
-4. ULTRA mode = más shots, más keyframes, más control
-5. CINE mode = eficiencia, menos shots pero bien planificados
-6. Incluye siempre ai_risks relevantes para cada shot
-7. Conecta cada shot con el anterior/siguiente mediante transiciones
+═══════════════════════════════════════════════════════
+SHOT TYPES VÁLIDOS
+═══════════════════════════════════════════════════════
+ExtremeWide, Wide, Full, MediumWide, Medium, MediumClose, CloseUp, ExtremeCloseUp, OverShoulder, POV, Insert, Cutaway, Establishing, TwoShot, GroupShot, ReactionShot, DetailMacro, Aerial, DutchAngle
 
-SHOT TYPES VÁLIDOS:
-ExtremeWide, Wide, Full, MediumWide, Medium, MediumClose, CloseUp, ExtremeCloseUp, OverShoulder, POV, Insert, Cutaway, Establishing, TwoShot, GroupShot, ReactionShot, DetailMacro
+═══════════════════════════════════════════════════════
+CAMERA MOVEMENTS VÁLIDOS  
+═══════════════════════════════════════════════════════
+Static, Pan_Left, Pan_Right, Tilt_Up, Tilt_Down, Dolly_In, Dolly_Out, Tracking_Follow, Tracking_Lead, Arc_Left, Arc_Right, Crane_Up, Crane_Down, Push_In, Pull_Out, Whip_Pan, Rack_Focus, Handheld_Controlled, Handheld_Raw, Steadicam, Gimbal
 
-CAMERA MOVEMENTS VÁLIDOS:
-Static, Handheld_Controlled, Handheld_Raw, Steadicam, Gimbal, Pan_Left, Pan_Right, Tilt_Up, Tilt_Down, Dolly_In, Dolly_Out, Tracking_Follow, Tracking_Lead, Arc_Orbit_Left, Arc_Orbit_Right, Crane_Up, Crane_Down, Zoom_In, Zoom_Out, Whip_Pan, Rack_Focus
+═══════════════════════════════════════════════════════
+REGLAS DE CANTIDAD DE SHOTS
+═══════════════════════════════════════════════════════
+- Escena de 30 seg → 4-6 shots
+- Escena de 60 seg → 6-10 shots  
+- Escena de 120 seg → 10-15 shots
+- Modo ULTRA → +20% más shots con más control
+- Modo CINE → shots eficientes, menos cantidad
 
-AI RISKS A CONSIDERAR:
-Identity_Drift, Hand_Deform, Lighting_Flicker, Spatial_Jump, Clothing_Morph, Hair_Change, Eye_Direction, Mouth_Artifact, Background_Pop, Scale_Inconsistency`;
+CRÍTICO: Cada shot debe tener PROPÓSITO narrativo. No generes shots de relleno.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -129,38 +241,110 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY no está configurada');
     }
 
+    // Build comprehensive scene description
+    const sceneAction = scene.action || scene.description || scene.summary || '';
+    const dialogueText = scene.dialogue?.map(d => 
+      `${d.character}${d.parenthetical ? ` (${d.parenthetical})` : ''}: "${d.line}"`
+    ).join('\n') || '';
+
+    const estimatedDuration = scene.duration_estimate_sec || 60;
+    const recommendedShots = scene.quality_mode === 'ULTRA' 
+      ? Math.ceil(estimatedDuration / 6) 
+      : Math.ceil(estimatedDuration / 8);
+
     const userPrompt = `
-ESCENA A CUBRIR:
-Slugline: ${scene.slugline}
-Resumen: ${scene.summary}
-Modo de Calidad: ${scene.quality_mode}
-Hora del día: ${scene.time_of_day || 'No especificada'}
+═══════════════════════════════════════════════════════
+ESCENA A CUBRIR COMPLETAMENTE
+═══════════════════════════════════════════════════════
 
-${scene.beats?.length ? `BEATS DE LA ESCENA:
-${scene.beats.map(b => `${b.index}. ${b.action}${b.emotion ? ` (${b.emotion})` : ''}`).join('\n')}` : ''}
+SLUGLINE: ${scene.slugline}
+DURACIÓN ESTIMADA: ${estimatedDuration} segundos
+MODO DE CALIDAD: ${scene.quality_mode} (${scene.quality_mode === 'ULTRA' ? 'máximo control' : 'eficiencia profesional'})
+SHOTS RECOMENDADOS: ${recommendedShots}-${recommendedShots + 3}
 
-PERSONAJES EN LA ESCENA:
-${characters.map(c => `- ${c.name}${c.has_refs ? ' (✓ refs disponibles)' : ' (⚠ sin refs)'}`).join('\n')}
+AMBIENTE: ${scene.time_of_day || 'No especificado'}
+${scene.mood ? `MOOD: ${scene.mood}` : ''}
+${scene.conflict ? `CONFLICTO: ${scene.conflict}` : ''}
 
-${location ? `LOCALIZACIÓN: ${location.name}${location.has_refs ? ' (✓ refs disponibles)' : ' (⚠ sin refs)'}` : ''}
+═══════════════════════════════════════════════════════
+ACCIÓN DE LA ESCENA (cubrir TODO):
+═══════════════════════════════════════════════════════
+${sceneAction}
 
-${stylePack ? `STYLE PACK:
-- Sistema de cámara: ${stylePack.camera_system || 'No especificado'}
-- Estilo de lente: ${stylePack.lens_style || 'No especificado'}
-${stylePack.forbidden_rules?.length ? `- PROHIBIDO: ${(stylePack.forbidden_rules as string[]).join(', ')}` : ''}` : ''}
+${dialogueText ? `
+═══════════════════════════════════════════════════════
+DIÁLOGO COMPLETO (cada línea debe tener cobertura):
+═══════════════════════════════════════════════════════
+${dialogueText}
+` : ''}
 
-${previousSceneContext ? `CONTEXTO ESCENA ANTERIOR: ${previousSceneContext}` : ''}
-${nextSceneContext ? `CONTEXTO ESCENA SIGUIENTE: ${nextSceneContext}` : ''}
+${scene.beats?.length ? `
+═══════════════════════════════════════════════════════
+BEATS NARRATIVOS:
+═══════════════════════════════════════════════════════
+${scene.beats.map(b => `${b.index}. ${b.action}${b.emotion ? ` [${b.emotion}]` : ''}`).join('\n')}
+` : ''}
 
-${existingShots?.length ? `SHOTS EXISTENTES (no regenerar):
-${existingShots.map(s => `Shot ${s.shot_no}: ${s.shot_type}`).join('\n')}` : ''}
+═══════════════════════════════════════════════════════
+PERSONAJES EN ESCENA:
+═══════════════════════════════════════════════════════
+${characters.map(c => `- ${c.name} (ID: ${c.id})${c.role ? ` [${c.role}]` : ''}${c.has_refs ? ' ✓ refs' : ' ⚠ sin refs'}`).join('\n')}
 
-IDIOMA DE RESPUESTA: ${language || 'es-ES'}
+${location ? `
+═══════════════════════════════════════════════════════
+LOCALIZACIÓN:
+═══════════════════════════════════════════════════════
+${location.name} (ID: ${location.id})
+${location.description || ''}
+${location.has_refs ? '✓ Referencias disponibles' : '⚠ Sin referencias visuales'}
+` : ''}
 
-Genera una propuesta de shots cinematográficos profesionales para cubrir esta escena.
-Considera los riesgos de generación por IA y proporciona QC gates apropiados.`;
+${stylePack ? `
+═══════════════════════════════════════════════════════
+STYLE PACK DEL PROYECTO:
+═══════════════════════════════════════════════════════
+${stylePack.camera_system ? `Sistema de cámara: ${stylePack.camera_system}` : ''}
+${stylePack.lens_style ? `Estilo de lentes: ${stylePack.lens_style}` : ''}
+${stylePack.visual_tone ? `Tono visual: ${stylePack.visual_tone}` : ''}
+${stylePack.forbidden_rules?.length ? `PROHIBIDO: ${(stylePack.forbidden_rules as string[]).join(', ')}` : ''}
+` : ''}
 
-    console.log('Generating shot suggestions for scene:', scene.slugline);
+${previousSceneContext ? `
+CONTEXTO ESCENA ANTERIOR (para continuidad):
+${previousSceneContext}
+` : ''}
+
+${nextSceneContext ? `
+CONTEXTO ESCENA SIGUIENTE (para transición):
+${nextSceneContext}
+` : ''}
+
+${existingShots?.length ? `
+═══════════════════════════════════════════════════════
+SHOTS EXISTENTES (NO regenerar, solo continuar desde aquí):
+═══════════════════════════════════════════════════════
+${existingShots.map(s => `Shot ${s.shot_no}: ${s.shot_type} (${s.duration_sec}s) - ${s.camera_movement || 'static'}`).join('\n')}
+` : ''}
+
+${scene.sfx_cue ? `SFX CUE: ${scene.sfx_cue}` : ''}
+${scene.music_cue ? `MUSIC CUE: ${scene.music_cue}` : ''}
+
+═══════════════════════════════════════════════════════
+INSTRUCCIONES FINALES:
+═══════════════════════════════════════════════════════
+
+1. Genera una secuencia COMPLETA de shots que cubra TODA la acción y diálogo
+2. Los shots deben ser CORRELATIVOS (1, 2, 3...) y fluir naturalmente
+3. Incluye TODOS los detalles técnicos: focal_mm, aperture, movement, height, lighting
+4. Identifica AI RISKS específicos para cada shot
+5. Cada shot debe tener PROPÓSITO narrativo claro (intention)
+6. Marca máximo 2 shots como "hero": true (los más importantes)
+
+IDIOMA: ${language || 'es-ES'}
+
+Responde SOLO con el JSON estructurado según el formato especificado.`;
+
+    console.log(`[SHOT-SUGGEST] Scene: ${scene.slugline} | Mode: ${scene.quality_mode} | Est. Duration: ${estimatedDuration}s`);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -174,6 +358,7 @@ Considera los riesgos de generación por IA y proporciona QC gates apropiados.`;
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
         ],
+        response_format: { type: "json_object" }
       }),
     });
 
@@ -191,7 +376,7 @@ Considera los riesgos de generación por IA y proporciona QC gates apropiados.`;
         );
       }
       const errorText = await response.text();
-      console.error('AI Gateway error:', response.status, errorText);
+      console.error('[SHOT-SUGGEST] AI Gateway error:', response.status, errorText);
       throw new Error(`AI Gateway error: ${response.status}`);
     }
 
@@ -205,26 +390,74 @@ Considera los riesgos de generación por IA y proporciona QC gates apropiados.`;
     // Parse JSON from response
     let shotData;
     try {
+      // Try direct parse first (for json_object mode)
+      shotData = JSON.parse(content);
+    } catch {
+      // Fallback: extract JSON from markdown/text
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         shotData = JSON.parse(jsonMatch[0]);
       } else {
         throw new Error('No JSON found in response');
       }
-    } catch (parseError) {
-      console.error('JSON parse error:', parseError);
-      // Return a minimal valid response
-      shotData = {
-        scene_analysis: { emotional_arc: 'Unknown', visual_themes: [], continuity_concerns: [], recommended_coverage: 'Standard' },
-        shots: [],
-        qc_gates: { identity_check_required: true, lighting_match_required: true, spatial_continuity_required: true, recommended_keyframes_per_shot: 4 },
-        total_duration_sec: 0,
-        production_notes: 'Error parsing AI response',
-        raw_response: content
+    }
+
+    // Validate and normalize shots
+    if (shotData.shots && Array.isArray(shotData.shots)) {
+      shotData.shots = shotData.shots.map((shot: any, idx: number) => ({
+        shot_no: shot.shot_no || idx + 1,
+        shot_type: shot.shot_type || 'Medium',
+        duration_sec: shot.duration_sec || 4,
+        effective_mode: shot.effective_mode || scene.quality_mode,
+        hero: shot.hero || false,
+        camera: {
+          body: shot.camera?.body || 'ARRI_Alexa35',
+          lens_model: shot.camera?.lens_model || 'ARRI_Signature_Prime',
+          focal_mm: shot.camera?.focal_mm || 35,
+          aperture: shot.camera?.aperture || 'T2.8',
+          movement: shot.camera?.movement || 'Static',
+          height: shot.camera?.height || 'EyeLevel',
+          stabilization: shot.camera?.stabilization || 'Tripod',
+          framing_notes: shot.camera?.framing_notes || ''
+        },
+        lighting: shot.lighting || {
+          style: 'Naturalistic_Daylight',
+          key_position: 'Front',
+          fill_ratio: '2:1',
+          color_temp_k: 5600,
+          practicals: [],
+          notes: ''
+        },
+        blocking: shot.blocking || {
+          action: '',
+          dialogue: '',
+          character_positions: '',
+          eye_lines: '',
+          viewer_notice: '',
+          intention: ''
+        },
+        characters_in_frame: shot.characters_in_frame || shot.character_refs || [],
+        ai_risks: shot.ai_risks || [],
+        risk_mitigation: shot.risk_mitigation || '',
+        continuity_anchors: shot.continuity_anchors || [],
+        transition_in: shot.transition_in || 'CUT',
+        transition_out: shot.transition_out || 'CUT',
+        sound_cue: shot.sound_cue || ''
+      }));
+
+      // Calculate totals
+      const totalDuration = shotData.shots.reduce((sum: number, s: any) => sum + (s.duration_sec || 4), 0);
+      const keyframesRequired = shotData.shots.length * (scene.quality_mode === 'ULTRA' ? 5 : 4);
+
+      shotData.sequence_notes = {
+        ...shotData.sequence_notes,
+        total_duration_sec: totalDuration,
+        shot_count: shotData.shots.length,
+        keyframes_required: keyframesRequired
       };
     }
 
-    console.log('Shot suggestions generated:', shotData.shots?.length || 0, 'shots');
+    console.log(`[SHOT-SUGGEST] ✅ Generated ${shotData.shots?.length || 0} shots for scene`);
 
     return new Response(
       JSON.stringify({
@@ -235,9 +468,12 @@ Considera los riesgos de generación por IA y proporciona QC gates apropiados.`;
     );
 
   } catch (error) {
-    console.error('Error in shot-suggest:', error);
+    console.error('[SHOT-SUGGEST] Error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        success: false 
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
