@@ -92,3 +92,9 @@ verify_jwt = false
 
 [functions.script-generate-episode]
 verify_jwt = false
+
+[functions.generate-outline-light]
+verify_jwt = false
+
+[functions.generate-episode-detailed]
+verify_jwt = false
