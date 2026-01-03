@@ -412,8 +412,26 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     try {
       const t0 = Date.now();
-      // Timeout varies by model: OpenAI is faster (30s), Claude needs more (120s)
-      const timeoutMs = generationModel === 'hollywood' ? 120000 : 60000;
+      // Timeout dinámico por modelo y nº de episodios (evita aborts falsos)
+      const outlineEpisodes = format === 'series' ? episodesCount : 1;
+      const timeoutMs = (() => {
+        if (generationModel === 'hollywood') {
+          // Claude: más lento y con más variabilidad
+          const base = 90000;
+          const perEp = 25000;
+          return Math.min(300000, Math.max(120000, base + perEp * outlineEpisodes));
+        }
+        if (generationModel === 'profesional') {
+          // GPT-4o: normalmente rápido, pero puede tardar en outlines largos
+          const base = 45000;
+          const perEp = 12000;
+          return Math.min(180000, Math.max(60000, base + perEp * outlineEpisodes));
+        }
+        // GPT-4o-mini (rápido)
+        const base = 30000;
+        const perEp = 8000;
+        return Math.min(150000, Math.max(60000, base + perEp * outlineEpisodes));
+      })();
       const { data, error } = await invokeWithTimeout<{ outline: typeof lightOutline }>(
         'generate-outline-light',
         {
