@@ -468,8 +468,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       startedAt: Date.now()
     });
 
-    // Total batches = 3 per episode
-    const totalBatches = totalEpisodes * 3;
+    // Total batches = 5 per episode (25 scenes total, smaller batches to avoid timeouts)
+    const BATCHES_PER_EPISODE = 5;
+    const totalBatches = totalEpisodes * BATCHES_PER_EPISODE;
     let completedBatches = 0;
 
     try {
@@ -484,15 +485,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setCurrentEpisodeGenerating(epNum);
         const episodeBeat = lightOutline.episode_beats?.[epNum - 1];
 
-        // Generate episode in 3 batches (0, 1, 2)
+        // Generate episode in 5 batches (0-4) = 25 scenes total
         const allScenes: any[] = [];
         let synopsisFromClaude: string | null = null;
         let episodeError: string | null = null;
 
-        for (let batchIdx = 0; batchIdx < 3; batchIdx++) {
+        for (let batchIdx = 0; batchIdx < BATCHES_PER_EPISODE; batchIdx++) {
           if (controller.signal.aborted) break;
 
-          const batchLabel = `Ep${epNum} batch ${batchIdx + 1}/3`;
+          const batchLabel = `Ep${epNum} batch ${batchIdx + 1}/${BATCHES_PER_EPISODE}`;
           updatePipelineStep('episodes', 'running', `${batchLabel} (escenas ${batchIdx * 5 + 1}-${batchIdx * 5 + 5})...`);
 
           const t0 = Date.now();
