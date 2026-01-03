@@ -11,6 +11,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -395,6 +406,55 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const updatePipelineStep = (stepId: string, status: PipelineStep['status'], label?: string) => {
     setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status, label: label || s.label } : s));
     if (label) setCurrentStepLabel(label);
+  };
+
+  // Helper function to generate teaser scenes
+  const generateTeaserScenes = async (teaserData: any) => {
+    if (!teaserData) return;
+    
+    setSegmenting(true);
+    try {
+      // Generate scenes for teaser 60s
+      if (teaserData.teaser60) {
+        toast.info('Generando escenas para Teaser 60s...');
+        const { error: err60 } = await supabase.functions.invoke('generate-scenes', {
+          body: {
+            projectId,
+            episodeNo: -1,
+            synopsis: `TEASER 60s: ${teaserData.teaser60.logline}. ${teaserData.teaser60.scenes?.map((s: any) => s.description).join(' ')}`,
+            sceneCount: teaserData.teaser60.scenes?.length || 6,
+            isTeaser: true,
+            teaserType: '60s',
+            teaserData: teaserData.teaser60
+          }
+        });
+        if (err60) throw err60;
+      }
+      
+      // Generate scenes for teaser 30s
+      if (teaserData.teaser30) {
+        toast.info('Generando escenas para Teaser 30s...');
+        const { error: err30 } = await supabase.functions.invoke('generate-scenes', {
+          body: {
+            projectId,
+            episodeNo: -2,
+            synopsis: `TEASER 30s: ${teaserData.teaser30.logline}. ${teaserData.teaser30.scenes?.map((s: any) => s.description).join(' ')}`,
+            sceneCount: teaserData.teaser30.scenes?.length || 4,
+            isTeaser: true,
+            teaserType: '30s',
+            teaserData: teaserData.teaser30
+          }
+        });
+        if (err30) throw err30;
+      }
+      
+      toast.success('Escenas de teasers generadas. Ve al módulo de Escenas.');
+    } catch (err) {
+      console.error('Error generating teaser scenes:', err);
+      toast.error('Error al generar escenas de teasers');
+    } finally {
+      setSegmenting(false);
+    }
   };
 
   // PIPELINE V2: Step 1 - Generate Light Outline (fast ~10s)
@@ -2387,62 +2447,60 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           <FileDown className="w-4 h-4 mr-1" />
                           PDF
                         </Button>
-                        <Button
-                          variant="default"
-                          size="sm"
-                          onClick={async () => {
-                            const teaserData = generatedScript?.teasers || generatedTeasers;
-                            if (!teaserData) return;
-                            
-                            setSegmenting(true);
-                            try {
-                              // Generate scenes for teaser 60s
-                              if (teaserData.teaser60) {
-                                toast.info('Generando escenas para Teaser 60s...');
-                                const { error: err60 } = await supabase.functions.invoke('generate-scenes', {
-                                  body: {
-                                    projectId,
-                                    episodeNo: -1, // Special episode number for teaser 60s
-                                    synopsis: `TEASER 60s: ${teaserData.teaser60.logline}. ${teaserData.teaser60.scenes?.map((s: any) => s.description).join(' ')}`,
-                                    sceneCount: teaserData.teaser60.scenes?.length || 6,
-                                    isTeaser: true,
-                                    teaserType: '60s',
-                                    teaserData: teaserData.teaser60
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={async (e) => {
+                                const teaserData = generatedScript?.teasers || generatedTeasers;
+                                if (!teaserData) return;
+                                
+                                // Check if teaser scenes already exist
+                                const { data: existingScenes } = await supabase
+                                  .from('scenes')
+                                  .select('id, episode_no')
+                                  .eq('project_id', projectId)
+                                  .in('episode_no', [-1, -2])
+                                  .limit(1);
+                                
+                                if (existingScenes && existingScenes.length > 0) {
+                                  // Let AlertDialog handle it
+                                  return;
+                                }
+                                
+                                // No existing scenes, generate directly
+                                e.preventDefault();
+                                await generateTeaserScenes(teaserData);
+                              }}
+                              disabled={segmenting}
+                            >
+                              {segmenting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Clapperboard className="w-4 h-4 mr-1" />}
+                              Generar Escenas
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>¿Sobrescribir escenas existentes?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Ya existen escenas generadas para los teasers. Si continúas, se eliminarán las escenas actuales y se generarán nuevas.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={async () => {
+                                  const teaserData = generatedScript?.teasers || generatedTeasers;
+                                  if (teaserData) {
+                                    await generateTeaserScenes(teaserData);
                                   }
-                                });
-                                if (err60) throw err60;
-                              }
-                              
-                              // Generate scenes for teaser 30s
-                              if (teaserData.teaser30) {
-                                toast.info('Generando escenas para Teaser 30s...');
-                                const { error: err30 } = await supabase.functions.invoke('generate-scenes', {
-                                  body: {
-                                    projectId,
-                                    episodeNo: -2, // Special episode number for teaser 30s
-                                    synopsis: `TEASER 30s: ${teaserData.teaser30.logline}. ${teaserData.teaser30.scenes?.map((s: any) => s.description).join(' ')}`,
-                                    sceneCount: teaserData.teaser30.scenes?.length || 4,
-                                    isTeaser: true,
-                                    teaserType: '30s',
-                                    teaserData: teaserData.teaser30
-                                  }
-                                });
-                                if (err30) throw err30;
-                              }
-                              
-                              toast.success('Escenas de teasers generadas. Ve al módulo de Escenas.');
-                            } catch (err) {
-                              console.error('Error generating teaser scenes:', err);
-                              toast.error('Error al generar escenas de teasers');
-                            } finally {
-                              setSegmenting(false);
-                            }
-                          }}
-                          disabled={segmenting}
-                        >
-                          {segmenting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Clapperboard className="w-4 h-4 mr-1" />}
-                          Generar Escenas
-                        </Button>
+                                }}
+                              >
+                                Sobrescribir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   </CardHeader>
