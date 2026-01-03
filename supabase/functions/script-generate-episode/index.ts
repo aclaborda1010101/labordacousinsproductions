@@ -16,12 +16,12 @@ interface EpisodeRequest {
 
 const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER: guionista de Hollywood.
 
-TU MISIÓN: Escribir un EPISODIO COMPLETO con escenas y diálogos, optimizado para ejecución rápida.
+TU MISIÓN: Escribir un EPISODIO COMPLETO con escenas y diálogos.
 
 REGLAS ABSOLUTAS:
 1. Escribe TODAS las escenas del episodio (usa el número indicado por episodeOutline.scenes_count).
-2. Diálogos COMPLETOS, pero compactos (por escena, aprox. 2-8 líneas totales según importancia).
-3. Acción cinematográfica clara (60-120 palabras por escena).
+2. Diálogos COMPLETOS (por escena, aprox. 4-12 líneas totales según importancia).
+3. Acción cinematográfica clara (80-150 palabras por escena).
 4. Cada escena debe tener conflicto (aunque sea sutil).
 5. Devuelve SOLO JSON válido (sin markdown).
 
@@ -88,9 +88,9 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY no está configurada');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY no está configurada');
     }
 
     // Build character reference
@@ -128,62 +128,51 @@ ${locationRef}
 
 === INSTRUCCIONES ===
 1. Escribe TODAS las escenas del episodio (usa ${episodeOutline.scenes_count || 12})
-2. Diálogos completos pero compactos (2-8 líneas totales por escena)
-3. Acción clara (60-120 palabras por escena)
+2. Diálogos completos (4-12 líneas por escena según importancia)
+3. Acción clara (80-150 palabras por escena)
 4. Incluye music/sfx cues cuando aplique
 5. Mantén continuity anchors útiles para producción
 
 IDIOMA: ${language || 'es-ES'}
 
-Devuelve SOLO JSON válido con el episodio completo.`;
+Devuelve SOLO el JSON válido con el episodio completo.`;
 
-    console.log(`Generating episode ${episodeNumber} with Gemini Flash`);
+    console.log(`Generating episode ${episodeNumber} with Claude Sonnet`);
 
-    let response: Response;
-    try {
-      response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: userPrompt }
-          ],
-          max_completion_tokens: 10000,
-        }),
-      });
-    } catch (e) {
-      console.error('Fetch error:', e);
-      throw e;
-    }
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 12000,
+        system: SYSTEM_PROMPT,
+        messages: [
+          { role: 'user', content: userPrompt }
+        ],
+      }),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Lovable AI error:', response.status, errorText);
+      console.error('Anthropic API error:', response.status, errorText);
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'Usage limit reached. Please add credits.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      throw new Error(`Lovable AI error: ${response.status}`);
+      throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const content = data.content?.[0]?.text;
 
     if (!content) {
-      throw new Error('No content from Lovable AI');
+      throw new Error('No content from Anthropic API');
     }
 
     // Parse JSON from response

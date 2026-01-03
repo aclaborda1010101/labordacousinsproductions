@@ -39,16 +39,16 @@ interface OutlineRequest {
 
 const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER: guionista + showrunner + script editor nivel estudio.
 
-TU MISIÓN: generar un OUTLINE PRODUCIBLE (rápido) y, sobre todo, SEGMENTADO POR EPISODIOS, cumpliendo los targets mínimos.
+TU MISIÓN: generar un OUTLINE PRODUCIBLE, SEGMENTADO POR EPISODIOS, cumpliendo los targets mínimos.
 
 PRIORIDADES:
 1) Segmentación clara por episodios (episode_outlines).
 2) Cumplir targets (mínimos) sin inventar conteos.
-3) Mantener descripciones compactas para evitar timeouts.
+3) Mantener descripciones compactas.
 
 REGLAS CRÍTICAS:
 - NUNCA entregues menos elementos que los targets.
-- Mantén los textos compactos (orientativo):
+- Mantén los textos compactos:
   - synopsis serie: 250-400 palabras
   - synopsis episodio: 120-200 palabras
   - beat description: 60-120 palabras
@@ -200,8 +200,8 @@ serve(async (req) => {
     const request: OutlineRequest = await req.json();
     const { idea, format, episodesCount, episodeDurationMin, filmDurationMin, genre, tone, language, references, referenceScripts, targets } = request;
 
-    const safeIdea = idea?.length > 1800 ? `${idea.slice(0, 1800)}…` : idea;
-    const safeReferences = references?.length ? references.slice(0, 600) : references;
+    const safeIdea = idea?.length > 2000 ? `${idea.slice(0, 2000)}…` : idea;
+    const safeReferences = references?.length ? references.slice(0, 800) : references;
 
     if (!idea || !targets) {
       return new Response(
@@ -210,38 +210,37 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY no está configurada');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY no está configurada');
     }
 
     const formatDescription = format === 'series' 
       ? `Serie de ${episodesCount || 6} episodios de ${episodeDurationMin || 45} minutos cada uno`
       : `Película de ${filmDurationMin || 100} minutos`;
 
-    // Build reference scripts section - heavily truncated to prevent timeout
+    // Build reference scripts section
     let referenceSection = '';
     if (referenceScripts && referenceScripts.length > 0) {
       referenceSection = `\n\nGUIONES DE REFERENCIA (estilo y tono):\n`;
       for (const ref of referenceScripts.slice(0, 2)) {
-        // Only take first 1500 chars to prevent timeout
         const excerpt = ref.content.slice(0, 1500);
         referenceSection += `• ${ref.title}: ${ref.genre || ''} - ${ref.notes || 'Referencia de estilo'}\n`;
       }
     }
 
-    const userPrompt = `GENERA UN OUTLINE PARA SEGMENTAR EN EPISODIOS (rápido y utilizable):
+    const userPrompt = `GENERA UN OUTLINE SEGMENTADO POR EPISODIOS:
 
-IDEA (si viene larga, extrae la esencia): ${safeIdea}
+IDEA: ${safeIdea}
 
 FORMATO: ${formatDescription}
 GÉNERO: ${genre}
 TONO: ${tone}
 IDIOMA: ${language}
-${safeReferences ? `REFERENCIAS (inspiración, NO copiar): ${safeReferences}` : ''}
+${safeReferences ? `REFERENCIAS (inspiración): ${safeReferences}` : ''}
 ${referenceSection}
 
-TARGETS OBLIGATORIOS (DEBES CUMPLIRLOS como mínimos):
+TARGETS OBLIGATORIOS (mínimos):
 - Protagonistas: ${targets.protagonists_min}
 - Personajes secundarios: ${targets.supporting_min}
 - Extras con frase: ${targets.extras_min}
@@ -253,56 +252,45 @@ TARGETS OBLIGATORIOS (DEBES CUMPLIRLOS como mínimos):
 ${format === 'series' ? `- Escenas por episodio: ${targets.scenes_per_episode}` : `- Escenas totales: ${targets.scenes_target}`}
 - Ratio diálogo/acción: ${targets.dialogue_action_ratio}
 
-IMPORTANTE: Prioriza segmentación por episodios y descripciones compactas. Devuelve SOLO JSON válido.`;
+Devuelve SOLO el JSON válido del outline.`;
 
-    console.log('Generating outline with Gemini Flash for:', idea.substring(0, 100));
+    console.log('Generating outline with Claude Sonnet for:', idea.substring(0, 100));
     console.log('Targets:', JSON.stringify(targets));
 
-    let response: Response;
-    try {
-      response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: userPrompt }
-          ],
-          max_completion_tokens: 8000,
-        }),
-      });
-    } catch (e) {
-      console.error('Fetch error:', e);
-      throw e;
-    }
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
+        system: SYSTEM_PROMPT,
+        messages: [
+          { role: 'user', content: userPrompt }
+        ],
+      }),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Lovable AI error:', response.status, errorText);
+      console.error('Anthropic API error:', response.status, errorText);
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'Usage limit reached. Please add credits.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      throw new Error(`Lovable AI error: ${response.status}`);
+      throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const content = data.content?.[0]?.text;
 
     if (!content) {
-      throw new Error('No content from Lovable AI');
+      throw new Error('No content from Anthropic API');
     }
 
     // Parse JSON from response
