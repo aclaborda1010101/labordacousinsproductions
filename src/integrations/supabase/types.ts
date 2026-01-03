@@ -2708,6 +2708,7 @@ export type Database = {
           fields_json: Json | null
           hero: boolean | null
           id: string
+          name: string | null
           prompt_json: Json | null
           render_status: string | null
           scene_id: string
@@ -2743,6 +2744,7 @@ export type Database = {
           fields_json?: Json | null
           hero?: boolean | null
           id?: string
+          name?: string | null
           prompt_json?: Json | null
           render_status?: string | null
           scene_id: string
@@ -2778,6 +2780,7 @@ export type Database = {
           fields_json?: Json | null
           hero?: boolean | null
           id?: string
+          name?: string | null
           prompt_json?: Json | null
           render_status?: string | null
           scene_id?: string
