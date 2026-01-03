@@ -104,3 +104,6 @@ verify_jwt = false
 
 [functions.episode-generate-batch]
 verify_jwt = false
+
+[functions.generate-teasers]
+verify_jwt = false

@@ -172,6 +172,75 @@ const LIGHTING_STYLES = [
   { value: 'Noir_Contrast', label: 'Noir' },
 ];
 
+// ============= INDUSTRY CAMERA BODIES =============
+const CAMERA_BODIES = [
+  { value: 'ARRI_ALEXA_35', label: 'ARRI ALEXA 35' },
+  { value: 'ARRI_ALEXA_LF', label: 'ARRI ALEXA LF' },
+  { value: 'ARRI_ALEXA_MINI_LF', label: 'ARRI ALEXA Mini LF' },
+  { value: 'ARRI_ALEXA_MINI', label: 'ARRI ALEXA Mini' },
+  { value: 'ARRI_AMIRA', label: 'ARRI AMIRA' },
+  { value: 'RED_V_RAPTOR_XL', label: 'RED V-RAPTOR XL 8K VV' },
+  { value: 'RED_V_RAPTOR', label: 'RED V-RAPTOR 8K' },
+  { value: 'RED_KOMODO_X', label: 'RED KOMODO-X 6K' },
+  { value: 'RED_KOMODO', label: 'RED KOMODO 6K' },
+  { value: 'SONY_VENICE_2', label: 'Sony VENICE 2 8K' },
+  { value: 'SONY_VENICE', label: 'Sony VENICE' },
+  { value: 'SONY_FX9', label: 'Sony FX9' },
+  { value: 'SONY_FX6', label: 'Sony FX6' },
+  { value: 'SONY_FX3', label: 'Sony FX3' },
+  { value: 'SONY_A7S_III', label: 'Sony A7S III' },
+  { value: 'BLACKMAGIC_URSA_12K', label: 'Blackmagic URSA Mini Pro 12K' },
+  { value: 'BLACKMAGIC_URSA_G2', label: 'Blackmagic URSA Mini Pro G2' },
+  { value: 'BLACKMAGIC_POCKET_6K', label: 'Blackmagic Pocket 6K Pro' },
+  { value: 'CANON_C500_II', label: 'Canon EOS C500 Mark II' },
+  { value: 'CANON_C300_III', label: 'Canon EOS C300 Mark III' },
+  { value: 'CANON_C70', label: 'Canon EOS C70' },
+  { value: 'CANON_R5C', label: 'Canon EOS R5 C' },
+  { value: 'PANAVISION_DXL2', label: 'Panavision DXL2' },
+  { value: 'PANAVISION_MILLENNIUM', label: 'Panavision Millennium' },
+];
+
+// ============= PROFESSIONAL LENSES =============
+const PROFESSIONAL_LENSES = [
+  // ARRI/ZEISS
+  { value: 'ARRI_SIGNATURE_PRIME', label: 'ARRI Signature Prime' },
+  { value: 'ARRI_MASTER_PRIME', label: 'ARRI Master Prime' },
+  { value: 'ARRI_ULTRA_PRIME', label: 'ARRI Ultra Prime' },
+  { value: 'ZEISS_SUPREME_PRIME', label: 'ZEISS Supreme Prime' },
+  { value: 'ZEISS_SUPREME_RADIANCE', label: 'ZEISS Supreme Prime Radiance' },
+  { value: 'ZEISS_CP3_XD', label: 'ZEISS CP.3 XD' },
+  // Cooke
+  { value: 'COOKE_S7I', label: 'Cooke S7/i Full Frame' },
+  { value: 'COOKE_S5I', label: 'Cooke S5/i' },
+  { value: 'COOKE_ANAMORPHIC', label: 'Cooke Anamorphic/i SF' },
+  { value: 'COOKE_PANCHRO', label: 'Cooke Panchro/i Classic' },
+  // Panavision
+  { value: 'PANAVISION_PRIMO', label: 'Panavision Primo 70' },
+  { value: 'PANAVISION_SPHERO', label: 'Panavision Sphero 65' },
+  { value: 'PANAVISION_ULTRA_VISTA', label: 'Panavision Ultra Vista' },
+  { value: 'PANAVISION_T_SERIES', label: 'Panavision T Series' },
+  // Canon
+  { value: 'CANON_SUMIRE', label: 'Canon Sumire Prime' },
+  { value: 'CANON_K35', label: 'Canon K35' },
+  { value: 'CANON_CN_E', label: 'Canon CN-E Prime' },
+  // Sony
+  { value: 'SONY_CineAlta', label: 'Sony CineAlta 4K' },
+  // Sigma
+  { value: 'SIGMA_FF_HIGH_SPEED', label: 'Sigma FF High Speed Prime' },
+  { value: 'SIGMA_FF_CLASSIC', label: 'Sigma FF Classic' },
+  // Vintage / Specialty
+  { value: 'LOMO_ANAMORPHIC', label: 'LOMO Anamorphic' },
+  { value: 'KOWA_ANAMORPHIC', label: 'Kowa Anamorphic' },
+  { value: 'ATLAS_ORION', label: 'Atlas Orion Anamorphic' },
+  { value: 'LEITZ_SUMMILUX', label: 'Leitz Summilux-C' },
+  { value: 'LEITZ_SUMMICRON', label: 'Leitz Summicron-C' },
+  // Zoom
+  { value: 'ANGENIEUX_EZ_ZOOM', label: 'Angénieux EZ Zoom' },
+  { value: 'ANGENIEUX_OPTIMO', label: 'Angénieux Optimo' },
+  { value: 'FUJINON_PREMISTA', label: 'Fujinon Premista' },
+  { value: 'FUJINON_CABRIO', label: 'Fujinon Cabrio' },
+];
+
 export default function ShotEditor({
   open,
   onOpenChange,
@@ -217,6 +286,8 @@ export default function ShotEditor({
     camera_height: (shot.camera as any)?.height || 'EyeLevel',
     camera_angle: (shot.camera as any)?.angle || '',
     focal_mm: (shot.camera as any)?.focal_mm || 35,
+    camera_body: (shot.camera as any)?.camera_body || 'ARRI_ALEXA_35',
+    lens_model: (shot.camera as any)?.lens_model || 'ARRI_SIGNATURE_PRIME',
     blocking_description: (shot.blocking as any)?.description || '',
     blocking_action: (shot.blocking as any)?.action || '',
     effective_mode: shot.effective_mode,
@@ -256,6 +327,8 @@ export default function ShotEditor({
           height: form.camera_height,
           angle: form.camera_angle,
           focal_mm: form.focal_mm,
+          camera_body: form.camera_body,
+          lens_model: form.lens_model,
           lighting_style: form.lighting_style
         },
         blocking: {
@@ -1083,6 +1156,38 @@ export default function ShotEditor({
                       {CAMERA_HEIGHTS.map(h => (
                         <SelectItem key={h.value} value={h.value}>
                           {h.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Cuerpo de Cámara</Label>
+                  <Select value={form.camera_body} onValueChange={v => setForm({...form, camera_body: v})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {CAMERA_BODIES.map(cam => (
+                        <SelectItem key={cam.value} value={cam.value}>
+                          {cam.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Objetivo / Lente</Label>
+                  <Select value={form.lens_model} onValueChange={v => setForm({...form, lens_model: v})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {PROFESSIONAL_LENSES.map(lens => (
+                        <SelectItem key={lens.value} value={lens.value}>
+                          {lens.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
