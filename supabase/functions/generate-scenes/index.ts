@@ -505,10 +505,33 @@ Retorna SOLO JSON válido, sin texto adicional.`;
 
       let generatedScenes;
       try {
+        // Additional cleanup for common AI formatting issues
+        // Fix TypeScript-style union types that sometimes appear: "mood": "intense" | "dramatic"
+        scenesText = scenesText.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
+        // Fix single | in strings
+        scenesText = scenesText.replace(/:\s*"([^"]*)\s*\|\s*([^"]*)"/g, ': "$1"');
+        // Remove trailing commas before closing brackets
+        scenesText = scenesText.replace(/,(\s*[\]}])/g, '$1');
+        
         generatedScenes = JSON.parse(scenesText);
       } catch (parseError) {
         console.error('Failed to parse AI response:', scenesText.substring(0, 500));
-        throw new Error('Invalid JSON response from AI');
+        
+        // Attempt to extract valid JSON array
+        const arrayMatch = scenesText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+        if (arrayMatch) {
+          try {
+            let extracted = arrayMatch[0];
+            extracted = extracted.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
+            extracted = extracted.replace(/,(\s*[\]}])/g, '$1');
+            generatedScenes = JSON.parse(extracted);
+            console.log('Successfully extracted and parsed JSON from response');
+          } catch (e) {
+            throw new Error('Invalid JSON response from AI');
+          }
+        } else {
+          throw new Error('Invalid JSON response from AI');
+        }
       }
 
       // Map character names to IDs
@@ -533,39 +556,73 @@ Retorna SOLO JSON válido, sin texto adicional.`;
           ? `TEASER ${teaserType} - ${scene.slugline || 'PROMOTIONAL SEQUENCE'}` 
           : scene.slugline;
 
-        const { data: insertedScene, error: sceneError } = await supabase
+        // Use upsert to handle duplicates (e.g., regenerating teasers)
+        const sceneData = {
+          project_id: projectId,
+          episode_no: episodeNo,
+          scene_no: scene.scene_no || 1,
+          slugline: sceneSlugline,
+          summary: scene.summary || (isTeaser ? `Teaser promocional ${teaserType}: ${teaserData?.logline || ''}` : ''),
+          time_of_day: scene.time_of_day,
+          character_ids: characterIds,
+          location_id: locationId,
+          mood: { primary: typeof scene.mood === 'string' ? scene.mood : (isTeaser ? 'cinematic' : 'dramatic') },
+          quality_mode: isTeaser ? 'ULTRA' : 'CINE',
+          parsed_json: {
+            scene_setup: scene.scene_setup || null,
+            generated_with: 'cinematographer_engine_v4',
+            narrative_mode: narrativeMode,
+            is_teaser: isTeaser || false,
+            teaser_type: teaserType || null,
+            teaser_metadata: isTeaser ? {
+              title: teaserData?.title,
+              logline: teaserData?.logline,
+              music_cue: teaserData?.music_cue,
+              voiceover_text: teaserData?.voiceover_text
+            } : null
+          }
+        };
+
+        // First try to get existing scene
+        const { data: existingScene } = await supabase
           .from('scenes')
-          .insert({
-            project_id: projectId,
-            episode_no: episodeNo,
-            scene_no: scene.scene_no || 1,
-            slugline: sceneSlugline,
-            summary: scene.summary || (isTeaser ? `Teaser promocional ${teaserType}: ${teaserData?.logline || ''}` : ''),
-            time_of_day: scene.time_of_day,
-            character_ids: characterIds,
-            location_id: locationId,
-            mood: { primary: scene.mood || (isTeaser ? 'cinematic' : 'dramatic') },
-            quality_mode: isTeaser ? 'ULTRA' : 'CINE',
-            // Store scene_setup in parsed_json for production use
-            parsed_json: {
-              scene_setup: scene.scene_setup || null,
-              generated_with: 'cinematographer_engine_v4',
-              narrative_mode: narrativeMode,
-              is_teaser: isTeaser || false,
-              teaser_type: teaserType || null,
-              teaser_metadata: isTeaser ? {
-                title: teaserData?.title,
-                logline: teaserData?.logline,
-                music_cue: teaserData?.music_cue,
-                voiceover_text: teaserData?.voiceover_text
-              } : null
-            }
-          })
-          .select()
-          .single();
+          .select('id')
+          .eq('project_id', projectId)
+          .eq('episode_no', episodeNo)
+          .eq('scene_no', scene.scene_no || 1)
+          .maybeSingle();
+
+        let insertedScene;
+        let sceneError;
+
+        if (existingScene) {
+          // Update existing scene
+          const { data, error } = await supabase
+            .from('scenes')
+            .update(sceneData)
+            .eq('id', existingScene.id)
+            .select()
+            .single();
+          insertedScene = data;
+          sceneError = error;
+          
+          // Delete existing shots for regeneration
+          if (!sceneError) {
+            await supabase.from('shots').delete().eq('scene_id', existingScene.id);
+          }
+        } else {
+          // Insert new scene
+          const { data, error } = await supabase
+            .from('scenes')
+            .insert(sceneData)
+            .select()
+            .single();
+          insertedScene = data;
+          sceneError = error;
+        }
 
         if (sceneError) {
-          console.error('Error inserting scene:', sceneError);
+          console.error('Error upserting scene:', sceneError);
           continue;
         }
 
@@ -641,22 +698,18 @@ Retorna SOLO JSON válido, sin texto adicional.`;
                 duration_target: shot.duration_sec || 4,
                 hero: shot.hero || isTeaser || false,
                 effective_mode: (shot.hero || isTeaser) ? 'ULTRA' : 'CINE',
-                // Store full cinematographic data
                 camera: cameraData,
                 blocking: blockingData,
-                // Store additional technical data
                 coverage_type: shot.coverage_type || null,
                 story_purpose: shot.story_purpose || null,
                 transition_in: shot.transition?.type || (isTeaser ? 'MATCH_CUT' : 'CUT'),
                 transition_out: shot.transition?.to_next || (isTeaser ? 'visual_match' : 'hard_cut'),
                 edit_intent: editIntentData,
                 ai_risk: shot.ai_risks || [],
-                continuity_notes: shot.risk_mitigation || null,
-                // Store new fields
+                continuity_notes: continuityData ? JSON.stringify(continuityData) : (shot.risk_mitigation || null),
                 lighting: lightingData,
                 sound_design: soundDesignData,
                 keyframe_hints: keyframeHintsData,
-                continuity: continuityData,
               });
 
             if (shotError) {
