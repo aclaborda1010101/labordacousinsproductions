@@ -412,7 +412,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     try {
       const t0 = Date.now();
-      // Use extended timeout (120s) for Claude-based outline generation
+      // Timeout varies by model: OpenAI is faster (30s), Claude needs more (120s)
+      const timeoutMs = generationModel === 'hollywood' ? 120000 : 60000;
       const { data, error } = await invokeWithTimeout<{ outline: typeof lightOutline }>(
         'generate-outline-light',
         {
@@ -423,9 +424,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           tone,
           language,
           narrativeMode,
-          densityTargets: targets // Pass density targets to enforce
+          densityTargets: targets,
+          generationModel // Pass the selected model
         },
-        120000 // 2 minutes timeout for Claude
+        timeoutMs
       );
       const durationMs = Date.now() - t0;
 

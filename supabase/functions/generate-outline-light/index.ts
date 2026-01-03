@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -5,8 +6,36 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
-const SCRIPT_MODEL = "claude-sonnet-4-20250514";
+// ⚠️ MODEL CONFIGS - Multi-provider support
+type GenerationModelType = 'rapido' | 'profesional' | 'hollywood';
+
+interface ModelConfig {
+  apiModel: string;
+  provider: 'openai' | 'anthropic';
+  maxTokens: number;
+  temperature: number;
+}
+
+const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
+  rapido: {
+    apiModel: 'gpt-4o-mini',
+    provider: 'openai',
+    maxTokens: 4000,
+    temperature: 0.8
+  },
+  profesional: {
+    apiModel: 'gpt-4o',
+    provider: 'openai',
+    maxTokens: 4000,
+    temperature: 0.7
+  },
+  hollywood: {
+    apiModel: 'claude-sonnet-4-20250514',
+    provider: 'anthropic',
+    maxTokens: 4000,
+    temperature: 0.8
+  }
+};
 
 // MASTER SHOWRUNNER ENGINE - Narrative Mode System Prompts
 const NARRATIVE_MODE_PROMPTS = {
@@ -104,13 +133,230 @@ Cada ESCENA debe:
 
 Si alguna regla no se cumple → REESCRIBIR.`;
 
+// Tool schema for structured output
+const OUTLINE_TOOL_SCHEMA = {
+  type: 'object',
+  properties: {
+    title: { type: 'string', description: 'Título evocador y memorable' },
+    logline: { type: 'string', description: '1-2 frases que VENDAN la serie con intriga' },
+    genre: { type: 'string' },
+    tone: { type: 'string' },
+    narrative_mode: { type: 'string', description: 'Modo narrativo aplicado' },
+    synopsis: { type: 'string', description: '150-250 palabras. NO resumen, sino PROMESA narrativa' },
+    main_characters: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting'] },
+          description: { type: 'string', description: 'Físico + personalidad + FLAW' },
+          secret: { type: 'string', description: 'Qué oculta este personaje' },
+          want: { type: 'string', description: 'Deseo consciente' },
+          need: { type: 'string', description: 'Necesidad inconsciente' }
+        },
+        required: ['name', 'role', 'description']
+      }
+    },
+    main_locations: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT'] },
+          description: { type: 'string' },
+          atmosphere: { type: 'string', description: 'Qué SIENTE el espectador aquí' }
+        },
+        required: ['name', 'type', 'description']
+      }
+    },
+    episode_beats: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          episode: { type: 'number' },
+          title: { type: 'string' },
+          summary: { type: 'string', description: '3-4 frases: qué pasa + conflicto + consecuencia' },
+          irreversible_event: { type: 'string', description: 'El evento que cambia todo este episodio' },
+          cliffhanger: { type: 'string', description: 'Cómo termina el episodio (debe generar NECESIDAD de ver más)' }
+        },
+        required: ['episode', 'title', 'summary', 'cliffhanger']
+      }
+    },
+    author_dna: {
+      type: 'object',
+      description: 'Solo para modo voz_de_autor',
+      properties: {
+        tempo: { type: 'string' },
+        density: { type: 'string' },
+        lexicon: { type: 'string' },
+        poetry_level: { type: 'string' },
+        core_themes: { type: 'array', items: { type: 'string' } },
+        recurring_icons: { type: 'array', items: { type: 'string' } }
+      }
+    },
+    qc_status: { type: 'string', enum: ['pass', 'fail'], description: 'Auto-QC: pass si cumple todas las reglas' }
+  },
+  required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'episode_beats', 'qc_status']
+};
+
+// OpenAI API call
+async function callOpenAI(
+  apiKey: string,
+  systemPrompt: string,
+  userPrompt: string,
+  config: ModelConfig
+): Promise<any> {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: config.apiModel,
+      max_tokens: config.maxTokens,
+      temperature: config.temperature,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      tools: [
+        {
+          type: 'function',
+          function: {
+            name: 'deliver_outline',
+            description: 'Entrega el outline estructurado con estilo MASTER SHOWRUNNER.',
+            parameters: OUTLINE_TOOL_SCHEMA
+          }
+        }
+      ],
+      tool_choice: { type: 'function', function: { name: 'deliver_outline' } }
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('[OUTLINE OpenAI ERROR]', response.status, errorText);
+    
+    if (response.status === 429) {
+      throw { status: 429, message: 'Rate limit alcanzado. Espera un momento.' };
+    }
+    throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  
+  // Extract tool call result
+  const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+  if (toolCall?.function?.name === 'deliver_outline') {
+    try {
+      return JSON.parse(toolCall.function.arguments);
+    } catch {
+      throw new Error('Failed to parse OpenAI tool call response');
+    }
+  }
+  
+  // Fallback: try to parse from content
+  const content = data.choices?.[0]?.message?.content ?? '';
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    try {
+      return JSON.parse(jsonMatch[0]);
+    } catch {
+      throw new Error('No se pudo parsear el outline de OpenAI');
+    }
+  }
+  
+  throw new Error('OpenAI no devolvió outline válido');
+}
+
+// Anthropic API call
+async function callAnthropic(
+  apiKey: string,
+  systemPrompt: string,
+  userPrompt: string,
+  config: ModelConfig
+): Promise<any> {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: config.apiModel,
+      max_tokens: config.maxTokens,
+      temperature: config.temperature,
+      system: systemPrompt,
+      tools: [
+        {
+          name: 'deliver_outline',
+          description: 'Entrega el outline estructurado con estilo MASTER SHOWRUNNER.',
+          input_schema: OUTLINE_TOOL_SCHEMA
+        }
+      ],
+      tool_choice: { type: 'tool', name: 'deliver_outline' },
+      messages: [{ role: 'user', content: userPrompt }]
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('[OUTLINE Anthropic ERROR]', response.status, errorText);
+    
+    if (response.status === 429) {
+      throw { status: 429, message: 'Rate limit alcanzado. Espera un momento.' };
+    }
+    if (response.status === 400 && errorText.toLowerCase().includes('credit')) {
+      throw { status: 402, message: 'Créditos insuficientes en la cuenta de Claude.' };
+    }
+    throw new Error(`Anthropic API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  // Extract tool use result
+  const toolUse = data.content?.find((c: any) => c.type === 'tool_use' && c.name === 'deliver_outline');
+  if (toolUse?.input) {
+    return toolUse.input;
+  }
+
+  // Fallback: try to parse JSON from text
+  const textBlock = data.content?.find((c: any) => c.type === 'text');
+  const content = textBlock?.text ?? '';
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    try {
+      return JSON.parse(jsonMatch[0]);
+    } catch {
+      throw new Error('No se pudo parsear el outline de Claude');
+    }
+  }
+  
+  throw new Error('Claude no devolvió outline');
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { idea, genre, tone, format, episodesCount, language, narrativeMode, densityTargets } = await req.json();
+    const { 
+      idea, 
+      genre, 
+      tone, 
+      format, 
+      episodesCount, 
+      language, 
+      narrativeMode, 
+      densityTargets,
+      generationModel = 'rapido' // Default to fast model
+    } = await req.json();
 
     if (!idea) {
       return new Response(
@@ -119,9 +365,24 @@ serve(async (req) => {
       );
     }
 
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY no configurada');
+    // Validate and get model config
+    const modelKey = (generationModel as GenerationModelType) in MODEL_CONFIGS 
+      ? generationModel as GenerationModelType 
+      : 'rapido';
+    const modelConfig = MODEL_CONFIGS[modelKey];
+
+    // Get API key based on provider
+    let apiKey: string | undefined;
+    if (modelConfig.provider === 'openai') {
+      apiKey = Deno.env.get('OPENAI_API_KEY');
+      if (!apiKey) {
+        throw new Error('OPENAI_API_KEY no configurada');
+      }
+    } else {
+      apiKey = Deno.env.get('ANTHROPIC_API_KEY');
+      if (!apiKey) {
+        throw new Error('ANTHROPIC_API_KEY no configurada');
+      }
     }
 
     // Select narrative mode prompt
@@ -179,138 +440,14 @@ CONSTRAINTS OBLIGATORIOS:
 Usa la herramienta deliver_outline para entregar el resultado.
 Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
 
-    console.log(`[OUTLINE] Generating with ${SCRIPT_MODEL} | Mode: ${narrativeMode || 'serie_adictiva'}...`);
+    console.log(`[OUTLINE] Generating with ${modelConfig.apiModel} (${modelConfig.provider}) | Mode: ${narrativeMode || 'serie_adictiva'}...`);
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: SCRIPT_MODEL,
-        max_tokens: 4000,
-        temperature: 0.8,
-        system: systemPrompt,
-        tools: [
-          {
-            name: 'deliver_outline',
-            description: 'Entrega el outline estructurado con estilo MASTER SHOWRUNNER.',
-            input_schema: {
-              type: 'object',
-              properties: {
-                title: { type: 'string', description: 'Título evocador y memorable' },
-                logline: { type: 'string', description: '1-2 frases que VENDAN la serie con intriga' },
-                genre: { type: 'string' },
-                tone: { type: 'string' },
-                narrative_mode: { type: 'string', description: 'Modo narrativo aplicado' },
-                synopsis: { type: 'string', description: '150-250 palabras. NO resumen, sino PROMESA narrativa' },
-                main_characters: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      name: { type: 'string' },
-                      role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting'] },
-                      description: { type: 'string', description: 'Físico + personalidad + FLAW' },
-                      secret: { type: 'string', description: 'Qué oculta este personaje' },
-                      want: { type: 'string', description: 'Deseo consciente' },
-                      need: { type: 'string', description: 'Necesidad inconsciente' }
-                    },
-                    required: ['name', 'role', 'description']
-                  }
-                },
-                main_locations: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      name: { type: 'string' },
-                      type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT'] },
-                      description: { type: 'string' },
-                      atmosphere: { type: 'string', description: 'Qué SIENTE el espectador aquí' }
-                    },
-                    required: ['name', 'type', 'description']
-                  }
-                },
-                episode_beats: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      episode: { type: 'number' },
-                      title: { type: 'string' },
-                      summary: { type: 'string', description: '3-4 frases: qué pasa + conflicto + consecuencia' },
-                      irreversible_event: { type: 'string', description: 'El evento que cambia todo este episodio' },
-                      cliffhanger: { type: 'string', description: 'Cómo termina el episodio (debe generar NECESIDAD de ver más)' }
-                    },
-                    required: ['episode', 'title', 'summary', 'cliffhanger']
-                  }
-                },
-                author_dna: {
-                  type: 'object',
-                  description: 'Solo para modo voz_de_autor',
-                  properties: {
-                    tempo: { type: 'string' },
-                    density: { type: 'string' },
-                    lexicon: { type: 'string' },
-                    poetry_level: { type: 'string' },
-                    core_themes: { type: 'array', items: { type: 'string' } },
-                    recurring_icons: { type: 'array', items: { type: 'string' } }
-                  }
-                },
-                qc_status: { type: 'string', enum: ['pass', 'fail'], description: 'Auto-QC: pass si cumple todas las reglas' }
-              },
-              required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'episode_beats', 'qc_status']
-            }
-          }
-        ],
-        tool_choice: { type: 'tool', name: 'deliver_outline' },
-        messages: [{ role: 'user', content: userPrompt }]
-      })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('[OUTLINE ERROR]', response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit alcanzado. Espera un momento.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      if (response.status === 400 && errorText.toLowerCase().includes('credit')) {
-        return new Response(
-          JSON.stringify({ error: 'Créditos insuficientes en la cuenta de Claude.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      throw new Error(`Claude API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // Extract tool use result
-    const toolUse = data.content?.find((c: any) => c.type === 'tool_use' && c.name === 'deliver_outline');
-    let outline = toolUse?.input;
-
-    if (!outline) {
-      // Fallback: try to parse JSON from text
-      const textBlock = data.content?.find((c: any) => c.type === 'text');
-      const content = textBlock?.text ?? '';
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          outline = JSON.parse(jsonMatch[0]);
-        } catch {
-          throw new Error('No se pudo parsear el outline');
-        }
-      } else {
-        throw new Error('Claude no devolvió outline');
-      }
+    // Call the appropriate API
+    let outline: any;
+    if (modelConfig.provider === 'openai') {
+      outline = await callOpenAI(apiKey, systemPrompt, userPrompt, modelConfig);
+    } else {
+      outline = await callAnthropic(apiKey, systemPrompt, userPrompt, modelConfig);
     }
 
     // Add narrative mode to outline if not present
@@ -341,15 +478,24 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       outline.qc_warnings = qcIssues;
     }
 
-    console.log('[OUTLINE] Success:', outline.title, '| Mode:', outline.narrative_mode, '| Characters:', outline.main_characters?.length, '| Episodes:', outline.episode_beats?.length);
+    console.log('[OUTLINE] Success:', outline.title, '| Model:', modelConfig.apiModel, '| Mode:', outline.narrative_mode, '| Characters:', outline.main_characters?.length, '| Episodes:', outline.episode_beats?.length);
 
     return new Response(
-      JSON.stringify({ success: true, outline }),
+      JSON.stringify({ success: true, outline, model: modelConfig.apiModel }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('[OUTLINE ERROR]', error);
+    
+    // Handle structured errors with status codes
+    if (error.status) {
+      return new Response(
+        JSON.stringify({ error: error.message }),
+        { status: error.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
