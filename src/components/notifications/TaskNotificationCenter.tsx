@@ -63,7 +63,7 @@ function TaskStatusIcon({ status }: { status: TaskStatus }) {
   }
 }
 
-function TaskItem({ task, onRemove }: { task: BackgroundTask; onRemove: () => void }) {
+function TaskItem({ task, onRemove, onCancel }: { task: BackgroundTask; onRemove: () => void; onCancel: () => void }) {
   const [expanded, setExpanded] = React.useState(false);
   const isActive = task.status === 'running' || task.status === 'pending';
 
@@ -93,15 +93,35 @@ function TaskItem({ task, onRemove }: { task: BackgroundTask; onRemove: () => vo
           {isActive && (
             <div className="mt-2">
               <Progress value={task.progress} className="h-1.5" />
-              <p className="text-xs text-muted-foreground mt-1">
-                {task.progress}% completado
-              </p>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs text-muted-foreground">
+                  {task.progress}% completado
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-5 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCancel();
+                  }}
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Cancelar
+                </Button>
+              </div>
             </div>
           )}
           
           {task.status === 'failed' && task.error && (
             <p className="text-xs text-destructive mt-1 truncate">
               {task.error}
+            </p>
+          )}
+          
+          {task.status === 'cancelled' && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Cancelado
             </p>
           )}
           
@@ -165,6 +185,7 @@ export function TaskNotificationCenter() {
     hasUnread, 
     markAllRead,
     removeTask,
+    cancelTask,
     clearCompleted 
   } = useBackgroundTasks();
 
@@ -242,6 +263,7 @@ export function TaskNotificationCenter() {
                   key={task.id} 
                   task={task} 
                   onRemove={() => removeTask(task.id)}
+                  onCancel={() => cancelTask(task.id)}
                 />
               ))}
             </div>
