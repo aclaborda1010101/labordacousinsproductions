@@ -11,6 +11,10 @@ interface ScriptBreakdownRequest {
   projectId: string;
   scriptId?: string;
   language?: string;
+  // Project planning hints (optional). If not provided, we load them from the project.
+  format?: 'film' | 'series' | string;
+  episodesCount?: number;
+  episodeDurationMin?: number;
 }
 
 const SYSTEM_PROMPT = `Eres un ANALIZADOR NARRATIVO PROFESIONAL de alto nivel (showrunner + script editor + story analyst).
@@ -279,7 +283,7 @@ serve(async (req) => {
 
   try {
     const request: ScriptBreakdownRequest = await req.json();
-    const { scriptText, projectId, scriptId, language } = request;
+    const { scriptText, projectId, scriptId, language, format, episodesCount, episodeDurationMin } = request;
 
     if (!scriptText || scriptText.trim().length < 100) {
       return new Response(
@@ -404,26 +408,112 @@ IMPORTANTE:
       if (supabaseUrl && supabaseServiceKey) {
         const supabase = createClient(supabaseUrl, supabaseServiceKey);
         
+        // Load project settings to respect episode count + duration
+        const { data: projectRow, error: projectRowError } = await supabase
+          .from('projects')
+          .select('format, episodes_count, target_duration_min')
+          .eq('id', projectId)
+          .maybeSingle();
+
+        if (projectRowError) {
+          console.warn('Could not load project settings for breakdown:', projectRowError);
+        }
+
+        const safeInt = (v: unknown, fallback: number) => {
+          const n = Number(v);
+          return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+        };
+
+        const safeFloat = (v: unknown, fallback: number) => {
+          const n = Number(v);
+          return Number.isFinite(n) && n > 0 ? n : fallback;
+        };
+
+        const effectiveFormat = String(format ?? projectRow?.format ?? 'series');
+        const desiredEpisodesCount = effectiveFormat === 'series'
+          ? safeInt(episodesCount ?? projectRow?.episodes_count, 1)
+          : 1;
+
+        const desiredEpisodeDurationMin = safeInt(
+          episodeDurationMin ?? projectRow?.target_duration_min,
+          effectiveFormat === 'series' ? 45 : 100
+        );
+
+        const scenes = Array.isArray(breakdownData.scenes) ? breakdownData.scenes : [];
+        const synopsisText = breakdownData.synopsis?.faithful_summary || '';
+
+        const buildEpisodesFromScenes = (): any[] => {
+          if (desiredEpisodesCount <= 1) {
+            return [{
+              episode_number: 1,
+              title: effectiveFormat === 'film' ? 'Película' : 'Episodio 1',
+              synopsis: synopsisText,
+              scenes,
+              duration_min: safeInt(breakdownData.summary?.estimated_runtime_min, desiredEpisodeDurationMin),
+            }];
+          }
+
+          const defaultSceneSec = 60;
+          const getSceneSec = (s: any) => safeFloat(s?.estimated_duration_sec, defaultSceneSec);
+
+          const targetEpisodeSec = desiredEpisodeDurationMin * 60;
+          const totalSec = scenes.reduce((acc: number, s: any) => acc + getSceneSec(s), 0);
+
+          const groups: any[][] = [];
+          if (totalSec > 0 && targetEpisodeSec > 0) {
+            let bucket: any[] = [];
+            let bucketSec = 0;
+
+            for (const s of scenes) {
+              bucket.push(s);
+              bucketSec += getSceneSec(s);
+
+              if (bucketSec >= targetEpisodeSec && groups.length < desiredEpisodesCount - 1) {
+                groups.push(bucket);
+                bucket = [];
+                bucketSec = 0;
+              }
+            }
+            groups.push(bucket);
+          } else {
+            const chunkSize = Math.max(1, Math.ceil(scenes.length / desiredEpisodesCount));
+            for (let i = 0; i < scenes.length; i += chunkSize) {
+              groups.push(scenes.slice(i, i + chunkSize));
+            }
+          }
+
+          // Ensure exactly N episodes (pad or merge)
+          while (groups.length < desiredEpisodesCount) groups.push([]);
+          if (groups.length > desiredEpisodesCount) {
+            const extras = groups.splice(desiredEpisodesCount - 1);
+            groups[desiredEpisodesCount - 1] = extras.flat();
+          }
+
+          return groups.map((chunk, idx) => ({
+            episode_number: idx + 1,
+            title: `Episodio ${idx + 1}`,
+            synopsis: idx === 0 ? synopsisText : '',
+            scenes: chunk,
+            duration_min: desiredEpisodeDurationMin,
+          }));
+        };
+
+        const parsedEpisodes = buildEpisodesFromScenes();
+
         // Build parsed_json structure for ScriptSummaryPanel
         const parsedJson = {
           title: breakdownData.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Analizado',
-          synopsis: breakdownData.synopsis?.faithful_summary || '',
-          episodes: breakdownData.episodes || [{
-            episode_number: 1,
-            title: 'Episodio 1',
-            synopsis: breakdownData.synopsis?.faithful_summary || '',
-            scenes: breakdownData.scenes,
-            duration_min: breakdownData.summary?.estimated_runtime_min || 10,
-          }],
+          synopsis: synopsisText,
+          episodes: parsedEpisodes,
           characters: breakdownData.characters || [],
           locations: breakdownData.locations || [],
-          scenes: breakdownData.scenes || [],
+          scenes,
           props: breakdownData.props || [],
           subplots: breakdownData.subplots || [],
           plot_twists: breakdownData.plot_twists || [],
           teasers: breakdownData.teasers,
           counts: {
-            total_scenes: breakdownData.scenes?.length || 0,
+            total_scenes: scenes.length || 0,
             total_dialogue_lines: 0,
           },
         };
