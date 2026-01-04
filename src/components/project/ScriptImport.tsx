@@ -1783,33 +1783,133 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 )}
 
-                {/* Characters */}
+                {/* Characters (with role + description) */}
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
                     Personajes ({lightOutline.main_characters?.length || 0})
                   </Label>
-                  <div className="flex flex-wrap gap-2">
-                    {lightOutline.main_characters?.map((char: any, i: number) => (
-                      <Badge key={i} variant={char.role === 'protagonist' ? 'default' : 'secondary'}>
-                        {char.name} ({char.role})
-                      </Badge>
-                    ))}
+                  <div className="grid gap-2 md:grid-cols-2">
+                    {lightOutline.main_characters?.map((char: any, i: number) => {
+                      const role = char.role || '';
+                      const roleDetail = char.role_detail || char.roleDetail;
+                      const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
+                      return (
+                        <div key={i} className="p-2 bg-muted/30 rounded border">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant={variant}>{char.name}</Badge>
+                            {(role || roleDetail) && (
+                              <span className="text-xs text-muted-foreground">
+                                {role}{roleDetail ? ` • ${roleDetail}` : ''}
+                              </span>
+                            )}
+                          </div>
+                          {char.description && (
+                            <p className="text-xs text-muted-foreground mt-1">{char.description}</p>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Locations */}
+                {/* Locations (with type + description) */}
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
                     Localizaciones ({lightOutline.main_locations?.length || 0})
                   </Label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid gap-2 md:grid-cols-2">
                     {lightOutline.main_locations?.map((loc: any, i: number) => (
-                      <Badge key={i} variant="outline">
-                        {loc.type}. {loc.name}
-                      </Badge>
+                      <div key={i} className="p-2 bg-muted/30 rounded border">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant="outline">{loc.name}</Badge>
+                          {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
+                        </div>
+                        {loc.description && (
+                          <p className="text-xs text-muted-foreground mt-1">{loc.description}</p>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
+
+                {/* Props */}
+                {!!lightOutline.main_props?.length && (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                      Props / Objetos clave ({lightOutline.main_props.length})
+                    </Label>
+                    <div className="flex flex-wrap gap-2">
+                      {lightOutline.main_props.map((prop: any, i: number) => {
+                        const name = typeof prop === 'string' ? prop : prop.name;
+                        return (
+                          <Badge key={i} variant="secondary">
+                            {name}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Subplots */}
+                {!!lightOutline.subplots?.length && (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                      Subtramas ({lightOutline.subplots.length})
+                    </Label>
+                    <div className="space-y-2">
+                      {lightOutline.subplots.slice(0, 6).map((subplot: any, i: number) => (
+                        <div key={i} className="p-2 bg-muted/30 rounded border">
+                          <p className="text-sm font-medium">{subplot.name}</p>
+                          {subplot.description && (
+                            <p className="text-xs text-muted-foreground mt-1">{subplot.description}</p>
+                          )}
+                        </div>
+                      ))}
+                      {lightOutline.subplots.length > 6 && (
+                        <p className="text-xs text-muted-foreground">+{lightOutline.subplots.length - 6} más</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Plot Twists */}
+                {!!lightOutline.plot_twists?.length && (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                      Giros narrativos ({lightOutline.plot_twists.length})
+                    </Label>
+                    <div className="space-y-2">
+                      {lightOutline.plot_twists.slice(0, 6).map((twist: any, i: number) => (
+                        <div key={i} className="p-2 bg-muted/30 rounded border">
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={
+                                twist.impact === 'paradigm_shift'
+                                  ? 'destructive'
+                                  : twist.impact === 'major'
+                                    ? 'default'
+                                    : 'secondary'
+                              }
+                              className="text-xs"
+                            >
+                              {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'}
+                              {twist.impact === 'paradigm_shift' ? 'Cambio total' : twist.impact === 'major' ? 'Mayor' : 'Menor'}
+                            </Badge>
+                            <p className="text-sm font-medium">{twist.name}</p>
+                          </div>
+                          {twist.description && (
+                            <p className="text-xs text-muted-foreground mt-1">{twist.description}</p>
+                          )}
+                        </div>
+                      ))}
+                      {lightOutline.plot_twists.length > 6 && (
+                        <p className="text-xs text-muted-foreground">+{lightOutline.plot_twists.length - 6} más</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
 
                 {/* Episodes - Editable Titles */}
                 <div>
@@ -2733,7 +2833,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                             }
                             <div className="min-w-0">
                               <p className="font-medium text-sm truncate">{char.name}</p>
-                              {char.role && <Badge variant="outline" className="text-xs">{char.role}</Badge>}
+                              {(char.role || char.role_detail) && (
+                                <div className="flex flex-wrap gap-1 mt-0.5">
+                                  {char.role && <Badge variant="outline" className="text-xs">{char.role}</Badge>}
+                                  {char.role_detail && <Badge variant="secondary" className="text-xs">{char.role_detail}</Badge>}
+                                </div>
+                              )}
+                              {char.description && (
+                                <p className="text-xs text-muted-foreground mt-1 break-words">{char.description}</p>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -2765,7 +2873,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                               <CheckSquare className="w-4 h-4 text-primary shrink-0 mt-0.5" /> : 
                               <Square className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                             }
-                            <p className="font-medium text-sm truncate">{typeof loc === 'string' ? loc : loc.name}</p>
+                            <div className="min-w-0">
+                              <p className="font-medium text-sm truncate">{typeof loc === 'string' ? loc : loc.name}</p>
+                              {typeof loc === 'object' && loc.description && (
+                                <p className="text-xs text-muted-foreground mt-1 break-words">{loc.description}</p>
+                              )}
+                            </div>
                           </div>
                         ))}
                         {(!generatedScript.locations || generatedScript.locations.length === 0) && (
@@ -2796,7 +2909,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                               <CheckSquare className="w-4 h-4 text-primary shrink-0 mt-0.5" /> : 
                               <Square className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                             }
-                            <p className="font-medium text-sm truncate">{typeof prop === 'string' ? prop : prop.name}</p>
+                            <div className="min-w-0">
+                              <p className="font-medium text-sm truncate">{typeof prop === 'string' ? prop : prop.name}</p>
+                              {typeof prop === 'object' && prop.description && (
+                                <p className="text-xs text-muted-foreground mt-1 break-words">{prop.description}</p>
+                              )}
+                            </div>
                           </div>
                         ))}
                         {(!generatedScript.props || generatedScript.props.length === 0) && (
@@ -2807,6 +2925,93 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Narrative Depth (Subplots + Plot Twists) */}
+              {(() => {
+                const subplots = (generatedScript.subplots || generatedScript.subplots || []) as any[];
+                const plotTwists = (generatedScript.plot_twists || generatedScript.plotTwists || []) as any[];
+
+                if (subplots.length === 0 && plotTwists.length === 0) return null;
+
+                return (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {subplots.length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-base flex items-center gap-2">
+                            <Layers className="w-5 h-5 text-primary" />
+                            Subtramas ({subplots.length})
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                          {subplots.slice(0, 12).map((subplot, i) => (
+                            <div key={i} className="p-3 bg-muted/30 rounded-lg">
+                              <p className="text-sm font-medium">{subplot.name}</p>
+                              {subplot.description && (
+                                <p className="text-xs text-muted-foreground mt-1">{subplot.description}</p>
+                              )}
+                              {subplot.characters_involved?.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {subplot.characters_involved.slice(0, 8).map((c: string, j: number) => (
+                                    <Badge key={j} variant="outline" className="text-xs">{c}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                          {subplots.length > 12 && (
+                            <p className="text-xs text-muted-foreground">+{subplots.length - 12} más</p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {plotTwists.length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-base flex items-center gap-2">
+                            <Zap className="w-5 h-5 text-primary" />
+                            Giros narrativos ({plotTwists.length})
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                          {plotTwists.slice(0, 12).map((twist, i) => (
+                            <div key={i} className="p-3 bg-muted/30 rounded-lg">
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant={
+                                    twist.impact === 'paradigm_shift'
+                                      ? 'destructive'
+                                      : twist.impact === 'major'
+                                        ? 'default'
+                                        : 'secondary'
+                                  }
+                                  className="text-xs"
+                                >
+                                  {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'}
+                                  {twist.impact === 'paradigm_shift' ? 'Cambio total' : twist.impact === 'major' ? 'Mayor' : 'Menor'}
+                                </Badge>
+                                <p className="text-sm font-medium">{twist.name}</p>
+                              </div>
+                              {twist.description && (
+                                <p className="text-xs text-muted-foreground mt-1">{twist.description}</p>
+                              )}
+                              {(twist.episode || twist.scene) && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {twist.episode ? `Episodio ${twist.episode}` : `Escena ${twist.scene}`}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                          {plotTwists.length > 12 && (
+                            <p className="text-xs text-muted-foreground">+{plotTwists.length - 12} más</p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* EPISODES / CHAPTERS - WITH SUMMARY vs FULL SCREENPLAY TOGGLE */}
               <div className="space-y-4">
