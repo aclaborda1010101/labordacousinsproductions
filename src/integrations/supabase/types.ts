@@ -1240,6 +1240,47 @@ export type Database = {
           },
         ]
       }
+      editorial_events: {
+        Row: {
+          asset_type: string
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json | null
+          project_id: string
+          run_id: string | null
+          suggestion_id: string | null
+        }
+        Insert: {
+          asset_type: string
+          created_at?: string
+          event_type: string
+          id?: string
+          payload?: Json | null
+          project_id: string
+          run_id?: string | null
+          suggestion_id?: string | null
+        }
+        Update: {
+          asset_type?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          project_id?: string
+          run_id?: string | null
+          suggestion_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "editorial_events_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       editorial_projects: {
         Row: {
           created_at: string
@@ -1941,6 +1982,7 @@ export type Database = {
       }
       generation_runs: {
         Row: {
+          accepted_at: string | null
           composed_prompt: string
           context: string | null
           created_at: string
@@ -1960,6 +2002,7 @@ export type Database = {
           parent_run_id: string | null
           payload: Json | null
           phase: string | null
+          preset_id: string | null
           project_id: string
           prompt: string | null
           rule_plan: Json | null
@@ -1972,6 +2015,7 @@ export type Database = {
           warnings: Json | null
         }
         Insert: {
+          accepted_at?: string | null
           composed_prompt: string
           context?: string | null
           created_at?: string
@@ -1991,6 +2035,7 @@ export type Database = {
           parent_run_id?: string | null
           payload?: Json | null
           phase?: string | null
+          preset_id?: string | null
           project_id: string
           prompt?: string | null
           rule_plan?: Json | null
@@ -2003,6 +2048,7 @@ export type Database = {
           warnings?: Json | null
         }
         Update: {
+          accepted_at?: string | null
           composed_prompt?: string
           context?: string | null
           created_at?: string
@@ -2022,6 +2068,7 @@ export type Database = {
           parent_run_id?: string | null
           payload?: Json | null
           phase?: string | null
+          preset_id?: string | null
           project_id?: string
           prompt?: string | null
           rule_plan?: Json | null
