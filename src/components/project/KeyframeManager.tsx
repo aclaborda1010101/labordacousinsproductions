@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
-import { generateRun, updateRunStatus } from '@/lib/generateRun';
+import { generateRun, updateRunStatus, GenerateRunPayload } from '@/lib/generateRun';
 import { toast } from 'sonner';
 import { 
   Loader2, 
@@ -21,7 +21,9 @@ import {
   RefreshCw,
   Lock,
   Unlock,
-  CheckCircle2
+  CheckCircle2,
+  Check,
+  RotateCcw
 } from 'lucide-react';
 
 interface Keyframe {
@@ -35,6 +37,7 @@ interface Keyframe {
   staging_snapshot: unknown;
   approved: boolean;
   locks: unknown;
+  run_id?: string | null; // Links to generation_runs for telemetry
 }
 
 interface Character {
@@ -175,19 +178,76 @@ export default function KeyframeManager({
     return () => clearInterval(interval);
   }, [isPlaying, keyframes.length]);
 
-  // Generate a keyframe for a specific slot
-  const generateKeyframe = async (slotIndex: number) => {
+  // Build generation payload for a slot
+  const buildGenerationPayload = useCallback((slotIndex: number, projectId: string, parentRunId?: string): GenerateRunPayload | null => {
+    const slots = getRequiredSlots();
+    const slot = slots[slotIndex];
+    if (!slot) return null;
+
+    // Find previous keyframe for continuity
+    const previousKeyframe = keyframes
+      .filter(kf => kf.timestamp_sec < slot.timestampSec && kf.image_url)
+      .sort((a, b) => b.timestamp_sec - a.timestamp_sec)[0];
+
+    return {
+      projectId,
+      type: 'keyframe',
+      phase: 'exploration', // MVP default
+      engine: 'nano-banana',
+      engineSelectedBy: 'auto',
+      engineReason: 'Default keyframe engine',
+      prompt: sceneDescription,
+      context: `${shotType} shot, ${slot.frameType} frame at ${slot.timestampSec}s`,
+      parentRunId, // For regeneration chains
+      params: {
+        shotId,
+        shotType,
+        duration,
+        frameType: slot.frameType,
+        timestampSec: slot.timestampSec,
+        characters: characters.map(c => ({
+          id: c.id,
+          name: c.name,
+          token: c.token,
+          referenceUrl: c.turnaround_urls?.[0]
+        })),
+        location: location ? {
+          id: location.id,
+          name: location.name,
+          token: location.token,
+          referenceUrl: location.reference_urls?.[0]
+        } : undefined,
+        cameraMovement,
+        blocking,
+        shotDetails: {
+          focalMm: shotDetails?.focalMm,
+          cameraHeight: shotDetails?.cameraHeight,
+          lightingStyle: shotDetails?.lightingStyle,
+          viewerNotice: shotDetails?.viewerNotice,
+          aiRisk: shotDetails?.aiRisk,
+          intention: shotDetails?.intention,
+          dialogueText: shotDetails?.dialogueText,
+          effectiveMode: shotDetails?.effectiveMode
+        },
+        previousKeyframeUrl: previousKeyframe?.image_url,
+        previousKeyframeData: previousKeyframe ? {
+          promptText: previousKeyframe.prompt_text,
+          frameGeometry: previousKeyframe.frame_geometry,
+          stagingSnapshot: previousKeyframe.staging_snapshot
+        } : undefined,
+        stylePack
+      }
+    };
+  }, [getRequiredSlots, keyframes, sceneDescription, shotType, shotId, duration, characters, location, cameraMovement, blocking, shotDetails, stylePack]);
+
+  // Generate a keyframe for a specific slot (or regenerate with parentRunId)
+  const generateKeyframe = async (slotIndex: number, parentRunId?: string) => {
     const slots = getRequiredSlots();
     const slot = slots[slotIndex];
     if (!slot) return;
 
     setGenerating(`slot-${slotIndex}`);
     try {
-      // Find previous keyframe for continuity
-      const previousKeyframe = keyframes
-        .filter(kf => kf.timestamp_sec < slot.timestampSec && kf.image_url)
-        .sort((a, b) => b.timestamp_sec - a.timestamp_sec)[0];
-
       // Get project_id from shot -> scene -> project
       const { data: shotData } = await supabase
         .from('shots')
@@ -197,58 +257,29 @@ export default function KeyframeManager({
       
       const projectId = (shotData?.scenes as any)?.project_id || 'unknown';
 
+      const payload = buildGenerationPayload(slotIndex, projectId, parentRunId);
+      if (!payload) throw new Error('Invalid slot');
+
       // Use unified generateRun gateway
-      const result = await generateRun({
-        projectId,
-        type: 'keyframe',
-        phase: 'exploration', // MVP default
-        engine: 'nano-banana',
-        engineSelectedBy: 'auto',
-        engineReason: 'Default keyframe engine',
-        prompt: sceneDescription,
-        context: `${shotType} shot, ${slot.frameType} frame at ${slot.timestampSec}s`,
-        params: {
-          shotId,
-          shotType,
-          duration,
-          frameType: slot.frameType,
-          timestampSec: slot.timestampSec,
-          characters: characters.map(c => ({
-            id: c.id,
-            name: c.name,
-            token: c.token,
-            referenceUrl: c.turnaround_urls?.[0]
-          })),
-          location: location ? {
-            id: location.id,
-            name: location.name,
-            token: location.token,
-            referenceUrl: location.reference_urls?.[0]
-          } : undefined,
-          cameraMovement,
-          blocking,
-          shotDetails: {
-            focalMm: shotDetails?.focalMm,
-            cameraHeight: shotDetails?.cameraHeight,
-            lightingStyle: shotDetails?.lightingStyle,
-            viewerNotice: shotDetails?.viewerNotice,
-            aiRisk: shotDetails?.aiRisk,
-            intention: shotDetails?.intention,
-            dialogueText: shotDetails?.dialogueText,
-            effectiveMode: shotDetails?.effectiveMode
-          },
-          previousKeyframeUrl: previousKeyframe?.image_url,
-          previousKeyframeData: previousKeyframe ? {
-            promptText: previousKeyframe.prompt_text,
-            frameGeometry: previousKeyframe.frame_geometry,
-            stagingSnapshot: previousKeyframe.staging_snapshot
-          } : undefined,
-          stylePack
-        }
-      });
+      const result = await generateRun(payload);
 
       if (!result.ok) {
         throw new Error(result.error || 'Generation failed');
+      }
+
+      // Update keyframe with runId for telemetry tracking
+      const existing = keyframes.find(
+        kf => Math.abs(kf.timestamp_sec - slot.timestampSec) < 0.5
+      );
+
+      if (existing && result.runId) {
+        await supabase
+          .from('keyframes')
+          .update({ 
+            image_url: result.outputUrl,
+            run_id: result.runId 
+          })
+          .eq('id', existing.id);
       }
 
       // Refresh keyframes
@@ -269,6 +300,41 @@ export default function KeyframeManager({
     } finally {
       setGenerating(null);
     }
+  };
+
+  // Accept a keyframe - updates generation_runs.status to 'accepted'
+  const acceptKeyframe = async (keyframe: Keyframe) => {
+    if (!keyframe.run_id) {
+      toast.error('Este keyframe no tiene runId asociado');
+      return;
+    }
+
+    try {
+      const success = await updateRunStatus(keyframe.run_id, 'accepted');
+      if (success) {
+        // Also mark as approved in keyframes table
+        await supabase
+          .from('keyframes')
+          .update({ approved: true })
+          .eq('id', keyframe.id);
+
+        setKeyframes(prev => prev.map(kf =>
+          kf.id === keyframe.id ? { ...kf, approved: true } : kf
+        ));
+        toast.success('Keyframe aceptado ✓');
+      } else {
+        throw new Error('Failed to update run status');
+      }
+    } catch (error) {
+      console.error('Error accepting keyframe:', error);
+      toast.error('Error al aceptar keyframe');
+    }
+  };
+
+  // Regenerate a keyframe - creates NEW run with parent_run_id
+  const regenerateKeyframe = async (slotIndex: number, keyframe: Keyframe) => {
+    // Pass the current runId as parentRunId to create chain
+    await generateKeyframe(slotIndex, keyframe.run_id || undefined);
   };
 
   // Generate all missing keyframes
@@ -510,26 +576,61 @@ export default function KeyframeManager({
                 )}
 
                 {/* Actions overlay */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                  {/* Generate button */}
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="h-7 w-7"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      generateKeyframe(index);
-                    }}
-                    disabled={isGenerating}
-                  >
-                    {isGenerating ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : keyframe?.image_url ? (
-                      <RefreshCw className="w-3.5 h-3.5" />
-                    ) : (
-                      <Wand2 className="w-3.5 h-3.5" />
-                    )}
-                  </Button>
+                <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-1 flex-wrap p-1">
+                  {/* Generate / Regenerate button */}
+                  {keyframe?.image_url && keyframe?.run_id ? (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-7 w-7"
+                      title="Regenerar (crea nuevo run)"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        regenerateKeyframe(index, keyframe);
+                      }}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <RotateCcw className="w-3.5 h-3.5" />
+                      )}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-7 w-7"
+                      title="Generar keyframe"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        generateKeyframe(index);
+                      }}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Wand2 className="w-3.5 h-3.5" />
+                      )}
+                    </Button>
+                  )}
+
+                  {/* Accept button - only for keyframes with runId that aren't approved */}
+                  {keyframe?.image_url && keyframe?.run_id && !keyframe.approved && (
+                    <Button
+                      size="icon"
+                      variant="default"
+                      className="h-7 w-7 bg-green-600 hover:bg-green-700"
+                      title="Aceptar (actualiza generation_runs.status)"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        acceptKeyframe(keyframe);
+                      }}
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
 
                   {/* Upload button */}
                   <label className="cursor-pointer">
@@ -546,6 +647,7 @@ export default function KeyframeManager({
                       size="icon"
                       variant="secondary"
                       className="h-7 w-7"
+                      title="Subir imagen"
                       asChild
                     >
                       <span>
@@ -558,12 +660,13 @@ export default function KeyframeManager({
                     </Button>
                   </label>
 
-                  {/* Approve/Lock button */}
-                  {keyframe && (
+                  {/* Lock/Unlock button (for manually uploaded or legacy keyframes) */}
+                  {keyframe && !keyframe.run_id && (
                     <Button
                       size="icon"
                       variant={keyframe.approved ? "default" : "secondary"}
                       className="h-7 w-7"
+                      title={keyframe.approved ? "Desbloquear" : "Bloquear"}
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleApproval(keyframe.id, keyframe.approved);
@@ -583,6 +686,7 @@ export default function KeyframeManager({
                       size="icon"
                       variant="destructive"
                       className="h-7 w-7"
+                      title="Eliminar"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteKeyframe(keyframe.id);

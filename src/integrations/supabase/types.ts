@@ -1883,6 +1883,7 @@ export type Database = {
           output_text: string | null
           output_type: string | null
           output_url: string | null
+          parent_run_id: string | null
           payload: Json | null
           phase: string | null
           project_id: string
@@ -1913,6 +1914,7 @@ export type Database = {
           output_text?: string | null
           output_type?: string | null
           output_url?: string | null
+          parent_run_id?: string | null
           payload?: Json | null
           phase?: string | null
           project_id: string
@@ -1943,6 +1945,7 @@ export type Database = {
           output_text?: string | null
           output_type?: string | null
           output_url?: string | null
+          parent_run_id?: string | null
           payload?: Json | null
           phase?: string | null
           project_id?: string
@@ -1956,7 +1959,15 @@ export type Database = {
           verdict?: Database["public"]["Enums"]["generation_verdict"]
           warnings?: Json | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "generation_runs_parent_run_id_fkey"
+            columns: ["parent_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       jobs: {
         Row: {
@@ -2020,6 +2031,7 @@ export type Database = {
           locks: Json | null
           negative_constraints: Json | null
           prompt_text: string | null
+          run_id: string | null
           seed: number | null
           shot_id: string
           staging_snapshot: Json | null
@@ -2037,6 +2049,7 @@ export type Database = {
           locks?: Json | null
           negative_constraints?: Json | null
           prompt_text?: string | null
+          run_id?: string | null
           seed?: number | null
           shot_id: string
           staging_snapshot?: Json | null
@@ -2054,6 +2067,7 @@ export type Database = {
           locks?: Json | null
           negative_constraints?: Json | null
           prompt_text?: string | null
+          run_id?: string | null
           seed?: number | null
           shot_id?: string
           staging_snapshot?: Json | null
@@ -2061,6 +2075,13 @@ export type Database = {
           version?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "keyframes_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "keyframes_shot_id_fkey"
             columns: ["shot_id"]

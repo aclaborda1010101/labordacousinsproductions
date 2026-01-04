@@ -10,6 +10,7 @@ export interface GenerateRunPayload {
   prompt: string;
   context?: string;
   params?: Record<string, unknown>;
+  parentRunId?: string; // For regeneration chains
 }
 
 export interface GenerateRunResult {
