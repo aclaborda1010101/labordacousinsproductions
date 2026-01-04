@@ -112,6 +112,50 @@ interface QualityDiagnosis {
   suggestions: string[];
 }
 
+/**
+ * Robust helper to coerce generatedScript to string regardless of format
+ * Handles: string, array, object with common keys, null/undefined
+ */
+function coerceScriptToString(input: unknown): string {
+  // Debug log to inspect actual formats returned from API
+  console.log('[ScriptWorkspace] coerceScriptToString input type:', typeof input, input);
+  
+  // Null/undefined
+  if (input == null) {
+    return '';
+  }
+  
+  // Already a string
+  if (typeof input === 'string') {
+    return input;
+  }
+  
+  // Array - join with newlines, stringify objects within
+  if (Array.isArray(input)) {
+    return input
+      .map(item => (typeof item === 'string' ? item : JSON.stringify(item)))
+      .join('\n');
+  }
+  
+  // Object - try common keys first
+  if (typeof input === 'object') {
+    const obj = input as Record<string, unknown>;
+    const commonKeys = ['script', 'text', 'result', 'content', 'output', 'screenplay', 'raw_text'];
+    
+    for (const key of commonKeys) {
+      if (key in obj && typeof obj[key] === 'string') {
+        return obj[key] as string;
+      }
+    }
+    
+    // Fallback: stringify the whole object
+    return JSON.stringify(obj, null, 2);
+  }
+  
+  // Fallback for other types (number, boolean, etc.)
+  return String(input);
+}
+
 export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: ScriptWorkspaceProps) {
   const navigate = useNavigate();
   
@@ -136,7 +180,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   // Generation state
   const [status, setStatus] = useState<WorkflowStatus>('idle');
   const [progress, setProgress] = useState(0);
-  const [generatedScript, setGeneratedScript] = useState<string | null>(null);
+  const [generatedScript, setGeneratedScript] = useState<unknown>(null);
   const [breakdownResult, setBreakdownResult] = useState<BreakdownResult | null>(null);
   const [qualityDiagnosis, setQualityDiagnosis] = useState<QualityDiagnosis | null>(null);
 
@@ -403,7 +447,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
   // Prepare project (extract entities from generated script)
   const handlePrepareProject = async () => {
-    if (!generatedScript) return;
+    const scriptTextNormalized = coerceScriptToString(generatedScript);
+    if (!scriptTextNormalized) return;
 
     setStatus('extracting');
     setProgress(20);
@@ -412,7 +457,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       const { data: breakdownData, error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
         body: {
           projectId,
-          scriptText: generatedScript,
+          scriptText: scriptTextNormalized,
           language: 'es-ES',
         }
       });
@@ -931,32 +976,44 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 </div>
               )}
 
-              {generatedScript && (status === 'success' || status === 'extracting') && !breakdownResult && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-green-600">
-                    <CheckCircle className="h-4 w-4" />
-                    <span className="text-sm font-medium">¡Guion generado!</span>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
-                    <pre className="text-xs whitespace-pre-wrap font-mono">
-                      {generatedScript.slice(0, 1000)}...
-                    </pre>
-                  </div>
-                  <Button onClick={handlePrepareProject} className="w-full" disabled={status === 'extracting'}>
-                    {status === 'extracting' ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Preparando proyecto...
-                      </>
+              {generatedScript && (status === 'success' || status === 'extracting') && !breakdownResult && (() => {
+                const scriptText = coerceScriptToString(generatedScript);
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span className="text-sm font-medium">¡Guion generado!</span>
+                    </div>
+                    {scriptText ? (
+                      <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
+                        <pre className="text-xs whitespace-pre-wrap font-mono">
+                          {scriptText.slice(0, 1000)}...
+                        </pre>
+                      </div>
                     ) : (
-                      <>
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        Preparar proyecto
-                      </>
+                      <Alert className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                        <AlertDescription className="text-amber-800 dark:text-amber-200">
+                          No se ha generado guion aún o el formato devuelto no es texto. Reintenta.
+                        </AlertDescription>
+                      </Alert>
                     )}
-                  </Button>
-                </div>
-              )}
+                    <Button onClick={handlePrepareProject} className="w-full" disabled={status === 'extracting' || !scriptText}>
+                      {status === 'extracting' ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Preparando proyecto...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 mr-2" />
+                          Preparar proyecto
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                );
+              })()}
 
               {!generatedScript && (
                 <Button 
