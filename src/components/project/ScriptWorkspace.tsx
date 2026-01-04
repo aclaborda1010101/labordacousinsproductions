@@ -839,6 +839,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       setProgress(100);
       setStatus('success');
+      
+      // Reset entry mode to show the full ScriptSummaryPanelAssisted
+      setEntryMode(null);
+      
       toast.success('¡Análisis completado!');
     } catch (err) {
       console.error('Analysis error:', err);
@@ -955,6 +959,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       setProgress(100);
       setStatus('success');
+      
+      // Reset entry mode to show the full ScriptSummaryPanelAssisted
+      setEntryMode(null);
+      
       toast.success('¡Proyecto preparado!');
     } catch (err) {
       console.error('Extraction error:', err);
