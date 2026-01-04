@@ -640,12 +640,28 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         plot_twists: scriptData?.plot_twists || [],
       };
       
-      await supabase.from('scripts').insert({
-        project_id: projectId,
-        raw_text: rawScript,
-        parsed_json: parsedJson,
-        status: 'draft',
-      });
+      // Upsert: update existing or create new (one script per project)
+      const { data: existingScript } = await supabase
+        .from('scripts')
+        .select('id')
+        .eq('project_id', projectId)
+        .limit(1)
+        .maybeSingle();
+
+      if (existingScript) {
+        await supabase.from('scripts').update({
+          raw_text: rawScript,
+          parsed_json: parsedJson,
+          status: 'draft',
+        }).eq('id', existingScript.id);
+      } else {
+        await supabase.from('scripts').insert({
+          project_id: projectId,
+          raw_text: rawScript,
+          parsed_json: parsedJson,
+          status: 'draft',
+        });
+      }
 
       // Trigger refresh to show ScriptSummaryPanel
       setHasExistingScript(true);
@@ -679,18 +695,42 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     setProgress(20);
 
     try {
-      // Save script first
-      const { data: savedScript, error: saveError } = await supabase
+      // Upsert: update existing or create new (one script per project)
+      const { data: existingScript } = await supabase
         .from('scripts')
-        .insert({
-          project_id: projectId,
-          raw_text: textToAnalyze,
-          status: 'draft',
-        })
-        .select()
-        .single();
+        .select('id')
+        .eq('project_id', projectId)
+        .limit(1)
+        .maybeSingle();
 
-      if (saveError) throw saveError;
+      let savedScript;
+      if (existingScript) {
+        const { data, error } = await supabase
+          .from('scripts')
+          .update({
+            raw_text: textToAnalyze,
+            status: 'draft',
+          })
+          .eq('id', existingScript.id)
+          .select()
+          .single();
+        if (error) throw error;
+        savedScript = data;
+      } else {
+        const { data, error } = await supabase
+          .from('scripts')
+          .insert({
+            project_id: projectId,
+            raw_text: textToAnalyze,
+            status: 'draft',
+          })
+          .select()
+          .single();
+        if (error) throw error;
+        savedScript = data;
+      }
+
+      if (!savedScript) throw new Error('Failed to save script');
       setProgress(40);
 
       // Call script-breakdown to analyze
