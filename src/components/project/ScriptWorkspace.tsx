@@ -250,7 +250,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (savedDraft) {
         const draft = JSON.parse(savedDraft);
         if (draft.ideaText) setIdeaText(draft.ideaText);
-        if (draft.scriptText) setScriptText(draft.scriptText);
+        if (draft.scriptText) setScriptText(coerceScriptToString(draft.scriptText));
         if (draft.entryMode) setEntryMode(draft.entryMode);
         if (draft.inputMethod) setInputMethod(draft.inputMethod);
         if (draft.uploadedFileName) setUploadedFileName(draft.uploadedFileName);
@@ -1829,7 +1829,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                   {scriptText && (
                     <div className="mt-4 bg-muted/50 rounded-lg p-4 max-h-40 overflow-y-auto">
                       <pre className="text-xs whitespace-pre-wrap font-mono">
-                        {scriptText.slice(0, 500)}...
+                        {coerceScriptToString(scriptText).slice(0, 500)}...
                       </pre>
                     </div>
                   )}
