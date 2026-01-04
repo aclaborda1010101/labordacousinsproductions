@@ -181,8 +181,10 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           prompt,
           context: `Character: ${character.name}`,
           params: {
-            entityId: character.id,
-            preset: 'portrait_frontal',
+            characterId: character.id,
+            characterName: character.name,
+            slotType: 'base_look',
+            allowTextToImage: true, // Generate without reference image
           },
         },
       });
@@ -284,8 +286,10 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           context: `Character: ${character.name}`,
           parentRunId: character.accepted_run_id,
           params: {
-            entityId: character.id,
-            preset: 'portrait_frontal',
+            characterId: character.id,
+            characterName: character.name,
+            slotType: 'base_look',
+            allowTextToImage: true,
           },
         },
       });
