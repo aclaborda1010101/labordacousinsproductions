@@ -1096,7 +1096,7 @@ export function WizardScriptStep({
                                       ESCENAS ({ep.scenes.length})
                                     </div>
                                     <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
-                                      {ep.scenes.slice(0, 5).map((scene, sIdx) => (
+                                      {ep.scenes.map((scene, sIdx) => (
                                         <div key={sIdx} className="p-2 rounded border border-border/50 bg-card/50 text-xs space-y-1">
                                           <div className="font-mono font-bold text-foreground">{scene.slugline}</div>
                                           {scene.description && (
@@ -1108,14 +1108,11 @@ export function WizardScriptStep({
                                                 <MessageSquare className="w-3 h-3" />
                                                 <span className="font-medium">Diálogos</span>
                                               </div>
-                                              {scene.dialogue.slice(0, 3).map((d, dIdx) => (
+                                              {scene.dialogue.map((d, dIdx) => (
                                                 <div key={dIdx} className="text-muted-foreground">
-                                                  <span className="font-semibold">{d.character}:</span> "{d.line.substring(0, 80)}{d.line.length > 80 ? '...' : ''}"
+                                                  <span className="font-semibold">{d.character}:</span> "{d.line}"
                                                 </div>
                                               ))}
-                                              {scene.dialogue.length > 3 && (
-                                                <span className="text-muted-foreground">+{scene.dialogue.length - 3} más...</span>
-                                              )}
                                             </div>
                                           )}
                                           {scene.music_cue && (
@@ -1132,11 +1129,6 @@ export function WizardScriptStep({
                                           )}
                                         </div>
                                       ))}
-                                      {ep.scenes.length > 5 && (
-                                        <p className="text-xs text-muted-foreground text-center">
-                                          +{ep.scenes.length - 5} escenas más en el PDF
-                                        </p>
-                                      )}
                                     </div>
                                   </div>
                                 )}

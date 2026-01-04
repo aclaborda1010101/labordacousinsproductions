@@ -1157,7 +1157,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                   Alcance: {synopsis.narrative_scope}
                 </Badge>
               )}
-              {synopsis.themes?.slice(0, 3).map((theme, i) => (
+              {synopsis.themes?.map((theme, i) => (
                 <Badge key={i} variant="outline" className="text-xs">
                   {theme}
                 </Badge>
@@ -1281,14 +1281,11 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                       <Users className="h-3 w-3" /> Extras con diálogo ({extrasWithLines.length})
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {extrasWithLines.slice(0, 8).map((char, i) => (
+                      {extrasWithLines.map((char, i) => (
                         <Badge key={i} variant="outline" className="text-xs">
                           {char.name}
                         </Badge>
                       ))}
-                      {extrasWithLines.length > 8 && (
-                        <Badge variant="secondary">+{extrasWithLines.length - 8} más</Badge>
-                      )}
                     </div>
                   </div>
                 )}
@@ -1308,7 +1305,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               <Badge variant="secondary">{subplots.length}</Badge>
             </div>
             <div className="space-y-2">
-              {subplots.slice(0, isPro ? 10 : 5).map((subplot, i) => (
+              {subplots.map((subplot, i) => (
                 <div key={i} className="p-2 bg-muted/50 rounded-lg">
                   <p className="text-sm font-medium">{subplot.name}</p>
                   {subplot.description && (
@@ -1323,9 +1320,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                   )}
                 </div>
               ))}
-              {subplots.length > (isPro ? 10 : 5) && (
-                <p className="text-xs text-muted-foreground">+{subplots.length - (isPro ? 10 : 5)} más</p>
-              )}
             </div>
           </Card>
         )}
@@ -1341,7 +1335,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               <Badge variant="secondary">{plot_twists.length}</Badge>
             </div>
             <div className="space-y-2">
-              {plot_twists.slice(0, isPro ? 10 : 4).map((twist, i) => (
+              {plot_twists.map((twist, i) => (
                 <div key={i} className="p-2 bg-muted/50 rounded-lg flex items-start gap-2">
                   <Badge 
                     variant={twist.impact === 'paradigm_shift' ? 'destructive' : twist.impact === 'major' ? 'default' : 'secondary'}
@@ -1357,9 +1351,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                   </div>
                 </div>
               ))}
-              {plot_twists.length > (isPro ? 10 : 4) && (
-                <p className="text-xs text-muted-foreground">+{plot_twists.length - (isPro ? 10 : 4)} más</p>
-              )}
             </div>
           </Card>
         )}
@@ -1375,15 +1366,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               <Badge variant="secondary">{locations.length}</Badge>
             </div>
             <div className="flex flex-wrap gap-2">
-              {locations.slice(0, 12).map((loc, i) => (
+              {locations.map((loc, i) => (
                 <Badge key={i} variant="outline" className="gap-1">
                   <Clapperboard className="h-3 w-3" />
                   {loc.name}
                 </Badge>
               ))}
-              {locations.length > 12 && (
-                <Badge variant="secondary">+{locations.length - 12} más</Badge>
-              )}
             </div>
           </Card>
         )}
