@@ -259,11 +259,29 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
           <Badge variant="secondary">{getFormatName()}</Badge>
         </div>
 
-        {/* Normal mode: simplified */}
+        {/* Normal mode: simplified - 3 view options only */}
         {!isPro && (
-          <p className="text-xs text-muted-foreground">
-            🤖 El sistema configura automáticamente la mejor opción
-          </p>
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Tipo de vista
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              {VIEW_PRESETS.map((preset) => (
+                <button
+                  key={preset.type}
+                  onClick={() => setSelectedType(preset.type)}
+                  disabled={status === 'generating'}
+                  className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+                    selectedType === preset.type
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                  } disabled:opacity-50`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Pro mode: Advanced controls in accordion */}
@@ -331,8 +349,10 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
           onRegenerate={handleRegenerate}
           onSetCanon={() => setShowCanonModal(true)}
           runId={currentOutput?.runId}
+          composedPrompt={currentOutput ? buildPrompt(VIEW_PRESETS.find(p => p.type === selectedType)!) : undefined}
           mode={userLevel}
           showCanonButton={true}
+          viewTypeLabel={VIEW_PRESETS.find(p => p.type === selectedType)?.label}
         />
 
         {/* Canon Modal */}
