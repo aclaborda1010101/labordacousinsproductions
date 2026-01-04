@@ -26,7 +26,7 @@ import { NotificationCenter } from '@/components/notifications/NotificationCente
 import CharactersView from '@/components/project/CharactersView';
 import LocationsView from '@/components/project/LocationsView';
 import Scenes from '@/components/project/Scenes';
-import ScriptWorkspace from '@/components/project/ScriptWorkspace';
+import ScriptWorkspaceView from '@/components/project/ScriptWorkspaceView';
 import RenderQueue from '@/components/project/RenderQueue';
 import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
 import { CreativeModeProvider } from '@/contexts/CreativeModeContext';
@@ -223,7 +223,7 @@ export default function ProjectDetail() {
               <Route path="/characters" element={<CharactersView projectId={project.id} />} />
               <Route path="/locations" element={<LocationsView projectId={project.id} />} />
               <Route path="/props" element={<PropsComponent projectId={project.id} />} />
-              <Route path="/script" element={<ScriptWorkspace projectId={project.id} />} />
+              <Route path="/script" element={<ScriptWorkspaceView projectId={project.id} />} />
               <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
               <Route path="/renders" element={<RenderQueue projectId={project.id} />} />
               <Route path="*" element={
