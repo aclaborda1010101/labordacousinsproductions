@@ -19,6 +19,7 @@ interface GenerateRunRequest {
   parentRunId?: string; // For regeneration chains
   presetId?: string; // For editorial assistant tracking
   userOverride?: boolean; // True if user chose different from recommendation
+  isAutoRetry?: boolean; // True if this is an auto-retry attempt
 }
 
 interface GenerateRunResponse {
@@ -77,7 +78,21 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
 
-    console.log(`[generate-run] Starting: type=${body.type}, engine=${body.engine}, project=${body.projectId}`);
+    console.log(`[generate-run] Starting: type=${body.type}, engine=${body.engine}, project=${body.projectId}, isAutoRetry=${body.isAutoRetry || false}`);
+
+    // Determine auto_retry_count
+    let autoRetryCount = 0;
+    if (body.isAutoRetry && body.parentRunId) {
+      // Fetch parent's retry count
+      const { data: parentRun } = await supabaseAdmin
+        .from('generation_runs')
+        .select('auto_retry_count')
+        .eq('id', body.parentRunId)
+        .single();
+      
+      autoRetryCount = (parentRun?.auto_retry_count ?? 0) + 1;
+      console.log(`[generate-run] Auto-retry #${autoRetryCount} from parent ${body.parentRunId}`);
+    }
 
     // 2) Create initial record in generation_runs
     const { data: runData, error: insertError } = await supabaseAdmin
@@ -101,7 +116,8 @@ serve(async (req) => {
         suggestions: [],
         parent_run_id: body.parentRunId || null,  // For regeneration chains
         preset_id: body.presetId || null,  // For editorial assistant tracking
-        user_override: body.userOverride || false  // Track if user overrode recommendation
+        user_override: body.userOverride || false,  // Track if user overrode recommendation
+        auto_retry_count: autoRetryCount  // Track auto-retry attempts
       })
       .select('id')
       .single();
@@ -295,6 +311,7 @@ serve(async (req) => {
           .update({
             status: 'failed',
             error: errorMessage,
+            last_error: errorMessage,  // Store in dedicated column for analytics
             generation_time_ms: Date.now() - startTime
           })
           .eq('id', runId);

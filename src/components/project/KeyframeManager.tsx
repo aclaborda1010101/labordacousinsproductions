@@ -316,6 +316,11 @@ export default function KeyframeManager({
         throw new Error(result.error || 'Generation failed');
       }
 
+      // Show auto-retry feedback
+      if (result.autoRetried) {
+        toast.info('He reintentado automáticamente 1 vez por un error técnico. Si persiste, cambia preset o engine.');
+      }
+
       // Update keyframe with runId for telemetry tracking
       const existing = keyframes.find(
         kf => Math.abs(kf.timestamp_sec - slot.timestampSec) < 0.5

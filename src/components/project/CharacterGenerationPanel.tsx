@@ -167,6 +167,11 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
         return;
       }
 
+      // Show auto-retry feedback
+      if (result.autoRetried) {
+        toast.info('He reintentado automáticamente 1 vez por un error técnico. Si persiste, cambia preset o engine.');
+      }
+
       // Update character with new run ID
       await supabase
         .from('characters')

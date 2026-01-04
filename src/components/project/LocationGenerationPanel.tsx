@@ -165,6 +165,11 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
         return;
       }
 
+      // Show auto-retry feedback
+      if (result.autoRetried) {
+        toast.info('He reintentado automáticamente 1 vez por un error técnico. Si persiste, cambia preset o engine.');
+      }
+
       // Update location with new run ID
       await supabase
         .from('locations')
