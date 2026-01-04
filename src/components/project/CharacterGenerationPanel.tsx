@@ -5,10 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Check, RotateCcw, Star, User, SidebarClose, Maximize } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { generateRun, updateRunStatus, GenerateRunPayload } from '@/lib/generateRun';
+import { updateRunStatus } from '@/lib/generateRun';
+import { runImageEngine, ImageEnginePayload } from '@/lib/engines/image';
 import SetCanonModal from './SetCanonModal';
 import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
 import { useRecommendations } from '@/hooks/useRecommendations';
+import { useAutopilot } from '@/hooks/useAutopilot';
 import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
 import { PresetSelector } from './PresetSelector';
 import { ENGINES } from '@/lib/recommendations';
@@ -85,23 +87,48 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
     phase: 'production'
   });
 
-  // Log recommendation shown
-  useEffect(() => {
-    if (recommendation && !recsLoading) {
-      logShown();
-    }
-  }, [recommendation, recsLoading, logShown]);
+  // Autopilot v1
+  const {
+    decision: autopilotDecision,
+    loading: autopilotLoading,
+    logShown: logAutopilotShown,
+    logFollowed: logAutopilotFollowed,
+    logOverridden: logAutopilotOverridden
+  } = useAutopilot({
+    projectId,
+    assetType: 'character',
+    availablePresets: AVAILABLE_PRESETS,
+    phase: 'production'
+  });
 
-  // Apply recommended preset if high confidence on first load
+  // Log recommendation/autopilot shown
   useEffect(() => {
-    if (recommendation && recommendation.confidence === 'high' && !generating) {
+    if (recommendation && !recsLoading && !autopilotLoading) {
+      if (autopilotDecision?.shouldAutopilot) {
+        logAutopilotShown();
+      } else {
+        logShown();
+      }
+    }
+  }, [recommendation, recsLoading, autopilotLoading, autopilotDecision?.shouldAutopilot, logShown, logAutopilotShown]);
+
+  // Apply autopilot or recommended preset on first load
+  useEffect(() => {
+    if (autopilotDecision?.shouldAutopilot && autopilotDecision.recommendation && !generating) {
+      const preset = PORTRAIT_PRESETS.find(p => p.type === autopilotDecision.recommendation!.recommendedPreset);
+      if (preset) {
+        setSelectedType(preset.type);
+        setSelectedEngine(autopilotDecision.recommendation.recommendedEngine);
+      }
+    } else if (recommendation && recommendation.confidence === 'high' && !generating) {
       const preset = PORTRAIT_PRESETS.find(p => p.type === recommendation.recommendedPreset);
       if (preset) {
         setSelectedType(preset.type);
         setSelectedEngine(recommendation.recommendedEngine);
       }
     }
-  }, [recommendation?.recommendedPreset, recommendation?.recommendedEngine, recommendation?.confidence]);
+  }, [autopilotDecision?.shouldAutopilot, autopilotDecision?.recommendation, recommendation?.recommendedPreset, recommendation?.recommendedEngine, recommendation?.confidence]);
+
 
   const buildPrompt = (preset: PortraitPreset) => {
     const characterDesc = [
@@ -130,25 +157,37 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
     setGenerating(true);
     const preset = PORTRAIT_PRESETS.find(p => p.type === selectedType)!;
 
-    // Check if user is overriding recommendation
+    // Check if user is overriding recommendation/autopilot
     const isUserOverride = checkOverride(selectedEngine, selectedType);
+    const isAutopilotActive = autopilotDecision?.shouldAutopilot ?? false;
     
-    if (isUserOverride) {
-      await logOverride(selectedEngine, selectedType);
-    } else if (recommendation && recommendation.confidence !== 'low') {
-      await logFollowed(selectedEngine, selectedType);
+    // Log appropriate event
+    if (isAutopilotActive) {
+      if (isUserOverride) {
+        await logAutopilotOverridden(selectedEngine, selectedType);
+      } else {
+        await logAutopilotFollowed(selectedEngine, selectedType);
+      }
+    } else {
+      if (isUserOverride) {
+        await logOverride(selectedEngine, selectedType);
+      } else if (recommendation && recommendation.confidence !== 'low') {
+        await logFollowed(selectedEngine, selectedType);
+      }
     }
 
     try {
-      const payload: GenerateRunPayload = {
+      const payload: ImageEnginePayload = {
         projectId,
         type: 'character',
         phase: 'production',
-        engine: selectedEngine,
-        engineSelectedBy: isUserOverride ? 'user' : 'recommendation',
-        engineReason: isUserOverride 
-          ? 'User override of recommendation' 
-          : `Recommendation: ${recommendation?.reason || 'default'}`,
+        engine: selectedEngine as 'nano-banana' | 'flux-1.1-pro-ultra',
+        engineSelectedBy: isAutopilotActive && !isUserOverride ? 'autopilot' : (isUserOverride ? 'user' : 'recommendation'),
+        engineReason: isAutopilotActive 
+          ? `Autopilot: ${autopilotDecision?.reason || 'default'}`
+          : (isUserOverride 
+            ? 'User override of recommendation' 
+            : `Recommendation: ${recommendation?.reason || 'default'}`),
         prompt: buildPrompt(preset),
         context: `Character portrait generation: ${preset.label}`,
         params: {
@@ -157,10 +196,12 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
         },
         parentRunId,
         presetId: selectedType,
-        userOverride: isUserOverride
+        userOverride: isUserOverride,
+        autopilotUsed: isAutopilotActive && !isUserOverride,
+        autopilotConfidence: autopilotDecision?.confidence
       };
 
-      const result = await generateRun(payload);
+      const result = await runImageEngine(payload);
 
       if (!result.ok) {
         toast.error(result.error || 'Error al generar retrato');
@@ -181,7 +222,7 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
       setCurrentOutput({ url: result.outputUrl!, runId: result.runId! });
       setRunStatus('generated');
       toast.success(`Retrato generado (Run: ${result.runId?.slice(0, 8)})`);
-      refreshRecs(); // Refresh recommendations after generation
+      refreshRecs();
       onUpdate();
     } catch (err) {
       console.error('[CharacterGeneration] error:', err);
@@ -242,12 +283,13 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Recommendations Bar */}
+        {/* Recommendations Bar with Autopilot */}
         <ProjectRecommendationsBar
           recommendation={recommendation}
-          loading={recsLoading}
+          loading={recsLoading || autopilotLoading}
           onApply={handleApplyRecommended}
           showEngineSelector={true}
+          autopilotDecision={autopilotDecision}
         />
 
         {/* Portrait Type Selector */}
