@@ -35,6 +35,7 @@ import ScriptImport from '@/components/project/ScriptImport';
 import RenderQueue from '@/components/project/RenderQueue';
 import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
 import { CreativeModeSelector } from '@/components/project/CreativeModeSelector';
+import { ProductionDirectorPanel, ProductionDirectorTrigger } from '@/components/project/ProductionDirectorPanel';
 
 interface Project {
   id: string;
@@ -55,6 +56,7 @@ interface ProjectDetailProProps {
 export default function ProjectDetailPro({ project, setProject }: ProjectDetailProProps) {
   const [activeTab, setActiveTab] = useState('script');
   const [showSettings, setShowSettings] = useState(false);
+  const [showDirector, setShowDirector] = useState(false);
 
   const bibleReady = project.bible_completeness_score >= 85;
   const formatLabel = project.format === 'series' ? 'Serie' : project.format === 'mini' ? 'Miniserie' : 'Película';
@@ -175,6 +177,17 @@ export default function ProjectDetailPro({ project, setProject }: ProjectDetailP
       </div>
 
       <RealtimeCollaboration projectId={project.id} currentSection={activeTab} />
+
+      {/* Production Director AI */}
+      {showDirector ? (
+        <ProductionDirectorPanel 
+          projectId={project.id} 
+          isOpen={showDirector} 
+          onClose={() => setShowDirector(false)} 
+        />
+      ) : (
+        <ProductionDirectorTrigger onClick={() => setShowDirector(true)} />
+      )}
     </>
   );
 }
