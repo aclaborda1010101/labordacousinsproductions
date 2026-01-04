@@ -3,8 +3,9 @@
  */
 
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, TrendingUp, Info } from 'lucide-react';
-import { MotorRecommendation } from '@/lib/motorSelector';
+import { Card, CardContent } from '@/components/ui/card';
+import { CheckCircle2, TrendingUp, Info, Zap, Sparkles } from 'lucide-react';
+import { MotorRecommendation, ENGINES } from '@/lib/motorSelector';
 import {
   Tooltip,
   TooltipContent,
@@ -61,13 +62,82 @@ export function MotorRecommendationBadge({
           <div className="space-y-1 text-sm">
             <p className="font-medium">{recommendation.reason}</p>
             <p className="text-xs text-muted-foreground">
-              Engine: {recommendation.recommendedEngine} | 
+              Engine: {formatEngineName(recommendation.recommendedEngine)} | 
               Preset: {recommendation.recommendedPreset}
             </p>
           </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
+  );
+}
+
+interface MotorRecommendationCardProps {
+  recommendation: MotorRecommendation | null;
+  loading?: boolean;
+}
+
+export function MotorRecommendationCard({ 
+  recommendation, 
+  loading 
+}: MotorRecommendationCardProps) {
+  if (loading) {
+    return (
+      <Card className="border-dashed border-muted animate-pulse">
+        <CardContent className="py-3 px-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Sparkles className="w-4 h-4" />
+            <span>Analizando historial...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!recommendation) {
+    return null;
+  }
+
+  const isNanoBanana = recommendation.recommendedEngine === ENGINES.NANO_BANANA || 
+                       recommendation.recommendedEngine.includes('nano');
+  const engineIcon = isNanoBanana ? <Zap className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />;
+  const engineLabel = formatEngineName(recommendation.recommendedEngine);
+
+  const bgColors = {
+    low: 'bg-muted/50 border-muted',
+    medium: 'bg-blue-500/5 border-blue-500/20',
+    high: 'bg-green-500/5 border-green-500/20'
+  };
+
+  return (
+    <Card className={`${bgColors[recommendation.confidence]}`}>
+      <CardContent className="py-3 px-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              {engineIcon}
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-sm">{engineLabel}</span>
+                  <Badge variant="outline" className="text-xs">
+                    {recommendation.recommendedPreset}
+                  </Badge>
+                  <Badge 
+                    variant="outline" 
+                    className="text-xs bg-green-500/10 text-green-600 border-green-500/30"
+                  >
+                    ✅ Recomendado
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {recommendation.reason}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -91,4 +161,14 @@ export function PresetRecommendationIndicator({
       <CheckCircle2 className="w-3 h-3 inline" />
     </span>
   );
+}
+
+function formatEngineName(engine: string): string {
+  if (engine === ENGINES.NANO_BANANA || engine.includes('nano')) {
+    return 'Nano Banana';
+  }
+  if (engine === ENGINES.FLUX || engine.includes('flux')) {
+    return 'FLUX Pro';
+  }
+  return engine;
 }

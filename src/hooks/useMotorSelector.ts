@@ -7,6 +7,7 @@ import {
   getMotorRecommendation, 
   MetricsResult, 
   AssetType,
+  Phase,
   logRecommendationEvent,
   isOverride
 } from '@/lib/motorSelector';
@@ -14,6 +15,7 @@ import {
 interface UseMotorSelectorOptions {
   projectId: string;
   assetType: AssetType;
+  phase?: Phase;
   enabled?: boolean;
 }
 
@@ -25,11 +27,13 @@ interface UseMotorSelectorResult {
   checkOverride: (engine: string, preset: string) => boolean;
   logShown: () => Promise<void>;
   logOverride: (engine: string, preset: string) => Promise<void>;
+  logFollowed: (engine: string, preset: string) => Promise<void>;
 }
 
 export function useMotorSelector({
   projectId,
   assetType,
+  phase,
   enabled = true
 }: UseMotorSelectorOptions): UseMotorSelectorResult {
   const [loading, setLoading] = useState(true);
@@ -44,14 +48,14 @@ export function useMotorSelector({
 
     setLoading(true);
     try {
-      const data = await getMotorRecommendation(projectId, assetType);
+      const data = await getMotorRecommendation(projectId, assetType, phase);
       setResult(data);
     } catch (err) {
       console.error('[useMotorSelector] Error:', err);
     } finally {
       setLoading(false);
     }
-  }, [projectId, assetType, enabled]);
+  }, [projectId, assetType, phase, enabled]);
 
   useEffect(() => {
     fetchRecommendation();
@@ -60,7 +64,7 @@ export function useMotorSelector({
   // Reset logged state when recommendation changes
   useEffect(() => {
     setHasLoggedShown(false);
-  }, [projectId, assetType]);
+  }, [projectId, assetType, phase]);
 
   const checkOverride = useCallback((engine: string, preset: string): boolean => {
     return isOverride(engine, preset, result.recommendation);
@@ -89,6 +93,17 @@ export function useMotorSelector({
     );
   }, [projectId, assetType, result.recommendation]);
 
+  const logFollowed = useCallback(async (engine: string, preset: string) => {
+    await logRecommendationEvent(
+      projectId,
+      assetType,
+      'recommendation_followed',
+      result.recommendation,
+      engine,
+      preset
+    );
+  }, [projectId, assetType, result.recommendation]);
+
   return {
     loading,
     recommendation: result.recommendation,
@@ -96,6 +111,7 @@ export function useMotorSelector({
     refresh: fetchRecommendation,
     checkOverride,
     logShown,
-    logOverride
+    logOverride,
+    logFollowed
   };
 }
