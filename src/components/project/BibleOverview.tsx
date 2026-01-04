@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Book, Users, MapPin, Palette, CheckCircle2, Circle, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { Book, Users, MapPin, Palette, CheckCircle2, Circle, ArrowRight, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { BibleExport } from './BibleExport';
 
 interface Project { id: string; title: string; format: string; episodes_count: number; target_duration_min: number; bible_completeness_score: number; created_at: string; }
 interface BibleOverviewProps { project: Project; setProject: React.Dispatch<React.SetStateAction<Project | null>>; }
@@ -75,9 +76,12 @@ export default function BibleOverview({ project, setProject }: BibleOverviewProp
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">{t.bible.title}</h2>
-        <p className="text-muted-foreground">{t.bible.subtitle}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t.bible.title}</h2>
+          <p className="text-muted-foreground">{t.bible.subtitle}</p>
+        </div>
+        <BibleExport projectId={project.id} projectTitle={project.title} />
       </div>
 
       <Collapsible open={expanded} onOpenChange={setExpanded}>

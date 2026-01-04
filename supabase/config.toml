@@ -110,3 +110,6 @@ verify_jwt = false
 
 [functions.generate-run]
 verify_jwt = false
+
+[functions.export-bible]
+verify_jwt = false
