@@ -196,16 +196,20 @@ export function ProductionDirectorPanel({
   return (
     <div 
       className={cn(
-        "fixed bottom-4 right-4 z-50 bg-background border rounded-xl shadow-2xl flex flex-col transition-all duration-300",
+        "fixed z-[9999] bg-background border shadow-2xl flex flex-col transition-all duration-300",
+        // Mobile: full screen
+        "inset-0 rounded-none sm:inset-auto",
+        // Desktop: positioned bottom-right
+        "sm:bottom-4 sm:right-4 sm:rounded-xl",
         isExpanded 
-          ? "w-[700px] h-[85vh] max-h-[900px]" 
-          : "w-[450px] h-[600px]"
+          ? "sm:w-[700px] sm:h-[85vh] sm:max-h-[900px]" 
+          : "sm:w-[450px] sm:h-[600px]"
       )}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b bg-gradient-to-r from-muted/50 to-muted/30">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-lg">
-          <Sparkles className="w-5 h-5 text-primary-foreground" />
+      <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 border-b bg-gradient-to-r from-muted/50 to-muted/30 shrink-0">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-lg">
+          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -226,12 +230,12 @@ export function ProductionDirectorPanel({
               </TooltipProvider>
             )}
           </div>
-          <p className="text-xs text-muted-foreground">Director de Producción AI</p>
+          <p className="text-xs text-muted-foreground hidden sm:block">Director de Producción AI</p>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <Badge 
             variant="outline" 
-            className="text-[10px] px-2 py-0.5 border-primary/30 text-primary"
+            className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 border-primary/30 text-primary hidden sm:inline-flex"
           >
             {userProfile === 'professional' ? 'Pro' : userProfile === 'creator' ? 'Creator' : 'Explorer'}
           </Badge>
@@ -265,13 +269,14 @@ export function ProductionDirectorPanel({
             </PopoverContent>
           </Popover>
 
+          {/* Expand/minimize - hide on mobile */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8"
+                  className="h-7 w-7 sm:h-8 sm:w-8 hidden sm:inline-flex"
                   onClick={() => setIsExpanded(!isExpanded)}
                 >
                   {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -286,7 +291,7 @@ export function ProductionDirectorPanel({
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8"
+                  className="h-7 w-7 sm:h-8 sm:w-8 hidden sm:inline-flex"
                   onClick={clearConversation}
                   disabled={messages.length === 0}
                 >
@@ -296,8 +301,8 @@ export function ProductionDirectorPanel({
               <TooltipContent>Nueva conversación</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
-            <X className="w-4 h-4" />
+          <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-8 sm:w-8" onClick={onClose}>
+            <X className="w-5 h-5 sm:w-4 sm:h-4" />
           </Button>
         </div>
       </div>
@@ -405,9 +410,9 @@ export function ProductionDirectorPanel({
       )}
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t bg-muted/10">
+      <form onSubmit={handleSubmit} className="p-3 sm:p-4 border-t bg-muted/10 shrink-0 safe-area-bottom">
         <div className="flex gap-2">
-          {/* Image upload button */}
+          {/* Image upload button - smaller on mobile */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -415,10 +420,10 @@ export function ProductionDirectorPanel({
                   type="button"
                   variant="outline"
                   size="icon"
-                  className="shrink-0 h-12 w-12 rounded-xl"
+                  className="shrink-0 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <Image className="w-5 h-5" />
+                  <Image className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Subir imagen de referencia</TooltipContent>
@@ -438,8 +443,8 @@ export function ProductionDirectorPanel({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Escribe o graba tu mensaje..."
-            className="min-h-[48px] max-h-32 resize-none rounded-xl"
+            placeholder="Escribe tu mensaje..."
+            className="min-h-[40px] sm:min-h-[48px] max-h-24 sm:max-h-32 resize-none rounded-xl text-sm"
             rows={1}
             disabled={isLoading || isRecording}
           />
@@ -452,14 +457,14 @@ export function ProductionDirectorPanel({
                   type="button"
                   variant={isRecording ? "destructive" : "outline"}
                   size="icon"
-                  className="shrink-0 h-12 w-12 rounded-xl"
+                  className="shrink-0 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
                   onClick={handleVoiceToggle}
                   disabled={isLoading}
                 >
                   {isRecording ? (
-                    <Square className="w-5 h-5" />
+                    <Square className="w-4 h-4 sm:w-5 sm:h-5" />
                   ) : (
-                    <Mic className="w-5 h-5" />
+                    <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
                   )}
                 </Button>
               </TooltipTrigger>
@@ -471,12 +476,12 @@ export function ProductionDirectorPanel({
             type="submit" 
             size="icon" 
             disabled={(!input.trim() && !attachedImages.length) || isLoading}
-            className="shrink-0 h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90"
+            className="shrink-0 h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-gradient-to-br from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90"
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2 text-center">
+        <p className="text-[9px] sm:text-[10px] text-muted-foreground mt-2 text-center hidden sm:block">
           Enter para enviar · Shift+Enter para nueva línea · 🎤 para hablar
         </p>
       </form>

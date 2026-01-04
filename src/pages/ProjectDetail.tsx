@@ -15,7 +15,9 @@ import {
   AlertCircle,
   Lock,
   Play,
-  Layers
+  PanelLeftClose,
+  PanelLeft,
+  Menu
 } from 'lucide-react';
 import PropsComponent from '@/components/project/Props';
 import { cn } from '@/lib/utils';
@@ -59,6 +61,8 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
   const { projectId } = useParams();
   const [showSettings, setShowSettings] = useState(false);
   const [showDirector, setShowDirector] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   
   // Get creative mode from context
   const creativeModeContext = useCreativeModeOptional();
@@ -83,8 +87,17 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
   return (
     <>
       <PageHeader title={project.title} description={`${formatLabel} • ${project.episodes_count} episodios`}>
+        {/* Mobile sidebar toggle */}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="sm:hidden"
+          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+        >
+          <Menu className="w-4 h-4" />
+        </Button>
         <CreativeModeSelector compact showDescription={false} />
-        <Badge variant={bibleReady ? 'pass' : 'pending'}>
+        <Badge variant={bibleReady ? 'pass' : 'pending'} className="hidden sm:inline-flex">
           Biblia: {project.bible_completeness_score}%
         </Badge>
         <NotificationCenter projectId={project.id} />
@@ -101,10 +114,45 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
         onUpdate={(updated) => setProject({ ...project, ...updated })}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Simplified sidebar navigation */}
-        <nav className="w-48 bg-sidebar border-r border-sidebar-border shrink-0 overflow-y-auto">
-          <div className="p-3 space-y-1">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile sidebar overlay */}
+        {mobileSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 sm:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar navigation - collapsible */}
+        <nav className={cn(
+          "bg-sidebar border-r border-sidebar-border shrink-0 overflow-y-auto transition-all duration-300 flex flex-col",
+          // Mobile: slide-in drawer
+          "fixed sm:relative inset-y-0 left-0 z-50 sm:z-auto",
+          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0",
+          // Desktop: collapsible width
+          sidebarCollapsed ? "sm:w-12" : "w-48"
+        )}>
+          {/* Collapse toggle - desktop only */}
+          <div className="hidden sm:flex p-2 border-b border-sidebar-border justify-end">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-7 w-7"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            >
+              {sidebarCollapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </Button>
+          </div>
+
+          {/* Mobile header */}
+          <div className="sm:hidden flex items-center justify-between p-3 border-b border-sidebar-border">
+            <span className="font-semibold text-sm">Navegación</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setMobileSidebarOpen(false)}>
+              <PanelLeftClose className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <div className="p-2 sm:p-3 space-y-1 flex-1">
             {PROJECT_TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = tab.id === 'bible' 
@@ -116,31 +164,39 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
                 <Link
                   key={tab.id}
                   to={isLocked ? '#' : `/projects/${projectId}${tab.path}`}
-                  onClick={(e) => isLocked && e.preventDefault()}
+                  onClick={(e) => {
+                    if (isLocked) {
+                      e.preventDefault();
+                    } else {
+                      setMobileSidebarOpen(false);
+                    }
+                  }}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                    sidebarCollapsed && "sm:justify-center sm:px-2",
                     isActive 
                       ? "bg-sidebar-accent text-sidebar-accent-foreground" 
                       : isLocked
                         ? "text-muted-foreground cursor-not-allowed opacity-50"
                         : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
                   )}
+                  title={sidebarCollapsed ? tab.label : undefined}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="flex-1">{tab.label}</span>
-                  {isLocked ? (
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1">{tab.label}</span>}
+                  {!sidebarCollapsed && (isLocked ? (
                     <Lock className="w-3.5 h-3.5" />
                   ) : isActive ? (
                     <ChevronRight className="w-4 h-4 opacity-50" />
-                  ) : null}
+                  ) : null)}
                 </Link>
               );
             })}
           </div>
 
-          {/* Bible sub-navigation - only show when in Bible section */}
-          {isBibleSection && (
-            <div className="px-3 pb-3">
+          {/* Bible sub-navigation - only show when in Bible section and not collapsed */}
+          {isBibleSection && !sidebarCollapsed && (
+            <div className="px-2 sm:px-3 pb-3">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground px-3 py-2">
                 Biblia
               </div>
@@ -155,6 +211,7 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
                   <Link
                     key={sub.path}
                     to={`/projects/${projectId}${sub.path}`}
+                    onClick={() => setMobileSidebarOpen(false)}
                     className={cn(
                       "block px-3 py-1.5 rounded text-xs transition-colors",
                       currentPath === sub.path || (sub.path === '' && (currentPath === '' || currentPath === '/bible'))
@@ -169,9 +226,9 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
             </div>
           )}
 
-          {/* Bible gate warning */}
-          {!bibleReady && (
-            <div className="m-3 p-3 rounded-lg bg-warning/10 border border-warning/20">
+          {/* Bible gate warning - hide when collapsed */}
+          {!bibleReady && !sidebarCollapsed && (
+            <div className="m-2 sm:m-3 p-3 rounded-lg bg-warning/10 border border-warning/20">
               <div className="flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-warning mt-0.5 shrink-0" />
                 <div className="text-xs">
