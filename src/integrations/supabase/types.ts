@@ -491,13 +491,16 @@ export type Database = {
       }
       characters: {
         Row: {
+          accepted_run_id: string | null
           active_visual_dna_id: string | null
           approved_for_production: boolean | null
           arc: string | null
           bio: string | null
+          canon_asset_id: string | null
           canon_rules: Json | null
           character_role: Database["public"]["Enums"]["character_role"] | null
           created_at: string
+          current_run_id: string | null
           expressions: Json | null
           id: string
           lora_trained_at: string | null
@@ -518,13 +521,16 @@ export type Database = {
           voice_card: Json | null
         }
         Insert: {
+          accepted_run_id?: string | null
           active_visual_dna_id?: string | null
           approved_for_production?: boolean | null
           arc?: string | null
           bio?: string | null
+          canon_asset_id?: string | null
           canon_rules?: Json | null
           character_role?: Database["public"]["Enums"]["character_role"] | null
           created_at?: string
+          current_run_id?: string | null
           expressions?: Json | null
           id?: string
           lora_trained_at?: string | null
@@ -545,13 +551,16 @@ export type Database = {
           voice_card?: Json | null
         }
         Update: {
+          accepted_run_id?: string | null
           active_visual_dna_id?: string | null
           approved_for_production?: boolean | null
           arc?: string | null
           bio?: string | null
+          canon_asset_id?: string | null
           canon_rules?: Json | null
           character_role?: Database["public"]["Enums"]["character_role"] | null
           created_at?: string
+          current_run_id?: string | null
           expressions?: Json | null
           id?: string
           lora_trained_at?: string | null
@@ -573,10 +582,31 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "characters_accepted_run_id_fkey"
+            columns: ["accepted_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "characters_active_visual_dna_id_fkey"
             columns: ["active_visual_dna_id"]
             isOneToOne: false
             referencedRelation: "character_visual_dna"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "characters_canon_asset_id_fkey"
+            columns: ["canon_asset_id"]
+            isOneToOne: false
+            referencedRelation: "canon_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "characters_current_run_id_fkey"
+            columns: ["current_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
             referencedColumns: ["id"]
           },
           {

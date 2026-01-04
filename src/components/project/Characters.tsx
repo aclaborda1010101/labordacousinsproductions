@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle, Image } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -24,6 +24,7 @@ import { TechnicalPromptGenerator } from './TechnicalPromptGenerator';
 import { CharacterQuickStart } from './CharacterQuickStart';
 import { CharacterCreationWizard } from './CharacterCreationWizard';
 import { ProductionModePanel } from './ProductionModePanel';
+import { CharacterGenerationPanel } from './CharacterGenerationPanel';
 
 interface CharactersProps { projectId: string; }
 
@@ -49,6 +50,10 @@ interface Character {
   pack_completeness_score?: number | null;
   profile_json?: unknown;
   outfits?: CharacterOutfit[];
+  // Unified generation system fields
+  current_run_id?: string | null;
+  accepted_run_id?: string | null;
+  canon_asset_id?: string | null;
 }
 
 export default function Characters({ projectId }: CharactersProps) {
@@ -1074,6 +1079,14 @@ export default function Characters({ projectId }: CharactersProps) {
                               <Wand2 className="w-4 h-4 mr-2" />
                               Prompts
                             </TabsTrigger>
+                            <TabsTrigger 
+                              value="generation"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                            >
+                              <Image className="w-4 h-4 mr-2" />
+                              Generación
+                              {character.canon_asset_id && <Star className="w-3 h-3 ml-1 text-amber-500" />}
+                            </TabsTrigger>
                           </TabsList>
 
                           <TabsContent value="turnarounds" className="p-4 m-0">
@@ -1244,6 +1257,22 @@ export default function Characters({ projectId }: CharactersProps) {
                             <TechnicalPromptGenerator
                               characterId={character.id}
                               characterName={character.name}
+                            />
+                          </TabsContent>
+
+                          <TabsContent value="generation" className="p-4 m-0">
+                            <CharacterGenerationPanel
+                              character={{
+                                id: character.id,
+                                name: character.name,
+                                bio: character.bio,
+                                role: character.role,
+                                current_run_id: character.current_run_id,
+                                accepted_run_id: character.accepted_run_id,
+                                canon_asset_id: character.canon_asset_id,
+                              }}
+                              projectId={projectId}
+                              onUpdate={fetchCharacters}
                             />
                           </TabsContent>
                         </Tabs>
