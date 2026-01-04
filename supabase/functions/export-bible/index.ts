@@ -86,10 +86,10 @@ serve(async (req) => {
     const style = body.style || 'basic';
     console.log(`[export-bible] Starting export: projectId=${body.projectId}, format=${body.format}, style=${style}`);
 
-    // Fetch project info
+    // Fetch project info (only existing columns)
     const { data: project, error: projectError } = await supabase
       .from('projects')
-      .select('id, title, format, genre')
+      .select('id, title, format')
       .eq('id', body.projectId)
       .single();
 
