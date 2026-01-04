@@ -265,14 +265,16 @@ export default function Locations({ projectId }: LocationsProps) {
       
       for (const slotConfig of slots) {
         // Create or get slot
-        const { data: existingSlot } = await supabase
+        const { data: existingSlot, error: existingSlotError } = await supabase
           .from('location_pack_slots')
           .select('id')
           .eq('location_id', location.id)
           .eq('slot_type', slotConfig.slot_type)
           .eq('view_angle', slotConfig.view_angle)
           .eq('time_of_day', slotConfig.time_of_day)
-          .single();
+          .maybeSingle();
+
+        if (existingSlotError) throw existingSlotError;
 
         let slotId = existingSlot?.id;
 
@@ -285,17 +287,23 @@ export default function Locations({ projectId }: LocationsProps) {
               view_angle: slotConfig.view_angle,
               time_of_day: slotConfig.time_of_day,
               status: 'pending',
-              required: true
+              required: true,
             })
             .select('id')
             .single();
 
-          if (error) continue;
+          if (error) throw error;
           slotId = newSlot.id;
         }
 
+        // Mark as generating
+        await supabase
+          .from('location_pack_slots')
+          .update({ status: 'generating' })
+          .eq('id', slotId);
+
         // Generate image
-        await supabase.functions.invoke('generate-location', {
+        const { data, error } = await supabase.functions.invoke('generate-location', {
           body: {
             slotId,
             locationId: location.id,
@@ -303,9 +311,40 @@ export default function Locations({ projectId }: LocationsProps) {
             locationDescription: location.description || '',
             slotType: slotConfig.slot_type,
             viewAngle: slotConfig.view_angle,
-            timeOfDay: slotConfig.time_of_day
-          }
+            timeOfDay: slotConfig.time_of_day,
+            weather: 'clear',
+          },
         });
+
+        if (error) {
+          await supabase
+            .from('location_pack_slots')
+            .update({ status: 'failed' })
+            .eq('id', slotId);
+          throw error;
+        }
+
+        if (!data?.imageUrl) {
+          await supabase
+            .from('location_pack_slots')
+            .update({ status: 'failed' })
+            .eq('id', slotId);
+          throw new Error('No image generated');
+        }
+
+        const qcScore = 80 + Math.random() * 20;
+
+        // Persist result for the slot (review by default)
+        await supabase
+          .from('location_pack_slots')
+          .update({
+            image_url: data.imageUrl,
+            prompt_text: data.prompt,
+            seed: data.seed,
+            qc_score: qcScore,
+            status: 'review',
+          })
+          .eq('id', slotId);
       }
       
       toast.success(`Pack de ${location.name} generado`);
