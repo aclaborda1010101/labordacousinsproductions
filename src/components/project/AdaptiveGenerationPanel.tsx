@@ -58,8 +58,8 @@ export function AdaptiveGenerationPanel({
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const levelConfig = USER_LEVEL_CONFIG[userLevel];
 
-  // Explorer mode: minimal UI
-  if (userLevel === 'explorer') {
+  // Normal mode: minimal UI, system decides automatically
+  if (userLevel === 'normal') {
     return (
       <Card className="border-primary/20">
         <CardHeader className="pb-3">
@@ -99,89 +99,9 @@ export function AdaptiveGenerationPanel({
           </Button>
 
           {/* Autopilot indicator */}
-          {autopilotDecision?.shouldAutopilot && (
-            <p className="text-xs text-muted-foreground text-center">
-              🤖 El sistema elige automáticamente la mejor configuración
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Creator mode: recommendations visible
-  if (userLevel === 'creator') {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Wand2 className="h-5 w-5 text-primary" />
-              Generar
-            </CardTitle>
-            <Badge variant="outline" className="gap-1">
-              {levelConfig.icon} {levelConfig.label}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Style context */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="outline" className="gap-1">
-              <Sparkles className="h-3 w-3" />
-              {styleName}
-            </Badge>
-            <Badge variant="secondary">{formatName}</Badge>
-          </div>
-
-          {/* Recommendations */}
-          {recommendation && visibility.showRecommendations && (
-            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <Lightbulb className="h-4 w-4 text-primary" />
-                Recomendado
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Preset: <strong>{recommendation.recommendedPreset}</strong>
-                {' | '}
-                {recommendation.reason}
-              </p>
-            </div>
-          )}
-
-          {/* Suggestions */}
-          {styleDecision?.suggestions && styleDecision.suggestions.length > 0 && (
-            <div className="space-y-1">
-              {styleDecision.suggestions.slice(0, 2).map((suggestion, i) => (
-                <p key={i} className="text-xs text-muted-foreground flex items-start gap-1">
-                  <Lightbulb className="h-3 w-3 mt-0.5 text-amber-500 shrink-0" />
-                  {suggestion}
-                </p>
-              ))}
-            </div>
-          )}
-
-          {/* Preset selector (children) */}
-          {children}
-
-          {/* Generate button */}
-          <Button
-            onClick={onGenerate}
-            disabled={isGenerating}
-            className="w-full"
-          >
-            {isGenerating ? (
-              <>
-                <Bot className="h-4 w-4 mr-2 animate-spin" />
-                Generando...
-              </>
-            ) : (
-              <>
-                <Wand2 className="h-4 w-4 mr-2" />
-                Generar
-              </>
-            )}
-          </Button>
+          <p className="text-xs text-muted-foreground text-center">
+            🤖 El sistema elige automáticamente la mejor configuración
+          </p>
         </CardContent>
       </Card>
     );

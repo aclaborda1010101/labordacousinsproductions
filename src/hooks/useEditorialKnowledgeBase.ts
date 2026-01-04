@@ -57,11 +57,12 @@ interface UseEditorialKnowledgeBaseResult {
   refresh: () => Promise<void>;
 }
 
+// MVP: Default to 'normal' user level (not 'explorer')
 const DEFAULT_CONTEXT: ProjectStyleContext = {
   formatProfile: 'short',
   animationType: '3D',
   visualStyle: 'pixar',
-  userLevel: 'explorer',
+  userLevel: 'normal',
 };
 
 export function useEditorialKnowledgeBase({
@@ -92,7 +93,7 @@ export function useEditorialKnowledgeBase({
           formatProfile: (projectData.format_profile as FormatProfile) || 'short',
           animationType: (projectData.animation_type as AnimationType) || '3D',
           visualStyle: (projectData.visual_style as VisualStyle) || 'pixar',
-          userLevel: (projectData.user_level as UserLevel) || 'explorer',
+          userLevel: (projectData.user_level as UserLevel) || 'normal',
         });
       } else {
         // Try editorial_projects table
@@ -107,7 +108,7 @@ export function useEditorialKnowledgeBase({
             formatProfile: (editorialData.format_profile as FormatProfile) || 'short',
             animationType: (editorialData.animation_type as AnimationType) || '3D',
             visualStyle: (editorialData.visual_style as VisualStyle) || 'pixar',
-            userLevel: (editorialData.user_level as UserLevel) || 'explorer',
+            userLevel: (editorialData.user_level as UserLevel) || 'normal',
           });
         } else {
           setContext(DEFAULT_CONTEXT);
@@ -170,7 +171,7 @@ export function useEditorialKnowledgeBase({
   }, [context, assetType]);
 
   const visibility = useMemo(() => {
-    return getVisibility(context?.userLevel || 'explorer');
+    return getVisibility(context?.userLevel || 'normal');
   }, [context?.userLevel]);
 
   const getStyleName = useCallback(() => {
@@ -193,7 +194,7 @@ export function useEditorialKnowledgeBase({
     formatProfile: context?.formatProfile || 'short',
     animationType: context?.animationType || '3D',
     visualStyle: context?.visualStyle || 'pixar',
-    userLevel: context?.userLevel || 'explorer',
+    userLevel: context?.userLevel || 'normal',
     setFormatProfile,
     setAnimationType,
     setVisualStyle,
