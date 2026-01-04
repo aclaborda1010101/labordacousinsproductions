@@ -311,8 +311,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     toast.info('Borrador descartado');
   };
 
-  // Project format state
+  // Project settings (used for episode planning)
   const [projectFormat, setProjectFormat] = useState<'film' | 'series' | 'short' | string>('series');
+  const [episodesCount, setEpisodesCount] = useState<number>(1);
+  const [episodeDurationMin, setEpisodeDurationMin] = useState<number>(30);
   
   // Refresh trigger for re-fetching script
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -326,10 +328,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     console.log('[ScriptWorkspace] Fetching script data for project:', projectId);
     
     try {
-      // Get project format
+      // Get project settings
       const { data: projectData, error: projectError } = await supabase
         .from('projects')
-        .select('format')
+        .select('format, episodes_count, target_duration_min')
         .eq('id', projectId)
         .maybeSingle();
       
@@ -339,6 +341,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       
       if (projectData?.format) {
         setProjectFormat(projectData.format);
+      }
+      if (typeof projectData?.episodes_count === 'number') {
+        setEpisodesCount(projectData.episodes_count || 1);
+      }
+      if (typeof projectData?.target_duration_min === 'number') {
+        setEpisodeDurationMin(projectData.target_duration_min || 30);
       }
 
       const { data, error } = await supabase
@@ -626,8 +634,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         body: {
           projectId,
           idea: ideaText,
+          format: projectFormat === 'film' ? 'film' : 'series',
+          episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+          language: 'es-ES',
+          generationModel: selectedModel,
+          // Back-compat for older request shapes
           model: selectedModel,
-          format: 'short',
         }
       });
 
@@ -638,8 +650,15 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       const { data: scriptData, error: scriptError } = await supabase.functions.invoke('script-generate', {
         body: {
           projectId,
-          outline: outlineData?.outline,
           idea: ideaText,
+          genre: '',
+          tone: '',
+          format: projectFormat === 'film' ? 'film' : 'series',
+          episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+          episodeDurationMin,
+          language: 'es-ES',
+          // Optional extras (ignored by current function but kept for compatibility)
+          outline: outlineData?.outline,
           model: selectedModel,
         }
       });
@@ -787,6 +806,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           scriptText: textToAnalyze,
           scriptId: savedScript.id,
           language: 'es-ES',
+          format: projectFormat === 'film' ? 'film' : 'series',
+          episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+          episodeDurationMin,
         }
       });
 
@@ -914,6 +936,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           scriptText: scriptTextNormalized,
           scriptId: savedScript.id,
           language: 'es-ES',
+          format: projectFormat === 'film' ? 'film' : 'series',
+          episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+          episodeDurationMin,
         }
       });
 
