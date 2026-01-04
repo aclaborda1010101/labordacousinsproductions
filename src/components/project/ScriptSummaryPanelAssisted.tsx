@@ -46,8 +46,10 @@ import {
   Users2,
   GitBranch,
   Zap,
+  BookOpen,
 } from 'lucide-react';
 import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
+import { exportBibleSummaryPDF } from '@/lib/exportBibleSummaryPDF';
 
 interface ScriptSummaryPanelAssistedProps {
   projectId: string;
@@ -377,7 +379,7 @@ export function ScriptSummaryPanelAssisted({
     }
   };
 
-  // Export PDF
+  // Export script PDF
   const handleExportPDF = () => {
     if (!scriptData) return;
     try {
@@ -388,9 +390,33 @@ export function ScriptSummaryPanelAssisted({
         characters: scriptData.characters,
         locations: scriptData.locations,
       });
-      toast.success('PDF exportado');
+      toast.success('Guion PDF exportado');
     } catch (err) {
       toast.error('Error al exportar PDF');
+    }
+  };
+
+  // Export bible summary PDF
+  const handleExportBiblePDF = () => {
+    if (!scriptData) return;
+    try {
+      const sceneCount = scriptData.counts?.total_scenes || 
+        scriptData.episodes.reduce((sum, ep) => sum + (ep.scenes?.length || 0), 0);
+      exportBibleSummaryPDF({
+        title: scriptData.title,
+        synopsis: scriptData.synopsis,
+        format: projectFormat,
+        episodeCount: scriptData.episodes.length,
+        sceneCount,
+        characters: scriptData.characters,
+        locations: scriptData.locations,
+        props: scriptData.props,
+        subplots: scriptData.subplots,
+        plot_twists: scriptData.plot_twists,
+      });
+      toast.success('Biblia PDF exportada');
+    } catch (err) {
+      toast.error('Error al exportar Biblia');
     }
   };
 
@@ -473,6 +499,10 @@ export function ScriptSummaryPanelAssisted({
             <Button variant="outline" onClick={handleExportPDF}>
               <FileDown className="h-4 w-4 mr-2" />
               Descargar Guion PDF
+            </Button>
+            <Button variant="outline" onClick={handleExportBiblePDF}>
+              <BookOpen className="h-4 w-4 mr-2" />
+              Descargar Resumen Biblia
             </Button>
           </div>
         </CardContent>
