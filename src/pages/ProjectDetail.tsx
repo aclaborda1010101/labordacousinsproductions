@@ -32,6 +32,7 @@ import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
 import { CreativeModeProvider, useCreativeModeOptional } from '@/contexts/CreativeModeContext';
 import { CreativeModeSelector } from '@/components/project/CreativeModeSelector';
 import ProjectDetailPro from '@/components/project/ProjectDetailPro';
+import { ProductionDirectorPanel, ProductionDirectorTrigger } from '@/components/project/ProductionDirectorPanel';
 
 interface Project {
   id: string;
@@ -57,6 +58,7 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
   const location = useLocation();
   const { projectId } = useParams();
   const [showSettings, setShowSettings] = useState(false);
+  const [showDirector, setShowDirector] = useState(false);
   
   // Get creative mode from context
   const creativeModeContext = useCreativeModeOptional();
@@ -215,6 +217,17 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
 
       {/* Realtime collaboration overlay */}
       <RealtimeCollaboration projectId={project.id} currentSection={currentSection} />
+
+      {/* Production Director AI */}
+      {showDirector ? (
+        <ProductionDirectorPanel 
+          projectId={project.id} 
+          isOpen={showDirector} 
+          onClose={() => setShowDirector(false)} 
+        />
+      ) : (
+        <ProductionDirectorTrigger onClick={() => setShowDirector(true)} />
+      )}
     </>
   );
 }
