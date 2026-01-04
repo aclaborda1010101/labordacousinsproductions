@@ -805,20 +805,19 @@ export function ScriptSummaryPanelAssisted({
         </div>
       )}
 
-      {/* Collapsible Details - Only for PRO/DIRECTOR modes */}
-      {effectiveMode !== 'ASSISTED' && (
-        <Collapsible 
-          open={expandedSection === 'details'} 
-          onOpenChange={(open) => setExpandedSection(open ? 'details' : null)}
-        >
-          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
-            <span className="text-sm font-medium">Ver detalles del análisis</span>
-            {expandedSection === 'details' ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </CollapsibleTrigger>
+      {/* Collapsible Details - Available for all modes */}
+      <Collapsible 
+        open={expandedSection === 'details'} 
+        onOpenChange={(open) => setExpandedSection(open ? 'details' : null)}
+      >
+        <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+          <span className="text-sm font-medium">Ver detalles del análisis</span>
+          {expandedSection === 'details' ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </CollapsibleTrigger>
           <CollapsibleContent>
             <Card className="mt-3 border-dashed">
               <CardContent className="py-4 space-y-4">
@@ -950,7 +949,6 @@ export function ScriptSummaryPanelAssisted({
             </Card>
           </CollapsibleContent>
         </Collapsible>
-      )}
 
       {/* Episodes overview - Always visible, collapsed by default */}
       <Collapsible 
