@@ -642,20 +642,18 @@ export function ScriptSummaryPanelAssisted({
                       <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
                         <Users2 className="h-3 w-3" /> Colectivos:
                       </span>
-                      {collectiveEntities.slice(0, 6).map((char, i) => (
+                      {collectiveEntities.map((char, i) => (
                         <Badge key={i} variant="outline" className="text-xs border-primary/50">{char.name}</Badge>
                       ))}
-                      {collectiveEntities.length > 6 && <Badge variant="outline" className="text-xs">+{collectiveEntities.length - 6}</Badge>}
                     </div>
                   )}
                   {/* Others (cameos, extras, etc.) */}
                   {others.length > 0 && (
                     <div className="flex flex-wrap gap-1 items-center">
                       <span className="text-xs text-muted-foreground mr-1">Otros:</span>
-                      {others.slice(0, 6).map((char, i) => (
+                      {others.map((char, i) => (
                         <Badge key={i} variant="outline" className="text-xs">{char.name}</Badge>
                       ))}
-                      {others.length > 6 && <Badge variant="outline" className="text-xs">+{others.length - 6}</Badge>}
                     </div>
                   )}
                 </div>
@@ -671,14 +669,11 @@ export function ScriptSummaryPanelAssisted({
                 <span className="font-medium text-sm">Localizaciones detectadas ({scriptData.locations.length})</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {scriptData.locations.slice(0, 12).map((loc, i) => (
+                {scriptData.locations.map((loc, i) => (
                   <Badge key={i} variant="outline">
                     {loc.name}
                   </Badge>
                 ))}
-                {scriptData.locations.length > 12 && (
-                  <Badge variant="secondary">+{scriptData.locations.length - 12} más</Badge>
-                )}
               </div>
             </div>
           )}
@@ -691,17 +686,14 @@ export function ScriptSummaryPanelAssisted({
                 <span className="font-medium text-sm">Subtramas ({scriptData.subplots.length})</span>
               </div>
               <div className="space-y-1">
-                {scriptData.subplots.slice(0, 4).map((subplot, i) => (
+                {scriptData.subplots.map((subplot, i) => (
                   <div key={i} className="text-xs bg-muted/50 rounded px-2 py-1">
                     <span className="font-medium">{subplot.name}</span>
                     {subplot.description && (
-                      <span className="text-muted-foreground ml-1">- {subplot.description.slice(0, 80)}{subplot.description.length > 80 ? '...' : ''}</span>
+                      <span className="text-muted-foreground ml-1">- {subplot.description}</span>
                     )}
                   </div>
                 ))}
-                {scriptData.subplots.length > 4 && (
-                  <span className="text-xs text-muted-foreground">+{scriptData.subplots.length - 4} más</span>
-                )}
               </div>
             </div>
           )}
@@ -714,7 +706,7 @@ export function ScriptSummaryPanelAssisted({
                 <span className="font-medium text-sm">Giros narrativos ({scriptData.plot_twists.length})</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {scriptData.plot_twists.slice(0, 5).map((twist, i) => (
+                {scriptData.plot_twists.map((twist, i) => (
                   <Badge 
                     key={i} 
                     variant={twist.impact === 'paradigm_shift' ? 'destructive' : twist.impact === 'major' ? 'default' : 'secondary'}
@@ -723,9 +715,6 @@ export function ScriptSummaryPanelAssisted({
                     {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'} {twist.name}
                   </Badge>
                 ))}
-                {scriptData.plot_twists.length > 5 && (
-                  <Badge variant="outline" className="text-xs">+{scriptData.plot_twists.length - 5} más</Badge>
-                )}
               </div>
             </div>
           )}
@@ -738,14 +727,11 @@ export function ScriptSummaryPanelAssisted({
                 <span className="font-medium text-sm">Props detectados ({scriptData.props.length})</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {scriptData.props.slice(0, 8).map((prop, i) => (
+                {scriptData.props.map((prop, i) => (
                   <Badge key={i} variant="outline" className="text-xs">
                     {typeof prop === 'string' ? prop : prop.name}
                   </Badge>
                 ))}
-                {scriptData.props.length > 8 && (
-                  <Badge variant="secondary">+{scriptData.props.length - 8} más</Badge>
-                )}
               </div>
             </div>
           )}

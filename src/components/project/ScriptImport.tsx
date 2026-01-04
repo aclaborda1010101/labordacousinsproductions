@@ -1858,7 +1858,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       Subtramas ({lightOutline.subplots.length})
                     </Label>
                     <div className="space-y-2">
-                      {lightOutline.subplots.slice(0, 6).map((subplot: any, i: number) => (
+                      {lightOutline.subplots.map((subplot: any, i: number) => (
                         <div key={i} className="p-2 bg-muted/30 rounded border">
                           <p className="text-sm font-medium">{subplot.name}</p>
                           {subplot.description && (
@@ -1866,9 +1866,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           )}
                         </div>
                       ))}
-                      {lightOutline.subplots.length > 6 && (
-                        <p className="text-xs text-muted-foreground">+{lightOutline.subplots.length - 6} más</p>
-                      )}
                     </div>
                   </div>
                 )}
@@ -1880,7 +1877,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       Giros narrativos ({lightOutline.plot_twists.length})
                     </Label>
                     <div className="space-y-2">
-                      {lightOutline.plot_twists.slice(0, 6).map((twist: any, i: number) => (
+                      {lightOutline.plot_twists.map((twist: any, i: number) => (
                         <div key={i} className="p-2 bg-muted/30 rounded border">
                           <div className="flex items-center gap-2">
                             <Badge
@@ -1903,9 +1900,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           )}
                         </div>
                       ))}
-                      {lightOutline.plot_twists.length > 6 && (
-                        <p className="text-xs text-muted-foreground">+{lightOutline.plot_twists.length - 6} más</p>
-                      )}
                     </div>
                   </div>
                 )}
