@@ -320,13 +320,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
         if (error) throw error;
         
+        if (data?.needsManualInput) {
+          toast.warning(data.error || 'El PDF requiere entrada manual. Por favor, copia y pega el texto.');
+          return;
+        }
+        
         if (data?.rawText) {
           setScriptText(data.rawText);
           toast.success('PDF procesado correctamente');
+        } else if (data?.error) {
+          toast.error(data.error);
         }
       } catch (err) {
         console.error('PDF parse error:', err);
-        toast.error('Error al procesar el PDF');
+        toast.error('Error al procesar el PDF. Intenta copiar y pegar el texto directamente.');
       }
     }
   };
