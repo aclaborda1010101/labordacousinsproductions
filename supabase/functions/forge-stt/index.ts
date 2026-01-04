@@ -16,19 +16,34 @@ serve(async (req) => {
     const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY');
 
     if (!ELEVENLABS_API_KEY) {
-      throw new Error('ELEVENLABS_API_KEY not configured');
+      console.error('[Forge STT] ELEVENLABS_API_KEY not configured');
+      return new Response(
+        JSON.stringify({ error: 'Servicio de voz no configurado' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     if (!audioFile) {
-      throw new Error('Audio file is required');
+      return new Response(
+        JSON.stringify({ error: 'No se recibió archivo de audio' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    console.log(`[Forge STT] Transcribing audio file: ${audioFile.size} bytes`);
+    console.log(`[Forge STT] Transcribing audio: ${audioFile.name}, size: ${audioFile.size} bytes, type: ${audioFile.type}`);
+
+    // Validar tamaño mínimo
+    if (audioFile.size < 1000) {
+      return new Response(
+        JSON.stringify({ error: 'Audio demasiado corto', text: '' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const apiFormData = new FormData();
     apiFormData.append('file', audioFile);
     apiFormData.append('model_id', 'scribe_v1');
-    apiFormData.append('language_code', 'spa'); // Spanish by default for this user
+    apiFormData.append('language_code', 'spa'); // Spanish
 
     const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
       method: 'POST',
@@ -40,12 +55,30 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[Forge STT] ElevenLabs error:', errorText);
-      throw new Error(`ElevenLabs API error: ${response.status}`);
+      console.error('[Forge STT] ElevenLabs error:', response.status, errorText);
+      
+      // Errores específicos
+      if (response.status === 401) {
+        return new Response(
+          JSON.stringify({ error: 'API key inválida' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Demasiadas solicitudes. Espera un momento.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      return new Response(
+        JSON.stringify({ error: `Error del servicio de voz: ${response.status}` }),
+        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const transcription = await response.json();
-    console.log(`[Forge STT] Transcription complete: ${transcription.text?.length || 0} characters`);
+    console.log(`[Forge STT] Transcription complete: "${transcription.text?.substring(0, 50)}..." (${transcription.text?.length || 0} chars)`);
 
     return new Response(JSON.stringify(transcription), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

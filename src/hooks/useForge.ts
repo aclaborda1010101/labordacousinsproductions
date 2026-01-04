@@ -96,6 +96,7 @@ export function useForge(options: UseForgeOptions) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const sendMessageRef = useRef<((content: string, attachedImages?: string[]) => Promise<void>) | null>(null);
 
   // Cargar conversación existente y analytics al montar
   useEffect(() => {
@@ -183,8 +184,27 @@ export function useForge(options: UseForgeOptions) {
   // Voice: Iniciar grabación
   const startRecording = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 16000
+        } 
+      });
+      
+      // Determinar el mejor formato compatible
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm')
+        ? 'audio/webm'
+        : MediaRecorder.isTypeSupported('audio/mp4')
+        ? 'audio/mp4'
+        : '';
+      
+      const mediaRecorder = mimeType 
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
+        
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -195,12 +215,22 @@ export function useForge(options: UseForgeOptions) {
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: mediaRecorder.mimeType });
         stream.getTracks().forEach(track => track.stop());
+        
+        // Verificar que hay audio grabado
+        if (audioBlob.size < 1000) {
+          toast.error('No se detectó audio. Habla más fuerte.');
+          return;
+        }
         
         // Transcribir audio
         const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.webm');
+        // Usar extensión correcta según el tipo MIME
+        const extension = mediaRecorder.mimeType.includes('webm') ? 'webm' : 'mp4';
+        formData.append('audio', audioBlob, `recording.${extension}`);
+        
+        toast.info('Procesando tu voz...');
         
         try {
           const response = await fetch(
@@ -215,24 +245,40 @@ export function useForge(options: UseForgeOptions) {
             }
           );
 
-          if (!response.ok) throw new Error('Transcription failed');
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('STT response error:', response.status, errorData);
+            throw new Error(errorData.error || `Error ${response.status}`);
+          }
           
           const data = await response.json();
-          if (data.text) {
-            sendMessage(data.text);
+          
+          if (data.error) {
+            throw new Error(data.error);
+          }
+          
+          if (data.text && data.text.trim()) {
+            toast.success('¡Entendido!');
+            // Usar ref para evitar dependencia circular
+            if (sendMessageRef.current) {
+              sendMessageRef.current(data.text);
+            }
+          } else {
+            toast.warning('No pude entender lo que dijiste. Intenta de nuevo.');
           }
         } catch (error) {
           console.error('STT error:', error);
-          toast.error('No pude entender el audio');
+          const errorMsg = error instanceof Error ? error.message : 'Error desconocido';
+          toast.error(`No pude procesar el audio: ${errorMsg}`);
         }
       };
 
-      mediaRecorder.start();
+      mediaRecorder.start(1000); // Chunks cada segundo para mejor streaming
       setIsRecording(true);
-      toast.success('Grabando... habla ahora');
+      toast.success('🎤 Grabando... habla ahora');
     } catch (error) {
       console.error('Recording error:', error);
-      toast.error('No pude acceder al micrófono');
+      toast.error('No pude acceder al micrófono. Verifica los permisos.');
     }
   }, []);
 
@@ -472,6 +518,11 @@ export function useForge(options: UseForgeOptions) {
       abortControllerRef.current = null;
     }
   }, [projectId, user?.id, messages, conversationId, isLoading, analytics, voiceEnabled, speakResponse, analyzeImage, generateVisual]);
+
+  // Mantener ref actualizado para evitar dependencias circulares
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
 
   const handleExecutedAction = (action: ForgeAction) => {
     if (!action.result.success) {
