@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
-import { Wrench, Lock, Unlock } from 'lucide-react';
+import { Wrench, Lock, Unlock, Loader2 } from 'lucide-react';
 
 interface DeveloperModeModalProps {
   open: boolean;
@@ -19,27 +19,44 @@ interface DeveloperModeModalProps {
 }
 
 export function DeveloperModeModal({ open, onOpenChange }: DeveloperModeModalProps) {
-  const { isDeveloperMode, enableDeveloperMode, disableDeveloperMode } = useDeveloperMode();
+  const { isDeveloperMode, isLoading, enableDeveloperMode, disableDeveloperMode } = useDeveloperMode();
   const [code, setCode] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleUnlock = () => {
-    const success = enableDeveloperMode(code);
+  const handleUnlock = async () => {
+    setIsSubmitting(true);
+    const success = await enableDeveloperMode(code);
+    setIsSubmitting(false);
     if (success) {
       setCode('');
       onOpenChange(false);
     }
   };
 
-  const handleDisable = () => {
-    disableDeveloperMode();
+  const handleDisable = async () => {
+    setIsSubmitting(true);
+    await disableDeveloperMode();
+    setIsSubmitting(false);
     onOpenChange(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !isDeveloperMode) {
+    if (e.key === 'Enter' && !isDeveloperMode && !isSubmitting) {
       handleUnlock();
     }
   };
+
+  if (isLoading) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -51,7 +68,7 @@ export function DeveloperModeModal({ open, onOpenChange }: DeveloperModeModalPro
           </DialogTitle>
           <DialogDescription>
             {isDeveloperMode
-              ? 'El modo desarrollador está activo. Tienes acceso a todas las opciones avanzadas.'
+              ? 'El modo desarrollador está activo. Tienes acceso a todas las opciones avanzadas en cualquier dispositivo.'
               : 'Introduce el código de desarrollador para desbloquear opciones avanzadas.'}
           </DialogDescription>
         </DialogHeader>
@@ -63,7 +80,7 @@ export function DeveloperModeModal({ open, onOpenChange }: DeveloperModeModalPro
               <span className="text-green-500 font-medium">Modo Activo</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Tienes acceso a paneles de debug, prompts editables, y controles avanzados en todos los módulos.
+              Tienes acceso a paneles de debug, prompts editables, y controles avanzados en todos los módulos. Este modo está sincronizado en todos tus dispositivos.
             </p>
           </div>
         ) : (
@@ -82,21 +99,24 @@ export function DeveloperModeModal({ open, onOpenChange }: DeveloperModeModalPro
                 onChange={(e) => setCode(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoComplete="off"
+                disabled={isSubmitting}
               />
             </div>
           </div>
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             Cancelar
           </Button>
           {isDeveloperMode ? (
-            <Button variant="destructive" onClick={handleDisable}>
+            <Button variant="destructive" onClick={handleDisable} disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Desactivar
             </Button>
           ) : (
-            <Button onClick={handleUnlock} disabled={!code.trim()}>
+            <Button onClick={handleUnlock} disabled={!code.trim() || isSubmitting}>
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Desbloquear
             </Button>
           )}

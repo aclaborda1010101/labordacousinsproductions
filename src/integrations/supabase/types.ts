@@ -2677,6 +2677,8 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          developer_mode_enabled: boolean
+          developer_mode_enabled_at: string | null
           display_name: string | null
           id: string
           updated_at: string
@@ -2685,6 +2687,8 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          developer_mode_enabled?: boolean
+          developer_mode_enabled_at?: string | null
           display_name?: string | null
           id?: string
           updated_at?: string
@@ -2693,6 +2697,8 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          developer_mode_enabled?: boolean
+          developer_mode_enabled_at?: string | null
           display_name?: string | null
           id?: string
           updated_at?: string
