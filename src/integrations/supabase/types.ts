@@ -1983,6 +1983,7 @@ export type Database = {
       generation_runs: {
         Row: {
           accepted_at: string | null
+          auto_retry_count: number | null
           composed_prompt: string
           context: string | null
           created_at: string
@@ -1994,6 +1995,7 @@ export type Database = {
           id: string
           input_intent: string
           is_canon: boolean | null
+          last_error: string | null
           model: string | null
           negative_prompt: string | null
           output_text: string | null
@@ -2017,6 +2019,7 @@ export type Database = {
         }
         Insert: {
           accepted_at?: string | null
+          auto_retry_count?: number | null
           composed_prompt: string
           context?: string | null
           created_at?: string
@@ -2028,6 +2031,7 @@ export type Database = {
           id?: string
           input_intent: string
           is_canon?: boolean | null
+          last_error?: string | null
           model?: string | null
           negative_prompt?: string | null
           output_text?: string | null
@@ -2051,6 +2055,7 @@ export type Database = {
         }
         Update: {
           accepted_at?: string | null
+          auto_retry_count?: number | null
           composed_prompt?: string
           context?: string | null
           created_at?: string
@@ -2062,6 +2067,7 @@ export type Database = {
           id?: string
           input_intent?: string
           is_canon?: boolean | null
+          last_error?: string | null
           model?: string | null
           negative_prompt?: string | null
           output_text?: string | null

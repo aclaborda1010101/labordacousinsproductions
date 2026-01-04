@@ -68,7 +68,7 @@ interface Render {
   engine: string | null;
 }
 
-type VideoEngine = 'veo' | 'kling' | 'lovable';
+type VideoEngine = 'veo' | 'kling' | 'lovable' | 'runway';
 
 interface ShotEditorProps {
   open: boolean;
@@ -906,6 +906,17 @@ export default function ShotEditor({
         }
       }
 
+      // Runway: Manual selection only - no auto integration yet
+      if (selectedEngine === 'runway' && !fallback) {
+        // Runway is not yet integrated with edge functions
+        // For now, show a placeholder message and fall back to Lovable
+        toast.warning('Runway Gen-3 requiere configuración adicional. Generando keyframe...');
+        console.log('Runway selected but not yet integrated, falling back to Lovable AI');
+        fallback = true;
+        engineUsed = 'lovable';
+        metadata = { engine: 'runway', model: 'gen-3-alpha', status: 'pending_integration' };
+      }
+
       // Use generate-shot for lovable only (and as fallback)
       if (selectedEngine === 'lovable' || fallback) {
         const { data, error } = await supabase.functions.invoke('generate-shot', {
@@ -1375,12 +1386,20 @@ export default function ShotEditor({
                       {preferredEngine === 'kling' && <Badge variant="outline" className="text-xs">Tu preferido</Badge>}
                     </div>
                   </SelectItem>
+                  <SelectItem value="runway">
+                    <div className="flex items-center gap-2">
+                      <Video className="w-4 h-4 text-purple-500" />
+                      <span className="font-bold">Runway Gen-3</span>
+                      {preferredEngine === 'runway' && <Badge variant="outline" className="text-xs">Tu preferido</Badge>}
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
                 {selectedEngine === 'lovable' && 'Genera keyframes de alta calidad. Siempre disponible.'}
                 {selectedEngine === 'veo' && 'Video con movimiento suave. Requiere API externa.'}
                 {selectedEngine === 'kling' && 'Video con expresiones detalladas. Requiere API externa.'}
+                {selectedEngine === 'runway' && 'Video cinematográfico con control avanzado. Requiere API externa.'}
               </p>
             </div>
 
