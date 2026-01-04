@@ -313,6 +313,61 @@ serve(async (req) => {
       );
     }
 
+    // If text was provided directly (not from PDF), run it through the same formatting AI
+    // This ensures consistent quality between PDF extraction and text input
+    if (scriptText && !pdfUrl) {
+      console.log("Processing direct text input through formatting AI...");
+      try {
+        const formattingResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [
+              {
+                role: "system",
+                content: "You are a professional screenplay formatter. Your job is to take screenplay text (which may be poorly formatted) and reformat it into proper screenplay format. Output ONLY the reformatted text, no commentary."
+              },
+              {
+                role: "user",
+                content: `Reformat this text into proper screenplay format, preserving:
+- Scene headings (INT./EXT.) in their own lines, uppercase
+- Character names in ALL CAPS before their dialogue
+- Dialogue properly indented after character names
+- Action lines/descriptions as regular text
+- Parentheticals in their proper place
+
+If the text is already well-formatted, return it as-is. If it's prose/narrative, convert it to screenplay format.
+
+Text to format:
+${textToProcess}`
+              }
+            ],
+            temperature: 0.1,
+            max_tokens: 50000
+          }),
+        });
+
+        if (formattingResponse.ok) {
+          const formattingData = await formattingResponse.json();
+          const formattedText = formattingData.choices?.[0]?.message?.content || "";
+          if (formattedText.length > textToProcess.length * 0.5) {
+            console.log(`Formatted text from ${textToProcess.length} to ${formattedText.length} chars`);
+            textToProcess = formattedText;
+          } else {
+            console.log("Formatting result too short, keeping original text");
+          }
+        } else {
+          console.warn("Formatting AI call failed, using original text");
+        }
+      } catch (formatError) {
+        console.warn("Error in text formatting step, using original text:", formatError);
+      }
+    }
+
     const systemPrompt = `You are a professional script breakdown assistant. Analyze the provided screenplay text and extract scenes.
 
 For each scene, identify:
