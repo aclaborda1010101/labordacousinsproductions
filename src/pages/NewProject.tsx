@@ -6,16 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, ArrowRight, Check, Film, Tv, Clapperboard, Loader2, 
-  FileText, DollarSign, Globe, Settings2
+  FileText, DollarSign, Globe, Settings2, Wrench
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ScriptImport from '@/components/project/ScriptImport';
+import ScriptWorkspace from '@/components/project/ScriptWorkspace';
 
 type ProjectFormat = 'series' | 'mini' | 'film';
 
@@ -49,10 +52,12 @@ export default function NewProject() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { isDeveloperMode } = useDeveloperMode();
   const [currentStep, setCurrentStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
   const [hasDraft, setHasDraft] = useState(false);
+  const [useAdvancedScriptMode, setUseAdvancedScriptMode] = useState(false);
 
   // Basic info
   const [title, setTitle] = useState('');
@@ -441,15 +446,42 @@ export default function NewProject() {
               </div>
             )}
 
-            {/* Step 4: Script - Using ScriptImport */}
+            {/* Step 4: Script */}
             {currentStep === 4 && createdProjectId && (
               <div className="animate-fade-in -m-8">
-                <ScriptImport 
-                  projectId={createdProjectId} 
-                  onScenesCreated={() => {
-                    toast.success('Escenas creadas correctamente');
-                  }}
-                />
+                {/* Developer Mode toggle for advanced script mode */}
+                {isDeveloperMode && (
+                  <div className="m-8 mb-0 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Wrench className="h-4 w-4 text-amber-500" />
+                      <span className="text-sm font-medium text-amber-500">Modo Avanzado de Guion</span>
+                      <span className="text-xs text-muted-foreground">(Developer Mode)</span>
+                    </div>
+                    <Switch
+                      checked={useAdvancedScriptMode}
+                      onCheckedChange={setUseAdvancedScriptMode}
+                    />
+                  </div>
+                )}
+                
+                {/* Show advanced ScriptImport or standard ScriptWorkspace */}
+                {useAdvancedScriptMode && isDeveloperMode ? (
+                  <ScriptImport 
+                    projectId={createdProjectId} 
+                    onScenesCreated={() => {
+                      toast.success('Escenas creadas correctamente');
+                    }}
+                  />
+                ) : (
+                  <div className="p-8">
+                    <ScriptWorkspace 
+                      projectId={createdProjectId} 
+                      onEntitiesExtracted={() => {
+                        toast.success('Entidades extraídas correctamente');
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
