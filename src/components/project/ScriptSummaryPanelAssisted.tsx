@@ -51,6 +51,7 @@ import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 
 interface ScriptSummaryPanelAssistedProps {
   projectId: string;
+  projectFormat?: 'film' | 'series' | 'short' | string;
   onScenesGenerated?: () => void;
   onEntitiesExtracted?: () => void;
 }
@@ -120,6 +121,7 @@ interface PlotTwistData {
 
 export function ScriptSummaryPanelAssisted({ 
   projectId, 
+  projectFormat = 'series',
   onScenesGenerated,
   onEntitiesExtracted 
 }: ScriptSummaryPanelAssistedProps) {
@@ -438,7 +440,9 @@ export function ScriptSummaryPanelAssisted({
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
             <div className="p-4 bg-background/50 rounded-xl text-center">
               <div className="text-3xl font-bold text-primary">{scriptData.episodes.length}</div>
-              <div className="text-sm text-muted-foreground">Episodios</div>
+              <div className="text-sm text-muted-foreground">
+                {projectFormat === 'film' ? 'Actos' : projectFormat === 'short' ? 'Partes' : 'Episodios'}
+              </div>
             </div>
             <div className="p-4 bg-background/50 rounded-xl text-center">
               <div className="text-3xl font-bold text-primary">{totalScenes}</div>

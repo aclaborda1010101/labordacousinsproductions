@@ -293,9 +293,23 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     toast.info('Borrador descartado');
   };
 
+  // Project format state
+  const [projectFormat, setProjectFormat] = useState<'film' | 'series' | 'short' | string>('series');
+
   // Check for existing script on mount
   useEffect(() => {
     const checkExistingScript = async () => {
+      // Get project format
+      const { data: projectData } = await supabase
+        .from('projects')
+        .select('format')
+        .eq('id', projectId)
+        .maybeSingle();
+      
+      if (projectData?.format) {
+        setProjectFormat(projectData.format);
+      }
+
       const { data } = await supabase
         .from('scripts')
         .select('id, raw_text')
@@ -426,7 +440,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         
         if (data?.rawText) {
           setScriptText(data.rawText);
-          toast.success('PDF procesado correctamente');
+          toast.success('PDF procesado. Analizando guion...');
+          // Auto-trigger analysis after PDF processing with the extracted text
+          await handleAnalyzeScript(data.rawText);
         } else if (data?.error) {
           toast.error(data.error);
         }
@@ -539,8 +555,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   };
 
   // Analyze existing script with quality diagnosis
-  const handleAnalyzeScript = async () => {
-    const textToAnalyze = scriptText.trim();
+  const handleAnalyzeScript = async (overrideText?: string) => {
+    const textToAnalyze = (overrideText || scriptText).trim();
     if (!textToAnalyze) {
       toast.error('Pega o sube un guion primero');
       return;
@@ -1183,6 +1199,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         {/* Script Summary Panel with episodes, teasers, and actions */}
         <ScriptSummaryPanelAssisted 
           projectId={projectId} 
+          projectFormat={projectFormat}
           onScenesGenerated={() => {
             toast.success('Escenas generadas. Ve al módulo de Escenas para producir.');
           }}
@@ -1591,7 +1608,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               )}
 
               <Button 
-                onClick={handleAnalyzeScript} 
+                id="analyze-script-btn"
+                onClick={() => handleAnalyzeScript()} 
                 className="w-full" 
                 disabled={!scriptText.trim() || status === 'analyzing'}
               >
