@@ -178,86 +178,84 @@ export default function Dashboard() {
       )}
 
       <PageHeader title={t.dashboard.title} description={t.dashboard.subtitle}>
-        <div className="flex items-center gap-3">
-          <UserProfileBadge />
-          <Button variant="gold" asChild>
-            <Link to="/projects/new">
-              <Plus className="w-4 h-4" />
-              {t.projects.newProject}
-            </Link>
-          </Button>
-        </div>
+        <UserProfileBadge />
+        <Button variant="gold" size="sm" asChild className="hidden sm:inline-flex">
+          <Link to="/projects/new">
+            <Plus className="w-4 h-4" />
+            {t.projects.newProject}
+          </Link>
+        </Button>
       </PageHeader>
 
-      <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-7xl mx-auto p-4 lg:p-6 space-y-4 lg:space-y-6">
           
-          {/* Stats Grid - More visual */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Stats Grid - Responsive */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
             {statCards.map((stat) => {
               const Icon = stat.icon;
               return (
                 <div 
                   key={stat.label} 
-                  className="relative overflow-hidden rounded-xl bg-card border border-border/50 p-5 group hover:border-primary/30 transition-all duration-300"
+                  className="relative overflow-hidden rounded-xl bg-card border border-border/50 p-3 lg:p-5 group hover:border-primary/30 transition-all duration-300"
                 >
                   {/* Background gradient */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-50`} />
                   
                   <div className="relative">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                        <Icon className={`w-5 h-5 ${stat.iconColor}`} />
+                    <div className="flex items-center justify-between mb-2 lg:mb-3">
+                      <div className={`w-8 lg:w-10 h-8 lg:h-10 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                        <Icon className={`w-4 lg:w-5 h-4 lg:h-5 ${stat.iconColor}`} />
                       </div>
-                      <TrendingUp className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <TrendingUp className="w-3 lg:w-4 h-3 lg:h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block" />
                     </div>
-                    <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
-                    <div className="text-xs text-muted-foreground/70 mt-1">{stat.trend}</div>
+                    <div className="text-2xl lg:text-3xl font-bold text-foreground mb-0.5 lg:mb-1">{stat.value}</div>
+                    <div className="text-xs lg:text-sm text-muted-foreground truncate">{stat.label}</div>
+                    <div className="text-[10px] lg:text-xs text-muted-foreground/70 mt-0.5 lg:mt-1 hidden sm:block">{stat.trend}</div>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Main Content Grid */}
-          <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Content - Stack on mobile, grid on desktop */}
+          <div className="grid lg:grid-cols-3 gap-4 lg:gap-6">
             
-            {/* Projects Section - Takes 2 columns */}
-            <div className="lg:col-span-2 space-y-4">
+            {/* Projects Section */}
+            <div className="lg:col-span-2 space-y-3 lg:space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <FolderKanban className="w-4 h-4 text-primary" />
+                <div className="flex items-center gap-2 lg:gap-3">
+                  <div className="w-7 lg:w-8 h-7 lg:h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <FolderKanban className="w-3.5 lg:w-4 h-3.5 lg:h-4 text-primary" />
                   </div>
-                  <h2 className="text-lg font-semibold text-foreground">{t.dashboard.recentProjects}</h2>
+                  <h2 className="text-base lg:text-lg font-semibold text-foreground">{t.dashboard.recentProjects}</h2>
                 </div>
-                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground text-xs lg:text-sm">
                   <Link to="/projects">
                     {t.dashboard.viewAll}
-                    <ArrowRight className="w-4 h-4 ml-1" />
+                    <ArrowRight className="w-3.5 lg:w-4 h-3.5 lg:h-4 ml-1" />
                   </Link>
                 </Button>
               </div>
 
               {loading ? (
-                <div className="grid gap-3">
+                <div className="grid gap-2 lg:gap-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-20 rounded-xl bg-card/50 shimmer" />
+                    <div key={i} className="h-16 lg:h-20 rounded-xl bg-card/50 shimmer" />
                   ))}
                 </div>
               ) : projects.length === 0 ? (
-                <div className="rounded-xl bg-card border border-border/50 p-10 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-8 h-8 text-primary" />
+                <div className="rounded-xl bg-card border border-border/50 p-6 lg:p-10 text-center">
+                  <div className="w-12 lg:w-16 h-12 lg:h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center mx-auto mb-3 lg:mb-4">
+                    <Sparkles className="w-6 lg:w-8 h-6 lg:h-8 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                  <h3 className="text-base lg:text-lg font-semibold text-foreground mb-2">
                     {t.dashboard.createFirst}
                   </h3>
-                  <p className="text-muted-foreground mb-6 max-w-md mx-auto text-sm">
+                  <p className="text-muted-foreground mb-4 lg:mb-6 max-w-md mx-auto text-xs lg:text-sm">
                     {t.dashboard.createFirstDesc}
                   </p>
-                  <Button variant="gold" asChild>
+                  <Button variant="gold" size="sm" asChild>
                     <Link to="/projects/new">
                       <Plus className="w-4 h-4" />
                       {t.projects.newProject}
@@ -265,45 +263,49 @@ export default function Dashboard() {
                   </Button>
                 </div>
               ) : (
-                <div className="grid gap-3">
+                <div className="grid gap-2 lg:gap-3">
                   {projects.map((project) => {
                     const formatInfo = getFormatBadge(project.format);
                     return (
                       <Link
                         key={project.id}
                         to={`/projects/${project.id}`}
-                        className="group rounded-xl bg-card border border-border/50 p-4 hover:border-primary/30 hover:bg-card/80 transition-all duration-300"
+                        className="group rounded-xl bg-card border border-border/50 p-3 lg:p-4 hover:border-primary/30 hover:bg-card/80 transition-all duration-300 active:scale-[0.98]"
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <Film className="w-6 h-6 text-primary" />
+                        <div className="flex items-center gap-3 lg:gap-4">
+                          <div className="w-10 lg:w-12 h-10 lg:h-12 rounded-xl bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <Film className="w-5 lg:w-6 h-5 lg:h-6 text-primary" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                            <div className="flex items-center gap-2 mb-0.5 lg:mb-1">
+                              <h3 className="font-semibold text-sm lg:text-base text-foreground truncate group-hover:text-primary transition-colors">
                                 {project.title}
                               </h3>
-                              <Badge variant={formatInfo.variant} className="capitalize shrink-0">
+                              <Badge variant={formatInfo.variant} className="capitalize shrink-0 text-[10px] lg:text-xs">
                                 {formatInfo.label}
                               </Badge>
                             </div>
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-3 lg:gap-4 text-xs lg:text-sm text-muted-foreground">
                               <span className="flex items-center gap-1">
-                                <Layers className="w-3.5 h-3.5" />
+                                <Layers className="w-3 lg:w-3.5 h-3 lg:h-3.5" />
                                 {project.episodes_count} eps
                               </span>
                               <span className="flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
+                                <Clock className="w-3 lg:w-3.5 h-3 lg:h-3.5" />
                                 {getTimeAgo(project.updated_at)}
                               </span>
                             </div>
                           </div>
-                          <div className="shrink-0 flex items-center gap-3">
+                          <div className="shrink-0 flex items-center gap-2 lg:gap-3">
                             <div className="text-right hidden sm:block">
-                              <div className="text-sm font-medium text-foreground">{project.bible_completeness_score}%</div>
-                              <Progress value={project.bible_completeness_score} className="w-20 h-1.5 mt-1" />
+                              <div className="text-xs lg:text-sm font-medium text-foreground">{project.bible_completeness_score}%</div>
+                              <Progress value={project.bible_completeness_score} className="w-16 lg:w-20 h-1 lg:h-1.5 mt-1" />
                             </div>
-                            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                            {/* Mobile: Show only percentage */}
+                            <div className="sm:hidden text-xs font-medium text-muted-foreground">
+                              {project.bible_completeness_score}%
+                            </div>
+                            <ArrowRight className="w-4 lg:w-5 h-4 lg:h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                           </div>
                         </div>
                       </Link>
@@ -313,8 +315,8 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Right Column - Quick Actions & Activity */}
-            <div className="space-y-6">
+            {/* Right Column - Quick Actions (hidden on mobile, actions are in bottom nav) */}
+            <div className="hidden lg:block space-y-6">
               
               {/* Quick Actions */}
               <div className="space-y-3">
@@ -390,6 +392,21 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Tip Card - Shown only on small screens */}
+          <div className="lg:hidden rounded-xl bg-gradient-to-br from-primary/5 to-amber-500/5 border border-primary/20 p-3">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Target className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-foreground text-sm mb-0.5">Consejo</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Define tus personajes con Visual DNA antes de generar escenas.
+                </p>
               </div>
             </div>
           </div>
