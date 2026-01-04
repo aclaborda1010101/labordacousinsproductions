@@ -207,10 +207,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   });
   const isPro = userLevel === 'pro';
 
+  // Draft persistence key
+  const DRAFT_KEY = `script_draft_${projectId}`;
+
   // Entry mode state
   const [entryMode, setEntryMode] = useState<EntryMode | null>(null);
   const [hasExistingScript, setHasExistingScript] = useState(false);
   const [existingScriptText, setExistingScriptText] = useState('');
+  const [hasDraft, setHasDraft] = useState(false);
 
   // Form state
   const [ideaText, setIdeaText] = useState('');
@@ -233,6 +237,61 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
   // File input ref
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem(DRAFT_KEY);
+      if (savedDraft) {
+        const draft = JSON.parse(savedDraft);
+        if (draft.ideaText) setIdeaText(draft.ideaText);
+        if (draft.scriptText) setScriptText(draft.scriptText);
+        if (draft.entryMode) setEntryMode(draft.entryMode);
+        if (draft.inputMethod) setInputMethod(draft.inputMethod);
+        if (draft.uploadedFileName) setUploadedFileName(draft.uploadedFileName);
+        if (draft.selectedModel) setSelectedModel(draft.selectedModel);
+        setHasDraft(true);
+        console.log('[ScriptWorkspace] Draft restored:', draft.entryMode);
+      }
+    } catch (e) {
+      console.warn('[ScriptWorkspace] Error loading draft:', e);
+    }
+  }, [DRAFT_KEY]);
+
+  // Auto-save draft when relevant state changes
+  useEffect(() => {
+    // Don't save if we have an existing script or generation succeeded
+    if (hasExistingScript || status === 'success') {
+      // Clear draft when script is saved successfully
+      localStorage.removeItem(DRAFT_KEY);
+      return;
+    }
+    
+    // Only save if there's content to save
+    if (ideaText || scriptText || entryMode) {
+      const draft = {
+        ideaText,
+        scriptText,
+        entryMode,
+        inputMethod,
+        uploadedFileName,
+        selectedModel,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    }
+  }, [ideaText, scriptText, entryMode, inputMethod, uploadedFileName, selectedModel, hasExistingScript, status, DRAFT_KEY]);
+
+  // Clear draft when discarding
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setHasDraft(false);
+    setIdeaText('');
+    setScriptText('');
+    setEntryMode(null);
+    setUploadedFileName(null);
+    toast.info('Borrador descartado');
+  };
 
   // Check for existing script on mount
   useEffect(() => {
@@ -1142,6 +1201,34 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   if (!entryMode) {
     return (
       <div className="space-y-6 p-6">
+        {/* Draft recovery banner */}
+        {hasDraft && (ideaText || scriptText) && (
+          <Alert className="border-primary/50 bg-primary/5">
+            <RefreshCw className="h-4 w-4 text-primary" />
+            <AlertTitle className="text-primary">Borrador recuperado</AlertTitle>
+            <AlertDescription className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
+                Tienes un borrador guardado. ¿Quieres continuar donde lo dejaste?
+              </span>
+              <div className="flex gap-2 mt-2 sm:mt-0">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={clearDraft}
+                >
+                  Descartar
+                </Button>
+                <Button 
+                  size="sm"
+                  onClick={() => setEntryMode(ideaText ? 'idea' : 'existing')}
+                >
+                  Reanudar
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold mb-2">¿Cómo quieres empezar?</h2>
           <p className="text-muted-foreground">
@@ -1208,6 +1295,11 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             <Lightbulb className="h-5 w-5 text-primary" />
             Genera tu guion desde una idea
           </h2>
+          {ideaText && (
+            <Badge variant="outline" className="ml-auto text-xs">
+              Guardado automático ✓
+            </Badge>
+          )}
         </div>
 
         {/* Show results if we have them */}
