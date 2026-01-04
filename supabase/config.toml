@@ -113,3 +113,15 @@ verify_jwt = false
 
 [functions.export-bible]
 verify_jwt = false
+
+[functions.unlock-developer-mode]
+verify_jwt = false
+
+[functions.disable-developer-mode]
+verify_jwt = false
+
+[functions.train-character-lora]
+verify_jwt = false
+
+[functions.lora-training-webhook]
+verify_jwt = false
