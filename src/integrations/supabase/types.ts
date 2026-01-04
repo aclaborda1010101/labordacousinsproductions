@@ -2011,6 +2011,7 @@ export type Database = {
           suggestions: Json | null
           triggered_rules: string[] | null
           used_asset_ids: string[] | null
+          user_override: boolean | null
           verdict: Database["public"]["Enums"]["generation_verdict"]
           warnings: Json | null
         }
@@ -2044,6 +2045,7 @@ export type Database = {
           suggestions?: Json | null
           triggered_rules?: string[] | null
           used_asset_ids?: string[] | null
+          user_override?: boolean | null
           verdict?: Database["public"]["Enums"]["generation_verdict"]
           warnings?: Json | null
         }
@@ -2077,6 +2079,7 @@ export type Database = {
           suggestions?: Json | null
           triggered_rules?: string[] | null
           used_asset_ids?: string[] | null
+          user_override?: boolean | null
           verdict?: Database["public"]["Enums"]["generation_verdict"]
           warnings?: Json | null
         }

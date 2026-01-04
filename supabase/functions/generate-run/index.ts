@@ -18,6 +18,7 @@ interface GenerateRunRequest {
   params?: Record<string, unknown>;
   parentRunId?: string; // For regeneration chains
   presetId?: string; // For editorial assistant tracking
+  userOverride?: boolean; // True if user chose different from recommendation
 }
 
 interface GenerateRunResponse {
@@ -99,7 +100,8 @@ serve(async (req) => {
         warnings: [],
         suggestions: [],
         parent_run_id: body.parentRunId || null,  // For regeneration chains
-        preset_id: body.presetId || null  // For editorial assistant tracking
+        preset_id: body.presetId || null,  // For editorial assistant tracking
+        user_override: body.userOverride || false  // Track if user overrode recommendation
       })
       .select('id')
       .single();

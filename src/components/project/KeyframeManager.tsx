@@ -24,10 +24,13 @@ import {
   CheckCircle2,
   Check,
   RotateCcw,
-  Star
+  Star,
+  TrendingUp
 } from 'lucide-react';
 import SetCanonModal from './SetCanonModal';
 import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
+import { useMotorSelector } from '@/hooks/useMotorSelector';
+import { MotorRecommendationBadge } from './MotorRecommendationBadge';
 
 interface Keyframe {
   id: string;
@@ -109,6 +112,27 @@ export default function KeyframeManager({
   const [canonModal, setCanonModal] = useState<{ open: boolean; keyframe: Keyframe | null }>({ open: false, keyframe: null });
   const [projectId, setProjectId] = useState<string | null>(null);
   const [promptPatch, setPromptPatch] = useState<string | null>(null);
+
+  // Motor Selector integration - only enable when projectId is available
+  const { 
+    recommendation, 
+    loading: motorLoading, 
+    checkOverride, 
+    logShown, 
+    logOverride,
+    refresh: refreshMotor
+  } = useMotorSelector({ 
+    projectId: projectId || '', 
+    assetType: 'keyframe',
+    enabled: !!projectId 
+  });
+
+  // Log recommendation shown
+  useEffect(() => {
+    if (recommendation && !motorLoading && projectId) {
+      logShown();
+    }
+  }, [recommendation, motorLoading, projectId, logShown]);
 
   // Calculate required keyframe slots based on duration
   const getRequiredSlots = useCallback(() => {
@@ -267,6 +291,17 @@ export default function KeyframeManager({
       const payload = buildGenerationPayload(slotIndex, fetchedProjectId, parentRunId);
       if (!payload) throw new Error('Invalid slot');
 
+      // Check if user is overriding recommendation
+      const currentPreset = slot.frameType;
+      const isUserOverride = checkOverride('nano-banana', currentPreset);
+      if (isUserOverride) {
+        logOverride('nano-banana', currentPreset);
+      }
+
+      // Add userOverride to payload
+      (payload as any).userOverride = isUserOverride;
+      (payload as any).presetId = currentPreset;
+
       // Use unified generateRun gateway
       const result = await generateRun(payload);
 
@@ -300,6 +335,7 @@ export default function KeyframeManager({
 
       setKeyframes(typedKeyframes);
       onKeyframesChange?.(typedKeyframes);
+      refreshMotor(); // Refresh recommendations
       toast.success(`Keyframe ${slot.frameType} generado (runId: ${result.runId?.slice(0, 8)})`);
     } catch (error) {
       console.error('Error generating keyframe:', error);
@@ -520,9 +556,14 @@ export default function KeyframeManager({
       {/* Progress bar */}
       <div className="space-y-1">
         <Progress value={completionPercent} className="h-2" />
-        <div className="flex justify-between text-xs text-muted-foreground">
+        <div className="flex justify-between items-center text-xs text-muted-foreground">
           <span>{Math.round(completionPercent)}% completado</span>
-          <span>nano-banana-pro (Gemini 3 Pro)</span>
+          <div className="flex items-center gap-2">
+            {recommendation && recommendation.confidence !== 'low' && (
+              <MotorRecommendationBadge recommendation={recommendation} loading={motorLoading} />
+            )}
+            <span>nano-banana-pro (Gemini 3 Pro)</span>
+          </div>
         </div>
       </div>
 
