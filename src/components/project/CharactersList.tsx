@@ -164,15 +164,26 @@ export default function CharactersList({ projectId }: CharactersListProps) {
     toast.info(`Generando ${character.name}...`);
 
     try {
+      // Build prompt from character data
+      const prompt = [
+        character.name,
+        character.bio || '',
+        character.role || '',
+      ].filter(Boolean).join('. ');
+
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
           projectId,
-          runType: 'character',
-          entityId: character.id,
-          entityName: character.name,
-          entityDescription: character.bio || '',
-          preset: 'portrait_frontal',
+          type: 'character',
           phase: 'exploration',
+          engine: 'fal-ai/nano-banana-pro',
+          engineSelectedBy: 'auto',
+          prompt,
+          context: `Character: ${character.name}`,
+          params: {
+            entityId: character.id,
+            preset: 'portrait_frontal',
+          },
         },
       });
 
@@ -256,16 +267,26 @@ export default function CharactersList({ projectId }: CharactersListProps) {
     toast.info(`Generando nueva variante de ${character.name}...`);
 
     try {
+      const prompt = [
+        character.name,
+        character.bio || '',
+        character.role || '',
+      ].filter(Boolean).join('. ');
+
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
           projectId,
-          runType: 'character',
-          entityId: character.id,
-          entityName: character.name,
-          entityDescription: character.bio || '',
-          preset: 'portrait_frontal',
+          type: 'character',
           phase: 'exploration',
+          engine: 'fal-ai/nano-banana-pro',
+          engineSelectedBy: 'auto',
+          prompt,
+          context: `Character: ${character.name}`,
           parentRunId: character.accepted_run_id,
+          params: {
+            entityId: character.id,
+            preset: 'portrait_frontal',
+          },
         },
       });
 
