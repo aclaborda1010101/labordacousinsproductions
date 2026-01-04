@@ -156,13 +156,12 @@ function TaskItem({ task, onRemove }: { task: BackgroundTask; onRemove: () => vo
 }
 
 export function TaskNotificationCenter() {
+  const [localOpen, setLocalOpen] = React.useState(false);
   const { 
     tasks, 
     activeTasks, 
     completedTasks, 
     failedTasks,
-    isOpen, 
-    setIsOpen, 
     hasUnread, 
     markAllRead,
     removeTask,
@@ -170,7 +169,7 @@ export function TaskNotificationCenter() {
   } = useBackgroundTasks();
 
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
+    setLocalOpen(open);
     if (open) {
       markAllRead();
     }
@@ -187,7 +186,7 @@ export function TaskNotificationCenter() {
   });
 
   return (
-    <Popover open={isOpen} onOpenChange={handleOpenChange}>
+    <Popover open={localOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />

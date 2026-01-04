@@ -68,7 +68,6 @@ export default function ProjectDetailPro({ project, setProject }: ProjectDetailP
         <Badge variant={bibleReady ? 'pass' : 'pending'}>
           Biblia: {project.bible_completeness_score}%
         </Badge>
-        <NotificationCenter projectId={project.id} />
         <Button variant="outline" size="icon" onClick={() => setShowSettings(true)}>
           <Settings className="w-4 h-4" />
         </Button>
