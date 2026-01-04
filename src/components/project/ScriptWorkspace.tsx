@@ -57,7 +57,11 @@ import {
   Star,
   Users2,
   FileDown,
+  Mic,
+  MicOff,
+  Square,
 } from 'lucide-react';
+import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 
 interface ScriptWorkspaceProps {
   projectId: string;
@@ -242,6 +246,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
   // File input ref
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Voice recorder for idea input
+  const voiceRecorder = useVoiceRecorder({
+    onTranscript: (text) => {
+      setIdeaText((prev) => prev ? `${prev}\n\n${text}` : text);
+    },
+    maxDurationMs: 120000, // 2 minutes max
+  });
 
   // Load draft from localStorage on mount
   useEffect(() => {
@@ -1630,15 +1642,51 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           <Card>
             <CardContent className="pt-6 space-y-4">
               <div>
-                <Label htmlFor="idea">Describe tu historia</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="idea">Describe tu historia</Label>
+                  <div className="flex items-center gap-2">
+                    {voiceRecorder.isRecording && (
+                      <div className="flex items-center gap-1.5 text-xs text-destructive animate-pulse">
+                        <div className="w-2 h-2 rounded-full bg-destructive" />
+                        {Math.floor(voiceRecorder.recordingTime / 60)}:{String(voiceRecorder.recordingTime % 60).padStart(2, '0')}
+                      </div>
+                    )}
+                    {voiceRecorder.isTranscribing && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Transcribiendo...
+                      </div>
+                    )}
+                    <Button
+                      type="button"
+                      variant={voiceRecorder.isRecording ? "destructive" : "outline"}
+                      size="sm"
+                      className="h-8 gap-1.5"
+                      onClick={voiceRecorder.toggleRecording}
+                      disabled={status === 'generating' || voiceRecorder.isTranscribing}
+                    >
+                      {voiceRecorder.isRecording ? (
+                        <>
+                          <Square className="h-3 w-3" />
+                          Detener
+                        </>
+                      ) : (
+                        <>
+                          <Mic className="h-3.5 w-3.5" />
+                          Dictar idea
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
                 <Textarea
                   id="idea"
-                  placeholder="Ej: Una comedia sobre un robot que quiere ser chef en un restaurante de alta cocina..."
+                  placeholder="Ej: Una comedia sobre un robot que quiere ser chef en un restaurante de alta cocina... (o pulsa 'Dictar idea' para usar tu voz)"
                   value={ideaText}
                   onChange={(e) => setIdeaText(e.target.value)}
                   rows={6}
                   className="mt-2"
-                  disabled={status === 'generating'}
+                  disabled={status === 'generating' || voiceRecorder.isRecording}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Incluye personajes, conflicto, tono y ambientación para mejores resultados
