@@ -209,6 +209,50 @@ export type Database = {
         }
         Relationships: []
       }
+      canon_assets: {
+        Row: {
+          asset_type: string
+          created_at: string
+          id: string
+          image_url: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          project_id: string
+          run_id: string
+        }
+        Insert: {
+          asset_type: string
+          created_at?: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          project_id: string
+          run_id: string
+        }
+        Update: {
+          asset_type?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          project_id?: string
+          run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canon_assets_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       character_narrative: {
         Row: {
           biography: Json

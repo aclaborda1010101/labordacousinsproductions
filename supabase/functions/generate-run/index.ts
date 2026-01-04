@@ -110,16 +110,56 @@ serve(async (req) => {
     runId = runData.id;
     console.log(`[generate-run] Created run: ${runId}`);
 
-    // 3) Route to existing Edge Functions based on type
+    // 3) Fetch canon assets for this project to build context
+    const { data: canonAssets } = await supabaseAdmin
+      .from('canon_assets')
+      .select('asset_type, name, image_url, notes')
+      .eq('project_id', body.projectId)
+      .eq('is_active', true);
+
+    // Build canon context string
+    let canonContext = '';
+    const canonReferenceImages: string[] = [];
+    
+    if (canonAssets && canonAssets.length > 0) {
+      const groupedAssets: Record<string, typeof canonAssets> = {};
+      for (const asset of canonAssets) {
+        if (!groupedAssets[asset.asset_type]) {
+          groupedAssets[asset.asset_type] = [];
+        }
+        groupedAssets[asset.asset_type].push(asset);
+        if (asset.image_url) {
+          canonReferenceImages.push(asset.image_url);
+        }
+      }
+
+      canonContext = '\n\nCANON DEL PROYECTO:\n';
+      for (const [type, assets] of Object.entries(groupedAssets)) {
+        for (const asset of assets) {
+          const typeLabel = type === 'character' ? 'Personaje' : 
+                           type === 'location' ? 'Localización' : 'Estilo';
+          canonContext += `- ${typeLabel}: ${asset.name}`;
+          if (asset.notes) canonContext += ` -> ${asset.notes}`;
+          canonContext += '\n';
+        }
+      }
+      console.log(`[generate-run] Canon context: ${canonAssets.length} assets loaded`);
+    }
+
+    // 4) Route to existing Edge Functions based on type
     let functionName: string;
     let functionBody: Record<string, unknown>;
+
+    // Append canon context to prompt/context
+    const enhancedPrompt = body.prompt + canonContext;
+    const enhancedContext = (body.context || '') + canonContext;
 
     switch (body.type) {
       case 'keyframe':
         functionName = 'generate-keyframe';
         functionBody = {
           shotId: body.params?.shotId,
-          sceneDescription: body.prompt,
+          sceneDescription: enhancedPrompt,
           shotType: body.params?.shotType || 'medium',
           duration: body.params?.duration || 5,
           frameType: body.params?.frameType || 'initial',
@@ -131,7 +171,8 @@ serve(async (req) => {
           shotDetails: body.params?.shotDetails,
           previousKeyframeUrl: body.params?.previousKeyframeUrl,
           previousKeyframeData: body.params?.previousKeyframeData,
-          stylePack: body.params?.stylePack
+          stylePack: body.params?.stylePack,
+          canonReferenceImages: canonReferenceImages.length > 0 ? canonReferenceImages : undefined
         };
         break;
 
