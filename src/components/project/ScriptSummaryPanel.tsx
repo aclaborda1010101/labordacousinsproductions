@@ -27,6 +27,14 @@ import {
   Clapperboard,
   RefreshCw,
   Play,
+  Crown,
+  Skull,
+  UserCheck,
+  Star,
+  Zap,
+  GitBranch,
+  Package,
+  Sparkles,
 } from 'lucide-react';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF, exportTeaserPDF } from '@/lib/exportScreenplayPDF';
 
@@ -46,6 +54,9 @@ interface ScriptData {
   };
   characters?: any[];
   locations?: any[];
+  props?: any[];
+  subplots?: any[];
+  plot_twists?: any[];
   counts?: {
     total_scenes?: number;
     total_dialogue_lines?: number;
@@ -100,6 +111,9 @@ export function ScriptSummaryPanel({ projectId, onScenesGenerated }: ScriptSumma
           teasers: parsed.teasers,
           characters: parsed.characters || parsed.main_characters,
           locations: parsed.locations || parsed.main_locations,
+          props: parsed.props || parsed.main_props || [],
+          subplots: parsed.subplots || [],
+          plot_twists: parsed.plot_twists || [],
           counts: parsed.counts,
         });
       }
@@ -478,6 +492,190 @@ export function ScriptSummaryPanel({ projectId, onScenesGenerated }: ScriptSumma
                   </CardContent>
                 </Card>
               )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Characters Section with Roles */}
+      {scriptData.characters && scriptData.characters.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary" />
+              Personajes ({scriptData.characters.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {(() => {
+                const protagonists = scriptData.characters.filter(c => c.role === 'protagonist' || c.character_role === 'protagonist');
+                const antagonists = scriptData.characters.filter(c => c.role === 'antagonist' || c.character_role === 'antagonist');
+                const supporting = scriptData.characters.filter(c => c.role === 'supporting' || c.character_role === 'supporting');
+                const recurring = scriptData.characters.filter(c => c.role === 'recurring' || c.character_role === 'recurring');
+                const collective = scriptData.characters.filter(c => c.role === 'collective_entity' || c.character_role === 'collective_entity');
+                const others = scriptData.characters.filter(c => 
+                  !['protagonist', 'antagonist', 'supporting', 'recurring', 'collective_entity'].includes(c.role || c.character_role || '')
+                );
+
+                const renderGroup = (chars: any[], label: string, Icon: any, variant: 'default' | 'destructive' | 'secondary' | 'outline' = 'secondary') => (
+                  chars.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        <span className="text-sm font-medium">{label} ({chars.length})</span>
+                      </div>
+                      <div className="grid gap-2 pl-6">
+                        {chars.map((char, i) => (
+                          <div key={i} className="p-2 bg-muted/30 rounded-lg">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant={variant}>{char.name}</Badge>
+                              {char.role && <span className="text-xs text-muted-foreground">({char.role})</span>}
+                            </div>
+                            {char.description && (
+                              <p className="text-xs text-muted-foreground">{char.description}</p>
+                            )}
+                            {char.bio && !char.description && (
+                              <p className="text-xs text-muted-foreground">{char.bio}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                );
+
+                return (
+                  <>
+                    {renderGroup(protagonists, 'Protagonistas', Crown, 'default')}
+                    {renderGroup(antagonists, 'Antagonistas', Skull, 'destructive')}
+                    {renderGroup(supporting, 'Secundarios', UserCheck, 'secondary')}
+                    {renderGroup(recurring, 'Recurrentes', Star, 'outline')}
+                    {renderGroup(collective, 'Entidades Colectivas', Users, 'outline')}
+                    {renderGroup(others, 'Otros', Sparkles, 'outline')}
+                  </>
+                );
+              })()}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Locations Section */}
+      {scriptData.locations && scriptData.locations.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-primary" />
+              Localizaciones ({scriptData.locations.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {scriptData.locations.map((loc, i) => (
+                <div key={i} className="p-2 bg-muted/30 rounded-lg">
+                  <Badge variant="outline">{loc.name}</Badge>
+                  {loc.description && (
+                    <p className="text-xs text-muted-foreground mt-1">{loc.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Props Section */}
+      {scriptData.props && scriptData.props.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary" />
+              Props / Objetos Clave ({scriptData.props.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {scriptData.props.map((prop, i) => (
+                <div key={i} className="p-2 bg-muted/30 rounded-lg">
+                  <Badge variant="secondary">{prop.name}</Badge>
+                  {prop.description && (
+                    <p className="text-xs text-muted-foreground mt-1">{prop.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Subplots Section */}
+      {scriptData.subplots && scriptData.subplots.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <GitBranch className="h-5 w-5 text-primary" />
+              Subtramas ({scriptData.subplots.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {scriptData.subplots.map((subplot, i) => (
+                <div key={i} className="p-3 bg-muted/30 rounded-lg">
+                  <div className="font-medium text-sm">{subplot.name}</div>
+                  {subplot.description && (
+                    <p className="text-xs text-muted-foreground mt-1">{subplot.description}</p>
+                  )}
+                  {subplot.characters_involved && subplot.characters_involved.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {subplot.characters_involved.map((char: string, ci: number) => (
+                        <Badge key={ci} variant="outline" className="text-xs">{char}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  {subplot.resolution && subplot.resolution !== 'not_specified' && (
+                    <p className="text-xs text-primary mt-1">Resolución: {subplot.resolution}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Plot Twists Section */}
+      {scriptData.plot_twists && scriptData.plot_twists.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Giros Narrativos ({scriptData.plot_twists.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {scriptData.plot_twists.map((twist, i) => (
+                <div key={i} className="p-3 bg-muted/30 rounded-lg flex items-start gap-3">
+                  <Badge 
+                    variant={twist.impact === 'paradigm_shift' ? 'destructive' : twist.impact === 'major' ? 'default' : 'secondary'}
+                    className="shrink-0"
+                  >
+                    {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'}
+                    {twist.impact === 'paradigm_shift' ? 'Cambio Total' : twist.impact === 'major' ? 'Mayor' : 'Menor'}
+                  </Badge>
+                  <div>
+                    <div className="font-medium text-sm">{twist.name}</div>
+                    {twist.description && (
+                      <p className="text-xs text-muted-foreground mt-1">{twist.description}</p>
+                    )}
+                    {(twist.episode || twist.scene) && (
+                      <p className="text-xs text-primary mt-1">
+                        {twist.episode ? `Episodio ${twist.episode}` : `Escena ${twist.scene}`}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
