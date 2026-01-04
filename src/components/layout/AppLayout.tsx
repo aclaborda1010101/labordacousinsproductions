@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -8,27 +8,34 @@ import { Badge } from '@/components/ui/badge';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { TaskNotificationCenter } from '@/components/notifications/TaskNotificationCenter';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Film, 
   Home, 
   FolderKanban, 
   Clapperboard,
   Users,
-  Settings,
   LogOut,
-  Sparkles,
   Play,
   ChevronRight,
-  ChevronLeft,
+  ChevronDown,
   Menu,
   PanelLeftClose,
   PanelLeft,
-  Wrench
+  Wrench,
+  Plus,
+  Folder
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AppLayoutProps {
   children: ReactNode;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  format: string;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
@@ -39,8 +46,27 @@ export function AppLayout({ children }: AppLayoutProps) {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const [projectsExpanded, setProjectsExpanded] = useState(true);
+  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
+
+  // Fetch recent projects for sidebar
+  useEffect(() => {
+    async function fetchRecentProjects() {
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from('projects')
+        .select('id, title, format')
+        .order('updated_at', { ascending: false })
+        .limit(5);
+      
+      if (data) {
+        setRecentProjects(data);
+      }
+    }
+    
+    fetchRecentProjects();
+  }, [user]);
 
   const navItems = [
     { href: '/dashboard', label: t.nav.dashboard, icon: Home },
@@ -93,14 +119,15 @@ export function AppLayout({ children }: AppLayoutProps) {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.href);
+          const isActive = location.pathname === item.href || 
+            (item.hasChildren && location.pathname.startsWith('/projects'));
           const Icon = item.icon;
           
           if (item.hasChildren && (!collapsed || isMobile)) {
             return (
-              <div key={item.href} className="space-y-1">
+              <div key={item.href} className="space-y-0.5">
                 <button
                   onClick={() => setProjectsExpanded(!projectsExpanded)}
                   className={cn(
@@ -112,27 +139,92 @@ export function AppLayout({ children }: AppLayoutProps) {
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
                   <span className="flex-1 text-left">{item.label}</span>
-                  <ChevronRight className={cn("w-4 h-4 transition-transform", projectsExpanded && "rotate-90")} />
+                  {projectsExpanded ? (
+                    <ChevronDown className="w-4 h-4 transition-transform" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 transition-transform" />
+                  )}
                 </button>
-                {projectsExpanded && (
-                  <div className="ml-8 space-y-1">
+                
+                {/* Submenu - Collapsible */}
+                <div className={cn(
+                  "overflow-hidden transition-all duration-200",
+                  projectsExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                )}>
+                  <div className="ml-4 pl-4 border-l border-sidebar-border/50 space-y-0.5 py-1">
                     <Link
                       to="/projects"
                       onClick={() => isMobile && setMobileOpen(false)}
-                      className="block px-3 py-2 text-sm text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent/50 rounded-lg"
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors",
+                        location.pathname === '/projects'
+                          ? "bg-sidebar-accent/60 text-sidebar-accent-foreground"
+                          : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/30"
+                      )}
                     >
+                      <Folder className="w-4 h-4" />
                       Ver todos
                     </Link>
                     <Link
                       to="/projects/new"
                       onClick={() => isMobile && setMobileOpen(false)}
-                      className="block px-3 py-2 text-sm text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent/50 rounded-lg"
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors",
+                        location.pathname === '/projects/new'
+                          ? "bg-sidebar-accent/60 text-sidebar-accent-foreground"
+                          : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/30"
+                      )}
                     >
+                      <Plus className="w-4 h-4" />
                       Nuevo proyecto
                     </Link>
+                    
+                    {/* Recent Projects */}
+                    {recentProjects.length > 0 && (
+                      <>
+                        <div className="px-3 py-2 text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">
+                          Recientes
+                        </div>
+                        {recentProjects.map((project) => (
+                          <Link
+                            key={project.id}
+                            to={`/projects/${project.id}`}
+                            onClick={() => isMobile && setMobileOpen(false)}
+                            className={cn(
+                              "flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors group",
+                              location.pathname === `/projects/${project.id}`
+                                ? "bg-sidebar-accent/60 text-sidebar-accent-foreground"
+                                : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/30"
+                            )}
+                          >
+                            <Film className="w-4 h-4 flex-shrink-0" />
+                            <span className="truncate flex-1">{project.title}</span>
+                          </Link>
+                        ))}
+                      </>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
+            );
+          }
+          
+          // Collapsed state for projects
+          if (item.hasChildren && collapsed && !isMobile) {
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={cn(
+                  "flex items-center justify-center px-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                  isActive 
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground" 
+                    : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                )}
+                title={item.label}
+              >
+                <Icon className="w-5 h-5" />
+              </Link>
             );
           }
           
@@ -244,7 +336,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Desktop Sidebar */}
       <aside className={cn(
         "hidden lg:flex bg-sidebar border-r border-sidebar-border flex-col transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        collapsed ? "w-16" : "w-72"
       )}>
         <SidebarContent />
       </aside>
