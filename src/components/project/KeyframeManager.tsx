@@ -29,8 +29,9 @@ import {
 } from 'lucide-react';
 import SetCanonModal from './SetCanonModal';
 import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
-import { useMotorSelector } from '@/hooks/useMotorSelector';
-import { MotorRecommendationBadge } from './MotorRecommendationBadge';
+import { useRecommendations } from '@/hooks/useRecommendations';
+import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
+import { ENGINES } from '@/lib/recommendations';
 
 interface Keyframe {
   id: string;
@@ -113,26 +114,32 @@ export default function KeyframeManager({
   const [projectId, setProjectId] = useState<string | null>(null);
   const [promptPatch, setPromptPatch] = useState<string | null>(null);
 
-  // Motor Selector integration - only enable when projectId is available
+  const KEYFRAME_PRESETS = ['initial', 'intermediate', 'final'];
+  
+  // Recommendations v1 - only enable when projectId is available
   const { 
     recommendation, 
-    loading: motorLoading, 
+    orderedPresets,
+    loading: recsLoading, 
     checkOverride, 
     logShown, 
     logOverride,
-    refresh: refreshMotor
-  } = useMotorSelector({ 
+    logFollowed,
+    refresh: refreshRecs
+  } = useRecommendations({ 
     projectId: projectId || '', 
     assetType: 'keyframe',
+    availablePresets: KEYFRAME_PRESETS,
+    phase: 'exploration',
     enabled: !!projectId 
   });
 
   // Log recommendation shown
   useEffect(() => {
-    if (recommendation && !motorLoading && projectId) {
+    if (recommendation && !recsLoading && projectId) {
       logShown();
     }
-  }, [recommendation, motorLoading, projectId, logShown]);
+  }, [recommendation, recsLoading, projectId, logShown]);
 
   // Calculate required keyframe slots based on duration
   const getRequiredSlots = useCallback(() => {
@@ -335,7 +342,7 @@ export default function KeyframeManager({
 
       setKeyframes(typedKeyframes);
       onKeyframesChange?.(typedKeyframes);
-      refreshMotor(); // Refresh recommendations
+      refreshRecs(); // Refresh recommendations
       toast.success(`Keyframe ${slot.frameType} generado (runId: ${result.runId?.slice(0, 8)})`);
     } catch (error) {
       console.error('Error generating keyframe:', error);
@@ -560,7 +567,10 @@ export default function KeyframeManager({
           <span>{Math.round(completionPercent)}% completado</span>
           <div className="flex items-center gap-2">
             {recommendation && recommendation.confidence !== 'low' && (
-              <MotorRecommendationBadge recommendation={recommendation} loading={motorLoading} />
+              <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/30 gap-1">
+                <CheckCircle2 className="w-3 h-3" />
+                Rec: {recommendation.recommendedPreset}
+              </Badge>
             )}
             <span>nano-banana-pro (Gemini 3 Pro)</span>
           </div>

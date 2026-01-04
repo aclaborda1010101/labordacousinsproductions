@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Check, RotateCcw, Star, MapPin, Maximize, Grid3X3, Focus, CheckCircle2 } from 'lucide-react';
+import { Loader2, Check, RotateCcw, Star, MapPin, Maximize, Grid3X3, Focus } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { generateRun, updateRunStatus, GenerateRunPayload } from '@/lib/generateRun';
 import SetCanonModal from './SetCanonModal';
 import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
-import { useMotorSelector } from '@/hooks/useMotorSelector';
-import { MotorRecommendationBadge } from './MotorRecommendationBadge';
+import { useRecommendations } from '@/hooks/useRecommendations';
+import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
+import { PresetSelector } from './PresetSelector';
+import { ENGINES } from '@/lib/recommendations';
 
 type ViewType = 'establishing' | 'keyarea' | 'detail';
 
@@ -41,6 +43,8 @@ const VIEW_PRESETS: ViewPreset[] = [
   }
 ];
 
+const AVAILABLE_PRESETS = VIEW_PRESETS.map(p => p.type);
+
 interface LocationGenerationPanelProps {
   location: {
     id: string;
@@ -57,37 +61,46 @@ interface LocationGenerationPanelProps {
 export function LocationGenerationPanel({ location, projectId, onUpdate }: LocationGenerationPanelProps) {
   const [generating, setGenerating] = useState(false);
   const [selectedType, setSelectedType] = useState<ViewType>('establishing');
+  const [selectedEngine, setSelectedEngine] = useState<string>(ENGINES.FLUX);
   const [currentOutput, setCurrentOutput] = useState<{ url: string; runId: string } | null>(null);
   const [runStatus, setRunStatus] = useState<'generated' | 'accepted' | null>(null);
   const [showCanonModal, setShowCanonModal] = useState(false);
   const [promptPatch, setPromptPatch] = useState<string | null>(null);
 
-  // Motor Selector integration
+  // Recommendations v1
   const { 
     recommendation, 
-    loading: motorLoading, 
+    orderedPresets,
+    loading: recsLoading, 
     checkOverride, 
     logShown, 
     logOverride,
-    refresh: refreshMotor
-  } = useMotorSelector({ projectId, assetType: 'location' });
+    logFollowed,
+    refresh: refreshRecs
+  } = useRecommendations({ 
+    projectId, 
+    assetType: 'location',
+    availablePresets: AVAILABLE_PRESETS,
+    phase: 'production'
+  });
 
   // Log recommendation shown
   useEffect(() => {
-    if (recommendation && !motorLoading) {
+    if (recommendation && !recsLoading) {
       logShown();
     }
-  }, [recommendation, motorLoading, logShown]);
+  }, [recommendation, recsLoading, logShown]);
 
-  // Apply recommended preset if high confidence
+  // Apply recommended preset if high confidence on first load
   useEffect(() => {
     if (recommendation && recommendation.confidence === 'high' && !generating) {
       const preset = VIEW_PRESETS.find(p => p.type === recommendation.recommendedPreset);
       if (preset) {
         setSelectedType(preset.type);
+        setSelectedEngine(recommendation.recommendedEngine);
       }
     }
-  }, [recommendation, generating]);
+  }, [recommendation?.recommendedPreset, recommendation?.recommendedEngine, recommendation?.confidence]);
 
   const buildPrompt = (preset: ViewPreset) => {
     const locationDesc = [
@@ -100,14 +113,28 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
     return promptPatch ? `${basePrompt}\n\n${promptPatch}` : basePrompt;
   };
 
+  const handleApplyRecommended = () => {
+    if (recommendation) {
+      const preset = VIEW_PRESETS.find(p => p.type === recommendation.recommendedPreset);
+      if (preset) {
+        setSelectedType(preset.type);
+        setSelectedEngine(recommendation.recommendedEngine);
+        toast.success('Recomendación aplicada');
+      }
+    }
+  };
+
   const handleGenerate = async (parentRunId?: string) => {
     setGenerating(true);
     const preset = VIEW_PRESETS.find(p => p.type === selectedType)!;
 
     // Check if user is overriding recommendation
-    const isUserOverride = checkOverride('flux-1.1-pro-ultra', selectedType);
+    const isUserOverride = checkOverride(selectedEngine, selectedType);
+    
     if (isUserOverride) {
-      logOverride('flux-1.1-pro-ultra', selectedType);
+      await logOverride(selectedEngine, selectedType);
+    } else if (recommendation && recommendation.confidence !== 'low') {
+      await logFollowed(selectedEngine, selectedType);
     }
 
     try {
@@ -115,9 +142,11 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
         projectId,
         type: 'location',
         phase: 'production',
-        engine: 'flux-1.1-pro-ultra', // Production engine for locations
-        engineSelectedBy: 'auto',
-        engineReason: 'Production location generation uses FLUX for high-quality environments',
+        engine: selectedEngine,
+        engineSelectedBy: isUserOverride ? 'user' : 'recommendation',
+        engineReason: isUserOverride 
+          ? 'User override of recommendation' 
+          : `Recommendation: ${recommendation?.reason || 'default'}`,
         prompt: buildPrompt(preset),
         context: `Location generation: ${preset.label}`,
         params: {
@@ -145,7 +174,7 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
       setCurrentOutput({ url: result.outputUrl!, runId: result.runId! });
       setRunStatus('generated');
       toast.success(`Vista generada (Run: ${result.runId?.slice(0, 8)})`);
-      refreshMotor(); // Refresh recommendations after generation
+      refreshRecs(); // Refresh recommendations after generation
       onUpdate();
     } catch (err) {
       console.error('[LocationGeneration] error:', err);
@@ -206,33 +235,22 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Motor Recommendation */}
-        {recommendation && recommendation.confidence !== 'low' && (
-          <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border/50">
-            <MotorRecommendationBadge recommendation={recommendation} loading={motorLoading} />
-            <span className="text-xs text-muted-foreground">{recommendation.reason}</span>
-          </div>
-        )}
+        {/* Recommendations Bar */}
+        <ProjectRecommendationsBar
+          recommendation={recommendation}
+          loading={recsLoading}
+          onApply={handleApplyRecommended}
+          showEngineSelector={true}
+        />
 
         {/* View Type Selector */}
-        <div className="flex gap-2 flex-wrap">
-          {VIEW_PRESETS.map(preset => (
-            <Button
-              key={preset.type}
-              variant={selectedType === preset.type ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedType(preset.type)}
-              disabled={generating}
-              className="relative"
-            >
-              {preset.icon}
-              <span className="ml-2">{preset.label}</span>
-              {recommendation?.recommendedPreset === preset.type && recommendation.confidence !== 'low' && (
-                <CheckCircle2 className="w-3 h-3 text-green-500 absolute -top-1 -right-1" />
-              )}
-            </Button>
-          ))}
-        </div>
+        <PresetSelector
+          presets={VIEW_PRESETS}
+          selectedPreset={selectedType}
+          onSelect={(preset) => setSelectedType(preset as ViewType)}
+          orderedPresets={orderedPresets}
+          disabled={generating}
+        />
 
         {/* Generate Button */}
         <Button 

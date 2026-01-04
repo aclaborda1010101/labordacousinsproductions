@@ -11,7 +11,7 @@ interface GenerateRunRequest {
   type: 'character' | 'location' | 'keyframe';
   phase: 'exploration' | 'production';
   engine: string;
-  engineSelectedBy: 'auto' | 'user';
+  engineSelectedBy: 'auto' | 'user' | 'recommendation';
   engineReason?: string;
   prompt: string;
   context?: string;
