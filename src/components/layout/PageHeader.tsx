@@ -15,18 +15,18 @@ export const PageHeader = forwardRef<HTMLElement, PageHeaderProps>(
         ref={ref}
         className={cn(
           "border-b border-border bg-card/50 backdrop-blur-sm shrink-0",
-          "px-4 py-3 lg:px-6 lg:h-16 lg:flex lg:items-center lg:justify-between",
+          "px-3 py-2 lg:px-6 lg:py-3 flex items-center justify-between gap-2",
           className
         )}
       >
-        <div className="mb-2 lg:mb-0">
-          <h1 className="text-base lg:text-lg font-semibold text-foreground">{title}</h1>
+        <div className="min-w-0 flex-shrink">
+          <h1 className="text-sm lg:text-lg font-semibold text-foreground truncate">{title}</h1>
           {description && (
-            <p className="text-xs lg:text-sm text-muted-foreground">{description}</p>
+            <p className="text-[10px] lg:text-sm text-muted-foreground truncate">{description}</p>
           )}
         </div>
         {children && (
-          <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
+          <div className="flex items-center gap-1.5 lg:gap-3 flex-shrink-0">
             {children}
           </div>
         )}
