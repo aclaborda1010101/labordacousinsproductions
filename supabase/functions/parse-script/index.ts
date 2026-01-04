@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encodeBase64 } from "https://deno.land/std@0.208.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,7 +7,7 @@ const corsHeaders = {
 };
 
 // Use AI to extract text from PDF by sending it as base64
-async function extractTextWithAI(pdfBase64: string): Promise<string> {
+async function extractTextWithAI(pdfBytes: Uint8Array): Promise<string> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   
   if (!LOVABLE_API_KEY) {
@@ -15,6 +16,10 @@ async function extractTextWithAI(pdfBase64: string): Promise<string> {
   }
 
   console.log("Using AI to extract PDF text...");
+  
+  // Use Deno's built-in base64 encoder (handles large files properly)
+  const pdfBase64 = encodeBase64(pdfBytes);
+  console.log(`Encoded PDF to base64: ${pdfBase64.length} chars`);
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -27,16 +32,15 @@ async function extractTextWithAI(pdfBase64: string): Promise<string> {
       messages: [
         {
           role: "system",
-          content: `You are a professional document text extractor. Extract ALL text content from the provided PDF document.
+          content: `You are a professional screenplay text extractor. Extract ALL text content from the provided PDF document.
 
 CRITICAL RULES:
-- Extract the COMPLETE text, preserving the original structure
-- Keep screenplay formatting: INT./EXT. headers, character names in CAPS, dialogue, parentheticals
-- Preserve line breaks between scenes and dialogue blocks
-- Include stage directions and action lines
-- Do NOT summarize - extract the FULL verbatim text
-- If there are footnotes or annotations, include them at the end
-- Output ONLY the extracted text, no explanations or metadata`
+- Extract the COMPLETE text, preserving the original screenplay structure
+- Keep formatting: INT./EXT. headers, character names in CAPS, dialogue, parentheticals, action lines
+- Preserve scene breaks and dialogue formatting
+- Include footnotes and annotations if present
+- Output ONLY the extracted text verbatim, no summaries or metadata
+- If text is in Spanish, keep it in Spanish`
         },
         {
           role: "user",
@@ -50,7 +54,7 @@ CRITICAL RULES:
             },
             {
               type: "text",
-              text: "Extract all text from this PDF screenplay document. Return the complete text preserving formatting."
+              text: "Extract all text from this PDF screenplay. Return the complete verbatim text."
             }
           ]
         }
@@ -79,55 +83,29 @@ function extractTextFromPdfBytes(pdfBytes: Uint8Array): string {
   const rawContent = decoder.decode(pdfBytes);
   
   let extractedText = '';
-  
-  // Method 1: Extract text between BT (Begin Text) and ET (End Text) markers
   const textBlocks = rawContent.match(/BT[\s\S]*?ET/g) || [];
   
   for (const block of textBlocks) {
-    // Extract from Tj operator (show text)
     const tjMatches = block.match(/\(([^)\\]*(?:\\.[^)\\]*)*)\)\s*Tj/g) || [];
     for (const tj of tjMatches) {
       const match = tj.match(/\(([^)\\]*(?:\\.[^)\\]*)*)\)/);
       if (match) {
-        let text = match[1];
-        text = text
+        let text = match[1]
           .replace(/\\n/g, '\n')
           .replace(/\\r/g, '\r')
-          .replace(/\\t/g, '\t')
           .replace(/\\\(/g, '(')
           .replace(/\\\)/g, ')')
           .replace(/\\\\/g, '\\');
         extractedText += text;
       }
-    }
-    
-    // Extract from TJ operator (show text with positioning)
-    const tJMatches = block.match(/\[([^\]]*)\]\s*TJ/gi) || [];
-    for (const tJ of tJMatches) {
-      const parts = tJ.match(/\(([^)\\]*(?:\\.[^)\\]*)*)\)/g) || [];
-      for (const part of parts) {
-        let text = part.slice(1, -1);
-        text = text
-          .replace(/\\n/g, '\n')
-          .replace(/\\r/g, '\r')
-          .replace(/\\t/g, '\t')
-          .replace(/\\\(/g, '(')
-          .replace(/\\\)/g, ')')
-          .replace(/\\\\/g, '\\');
-        extractedText += text;
-      }
-      extractedText += ' ';
     }
   }
   
-  // Clean up extracted text
-  extractedText = extractedText
+  return extractedText
     .replace(/\x00/g, '')
     .replace(/[^\x20-\x7E\n\r\táéíóúñÁÉÍÓÚÑüÜ¿¡]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  
-  return extractedText;
 }
 
 serve(async (req) => {
@@ -157,13 +135,10 @@ serve(async (req) => {
         const pdfBytes = new Uint8Array(pdfBuffer);
         console.log(`PDF downloaded: ${pdfBytes.length} bytes`);
         
-        // Convert to base64 for AI processing
-        const pdfBase64 = btoa(String.fromCharCode(...pdfBytes));
-        
         // Try AI extraction first
         let extractedText = "";
         try {
-          extractedText = await extractTextWithAI(pdfBase64);
+          extractedText = await extractTextWithAI(pdfBytes);
         } catch (aiError) {
           console.warn("AI extraction failed, falling back to regex:", aiError);
           extractedText = extractTextFromPdfBytes(pdfBytes);
