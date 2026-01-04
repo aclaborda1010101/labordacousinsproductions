@@ -32,20 +32,19 @@ interface ProjectStyleSelectorProps {
   disabled?: boolean;
 }
 
+// MVP: Only short/series formats
 const formatOptions: { value: FormatProfile; label: string; icon: string }[] = [
   { value: 'short', label: 'Cortometraje', icon: '🎬' },
   { value: 'series', label: 'Serie', icon: '📺' },
-  { value: 'trailer', label: 'Trailer', icon: '🎞️' },
-  { value: 'teaser', label: 'Teaser', icon: '👁️' },
-  { value: 'cinematic', label: 'Cinemática', icon: '🎥' },
 ];
 
+// MVP: Only 2D/3D animation types
 const animationOptions: { value: AnimationType; label: string; icon: string }[] = [
   { value: '2D', label: '2D', icon: '✏️' },
   { value: '3D', label: '3D', icon: '🎲' },
-  { value: 'mixed', label: 'Mixta', icon: '🔀' },
 ];
 
+// 6 canonical visual styles
 const styleOptions: { value: VisualStyle; label: string; icon: string; color: string }[] = [
   { value: 'pixar', label: 'Pixar', icon: '🏠', color: 'bg-blue-500' },
   { value: 'ghibli', label: 'Studio Ghibli', icon: '🍃', color: 'bg-green-500' },
@@ -55,9 +54,9 @@ const styleOptions: { value: VisualStyle; label: string; icon: string; color: st
   { value: 'realistic', label: 'Realista', icon: '📷', color: 'bg-gray-500' },
 ];
 
+// MVP: Only 2 user levels - Normal and Pro
 const userLevelOptions: { value: UserLevel; label: string; icon: string; description: string }[] = [
-  { value: 'explorer', label: 'Explorador', icon: '🧭', description: 'El sistema decide todo' },
-  { value: 'creator', label: 'Creador', icon: '✨', description: 'Recomendaciones visibles' },
+  { value: 'normal', label: 'Normal', icon: '✨', description: 'El sistema decide automáticamente' },
   { value: 'pro', label: 'Profesional', icon: '🎬', description: 'Control total' },
 ];
 

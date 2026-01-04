@@ -289,8 +289,8 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
     onUpdate();
   };
 
-  // Explorer mode: use AdaptiveGenerationPanel
-  if (userLevel === 'explorer') {
+  // Normal mode: simplified UI, system decides automatically
+  if (userLevel === 'normal') {
     return (
       <Card className="border-primary/20">
         <CardHeader className="pb-3">
@@ -335,6 +335,11 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
               </>
             )}
           </Button>
+
+          {/* Autopilot indicator */}
+          <p className="text-xs text-muted-foreground text-center">
+            🤖 El sistema elige automáticamente la mejor configuración
+          </p>
 
           {/* Output Preview */}
           {currentOutput && (
@@ -385,7 +390,7 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
     );
   }
 
-  // Creator/Pro mode: full interface
+  // Pro mode: full interface with all controls
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3">
@@ -399,7 +404,7 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
             </Badge>
           )}
           <Badge variant="outline" className="ml-auto text-xs">
-            {userLevel === 'pro' ? '🎬 Pro' : '✨ Creador'}
+            🎬 Pro
           </Badge>
         </CardTitle>
       </CardHeader>

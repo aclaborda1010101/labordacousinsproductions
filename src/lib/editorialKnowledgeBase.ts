@@ -8,10 +8,11 @@
 // TYPES
 // ─────────────────────────────────────────────────────────────
 
-export type FormatProfile = 'short' | 'series' | 'trailer' | 'teaser' | 'cinematic';
-export type AnimationType = '2D' | '3D' | 'mixed';
+// MVP: Only short/series formats, 2D/3D animation, 6 canonical styles, 2 user levels
+export type FormatProfile = 'short' | 'series';
+export type AnimationType = '2D' | '3D';
 export type VisualStyle = 'pixar' | 'ghibli' | 'anime' | 'cartoon' | 'sports_epic' | 'realistic';
-export type UserLevel = 'explorer' | 'creator' | 'pro';
+export type UserLevel = 'normal' | 'pro';
 export type AssetCategory = 'character' | 'location' | 'keyframe' | 'video';
 export type ImpactLevel = 'high' | 'medium' | 'low';
 
@@ -172,6 +173,7 @@ export const INDUSTRY_RULES: IndustryRule[] = [
 // FORMAT PROFILES
 // ─────────────────────────────────────────────────────────────
 
+// MVP: Only short and series formats
 export const FORMAT_PROFILES: Record<FormatProfile, FormatProfileConfig> = {
   short: {
     id: 'short',
@@ -190,33 +192,6 @@ export const FORMAT_PROFILES: Record<FormatProfile, FormatProfileConfig> = {
     visualComplexity: 'medium',
     recommendedPresets: ['frontal', 'action', 'dialog'],
     activatedRules: ['expression_consistency'],
-  },
-  trailer: {
-    id: 'trailer',
-    name: 'Trailer',
-    rhythm: 'fast',
-    avgShotDurationSec: 2,
-    visualComplexity: 'high',
-    recommendedPresets: ['hero', 'action', 'impact'],
-    activatedRules: ['protagonist_silhouette'],
-  },
-  teaser: {
-    id: 'teaser',
-    name: 'Teaser',
-    rhythm: 'slow',
-    avgShotDurationSec: 5,
-    visualComplexity: 'high',
-    recommendedPresets: ['establishing', 'mood', 'silhouette'],
-    activatedRules: ['protagonist_silhouette', 'ambient_lighting'],
-  },
-  cinematic: {
-    id: 'cinematic',
-    name: 'Cinemática',
-    rhythm: 'slow',
-    avgShotDurationSec: 6,
-    visualComplexity: 'very_high',
-    recommendedPresets: ['hero', 'establishing', 'epic'],
-    activatedRules: ['protagonist_silhouette', 'expression_consistency', 'ambient_lighting'],
   },
 };
 
@@ -363,8 +338,9 @@ export interface UserLevelVisibility {
   autopilotSoft: boolean;
 }
 
+// MVP: Only 2 user levels - Normal and Pro
 export const USER_LEVEL_VISIBILITY: Record<UserLevel, UserLevelVisibility> = {
-  explorer: {
+  normal: {
     showEngineSelector: false,
     showPresetSelector: false,
     showTechnicalMetrics: false,
@@ -376,19 +352,6 @@ export const USER_LEVEL_VISIBILITY: Record<UserLevel, UserLevelVisibility> = {
     showRecommendations: false,
     allowBreakRules: false,
     autopilotSoft: true, // System decides automatically
-  },
-  creator: {
-    showEngineSelector: false,
-    showPresetSelector: true,
-    showTechnicalMetrics: false,
-    showAdvancedWarnings: false,
-    showRuleDetails: false,
-    showAutopilotToggle: false,
-    showOverrides: false,
-    showCanonButton: true,
-    showRecommendations: true,
-    allowBreakRules: false,
-    autopilotSoft: false,
   },
   pro: {
     showEngineSelector: true,
@@ -406,15 +369,10 @@ export const USER_LEVEL_VISIBILITY: Record<UserLevel, UserLevelVisibility> = {
 };
 
 export const USER_LEVEL_CONFIG: Record<UserLevel, { label: string; icon: string; description: string }> = {
-  explorer: {
-    label: 'Explorador',
-    icon: '🧭',
-    description: 'El sistema decide automáticamente. Solo elige estilo y genera.',
-  },
-  creator: {
-    label: 'Creador',
+  normal: {
+    label: 'Normal',
     icon: '✨',
-    description: 'Ve recomendaciones y puede cambiar preset con explicación.',
+    description: 'El sistema decide automáticamente. Solo elige estilo y genera.',
   },
   pro: {
     label: 'Profesional',
