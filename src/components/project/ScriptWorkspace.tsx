@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { ScriptSummaryPanelAssisted } from './ScriptSummaryPanelAssisted';
+import { exportOutlinePDF } from '@/lib/exportOutlinePDF';
 import {
   Lightbulb,
   FileText,
@@ -1330,6 +1331,40 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             </AccordionItem>
           </Accordion>
         )}
+
+        {/* Export action */}
+        <div className="flex justify-end pt-4">
+          <Button 
+            onClick={() => {
+              try {
+                exportOutlinePDF({
+                  title: 'Outline del Proyecto',
+                  logline: synopsis?.faithful_summary?.split('.')[0],
+                  synopsis: synopsis?.faithful_summary,
+                  format: projectFormat,
+                  estimatedDuration: estimatedRuntime || undefined,
+                  episodes: [],
+                  characters,
+                  locations,
+                  props: breakdownResult.props,
+                  subplots,
+                  plot_twists,
+                  counts: {
+                    total_scenes: scenes?.length,
+                  },
+                });
+                toast.success('Outline profesional exportado');
+              } catch (err) {
+                console.error('Export error:', err);
+                toast.error('Error al exportar Outline');
+              }
+            }}
+            className="gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            Exportar Outline Pro
+          </Button>
+        </div>
       </div>
     );
   };
