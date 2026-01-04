@@ -506,6 +506,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         teasers: scriptData?.teasers,
         characters: scriptData?.characters || scriptData?.main_characters || [],
         locations: scriptData?.locations || scriptData?.main_locations || [],
+        props: scriptData?.props || scriptData?.main_props || [],
+        subplots: scriptData?.subplots || [],
+        plot_twists: scriptData?.plot_twists || [],
       };
       
       await supabase.from('scripts').insert({
@@ -578,7 +581,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         characters: breakdownData?.characters || [],
         locations: breakdownData?.locations || [],
         scenes: breakdownData?.scenes || [],
+        props: breakdownData?.props || [],
         synopsis: breakdownData?.synopsis,
+        subplots: breakdownData?.subplots || [],
+        plot_twists: breakdownData?.plot_twists || [],
         summary: breakdownData?.summary,
       };
 
@@ -593,9 +599,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           scenes: breakdown.scenes,
           duration_min: breakdown.summary?.estimated_runtime_min || 10,
         }],
-        characters: breakdown.characters,
-        locations: breakdown.locations,
-        scenes: breakdown.scenes,
+        characters: breakdown.characters || [],
+        locations: breakdown.locations || [],
+        scenes: breakdown.scenes || [],
+        props: breakdown.props || [],
+        subplots: breakdown.subplots || [],
+        plot_twists: breakdown.plot_twists || [],
         teasers: breakdownData?.teasers,
         counts: {
           total_scenes: breakdown.scenes?.length || 0,
@@ -651,7 +660,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         characters: breakdownData?.characters || [],
         locations: breakdownData?.locations || [],
         scenes: breakdownData?.scenes || [],
+        props: breakdownData?.props || [],
         synopsis: breakdownData?.synopsis,
+        subplots: breakdownData?.subplots || [],
+        plot_twists: breakdownData?.plot_twists || [],
         summary: breakdownData?.summary,
       };
 
