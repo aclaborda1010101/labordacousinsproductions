@@ -1,6 +1,6 @@
 /**
- * AUTOPILOT v1 - Confidence-based automatic engine+preset selection (IMAGE only)
- * Only activates when confidence is high enough
+ * AUTOPILOT v2 - Confidence-based automatic engine+preset selection (IMAGE only)
+ * Enhanced with template step context for Short Templates v1
  */
 
 import { supabase } from '@/integrations/supabase/client';
@@ -29,7 +29,11 @@ export interface AutopilotDecision {
   confidence: number;
   reason: string;
   settings: AutopilotSettings;
+  templateStepKey?: string; // v2: current template step
 }
+
+// v2: Template step preset boost
+const TEMPLATE_STEP_PRESET_BOOST = 0.08;
 
 const DEFAULT_SETTINGS: AutopilotSettings = {
   autopilotImageEnabled: true,
@@ -124,17 +128,30 @@ export function calculateAutopilotConfidence(
 }
 
 // ─────────────────────────────────────────────────────────────
-// MAIN AUTOPILOT API
+// MAIN AUTOPILOT API (v2)
 // ─────────────────────────────────────────────────────────────
 
+export interface AutopilotV2Options {
+  projectId: string;
+  assetType: AssetType;
+  availablePresets: string[];
+  phase?: Phase;
+  // v2: Template context
+  templateStepKey?: string;
+  templatePresetBias?: Record<string, number>;
+  styleBias?: Record<string, number>;
+}
+
 /**
- * Get autopilot decision for image generation
+ * Get autopilot decision for image generation (v2)
+ * Now includes template step context for better preset selection
  */
 export async function getAutopilotDecision(
   projectId: string,
   assetType: AssetType,
   availablePresets: string[],
-  phase?: Phase
+  phase?: Phase,
+  options?: { templateStepKey?: string; templatePresetBias?: Record<string, number>; styleBias?: Record<string, number> }
 ): Promise<AutopilotDecision> {
   const settings = await getAutopilotSettings(projectId);
 
@@ -145,16 +162,30 @@ export async function getAutopilotDecision(
       recommendation: null,
       confidence: 0,
       reason: 'Autopilot desactivado para este proyecto',
-      settings
+      settings,
+      templateStepKey: options?.templateStepKey
     };
   }
 
-  // Get recommendations
+  // Combine style bias with template preset bias (v2)
+  const combinedBias: Record<string, number> = {
+    ...(options?.styleBias || {}),
+  };
+  
+  // Add template preset bias (higher priority)
+  if (options?.templatePresetBias) {
+    for (const [preset, boost] of Object.entries(options.templatePresetBias)) {
+      combinedBias[preset] = (combinedBias[preset] || 0) + boost;
+    }
+  }
+
+  // Get recommendations with combined bias
   const { recommendation } = await getRecommendations(
     projectId,
     assetType,
     availablePresets,
-    phase
+    phase,
+    Object.keys(combinedBias).length > 0 ? combinedBias : undefined
   );
 
   if (!recommendation || recommendation.confidence === 'low') {
@@ -163,7 +194,8 @@ export async function getAutopilotDecision(
       recommendation,
       confidence: 0,
       reason: 'Datos insuficientes para autopilot',
-      settings
+      settings,
+      templateStepKey: options?.templateStepKey
     };
   }
 
@@ -179,7 +211,8 @@ export async function getAutopilotDecision(
 
   let reason: string;
   if (shouldAutopilot) {
-    reason = `Autopilot: ${(confidence * 100).toFixed(0)}% confianza | ${recommendation.basedOnRuns} runs | ${(recommendation.acceptRate * 100).toFixed(0)}% aceptación`;
+    const templateInfo = options?.templateStepKey ? ` | paso: ${options.templateStepKey}` : '';
+    reason = `Autopilot: ${(confidence * 100).toFixed(0)}% confianza | ${recommendation.basedOnRuns} runs | ${(recommendation.acceptRate * 100).toFixed(0)}% aceptación${templateInfo}`;
   } else {
     const issues: string[] = [];
     if (!meetsConfidence) issues.push(`confianza ${(confidence * 100).toFixed(0)}% < ${(settings.autopilotConfidenceThreshold * 100).toFixed(0)}%`);
@@ -193,16 +226,17 @@ export async function getAutopilotDecision(
     recommendation,
     confidence,
     reason,
-    settings
+    settings,
+    templateStepKey: options?.templateStepKey
   };
 }
 
 // ─────────────────────────────────────────────────────────────
-// TRACKING
+// TRACKING (v2)
 // ─────────────────────────────────────────────────────────────
 
 /**
- * Log autopilot events to editorial_events
+ * Log autopilot events to editorial_events (v2 with template_step_key)
  */
 export async function logAutopilotEvent(
   projectId: string,
@@ -225,6 +259,7 @@ export async function logAutopilotEvent(
         reason: decision.reason,
         chosenEngine: chosenEngine ?? null,
         chosenPreset: chosenPreset ?? null,
+        templateStepKey: decision.templateStepKey ?? null, // v2
         autopilotImageEnabled: decision.settings.autopilotImageEnabled,
         autopilotConfidenceThreshold: decision.settings.autopilotConfidenceThreshold,
         autopilotMinRuns: decision.settings.autopilotMinRuns,

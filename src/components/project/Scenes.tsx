@@ -16,6 +16,10 @@ import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
 import ShotEditor from './ShotEditor';
 import ShotSuggestionPanel from './ShotSuggestionPanel';
 import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
+import { ShortTemplatePanel } from './ShortTemplatePanel';
+import { useShortTemplate } from '@/hooks/useShortTemplate';
+import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import { runTemplateQAChecks, TemplateQAWarning } from '@/lib/shortTemplates';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -89,6 +93,29 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
   const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
+
+  // Editorial Knowledge Base context
+  const { formatProfile, visualStyle, userLevel } = useEditorialKnowledgeBase({
+    projectId,
+    enabled: true,
+  });
+
+  // Short Templates hook (only for short format)
+  const shortTemplate = useShortTemplate({
+    projectId,
+    visualStyle,
+    formatProfile,
+    enabled: formatProfile === 'short',
+  });
+
+  // QA warnings for templates
+  const hasCanon = characters.some(c => c.turnaround_urls);
+  const totalShots = Object.values(shots).flat().length;
+  const templateWarnings: TemplateQAWarning[] = formatProfile === 'short' ? runTemplateQAChecks(
+    { format_profile: formatProfile, visual_style: visualStyle },
+    totalShots,
+    hasCanon
+  ) : [];
 
   const fetchScenes = async () => {
     const { data } = await supabase.from('scenes').select('*').eq('project_id', projectId).order('episode_no').order('scene_no');
@@ -426,6 +453,39 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             <span className="text-muted-foreground ml-2">(determinado por Engine Shootout)</span>
           </span>
         </div>
+      )}
+
+      {/* Short Template Panel (only for short format) */}
+      {formatProfile === 'short' && (
+        <ShortTemplatePanel
+          userLevel={userLevel}
+          template={shortTemplate.template}
+          availableTemplates={shortTemplate.availableTemplates}
+          currentStepIndex={shortTemplate.currentStepIndex}
+          totalSteps={shortTemplate.totalSteps}
+          progress={shortTemplate.progress}
+          isComplete={shortTemplate.isComplete}
+          currentStep={shortTemplate.currentStep}
+          warnings={templateWarnings}
+          loading={shortTemplate.loading}
+          onApplyTemplate={(id) => {
+            shortTemplate.applyTemplate(id);
+            toast.success('Template aplicado');
+          }}
+          onAdvanceStep={() => {
+            shortTemplate.advanceStep();
+            toast.success('Paso avanzado');
+          }}
+          onGoToStep={(index) => shortTemplate.goToStep(index)}
+          onClearTemplate={() => {
+            shortTemplate.clearTemplate();
+            toast.info('Template eliminado');
+          }}
+          onGenerateForStep={() => {
+            // TODO: Integrate with generation panel
+            toast.info(`Genera: ${shortTemplate.currentStep?.label}`);
+          }}
+        />
       )}
 
       <div className="flex gap-4 text-sm">
