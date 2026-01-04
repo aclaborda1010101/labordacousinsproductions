@@ -37,6 +37,8 @@ interface GenerationActionBarProps {
   showCanonButton?: boolean;
   errorMessage?: string;
   className?: string;
+  /** Human-friendly label for the current view/preset type */
+  viewTypeLabel?: string;
 }
 
 export function GenerationActionBar({
@@ -54,6 +56,7 @@ export function GenerationActionBar({
   showCanonButton = true,
   errorMessage,
   className = '',
+  viewTypeLabel,
 }: GenerationActionBarProps) {
   const isGenerating = status === 'generating';
   const isError = status === 'error';
