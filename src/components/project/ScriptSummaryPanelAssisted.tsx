@@ -50,6 +50,7 @@ import {
 } from 'lucide-react';
 import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import { exportBibleSummaryPDF } from '@/lib/exportBibleSummaryPDF';
+import { exportOutlinePDF } from '@/lib/exportOutlinePDF';
 
 interface ScriptSummaryPanelAssistedProps {
   projectId: string;
@@ -420,6 +421,41 @@ export function ScriptSummaryPanelAssisted({
     }
   };
 
+  // Export professional outline PDF
+  const handleExportOutlinePDF = () => {
+    if (!scriptData) return;
+    try {
+      const sceneCount = scriptData.counts?.total_scenes || 
+        scriptData.episodes.reduce((sum, ep) => sum + (ep.scenes?.length || 0), 0);
+      
+      // Calculate estimated duration
+      const estimatedDuration = scriptData.episodes.reduce((sum, ep) => sum + (ep.duration_min || 0), 0);
+      
+      exportOutlinePDF({
+        title: scriptData.title,
+        logline: scriptData.synopsis?.split('.')[0], // First sentence as logline
+        synopsis: scriptData.synopsis,
+        format: projectFormat,
+        estimatedDuration: estimatedDuration || undefined,
+        episodes: scriptData.episodes,
+        teasers: scriptData.teasers,
+        characters: scriptData.characters,
+        locations: scriptData.locations,
+        props: scriptData.props,
+        subplots: scriptData.subplots,
+        plot_twists: scriptData.plot_twists,
+        counts: {
+          total_scenes: sceneCount,
+          total_dialogue_lines: scriptData.counts?.total_dialogue_lines,
+        },
+      });
+      toast.success('Outline profesional exportado');
+    } catch (err) {
+      console.error('Export error:', err);
+      toast.error('Error al exportar Outline');
+    }
+  };
+
   if (loading) {
     return (
       <Card className="p-8">
@@ -496,6 +532,10 @@ export function ScriptSummaryPanelAssisted({
 
           {/* Export actions */}
           <div className="flex flex-wrap gap-3">
+            <Button onClick={handleExportOutlinePDF} className="gap-2">
+              <Sparkles className="h-4 w-4" />
+              Exportar Outline Pro
+            </Button>
             <Button variant="outline" onClick={handleExportPDF}>
               <FileDown className="h-4 w-4 mr-2" />
               Descargar Guion PDF
