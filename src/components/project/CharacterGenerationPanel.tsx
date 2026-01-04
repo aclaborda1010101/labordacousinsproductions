@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { User, Sparkles, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -16,6 +15,8 @@ import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
 import { PresetSelector } from './PresetSelector';
 import { GenerationActionBar, GenerationPreview, type GenerationStatus } from '@/components/generation';
 import { ENGINES } from '@/lib/recommendations';
+import { DeveloperDebugPanel, DebugPanelData } from '@/components/developer/DeveloperDebugPanel';
+import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
 
 type PortraitType = 'frontal' | 'profile' | 'fullbody';
 
@@ -66,6 +67,10 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
   const [currentOutput, setCurrentOutput] = useState<{ url: string; runId: string } | null>(null);
   const [isAccepted, setIsAccepted] = useState(false);
   const [showCanonModal, setShowCanonModal] = useState(false);
+  const [debugPrompt, setDebugPrompt] = useState<string>('');
+  const [debugNegativePrompt, setDebugNegativePrompt] = useState<string>('');
+  const [rawResponse, setRawResponse] = useState<unknown>(null);
+  const { isDeveloperMode } = useDeveloperMode();
 
   // Editorial Knowledge Base v1
   const {
@@ -189,6 +194,8 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
     }
 
     try {
+      const builtPrompt = debugPrompt || buildPrompt(preset);
+      
       const payload: ImageEnginePayload = {
         projectId,
         type: 'character',
@@ -200,7 +207,8 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
           : (isUserOverride 
             ? 'User override of recommendation' 
             : `Recommendation: ${recommendation?.reason || 'default'}`),
-        prompt: buildPrompt(preset),
+        prompt: builtPrompt,
+        negativePrompt: debugNegativePrompt || undefined,
         context: `Character portrait generation: ${preset.label}`,
         params: {
           characterId: character.id,
@@ -214,6 +222,7 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
       };
 
       const result = await runImageEngine(payload);
+      setRawResponse(result);
 
       if (!result.ok) {
         setStatus('error');
@@ -276,7 +285,31 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
   };
 
   const isCanon = !!character.canon_asset_id;
-  const isPro = userLevel === 'pro';
+  const isPro = userLevel === 'pro' || isDeveloperMode;
+
+  // Debug panel data
+  const debugData: DebugPanelData = useMemo(() => ({
+    prompt: debugPrompt || buildPrompt(PORTRAIT_PRESETS.find(p => p.type === selectedType)!),
+    negativePrompt: debugNegativePrompt,
+    engine: selectedEngine,
+    preset: selectedType,
+    contextJson: {
+      characterId: character.id,
+      characterName: character.name,
+      portraitType: selectedType,
+      styleDecision,
+      recommendation,
+      autopilotDecision,
+    },
+    rawResponse,
+  }), [debugPrompt, debugNegativePrompt, selectedEngine, selectedType, character, styleDecision, recommendation, autopilotDecision, rawResponse]);
+
+  const availableEngines = [
+    { id: ENGINES.NANO_BANANA, label: 'Nano Banana' },
+    { id: ENGINES.FLUX, label: 'FLUX Pro Ultra' },
+  ];
+
+  const availablePresets = PORTRAIT_PRESETS.map(p => ({ id: p.type, label: p.label }));
 
   return (
     <Card className="border-primary/20">
@@ -401,6 +434,20 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
           mode={userLevel}
           showCanonButton={visibility.showCanonButton}
           viewTypeLabel={PORTRAIT_PRESETS.find(p => p.type === selectedType)?.label}
+        />
+
+        {/* Developer Debug Panel */}
+        <DeveloperDebugPanel
+          data={debugData}
+          onPromptChange={setDebugPrompt}
+          onNegativePromptChange={setDebugNegativePrompt}
+          onEngineChange={setSelectedEngine}
+          onPresetChange={(p) => setSelectedType(p as PortraitType)}
+          onForceRegenerate={() => handleGenerate()}
+          availableEngines={availableEngines}
+          availablePresets={availablePresets}
+          showSeed={false}
+          title="Debug / Advanced (Character)"
         />
 
         {/* Canon Modal */}

@@ -13,6 +13,8 @@ import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
 import { PresetSelector } from './PresetSelector';
 import { GenerationActionBar, GenerationPreview, type GenerationStatus } from '@/components/generation';
 import { ENGINES } from '@/lib/recommendations';
+import { DeveloperDebugPanel, DebugPanelData } from '@/components/developer/DeveloperDebugPanel';
+import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
 
 type ViewType = 'establishing' | 'keyarea' | 'detail';
 
@@ -62,6 +64,10 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
   const [currentOutput, setCurrentOutput] = useState<{ url: string; runId: string } | null>(null);
   const [isAccepted, setIsAccepted] = useState(false);
   const [showCanonModal, setShowCanonModal] = useState(false);
+  const [debugPrompt, setDebugPrompt] = useState<string>('');
+  const [debugNegativePrompt, setDebugNegativePrompt] = useState<string>('');
+  const [rawResponse, setRawResponse] = useState<unknown>(null);
+  const { isDeveloperMode } = useDeveloperMode();
 
   // Editorial Knowledge Base v1
   const {
@@ -150,6 +156,8 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
     }
 
     try {
+      const builtPrompt = debugPrompt || buildPrompt(preset);
+      
       const payload: GenerateRunPayload = {
         projectId,
         type: 'location',
@@ -159,7 +167,8 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
         engineReason: isUserOverride 
           ? 'User override of recommendation' 
           : `Recommendation: ${recommendation?.reason || 'default'}`,
-        prompt: buildPrompt(preset),
+        prompt: builtPrompt,
+        negativePrompt: debugNegativePrompt || undefined,
         context: `Location generation: ${preset.label}`,
         params: {
           locationId: location.id,
@@ -171,6 +180,7 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
       };
 
       const result = await generateRun(payload);
+      setRawResponse(result);
 
       if (!result.ok) {
         setStatus('error');
@@ -233,7 +243,30 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
   };
 
   const isCanon = !!location.canon_asset_id;
-  const isPro = userLevel === 'pro';
+  const isPro = userLevel === 'pro' || isDeveloperMode;
+
+  // Debug panel data
+  const debugData: DebugPanelData = useMemo(() => ({
+    prompt: debugPrompt || buildPrompt(VIEW_PRESETS.find(p => p.type === selectedType)!),
+    negativePrompt: debugNegativePrompt,
+    engine: selectedEngine,
+    preset: selectedType,
+    contextJson: {
+      locationId: location.id,
+      locationName: location.name,
+      viewType: selectedType,
+      styleDecision,
+      recommendation,
+    },
+    rawResponse,
+  }), [debugPrompt, debugNegativePrompt, selectedEngine, selectedType, location, styleDecision, recommendation, rawResponse]);
+
+  const availableEngines = [
+    { id: ENGINES.FLUX, label: 'FLUX Pro Ultra' },
+    { id: ENGINES.NANO_BANANA, label: 'Nano Banana' },
+  ];
+
+  const availablePresets = VIEW_PRESETS.map(p => ({ id: p.type, label: p.label }));
 
   return (
     <Card className="border-primary/20">
@@ -353,6 +386,20 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
           mode={userLevel}
           showCanonButton={true}
           viewTypeLabel={VIEW_PRESETS.find(p => p.type === selectedType)?.label}
+        />
+
+        {/* Developer Debug Panel */}
+        <DeveloperDebugPanel
+          data={debugData}
+          onPromptChange={setDebugPrompt}
+          onNegativePromptChange={setDebugNegativePrompt}
+          onEngineChange={setSelectedEngine}
+          onPresetChange={(p) => setSelectedType(p as ViewType)}
+          onForceRegenerate={() => handleGenerate()}
+          availableEngines={availableEngines}
+          availablePresets={availablePresets}
+          showSeed={false}
+          title="Debug / Advanced (Location)"
         />
 
         {/* Canon Modal */}

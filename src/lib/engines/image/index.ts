@@ -15,6 +15,7 @@ export interface ImageEnginePayload {
   engineSelectedBy: 'auto' | 'user' | 'recommendation' | 'autopilot';
   engineReason?: string;
   prompt: string;
+  negativePrompt?: string;
   context?: string;
   params?: Record<string, unknown>;
   parentRunId?: string;

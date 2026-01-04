@@ -8,6 +8,7 @@ export interface GenerateRunPayload {
   engineSelectedBy: 'auto' | 'user' | 'recommendation';
   engineReason?: string;
   prompt: string;
+  negativePrompt?: string;
   context?: string;
   params?: Record<string, unknown>;
   parentRunId?: string; // For regeneration chains

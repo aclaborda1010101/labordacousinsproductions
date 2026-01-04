@@ -6,6 +6,7 @@ import {
   modeCapabilities, 
   getCapabilities 
 } from '@/lib/modeCapabilities';
+import { useDeveloperMode } from './DeveloperModeContext';
 
 // Re-export CreativeMode type
 export type { CreativeMode } from '@/lib/modeCapabilities';
@@ -33,6 +34,9 @@ interface CreativeModeContextType {
   isUIVisible: (key: keyof ModeCapabilities['ui']) => boolean;
   canEdit: (key: keyof ModeCapabilities['edit']) => boolean;
   getBehavior: (key: keyof ModeCapabilities['behavior']) => boolean;
+  
+  // Developer mode override
+  isDeveloperModeActive: boolean;
 }
 
 const MODE_HIERARCHY: Record<CreativeMode, number> = {
@@ -62,6 +66,7 @@ export function CreativeModeProvider({
   children: React.ReactNode;
   projectId: string;
 }) {
+  const { isDeveloperMode } = useDeveloperMode();
   const [projectMode, setProjectModeState] = useState<CreativeMode>('ASSISTED');
   const [sceneOverrides, setSceneOverrides] = useState<Record<string, CreativeMode | null>>({});
   const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
@@ -159,11 +164,12 @@ export function CreativeModeProvider({
     }
   }, []);
 
-  // Calculate effective mode
+  // Calculate effective mode - Developer Mode overrides to PRO
   const sceneOverride = currentSceneId ? sceneOverrides[currentSceneId] : null;
-  const effectiveMode = sceneOverride ?? projectMode;
+  const baseEffectiveMode = sceneOverride ?? projectMode;
+  const effectiveMode: CreativeMode = isDeveloperMode ? 'PRO' : baseEffectiveMode;
   
-  // Get capabilities for current mode
+  // Get capabilities for current mode (always PRO if developer mode is active)
   const capabilities = getCapabilities(effectiveMode);
 
   // Helper to check if a field should be editable based on mode
@@ -221,6 +227,7 @@ export function CreativeModeProvider({
         isUIVisible,
         canEdit,
         getBehavior,
+        isDeveloperModeActive: isDeveloperMode,
       }}
     >
       {children}

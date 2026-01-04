@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -32,6 +32,8 @@ import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssista
 import { useRecommendations } from '@/hooks/useRecommendations';
 import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
 import { ENGINES } from '@/lib/recommendations';
+import { DeveloperDebugPanel, DebugPanelData } from '@/components/developer/DeveloperDebugPanel';
+import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
 
 interface Keyframe {
   id: string;
@@ -113,6 +115,10 @@ export default function KeyframeManager({
   const [canonModal, setCanonModal] = useState<{ open: boolean; keyframe: Keyframe | null }>({ open: false, keyframe: null });
   const [projectId, setProjectId] = useState<string | null>(null);
   const [promptPatch, setPromptPatch] = useState<string | null>(null);
+  const [debugPrompt, setDebugPrompt] = useState<string>('');
+  const [debugNegativePrompt, setDebugNegativePrompt] = useState<string>('');
+  const [lastRawResponse, setLastRawResponse] = useState<unknown>(null);
+  const { isDeveloperMode } = useDeveloperMode();
 
   const KEYFRAME_PRESETS = ['initial', 'intermediate', 'final'];
   
@@ -311,6 +317,7 @@ export default function KeyframeManager({
 
       // Use unified generateRun gateway
       const result = await generateRun(payload);
+      setLastRawResponse(result);
 
       if (!result.ok) {
         throw new Error(result.error || 'Generation failed');
@@ -864,6 +871,37 @@ export default function KeyframeManager({
           }}
         />
       )}
+
+      {/* Developer Debug Panel */}
+      <DeveloperDebugPanel
+        data={{
+          prompt: debugPrompt || buildGenerationPayload(selectedIndex, projectId || '', undefined)?.prompt || '',
+          negativePrompt: debugNegativePrompt,
+          engine: 'nano-banana-pro',
+          preset: getRequiredSlots()[selectedIndex]?.frameType || 'initial',
+          contextJson: {
+            shotId,
+            duration,
+            sceneDescription,
+            shotType,
+            cameraMovement,
+            blocking,
+            characters: characters.map(c => ({ id: c.id, name: c.name })),
+            location: location ? { id: location.id, name: location.name } : null,
+            shotDetails,
+            stylePack,
+            recommendation,
+          },
+          rawResponse: lastRawResponse,
+        }}
+        onPromptChange={setDebugPrompt}
+        onNegativePromptChange={setDebugNegativePrompt}
+        onForceRegenerate={() => generateKeyframe(selectedIndex)}
+        showEngineSelector={false}
+        showPresetSelector={false}
+        showSeed={true}
+        title="Debug / Advanced (Keyframe)"
+      />
 
       {/* Set Canon Modal */}
       {canonModal.keyframe && projectId && (
