@@ -1984,6 +1984,8 @@ export type Database = {
         Row: {
           accepted_at: string | null
           auto_retry_count: number | null
+          autopilot_confidence: number | null
+          autopilot_used: boolean | null
           composed_prompt: string
           context: string | null
           created_at: string
@@ -2020,6 +2022,8 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           auto_retry_count?: number | null
+          autopilot_confidence?: number | null
+          autopilot_used?: boolean | null
           composed_prompt: string
           context?: string | null
           created_at?: string
@@ -2056,6 +2060,8 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           auto_retry_count?: number | null
+          autopilot_confidence?: number | null
+          autopilot_used?: boolean | null
           composed_prompt?: string
           context?: string | null
           created_at?: string
@@ -2571,6 +2577,39 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      project_autopilot_settings: {
+        Row: {
+          autopilot_confidence_threshold: number | null
+          autopilot_image_enabled: boolean | null
+          autopilot_max_regens: number | null
+          autopilot_min_runs: number | null
+          created_at: string | null
+          id: string
+          project_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          autopilot_confidence_threshold?: number | null
+          autopilot_image_enabled?: boolean | null
+          autopilot_max_regens?: number | null
+          autopilot_min_runs?: number | null
+          created_at?: string | null
+          id?: string
+          project_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          autopilot_confidence_threshold?: number | null
+          autopilot_image_enabled?: boolean | null
+          autopilot_max_regens?: number | null
+          autopilot_min_runs?: number | null
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          updated_at?: string | null
         }
         Relationships: []
       }

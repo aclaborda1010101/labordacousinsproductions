@@ -11,7 +11,7 @@ interface GenerateRunRequest {
   type: 'character' | 'location' | 'keyframe';
   phase: 'exploration' | 'production';
   engine: string;
-  engineSelectedBy: 'auto' | 'user' | 'recommendation';
+  engineSelectedBy: 'auto' | 'user' | 'recommendation' | 'autopilot';
   engineReason?: string;
   prompt: string;
   context?: string;
@@ -20,6 +20,8 @@ interface GenerateRunRequest {
   presetId?: string; // For editorial assistant tracking
   userOverride?: boolean; // True if user chose different from recommendation
   isAutoRetry?: boolean; // True if this is an auto-retry attempt
+  autopilotUsed?: boolean; // True if autopilot selected engine+preset
+  autopilotConfidence?: number; // Confidence score when autopilot was used
 }
 
 interface GenerateRunResponse {
@@ -114,10 +116,12 @@ serve(async (req) => {
         verdict: 'approved',
         warnings: [],
         suggestions: [],
-        parent_run_id: body.parentRunId || null,  // For regeneration chains
-        preset_id: body.presetId || null,  // For editorial assistant tracking
-        user_override: body.userOverride || false,  // Track if user overrode recommendation
-        auto_retry_count: autoRetryCount  // Track auto-retry attempts
+        parent_run_id: body.parentRunId || null,
+        preset_id: body.presetId || null,
+        user_override: body.userOverride || false,
+        auto_retry_count: autoRetryCount,
+        autopilot_used: body.autopilotUsed || false,
+        autopilot_confidence: body.autopilotConfidence || null
       })
       .select('id')
       .single();

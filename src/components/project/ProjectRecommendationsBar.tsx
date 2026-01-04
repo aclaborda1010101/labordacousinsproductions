@@ -1,5 +1,5 @@
 /**
- * ProjectRecommendationsBar - Shows engine + preset recommendations
+ * ProjectRecommendationsBar - Shows engine + preset recommendations + autopilot
  */
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,9 +11,12 @@ import {
   Sparkles, 
   ChevronDown,
   Info,
-  TrendingUp
+  TrendingUp,
+  Bot,
+  Settings2
 } from 'lucide-react';
 import { Recommendation, ENGINES, formatEngineName } from '@/lib/recommendations';
+import { AutopilotDecision } from '@/lib/autopilot';
 import {
   Collapsible,
   CollapsibleContent,
@@ -27,6 +30,8 @@ interface ProjectRecommendationsBarProps {
   onApply: () => void;
   onShowAlternatives?: () => void;
   showEngineSelector?: boolean;
+  autopilotDecision?: AutopilotDecision | null;
+  onToggleAutopilot?: () => void;
 }
 
 export function ProjectRecommendationsBar({ 
@@ -34,9 +39,13 @@ export function ProjectRecommendationsBar({
   loading,
   onApply,
   onShowAlternatives,
-  showEngineSelector = true
+  showEngineSelector = true,
+  autopilotDecision,
+  onToggleAutopilot
 }: ProjectRecommendationsBarProps) {
   const [showDetails, setShowDetails] = useState(false);
+  
+  const isAutopilotActive = autopilotDecision?.shouldAutopilot ?? false;
 
   if (loading) {
     return (
@@ -73,15 +82,33 @@ export function ProjectRecommendationsBar({
   };
 
   return (
-    <Card className={`${bgColors[recommendation.confidence]} mb-4`}>
+    <Card className={`${isAutopilotActive ? 'bg-violet-500/5 border-violet-500/30' : bgColors[recommendation.confidence]} mb-4`}>
       <CardContent className="py-3 px-4">
         <div className="flex flex-col gap-3">
+          {/* Autopilot badge */}
+          {isAutopilotActive && (
+            <div className="flex items-center justify-between">
+              <Badge className="bg-violet-600 text-white gap-1">
+                <Bot className="w-3 h-3" />
+                Autopilot activado
+              </Badge>
+              {onToggleAutopilot && (
+                <Button variant="ghost" size="sm" onClick={onToggleAutopilot} className="h-6 text-xs">
+                  <Settings2 className="w-3 h-3 mr-1" />
+                  Configurar
+                </Button>
+              )}
+            </div>
+          )}
+          
           {/* Header row */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3">
-              {engineIcon}
+              {isAutopilotActive ? <Bot className="w-4 h-4 text-violet-600" /> : engineIcon}
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-medium text-sm">Recomendado para este proyecto</span>
+                <span className="font-medium text-sm">
+                  {isAutopilotActive ? 'Autopilot seleccionará automáticamente' : 'Recomendado para este proyecto'}
+                </span>
                 {showEngineSelector && (
                   <Badge variant="outline" className="text-xs font-mono">
                     {engineLabel}
@@ -90,29 +117,52 @@ export function ProjectRecommendationsBar({
                 <Badge variant="outline" className="text-xs">
                   {recommendation.recommendedPreset}
                 </Badge>
-                <Badge 
-                  variant="outline" 
-                  className="text-xs bg-green-500/10 text-green-600 border-green-500/30 gap-1"
-                >
-                  {confidenceIcons[recommendation.confidence]}
-                  <span>
-                    {recommendation.confidence === 'high' ? 'Alta confianza' : 
-                     recommendation.confidence === 'medium' ? 'Confianza media' : 'Datos limitados'}
-                  </span>
-                </Badge>
+                {isAutopilotActive && autopilotDecision && (
+                  <Badge 
+                    variant="outline" 
+                    className="text-xs bg-violet-500/10 text-violet-600 border-violet-500/30 gap-1"
+                  >
+                    <TrendingUp className="w-3 h-3" />
+                    {(autopilotDecision.confidence * 100).toFixed(0)}% confianza
+                  </Badge>
+                )}
+                {!isAutopilotActive && (
+                  <Badge 
+                    variant="outline" 
+                    className="text-xs bg-green-500/10 text-green-600 border-green-500/30 gap-1"
+                  >
+                    {confidenceIcons[recommendation.confidence]}
+                    <span>
+                      {recommendation.confidence === 'high' ? 'Alta confianza' : 
+                       recommendation.confidence === 'medium' ? 'Confianza media' : 'Datos limitados'}
+                    </span>
+                  </Badge>
+                )}
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <Button 
-                size="sm" 
-                onClick={onApply}
-                className="gap-1"
-              >
-                <CheckCircle2 className="w-3 h-3" />
-                Aplicar recomendado
-              </Button>
-              {onShowAlternatives && (
+              {!isAutopilotActive && (
+                <Button 
+                  size="sm" 
+                  onClick={onApply}
+                  className="gap-1"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  Aplicar recomendado
+                </Button>
+              )}
+              {isAutopilotActive && (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={onShowAlternatives}
+                  className="gap-1"
+                >
+                  Cambiar manualmente
+                </Button>
+              )}
+              {onShowAlternatives && !isAutopilotActive && (
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -126,7 +176,7 @@ export function ProjectRecommendationsBar({
 
           {/* Reason text */}
           <p className="text-xs text-muted-foreground">
-            {recommendation.reason}
+            {isAutopilotActive && autopilotDecision ? autopilotDecision.reason : recommendation.reason}
           </p>
 
           {/* Expandable details */}
