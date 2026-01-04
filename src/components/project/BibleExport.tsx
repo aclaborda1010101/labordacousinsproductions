@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Download, FileJson, FileText, Loader2, Star, ExternalLink, Printer } from 'lucide-react';
+import { Download, FileJson, FileText, Loader2, Star, Printer, Clock } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { BibleProDocument } from './BibleProDocument';
 
@@ -14,43 +14,66 @@ interface BibleExportProps {
 }
 
 interface CanonAsset {
+  id: string;
   name: string;
   imageUrl: string;
   notes: string | null;
   runId: string;
   model: string | null;
   engine: string | null;
+  createdAt: string;
+  assetType: string;
 }
 
 interface KeyframeData {
   id: string;
   imageUrl: string | null;
-  sceneNumber?: number;
-  shotNumber?: number;
+  sceneNumber?: number | null;
+  shotNumber?: number | null;
+  frameType?: string | null;
 }
 
 interface StylePackData {
-  genre?: string;
-  tone?: string;
-  era?: string;
-  keywords?: string[];
-  colorPalette?: string[];
-  description?: string;
+  description?: string | null;
+  tone?: string | null;
+  lensStyle?: string | null;
+  realismLevel?: string | null;
+  colorPalette?: string[] | null;
+  referenceUrls?: string[] | null;
+}
+
+interface ProjectStats {
+  totalCharacters: number;
+  totalLocations: number;
+  totalScenes: number;
+  totalShots: number;
+  totalKeyframes: number;
+  canonCharacters: number;
+  canonLocations: number;
+  canonStyle: number;
+  lastUpdated: string;
 }
 
 interface BibleData {
   projectId: string;
   projectTitle: string;
   exportedAt: string;
-  version?: string;
+  version: string;
+  heroImageUrl: string | null;
+  stylePack: StylePackData | null;
+  stats: ProjectStats;
   canon: {
     characters: CanonAsset[];
     locations: CanonAsset[];
     style: CanonAsset[];
   };
-  keyframes?: KeyframeData[];
-  stylePack?: StylePackData;
-  heroImageUrl?: string;
+  keyframes: KeyframeData[];
+}
+
+interface LastExport {
+  type: 'normal' | 'pro';
+  date: Date;
+  fileName: string;
 }
 
 export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
@@ -59,21 +82,24 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
   const [exportingPro, setExportingPro] = useState(false);
   const [showProPreview, setShowProPreview] = useState(false);
   const [proData, setProData] = useState<BibleData | null>(null);
-  const [lastProExport, setLastProExport] = useState<{ url: string; date: Date } | null>(null);
+  const [lastExport, setLastExport] = useState<LastExport | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
+
+  const fetchBibleData = async (): Promise<BibleData> => {
+    const { data, error } = await supabase.functions.invoke('export-bible', {
+      body: { projectId, format: 'json' }
+    });
+    if (error) throw error;
+    if (!data.ok) throw new Error(data.error);
+    return data.data;
+  };
 
   const handleExportJSON = async () => {
     setExportingJson(true);
     try {
-      const { data, error } = await supabase.functions.invoke('export-bible', {
-        body: { projectId, format: 'json' }
-      });
-
-      if (error) throw error;
-      if (!data.ok) throw new Error(data.error);
-
-      // Download JSON
-      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+      const bibleData = await fetchBibleData();
+      
+      const blob = new Blob([JSON.stringify(bibleData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -93,16 +119,11 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
   const handleExportPDF = async () => {
     setExportingPdf(true);
     try {
-      const { data, error } = await supabase.functions.invoke('export-bible', {
-        body: { projectId, format: 'pdf', style: 'basic' }
-      });
-
-      if (error) throw error;
-      if (!data.ok) throw new Error(data.error);
-
-      const bibleData: BibleData = data.data;
+      const bibleData = await fetchBibleData();
+      const hasCanon = bibleData.canon.characters.length > 0 || 
+                       bibleData.canon.locations.length > 0 || 
+                       bibleData.canon.style.length > 0;
       
-      // Generate PDF client-side using jsPDF
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -115,88 +136,173 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
       let yPos = margin;
 
       // Cover page
-      pdf.setFillColor(10, 10, 10);
+      pdf.setFillColor(15, 15, 15);
       pdf.rect(0, 0, pageWidth, pageHeight, 'F');
       
       pdf.setTextColor(245, 158, 11);
-      pdf.setFontSize(32);
+      pdf.setFontSize(28);
       pdf.setFont('helvetica', 'bold');
       const titleLines = pdf.splitTextToSize(bibleData.projectTitle, pageWidth - 2 * margin);
       pdf.text(titleLines, pageWidth / 2, pageHeight / 3, { align: 'center' });
       
       pdf.setTextColor(150, 150, 150);
-      pdf.setFontSize(18);
+      pdf.setFontSize(16);
       pdf.setFont('helvetica', 'normal');
       pdf.text('Biblia de Producción', pageWidth / 2, pageHeight / 3 + 20, { align: 'center' });
       
-      pdf.setFontSize(12);
+      pdf.setFontSize(11);
       const exportDate = new Date(bibleData.exportedAt).toLocaleDateString('es-ES', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       });
-      pdf.text(`Exportado: ${exportDate}`, pageWidth / 2, pageHeight / 3 + 35, { align: 'center' });
+      pdf.text(`Exportado: ${exportDate}`, pageWidth / 2, pageHeight / 3 + 32, { align: 'center' });
 
-      // Render sections
-      const renderSection = (title: string, assets: CanonAsset[]) => {
+      // If no canon, show project status page
+      if (!hasCanon) {
         pdf.addPage();
         yPos = margin;
         
+        pdf.setFillColor(15, 15, 15);
+        pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+        
         pdf.setTextColor(245, 158, 11);
-        pdf.setFontSize(24);
+        pdf.setFontSize(22);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(title, margin, yPos);
-        yPos += 15;
+        pdf.text('Estado del Proyecto', margin, yPos + 10);
+        yPos += 30;
         
         pdf.setDrawColor(245, 158, 11);
         pdf.setLineWidth(0.5);
-        pdf.line(margin, yPos, margin + 60, yPos);
+        pdf.line(margin, yPos, margin + 50, yPos);
+        yPos += 20;
+
+        // Stats
+        const stats = bibleData.stats;
+        const statItems = [
+          { label: 'Personajes definidos', value: stats.totalCharacters },
+          { label: 'Localizaciones definidas', value: stats.totalLocations },
+          { label: 'Escenas creadas', value: stats.totalScenes },
+          { label: 'Shots definidos', value: stats.totalShots },
+          { label: 'Canon activos (personajes)', value: stats.canonCharacters },
+          { label: 'Canon activos (localizaciones)', value: stats.canonLocations },
+          { label: 'Canon activos (estilo)', value: stats.canonStyle },
+        ];
+
+        pdf.setFontSize(12);
+        for (const item of statItems) {
+          pdf.setTextColor(150, 150, 150);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text(item.label + ':', margin, yPos);
+          pdf.setTextColor(229, 229, 229);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(item.value), margin + 80, yPos);
+          yPos += 10;
+        }
+
+        yPos += 15;
+        pdf.setTextColor(100, 100, 100);
+        pdf.setFontSize(10);
+        const lastUpdated = new Date(stats.lastUpdated).toLocaleDateString('es-ES', {
+          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        pdf.text(`Última actualización: ${lastUpdated}`, margin, yPos);
+
+        // Checklist
+        yPos += 25;
+        pdf.setTextColor(245, 158, 11);
+        pdf.setFontSize(16);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Próximos Pasos', margin, yPos);
         yPos += 15;
 
-        if (assets.length === 0) {
-          pdf.setTextColor(100, 100, 100);
-          pdf.setFontSize(12);
-          pdf.setFont('helvetica', 'italic');
-          pdf.text('No hay assets canon definidos', margin, yPos);
-          return;
+        const checklist = [
+          { done: stats.totalCharacters > 0, text: 'Crear personajes principales' },
+          { done: stats.totalLocations > 0, text: 'Definir localizaciones clave' },
+          { done: stats.canonCharacters > 0, text: 'Aprobar canon de personajes' },
+          { done: stats.canonLocations > 0, text: 'Aprobar canon de localizaciones' },
+          { done: stats.totalScenes > 0, text: 'Estructurar escenas' },
+          { done: stats.totalKeyframes > 0, text: 'Generar keyframes de referencia' },
+        ];
+
+        pdf.setFontSize(11);
+        for (const item of checklist) {
+          const icon = item.done ? '✓' : '○';
+          pdf.setTextColor(item.done ? 100 : 60, item.done ? 180 : 60, item.done ? 100 : 60);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text(`${icon}  ${item.text}`, margin, yPos);
+          yPos += 9;
         }
 
-        for (const asset of assets) {
-          if (yPos > pageHeight - 70) {
-            pdf.addPage();
-            yPos = margin;
-          }
-
-          pdf.setFillColor(26, 26, 26);
-          pdf.roundedRect(margin, yPos, pageWidth - 2 * margin, 55, 3, 3, 'F');
-
-          pdf.setTextColor(229, 229, 229);
-          pdf.setFontSize(14);
+      } else {
+        // Render sections with canon
+        const renderSection = (title: string, assets: CanonAsset[]) => {
+          if (assets.length === 0) return;
+          
+          pdf.addPage();
+          yPos = margin;
+          
+          pdf.setFillColor(15, 15, 15);
+          pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+          
+          pdf.setTextColor(245, 158, 11);
+          pdf.setFontSize(22);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(asset.name, margin + 5, yPos + 10);
+          pdf.text(title, margin, yPos + 10);
+          yPos += 25;
+          
+          pdf.setDrawColor(245, 158, 11);
+          pdf.setLineWidth(0.5);
+          pdf.line(margin, yPos, margin + 50, yPos);
+          yPos += 15;
 
-          if (asset.notes) {
-            pdf.setTextColor(150, 150, 150);
-            pdf.setFontSize(10);
-            pdf.setFont('helvetica', 'normal');
-            const noteLines = pdf.splitTextToSize(asset.notes, pageWidth - 2 * margin - 10);
-            pdf.text(noteLines.slice(0, 2), margin + 5, yPos + 20);
+          for (const asset of assets) {
+            if (yPos > pageHeight - 65) {
+              pdf.addPage();
+              pdf.setFillColor(15, 15, 15);
+              pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+              yPos = margin;
+            }
+
+            pdf.setFillColor(26, 26, 26);
+            pdf.roundedRect(margin, yPos, pageWidth - 2 * margin, 50, 3, 3, 'F');
+
+            pdf.setTextColor(229, 229, 229);
+            pdf.setFontSize(14);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(asset.name, margin + 8, yPos + 12);
+
+            if (asset.notes) {
+              pdf.setTextColor(150, 150, 150);
+              pdf.setFontSize(10);
+              pdf.setFont('helvetica', 'normal');
+              const noteLines = pdf.splitTextToSize(asset.notes, pageWidth - 2 * margin - 16);
+              pdf.text(noteLines.slice(0, 2), margin + 8, yPos + 24);
+            }
+
+            pdf.setTextColor(100, 100, 100);
+            pdf.setFontSize(9);
+            pdf.text(`Motor: ${asset.engine || 'N/A'} | Modelo: ${asset.model || 'N/A'}`, margin + 8, yPos + 42);
+
+            yPos += 55;
           }
+        };
 
-          pdf.setTextColor(100, 100, 100);
-          pdf.setFontSize(9);
-          pdf.text(`Motor: ${asset.engine || 'N/A'} | Modelo: ${asset.model || 'N/A'}`, margin + 5, yPos + 45);
+        renderSection('Personajes Canon', bibleData.canon.characters);
+        renderSection('Localizaciones Canon', bibleData.canon.locations);
+        renderSection('Estilo Canon', bibleData.canon.style);
+      }
 
-          yPos += 60;
-        }
-      };
+      // Footer on last page
+      pdf.setTextColor(80, 80, 80);
+      pdf.setFontSize(8);
+      pdf.text(`${projectId} | Bible v${bibleData.version}`, margin, pageHeight - 10);
+      pdf.text(exportDate, pageWidth - margin, pageHeight - 10, { align: 'right' });
 
-      renderSection('Personajes Canon', bibleData.canon.characters);
-      renderSection('Localizaciones Canon', bibleData.canon.locations);
-      renderSection('Estilo Canon', bibleData.canon.style);
-
-      // Save PDF
-      pdf.save(`biblia-${projectTitle.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`);
+      const fileName = `biblia-${projectTitle.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`;
+      pdf.save(fileName);
+      
+      setLastExport({ type: 'normal', date: new Date(), fileName });
       toast.success('Biblia exportada como PDF');
 
     } catch (err) {
@@ -210,64 +316,9 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
   const handleExportPro = async () => {
     setExportingPro(true);
     try {
-      const { data, error } = await supabase.functions.invoke('export-bible', {
-        body: { projectId, format: 'json', style: 'pro' }
-      });
-
-      if (error) throw error;
-      if (!data.ok) throw new Error(data.error);
-
-      // Fetch additional data for PRO document
-      const [keyframesRes, stylePackRes] = await Promise.all([
-        supabase
-          .from('keyframes')
-          .select('id, image_url, shot_id, shots(shot_number, scenes(scene_number))')
-          .eq('approved', true)
-          .order('created_at', { ascending: false })
-          .limit(16),
-        supabase
-          .from('style_packs')
-          .select('tone, color_palette, description, lens_style, realism_level')
-          .eq('project_id', projectId)
-          .maybeSingle()
-      ]);
-
-      // Find hero image - prefer first accepted keyframe with image
-      let heroImageUrl: string | undefined;
-      if (keyframesRes.data && keyframesRes.data.length > 0) {
-        const kfWithImage = keyframesRes.data.find(kf => kf.image_url);
-        if (kfWithImage) heroImageUrl = kfWithImage.image_url ?? undefined;
-      }
-      if (!heroImageUrl && data.data.canon.characters[0]?.imageUrl) {
-        heroImageUrl = data.data.canon.characters[0].imageUrl;
-      }
-
-      const proDocData: BibleData = {
-        ...data.data,
-        version: '1.0',
-        heroImageUrl,
-        keyframes: keyframesRes.data?.map(kf => {
-          const shots = kf.shots as { shot_number?: number; scenes?: { scene_number?: number } } | null;
-          return {
-            id: kf.id,
-            imageUrl: kf.image_url,
-            shotNumber: shots?.shot_number,
-            sceneNumber: shots?.scenes?.scene_number
-          };
-        }) || [],
-        stylePack: stylePackRes.data ? {
-          tone: stylePackRes.data.tone ?? undefined,
-          colorPalette: stylePackRes.data.color_palette ?? undefined,
-          description: stylePackRes.data.description ?? undefined,
-          genre: stylePackRes.data.lens_style ?? undefined,
-          era: stylePackRes.data.realism_level ?? undefined
-        } : undefined
-      };
-
-      setProData(proDocData);
+      const bibleData = await fetchBibleData();
+      setProData(bibleData);
       setShowProPreview(true);
-      setLastProExport({ url: '', date: new Date() });
-
     } catch (err) {
       console.error('Error preparing PRO PDF:', err);
       toast.error('Error al preparar la biblia PRO');
@@ -277,14 +328,16 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
   };
 
   const handlePrint = useCallback(() => {
-    // Open print dialog
     window.print();
+    if (proData) {
+      const fileName = `biblia-pro-${projectTitle.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`;
+      setLastExport({ type: 'pro', date: new Date(), fileName });
+    }
     toast.success('Usa "Guardar como PDF" en el diálogo de impresión');
-  }, []);
+  }, [proData, projectTitle]);
 
   const handleCloseProPreview = () => {
     setShowProPreview(false);
-    setProData(null);
   };
 
   return (
@@ -317,7 +370,7 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
             ) : (
               <FileText className="w-4 h-4" />
             )}
-            PDF Básico
+            PDF Normal
           </Button>
           <Button
             variant="default"
@@ -335,13 +388,15 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
           </Button>
         </div>
         
-        {lastProExport && (
+        {lastExport && (
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Badge variant="outline" className="gap-1">
-              <Download className="w-3 h-3" />
-              {lastProExport.date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+              <Clock className="w-3 h-3" />
+              {lastExport.date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
             </Badge>
-            <span className="text-muted-foreground">PRO preview abierto</span>
+            <span>
+              Último: <span className="font-medium">{lastExport.type === 'pro' ? 'PRO' : 'Normal'}</span>
+            </span>
           </div>
         )}
       </div>
@@ -366,10 +421,7 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
           <div className="flex-1 overflow-auto bg-gray-100 p-4 rounded-lg">
             {proData && (
               <div ref={printRef}>
-                <BibleProDocument 
-                  data={proData} 
-                  onReady={() => console.log('Document ready for print')}
-                />
+                <BibleProDocument data={proData} />
               </div>
             )}
           </div>
