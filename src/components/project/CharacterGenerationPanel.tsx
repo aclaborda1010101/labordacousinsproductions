@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Check, RotateCcw, Star, User, SidebarClose, Maximize } from 'lucide-react';
+import { Loader2, Check, RotateCcw, Star, User, SidebarClose, Maximize, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { generateRun, updateRunStatus, GenerateRunPayload } from '@/lib/generateRun';
 import SetCanonModal from './SetCanonModal';
 import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
+import { useMotorSelector } from '@/hooks/useMotorSelector';
+import { MotorRecommendationBadge } from './MotorRecommendationBadge';
 
 type PortraitType = 'frontal' | 'profile' | 'fullbody';
 
@@ -61,6 +63,33 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
   const [showCanonModal, setShowCanonModal] = useState(false);
   const [promptPatch, setPromptPatch] = useState<string | null>(null);
 
+  // Motor Selector integration
+  const { 
+    recommendation, 
+    loading: motorLoading, 
+    checkOverride, 
+    logShown, 
+    logOverride,
+    refresh: refreshMotor
+  } = useMotorSelector({ projectId, assetType: 'character' });
+
+  // Log recommendation shown
+  useEffect(() => {
+    if (recommendation && !motorLoading) {
+      logShown();
+    }
+  }, [recommendation, motorLoading, logShown]);
+
+  // Apply recommended preset if high confidence
+  useEffect(() => {
+    if (recommendation && recommendation.confidence === 'high' && !generating) {
+      const preset = PORTRAIT_PRESETS.find(p => p.type === recommendation.recommendedPreset);
+      if (preset) {
+        setSelectedType(preset.type);
+      }
+    }
+  }, [recommendation, generating]);
+
   const buildPrompt = (preset: PortraitPreset) => {
     const characterDesc = [
       character.name,
@@ -77,6 +106,12 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
     setGenerating(true);
     const preset = PORTRAIT_PRESETS.find(p => p.type === selectedType)!;
 
+    // Check if user is overriding recommendation
+    const isUserOverride = checkOverride('flux-1.1-pro-ultra', selectedType);
+    if (isUserOverride) {
+      logOverride('flux-1.1-pro-ultra', selectedType);
+    }
+
     try {
       const payload: GenerateRunPayload = {
         projectId,
@@ -92,7 +127,8 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
           portraitType: selectedType
         },
         parentRunId,
-        presetId: selectedType
+        presetId: selectedType,
+        userOverride: isUserOverride
       };
 
       const result = await generateRun(payload);
@@ -111,6 +147,7 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
       setCurrentOutput({ url: result.outputUrl!, runId: result.runId! });
       setRunStatus('generated');
       toast.success(`Retrato generado (Run: ${result.runId?.slice(0, 8)})`);
+      refreshMotor(); // Refresh recommendations after generation
       onUpdate();
     } catch (err) {
       console.error('[CharacterGeneration] error:', err);
@@ -171,8 +208,16 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Motor Recommendation */}
+        {recommendation && recommendation.confidence !== 'low' && (
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border/50">
+            <MotorRecommendationBadge recommendation={recommendation} loading={motorLoading} />
+            <span className="text-xs text-muted-foreground">{recommendation.reason}</span>
+          </div>
+        )}
+
         {/* Portrait Type Selector */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {PORTRAIT_PRESETS.map(preset => (
             <Button
               key={preset.type}
@@ -180,9 +225,13 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
               size="sm"
               onClick={() => setSelectedType(preset.type)}
               disabled={generating}
+              className="relative"
             >
               {preset.icon}
               <span className="ml-2">{preset.label}</span>
+              {recommendation?.recommendedPreset === preset.type && recommendation.confidence !== 'low' && (
+                <CheckCircle2 className="w-3 h-3 text-green-500 absolute -top-1 -right-1" />
+              )}
             </Button>
           ))}
         </div>

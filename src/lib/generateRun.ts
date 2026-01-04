@@ -12,6 +12,7 @@ export interface GenerateRunPayload {
   params?: Record<string, unknown>;
   parentRunId?: string; // For regeneration chains
   presetId?: string; // For editorial assistant tracking
+  userOverride?: boolean; // True if user chose different from recommendation
 }
 
 export interface GenerateRunResult {
