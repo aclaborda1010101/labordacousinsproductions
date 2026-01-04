@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,9 +6,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, Settings, Trash2 } from 'lucide-react';
+import { Loader2, Settings, Trash2, Palette } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Separator } from '@/components/ui/separator';
+import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import {
+  FormatProfile,
+  AnimationType,
+  VisualStyle,
+  UserLevel,
+  FORMAT_PROFILES,
+  ANIMATION_STYLES,
+  USER_LEVEL_CONFIG,
+} from '@/lib/editorialKnowledgeBase';
 
 interface Project {
   id: string;
@@ -35,6 +46,19 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
     episodes_count: project.episodes_count,
     target_duration_min: project.target_duration_min,
   });
+
+  // Editorial Knowledge Base
+  const {
+    formatProfile,
+    animationType,
+    visualStyle,
+    userLevel,
+    setFormatProfile,
+    setAnimationType,
+    setVisualStyle,
+    setUserLevel,
+    loading: ekbLoading,
+  } = useEditorialKnowledgeBase({ projectId: project.id });
 
   const handleSave = async () => {
     if (!formData.title.trim()) {
@@ -136,9 +160,103 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
               />
             </div>
           </div>
+
+          {/* EKB Style Settings */}
+          <Separator />
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold flex items-center gap-2">
+              <Palette className="w-4 h-4" />
+              Configuración Visual (EKB)
+            </h4>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {/* Format Profile */}
+              <div className="space-y-2">
+                <Label>Tipo de Obra</Label>
+                <Select
+                  value={formatProfile}
+                  onValueChange={(v) => setFormatProfile(v as FormatProfile)}
+                  disabled={ekbLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(FORMAT_PROFILES).map(([key, profile]) => (
+                      <SelectItem key={key} value={key}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Animation Type */}
+              <div className="space-y-2">
+                <Label>Tipo Animación</Label>
+                <Select
+                  value={animationType}
+                  onValueChange={(v) => setAnimationType(v as AnimationType)}
+                  disabled={ekbLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2D">2D</SelectItem>
+                    <SelectItem value="3D">3D</SelectItem>
+                    <SelectItem value="mixed">Mixta</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Visual Style */}
+              <div className="space-y-2">
+                <Label>Estilo Visual</Label>
+                <Select
+                  value={visualStyle}
+                  onValueChange={(v) => setVisualStyle(v as VisualStyle)}
+                  disabled={ekbLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(ANIMATION_STYLES).map(([key, style]) => (
+                      <SelectItem key={key} value={key}>
+                        {style.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* User Level */}
+              <div className="space-y-2">
+                <Label>Nivel UI</Label>
+                <Select
+                  value={userLevel}
+                  onValueChange={(v) => setUserLevel(v as UserLevel)}
+                  disabled={ekbLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(USER_LEVEL_CONFIG).map(([key, config]) => (
+                      <SelectItem key={key} value={key}>
+                        {config.icon} {config.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
           
           {/* Danger Zone */}
-          <div className="pt-4 border-t border-destructive/20">
+          <Separator />
+          <div className="pt-4">
             <h4 className="text-sm font-semibold text-destructive mb-3">Zona de Peligro</h4>
             <AlertDialog>
               <AlertDialogTrigger asChild>

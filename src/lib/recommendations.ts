@@ -1,6 +1,6 @@
 /**
  * RECOMMENDATIONS v1 - Engine + Preset recommendations based on real metrics
- * No ML, pure metrics-based scoring with phase bias
+ * No ML, pure metrics-based scoring with phase bias + style bias (EKB v1)
  * 
  * Engines for IMAGE:
  * - nano-banana: exploration/variants/identity packs, fast keyframes
@@ -8,6 +8,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import type { VisualStyle, FormatProfile } from './editorialKnowledgeBase';
 
 // ─────────────────────────────────────────────────────────────
 // TYPES
@@ -73,6 +74,13 @@ export interface RecommendationsResult {
   orderedPresets: PresetWithMetrics[];
 }
 
+export interface StyleBias {
+  visualStyle?: VisualStyle;
+  formatProfile?: FormatProfile;
+  presetBias?: Record<string, number>;
+  engineBias?: Record<string, number>;
+}
+
 // ─────────────────────────────────────────────────────────────
 // ENGINE CONSTANTS
 // ─────────────────────────────────────────────────────────────
@@ -103,6 +111,7 @@ const PHASE_ENGINE_BIAS: Record<Phase, string> = {
 };
 
 const PHASE_BIAS_SCORE = 0.05;
+const STYLE_BIAS_SCORE = 0.03; // Lower than phase bias
 
 // ─────────────────────────────────────────────────────────────
 // HELPER FUNCTIONS
@@ -328,7 +337,9 @@ function calculateScore(
   avgRegenerationsChain: number,
   avgTimeToAccept: number,
   engine?: string,
-  phase?: Phase
+  phase?: Phase,
+  presetId?: string,
+  styleBias?: StyleBias
 ): number {
   const maxTimeSeconds = 3600;
   const normalizedTime = Math.min(avgTimeToAccept, maxTimeSeconds) / maxTimeSeconds;
@@ -342,6 +353,18 @@ function calculateScore(
   // Apply phase bias
   if (phase && engine && PHASE_ENGINE_BIAS[phase] === engine) {
     score += PHASE_BIAS_SCORE;
+  }
+
+  // Apply style bias from EKB
+  if (styleBias) {
+    // Engine bias from style
+    if (engine && styleBias.engineBias?.[engine]) {
+      score += styleBias.engineBias[engine];
+    }
+    // Preset bias from style
+    if (presetId && styleBias.presetBias?.[presetId]) {
+      score += styleBias.presetBias[presetId];
+    }
   }
   
   return score;
@@ -358,7 +381,8 @@ export async function getRecommendations(
   projectId: string,
   assetType: AssetType,
   availablePresets: string[],
-  phase?: Phase
+  phase?: Phase,
+  styleBias?: StyleBias
 ): Promise<RecommendationsResult> {
   const presetMetrics = await getPresetMetrics(projectId, assetType);
   const { byPreset: engineMetrics, global: engineGlobalMetrics } = await getEngineMetrics(projectId, assetType);
@@ -381,10 +405,10 @@ export async function getRecommendations(
       reason: 'Recomendación por defecto (historial insuficiente)'
     };
   } else {
-    // Score and sort
+    // Score and sort with style bias
     const scoredMetrics = validMetrics.map(m => ({
       ...m,
-      score: calculateScore(m.acceptRate, m.avgRegenerationsChain, m.avgTimeToAccept, m.engine, phase)
+      score: calculateScore(m.acceptRate, m.avgRegenerationsChain, m.avgTimeToAccept, m.engine, phase, m.presetId, styleBias)
     }));
     scoredMetrics.sort((a, b) => b.score - a.score);
     
@@ -419,7 +443,7 @@ export async function getRecommendations(
     const isRecommended = recommendation?.recommendedPreset === presetId;
     
     const score = metrics 
-      ? calculateScore(metrics.acceptRate, metrics.avgRegenerationsChain, metrics.avgTimeToAccept, engineMetric?.engine, phase)
+      ? calculateScore(metrics.acceptRate, metrics.avgRegenerationsChain, metrics.avgTimeToAccept, engineMetric?.engine, phase, presetId, styleBias)
       : -1;
     
     return {
