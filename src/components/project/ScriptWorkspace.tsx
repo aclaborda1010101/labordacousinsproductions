@@ -638,21 +638,33 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (!runInBackground) setProgress(100);
       updateTask(taskId, { progress: 90, description: 'Guardando...' });
 
-      const rawScript = scriptData?.screenplay || scriptData?.script || '';
-      setGeneratedScript(rawScript);
-      
+      const scriptPayload: any = (scriptData as any)?.script ?? scriptData;
+
+      const rawScriptText = coerceScriptToString(
+        scriptPayload?.screenplay ??
+          scriptPayload?.screenplay_text ??
+          scriptPayload?.episodes?.[0]?.screenplay_text ??
+          scriptPayload?.episodes?.[0]?.screenplay ??
+          scriptPayload?.script ??
+          scriptPayload
+      );
+
+      if (!rawScriptText.trim()) {
+        throw new Error('No se recibió texto de guion desde el generador');
+      }
+
       // Ensure parsed_json has required structure for ScriptSummaryPanel
       const parsedJson = {
-        ...scriptData,
-        title: scriptData?.title || 'Guion Generado',
-        synopsis: scriptData?.synopsis || scriptData?.logline || '',
-        episodes: scriptData?.episodes || [],
-        teasers: scriptData?.teasers,
-        characters: scriptData?.characters || scriptData?.main_characters || [],
-        locations: scriptData?.locations || scriptData?.main_locations || [],
-        props: scriptData?.props || scriptData?.main_props || [],
-        subplots: scriptData?.subplots || [],
-        plot_twists: scriptData?.plot_twists || [],
+        ...(scriptPayload ?? {}),
+        title: scriptPayload?.title || 'Guion Generado',
+        synopsis: scriptPayload?.synopsis || scriptPayload?.logline || '',
+        episodes: scriptPayload?.episodes || [],
+        teasers: scriptPayload?.teasers,
+        characters: scriptPayload?.characters || scriptPayload?.main_characters || [],
+        locations: scriptPayload?.locations || scriptPayload?.main_locations || [],
+        props: scriptPayload?.props || scriptPayload?.main_props || [],
+        subplots: scriptPayload?.subplots || [],
+        plot_twists: scriptPayload?.plot_twists || [],
       };
       
       // Upsert: update existing or create new (one script per project)
@@ -664,23 +676,32 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         .maybeSingle();
 
       if (existingScript) {
-        await supabase.from('scripts').update({
-          raw_text: rawScript,
-          parsed_json: parsedJson,
-          status: 'draft',
-        }).eq('id', existingScript.id);
+        const { error: updateError } = await supabase
+          .from('scripts')
+          .update({
+            raw_text: rawScriptText,
+            parsed_json: parsedJson,
+            status: 'draft',
+          })
+          .eq('id', existingScript.id);
+
+        if (updateError) throw updateError;
       } else {
-        await supabase.from('scripts').insert({
+        const { error: insertError } = await supabase.from('scripts').insert({
           project_id: projectId,
-          raw_text: rawScript,
+          raw_text: rawScriptText,
           parsed_json: parsedJson,
           status: 'draft',
         });
+
+        if (insertError) throw insertError;
       }
+
+      setGeneratedScript(rawScriptText);
 
       // Trigger refresh to show ScriptSummaryPanel
       setHasExistingScript(true);
-      setExistingScriptText(rawScript);
+      setExistingScriptText(rawScriptText);
       setEntryMode(null);
 
       completeTask(taskId, { title: parsedJson.title });
@@ -690,6 +711,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       toast.success('¡Guion generado!');
     } catch (err) {
       console.error('Generation error:', err);
+      setGeneratedScript(null);
       failTask(taskId, err instanceof Error ? err.message : 'Error desconocido');
       if (!runInBackground) {
         setStatus('error');
@@ -1501,8 +1523,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             <AccordionContent>
               <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
                 <pre className="text-xs whitespace-pre-wrap font-mono">
-                  {(existingScriptText || '').slice(0, 2000)}
-                  {(existingScriptText || '').length > 2000 && '...'}
+                  {coerceScriptToString(existingScriptText).slice(0, 2000)}
+                  {coerceScriptToString(existingScriptText).length > 2000 && '...'}
                 </pre>
               </div>
             </AccordionContent>
@@ -1768,22 +1790,22 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 );
               })()}
 
-              {status === 'error' && !generatedScript && (
+              {status === 'error' && (
                 <Alert variant="destructive">
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>Error en la generación</AlertTitle>
                   <AlertDescription>
-                    Hubo un problema al generar el guion. Tu idea se ha guardado automáticamente. 
+                    Hubo un problema al generar el guion. Tu idea se ha guardado automáticamente.
                     Puedes reintentar o modificar el texto.
                   </AlertDescription>
                 </Alert>
               )}
 
-              {!generatedScript && (
+              {(!generatedScript || status === 'error') && (
                 <div className="flex gap-2">
-                  <Button 
-                    onClick={() => handleGenerateScript(false)} 
-                    className="flex-1" 
+                  <Button
+                    onClick={() => handleGenerateScript(false)}
+                    className="flex-1"
                     disabled={!ideaText.trim() || status === 'generating'}
                   >
                     {status === 'generating' ? (
@@ -1803,9 +1825,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                       </>
                     )}
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
-                    onClick={() => handleGenerateScript(true)} 
+                    onClick={() => handleGenerateScript(true)}
                     disabled={!ideaText.trim() || status === 'generating'}
                     title="Ejecutar en segundo plano"
                   >
