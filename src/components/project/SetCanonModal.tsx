@@ -26,9 +26,13 @@ interface SetCanonModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   runId: string;
-  imageUrl: string;
+  imageUrl?: string;
+  outputUrl?: string; // Alias for imageUrl
   projectId: string;
+  defaultAssetType?: AssetType;
+  defaultName?: string;
   onSuccess?: () => void;
+  onSaved?: (canonAssetId: string) => void;
 }
 
 type AssetType = 'character' | 'location' | 'style';
@@ -38,11 +42,16 @@ export default function SetCanonModal({
   onOpenChange,
   runId,
   imageUrl,
+  outputUrl,
   projectId,
-  onSuccess
+  defaultAssetType,
+  defaultName,
+  onSuccess,
+  onSaved
 }: SetCanonModalProps) {
-  const [assetType, setAssetType] = useState<AssetType>('character');
-  const [name, setName] = useState('');
+  const resolvedImageUrl = imageUrl || outputUrl || '';
+  const [assetType, setAssetType] = useState<AssetType>(defaultAssetType || 'character');
+  const [name, setName] = useState(defaultName || '');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -55,17 +64,19 @@ export default function SetCanonModal({
     setSaving(true);
     try {
       // Insert new canon asset (trigger will deactivate previous if exists)
-      const { error } = await supabase
+      const { data: insertedCanon, error } = await supabase
         .from('canon_assets')
         .insert({
           project_id: projectId,
           asset_type: assetType,
           name: name.trim(),
           run_id: runId,
-          image_url: imageUrl,
+          image_url: resolvedImageUrl,
           notes: notes.trim() || null,
           is_active: true
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 
@@ -78,11 +89,12 @@ export default function SetCanonModal({
       toast.success(`${assetType} "${name}" establecido como canon ⭐`);
       onOpenChange(false);
       onSuccess?.();
+      onSaved?.(insertedCanon.id);
       
       // Reset form
-      setName('');
+      setName(defaultName || '');
       setNotes('');
-      setAssetType('character');
+      setAssetType(defaultAssetType || 'character');
     } catch (error) {
       console.error('Error setting canon:', error);
       toast.error('Error al establecer como canon');
@@ -105,15 +117,16 @@ export default function SetCanonModal({
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
-          {/* Preview */}
-          <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-            <img 
-              src={imageUrl} 
-              alt="Canon preview" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-
+        {/* Preview */}
+          {resolvedImageUrl && (
+            <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+              <img 
+                src={resolvedImageUrl} 
+                alt="Canon preview" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           {/* Asset Type */}
           <div className="grid gap-2">
             <Label htmlFor="asset-type">Tipo de Asset</Label>
