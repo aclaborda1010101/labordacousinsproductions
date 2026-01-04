@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,6 +9,7 @@ const corsHeaders = {
 interface ScriptBreakdownRequest {
   scriptText: string;
   projectId: string;
+  scriptId?: string;
   language?: string;
 }
 
@@ -277,7 +279,7 @@ serve(async (req) => {
 
   try {
     const request: ScriptBreakdownRequest = await req.json();
-    const { scriptText, projectId, language } = request;
+    const { scriptText, projectId, scriptId, language } = request;
 
     if (!scriptText || scriptText.trim().length < 100) {
       return new Response(
@@ -393,6 +395,54 @@ IMPORTANTE:
       locations: breakdownData.locations?.length || 0,
       props: breakdownData.props?.length || 0
     });
+
+    // Save parsed_json directly to the script if scriptId is provided
+    if (scriptId) {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL');
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+      
+      if (supabaseUrl && supabaseServiceKey) {
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        
+        // Build parsed_json structure for ScriptSummaryPanel
+        const parsedJson = {
+          title: breakdownData.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Analizado',
+          synopsis: breakdownData.synopsis?.faithful_summary || '',
+          episodes: breakdownData.episodes || [{
+            episode_number: 1,
+            title: 'Episodio 1',
+            synopsis: breakdownData.synopsis?.faithful_summary || '',
+            scenes: breakdownData.scenes,
+            duration_min: breakdownData.summary?.estimated_runtime_min || 10,
+          }],
+          characters: breakdownData.characters || [],
+          locations: breakdownData.locations || [],
+          scenes: breakdownData.scenes || [],
+          props: breakdownData.props || [],
+          subplots: breakdownData.subplots || [],
+          plot_twists: breakdownData.plot_twists || [],
+          teasers: breakdownData.teasers,
+          counts: {
+            total_scenes: breakdownData.scenes?.length || 0,
+            total_dialogue_lines: 0,
+          },
+        };
+
+        const { error: updateError } = await supabase
+          .from('scripts')
+          .update({ 
+            parsed_json: parsedJson,
+            status: 'analyzed'
+          })
+          .eq('id', scriptId);
+
+        if (updateError) {
+          console.error('Error saving parsed_json to script:', updateError);
+        } else {
+          console.log('Successfully saved parsed_json to script:', scriptId);
+        }
+      }
+    }
 
     return new Response(
       JSON.stringify({

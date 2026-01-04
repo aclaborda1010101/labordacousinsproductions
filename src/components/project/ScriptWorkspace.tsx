@@ -628,9 +628,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         },
       };
 
-      await supabase.from('scripts')
+      const { error: updateError } = await supabase.from('scripts')
         .update({ parsed_json: JSON.parse(JSON.stringify(parsedJson)) })
         .eq('id', savedScript.id);
+      
+      if (updateError) {
+        console.error('Error updating parsed_json:', updateError);
+        throw updateError;
+      }
 
       setBreakdownResult(breakdown);
       
