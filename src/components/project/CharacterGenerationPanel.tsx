@@ -1,20 +1,20 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Check, RotateCcw, Star, User, SidebarClose, Maximize, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { User, Sparkles, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { updateRunStatus } from '@/lib/generateRun';
 import { runImageEngine, ImageEnginePayload } from '@/lib/engines/image';
 import SetCanonModal from './SetCanonModal';
-import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
 import { useRecommendations } from '@/hooks/useRecommendations';
 import { useAutopilot } from '@/hooks/useAutopilot';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
 import { PresetSelector } from './PresetSelector';
-import { AdaptiveGenerationPanel } from './AdaptiveGenerationPanel';
+import { GenerationActionBar, GenerationPreview, type GenerationStatus } from '@/components/generation';
 import { ENGINES } from '@/lib/recommendations';
 
 type PortraitType = 'frontal' | 'profile' | 'fullbody';
@@ -22,7 +22,6 @@ type PortraitType = 'frontal' | 'profile' | 'fullbody';
 interface PortraitPreset {
   type: PortraitType;
   label: string;
-  icon: React.ReactNode;
   promptTemplate: string;
 }
 
@@ -30,19 +29,16 @@ const PORTRAIT_PRESETS: PortraitPreset[] = [
   {
     type: 'frontal',
     label: 'Retrato Frontal',
-    icon: <User className="w-4 h-4" />,
     promptTemplate: 'Portrait photograph, head and shoulders, facing camera directly, neutral expression, soft studio lighting, clean background'
   },
   {
     type: 'profile',
     label: 'Perfil Lateral',
-    icon: <SidebarClose className="w-4 h-4" />,
     promptTemplate: 'Side profile portrait, 90-degree angle, head and shoulders, looking left, soft rim lighting, clean background'
   },
   {
     type: 'fullbody',
     label: 'Cuerpo Entero',
-    icon: <Maximize className="w-4 h-4" />,
     promptTemplate: 'Full body portrait, standing pose, facing camera, full length view from head to feet, correct human proportions, studio lighting, clean background'
   }
 ];
@@ -64,13 +60,12 @@ interface CharacterGenerationPanelProps {
 }
 
 export function CharacterGenerationPanel({ character, projectId, onUpdate }: CharacterGenerationPanelProps) {
-  const [generating, setGenerating] = useState(false);
+  const [status, setStatus] = useState<GenerationStatus>('idle');
   const [selectedType, setSelectedType] = useState<PortraitType>('frontal');
   const [selectedEngine, setSelectedEngine] = useState<string>(ENGINES.NANO_BANANA);
   const [currentOutput, setCurrentOutput] = useState<{ url: string; runId: string } | null>(null);
-  const [runStatus, setRunStatus] = useState<'generated' | 'accepted' | null>(null);
+  const [isAccepted, setIsAccepted] = useState(false);
   const [showCanonModal, setShowCanonModal] = useState(false);
-  const [promptPatch, setPromptPatch] = useState<string | null>(null);
 
   // Editorial Knowledge Base v1
   const {
@@ -135,21 +130,20 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
 
   // Apply autopilot or recommended preset on first load
   useEffect(() => {
-    if (autopilotDecision?.shouldAutopilot && autopilotDecision.recommendation && !generating) {
+    if (autopilotDecision?.shouldAutopilot && autopilotDecision.recommendation && status === 'idle') {
       const preset = PORTRAIT_PRESETS.find(p => p.type === autopilotDecision.recommendation!.recommendedPreset);
       if (preset) {
         setSelectedType(preset.type);
         setSelectedEngine(autopilotDecision.recommendation.recommendedEngine);
       }
-    } else if (recommendation && recommendation.confidence === 'high' && !generating) {
+    } else if (recommendation && recommendation.confidence === 'high' && status === 'idle') {
       const preset = PORTRAIT_PRESETS.find(p => p.type === recommendation.recommendedPreset);
       if (preset) {
         setSelectedType(preset.type);
         setSelectedEngine(recommendation.recommendedEngine);
       }
     }
-  }, [autopilotDecision?.shouldAutopilot, autopilotDecision?.recommendation, recommendation?.recommendedPreset, recommendation?.recommendedEngine, recommendation?.confidence]);
-
+  }, [autopilotDecision?.shouldAutopilot, autopilotDecision?.recommendation, recommendation?.recommendedPreset, recommendation?.recommendedEngine, recommendation?.confidence, status]);
 
   const buildPrompt = (preset: PortraitPreset) => {
     const characterDesc = [
@@ -157,10 +151,7 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
       character.bio || '',
       character.role ? `Role: ${character.role}` : ''
     ].filter(Boolean).join('. ');
-
-    // Apply editorial assistant patch if present
-    const basePrompt = `${preset.promptTemplate}. Character: ${characterDesc}`;
-    return promptPatch ? `${basePrompt}\n\n${promptPatch}` : basePrompt;
+    return `${preset.promptTemplate}. Character: ${characterDesc}`;
   };
 
   const handleApplyRecommended = () => {
@@ -169,13 +160,13 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
       if (preset) {
         setSelectedType(preset.type);
         setSelectedEngine(recommendation.recommendedEngine);
-        toast.success('Recomendación aplicada');
+        toast.success('Configuración recomendada aplicada');
       }
     }
   };
 
   const handleGenerate = async (parentRunId?: string) => {
-    setGenerating(true);
+    setStatus('generating');
     const preset = PORTRAIT_PRESETS.find(p => p.type === selectedType)!;
 
     // Check if user is overriding recommendation/autopilot
@@ -225,13 +216,9 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
       const result = await runImageEngine(payload);
 
       if (!result.ok) {
-        toast.error(result.error || 'Error al generar retrato');
+        setStatus('error');
+        toast.error(result.error || 'Error al generar');
         return;
-      }
-
-      // Show auto-retry feedback
-      if (result.autoRetried) {
-        toast.info('He reintentado automáticamente 1 vez por un error técnico. Si persiste, cambia preset o engine.');
       }
 
       // Update character with new run ID
@@ -241,15 +228,15 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
         .eq('id', character.id);
 
       setCurrentOutput({ url: result.outputUrl!, runId: result.runId! });
-      setRunStatus('generated');
-      toast.success(`Retrato generado (Run: ${result.runId?.slice(0, 8)})`);
+      setStatus('generated');
+      setIsAccepted(false);
+      toast.success('Imagen generada');
       refreshRecs();
       onUpdate();
     } catch (err) {
       console.error('[CharacterGeneration] error:', err);
-      toast.error('Error al generar retrato');
-    } finally {
-      setGenerating(false);
+      setStatus('error');
+      toast.error('Error al generar');
     }
   };
 
@@ -258,17 +245,17 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
 
     const success = await updateRunStatus(currentOutput.runId, 'accepted');
     if (success) {
-      // Update character with accepted run
       await supabase
         .from('characters')
         .update({ accepted_run_id: currentOutput.runId })
         .eq('id', character.id);
 
-      setRunStatus('accepted');
-      toast.success('Retrato aceptado');
+      setIsAccepted(true);
+      setStatus('accepted');
+      toast.success('Aceptado. Este será el resultado oficial.');
       onUpdate();
     } else {
-      toast.error('Error al aceptar retrato');
+      toast.error('Error al aceptar');
     }
   };
 
@@ -278,134 +265,31 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
   };
 
   const handleCanonSaved = async (canonAssetId: string) => {
-    // Update character with canon reference
     await supabase
       .from('characters')
       .update({ canon_asset_id: canonAssetId })
       .eq('id', character.id);
 
     setShowCanonModal(false);
-    toast.success('Personaje marcado como Canon');
+    toast.success('Fijado como referencia oficial ⭐');
     onUpdate();
   };
 
-  // Normal mode: simplified UI, system decides automatically
-  if (userLevel === 'normal') {
-    return (
-      <Card className="border-primary/20">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <User className="w-4 h-4" />
-            Generar Personaje
-            {character.canon_asset_id && (
-              <Badge variant="default" className="bg-amber-500">
-                <Star className="w-3 h-3 mr-1" />
-                Canon
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Style context */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="outline" className="gap-1">
-              <Sparkles className="h-3 w-3" />
-              {getStyleName()}
-            </Badge>
-            <Badge variant="secondary">{getFormatName()}</Badge>
-          </div>
+  const isCanon = !!character.canon_asset_id;
+  const isPro = userLevel === 'pro';
 
-          {/* Simple generate button */}
-          <Button 
-            onClick={() => handleGenerate()}
-            disabled={generating}
-            className="w-full"
-            variant="gold"
-            size="lg"
-          >
-            {generating ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                Generando...
-              </>
-            ) : (
-              <>
-                <User className="w-4 h-4 mr-2" />
-                Generar con estilo {getStyleName()}
-              </>
-            )}
-          </Button>
-
-          {/* Autopilot indicator */}
-          <p className="text-xs text-muted-foreground text-center">
-            🤖 El sistema elige automáticamente la mejor configuración
-          </p>
-
-          {/* Output Preview */}
-          {currentOutput && (
-            <div className="space-y-3">
-              <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
-                <img 
-                  src={currentOutput.url} 
-                  alt={`${character.name} portrait`}
-                  className="w-full h-full object-cover"
-                />
-                {runStatus === 'accepted' && (
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-green-600">
-                      <Check className="w-3 h-3 mr-1" />
-                      Aceptado
-                    </Badge>
-                  </div>
-                )}
-              </div>
-
-              {/* Simple action buttons */}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAccept}
-                  disabled={runStatus === 'accepted'}
-                  className="flex-1"
-                >
-                  <Check className="w-4 h-4 mr-2 text-green-600" />
-                  Aceptar
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRegenerate}
-                  disabled={generating}
-                  className="flex-1"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Regenerar
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Pro mode: full interface with all controls
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm flex items-center gap-2">
           <User className="w-4 h-4" />
-          Generación Unificada
-          {character.canon_asset_id && (
-            <Badge variant="default" className="bg-amber-500">
-              <Star className="w-3 h-3 mr-1" />
-              Canon
-            </Badge>
+          Generar Personaje
+          {isCanon && (
+            <Badge className="bg-amber-500 text-xs">⭐ Referencia</Badge>
           )}
-          <Badge variant="outline" className="ml-auto text-xs">
-            🎬 Pro
-          </Badge>
+          {isPro && (
+            <Badge variant="outline" className="ml-auto text-xs">Pro</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -418,136 +302,86 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
           <Badge variant="secondary">{getFormatName()}</Badge>
         </div>
 
-        {/* Recommendations Bar with Autopilot (hidden for explorer) */}
-        {visibility.showRecommendations && (
-          <ProjectRecommendationsBar
-            recommendation={recommendation}
-            loading={recsLoading || autopilotLoading}
-            onApply={handleApplyRecommended}
-            showEngineSelector={visibility.showEngineSelector}
-            autopilotDecision={autopilotDecision}
-          />
+        {/* Normal mode: simplified */}
+        {!isPro && (
+          <p className="text-xs text-muted-foreground">
+            🤖 El sistema configura automáticamente la mejor opción
+          </p>
         )}
 
-        {/* Portrait Type Selector (visible for creator/pro) */}
-        {visibility.showPresetSelector && (
-          <PresetSelector
-            presets={PORTRAIT_PRESETS}
-            selectedPreset={selectedType}
-            onSelect={(preset) => setSelectedType(preset as PortraitType)}
-            orderedPresets={orderedPresets}
-            disabled={generating}
-          />
-        )}
-
-        {/* Style suggestions */}
-        {styleDecision?.suggestions && styleDecision.suggestions.length > 0 && userLevel === 'pro' && (
-          <div className="text-xs text-muted-foreground space-y-1">
-            {styleDecision.suggestions.map((s, i) => (
-              <p key={i} className="flex items-start gap-1">
-                <Sparkles className="h-3 w-3 mt-0.5 text-amber-500 shrink-0" />
-                {s}
-              </p>
-            ))}
-          </div>
-        )}
-
-        {/* Generate Button */}
-        <Button 
-          onClick={() => handleGenerate()}
-          disabled={generating}
-          className="w-full"
-          variant="gold"
-        >
-          {generating ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              Generando...
-            </>
-          ) : (
-            'Generar Retrato'
-          )}
-        </Button>
-
-        {/* Output Preview */}
-        {currentOutput && (
-          <div className="space-y-3">
-            <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
-              <img 
-                src={currentOutput.url} 
-                alt={`${character.name} portrait`}
-                className="w-full h-full object-cover"
-              />
-              {runStatus === 'accepted' && (
-                <div className="absolute top-2 right-2">
-                  <Badge className="bg-green-600">
-                    <Check className="w-3 h-3 mr-1" />
-                    Aceptado
-                  </Badge>
+        {/* Pro mode: Advanced controls in accordion */}
+        {isPro && (
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="advanced" className="border-none">
+              <AccordionTrigger className="py-2 text-xs text-muted-foreground hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Settings2 className="h-3 w-3" />
+                  Opciones avanzadas
                 </div>
-              )}
-            </div>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-3 pt-2">
+                {/* Recommendations Bar */}
+                {visibility.showRecommendations && (
+                  <ProjectRecommendationsBar
+                    recommendation={recommendation}
+                    loading={recsLoading || autopilotLoading}
+                    onApply={handleApplyRecommended}
+                    showEngineSelector={visibility.showEngineSelector}
+                    autopilotDecision={autopilotDecision}
+                  />
+                )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleAccept}
-                disabled={runStatus === 'accepted'}
-                className="flex-1"
-              >
-                <Check className="w-4 h-4 mr-2 text-green-600" />
-                Aceptar
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRegenerate}
-                disabled={generating}
-                className="flex-1"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Regenerar
-              </Button>
-              {runStatus === 'accepted' && visibility.showCanonButton && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCanonModal(true)}
-                  className="flex-1 border-amber-500 text-amber-600 hover:bg-amber-50"
-                >
-                  <Star className="w-4 h-4 mr-2" />
-                  Set Canon
-                </Button>
-              )}
-            </div>
+                {/* Preset Selector */}
+                {visibility.showPresetSelector && (
+                  <PresetSelector
+                    presets={PORTRAIT_PRESETS.map(p => ({ type: p.type, label: p.label, icon: null }))}
+                    selectedPreset={selectedType}
+                    onSelect={(preset) => setSelectedType(preset as PortraitType)}
+                    orderedPresets={orderedPresets}
+                    disabled={status === 'generating'}
+                  />
+                )}
 
-            <p className="text-xs text-muted-foreground text-center">
-              Run ID: {currentOutput.runId.slice(0, 8)}...
-            </p>
-          </div>
+                {/* Style suggestions */}
+                {styleDecision?.suggestions && styleDecision.suggestions.length > 0 && (
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {styleDecision.suggestions.map((s, i) => (
+                      <p key={i} className="flex items-start gap-1">
+                        <Sparkles className="h-3 w-3 mt-0.5 text-amber-500 shrink-0" />
+                        {s}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
 
-        {/* Editorial Assistant Panel */}
-        {currentOutput && (
-          <EditorialAssistantPanel
-            projectId={projectId}
-            assetType="character"
-            currentRunId={currentOutput.runId}
-            phase="production"
-            presetId={selectedType}
-            onApplyPromptPatch={(patch) => {
-              setPromptPatch(patch);
-              toast.success('Patch de canon aplicado al prompt');
-            }}
-            onSwitchPreset={(presetId) => {
-              setSelectedType(presetId as PortraitType);
-              toast.success(`Preset cambiado a ${presetId}`);
-            }}
-            onOpenCanonModal={() => setShowCanonModal(true)}
-          />
-        )}
+        {/* Preview */}
+        <GenerationPreview
+          imageUrl={currentOutput?.url || null}
+          altText={`${character.name} portrait`}
+          status={status}
+          isAccepted={isAccepted}
+          isCanon={isCanon}
+          aspectRatio="square"
+        />
+
+        {/* Unified Action Bar */}
+        <GenerationActionBar
+          status={status}
+          hasOutput={!!currentOutput}
+          isAccepted={isAccepted}
+          isCanon={isCanon}
+          onGenerate={() => handleGenerate()}
+          onAccept={handleAccept}
+          onRegenerate={handleRegenerate}
+          onSetCanon={() => setShowCanonModal(true)}
+          runId={currentOutput?.runId}
+          mode={userLevel}
+          showCanonButton={visibility.showCanonButton}
+        />
 
         {/* Canon Modal */}
         {showCanonModal && currentOutput && (
