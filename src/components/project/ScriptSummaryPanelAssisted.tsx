@@ -7,7 +7,7 @@
  * v2: Simplified UI with NextStepIndicator and fewer duplicate buttons
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -46,6 +47,7 @@ import {
   BookOpen,
   MoreHorizontal,
   Bell,
+  Pencil,
 } from 'lucide-react';
 import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import { exportBibleSummaryPDF } from '@/lib/exportBibleSummaryPDF';
@@ -143,6 +145,14 @@ export function ScriptSummaryPanelAssisted({
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [runningInBackground, setRunningInBackground] = useState(false);
   
+  // Inline editing states (DIRECTOR/PRO only)
+  const [editingMainTitle, setEditingMainTitle] = useState(false);
+  const [editingEpisodeIndex, setEditingEpisodeIndex] = useState<number | null>(null);
+  const [tempTitle, setTempTitle] = useState('');
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  
+  const canEditTitles = effectiveMode === 'DIRECTOR' || effectiveMode === 'PRO';
+  
   // Determine current workflow step
   const allEpisodesSegmented = scriptData?.episodes?.every(ep => segmentedEpisodes.has(ep.episode_number)) ?? false;
   
@@ -210,6 +220,81 @@ export function ScriptSummaryPanelAssisted({
 
     loadData();
   }, [projectId]);
+
+  // Save title changes to Supabase (DIRECTOR/PRO only)
+  const saveMainTitle = async (newTitle: string) => {
+    if (!scriptData || !newTitle.trim()) {
+      setEditingMainTitle(false);
+      return;
+    }
+    
+    try {
+      // Get current parsed_json
+      const { data: script } = await supabase
+        .from('scripts')
+        .select('id, parsed_json')
+        .eq('id', scriptData.id)
+        .single();
+      
+      if (script?.parsed_json) {
+        const updatedJson = { ...(script.parsed_json as any), title: newTitle.trim() };
+        await supabase
+          .from('scripts')
+          .update({ parsed_json: updatedJson })
+          .eq('id', scriptData.id);
+        
+        setScriptData(prev => prev ? { ...prev, title: newTitle.trim() } : null);
+        toast.success('Título actualizado');
+      }
+    } catch (err) {
+      console.error('Error updating title:', err);
+      toast.error('Error al guardar el título');
+    }
+    setEditingMainTitle(false);
+  };
+
+  const saveEpisodeTitle = async (episodeIndex: number, newTitle: string) => {
+    if (!scriptData || !newTitle.trim()) {
+      setEditingEpisodeIndex(null);
+      return;
+    }
+    
+    try {
+      const { data: script } = await supabase
+        .from('scripts')
+        .select('id, parsed_json')
+        .eq('id', scriptData.id)
+        .single();
+      
+      if (script?.parsed_json) {
+        const parsed = script.parsed_json as any;
+        const updatedEpisodes = [...(parsed.episodes || [])];
+        if (updatedEpisodes[episodeIndex]) {
+          updatedEpisodes[episodeIndex] = { ...updatedEpisodes[episodeIndex], title: newTitle.trim() };
+        }
+        
+        const updatedJson = { ...parsed, episodes: updatedEpisodes };
+        await supabase
+          .from('scripts')
+          .update({ parsed_json: updatedJson })
+          .eq('id', scriptData.id);
+        
+        setScriptData(prev => {
+          if (!prev) return null;
+          const newEpisodes = [...prev.episodes];
+          if (newEpisodes[episodeIndex]) {
+            newEpisodes[episodeIndex] = { ...newEpisodes[episodeIndex], title: newTitle.trim() };
+          }
+          return { ...prev, episodes: newEpisodes };
+        });
+        toast.success('Título del episodio actualizado');
+      }
+    } catch (err) {
+      console.error('Error updating episode title:', err);
+      toast.error('Error al guardar el título');
+    }
+    setEditingEpisodeIndex(null);
+  };
 
   // Extract entities to Bible
   const extractEntitiesToBible = async () => {
@@ -524,7 +609,35 @@ export function ScriptSummaryPanelAssisted({
                 <div className="p-2 bg-primary/20 rounded-lg flex-shrink-0">
                   <Film className="h-5 w-5 text-primary" />
                 </div>
-                <span className="truncate">{scriptData.title}</span>
+                {editingMainTitle && canEditTitles ? (
+                  <Input
+                    ref={titleInputRef}
+                    value={tempTitle}
+                    onChange={(e) => setTempTitle(e.target.value)}
+                    onBlur={() => saveMainTitle(tempTitle)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') saveMainTitle(tempTitle);
+                      if (e.key === 'Escape') setEditingMainTitle(false);
+                    }}
+                    className="h-8 text-lg font-semibold flex-1"
+                    autoFocus
+                  />
+                ) : (
+                  <span 
+                    className={`truncate ${canEditTitles ? 'cursor-pointer hover:text-primary transition-colors group' : ''}`}
+                    onClick={() => {
+                      if (canEditTitles) {
+                        setTempTitle(scriptData.title);
+                        setEditingMainTitle(true);
+                      }
+                    }}
+                  >
+                    {scriptData.title}
+                    {canEditTitles && (
+                      <Pencil className="h-3 w-3 inline-block ml-2 opacity-0 group-hover:opacity-50 transition-opacity" />
+                    )}
+                  </span>
+                )}
               </CardTitle>
               {scriptData.synopsis && (
                 <CardDescription className="mt-2 line-clamp-2">
@@ -806,9 +919,39 @@ export function ScriptSummaryPanelAssisted({
                   className="flex items-center justify-between p-3 bg-background rounded-lg border"
                 >
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm truncate">
-                      {projectFormat === 'film' ? `Acto ${episode.episode_number}` : `Ep. ${episode.episode_number}`}: {episode.title}
-                    </div>
+                    {editingEpisodeIndex === idx && canEditTitles ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">
+                          {projectFormat === 'film' ? `Acto ${episode.episode_number}` : `Ep. ${episode.episode_number}`}:
+                        </span>
+                        <Input
+                          value={tempTitle}
+                          onChange={(e) => setTempTitle(e.target.value)}
+                          onBlur={() => saveEpisodeTitle(idx, tempTitle)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') saveEpisodeTitle(idx, tempTitle);
+                            if (e.key === 'Escape') setEditingEpisodeIndex(null);
+                          }}
+                          className="h-7 text-sm flex-1"
+                          autoFocus
+                        />
+                      </div>
+                    ) : (
+                      <div 
+                        className={`font-medium text-sm truncate ${canEditTitles ? 'cursor-pointer hover:text-primary transition-colors group' : ''}`}
+                        onClick={() => {
+                          if (canEditTitles) {
+                            setTempTitle(episode.title);
+                            setEditingEpisodeIndex(idx);
+                          }
+                        }}
+                      >
+                        {projectFormat === 'film' ? `Acto ${episode.episode_number}` : `Ep. ${episode.episode_number}`}: {episode.title}
+                        {canEditTitles && (
+                          <Pencil className="h-3 w-3 inline-block ml-2 opacity-0 group-hover:opacity-50 transition-opacity" />
+                        )}
+                      </div>
+                    )}
                     <div className="flex gap-2 mt-1">
                       <Badge variant="secondary" className="text-xs">
                         {episode.scenes?.length || 0} escenas
