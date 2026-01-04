@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { generateRun, updateRunStatus, GenerateRunPayload } from '@/lib/generateRun';
 import SetCanonModal from './SetCanonModal';
+import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
 
 type PortraitType = 'frontal' | 'profile' | 'fullbody';
 
@@ -58,6 +59,7 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
   const [currentOutput, setCurrentOutput] = useState<{ url: string; runId: string } | null>(null);
   const [runStatus, setRunStatus] = useState<'generated' | 'accepted' | null>(null);
   const [showCanonModal, setShowCanonModal] = useState(false);
+  const [promptPatch, setPromptPatch] = useState<string | null>(null);
 
   const buildPrompt = (preset: PortraitPreset) => {
     const characterDesc = [
@@ -66,7 +68,9 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
       character.role ? `Role: ${character.role}` : ''
     ].filter(Boolean).join('. ');
 
-    return `${preset.promptTemplate}. Character: ${characterDesc}`;
+    // Apply editorial assistant patch if present
+    const basePrompt = `${preset.promptTemplate}. Character: ${characterDesc}`;
+    return promptPatch ? `${basePrompt}\n\n${promptPatch}` : basePrompt;
   };
 
   const handleGenerate = async (parentRunId?: string) => {
@@ -87,7 +91,8 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
           characterId: character.id,
           portraitType: selectedType
         },
-        parentRunId
+        parentRunId,
+        presetId: selectedType
       };
 
       const result = await generateRun(payload);
@@ -257,6 +262,26 @@ export function CharacterGenerationPanel({ character, projectId, onUpdate }: Cha
               Run ID: {currentOutput.runId.slice(0, 8)}...
             </p>
           </div>
+        )}
+
+        {/* Editorial Assistant Panel */}
+        {currentOutput && (
+          <EditorialAssistantPanel
+            projectId={projectId}
+            assetType="character"
+            currentRunId={currentOutput.runId}
+            phase="production"
+            presetId={selectedType}
+            onApplyPromptPatch={(patch) => {
+              setPromptPatch(patch);
+              toast.success('Patch de canon aplicado al prompt');
+            }}
+            onSwitchPreset={(presetId) => {
+              setSelectedType(presetId as PortraitType);
+              toast.success(`Preset cambiado a ${presetId}`);
+            }}
+            onOpenCanonModal={() => setShowCanonModal(true)}
+          />
         )}
 
         {/* Canon Modal */}

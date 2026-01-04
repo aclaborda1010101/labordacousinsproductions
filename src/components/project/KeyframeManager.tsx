@@ -27,6 +27,7 @@ import {
   Star
 } from 'lucide-react';
 import SetCanonModal from './SetCanonModal';
+import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
 
 interface Keyframe {
   id: string;
@@ -107,6 +108,7 @@ export default function KeyframeManager({
   const [uploadingSlot, setUploadingSlot] = useState<number | null>(null);
   const [canonModal, setCanonModal] = useState<{ open: boolean; keyframe: Keyframe | null }>({ open: false, keyframe: null });
   const [projectId, setProjectId] = useState<string | null>(null);
+  const [promptPatch, setPromptPatch] = useState<string | null>(null);
 
   // Calculate required keyframe slots based on duration
   const getRequiredSlots = useCallback(() => {
@@ -784,6 +786,27 @@ export default function KeyframeManager({
             {keyframes[selectedIndex].prompt_text || 'Sin prompt generado'}
           </p>
         </div>
+      )}
+
+      {/* Editorial Assistant Panel */}
+      {projectId && keyframes[selectedIndex] && (
+        <EditorialAssistantPanel
+          projectId={projectId}
+          assetType="keyframe"
+          currentRunId={keyframes[selectedIndex]?.run_id || undefined}
+          phase="exploration"
+          presetId={slots[selectedIndex]?.frameType}
+          onApplyPromptPatch={(patch) => {
+            setPromptPatch(patch);
+            toast.success('Patch de canon aplicado');
+          }}
+          onOpenCanonModal={() => {
+            const kf = keyframes[selectedIndex];
+            if (kf?.run_id && kf?.image_url) {
+              setCanonModal({ open: true, keyframe: kf });
+            }
+          }}
+        />
       )}
 
       {/* Set Canon Modal */}

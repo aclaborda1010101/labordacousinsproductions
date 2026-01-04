@@ -17,6 +17,7 @@ interface GenerateRunRequest {
   context?: string;
   params?: Record<string, unknown>;
   parentRunId?: string; // For regeneration chains
+  presetId?: string; // For editorial assistant tracking
 }
 
 interface GenerateRunResponse {
@@ -97,7 +98,8 @@ serve(async (req) => {
         verdict: 'approved',
         warnings: [],
         suggestions: [],
-        parent_run_id: body.parentRunId || null  // For regeneration chains
+        parent_run_id: body.parentRunId || null,  // For regeneration chains
+        preset_id: body.presetId || null  // For editorial assistant tracking
       })
       .select('id')
       .single();

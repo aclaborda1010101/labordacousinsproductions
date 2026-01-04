@@ -11,6 +11,7 @@ export interface GenerateRunPayload {
   context?: string;
   params?: Record<string, unknown>;
   parentRunId?: string; // For regeneration chains
+  presetId?: string; // For editorial assistant tracking
 }
 
 export interface GenerateRunResult {
