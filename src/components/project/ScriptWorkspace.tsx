@@ -3,8 +3,9 @@
  * With quality diagnosis, visual summary, and adapted UX by level (Normal/Pro)
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { invokeWithTimeout } from '@/lib/supabaseFetchWithTimeout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -295,38 +296,59 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
   // Project format state
   const [projectFormat, setProjectFormat] = useState<'film' | 'series' | 'short' | string>('series');
+  
+  // Refresh trigger for re-fetching script
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Check for existing script on mount
-  useEffect(() => {
-    const checkExistingScript = async () => {
-      // Get project format
-      const { data: projectData } = await supabase
-        .from('projects')
-        .select('format')
-        .eq('id', projectId)
-        .maybeSingle();
-      
-      if (projectData?.format) {
-        setProjectFormat(projectData.format);
-      }
+  // Check for existing script on mount or refresh
+  const refreshScriptData = useCallback(async () => {
+    // Get project format
+    const { data: projectData } = await supabase
+      .from('projects')
+      .select('format')
+      .eq('id', projectId)
+      .maybeSingle();
+    
+    if (projectData?.format) {
+      setProjectFormat(projectData.format);
+    }
 
-      const { data } = await supabase
-        .from('scripts')
-        .select('id, raw_text')
-        .eq('project_id', projectId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+    const { data } = await supabase
+      .from('scripts')
+      .select('id, raw_text')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-      if (data?.raw_text) {
-        setHasExistingScript(true);
-        // Ensure raw_text is always a string
-        const rawText = typeof data.raw_text === 'string' ? data.raw_text : JSON.stringify(data.raw_text);
-        setExistingScriptText(rawText);
-      }
-    };
-    checkExistingScript();
+    if (data?.raw_text) {
+      setHasExistingScript(true);
+      // Ensure raw_text is always a string
+      const rawText = typeof data.raw_text === 'string' ? data.raw_text : JSON.stringify(data.raw_text);
+      setExistingScriptText(rawText);
+    } else {
+      setHasExistingScript(false);
+      setExistingScriptText('');
+    }
   }, [projectId]);
+
+  useEffect(() => {
+    refreshScriptData();
+  }, [refreshScriptData, refreshTrigger]);
+  
+  // Function to reset and allow uploading a new script
+  const handleChangeScript = () => {
+    setHasExistingScript(false);
+    setExistingScriptText('');
+    setScriptText('');
+    setBreakdownResult(null);
+    setQualityDiagnosis(null);
+    setStatus('idle');
+    setProgress(0);
+    setEntryMode('existing');
+    setUploadedFileName(null);
+    toast.info('Puedes subir un nuevo guión');
+  };
 
   // Evaluate script quality from breakdown result
   const evaluateQuality = (breakdown: BreakdownResult): QualityDiagnosis => {
@@ -393,6 +415,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     return { quality, score: Math.max(0, score), issues, suggestions };
   };
 
+  // Calculate dynamic timeout based on file size
+  const getTimeoutForFileSize = (fileSizeBytes: number): number => {
+    if (fileSizeBytes < 100000) return 90000;      // <100KB: 1.5 min
+    if (fileSizeBytes < 300000) return 150000;     // 100-300KB: 2.5 min
+    if (fileSizeBytes < 600000) return 240000;     // 300-600KB: 4 min
+    return 300000;                                  // >600KB: 5 min
+  };
+
   // Handle file upload
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -405,13 +435,19 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
 
     setUploadedFileName(file.name);
+    setStatus('analyzing');
+    setProgress(10);
     
     if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
       const text = await file.text();
       setScriptText(text);
+      setStatus('idle');
+      setProgress(0);
       toast.success('Archivo cargado correctamente');
     } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-      toast.info('Procesando PDF...');
+      const fileSizeKB = Math.round(file.size / 1024);
+      const estimatedPages = Math.ceil(file.size / 3500);
+      toast.info(`Procesando PDF (~${estimatedPages} páginas, ${fileSizeKB}KB)...`);
       
       const fileName = `${projectId}/${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage
@@ -421,34 +457,60 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (uploadError) {
         toast.error('Error al subir archivo');
         console.error(uploadError);
+        setStatus('error');
         return;
       }
 
+      setProgress(30);
       const { data: urlData } = supabase.storage.from('scripts').getPublicUrl(fileName);
       
       try {
-        const { data, error } = await supabase.functions.invoke('parse-script', {
-          body: { pdfUrl: urlData.publicUrl, projectId }
-        });
+        // Use dynamic timeout based on file size
+        const timeoutMs = getTimeoutForFileSize(file.size);
+        console.log(`[ScriptWorkspace] Using timeout ${timeoutMs}ms for ${fileSizeKB}KB PDF`);
+        
+        const { data, error } = await invokeWithTimeout<{
+          rawText?: string;
+          error?: string;
+          needsManualInput?: boolean;
+          hint?: string;
+          stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
+        }>('parse-script', { pdfUrl: urlData.publicUrl, projectId }, timeoutMs);
 
         if (error) throw error;
         
+        setProgress(70);
+        
         if (data?.needsManualInput) {
-          toast.warning(data.error || 'El PDF requiere entrada manual. Por favor, copia y pega el texto.');
+          toast.warning(data.error || 'El PDF requiere entrada manual.', {
+            description: data.hint,
+            duration: 8000,
+          });
+          setStatus('idle');
+          setProgress(0);
           return;
         }
         
         if (data?.rawText) {
           setScriptText(data.rawText);
+          const stats = data.stats;
+          if (stats) {
+            console.log(`[ScriptWorkspace] PDF stats: ${stats.estimatedPages} pages, model: ${stats.modelUsed}`);
+          }
           toast.success('PDF procesado. Analizando guion...');
           // Auto-trigger analysis after PDF processing with the extracted text
           await handleAnalyzeScript(data.rawText);
         } else if (data?.error) {
           toast.error(data.error);
+          setStatus('error');
         }
       } catch (err) {
         console.error('PDF parse error:', err);
-        toast.error('Error al procesar el PDF. Intenta copiar y pegar el texto directamente.');
+        const errorMsg = err instanceof Error ? err.message : 'Error desconocido';
+        toast.error(errorMsg.includes('Timeout') 
+          ? `El PDF es muy grande. ${errorMsg}` 
+          : 'Error al procesar el PDF. Intenta copiar y pegar el texto directamente.');
+        setStatus('error');
       }
     }
   };
@@ -1196,9 +1258,16 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               Gestiona episodios, genera escenas y exporta tu guion
             </p>
           </div>
-          <Button variant="outline" onClick={() => setHasExistingScript(false)}>
-            Empezar nuevo guion
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleChangeScript}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Cambiar guión
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setRefreshTrigger(t => t + 1)}>
+              <Search className="h-4 w-4 mr-2" />
+              Actualizar
+            </Button>
+          </div>
         </div>
 
         {/* Script Summary Panel with episodes, teasers, and actions */}
