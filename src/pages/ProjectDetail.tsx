@@ -8,23 +8,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { 
   Book, 
-  Film, 
-  Users, 
-  MapPin, 
-  Palette,
   FileText,
   Clapperboard,
-  Play,
   Settings,
   ChevronRight,
   AlertCircle,
   Lock,
-  DollarSign,
-  Gauge,
-  UserPlus,
-  CheckSquare,
-  Layers,
-  Box
+  Play,
+  Layers
 } from 'lucide-react';
 import PropsComponent from '@/components/project/Props';
 import { cn } from '@/lib/utils';
@@ -35,10 +26,6 @@ import { NotificationCenter } from '@/components/notifications/NotificationCente
 import Characters from '@/components/project/Characters';
 import Locations from '@/components/project/Locations';
 import Scenes from '@/components/project/Scenes';
-import CostEngine from '@/components/project/CostEngine';
-import TeamMembers from '@/components/project/TeamMembers';
-import ApprovalWorkflow from '@/components/project/ApprovalWorkflow';
-import QCEngine from '@/components/project/QCEngine';
 import ScriptImport from '@/components/project/ScriptImport';
 import RenderQueue from '@/components/project/RenderQueue';
 import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
@@ -56,19 +43,12 @@ interface Project {
   owner_id: string;
 }
 
+// Simplified tabs: Guion, Biblia (unified), Escenas, Dailies/Export, Ajustes
 const PROJECT_TABS = [
-  { id: 'bible', path: '', label: 'Biblia', icon: Book, requiresBible: false },
-  { id: 'style', path: '/style', label: 'Estilo Visual', icon: Palette, requiresBible: false },
-  { id: 'characters', path: '/characters', label: 'Personajes', icon: Users, requiresBible: false },
-  { id: 'locations', path: '/locations', label: 'Localizaciones', icon: MapPin, requiresBible: false },
-  { id: 'props', path: '/props', label: 'Props', icon: Box, requiresBible: false },
-  { id: 'script', path: '/script', label: 'Guion (Generar / Importar)', icon: FileText, requiresBible: false },
+  { id: 'script', path: '/script', label: 'Guion', icon: FileText, requiresBible: false },
+  { id: 'bible', path: '', label: 'Biblia', icon: Book, requiresBible: false, description: 'Personajes, Localizaciones, Estilo' },
   { id: 'scenes', path: '/scenes', label: 'Escenas', icon: Clapperboard, requiresBible: true },
-  { id: 'renders', path: '/renders', label: 'Cola de Renders', icon: Layers, requiresBible: true },
-  { id: 'cost', path: '/cost', label: 'Motor de Costes', icon: DollarSign, requiresBible: false },
-  { id: 'qc', path: '/qc', label: 'Control de Calidad', icon: Gauge, requiresBible: true },
-  { id: 'approvals', path: '/approvals', label: 'Aprobaciones', icon: CheckSquare, requiresBible: true },
-  { id: 'team', path: '/team', label: 'Equipo', icon: UserPlus, requiresBible: false },
+  { id: 'renders', path: '/renders', label: 'Dailies', icon: Play, requiresBible: true },
 ];
 
 export default function ProjectDetail() {
@@ -123,6 +103,11 @@ export default function ProjectDetail() {
   const currentSection = PROJECT_TABS.find(t => t.path === currentPath)?.label || 'Biblia';
   const formatLabel = project.format === 'series' ? 'Serie' : project.format === 'mini' ? 'Miniserie' : 'Película';
 
+  // Sub-routes for Bible section
+  const isBibleSection = currentPath === '' || currentPath === '/bible' || 
+    currentPath === '/style' || currentPath === '/characters' || 
+    currentPath === '/locations' || currentPath === '/props';
+
   return (
     <CreativeModeProvider projectId={project.id}>
       <AppLayout>
@@ -146,13 +131,14 @@ export default function ProjectDetail() {
         />
 
         <div className="flex-1 flex overflow-hidden">
-          {/* Project sidebar navigation */}
-          <nav className="w-56 bg-sidebar border-r border-sidebar-border shrink-0 overflow-y-auto">
+          {/* Simplified sidebar navigation */}
+          <nav className="w-48 bg-sidebar border-r border-sidebar-border shrink-0 overflow-y-auto">
             <div className="p-3 space-y-1">
               {PROJECT_TABS.map((tab) => {
                 const Icon = tab.icon;
-                const isActive = currentPath === tab.path || 
-                  (tab.path === '' && currentPath === '/bible');
+                const isActive = tab.id === 'bible' 
+                  ? isBibleSection 
+                  : currentPath === tab.path;
                 const isLocked = tab.requiresBible && !bibleReady;
                 
                 return (
@@ -181,15 +167,46 @@ export default function ProjectDetail() {
               })}
             </div>
 
+            {/* Bible sub-navigation - only show when in Bible section */}
+            {isBibleSection && (
+              <div className="px-3 pb-3">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground px-3 py-2">
+                  Biblia
+                </div>
+                <div className="space-y-0.5">
+                  {[
+                    { path: '', label: 'Resumen' },
+                    { path: '/style', label: 'Estilo Visual' },
+                    { path: '/characters', label: 'Personajes' },
+                    { path: '/locations', label: 'Localizaciones' },
+                    { path: '/props', label: 'Props' },
+                  ].map((sub) => (
+                    <Link
+                      key={sub.path}
+                      to={`/projects/${projectId}${sub.path}`}
+                      className={cn(
+                        "block px-3 py-1.5 rounded text-xs transition-colors",
+                        currentPath === sub.path || (sub.path === '' && (currentPath === '' || currentPath === '/bible'))
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Bible gate warning */}
             {!bibleReady && (
               <div className="m-3 p-3 rounded-lg bg-warning/10 border border-warning/20">
                 <div className="flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-warning mt-0.5 shrink-0" />
                   <div className="text-xs">
-                    <p className="font-medium text-warning">Biblia Incompleta</p>
+                    <p className="font-medium text-warning">Biblia incompleta</p>
                     <p className="text-muted-foreground mt-0.5">
-                      Completa tu biblia de producción para desbloquear escenas.
+                      Completa la biblia para desbloquear escenas.
                     </p>
                   </div>
                 </div>
@@ -209,10 +226,6 @@ export default function ProjectDetail() {
               <Route path="/script" element={<ScriptImport projectId={project.id} />} />
               <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
               <Route path="/renders" element={<RenderQueue projectId={project.id} />} />
-              <Route path="/cost" element={<CostEngine projectId={project.id} />} />
-              <Route path="/qc" element={<QCEngine projectId={project.id} />} />
-              <Route path="/approvals" element={<ApprovalWorkflow projectId={project.id} />} />
-              <Route path="/team" element={<TeamMembers projectId={project.id} ownerId={project.owner_id} />} />
               <Route path="*" element={
                 <div className="flex-1 flex items-center justify-center p-8">
                   <div className="text-center">
@@ -221,8 +234,8 @@ export default function ProjectDetail() {
                       Completa tu Biblia primero
                     </h3>
                     <p className="text-muted-foreground max-w-md">
-                      Construye el canon de tu producción con estilo, personajes y localizaciones 
-                      antes de proceder con el guión y los renders.
+                      Construye el canon con estilo, personajes y localizaciones 
+                      antes de proceder con las escenas.
                     </p>
                   </div>
                 </div>

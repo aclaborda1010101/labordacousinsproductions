@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Check, RotateCcw, Star, MapPin, Maximize, Grid3X3, Focus } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { MapPin, Sparkles, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { generateRun, updateRunStatus, GenerateRunPayload } from '@/lib/generateRun';
 import SetCanonModal from './SetCanonModal';
-import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
 import { useRecommendations } from '@/hooks/useRecommendations';
+import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
 import { PresetSelector } from './PresetSelector';
+import { GenerationActionBar, GenerationPreview, type GenerationStatus } from '@/components/generation';
 import { ENGINES } from '@/lib/recommendations';
 
 type ViewType = 'establishing' | 'keyarea' | 'detail';
@@ -18,27 +19,23 @@ type ViewType = 'establishing' | 'keyarea' | 'detail';
 interface ViewPreset {
   type: ViewType;
   label: string;
-  icon: React.ReactNode;
   promptTemplate: string;
 }
 
 const VIEW_PRESETS: ViewPreset[] = [
   {
     type: 'establishing',
-    label: 'Establishing',
-    icon: <Maximize className="w-4 h-4" />,
+    label: 'Vista General',
     promptTemplate: 'Wide establishing shot, full location view, architectural details, atmospheric perspective, cinematic composition, natural lighting'
   },
   {
     type: 'keyarea',
-    label: 'Key Area',
-    icon: <Grid3X3 className="w-4 h-4" />,
+    label: 'Área Principal',
     promptTemplate: 'Medium shot, main action area, clear spatial layout, functional zones visible, balanced composition, ambient lighting'
   },
   {
     type: 'detail',
-    label: 'Detail',
-    icon: <Focus className="w-4 h-4" />,
+    label: 'Detalle',
     promptTemplate: 'Close-up detail shot, iconic element, texture and material focus, shallow depth of field, dramatic lighting'
   }
 ];
@@ -59,15 +56,32 @@ interface LocationGenerationPanelProps {
 }
 
 export function LocationGenerationPanel({ location, projectId, onUpdate }: LocationGenerationPanelProps) {
-  const [generating, setGenerating] = useState(false);
+  const [status, setStatus] = useState<GenerationStatus>('idle');
   const [selectedType, setSelectedType] = useState<ViewType>('establishing');
   const [selectedEngine, setSelectedEngine] = useState<string>(ENGINES.FLUX);
   const [currentOutput, setCurrentOutput] = useState<{ url: string; runId: string } | null>(null);
-  const [runStatus, setRunStatus] = useState<'generated' | 'accepted' | null>(null);
+  const [isAccepted, setIsAccepted] = useState(false);
   const [showCanonModal, setShowCanonModal] = useState(false);
-  const [promptPatch, setPromptPatch] = useState<string | null>(null);
 
-  // Recommendations v1
+  // Editorial Knowledge Base v1
+  const {
+    userLevel,
+    visibility,
+    styleDecision,
+    getStyleName,
+    getFormatName,
+  } = useEditorialKnowledgeBase({
+    projectId,
+    assetType: 'location',
+  });
+
+  // Compute style bias for recommendations
+  const styleBias = useMemo(() => ({
+    presetBias: styleDecision?.presetBias,
+    engineBias: styleDecision?.engineBias,
+  }), [styleDecision?.presetBias, styleDecision?.engineBias]);
+
+  // Recommendations v1 with style bias
   const { 
     recommendation, 
     orderedPresets,
@@ -81,7 +95,8 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
     projectId, 
     assetType: 'location',
     availablePresets: AVAILABLE_PRESETS,
-    phase: 'production'
+    phase: 'production',
+    styleBias
   });
 
   // Log recommendation shown
@@ -93,24 +108,21 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
 
   // Apply recommended preset if high confidence on first load
   useEffect(() => {
-    if (recommendation && recommendation.confidence === 'high' && !generating) {
+    if (recommendation && recommendation.confidence === 'high' && status === 'idle') {
       const preset = VIEW_PRESETS.find(p => p.type === recommendation.recommendedPreset);
       if (preset) {
         setSelectedType(preset.type);
         setSelectedEngine(recommendation.recommendedEngine);
       }
     }
-  }, [recommendation?.recommendedPreset, recommendation?.recommendedEngine, recommendation?.confidence]);
+  }, [recommendation?.recommendedPreset, recommendation?.recommendedEngine, recommendation?.confidence, status]);
 
   const buildPrompt = (preset: ViewPreset) => {
     const locationDesc = [
       location.name,
       location.description || ''
     ].filter(Boolean).join('. ');
-
-    // Apply editorial assistant patch if present
-    const basePrompt = `${preset.promptTemplate}. Location: ${locationDesc}`;
-    return promptPatch ? `${basePrompt}\n\n${promptPatch}` : basePrompt;
+    return `${preset.promptTemplate}. Location: ${locationDesc}`;
   };
 
   const handleApplyRecommended = () => {
@@ -119,13 +131,13 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
       if (preset) {
         setSelectedType(preset.type);
         setSelectedEngine(recommendation.recommendedEngine);
-        toast.success('Recomendación aplicada');
+        toast.success('Configuración recomendada aplicada');
       }
     }
   };
 
   const handleGenerate = async (parentRunId?: string) => {
-    setGenerating(true);
+    setStatus('generating');
     const preset = VIEW_PRESETS.find(p => p.type === selectedType)!;
 
     // Check if user is overriding recommendation
@@ -161,13 +173,9 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
       const result = await generateRun(payload);
 
       if (!result.ok) {
-        toast.error(result.error || 'Error al generar localización');
+        setStatus('error');
+        toast.error(result.error || 'Error al generar');
         return;
-      }
-
-      // Show auto-retry feedback
-      if (result.autoRetried) {
-        toast.info('He reintentado automáticamente 1 vez por un error técnico. Si persiste, cambia preset o engine.');
       }
 
       // Update location with new run ID
@@ -177,15 +185,15 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
         .eq('id', location.id);
 
       setCurrentOutput({ url: result.outputUrl!, runId: result.runId! });
-      setRunStatus('generated');
-      toast.success(`Vista generada (Run: ${result.runId?.slice(0, 8)})`);
-      refreshRecs(); // Refresh recommendations after generation
+      setStatus('generated');
+      setIsAccepted(false);
+      toast.success('Vista generada');
+      refreshRecs();
       onUpdate();
     } catch (err) {
       console.error('[LocationGeneration] error:', err);
-      toast.error('Error al generar localización');
-    } finally {
-      setGenerating(false);
+      setStatus('error');
+      toast.error('Error al generar');
     }
   };
 
@@ -194,17 +202,17 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
 
     const success = await updateRunStatus(currentOutput.runId, 'accepted');
     if (success) {
-      // Update location with accepted run
       await supabase
         .from('locations')
         .update({ accepted_run_id: currentOutput.runId })
         .eq('id', location.id);
 
-      setRunStatus('accepted');
-      toast.success('Vista aceptada');
+      setIsAccepted(true);
+      setStatus('accepted');
+      toast.success('Aceptado. Esta será la vista oficial.');
       onUpdate();
     } else {
-      toast.error('Error al aceptar vista');
+      toast.error('Error al aceptar');
     }
   };
 
@@ -214,145 +222,118 @@ export function LocationGenerationPanel({ location, projectId, onUpdate }: Locat
   };
 
   const handleCanonSaved = async (canonAssetId: string) => {
-    // Update location with canon reference
     await supabase
       .from('locations')
       .update({ canon_asset_id: canonAssetId })
       .eq('id', location.id);
 
     setShowCanonModal(false);
-    toast.success('Localización marcada como Canon');
+    toast.success('Fijado como referencia oficial ⭐');
     onUpdate();
   };
+
+  const isCanon = !!location.canon_asset_id;
+  const isPro = userLevel === 'pro';
 
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm flex items-center gap-2">
           <MapPin className="w-4 h-4" />
-          Generación Unificada
-          {location.canon_asset_id && (
-            <Badge variant="default" className="bg-amber-500">
-              <Star className="w-3 h-3 mr-1" />
-              Canon
-            </Badge>
+          Generar Localización
+          {isCanon && (
+            <Badge className="bg-amber-500 text-xs">⭐ Referencia</Badge>
+          )}
+          {isPro && (
+            <Badge variant="outline" className="ml-auto text-xs">Pro</Badge>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Recommendations Bar */}
-        <ProjectRecommendationsBar
-          recommendation={recommendation}
-          loading={recsLoading}
-          onApply={handleApplyRecommended}
-          showEngineSelector={true}
-        />
+        {/* Style context */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant="outline" className="gap-1">
+            <Sparkles className="h-3 w-3" />
+            {getStyleName()}
+          </Badge>
+          <Badge variant="secondary">{getFormatName()}</Badge>
+        </div>
 
-        {/* View Type Selector */}
-        <PresetSelector
-          presets={VIEW_PRESETS}
-          selectedPreset={selectedType}
-          onSelect={(preset) => setSelectedType(preset as ViewType)}
-          orderedPresets={orderedPresets}
-          disabled={generating}
-        />
+        {/* Normal mode: simplified */}
+        {!isPro && (
+          <p className="text-xs text-muted-foreground">
+            🤖 El sistema configura automáticamente la mejor opción
+          </p>
+        )}
 
-        {/* Generate Button */}
-        <Button 
-          onClick={() => handleGenerate()}
-          disabled={generating}
-          className="w-full"
-          variant="gold"
-        >
-          {generating ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              Generando...
-            </>
-          ) : (
-            'Generar Vista'
-          )}
-        </Button>
-
-        {/* Output Preview */}
-        {currentOutput && (
-          <div className="space-y-3">
-            <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-              <img 
-                src={currentOutput.url} 
-                alt={`${location.name} view`}
-                className="w-full h-full object-cover"
-              />
-              {runStatus === 'accepted' && (
-                <div className="absolute top-2 right-2">
-                  <Badge className="bg-green-600">
-                    <Check className="w-3 h-3 mr-1" />
-                    Aceptado
-                  </Badge>
+        {/* Pro mode: Advanced controls in accordion */}
+        {isPro && (
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="advanced" className="border-none">
+              <AccordionTrigger className="py-2 text-xs text-muted-foreground hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Settings2 className="h-3 w-3" />
+                  Opciones avanzadas
                 </div>
-              )}
-            </div>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-3 pt-2">
+                {/* Recommendations Bar */}
+                <ProjectRecommendationsBar
+                  recommendation={recommendation}
+                  loading={recsLoading}
+                  onApply={handleApplyRecommended}
+                  showEngineSelector={true}
+                />
 
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleAccept}
-                disabled={runStatus === 'accepted'}
-                className="flex-1"
-              >
-                <Check className="w-4 h-4 mr-2 text-green-600" />
-                Aceptar
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRegenerate}
-                disabled={generating}
-                className="flex-1"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Regenerar
-              </Button>
-              {runStatus === 'accepted' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCanonModal(true)}
-                  className="flex-1 border-amber-500 text-amber-600 hover:bg-amber-50"
-                >
-                  <Star className="w-4 h-4 mr-2" />
-                  Set Canon
-                </Button>
-              )}
-            </div>
+                {/* Preset Selector */}
+                <PresetSelector
+                  presets={VIEW_PRESETS.map(p => ({ type: p.type, label: p.label, icon: null }))}
+                  selectedPreset={selectedType}
+                  onSelect={(preset) => setSelectedType(preset as ViewType)}
+                  orderedPresets={orderedPresets}
+                  disabled={status === 'generating'}
+                />
 
-            <p className="text-xs text-muted-foreground text-center">
-              Run ID: {currentOutput.runId.slice(0, 8)}...
-            </p>
-          </div>
+                {/* Style suggestions */}
+                {styleDecision?.suggestions && styleDecision.suggestions.length > 0 && (
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {styleDecision.suggestions.map((s, i) => (
+                      <p key={i} className="flex items-start gap-1">
+                        <Sparkles className="h-3 w-3 mt-0.5 text-amber-500 shrink-0" />
+                        {s}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
 
-        {/* Editorial Assistant Panel */}
-        {currentOutput && (
-          <EditorialAssistantPanel
-            projectId={projectId}
-            assetType="location"
-            currentRunId={currentOutput.runId}
-            phase="production"
-            presetId={selectedType}
-            onApplyPromptPatch={(patch) => {
-              setPromptPatch(patch);
-              toast.success('Patch de canon aplicado al prompt');
-            }}
-            onSwitchPreset={(presetId) => {
-              setSelectedType(presetId as ViewType);
-              toast.success(`Preset cambiado a ${presetId}`);
-            }}
-            onOpenCanonModal={() => setShowCanonModal(true)}
-          />
-        )}
+        {/* Preview */}
+        <GenerationPreview
+          imageUrl={currentOutput?.url || null}
+          altText={`${location.name} view`}
+          status={status}
+          isAccepted={isAccepted}
+          isCanon={isCanon}
+          aspectRatio="video"
+        />
+
+        {/* Unified Action Bar */}
+        <GenerationActionBar
+          status={status}
+          hasOutput={!!currentOutput}
+          isAccepted={isAccepted}
+          isCanon={isCanon}
+          onGenerate={() => handleGenerate()}
+          onAccept={handleAccept}
+          onRegenerate={handleRegenerate}
+          onSetCanon={() => setShowCanonModal(true)}
+          runId={currentOutput?.runId}
+          mode={userLevel}
+          showCanonButton={true}
+        />
 
         {/* Canon Modal */}
         {showCanonModal && currentOutput && (
