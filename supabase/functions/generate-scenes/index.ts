@@ -708,7 +708,7 @@ Retorna SOLO JSON válido, sin texto adicional.`;
                 ai_risk: shot.ai_risks || [],
                 continuity_notes: continuityData ? JSON.stringify(continuityData) : (shot.risk_mitigation || null),
                 lighting: lightingData,
-                sound_design: soundDesignData,
+                sound_plan: soundDesignData, // Using sound_plan column for sound_design data
                 keyframe_hints: keyframeHintsData,
               });
 

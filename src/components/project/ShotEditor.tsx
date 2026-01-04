@@ -32,6 +32,14 @@ interface Shot {
   dialogue_text: string | null;
   camera?: any;
   blocking?: any;
+  lighting?: any;
+  sound_plan?: any;
+  keyframe_hints?: any;
+  edit_intent?: any;
+  ai_risk?: string[];
+  continuity_notes?: string;
+  coverage_type?: string;
+  story_purpose?: string;
 }
 
 interface Scene {
@@ -288,17 +296,26 @@ export default function ShotEditor({
     focal_mm: (shot.camera as any)?.focal_mm || 35,
     camera_body: (shot.camera as any)?.camera_body || 'ARRI_ALEXA_35',
     lens_model: (shot.camera as any)?.lens_model || 'ARRI_SIGNATURE_PRIME',
-    blocking_description: (shot.blocking as any)?.description || '',
+    blocking_description: (shot.blocking as any)?.description || (shot.blocking as any)?.subject_positions || '',
     blocking_action: (shot.blocking as any)?.action || '',
     effective_mode: shot.effective_mode,
     hero: shot.hero || false,
-    // SHOT_ASSISTANT extra fields
-    viewer_notice: (shot.blocking as any)?.viewer_notice || '',
-    ai_risk: (shot.blocking as any)?.ai_risk || '',
-    lighting_style: (shot.camera as any)?.lighting_style || 'Naturalistic_Daylight',
-    intention: (shot.blocking as any)?.intention || '',
+    // SHOT_ASSISTANT extra fields - read from proper columns
+    viewer_notice: (shot.edit_intent as any)?.viewer_notice || (shot.blocking as any)?.viewer_notice || '',
+    ai_risk: Array.isArray(shot.ai_risk) ? shot.ai_risk.join(', ') : ((shot.blocking as any)?.ai_risk || ''),
+    lighting_style: (shot.lighting as any)?.style || (shot.camera as any)?.lighting_style || 'Naturalistic_Daylight',
+    intention: (shot.edit_intent as any)?.intention || (shot.blocking as any)?.intention || '',
     prev_shot_context: '',
     next_shot_context: '',
+    // Additional fields from DB
+    coverage_type: shot.coverage_type || '',
+    story_purpose: shot.story_purpose || '',
+    room_tone: (shot.sound_plan as any)?.room_tone || '',
+    ambience: Array.isArray((shot.sound_plan as any)?.ambience) ? (shot.sound_plan as any).ambience.join(', ') : '',
+    foley: Array.isArray((shot.sound_plan as any)?.foley) ? (shot.sound_plan as any).foley.join(', ') : '',
+    keyframe_start: (shot.keyframe_hints as any)?.start_frame || '',
+    keyframe_end: (shot.keyframe_hints as any)?.end_frame || '',
+    continuity_notes: shot.continuity_notes || '',
   });
   
   const [selectedEngine, setSelectedEngine] = useState<VideoEngine>(
