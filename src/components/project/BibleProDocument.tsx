@@ -15,46 +15,40 @@ interface CanonAsset {
 interface KeyframeData {
   id: string;
   imageUrl: string | null;
-  sceneNumber?: number | null;
-  shotNumber?: number | null;
-  frameType?: string | null;
-}
-
-interface StylePackData {
-  description?: string | null;
-  tone?: string | null;
-  lensStyle?: string | null;
-  realismLevel?: string | null;
-  colorPalette?: string[] | null;
-  referenceUrls?: string[] | null;
-}
-
-interface ProjectStats {
-  totalCharacters: number;
-  totalLocations: number;
-  totalScenes: number;
-  totalShots: number;
-  totalKeyframes: number;
-  canonCharacters: number;
-  canonLocations: number;
-  canonStyle: number;
-  lastUpdated: string;
+  scene: number | null;
+  shot: number | null;
+  runId: string | null;
+  createdAt: string;
 }
 
 interface BibleProData {
-  projectId: string;
-  projectTitle: string;
-  exportedAt: string;
-  version: string;
-  heroImageUrl: string | null;
-  stylePack: StylePackData | null;
-  stats: ProjectStats;
+  project: {
+    id: string;
+    name: string;
+    tone: string | null;
+    lensStyle: string | null;
+    realismLevel: string | null;
+    description: string | null;
+    colorPalette: string[] | null;
+  };
   canon: {
     characters: CanonAsset[];
     locations: CanonAsset[];
     style: CanonAsset[];
   };
-  keyframes: KeyframeData[];
+  continuity: {
+    keyframes: KeyframeData[];
+  };
+  stats: {
+    totalCharacters: number;
+    totalLocations: number;
+    canonCharacters: number;
+    canonLocations: number;
+    canonStyle: number;
+    acceptedKeyframes: number;
+  };
+  exportedAt: string;
+  version: string;
 }
 
 interface BibleProDocumentProps {
@@ -64,6 +58,7 @@ interface BibleProDocumentProps {
 
 export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const pageCount = useRef(0);
 
   useEffect(() => {
     const images = containerRef.current?.querySelectorAll('img');
@@ -95,8 +90,16 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+    });
+  };
+
+  const formatDateTime = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -104,13 +107,37 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
     data.canon.locations.length > 0 || 
     data.canon.style.length > 0;
 
-  const hasKeyframes = data.keyframes.filter(kf => kf.imageUrl).length > 0;
+  const hasKeyframes = data.continuity.keyframes.filter(kf => kf.imageUrl).length > 0;
 
-  // Render characters in pairs (2 per page)
+  // Get hero image priority: keyframe > character > location > style
+  const heroImage = 
+    data.continuity.keyframes.find(kf => kf.imageUrl)?.imageUrl ||
+    data.canon.characters[0]?.imageUrl ||
+    data.canon.locations[0]?.imageUrl ||
+    data.canon.style[0]?.imageUrl ||
+    null;
+
+  // Character pairs for 2-per-page layout
   const characterPairs: CanonAsset[][] = [];
   for (let i = 0; i < data.canon.characters.length; i += 2) {
     characterPairs.push(data.canon.characters.slice(i, i + 2));
   }
+
+  const getPageNumber = () => {
+    pageCount.current += 1;
+    return pageCount.current;
+  };
+
+  // Reset page counter
+  pageCount.current = 0;
+
+  const PageFooter = ({ pageNum }: { pageNum: number }) => (
+    <div className="page-footer">
+      <span>{data.project.id}</span>
+      <span>Bible v{data.version} • {formatDateTime(data.exportedAt)}</span>
+      <span>Página {pageNum}</span>
+    </div>
+  );
 
   return (
     <div ref={containerRef} className="bible-pro-document">
@@ -158,30 +185,30 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
           right: 14mm;
           display: flex;
           justify-content: space-between;
-          font-size: 9px;
-          color: #888;
+          font-size: 8px;
+          color: #999;
           border-top: 1px solid #eee;
-          padding-top: 8px;
+          padding-top: 6px;
         }
 
-        /* Cover Page */
-        .cover-page {
+        /* Cover */
+        .cover {
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
           text-align: center;
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+          background: linear-gradient(160deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
           color: #fff;
         }
 
         .cover-hero {
           width: 100%;
-          max-height: 150mm;
+          max-height: 145mm;
           object-fit: cover;
           border-radius: 8px;
-          margin-bottom: 24px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+          margin-bottom: 20px;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         .cover-placeholder {
@@ -191,47 +218,47 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
           border-radius: 8px;
-          margin-bottom: 24px;
-          border: 2px dashed #333;
+          margin-bottom: 20px;
+          border: 1px solid #333;
         }
 
         .cover-placeholder-icon {
-          font-size: 64px;
-          margin-bottom: 16px;
-          opacity: 0.3;
+          font-size: 56px;
+          margin-bottom: 12px;
+          opacity: 0.4;
         }
 
         .cover-placeholder-text {
           color: #555;
-          font-size: 14px;
+          font-size: 13px;
         }
 
         .cover-title {
-          font-size: 36px;
+          font-size: 32px;
           font-weight: 700;
           color: #f59e0b;
-          margin-bottom: 12px;
+          margin-bottom: 8px;
           letter-spacing: -0.02em;
         }
 
         .cover-subtitle {
-          font-size: 18px;
+          font-size: 16px;
           color: #888;
-          margin-bottom: 8px;
+          margin-bottom: 4px;
         }
 
         .cover-meta {
-          font-size: 12px;
+          font-size: 11px;
           color: #666;
-          margin-bottom: 4px;
+          margin-bottom: 2px;
         }
 
         .cover-stats {
           display: flex;
-          gap: 24px;
-          margin-top: 24px;
+          gap: 32px;
+          margin-top: 20px;
           padding-top: 16px;
           border-top: 1px solid #333;
         }
@@ -241,13 +268,13 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
         }
 
         .cover-stat-value {
-          font-size: 24px;
+          font-size: 22px;
           font-weight: 700;
           color: #f59e0b;
         }
 
         .cover-stat-label {
-          font-size: 10px;
+          font-size: 9px;
           color: #666;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -255,118 +282,152 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
 
         /* Section Headers */
         .section-header {
-          font-size: 24px;
+          font-size: 22px;
           font-weight: 700;
           color: #1a1a1a;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
           padding-bottom: 8px;
           border-bottom: 3px solid #f59e0b;
         }
 
         .section-subtitle {
-          font-size: 14px;
+          font-size: 13px;
           color: #666;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
         }
 
         /* Quick Snapshot */
-        .snapshot-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 16px;
-          margin-bottom: 24px;
+        .chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-bottom: 20px;
         }
 
-        .snapshot-card {
-          background: #f8f8f8;
-          border-radius: 8px;
-          padding: 16px;
-          border: 1px solid #e5e5e5;
+        .chip {
+          background: #f8f9fa;
+          border: 1px solid #e9ecef;
+          border-radius: 20px;
+          padding: 8px 16px;
+          font-size: 12px;
         }
 
-        .snapshot-label {
+        .chip-label {
+          color: #888;
           font-size: 10px;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          color: #888;
-          margin-bottom: 4px;
         }
 
-        .snapshot-value {
-          font-size: 16px;
-          font-weight: 600;
+        .chip-value {
           color: #1a1a1a;
+          font-weight: 500;
+          margin-left: 4px;
+        }
+
+        .description-box {
+          background: #f8f9fa;
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 20px;
+          border-left: 3px solid #f59e0b;
+        }
+
+        .description-text {
+          font-size: 13px;
+          color: #444;
+          line-height: 1.7;
         }
 
         .color-palette {
           display: flex;
           gap: 8px;
-          margin-top: 12px;
+          margin-top: 16px;
         }
 
         .color-swatch {
-          width: 32px;
-          height: 32px;
-          border-radius: 6px;
-          border: 2px solid #e5e5e5;
+          width: 36px;
+          height: 36px;
+          border-radius: 8px;
+          border: 2px solid #e9ecef;
         }
 
-        /* Character Cards - 2 per page */
+        /* Character Cards */
         .character-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
 
         .character-card {
           display: grid;
-          grid-template-columns: 180px 1fr;
+          grid-template-columns: 160px 1fr;
           gap: 20px;
-          background: #f8f8f8;
-          border-radius: 12px;
+          background: #f8f9fa;
+          border-radius: 10px;
           overflow: hidden;
-          border: 1px solid #e5e5e5;
+          border: 1px solid #e9ecef;
           page-break-inside: avoid;
-          min-height: 120mm;
+          min-height: 115mm;
         }
 
         .character-image {
           width: 100%;
           height: 100%;
-          min-height: 180px;
           object-fit: cover;
-          background: #e5e5e5;
+          background: #e9ecef;
         }
 
         .character-content {
-          padding: 20px 20px 20px 0;
+          padding: 16px 16px 16px 0;
           display: flex;
           flex-direction: column;
         }
 
         .character-name {
-          font-size: 22px;
+          font-size: 20px;
           font-weight: 700;
           color: #1a1a1a;
-          margin-bottom: 12px;
+          margin-bottom: 10px;
         }
 
         .character-notes {
-          font-size: 13px;
+          font-size: 12px;
           color: #555;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
           line-height: 1.7;
           flex: 1;
         }
 
-        .character-meta {
-          font-size: 10px;
+        .character-bullets {
+          list-style: none;
+          padding: 0;
+          margin: 0 0 12px 0;
+        }
+
+        .character-bullets li {
+          font-size: 11px;
+          color: #555;
+          padding: 3px 0;
+          padding-left: 14px;
+          position: relative;
+        }
+
+        .character-bullets li::before {
+          content: '•';
+          color: #f59e0b;
+          position: absolute;
+          left: 0;
+        }
+
+        .meta-row {
+          font-size: 9px;
           color: #888;
           display: flex;
-          gap: 16px;
+          gap: 14px;
           flex-wrap: wrap;
-          border-top: 1px solid #e5e5e5;
-          padding-top: 12px;
+          border-top: 1px solid #e9ecef;
+          padding-top: 10px;
           margin-top: auto;
         }
 
@@ -379,22 +440,22 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
           color: #aaa;
         }
 
-        /* Location Scouting Layout */
-        .location-scouting {
-          margin-bottom: 32px;
+        /* Location Scouting */
+        .location-block {
+          margin-bottom: 28px;
           page-break-inside: avoid;
         }
 
         .location-images {
           display: grid;
           grid-template-columns: 2fr 1fr;
-          gap: 12px;
-          margin-bottom: 16px;
+          gap: 10px;
+          margin-bottom: 12px;
         }
 
         .location-main {
           width: 100%;
-          height: 180px;
+          height: 160px;
           object-fit: cover;
           border-radius: 8px;
         }
@@ -402,68 +463,67 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
         .location-secondary-stack {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 10px;
         }
 
         .location-secondary {
           flex: 1;
           object-fit: cover;
           border-radius: 6px;
-          background: #e5e5e5;
+          background: #e9ecef;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #aaa;
+          font-size: 10px;
         }
 
         .location-info {
-          background: #f8f8f8;
+          background: #f8f9fa;
           border-radius: 8px;
-          padding: 16px;
-          border: 1px solid #e5e5e5;
+          padding: 14px;
+          border: 1px solid #e9ecef;
         }
 
         .location-name {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: 700;
           color: #1a1a1a;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
         }
 
         .location-notes {
-          font-size: 12px;
+          font-size: 11px;
           color: #555;
-          margin-bottom: 12px;
-        }
-
-        .location-meta {
-          font-size: 10px;
-          color: #888;
-          display: flex;
-          gap: 12px;
+          margin-bottom: 10px;
+          line-height: 1.6;
         }
 
         /* Style Section */
         .style-card {
           display: grid;
-          grid-template-columns: 200px 1fr;
-          gap: 20px;
-          background: #f8f8f8;
-          border-radius: 12px;
+          grid-template-columns: 180px 1fr;
+          gap: 16px;
+          background: #f8f9fa;
+          border-radius: 10px;
           overflow: hidden;
-          border: 1px solid #e5e5e5;
+          border: 1px solid #e9ecef;
           page-break-inside: avoid;
-          margin-bottom: 20px;
+          margin-bottom: 16px;
         }
 
         .style-image {
           width: 100%;
-          height: 200px;
+          height: 180px;
           object-fit: cover;
         }
 
         .style-content {
-          padding: 20px 20px 20px 0;
+          padding: 16px 16px 16px 0;
         }
 
         .style-name {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: 700;
           color: #1a1a1a;
           margin-bottom: 8px;
@@ -473,7 +533,7 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
         .continuity-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
+          gap: 10px;
         }
 
         .continuity-frame {
@@ -482,70 +542,65 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
 
         .continuity-image {
           width: 100%;
-          height: 70px;
+          height: 65px;
           object-fit: cover;
-          border-radius: 6px;
-          border: 1px solid #e5e5e5;
+          border-radius: 5px;
+          border: 1px solid #e9ecef;
         }
 
         .continuity-caption {
-          font-size: 9px;
+          font-size: 8px;
           color: #888;
           text-align: center;
-          margin-top: 4px;
+          margin-top: 3px;
         }
 
-        /* Checklist for empty state */
-        .checklist {
-          margin-top: 24px;
+        /* Canon Pending */
+        .canon-pending {
+          background: linear-gradient(135deg, #fefce8 0%, #fff7ed 100%);
+          border: 1px solid #fcd34d;
+          border-radius: 10px;
+          padding: 28px;
+          text-align: center;
+          margin-top: 20px;
         }
 
-        .checklist-title {
-          font-size: 16px;
+        .canon-pending-title {
+          font-size: 18px;
           font-weight: 600;
-          color: #1a1a1a;
-          margin-bottom: 12px;
+          color: #92400e;
+          margin-bottom: 10px;
         }
 
-        .checklist-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 8px 0;
-          border-bottom: 1px solid #eee;
-        }
-
-        .checklist-icon {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-        }
-
-        .checklist-done {
-          background: #22c55e;
-          color: white;
-        }
-
-        .checklist-pending {
-          background: #e5e5e5;
-          color: #888;
-        }
-
-        .checklist-text {
+        .canon-pending-text {
           font-size: 13px;
-          color: #555;
+          color: #78350f;
+          line-height: 1.6;
+          max-width: 420px;
+          margin: 0 auto;
+        }
+
+        .canon-pending-list {
+          text-align: left;
+          max-width: 320px;
+          margin: 16px auto 0;
+        }
+
+        .canon-pending-item {
+          font-size: 12px;
+          color: #92400e;
+          padding: 4px 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
       `}</style>
 
       {/* Cover Page */}
-      <div className="page cover-page">
-        {data.heroImageUrl ? (
+      <div className="page cover">
+        {heroImage ? (
           <img 
-            src={data.heroImageUrl} 
+            src={heroImage} 
             alt="Hero" 
             className="cover-hero"
             crossOrigin="anonymous"
@@ -556,7 +611,7 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
             <div className="cover-placeholder-text">Producción Visual Pendiente</div>
           </div>
         )}
-        <h1 className="cover-title">{data.projectTitle}</h1>
+        <h1 className="cover-title">{data.project.name}</h1>
         <p className="cover-subtitle">Biblia de Producción PRO</p>
         <p className="cover-meta">Versión {data.version}</p>
         <p className="cover-meta">{formatDate(data.exportedAt)}</p>
@@ -571,51 +626,58 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
             <div className="cover-stat-label">Localizaciones Canon</div>
           </div>
           <div className="cover-stat">
-            <div className="cover-stat-value">{data.keyframes.filter(k => k.imageUrl).length}</div>
+            <div className="cover-stat-value">{data.stats.acceptedKeyframes}</div>
             <div className="cover-stat-label">Keyframes</div>
           </div>
         </div>
         
-        <div className="page-footer">
-          <span>{data.projectId}</span>
-          <span>Bible v{data.version} • {formatDate(data.exportedAt)}</span>
-        </div>
+        <PageFooter pageNum={getPageNumber()} />
       </div>
 
       {/* Quick Snapshot */}
       <div className="page">
         <h2 className="section-header">Quick Snapshot</h2>
-        <p className="section-subtitle">Resumen visual del proyecto</p>
+        <p className="section-subtitle">Visión rápida del proyecto</p>
 
-        <div className="snapshot-grid">
-          <div className="snapshot-card">
-            <div className="snapshot-label">Tono</div>
-            <div className="snapshot-value">{data.stylePack?.tone || '—'}</div>
-          </div>
-          <div className="snapshot-card">
-            <div className="snapshot-label">Estilo de Lente</div>
-            <div className="snapshot-value">{data.stylePack?.lensStyle || '—'}</div>
-          </div>
-          <div className="snapshot-card">
-            <div className="snapshot-label">Nivel de Realismo</div>
-            <div className="snapshot-value">{data.stylePack?.realismLevel || '—'}</div>
-          </div>
+        <div className="chips">
+          {data.project.tone && (
+            <div className="chip">
+              <span className="chip-label">Tono:</span>
+              <span className="chip-value">{data.project.tone}</span>
+            </div>
+          )}
+          {data.project.lensStyle && (
+            <div className="chip">
+              <span className="chip-label">Lente:</span>
+              <span className="chip-value">{data.project.lensStyle}</span>
+            </div>
+          )}
+          {data.project.realismLevel && (
+            <div className="chip">
+              <span className="chip-label">Realismo:</span>
+              <span className="chip-value">{data.project.realismLevel}</span>
+            </div>
+          )}
+          {!data.project.tone && !data.project.lensStyle && !data.project.realismLevel && (
+            <div className="chip">
+              <span className="chip-value" style={{ color: '#888' }}>Estilo por definir</span>
+            </div>
+          )}
         </div>
 
-        {data.stylePack?.description && (
-          <div className="snapshot-card" style={{ marginBottom: 16 }}>
-            <div className="snapshot-label">Descripción del Estilo</div>
-            <div className="snapshot-value" style={{ fontSize: 14, fontWeight: 400 }}>
-              {data.stylePack.description}
-            </div>
+        {data.project.description && (
+          <div className="description-box">
+            <p className="description-text">{data.project.description}</p>
           </div>
         )}
 
-        {data.stylePack?.colorPalette && data.stylePack.colorPalette.length > 0 && (
-          <div className="snapshot-card" style={{ marginTop: 16 }}>
-            <div className="snapshot-label">Paleta de Color</div>
+        {data.project.colorPalette && data.project.colorPalette.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 11, color: '#888', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Paleta de Color
+            </div>
             <div className="color-palette">
-              {data.stylePack.colorPalette.map((color, i) => (
+              {data.project.colorPalette.map((color, i) => (
                 <div 
                   key={i} 
                   className="color-swatch" 
@@ -627,32 +689,30 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
           </div>
         )}
 
-        {/* If no canon, show checklist */}
         {!hasCanon && (
-          <div className="checklist">
-            <div className="checklist-title">Próximos Pasos del Proyecto</div>
-            {[
-              { done: data.stats.totalCharacters > 0, text: 'Crear personajes principales' },
-              { done: data.stats.totalLocations > 0, text: 'Definir localizaciones clave' },
-              { done: data.stats.canonCharacters > 0, text: 'Aprobar canon de personajes' },
-              { done: data.stats.canonLocations > 0, text: 'Aprobar canon de localizaciones' },
-              { done: data.stats.totalScenes > 0, text: 'Estructurar escenas' },
-              { done: data.stats.totalKeyframes > 0, text: 'Generar keyframes de referencia' },
-            ].map((item, i) => (
-              <div key={i} className="checklist-item">
-                <div className={`checklist-icon ${item.done ? 'checklist-done' : 'checklist-pending'}`}>
-                  {item.done ? '✓' : '○'}
-                </div>
-                <span className="checklist-text">{item.text}</span>
+          <div className="canon-pending">
+            <div className="canon-pending-title">📋 Canon Pendiente</div>
+            <p className="canon-pending-text">
+              Para completar el dossier PRO, marca tus primeros assets como canon:
+            </p>
+            <div className="canon-pending-list">
+              <div className="canon-pending-item">
+                <span>○</span> Aceptar retratos de personajes principales
               </div>
-            ))}
+              <div className="canon-pending-item">
+                <span>○</span> Marcar localizaciones clave como canon
+              </div>
+              <div className="canon-pending-item">
+                <span>○</span> Definir referencias de estilo visual
+              </div>
+              <div className="canon-pending-item">
+                <span>○</span> Aprobar keyframes por escena
+              </div>
+            </div>
           </div>
         )}
 
-        <div className="page-footer">
-          <span>{data.projectId}</span>
-          <span>Bible v{data.version} • {formatDate(data.exportedAt)}</span>
-        </div>
+        <PageFooter pageNum={getPageNumber()} />
       </div>
 
       {/* Characters - 2 per page */}
@@ -661,27 +721,31 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
           {pageIndex === 0 && (
             <>
               <h2 className="section-header">Personajes Canon</h2>
-              <p className="section-subtitle">Fichas de personajes aprobados para producción</p>
+              <p className="section-subtitle">Fichas de casting aprobadas para producción</p>
             </>
           )}
           
           <div className="character-grid">
             {pair.map((char) => (
               <div key={char.id} className="character-card">
-                {char.imageUrl && (
+                {char.imageUrl ? (
                   <img 
                     src={char.imageUrl} 
                     alt={char.name} 
                     className="character-image"
                     crossOrigin="anonymous"
                   />
+                ) : (
+                  <div className="character-image" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa' }}>
+                    Sin imagen
+                  </div>
                 )}
                 <div className="character-content">
                   <h3 className="character-name">{char.name}</h3>
                   {char.notes && (
                     <p className="character-notes">{char.notes}</p>
                   )}
-                  <div className="character-meta">
+                  <div className="meta-row">
                     <div className="meta-item">
                       <span className="meta-label">Motor:</span>
                       <span>{char.engine || 'N/A'}</span>
@@ -700,10 +764,7 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
             ))}
           </div>
 
-          <div className="page-footer">
-            <span>{data.projectId}</span>
-            <span>Bible v{data.version} • {formatDate(data.exportedAt)}</span>
-          </div>
+          <PageFooter pageNum={getPageNumber()} />
         </div>
       ))}
 
@@ -713,8 +774,8 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
           <h2 className="section-header">Localizaciones Canon</h2>
           <p className="section-subtitle">Scouting visual aprobado para producción</p>
 
-          {data.canon.locations.map((loc, index) => (
-            <div key={loc.id} className="location-scouting">
+          {data.canon.locations.map((loc) => (
+            <div key={loc.id} className="location-block">
               <div className="location-images">
                 <img 
                   src={loc.imageUrl} 
@@ -723,12 +784,8 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
                   crossOrigin="anonymous"
                 />
                 <div className="location-secondary-stack">
-                  <div className="location-secondary" style={{ background: '#e5e5e5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', fontSize: 11 }}>
-                    Key Area
-                  </div>
-                  <div className="location-secondary" style={{ background: '#e5e5e5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', fontSize: 11 }}>
-                    Detail
-                  </div>
+                  <div className="location-secondary">Key Area</div>
+                  <div className="location-secondary">Detail</div>
                 </div>
               </div>
               <div className="location-info">
@@ -736,7 +793,7 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
                 {loc.notes && (
                   <p className="location-notes">{loc.notes}</p>
                 )}
-                <div className="location-meta">
+                <div className="meta-row">
                   <div className="meta-item">
                     <span className="meta-label">Motor:</span>
                     <span>{loc.engine || 'N/A'}</span>
@@ -750,10 +807,7 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
             </div>
           ))}
 
-          <div className="page-footer">
-            <span>{data.projectId}</span>
-            <span>Bible v{data.version} • {formatDate(data.exportedAt)}</span>
-          </div>
+          <PageFooter pageNum={getPageNumber()} />
         </div>
       )}
 
@@ -778,7 +832,7 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
                 {style.notes && (
                   <p className="location-notes">{style.notes}</p>
                 )}
-                <div className="location-meta" style={{ marginTop: 12 }}>
+                <div className="meta-row" style={{ marginTop: 12 }}>
                   <div className="meta-item">
                     <span className="meta-label">Motor:</span>
                     <span>{style.engine || 'N/A'}</span>
@@ -792,10 +846,7 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
             </div>
           ))}
 
-          <div className="page-footer">
-            <span>{data.projectId}</span>
-            <span>Bible v{data.version} • {formatDate(data.exportedAt)}</span>
-          </div>
+          <PageFooter pageNum={getPageNumber()} />
         </div>
       )}
 
@@ -803,30 +854,27 @@ export function BibleProDocument({ data, onReady }: BibleProDocumentProps) {
       {hasKeyframes && (
         <div className="page">
           <h2 className="section-header">Continuidad Visual</h2>
-          <p className="section-subtitle">Keyframes aceptados recientes</p>
+          <p className="section-subtitle">Keyframes aceptados para referencia de producción</p>
 
           <div className="continuity-grid">
-            {data.keyframes.filter(kf => kf.imageUrl).slice(0, 16).map((kf) => (
+            {data.continuity.keyframes.filter(kf => kf.imageUrl).slice(0, 16).map((kf) => (
               <div key={kf.id} className="continuity-frame">
                 <img 
                   src={kf.imageUrl!} 
-                  alt={`Keyframe ${kf.id}`}
+                  alt={`Keyframe`}
                   className="continuity-image"
                   crossOrigin="anonymous"
                 />
                 <div className="continuity-caption">
-                  {kf.sceneNumber != null && kf.shotNumber != null 
-                    ? `E${kf.sceneNumber} S${kf.shotNumber}`
-                    : kf.frameType || 'Keyframe'}
+                  {kf.scene != null && kf.shot != null 
+                    ? `E${kf.scene} S${kf.shot}`
+                    : formatDate(kf.createdAt)}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="page-footer">
-            <span>{data.projectId}</span>
-            <span>Bible v{data.version} • {formatDate(data.exportedAt)}</span>
-          </div>
+          <PageFooter pageNum={getPageNumber()} />
         </div>
       )}
     </div>

@@ -6,20 +6,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface ExportBibleRequest {
-  projectId: string;
-  format: 'json' | 'pdf';
-  style?: 'basic' | 'pro';
-}
-
 interface CanonAsset {
   id: string;
   name: string;
   imageUrl: string;
   notes: string | null;
   runId: string;
-  model: string | null;
   engine: string | null;
+  model: string | null;
   createdAt: string;
   assetType: string;
 }
@@ -27,50 +21,50 @@ interface CanonAsset {
 interface KeyframeData {
   id: string;
   imageUrl: string | null;
-  shotId: string;
-  sceneNumber: number | null;
-  shotNumber: number | null;
-  frameType: string | null;
+  scene: number | null;
+  shot: number | null;
   runId: string | null;
-  engine: string | null;
-  model: string | null;
+  createdAt: string;
 }
 
-interface StylePackData {
-  description: string | null;
-  tone: string | null;
-  lensStyle: string | null;
-  realismLevel: string | null;
-  colorPalette: string[] | null;
-  referenceUrls: string[] | null;
-}
-
-interface ProjectStats {
-  totalCharacters: number;
-  totalLocations: number;
-  totalScenes: number;
-  totalShots: number;
-  totalKeyframes: number;
-  canonCharacters: number;
-  canonLocations: number;
-  canonStyle: number;
-  lastUpdated: string;
+interface AcceptedRun {
+  id: string;
+  type: string;
+  name: string;
+  date: string;
 }
 
 interface BibleExport {
-  projectId: string;
-  projectTitle: string;
-  exportedAt: string;
-  version: string;
-  heroImageUrl: string | null;
-  stylePack: StylePackData | null;
-  stats: ProjectStats;
+  project: {
+    id: string;
+    name: string;
+    tone: string | null;
+    lensStyle: string | null;
+    realismLevel: string | null;
+    description: string | null;
+    colorPalette: string[] | null;
+  };
   canon: {
     characters: CanonAsset[];
     locations: CanonAsset[];
     style: CanonAsset[];
   };
-  keyframes: KeyframeData[];
+  continuity: {
+    keyframes: KeyframeData[];
+  };
+  recentRuns: AcceptedRun[];
+  stats: {
+    totalCharacters: number;
+    totalLocations: number;
+    totalScenes: number;
+    totalShots: number;
+    canonCharacters: number;
+    canonLocations: number;
+    canonStyle: number;
+    acceptedKeyframes: number;
+  };
+  exportedAt: string;
+  version: string;
 }
 
 serve(async (req) => {
@@ -79,12 +73,12 @@ serve(async (req) => {
   }
 
   try {
-    const body: ExportBibleRequest = await req.json();
+    const body = await req.json();
     
-    if (!body.projectId || !body.format) {
+    if (!body.projectId) {
       return new Response(JSON.stringify({
         ok: false,
-        error: 'Missing required fields: projectId, format'
+        error: 'Missing required field: projectId'
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -95,37 +89,27 @@ serve(async (req) => {
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const style = body.style || 'basic';
-    console.log(`[export-bible] Starting export: projectId=${body.projectId}, format=${body.format}, style=${style}`);
+    console.log(`[export-bible] Starting export for project: ${body.projectId}`);
 
-    // Fetch project info
-    const { data: project, error: projectError } = await supabase
-      .from('projects')
-      .select('id, title, format, updated_at')
-      .eq('id', body.projectId)
-      .single();
-
-    if (projectError || !project) {
-      console.error('[export-bible] Project not found:', projectError);
-      return new Response(JSON.stringify({
-        ok: false,
-        error: 'Project not found'
-      }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Fetch all stats in parallel
+    // Parallel fetch all data
     const [
+      projectRes,
       canonAssetsRes,
       stylePackRes,
       keyframesRes,
       charactersCountRes,
       locationsCountRes,
       scenesCountRes,
-      shotsCountRes
+      shotsCountRes,
+      recentRunsRes
     ] = await Promise.all([
+      // Project info
+      supabase
+        .from('projects')
+        .select('id, title, updated_at')
+        .eq('id', body.projectId)
+        .single(),
+      
       // Canon assets with generation_runs join
       supabase
         .from('canon_assets')
@@ -144,24 +128,22 @@ serve(async (req) => {
         `)
         .eq('project_id', body.projectId)
         .eq('is_active', true)
-        .order('asset_type')
-        .order('name'),
+        .order('created_at', { ascending: false }),
       
       // Style pack
       supabase
         .from('style_packs')
-        .select('description, tone, lens_style, realism_level, color_palette, reference_urls')
+        .select('description, tone, lens_style, realism_level, color_palette')
         .eq('project_id', body.projectId)
         .maybeSingle(),
       
-      // Accepted keyframes for continuity
+      // Accepted keyframes with scene/shot info
       supabase
         .from('keyframes')
         .select(`
           id,
           image_url,
           shot_id,
-          frame_type,
           run_id,
           created_at,
           shots (
@@ -169,67 +151,58 @@ serve(async (req) => {
             scenes (
               scene_number
             )
-          ),
-          generation_runs (
-            engine,
-            model
           )
         `)
         .eq('approved', true)
         .order('created_at', { ascending: false })
         .limit(20),
       
-      // Total characters count
+      // Counts
       supabase
         .from('characters')
         .select('id', { count: 'exact', head: true })
         .eq('project_id', body.projectId),
       
-      // Total locations count
       supabase
         .from('locations')
         .select('id', { count: 'exact', head: true })
         .eq('project_id', body.projectId),
       
-      // Total scenes count
       supabase
         .from('scenes')
         .select('id', { count: 'exact', head: true })
         .eq('project_id', body.projectId),
       
-      // Total shots count
       supabase
         .from('shots')
         .select('id', { count: 'exact', head: true })
+        .eq('project_id', body.projectId),
+      
+      // Recent accepted runs (for timeline)
+      supabase
+        .from('generation_runs')
+        .select('id, run_type, created_at, output_url')
         .eq('project_id', body.projectId)
+        .eq('verdict', 'accepted')
+        .order('created_at', { ascending: false })
+        .limit(10)
     ]);
 
-    if (canonAssetsRes.error) {
-      console.error('[export-bible] Error fetching canon assets:', canonAssetsRes.error);
+    if (projectRes.error || !projectRes.data) {
+      console.error('[export-bible] Project not found:', projectRes.error);
+      return new Response(JSON.stringify({
+        ok: false,
+        error: 'Project not found'
+      }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
     }
 
-    // Process keyframes
-    const projectKeyframes: KeyframeData[] = [];
-    if (keyframesRes.data) {
-      for (const kf of keyframesRes.data) {
-        const shotData = kf.shots as unknown as { shot_number: number | null; scenes: { scene_number: number } | null } | null;
-        const runData = kf.generation_runs as unknown as { engine: string | null; model: string | null } | null;
-        
-        projectKeyframes.push({
-          id: kf.id,
-          imageUrl: kf.image_url,
-          shotId: kf.shot_id,
-          sceneNumber: shotData?.scenes?.scene_number || null,
-          shotNumber: shotData?.shot_number || null,
-          frameType: kf.frame_type,
-          runId: kf.run_id,
-          engine: runData?.engine || null,
-          model: runData?.model || null,
-        });
-      }
-    }
+    const project = projectRes.data;
+    const stylePack = stylePackRes.data;
 
-    // Group canon assets by type
+    // Process canon assets
     const characters: CanonAsset[] = [];
     const locations: CanonAsset[] = [];
     const styleAssets: CanonAsset[] = [];
@@ -265,64 +238,95 @@ serve(async (req) => {
       }
     }
 
-    // Determine hero image priority: keyframe > character > location > style
-    let heroImageUrl: string | null = null;
-    if (projectKeyframes.length > 0 && projectKeyframes[0].imageUrl) {
-      heroImageUrl = projectKeyframes[0].imageUrl;
-    } else if (characters.length > 0) {
-      heroImageUrl = characters[0].imageUrl;
-    } else if (locations.length > 0) {
-      heroImageUrl = locations[0].imageUrl;
-    } else if (styleAssets.length > 0) {
-      heroImageUrl = styleAssets[0].imageUrl;
+    // Process keyframes
+    const keyframes: KeyframeData[] = [];
+    if (keyframesRes.data) {
+      for (const kf of keyframesRes.data) {
+        const shotData = kf.shots as unknown as { shot_number: number | null; scenes: { scene_number: number } | null } | null;
+        
+        keyframes.push({
+          id: kf.id,
+          imageUrl: kf.image_url,
+          scene: shotData?.scenes?.scene_number || null,
+          shot: shotData?.shot_number || null,
+          runId: kf.run_id,
+          createdAt: kf.created_at,
+        });
+      }
     }
 
-    const stylePack = stylePackRes.data;
-    const stylePackData: StylePackData | null = stylePack ? {
-      description: stylePack.description,
-      tone: stylePack.tone,
-      lensStyle: stylePack.lens_style,
-      realismLevel: stylePack.realism_level,
-      colorPalette: stylePack.color_palette,
-      referenceUrls: stylePack.reference_urls,
-    } : null;
+    // Process recent runs for timeline
+    const recentRuns: AcceptedRun[] = [];
+    if (recentRunsRes.data) {
+      for (const run of recentRunsRes.data) {
+        recentRuns.push({
+          id: run.id,
+          type: run.run_type || 'generation',
+          name: run.run_type || 'Run',
+          date: run.created_at,
+        });
+      }
+    }
 
-    // Build stats
-    const stats: ProjectStats = {
-      totalCharacters: charactersCountRes.count || 0,
-      totalLocations: locationsCountRes.count || 0,
-      totalScenes: scenesCountRes.count || 0,
-      totalShots: shotsCountRes.count || 0,
-      totalKeyframes: projectKeyframes.length,
-      canonCharacters: characters.length,
-      canonLocations: locations.length,
-      canonStyle: styleAssets.length,
-      lastUpdated: project.updated_at || new Date().toISOString(),
-    };
+    // Add canon assets to recent runs
+    for (const char of characters.slice(0, 3)) {
+      recentRuns.push({
+        id: char.id,
+        type: 'character',
+        name: char.name,
+        date: char.createdAt,
+      });
+    }
+    for (const loc of locations.slice(0, 3)) {
+      recentRuns.push({
+        id: loc.id,
+        type: 'location',
+        name: loc.name,
+        date: loc.createdAt,
+      });
+    }
+
+    // Sort by date and take top 6
+    recentRuns.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const topRecentRuns = recentRuns.slice(0, 6);
 
     const bibleExport: BibleExport = {
-      projectId: body.projectId,
-      projectTitle: project.title,
-      exportedAt: new Date().toISOString(),
-      version: '1.0',
-      heroImageUrl,
-      stylePack: stylePackData,
-      stats,
+      project: {
+        id: body.projectId,
+        name: project.title,
+        tone: stylePack?.tone || null,
+        lensStyle: stylePack?.lens_style || null,
+        realismLevel: stylePack?.realism_level || null,
+        description: stylePack?.description || null,
+        colorPalette: stylePack?.color_palette || null,
+      },
       canon: {
         characters,
         locations,
         style: styleAssets,
       },
-      keyframes: projectKeyframes,
+      continuity: {
+        keyframes,
+      },
+      recentRuns: topRecentRuns,
+      stats: {
+        totalCharacters: charactersCountRes.count || 0,
+        totalLocations: locationsCountRes.count || 0,
+        totalScenes: scenesCountRes.count || 0,
+        totalShots: shotsCountRes.count || 0,
+        canonCharacters: characters.length,
+        canonLocations: locations.length,
+        canonStyle: styleAssets.length,
+        acceptedKeyframes: keyframes.length,
+      },
+      exportedAt: new Date().toISOString(),
+      version: '1.0',
     };
 
-    console.log(`[export-bible] Stats: ${stats.totalCharacters} chars, ${stats.totalLocations} locs, ${stats.canonCharacters} canon chars, ${stats.canonLocations} canon locs`);
+    console.log(`[export-bible] Export complete: ${characters.length} chars, ${locations.length} locs, ${keyframes.length} keyframes`);
 
-    // Return JSON data (PDF generation happens client-side)
     return new Response(JSON.stringify({
       ok: true,
-      format: body.format,
-      style: style,
       data: bibleExport
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
