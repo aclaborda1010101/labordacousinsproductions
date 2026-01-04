@@ -23,8 +23,8 @@ import BibleOverview from '@/components/project/BibleOverview';
 import StylePack from '@/components/project/StylePack';
 import { ProjectSettings } from '@/components/project/ProjectSettings';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
-import Characters from '@/components/project/Characters';
-import Locations from '@/components/project/Locations';
+import CharactersList from '@/components/project/CharactersList';
+import LocationsList from '@/components/project/LocationsList';
 import Scenes from '@/components/project/Scenes';
 import ScriptWorkspace from '@/components/project/ScriptWorkspace';
 import RenderQueue from '@/components/project/RenderQueue';
@@ -220,8 +220,8 @@ export default function ProjectDetail() {
               <Route path="/" element={<BibleOverview project={project} setProject={setProject} />} />
               <Route path="/bible" element={<BibleOverview project={project} setProject={setProject} />} />
               <Route path="/style" element={<StylePack projectId={project.id} />} />
-              <Route path="/characters" element={<Characters projectId={project.id} />} />
-              <Route path="/locations" element={<Locations projectId={project.id} />} />
+              <Route path="/characters" element={<CharactersList projectId={project.id} />} />
+              <Route path="/locations" element={<LocationsList projectId={project.id} />} />
               <Route path="/props" element={<PropsComponent projectId={project.id} />} />
               <Route path="/script" element={<ScriptWorkspace projectId={project.id} />} />
               <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
