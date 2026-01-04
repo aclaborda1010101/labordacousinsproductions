@@ -20,8 +20,8 @@ interface LocationGenerationRequest {
   };
 }
 
-// Use Lovable AI (Nano Banana) for faster generation
-const LOVABLE_MODEL = 'google/gemini-2.5-flash-image-preview';
+// Use flux-1.1-pro-ultra for high-quality location scouting images
+const FAL_MODEL = 'fal-ai/flux-pro/v1.1-ultra';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -43,9 +43,9 @@ serve(async (req) => {
 
     console.log(`[generate-location] Generating: ${locationName}, view: ${viewAngle}, time: ${timeOfDay}`);
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+    const FAL_KEY = Deno.env.get('FAL_KEY');
+    if (!FAL_KEY) {
+      throw new Error('FAL_KEY is not configured');
     }
 
     // Build the view angle description
@@ -95,7 +95,7 @@ serve(async (req) => {
     }
 
     // Construct the prompt
-    const prompt = `Generate a cinematic film still of a location for production reference.
+    const prompt = `Cinematic film still, location scouting photograph.
 
 Location: ${locationName}
 Description: ${locationDescription || locationName}
@@ -107,37 +107,112 @@ ${styleContext}
 
 Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphic lens characteristics, natural color grading, film-like depth of field, architectural accuracy, environmental storytelling.`;
 
-    console.log('[generate-location] Using Lovable AI with prompt:', prompt.substring(0, 150) + '...');
+    console.log('[generate-location] Using FAL flux-pro-ultra with prompt:', prompt.substring(0, 150) + '...');
 
-    // Call Lovable AI Gateway
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Call FAL AI for flux-1.1-pro-ultra
+    const response = await fetch('https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Authorization': `Key ${FAL_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: LOVABLE_MODEL,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        modalities: ['image', 'text']
+        prompt,
+        aspect_ratio: '16:9',
+        safety_tolerance: 5,
+        output_format: 'jpeg',
+        raw: false
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[generate-location] Lovable AI error:', response.status, errorText);
-      throw new Error(`Lovable AI failed: ${response.status} - ${errorText}`);
+      console.error('[generate-location] FAL error:', response.status, errorText);
+      throw new Error(`FAL AI failed: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
-    const imageData = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-
-    if (!imageData) {
+    
+    // Handle FAL async queue response
+    if (result.request_id) {
+      // Poll for result
+      const requestId = result.request_id;
+      console.log('[generate-location] FAL request queued:', requestId);
+      
+      let attempts = 0;
+      const maxAttempts = 60; // 60 seconds max
+      
+      while (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const statusResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}/status`, {
+          headers: {
+            'Authorization': `Key ${FAL_KEY}`,
+          },
+        });
+        
+        const status = await statusResponse.json();
+        
+        if (status.status === 'COMPLETED') {
+          // Get result
+          const resultResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}`, {
+            headers: {
+              'Authorization': `Key ${FAL_KEY}`,
+            },
+          });
+          
+          const finalResult = await resultResponse.json();
+          const imageUrl = finalResult.images?.[0]?.url;
+          
+          if (!imageUrl) {
+            throw new Error('No image URL in FAL response');
+          }
+          
+          const generationTimeMs = Date.now() - startTime;
+          console.log(`[generate-location] Complete in ${generationTimeMs}ms`);
+          
+          // Log generation cost
+          const userId = extractUserId(req.headers.get('authorization'));
+          if (userId) {
+            await logGenerationCost({
+              userId,
+              slotType: 'location_image',
+              engine: 'flux-1.1-pro-ultra',
+              durationMs: generationTimeMs,
+              success: true,
+              metadata: { viewAngle, timeOfDay, weather }
+            });
+          }
+          
+          return new Response(JSON.stringify({ 
+            imageUrl,
+            seed: finalResult.seed || Math.floor(Math.random() * 999999),
+            prompt,
+            metadata: {
+              viewAngle,
+              timeOfDay,
+              weather,
+              engine: 'flux-1.1-pro-ultra',
+              generatedAt: new Date().toISOString(),
+              generationTimeMs
+            }
+          }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        } else if (status.status === 'FAILED') {
+          throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
+        }
+        
+        attempts++;
+      }
+      
+      throw new Error('FAL generation timed out');
+    }
+    
+    // Direct response (no queue)
+    const imageUrl = result.images?.[0]?.url;
+    
+    if (!imageUrl) {
       console.error('[generate-location] No image in response:', JSON.stringify(result).substring(0, 500));
       throw new Error('No image generated');
     }
@@ -151,7 +226,7 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
       await logGenerationCost({
         userId,
         slotType: 'location_image',
-        engine: LOVABLE_MODEL,
+        engine: 'flux-1.1-pro-ultra',
         durationMs: generationTimeMs,
         success: true,
         metadata: { viewAngle, timeOfDay, weather }
@@ -159,14 +234,14 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
     }
 
     return new Response(JSON.stringify({ 
-      imageUrl: imageData,
-      seed: Math.floor(Math.random() * 999999),
+      imageUrl,
+      seed: result.seed || Math.floor(Math.random() * 999999),
       prompt,
       metadata: {
         viewAngle,
         timeOfDay,
         weather,
-        engine: LOVABLE_MODEL,
+        engine: 'flux-1.1-pro-ultra',
         generatedAt: new Date().toISOString(),
         generationTimeMs
       }
