@@ -64,7 +64,7 @@ export function exportStoryboardPDF({
   
   doc.setFontSize(12);
   doc.setTextColor(150, 150, 150);
-  doc.text('CINEFORGE Studio', pageWidth / 2, 130, { align: 'center' });
+  doc.text('LC Studio', pageWidth / 2, 130, { align: 'center' });
   doc.text(`Generado: ${new Date().toLocaleDateString('es-ES', { 
     year: 'numeric', 
     month: 'long', 

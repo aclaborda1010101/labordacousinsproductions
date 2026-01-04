@@ -18,8 +18,7 @@ export default function Index() {
                 <Clapperboard className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <span className="font-bold text-foreground text-lg">CINEFORGE</span>
-                <span className="text-xs text-muted-foreground block -mt-0.5">Studio</span>
+                <span className="font-bold text-foreground text-lg">LC Studio</span>
               </div>
             </div>
             <div className="flex items-center gap-4">

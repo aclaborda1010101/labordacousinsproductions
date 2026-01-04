@@ -4,7 +4,7 @@ import { es } from '@/lib/i18n';
 // English translations
 export const en = {
   app: {
-    name: 'CINEFORGE Studio',
+    name: 'LC Studio',
     tagline: 'AI-powered cinema production',
   },
   nav: {

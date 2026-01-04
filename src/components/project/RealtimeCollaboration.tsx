@@ -145,11 +145,11 @@ export default function RealtimeCollaboration({ projectId, currentSection }: Rea
   return (
     <>
       {/* Active users indicator */}
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-20 sm:bottom-4 right-20 z-40 hidden">
         <TooltipProvider>
           <div className="flex items-center gap-1 p-2 rounded-full bg-card border border-border shadow-lg">
             {users.length === 0 ? (
-              <span className="text-xs text-muted-foreground px-2">Only you</span>
+              <span className="text-xs text-muted-foreground px-2"></span>
             ) : (
               <>
                 {users.slice(0, 5).map((u) => (

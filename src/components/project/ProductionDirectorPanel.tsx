@@ -746,7 +746,7 @@ export function ProductionDirectorTrigger({ onClick, hasUnread }: ProductionDire
           <Button
             onClick={onClick}
             size="icon"
-            className="fixed bottom-4 right-4 z-40 h-14 w-14 rounded-2xl shadow-xl bg-gradient-to-br from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90 hover:scale-105 transition-transform"
+            className="fixed bottom-20 sm:bottom-4 right-4 z-[9999] h-14 w-14 rounded-2xl shadow-xl bg-gradient-to-br from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90 hover:scale-105 transition-transform"
           >
             <Sparkles className="w-6 h-6 text-primary-foreground" />
             {hasUnread && (

@@ -1,8 +1,8 @@
-// Traducciones al español para CINEFORGE Studio
+// Traducciones al español para LC Studio
 export const es = {
   // General
   app: {
-    name: 'CINEFORGE Studio',
+    name: 'LC Studio',
     tagline: 'Producción cinematográfica impulsada por IA',
   },
   
