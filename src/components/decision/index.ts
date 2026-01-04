@@ -7,7 +7,9 @@ export type {
   DecisionAssetType,
   DecisionPhase,
   UserMode,
+  BudgetMode,
   RiskFlags,
   TelemetrySummary,
-  CanonSummary
+  CanonSummary,
+  DecisionEventType
 } from '@/lib/decisionEngine';

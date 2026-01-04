@@ -22,13 +22,22 @@ import {
 
 export type UserMode = 'assisted' | 'director' | 'pro' | 'dev';
 export type DecisionPhase = 'exploration' | 'production';
-export type DecisionAssetType = 'script_import' | 'character' | 'location' | 'keyframe';
+export type DecisionAssetType = 'script_import' | 'character' | 'location' | 'keyframe' | 'video' | 'scene' | 'shot';
 export type ActionIntent = 'generate' | 'accept' | 'regenerate' | 'canon' | 'script_import';
+export type BudgetMode = 'normal' | 'saver';
 
+/**
+ * PRIORITY ORDER (hard-coded):
+ * #1 invention  - NEVER invent content (script import)
+ * #2 canon      - Canon drift protection
+ * #2 consistency - Visual consistency
+ * #3 cost       - Cost optimization (only when #1 and #2 are satisfied)
+ */
 export interface RiskFlags {
-  cost: boolean;       // High cost potential
-  canon: boolean;      // Canon drift or missing canon
-  consistency: boolean; // Visual consistency risk
+  invention: boolean;   // Priority #1: Risk of AI inventing content
+  canon: boolean;       // Priority #2: Canon drift or missing canon
+  consistency: boolean; // Priority #2: Visual consistency risk
+  cost: boolean;        // Priority #3: High cost potential
 }
 
 export interface DecisionPack {
@@ -46,6 +55,8 @@ export interface DecisionPack {
   switchPresetTo?: string;   // Suggest switching to this preset
   autoRetryEligible: boolean; // Can auto-retry on failure
   fallbackEngine?: string;   // Fallback engine if primary fails
+  estimatedCost?: number;    // Rough cost estimate in USD
+  costWarning?: string;      // Warning message if cost is high
 }
 
 export interface TelemetrySummary {
@@ -54,6 +65,7 @@ export interface TelemetrySummary {
   timeToAcceptMedian: number;   // seconds
   overrideRate: number;         // % recommendation_overridden events
   engineFailureRate: number;    // timeout/500/network errors
+  costPressure: number;         // 0..1 relative cost usage
   canonCoverage: number;        // % core assets with active canon
   canonDriftProxy: number;      // regen count after canon or warnings
   totalRuns: number;
@@ -72,10 +84,34 @@ export interface DecisionContext {
   userMode: UserMode;
   phase: DecisionPhase;
   assetType: DecisionAssetType;
+  budgetMode?: BudgetMode;
   currentRunId?: string;
   currentPresetId?: string;
   currentEngine?: string;
   entityId?: string; // character_id, location_id, etc.
+}
+
+// ─────────────────────────────────────────────────────────────
+// COST ESTIMATES (USD per generation)
+// ─────────────────────────────────────────────────────────────
+
+const ENGINE_COSTS: Record<string, number> = {
+  'nano-banana-pro': 0.02,
+  'fal-ai/nano-banana-pro': 0.02,
+  'flux-pro': 0.05,
+  'flux-1.1-pro-ultra': 0.08,
+  'fal-ai/flux-pro/v1.1-ultra': 0.08,
+  'kling': 0.15,
+  'veo': 0.20,
+  'claude-sonnet': 0.03,
+  'gpt-4o-mini': 0.01,
+  'gpt-4o': 0.02,
+};
+
+function estimateCost(engine?: string, preset?: string): number {
+  const baseCost = ENGINE_COSTS[engine || 'nano-banana-pro'] || 0.02;
+  const multiplier = preset === 'ultra' ? 1.5 : preset === 'quality' ? 1.2 : 1.0;
+  return baseCost * multiplier;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -116,6 +152,7 @@ export async function getTelemetrySummary(
       timeToAcceptMedian: 0,
       overrideRate: 0,
       engineFailureRate: 0,
+      costPressure: 0,
       canonCoverage: 0,
       canonDriftProxy: 0,
       totalRuns: 0,
@@ -176,12 +213,18 @@ export async function getTelemetrySummary(
     r.warnings && Array.isArray(r.warnings) && (r.warnings as unknown[]).length > 0
   ).length;
 
+  // Cost pressure: ratio of expensive engine usage
+  const expensiveEngines = ['flux-1.1-pro-ultra', 'fal-ai/flux-pro/v1.1-ultra', 'veo', 'kling'];
+  const expensiveRuns = runs.filter(r => expensiveEngines.includes(r.engine || '')).length;
+  const costPressure = runs.length > 0 ? expensiveRuns / runs.length : 0;
+
   return {
     acceptRate,
     regenRate,
     timeToAcceptMedian,
     overrideRate,
     engineFailureRate,
+    costPressure,
     canonCoverage: 0, // Will be calculated with canon summary
     canonDriftProxy,
     totalRuns: runs.length,
@@ -232,6 +275,7 @@ function getGenerateDecision(
   const hasRelevantCanon = canonSummary[assetType as keyof Omit<CanonSummary, 'totalActive'>] > 0;
   
   const riskFlags: RiskFlags = {
+    invention: false, // Generate never invents
     cost: ctx.phase === 'production',
     canon: !hasRelevantCanon && telemetry.totalRuns > 5,
     consistency: telemetry.regenRate > 2
@@ -290,6 +334,7 @@ function getAcceptDecision(
   const hasRelevantCanon = canonSummary[assetType as keyof Omit<CanonSummary, 'totalActive'>] > 0;
   
   const riskFlags: RiskFlags = {
+    invention: false,
     cost: false,
     canon: !hasRelevantCanon,
     consistency: false
@@ -332,6 +377,7 @@ function getRegenerateDecision(
   const hasRelevantCanon = canonSummary[assetType as keyof Omit<CanonSummary, 'totalActive'>] > 0;
   
   const riskFlags: RiskFlags = {
+    invention: false,
     cost: chainLength > 3,
     canon: hasRelevantCanon && chainLength > 2, // Canon drift risk
     consistency: chainLength > 2
@@ -391,6 +437,7 @@ function getCanonDecision(
   const existingCanon = canonSummary[assetType as keyof Omit<CanonSummary, 'totalActive'>];
   
   const riskFlags: RiskFlags = {
+    invention: false,
     cost: false,
     canon: existingCanon > 0, // Will replace existing
     consistency: false
@@ -424,7 +471,9 @@ function getCanonDecision(
 function getScriptImportDecision(
   ctx: DecisionContext
 ): Partial<DecisionPack> {
+  // Priority #1: INVENTION RISK - Script import is the highest risk for AI hallucination
   const riskFlags: RiskFlags = {
+    invention: true, // Always flag as risk - extraction must be strictly analytical
     cost: false,
     canon: false,
     consistency: false
@@ -433,15 +482,17 @@ function getScriptImportDecision(
   return {
     recommendedAction: 'script_import',
     riskFlags,
-    message: 'Importar y analizar guion',
+    message: 'Extracción analítica – SOLO contenido explícito del guion',
     nextSteps: [
-      'Extracción de personajes, localizaciones, props',
-      'Campos ambiguos marcados como "no especificado"',
-      'Revisión manual recomendada'
+      'Solo personajes/localizaciones mencionados explícitamente',
+      'Campos ambiguos → "NO ESPECIFICADO"',
+      'Revisión manual obligatoria'
     ],
     reinforceCanon: false,
     suggestCanon: false,
-    autoRetryEligible: false
+    autoRetryEligible: false,
+    // Script import should never be autopiloted
+    autopilotEligible: false
   };
 }
 
@@ -527,24 +578,43 @@ export async function getDecisionPack(
     reasons.push(`${canonSummary.totalActive} canon activos`);
   }
 
+  // Calculate estimated cost
+  const recEngine = actionDecision.recommendedEngine || recommendation?.recommendedEngine || ctx.currentEngine;
+  const recPreset = actionDecision.recommendedPresetId || recommendation?.recommendedPreset || ctx.currentPresetId;
+  const estCost = estimateCost(recEngine, recPreset);
+  
+  // Cost warning threshold
+  const costWarning = estCost > 0.1 ? `Coste estimado: $${estCost.toFixed(2)}` : undefined;
+
+  // Default risk flags with invention field
+  const defaultRiskFlags: RiskFlags = { invention: false, cost: false, canon: false, consistency: false };
+  const finalRiskFlags = actionDecision.riskFlags || defaultRiskFlags;
+
+  // Autopilot soft: never auto for script_import or canon, never when cost is high
+  const softAutopilot = autopilotEligible && 
+    actionIntent !== 'script_import' && 
+    actionIntent !== 'canon' &&
+    estCost <= 0.1;
+
   return {
     recommendedAction: actionIntent,
     recommendedPresetId: actionDecision.recommendedPresetId || recommendation?.recommendedPreset,
     recommendedEngine: actionDecision.recommendedEngine || recommendation?.recommendedEngine,
-    riskFlags: actionDecision.riskFlags || { cost: false, canon: false, consistency: false },
+    riskFlags: finalRiskFlags,
     message: actionDecision.message || '',
     nextSteps: actionDecision.nextSteps || [],
-    autopilotEligible,
+    autopilotEligible: actionDecision.autopilotEligible ?? softAutopilot,
     confidence,
     reason: reasons.join(' | ') || 'Sin datos suficientes',
     reinforceCanon: actionDecision.reinforceCanon || false,
     suggestCanon: actionDecision.suggestCanon || false,
     switchPresetTo: actionDecision.switchPresetTo,
     autoRetryEligible: actionDecision.autoRetryEligible || false,
-    fallbackEngine: actionDecision.fallbackEngine
+    fallbackEngine: actionDecision.fallbackEngine,
+    estimatedCost: estCost,
+    costWarning
   };
 }
-
 // ─────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────
@@ -577,12 +647,23 @@ async function getCoreAssetCount(projectId: string): Promise<number> {
 }
 
 /**
+ * Decision event types for logging
+ */
+export type DecisionEventType = 
+  | 'decision_shown'
+  | 'decision_followed'
+  | 'decision_overridden'
+  | 'autopilot_prompted'
+  | 'autopilot_executed'
+  | 'cost_warning_shown';
+
+/**
  * Log decision engine event to editorial_events
  */
 export async function logDecisionEvent(
   projectId: string,
   assetType: DecisionAssetType,
-  eventType: 'decision_shown' | 'decision_followed' | 'decision_overridden',
+  eventType: DecisionEventType,
   decisionPack: DecisionPack,
   userChoice?: {
     chosenEngine?: string;
@@ -603,6 +684,7 @@ export async function logDecisionEvent(
         autopilotEligible: decisionPack.autopilotEligible,
         riskFlags: decisionPack.riskFlags,
         reinforceCanon: decisionPack.reinforceCanon,
+        estimatedCost: decisionPack.estimatedCost,
         ...userChoice
       }
     }] as any);

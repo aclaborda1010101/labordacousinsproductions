@@ -8,7 +8,8 @@ import {
   type ActionIntent,
   type DecisionAssetType,
   type DecisionPhase,
-  type UserMode
+  type UserMode,
+  type DecisionEventType
 } from '@/lib/decisionEngine';
 import type { CreativeMode } from '@/lib/modeCapabilities';
 
@@ -38,6 +39,11 @@ export interface UseDecisionEngineReturn {
   logFollowed: (chosenEngine?: string, chosenPreset?: string) => Promise<void>;
   // Log that decision was overridden
   logOverridden: (chosenEngine?: string, chosenPreset?: string, chosenAction?: ActionIntent) => Promise<void>;
+  // Log autopilot events
+  logAutopilotPrompted: () => Promise<void>;
+  logAutopilotExecuted: () => Promise<void>;
+  // Log cost warning shown
+  logCostWarning: () => Promise<void>;
   // Refresh the decision
   refresh: () => Promise<void>;
 }
@@ -130,6 +136,21 @@ export function useDecisionEngine({
     });
   }, [decision, projectId, assetType]);
 
+  const logAutopilotPrompted = useCallback(async () => {
+    if (!decision || !projectId) return;
+    await logDecisionEvent(projectId, assetType, 'autopilot_prompted', decision);
+  }, [decision, projectId, assetType]);
+
+  const logAutopilotExecuted = useCallback(async () => {
+    if (!decision || !projectId) return;
+    await logDecisionEvent(projectId, assetType, 'autopilot_executed', decision);
+  }, [decision, projectId, assetType]);
+
+  const logCostWarning = useCallback(async () => {
+    if (!decision || !projectId) return;
+    await logDecisionEvent(projectId, assetType, 'cost_warning_shown', decision);
+  }, [decision, projectId, assetType]);
+
   const refresh = useCallback(async () => {
     await fetchDecision('generate');
   }, [fetchDecision]);
@@ -150,6 +171,9 @@ export function useDecisionEngine({
     logShown,
     logFollowed,
     logOverridden,
+    logAutopilotPrompted,
+    logAutopilotExecuted,
+    logCostWarning,
     refresh
   };
 }

@@ -8,7 +8,8 @@ import {
   DollarSign,
   Sparkles,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  FileWarning
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -61,7 +62,7 @@ export function DecisionPanel({
   }
 
   const isAssisted = creativeMode === 'ASSISTED';
-  const hasRisks = decision.riskFlags.cost || decision.riskFlags.canon || decision.riskFlags.consistency;
+  const hasRisks = decision.riskFlags.invention || decision.riskFlags.cost || decision.riskFlags.canon || decision.riskFlags.consistency;
   const confidencePercent = Math.round(decision.confidence * 100);
 
   // ASSISTED mode: Simple inline CTA
@@ -120,6 +121,9 @@ export function DecisionPanel({
           <div className="flex items-center gap-2">
             {hasRisks && (
               <div className="flex gap-1">
+                {decision.riskFlags.invention && (
+                  <FileWarning className="w-3.5 h-3.5 text-destructive" />
+                )}
                 {decision.riskFlags.cost && (
                   <DollarSign className="w-3.5 h-3.5 text-warning" />
                 )}
@@ -150,6 +154,12 @@ export function DecisionPanel({
         {/* Risk flags */}
         {hasRisks && (
           <div className="flex flex-wrap gap-2">
+            {decision.riskFlags.invention && (
+              <Badge variant="outline" className="text-xs border-destructive/50 text-destructive">
+                <FileWarning className="w-3 h-3 mr-1" />
+                Riesgo invención
+              </Badge>
+            )}
             {decision.riskFlags.cost && (
               <Badge variant="outline" className="text-xs border-warning/50 text-warning">
                 <DollarSign className="w-3 h-3 mr-1" />
@@ -172,7 +182,7 @@ export function DecisionPanel({
         )}
 
         {/* Engine/Preset recommendations */}
-        {(decision.recommendedEngine || decision.recommendedPresetId || decision.switchPresetTo) && (
+        {(decision.recommendedEngine || decision.recommendedPresetId || decision.switchPresetTo || decision.estimatedCost) && (
           <div className="flex flex-wrap gap-2">
             {decision.recommendedEngine && (
               <Badge variant="secondary" className="text-xs">
@@ -187,6 +197,12 @@ export function DecisionPanel({
             {!decision.switchPresetTo && decision.recommendedPresetId && (
               <Badge variant="secondary" className="text-xs">
                 Preset: {decision.recommendedPresetId}
+              </Badge>
+            )}
+            {decision.estimatedCost !== undefined && (
+              <Badge variant={decision.riskFlags.cost ? "destructive" : "outline"} className="text-xs">
+                <DollarSign className="w-3 h-3 mr-1" />
+                ${decision.estimatedCost.toFixed(3)}
               </Badge>
             )}
           </div>
