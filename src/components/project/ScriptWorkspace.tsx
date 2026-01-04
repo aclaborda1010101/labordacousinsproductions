@@ -1768,6 +1768,17 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 );
               })()}
 
+              {status === 'error' && !generatedScript && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Error en la generación</AlertTitle>
+                  <AlertDescription>
+                    Hubo un problema al generar el guion. Tu idea se ha guardado automáticamente. 
+                    Puedes reintentar o modificar el texto.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               {!generatedScript && (
                 <div className="flex gap-2">
                   <Button 
@@ -1779,6 +1790,11 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                         Generando...
+                      </>
+                    ) : status === 'error' ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Reintentar
                       </>
                     ) : (
                       <>
