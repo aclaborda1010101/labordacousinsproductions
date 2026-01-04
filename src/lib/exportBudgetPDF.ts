@@ -54,7 +54,7 @@ export function exportBudgetPDF({
   doc.setTextColor(212, 175, 55); // Gold color
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  doc.text('CINEFORGE Studio', 14, 20);
+  doc.text('LC Studio', 14, 20);
   
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(12);
@@ -228,7 +228,7 @@ export function exportBudgetPDF({
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
     doc.text(
-      `CINEFORGE Studio - ${projectTitle} - Página ${i} de ${pageCount}`,
+      `LC Studio - ${projectTitle} - Página ${i} de ${pageCount}`,
       pageWidth / 2,
       doc.internal.pageSize.getHeight() - 10,
       { align: 'center' }

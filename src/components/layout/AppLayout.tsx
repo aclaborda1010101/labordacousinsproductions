@@ -94,7 +94,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
           {(!collapsed || isMobile) && (
             <div>
-              <span className="font-bold text-foreground tracking-tight text-sm lg:text-base">CINEFORGE</span>
+              <span className="font-bold text-foreground tracking-tight text-sm lg:text-base">LC</span>
               <span className="text-[10px] lg:text-xs text-muted-foreground block -mt-0.5">Studio</span>
             </div>
           )}
@@ -353,7 +353,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center">
             <Clapperboard className="w-3.5 h-3.5 text-primary-foreground" />
           </div>
-          <span className="font-bold text-foreground text-sm">CINEFORGE</span>
+          <span className="font-bold text-foreground text-sm">LC Studio</span>
         </Link>
         <TaskNotificationCenter />
       </div>

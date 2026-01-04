@@ -101,7 +101,7 @@ export default function Auth() {
               <Clapperboard className="w-8 h-8 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">CINEFORGE</h1>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">LC Studio</h1>
               <p className="text-muted-foreground">Fábrica de Blockbusters</p>
             </div>
           </div>
@@ -138,8 +138,7 @@ export default function Auth() {
               <Clapperboard className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <span className="text-xl font-bold text-foreground">CINEFORGE</span>
-              <span className="text-xs text-muted-foreground block">Studio</span>
+              <span className="text-xl font-bold text-foreground">LC Studio</span>
             </div>
           </div>
 
