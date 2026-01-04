@@ -820,10 +820,49 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     setProgress(20);
 
     try {
+      // First save the script to the database
+      const { data: existingScript } = await supabase
+        .from('scripts')
+        .select('id')
+        .eq('project_id', projectId)
+        .limit(1)
+        .maybeSingle();
+
+      let savedScript;
+      if (existingScript) {
+        const { data, error } = await supabase
+          .from('scripts')
+          .update({
+            raw_text: scriptTextNormalized,
+            status: 'draft',
+          })
+          .eq('id', existingScript.id)
+          .select()
+          .single();
+        if (error) throw error;
+        savedScript = data;
+      } else {
+        const { data, error } = await supabase
+          .from('scripts')
+          .insert({
+            project_id: projectId,
+            raw_text: scriptTextNormalized,
+            status: 'draft',
+          })
+          .select()
+          .single();
+        if (error) throw error;
+        savedScript = data;
+      }
+
+      if (!savedScript) throw new Error('Failed to save script');
+      setProgress(40);
+
       const { data: breakdownData, error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
         body: {
           projectId,
           scriptText: scriptTextNormalized,
+          scriptId: savedScript.id,
           language: 'es-ES',
         }
       });
@@ -842,9 +881,41 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         summary: breakdownData?.summary,
       };
 
+      // Save parsed_json for persistence
+      const parsedJson = {
+        title: breakdown.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Generado',
+        synopsis: breakdown.synopsis?.faithful_summary || '',
+        episodes: breakdownData?.episodes || [{
+          episode_number: 1,
+          title: 'Episodio 1',
+          synopsis: breakdown.synopsis?.faithful_summary || '',
+          scenes: breakdown.scenes,
+          duration_min: breakdown.summary?.estimated_runtime_min || 10,
+        }],
+        characters: breakdown.characters || [],
+        locations: breakdown.locations || [],
+        scenes: breakdown.scenes || [],
+        props: breakdown.props || [],
+        subplots: breakdown.subplots || [],
+        plot_twists: breakdown.plot_twists || [],
+        teasers: breakdownData?.teasers,
+        counts: {
+          total_scenes: breakdown.scenes?.length || 0,
+          total_dialogue_lines: 0,
+        },
+      };
+
+      await supabase.from('scripts')
+        .update({ parsed_json: JSON.parse(JSON.stringify(parsedJson)) })
+        .eq('id', savedScript.id);
+
       setBreakdownResult(breakdown);
       const diagnosis = evaluateQuality(breakdown);
       setQualityDiagnosis(diagnosis);
+
+      // Mark as having script for persistence
+      setHasExistingScript(true);
+      setExistingScriptText(scriptTextNormalized);
 
       setProgress(100);
       setStatus('success');
