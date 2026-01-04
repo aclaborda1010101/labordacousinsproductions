@@ -263,7 +263,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         const draft = JSON.parse(savedDraft);
         if (draft.ideaText) setIdeaText(draft.ideaText);
         if (draft.scriptText) setScriptText(coerceScriptToString(draft.scriptText));
-        if (draft.entryMode) setEntryMode(draft.entryMode);
+        // Note: we intentionally do NOT auto-restore entryMode.
+        // This avoids jumping back into the old edit screen when a script already exists.
         if (draft.inputMethod) setInputMethod(draft.inputMethod);
         if (draft.uploadedFileName) setUploadedFileName(draft.uploadedFileName);
         if (draft.selectedModel) setSelectedModel(draft.selectedModel);
@@ -376,7 +377,16 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   useEffect(() => {
     refreshScriptData();
   }, [refreshScriptData, refreshTrigger]);
+
+  // If a script already exists, always show the summary screen.
+  // This avoids landing back in the old entry/edit screens after navigating away.
+  useEffect(() => {
+    if (hasExistingScript && entryMode) {
+      setEntryMode(null);
+    }
+  }, [hasExistingScript, entryMode]);
   
+
   // Function to reset and allow uploading a new script
   const handleChangeScript = () => {
     setHasExistingScript(false);
@@ -1504,10 +1514,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             <Button variant="outline" size="sm" onClick={handleChangeScript}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Cambiar guión
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setRefreshTrigger(t => t + 1)}>
-              <Search className="h-4 w-4 mr-2" />
-              Actualizar
             </Button>
           </div>
         </div>
