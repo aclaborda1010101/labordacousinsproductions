@@ -20,6 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import { ScriptSummaryPanel } from './ScriptSummaryPanel';
 import {
   Lightbulb,
   FileText,
@@ -805,37 +806,50 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     );
   };
 
-  // If script already exists, show summary
+  // If script already exists, show summary with episodes panel
   if (hasExistingScript && !entryMode) {
     return (
       <div className="space-y-6 p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Guion existente
-            </CardTitle>
-            <CardDescription>
-              Ya tienes un guion guardado. Puedes continuar trabajando o empezar de nuevo.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-muted/50 rounded-lg p-4 max-h-40 overflow-y-auto">
-              <pre className="text-xs whitespace-pre-wrap font-mono">
-                {existingScriptText.slice(0, 500)}...
-              </pre>
-            </div>
-            <div className="flex gap-3">
-              <Button onClick={() => navigate(`/projects/${projectId}/characters`)}>
-                <ArrowRight className="h-4 w-4 mr-2" />
-                Continuar a Personajes
-              </Button>
-              <Button variant="outline" onClick={() => setHasExistingScript(false)}>
-                Empezar de nuevo
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Quick actions header */}
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              Guion del Proyecto
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Gestiona episodios, genera escenas y exporta tu guion
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => setHasExistingScript(false)}>
+            Empezar nuevo guion
+          </Button>
+        </div>
+
+        {/* Script Summary Panel with episodes, teasers, and actions */}
+        <ScriptSummaryPanel 
+          projectId={projectId} 
+          onScenesGenerated={() => {
+            toast.success('Escenas generadas. Ve al módulo de Escenas para producir.');
+          }}
+        />
+
+        {/* Raw text preview (collapsed) */}
+        <Accordion type="single" collapsible>
+          <AccordionItem value="raw-text">
+            <AccordionTrigger className="text-sm">
+              Ver texto del guion
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
+                <pre className="text-xs whitespace-pre-wrap font-mono">
+                  {existingScriptText.slice(0, 2000)}
+                  {existingScriptText.length > 2000 && '...'}
+                </pre>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     );
   }
