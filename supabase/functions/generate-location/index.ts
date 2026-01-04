@@ -43,9 +43,9 @@ serve(async (req) => {
 
     console.log(`[generate-location] Generating: ${locationName}, view: ${viewAngle}, time: ${timeOfDay}`);
 
-    const FAL_KEY = Deno.env.get('FAL_KEY');
+    const FAL_KEY = Deno.env.get('FAL_API_KEY') || Deno.env.get('FAL_KEY');
     if (!FAL_KEY) {
-      throw new Error('FAL_KEY is not configured');
+      throw new Error('FAL_API_KEY is not configured');
     }
 
     // Build the view angle description
