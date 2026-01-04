@@ -27,6 +27,7 @@ import {
   Settings2,
   Image,
   History,
+  RefreshCw,
 } from 'lucide-react';
 
 interface CharactersListProps {
@@ -45,6 +46,10 @@ interface Character {
   accepted_run_id?: string | null;
   canon_asset_id?: string | null;
   pack_completeness_score?: number | null;
+  // Generated image URLs from generation_runs
+  current_run_image?: string | null;
+  accepted_run_image?: string | null;
+  canon_image?: string | null;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -77,14 +82,47 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const fetchCharacters = async () => {
     const { data } = await supabase
       .from('characters')
-      .select('id, name, role, character_role, bio, arc, turnaround_urls, current_run_id, accepted_run_id, canon_asset_id, pack_completeness_score')
+      .select(`
+        id, name, role, character_role, bio, arc, turnaround_urls, 
+        current_run_id, accepted_run_id, canon_asset_id, pack_completeness_score
+      `)
       .eq('project_id', projectId)
       .order('created_at');
 
     if (data) {
+      // Fetch generated images from runs
+      const runIds = data.flatMap(c => [c.current_run_id, c.accepted_run_id].filter(Boolean)) as string[];
+      const canonIds = data.map(c => c.canon_asset_id).filter(Boolean) as string[];
+      
+      let runImages: Record<string, string> = {};
+      let canonImages: Record<string, string> = {};
+
+      if (runIds.length > 0) {
+        const { data: runs } = await supabase
+          .from('generation_runs')
+          .select('id, output_url')
+          .in('id', runIds);
+        if (runs) {
+          runImages = Object.fromEntries(runs.filter(r => r.output_url).map(r => [r.id, r.output_url!]));
+        }
+      }
+
+      if (canonIds.length > 0) {
+        const { data: canons } = await supabase
+          .from('canon_assets')
+          .select('id, image_url')
+          .in('id', canonIds);
+        if (canons) {
+          canonImages = Object.fromEntries(canons.filter(c => c.image_url).map(c => [c.id, c.image_url]));
+        }
+      }
+
       setCharacters(data.map(c => ({
         ...c,
         turnaround_urls: c.turnaround_urls as Record<string, string> | null,
+        current_run_image: c.current_run_id ? runImages[c.current_run_id] : null,
+        accepted_run_image: c.accepted_run_id ? runImages[c.accepted_run_id] : null,
+        canon_image: c.canon_asset_id ? canonImages[c.canon_asset_id] : null,
       })));
     }
     setLoading(false);
@@ -400,13 +438,17 @@ export default function CharactersList({ projectId }: CharactersListProps) {
             </CardContent>
           </Card>
         ) : (
-          filteredCharacters.map(character => (
+          filteredCharacters.map(character => {
+            // Get best available image: canon > accepted > current > turnaround
+            const displayImage = character.canon_image || character.accepted_run_image || character.current_run_image || character.turnaround_urls?.front;
+            
+            return (
             <EntityCard
               key={character.id}
               id={character.id}
               name={character.name}
               description={character.bio}
-              imageUrl={character.turnaround_urls?.front}
+              imageUrl={displayImage}
               placeholderIcon={<Users className="w-6 h-6" />}
               status={getEntityStatus(character.current_run_id, character.accepted_run_id, character.canon_asset_id)}
               isExpanded={expandedId === character.id}
@@ -423,16 +465,35 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               }
               expandedContent={
                 <div className="space-y-4">
-                  {/* Visual preview */}
-                  {character.turnaround_urls?.front && (
-                    <div className="flex justify-center">
-                      <img
-                        src={character.turnaround_urls.front}
-                        alt={character.name}
-                        className="max-w-[200px] rounded-lg border"
-                      />
-                    </div>
-                  )}
+                  {/* Visual preview - show all available images */}
+                  <div className="space-y-3">
+                    {displayImage && (
+                      <div className="flex flex-col items-center gap-2">
+                        <img
+                          src={displayImage}
+                          alt={character.name}
+                          className="max-w-[280px] rounded-lg border shadow-sm"
+                        />
+                        <Badge variant={character.canon_image ? 'pass' : character.accepted_run_image ? 'secondary' : 'outline'} className="text-xs">
+                          {character.canon_image ? '⭐ Canon' : character.accepted_run_image ? '✓ Aceptado' : character.current_run_image ? 'Pendiente de revisión' : 'Referencia'}
+                        </Badge>
+                      </div>
+                    )}
+                    
+                    {/* Show pending vs accepted if different */}
+                    {character.current_run_image && character.accepted_run_image && character.current_run_image !== character.accepted_run_image && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="text-center">
+                          <img src={character.accepted_run_image} alt="Aceptado" className="w-full rounded-lg border" />
+                          <span className="text-xs text-muted-foreground mt-1">Aceptado</span>
+                        </div>
+                        <div className="text-center">
+                          <img src={character.current_run_image} alt="Nueva generación" className="w-full rounded-lg border border-primary" />
+                          <span className="text-xs text-primary mt-1">Nueva variante</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Editable fields */}
                   <div className="grid gap-3">
@@ -449,7 +510,13 @@ export default function CharactersList({ projectId }: CharactersListProps) {
                   </div>
 
                   {/* Quick actions */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
+                    {character.current_run_id && !character.accepted_run_id && (
+                      <Button variant="outline" size="sm" onClick={() => handleRegenerate(character)}>
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Regenerar
+                      </Button>
+                    )}
                     <Button variant="ghost" size="sm" onClick={() => handleDeleteCharacter(character.id)}>
                       <Trash2 className="w-4 h-4 mr-2" />
                       Eliminar
@@ -490,7 +557,8 @@ export default function CharactersList({ projectId }: CharactersListProps) {
                 </div>
               }
             />
-          ))
+          );
+          })
         )}
       </div>
 

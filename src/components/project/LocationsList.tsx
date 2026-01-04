@@ -27,6 +27,7 @@ import {
   Moon,
   Image,
   History,
+  RefreshCw,
 } from 'lucide-react';
 
 interface LocationsListProps {
@@ -42,6 +43,10 @@ interface Location {
   current_run_id?: string | null;
   accepted_run_id?: string | null;
   canon_asset_id?: string | null;
+  // Generated images from runs
+  current_run_image?: string | null;
+  accepted_run_image?: string | null;
+  canon_image?: string | null;
 }
 
 export default function LocationsList({ projectId }: LocationsListProps) {
@@ -72,10 +77,40 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       .order('created_at');
 
     if (data) {
+      // Fetch generated images from runs
+      const runIds = data.flatMap(l => [l.current_run_id, l.accepted_run_id].filter(Boolean)) as string[];
+      const canonIds = data.map(l => l.canon_asset_id).filter(Boolean) as string[];
+      
+      let runImages: Record<string, string> = {};
+      let canonImages: Record<string, string> = {};
+
+      if (runIds.length > 0) {
+        const { data: runs } = await supabase
+          .from('generation_runs')
+          .select('id, output_url')
+          .in('id', runIds);
+        if (runs) {
+          runImages = Object.fromEntries(runs.filter(r => r.output_url).map(r => [r.id, r.output_url!]));
+        }
+      }
+
+      if (canonIds.length > 0) {
+        const { data: canons } = await supabase
+          .from('canon_assets')
+          .select('id, image_url')
+          .in('id', canonIds);
+        if (canons) {
+          canonImages = Object.fromEntries(canons.filter(c => c.image_url).map(c => [c.id, c.image_url]));
+        }
+      }
+
       setLocations(data.map(l => ({
         ...l,
         variants: l.variants as Location['variants'],
         reference_urls: l.reference_urls as Record<string, string> | null,
+        current_run_image: l.current_run_id ? runImages[l.current_run_id] : null,
+        accepted_run_image: l.accepted_run_id ? runImages[l.accepted_run_id] : null,
+        canon_image: l.canon_asset_id ? canonImages[l.canon_asset_id] : null,
       })));
     }
     setLoading(false);
@@ -379,13 +414,17 @@ export default function LocationsList({ projectId }: LocationsListProps) {
             </CardContent>
           </Card>
         ) : (
-          filteredLocations.map(location => (
+          filteredLocations.map(location => {
+            // Get best available image: canon > accepted > current > reference
+            const displayImage = location.canon_image || location.accepted_run_image || location.current_run_image || getLocationImage(location);
+            
+            return (
             <EntityCard
               key={location.id}
               id={location.id}
               name={location.name}
               description={location.description}
-              imageUrl={getLocationImage(location)}
+              imageUrl={displayImage}
               placeholderIcon={<MapPin className="w-6 h-6" />}
               status={getEntityStatus(location.current_run_id, location.accepted_run_id, location.canon_asset_id)}
               isExpanded={expandedId === location.id}
@@ -401,16 +440,35 @@ export default function LocationsList({ projectId }: LocationsListProps) {
               }
               expandedContent={
                 <div className="space-y-4">
-                  {/* Visual preview */}
-                  {getLocationImage(location) && (
-                    <div className="flex justify-center">
-                      <img
-                        src={getLocationImage(location)!}
-                        alt={location.name}
-                        className="max-w-[300px] rounded-lg border"
-                      />
-                    </div>
-                  )}
+                  {/* Visual preview - show generated image */}
+                  <div className="space-y-3">
+                    {displayImage && (
+                      <div className="flex flex-col items-center gap-2">
+                        <img
+                          src={displayImage}
+                          alt={location.name}
+                          className="max-w-[350px] rounded-lg border shadow-sm"
+                        />
+                        <Badge variant={location.canon_image ? 'pass' : location.accepted_run_image ? 'secondary' : 'outline'} className="text-xs">
+                          {location.canon_image ? '⭐ Canon' : location.accepted_run_image ? '✓ Aceptada' : location.current_run_image ? 'Pendiente de revisión' : 'Referencia'}
+                        </Badge>
+                      </div>
+                    )}
+                    
+                    {/* Show pending vs accepted if different */}
+                    {location.current_run_image && location.accepted_run_image && location.current_run_image !== location.accepted_run_image && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="text-center">
+                          <img src={location.accepted_run_image} alt="Aceptada" className="w-full rounded-lg border" />
+                          <span className="text-xs text-muted-foreground mt-1">Aceptada</span>
+                        </div>
+                        <div className="text-center">
+                          <img src={location.current_run_image} alt="Nueva generación" className="w-full rounded-lg border border-primary" />
+                          <span className="text-xs text-primary mt-1">Nueva variante</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Description */}
                   <div>
@@ -431,7 +489,13 @@ export default function LocationsList({ projectId }: LocationsListProps) {
                   </div>
 
                   {/* Quick actions */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
+                    {location.current_run_id && !location.accepted_run_id && (
+                      <Button variant="outline" size="sm" onClick={() => handleRegenerate(location)}>
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Regenerar
+                      </Button>
+                    )}
                     <Button variant="ghost" size="sm" onClick={() => handleDeleteLocation(location.id)}>
                       <Trash2 className="w-4 h-4 mr-2" />
                       Eliminar
@@ -466,7 +530,8 @@ export default function LocationsList({ projectId }: LocationsListProps) {
                 </div>
               }
             />
-          ))
+          );
+          })
         )}
       </div>
 
