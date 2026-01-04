@@ -367,12 +367,28 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       const rawScript = scriptData?.screenplay || scriptData?.script || '';
       setGeneratedScript(rawScript);
       
+      // Ensure parsed_json has required structure for ScriptSummaryPanel
+      const parsedJson = {
+        ...scriptData,
+        title: scriptData?.title || 'Guion Generado',
+        synopsis: scriptData?.synopsis || scriptData?.logline || '',
+        episodes: scriptData?.episodes || [],
+        teasers: scriptData?.teasers,
+        characters: scriptData?.characters || scriptData?.main_characters || [],
+        locations: scriptData?.locations || scriptData?.main_locations || [],
+      };
+      
       await supabase.from('scripts').insert({
         project_id: projectId,
         raw_text: rawScript,
-        parsed_json: scriptData,
+        parsed_json: parsedJson,
         status: 'draft',
       });
+
+      // Trigger refresh to show ScriptSummaryPanel
+      setHasExistingScript(true);
+      setExistingScriptText(rawScript);
+      setEntryMode(null);
 
       setStatus('success');
       toast.success('¡Guion generado!');
@@ -430,11 +446,40 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         summary: breakdownData?.summary,
       };
 
+      // Update script with parsed_json for ScriptSummaryPanel
+      const parsedJson = {
+        title: breakdown.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Analizado',
+        synopsis: breakdown.synopsis?.faithful_summary || '',
+        episodes: breakdownData?.episodes || [{
+          episode_number: 1,
+          title: 'Episodio 1',
+          synopsis: breakdown.synopsis?.faithful_summary || '',
+          scenes: breakdown.scenes,
+          duration_min: breakdown.summary?.estimated_runtime_min || 10,
+        }],
+        characters: breakdown.characters,
+        locations: breakdown.locations,
+        scenes: breakdown.scenes,
+        teasers: breakdownData?.teasers,
+        counts: {
+          total_scenes: breakdown.scenes?.length || 0,
+          total_dialogue_lines: 0,
+        },
+      };
+
+      await supabase.from('scripts')
+        .update({ parsed_json: JSON.parse(JSON.stringify(parsedJson)) })
+        .eq('id', savedScript.id);
+
       setBreakdownResult(breakdown);
       
       // Evaluate quality
       const diagnosis = evaluateQuality(breakdown);
       setQualityDiagnosis(diagnosis);
+
+      // Mark as having script for the summary panel
+      setHasExistingScript(true);
+      setExistingScriptText(textToAnalyze);
 
       setProgress(100);
       setStatus('success');
