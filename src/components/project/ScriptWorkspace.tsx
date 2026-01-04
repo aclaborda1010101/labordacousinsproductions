@@ -207,7 +207,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       if (data?.raw_text) {
         setHasExistingScript(true);
-        setExistingScriptText(data.raw_text);
+        // Ensure raw_text is always a string
+        const rawText = typeof data.raw_text === 'string' ? data.raw_text : JSON.stringify(data.raw_text);
+        setExistingScriptText(rawText);
       }
     };
     checkExistingScript();
@@ -888,8 +890,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             <AccordionContent>
               <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
                 <pre className="text-xs whitespace-pre-wrap font-mono">
-                  {existingScriptText.slice(0, 2000)}
-                  {existingScriptText.length > 2000 && '...'}
+                  {(existingScriptText || '').slice(0, 2000)}
+                  {(existingScriptText || '').length > 2000 && '...'}
                 </pre>
               </div>
             </AccordionContent>
