@@ -1,6 +1,11 @@
 /**
- * DECISION ENGINE v1
+ * DECISION ENGINE v1.1
  * Central intelligence layer for all user actions
+ * 
+ * PRIORITIES (hard-coded):
+ * #1 CERO INVENCIONES - Script import uses evidence-required extraction
+ * #2 CONSISTENCIA - Canon drift detection + strict mode enforcement
+ * #3 COSTE - Cost optimization only when #1 and #2 are satisfied
  * 
  * Uses telemetry from generation_runs, editorial_events, and canon_assets
  * to provide smart recommendations and guardrails per action type.
@@ -23,8 +28,9 @@ import {
 export type UserMode = 'assisted' | 'director' | 'pro' | 'dev';
 export type DecisionPhase = 'exploration' | 'production';
 export type DecisionAssetType = 'script_import' | 'character' | 'location' | 'keyframe' | 'video' | 'scene' | 'shot';
-export type ActionIntent = 'generate' | 'accept' | 'regenerate' | 'canon' | 'script_import';
+export type ActionIntent = 'generate' | 'accept' | 'regenerate' | 'canon' | 'script_import' | 'reinforce_canon_and_regenerate';
 export type BudgetMode = 'normal' | 'saver';
+export type OutputType = 'image' | 'video' | 'text';
 
 /**
  * PRIORITY ORDER (hard-coded):
@@ -41,35 +47,42 @@ export interface RiskFlags {
 }
 
 export interface DecisionPack {
+  decisionId: string;            // Deterministic ID for correlation
   recommendedAction: ActionIntent;
   recommendedPresetId?: string;
   recommendedEngine?: string;
   riskFlags: RiskFlags;
-  message: string;           // Microcopy for UI
-  nextSteps: string[];       // Max 3 next step hints
+  message: string;               // Microcopy for UI
+  nextSteps: string[];           // Max 3 next step hints
   autopilotEligible: boolean;
-  confidence: number;        // 0..1
-  reason: string;            // Explanation for why this recommendation
-  reinforceCanon: boolean;   // Should inject canon context
-  suggestCanon: boolean;     // Should suggest marking canon
-  switchPresetTo?: string;   // Suggest switching to this preset
-  autoRetryEligible: boolean; // Can auto-retry on failure
-  fallbackEngine?: string;   // Fallback engine if primary fails
-  estimatedCost?: number;    // Rough cost estimate in USD
-  costWarning?: string;      // Warning message if cost is high
+  confidence: number;            // 0..1
+  confidenceLabel: 'high' | 'medium' | 'low' | 'few_data' | 'friction';
+  reason: string;                // Explanation for why this recommendation
+  reinforceCanon: boolean;       // Should inject canon context
+  suggestCanon: boolean;         // Should suggest marking canon
+  switchPresetTo?: string;       // Suggest switching to this preset
+  autoRetryEligible: boolean;    // Can auto-retry on failure
+  fallbackEngine?: string;       // Fallback engine if primary fails
+  estimatedCost?: number;        // Rough cost estimate in USD
+  costWarning?: string;          // Warning message if cost is high
+  chainLength: number;           // Current chain length for safety limits
+  chainLimitReached: boolean;    // True if chain limit reached (image=3, video=2)
 }
 
 export interface TelemetrySummary {
   acceptRate: number;           // 0..1
   regenRate: number;            // avg regenerations per accepted
+  regenRateLast6: number;       // regen rate in last 6 runs for entity
   timeToAcceptMedian: number;   // seconds
   overrideRate: number;         // % recommendation_overridden events
   engineFailureRate: number;    // timeout/500/network errors
   costPressure: number;         // 0..1 relative cost usage
   canonCoverage: number;        // % core assets with active canon
   canonDriftProxy: number;      // regen count after canon or warnings
+  canonDriftHigh: boolean;      // true if drift >= 0.5 in last 6 or >= 2 post-canon regens
   totalRuns: number;
   recentFailStreak: number;     // consecutive fails in recent runs
+  consecutiveFailures: number;  // 2+ triggers fallback
 }
 
 export interface CanonSummary {
@@ -84,18 +97,42 @@ export interface DecisionContext {
   userMode: UserMode;
   phase: DecisionPhase;
   assetType: DecisionAssetType;
+  outputType?: OutputType;
   budgetMode?: BudgetMode;
   currentRunId?: string;
   currentPresetId?: string;
   currentEngine?: string;
   entityId?: string; // character_id, location_id, etc.
+  chainLength?: number;
 }
+
+/**
+ * Evidence-required entity for script import (v1.1)
+ */
+export interface ExtractedEntity {
+  name: string;
+  type: 'character' | 'location' | 'scene' | 'prop';
+  evidence: string[];       // Snippets from source text
+  confidence: number;       // 0..1
+  uncertain: boolean;       // True if evidence empty or ambiguous
+}
+
+// ─────────────────────────────────────────────────────────────
+// CHAIN SAFETY LIMITS
+// ─────────────────────────────────────────────────────────────
+
+const CHAIN_LIMITS: Record<OutputType, number> = {
+  image: 3,
+  video: 2,
+  text: 5
+};
 
 // ─────────────────────────────────────────────────────────────
 // COST ESTIMATES (USD per generation)
 // ─────────────────────────────────────────────────────────────
 
 const ENGINE_COSTS: Record<string, number> = {
+  'nano-banana': 0.02,
   'nano-banana-pro': 0.02,
   'fal-ai/nano-banana-pro': 0.02,
   'flux-pro': 0.05,
@@ -109,9 +146,23 @@ const ENGINE_COSTS: Record<string, number> = {
 };
 
 function estimateCost(engine?: string, preset?: string): number {
-  const baseCost = ENGINE_COSTS[engine || 'nano-banana-pro'] || 0.02;
+  const baseCost = ENGINE_COSTS[engine || 'nano-banana'] || 0.02;
   const multiplier = preset === 'ultra' ? 1.5 : preset === 'quality' ? 1.2 : 1.0;
   return baseCost * multiplier;
+}
+
+/**
+ * Generate deterministic decision ID for correlation
+ */
+function generateDecisionId(ctx: DecisionContext, action: ActionIntent, recPreset?: string, recEngine?: string): string {
+  const input = `${ctx.projectId}|${ctx.entityId || 'no-entity'}|${action}|${recPreset || ''}|${recEngine || ''}|${ctx.phase}`;
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    const char = input.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return `dec_${Math.abs(hash).toString(36)}`;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -123,18 +174,21 @@ function estimateCost(engine?: string, preset?: string): number {
  */
 export async function getTelemetrySummary(
   projectId: string,
-  assetType: DecisionAssetType
+  assetType: DecisionAssetType,
+  entityId?: string
 ): Promise<TelemetrySummary> {
   const runType = assetType === 'script_import' ? 'script' : assetType;
   
   // Fetch recent generation runs
-  const { data: runs } = await supabase
+  let runsQuery = supabase
     .from('generation_runs')
     .select('id, status, preset_id, engine, parent_run_id, created_at, accepted_at, error, warnings')
     .eq('project_id', projectId)
     .eq('run_type', runType)
     .order('created_at', { ascending: false })
     .limit(100);
+
+  const { data: runs } = await runsQuery;
 
   // Fetch editorial events for override tracking
   const { data: events } = await supabase
@@ -149,14 +203,17 @@ export async function getTelemetrySummary(
     return {
       acceptRate: 0,
       regenRate: 1,
+      regenRateLast6: 0,
       timeToAcceptMedian: 0,
       overrideRate: 0,
       engineFailureRate: 0,
       costPressure: 0,
       canonCoverage: 0,
       canonDriftProxy: 0,
+      canonDriftHigh: false,
       totalRuns: 0,
-      recentFailStreak: 0
+      recentFailStreak: 0,
+      consecutiveFailures: 0
     };
   }
 
@@ -182,6 +239,12 @@ export async function getTelemetrySummary(
   }
   const regenRate = acceptedRuns.length > 0 ? totalChain / acceptedRuns.length : 1;
 
+  // Calculate regen rate in last 6 runs (for canon drift detection)
+  const last6Runs = runs.slice(0, 6);
+  const last6Accepted = last6Runs.filter(r => r.status === 'accepted');
+  const last6Chain = last6Accepted.reduce((acc, r) => acc + (chainMap.get(r.id) || 1), 0);
+  const regenRateLast6 = last6Accepted.length > 0 ? last6Chain / last6Accepted.length : 0;
+
   // Calculate time to accept median
   const times = acceptedRuns
     .filter(r => r.created_at && r.accepted_at)
@@ -190,8 +253,14 @@ export async function getTelemetrySummary(
   const timeToAcceptMedian = times.length > 0 ? times[Math.floor(times.length / 2)] : 0;
 
   // Calculate override rate from editorial_events
-  const overrideEvents = events?.filter(e => e.event_type === 'recommendation_overridden') || [];
-  const shownEvents = events?.filter(e => e.event_type === 'recommendation_shown') || [];
+  const overrideEvents = events?.filter(e => 
+    e.event_type === 'recommendation_overridden' || 
+    e.event_type === 'decision_overridden'
+  ) || [];
+  const shownEvents = events?.filter(e => 
+    e.event_type === 'recommendation_shown' || 
+    e.event_type === 'decision_shown'
+  ) || [];
   const overrideRate = shownEvents.length > 0 ? overrideEvents.length / shownEvents.length : 0;
 
   // Calculate engine failure rate
@@ -208,10 +277,23 @@ export async function getTelemetrySummary(
     }
   }
 
+  // Calculate consecutive failures (for fallback trigger)
+  let consecutiveFailures = 0;
+  for (const run of runs.slice(0, 5)) {
+    if (run.status === 'failed' || run.error) {
+      consecutiveFailures++;
+    } else {
+      break;
+    }
+  }
+
   // Canon drift proxy: count warnings after canon was set
   const canonDriftProxy = runs.filter(r => 
     r.warnings && Array.isArray(r.warnings) && (r.warnings as unknown[]).length > 0
   ).length;
+
+  // Canon drift high: if regenRate >= 0.5 in last 6 OR >= 2 post-canon regenerations
+  const canonDriftHigh = regenRateLast6 >= 0.5 || canonDriftProxy >= 2;
 
   // Cost pressure: ratio of expensive engine usage
   const expensiveEngines = ['flux-1.1-pro-ultra', 'fal-ai/flux-pro/v1.1-ultra', 'veo', 'kling'];
@@ -221,14 +303,17 @@ export async function getTelemetrySummary(
   return {
     acceptRate,
     regenRate,
+    regenRateLast6,
     timeToAcceptMedian,
     overrideRate,
     engineFailureRate,
     costPressure,
     canonCoverage: 0, // Will be calculated with canon summary
     canonDriftProxy,
+    canonDriftHigh,
     totalRuns: runs.length,
-    recentFailStreak
+    recentFailStreak,
+    consecutiveFailures
   };
 }
 
@@ -278,7 +363,7 @@ function getGenerateDecision(
     invention: false, // Generate never invents
     cost: ctx.phase === 'production',
     canon: !hasRelevantCanon && telemetry.totalRuns > 5,
-    consistency: telemetry.regenRate > 2
+    consistency: telemetry.regenRate > 2 || telemetry.canonDriftHigh
   };
 
   // Determine message based on state
@@ -375,16 +460,20 @@ function getRegenerateDecision(
 ): Partial<DecisionPack> {
   const assetType = ctx.assetType === 'script_import' ? 'character' : ctx.assetType;
   const hasRelevantCanon = canonSummary[assetType as keyof Omit<CanonSummary, 'totalActive'>] > 0;
+  const outputType = ctx.outputType || 'image';
+  const chainLimit = CHAIN_LIMITS[outputType];
+  const chainLimitReached = chainLength >= chainLimit;
   
   const riskFlags: RiskFlags = {
     invention: false,
     cost: chainLength > 3,
-    canon: hasRelevantCanon && chainLength > 2, // Canon drift risk
-    consistency: chainLength > 2
+    canon: hasRelevantCanon && (chainLength > 2 || telemetry.canonDriftHigh),
+    consistency: chainLength > 2 || telemetry.canonDriftHigh
   };
 
   let message = 'Regenerar imagen';
   const nextSteps: string[] = [];
+  let recommendedAction: ActionIntent = 'regenerate';
 
   // Strong preset change suggestion after 2+ regenerations
   let switchPresetTo: string | undefined;
@@ -394,15 +483,29 @@ function getRegenerateDecision(
     nextSteps.push(`Preset "${switchPresetTo}" tiene mejor aceptación`);
   }
 
-  // Canon drift warning
-  if (hasRelevantCanon && chainLength >= 2) {
-    message = 'Activar refuerzo de canon estricto';
+  // Canon drift detection - trigger reinforce mode
+  if (telemetry.canonDriftHigh || (hasRelevantCanon && chainLength >= 2)) {
+    recommendedAction = 'reinforce_canon_and_regenerate';
+    message = 'Estoy detectando deriva respecto al canon. Recomiendo reforzarlo y regenerar en modo estricto.';
+    nextSteps.length = 0;
     nextSteps.push('Canon estricto inyectado');
+    nextSteps.push('Preset más estable aplicado');
+  }
+
+  // Chain limit reached
+  if (chainLimitReached) {
+    message = `Hemos intentado ${chainLength} veces. Para mejorar resultados: cambia preset o refuerza canon.`;
+    nextSteps.length = 0;
+    nextSteps.push('Cambiar preset');
+    if (!hasRelevantCanon) {
+      nextSteps.push('Marcar canon');
+    }
+    nextSteps.push('Editar brief / añadir detalles');
   }
 
   // Auto-retry on technical error
-  const autoRetryEligible = telemetry.recentFailStreak > 0;
-  const fallbackEngine = telemetry.engineFailureRate > 0.3 ? 
+  const autoRetryEligible = telemetry.recentFailStreak > 0 && !chainLimitReached;
+  const fallbackEngine = (telemetry.engineFailureRate > 0.25 || telemetry.consecutiveFailures >= 2) ? 
     (ctx.currentEngine === ENGINES.NANO_BANANA ? ENGINES.FLUX : ENGINES.NANO_BANANA) : 
     undefined;
 
@@ -411,17 +514,18 @@ function getRegenerateDecision(
   }
 
   return {
-    recommendedAction: 'regenerate',
+    recommendedAction,
     recommendedPresetId: switchPresetTo || recommendation?.recommendedPreset,
     recommendedEngine: fallbackEngine || recommendation?.recommendedEngine,
     riskFlags,
     message,
     nextSteps: nextSteps.slice(0, 3),
-    reinforceCanon: hasRelevantCanon && chainLength >= 2,
+    reinforceCanon: hasRelevantCanon && (chainLength >= 2 || telemetry.canonDriftHigh),
     suggestCanon: false,
     switchPresetTo,
     autoRetryEligible,
-    fallbackEngine
+    fallbackEngine,
+    chainLimitReached
   };
 }
 
@@ -466,7 +570,7 @@ function getCanonDecision(
 }
 
 /**
- * Get decision pack for SCRIPT_IMPORT action
+ * Get decision pack for SCRIPT_IMPORT action (v1.1 - Evidence Required)
  */
 function getScriptImportDecision(
   ctx: DecisionContext
@@ -484,9 +588,9 @@ function getScriptImportDecision(
     riskFlags,
     message: 'Extracción analítica – SOLO contenido explícito del guion',
     nextSteps: [
-      'Solo personajes/localizaciones mencionados explícitamente',
-      'Campos ambiguos → "NO ESPECIFICADO"',
-      'Revisión manual obligatoria'
+      'Solo personajes/localizaciones con EVIDENCIA en texto',
+      'Sin evidencia → "INCIERTO" (no confirmado)',
+      'Revisión manual obligatoria antes de confirmar'
     ],
     reinforceCanon: false,
     suggestCanon: false,
@@ -510,7 +614,7 @@ export async function getDecisionPack(
 ): Promise<DecisionPack> {
   // Fetch telemetry and canon data in parallel
   const [telemetry, canonSummary] = await Promise.all([
-    getTelemetrySummary(ctx.projectId, ctx.assetType),
+    getTelemetrySummary(ctx.projectId, ctx.assetType, ctx.entityId),
     getCanonSummary(ctx.projectId)
   ]);
 
@@ -528,19 +632,34 @@ export async function getDecisionPack(
     recommendation = result.recommendation;
   }
 
-  // Calculate autopilot eligibility
+  // Calculate autopilot eligibility with chain safety limits
+  const outputType = ctx.outputType || 'image';
+  const chainLimit = CHAIN_LIMITS[outputType];
+  const chainLimitReached = chainLength >= chainLimit;
+  
   const autopilotEligible = 
     telemetry.totalRuns >= 10 && 
     telemetry.regenRate <= 1.3 &&
-    (recommendation?.confidence === 'high' || recommendation?.confidence === 'medium');
+    (recommendation?.confidence === 'high' || recommendation?.confidence === 'medium') &&
+    !chainLimitReached;
 
-  // Calculate overall confidence
+  // Calculate overall confidence with labels
   let confidence = 0.5;
-  if (recommendation) {
+  let confidenceLabel: 'high' | 'medium' | 'low' | 'few_data' | 'friction' = 'medium';
+  
+  if (telemetry.totalRuns < 10) {
+    confidenceLabel = 'few_data';
+    confidence = 0.4;
+  } else if (telemetry.regenRate > 2 || telemetry.overrideRate > 0.3) {
+    confidenceLabel = 'friction';
+    confidence = 0.5;
+  } else if (recommendation) {
     confidence = recommendation.confidence === 'high' ? 0.9 : 
                  recommendation.confidence === 'medium' ? 0.7 : 0.5;
+    confidenceLabel = recommendation.confidence === 'high' ? 'high' : 
+                      recommendation.confidence === 'medium' ? 'medium' : 'low';
   }
-  if (telemetry.totalRuns < 5) confidence *= 0.7;
+  
   if (telemetry.engineFailureRate > 0.2) confidence *= 0.8;
 
   // Get action-specific decision
@@ -553,6 +672,7 @@ export async function getDecisionPack(
       actionDecision = getAcceptDecision(telemetry, canonSummary, ctx);
       break;
     case 'regenerate':
+    case 'reinforce_canon_and_regenerate':
       actionDecision = getRegenerateDecision(telemetry, canonSummary, ctx, recommendation, chainLength);
       break;
     case 'canon':
@@ -574,6 +694,9 @@ export async function getDecisionPack(
   if (telemetry.regenRate > 2) {
     reasons.push('Alta tasa de regeneración');
   }
+  if (telemetry.canonDriftHigh) {
+    reasons.push('Deriva de canon detectada');
+  }
   if (canonSummary.totalActive > 0) {
     reasons.push(`${canonSummary.totalActive} canon activos`);
   }
@@ -591,13 +714,19 @@ export async function getDecisionPack(
   const finalRiskFlags = actionDecision.riskFlags || defaultRiskFlags;
 
   // Autopilot soft: never auto for script_import or canon, never when cost is high
+  // Also respect chain limits
   const softAutopilot = autopilotEligible && 
     actionIntent !== 'script_import' && 
     actionIntent !== 'canon' &&
-    estCost <= 0.1;
+    estCost <= 0.1 &&
+    !chainLimitReached;
+
+  // Generate decision ID for correlation
+  const decisionId = generateDecisionId(ctx, actionIntent, recPreset, recEngine);
 
   return {
-    recommendedAction: actionIntent,
+    decisionId,
+    recommendedAction: actionDecision.recommendedAction || actionIntent,
     recommendedPresetId: actionDecision.recommendedPresetId || recommendation?.recommendedPreset,
     recommendedEngine: actionDecision.recommendedEngine || recommendation?.recommendedEngine,
     riskFlags: finalRiskFlags,
@@ -605,6 +734,7 @@ export async function getDecisionPack(
     nextSteps: actionDecision.nextSteps || [],
     autopilotEligible: actionDecision.autopilotEligible ?? softAutopilot,
     confidence,
+    confidenceLabel,
     reason: reasons.join(' | ') || 'Sin datos suficientes',
     reinforceCanon: actionDecision.reinforceCanon || false,
     suggestCanon: actionDecision.suggestCanon || false,
@@ -612,9 +742,12 @@ export async function getDecisionPack(
     autoRetryEligible: actionDecision.autoRetryEligible || false,
     fallbackEngine: actionDecision.fallbackEngine,
     estimatedCost: estCost,
-    costWarning
+    costWarning,
+    chainLength,
+    chainLimitReached: actionDecision.chainLimitReached || chainLimitReached
   };
 }
+
 // ─────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────
@@ -647,7 +780,7 @@ async function getCoreAssetCount(projectId: string): Promise<number> {
 }
 
 /**
- * Decision event types for logging
+ * Decision event types for logging (v1.1)
  */
 export type DecisionEventType = 
   | 'decision_shown'
@@ -655,10 +788,18 @@ export type DecisionEventType =
   | 'decision_overridden'
   | 'autopilot_prompted'
   | 'autopilot_executed'
-  | 'cost_warning_shown';
+  | 'cost_warning_shown'
+  | 'engine_fallback_applied'
+  | 'chain_limit_reached';
+
+export type OverrideReason = 
+  | 'changed_preset'
+  | 'changed_engine'
+  | 'ignored_recommendation'
+  | 'manual_regenerate';
 
 /**
- * Log decision engine event to editorial_events
+ * Log decision engine event to editorial_events (v1.1 - includes decision_id)
  */
 export async function logDecisionEvent(
   projectId: string,
@@ -669,6 +810,7 @@ export async function logDecisionEvent(
     chosenEngine?: string;
     chosenPreset?: string;
     chosenAction?: ActionIntent;
+    overrideReason?: OverrideReason;
   }
 ): Promise<void> {
   try {
@@ -677,14 +819,18 @@ export async function logDecisionEvent(
       asset_type: assetType === 'script_import' ? 'script' : assetType,
       event_type: eventType,
       payload: {
+        decisionId: decisionPack.decisionId,
         recommendedAction: decisionPack.recommendedAction,
         recommendedEngine: decisionPack.recommendedEngine,
         recommendedPreset: decisionPack.recommendedPresetId,
         confidence: decisionPack.confidence,
+        confidenceLabel: decisionPack.confidenceLabel,
         autopilotEligible: decisionPack.autopilotEligible,
         riskFlags: decisionPack.riskFlags,
         reinforceCanon: decisionPack.reinforceCanon,
         estimatedCost: decisionPack.estimatedCost,
+        chainLength: decisionPack.chainLength,
+        chainLimitReached: decisionPack.chainLimitReached,
         ...userChoice
       }
     }] as any);
@@ -703,4 +849,39 @@ export function creativeModeToUserMode(mode: CreativeMode): UserMode {
     case 'PRO': return 'pro';
     default: return 'assisted';
   }
+}
+
+/**
+ * Validate extracted entities for invention risk (v1.1)
+ * Returns entities with invention risk flagged
+ */
+export function validateExtractedEntities(entities: ExtractedEntity[]): {
+  valid: ExtractedEntity[];
+  uncertain: ExtractedEntity[];
+  inventionRisk: boolean;
+} {
+  const valid: ExtractedEntity[] = [];
+  const uncertain: ExtractedEntity[] = [];
+  
+  for (const entity of entities) {
+    // Entity without evidence is uncertain
+    if (!entity.evidence || entity.evidence.length === 0) {
+      entity.uncertain = true;
+      entity.confidence = 0.3;
+      uncertain.push(entity);
+    } else if (entity.confidence < 0.5) {
+      entity.uncertain = true;
+      uncertain.push(entity);
+    } else {
+      entity.uncertain = false;
+      valid.push(entity);
+    }
+  }
+  
+  // Invention risk if any entity was marked as confirmed without evidence
+  const inventionRisk = entities.some(e => 
+    !e.uncertain && (!e.evidence || e.evidence.length === 0)
+  );
+  
+  return { valid, uncertain, inventionRisk };
 }

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { generateTechnicalPrompt, PromptContext, TechnicalPrompt } from '@/lib/technicalPromptGenerator';
 import type { CharacterVisualDNA } from '@/lib/visualDNASchema';
 
-export type Engine = 'veo' | 'kling' | 'chatgpt' | 'claude' | 'midjourney' | 'flux';
+export type Engine = 'nano-banana' | 'flux' | 'veo' | 'kling';
 
 export interface PromptOptions {
   shotType?: string;
@@ -27,7 +27,7 @@ export function useTechnicalPrompt() {
 
   const generatePrompt = useCallback(async (
     characterId: string,
-    engine: Engine = 'chatgpt',
+    engine: Engine = 'nano-banana',
     options?: PromptOptions
   ): Promise<GeneratedPrompt | null> => {
     setGenerating(true);
@@ -63,7 +63,7 @@ export function useTechnicalPrompt() {
 
   const generateLocalPrompt = useCallback((
     visualDNA: CharacterVisualDNA,
-    engine: Engine = 'chatgpt',
+    engine: Engine = 'nano-banana',
     options?: PromptOptions
   ): TechnicalPrompt => {
     const context: PromptContext = {
@@ -72,7 +72,7 @@ export function useTechnicalPrompt() {
       outfit_description: options?.outfit,
       view_angle: options?.shotType,
       scene_context: options?.lighting ? { lighting: options.lighting } : undefined,
-      engine: engine === 'chatgpt' || engine === 'claude' ? 'flux' : engine as any,
+      engine: engine as any,
     };
 
     const result = generateTechnicalPrompt(visualDNA, context);
@@ -106,7 +106,7 @@ export function useTechnicalPrompt() {
 // Legacy utility function for backwards compatibility
 export function buildLocalPrompt(
   visualDNA: any,
-  engine: Engine = 'chatgpt',
+  engine: Engine = 'nano-banana',
   options?: PromptOptions
 ): GeneratedPrompt {
   const parts: string[] = [];
