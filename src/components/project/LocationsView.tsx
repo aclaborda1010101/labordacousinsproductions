@@ -1,10 +1,11 @@
 /**
- * LocationsView - Adaptive Location Interface
- * Shows full Locations.tsx for Developer Mode
- * Shows simplified LocationsList.tsx for Normal/Pro users
+ * LocationsView - Adaptive Location Interface by Creative Mode
+ * ASSISTED: Simplified LocationsList
+ * DIRECTOR/PRO: Full Locations.tsx with advanced tabs
  */
 
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
+import { useCreativeModeOptional } from '@/contexts/CreativeModeContext';
 import Locations from './Locations';
 import LocationsList from './LocationsList';
 
@@ -14,12 +15,14 @@ interface LocationsViewProps {
 
 export default function LocationsView({ projectId }: LocationsViewProps) {
   const { isDeveloperMode } = useDeveloperMode();
+  const creativeModeContext = useCreativeModeOptional();
+  const effectiveMode = creativeModeContext?.effectiveMode ?? 'ASSISTED';
 
-  // Developer Mode: Show full advanced interface with all tabs and options
-  if (isDeveloperMode) {
+  // Developer Mode or DIRECTOR/PRO: Show full advanced interface
+  if (isDeveloperMode || effectiveMode === 'DIRECTOR' || effectiveMode === 'PRO') {
     return <Locations projectId={projectId} />;
   }
 
-  // Normal/Pro users: Show simplified clean interface
+  // ASSISTED mode: Show simplified clean interface
   return <LocationsList projectId={projectId} />;
 }
