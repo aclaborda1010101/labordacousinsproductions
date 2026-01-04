@@ -1,6 +1,6 @@
 /**
- * ScriptWorkspace v1 - Two clear modes: Generate from idea / Analyze existing script
- * Adapted by user level (Normal/Pro)
+ * ScriptWorkspace v2 - Two clear modes: Generate from idea / Analyze existing script
+ * With quality diagnosis, visual summary, and adapted UX by level (Normal/Pro)
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -15,6 +15,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
@@ -32,6 +34,14 @@ import {
   Settings2,
   ArrowRight,
   Sparkles,
+  AlertTriangle,
+  Info,
+  Clock,
+  Palette,
+  BookOpen,
+  Clapperboard,
+  RefreshCw,
+  Edit3,
 } from 'lucide-react';
 
 interface ScriptWorkspaceProps {
@@ -42,18 +52,71 @@ interface ScriptWorkspaceProps {
 type EntryMode = 'idea' | 'existing';
 type InputMethod = 'paste' | 'upload';
 type WorkflowStatus = 'idle' | 'generating' | 'analyzing' | 'extracting' | 'success' | 'error';
+type ScriptQuality = 'solid' | 'incomplete' | 'draft';
 
-interface ExtractionResult {
-  characters: { name: string; role?: string }[];
-  locations: { name: string; description?: string }[];
-  scenes: { slugline: string; summary?: string }[];
+interface ScriptSynopsis {
+  faithful_summary?: string;
+  conflict_type?: string;
+  narrative_scope?: string;
+  temporal_span?: string;
+  tone?: string;
+  themes?: string[];
+}
+
+interface CharacterData {
+  name: string;
+  role?: string;
+  entity_type?: string;
+  description?: string;
+  priority?: string;
+}
+
+interface LocationData {
+  name: string;
+  type?: string;
+  scale?: string;
+  description?: string;
+  priority?: string;
+}
+
+interface SceneData {
+  scene_number?: number;
+  slugline?: string;
+  summary?: string;
+  location_name?: string;
+  characters_present?: string[];
+  estimated_duration_sec?: number;
+}
+
+interface BreakdownResult {
+  synopsis?: ScriptSynopsis;
+  characters: CharacterData[];
+  locations: LocationData[];
+  scenes: SceneData[];
+  props?: any[];
+  set_pieces?: any[];
+  summary?: {
+    total_scenes?: number;
+    total_characters?: number;
+    total_locations?: number;
+    estimated_runtime_min?: number;
+    analysis_confidence?: string;
+    production_notes?: string;
+  };
+}
+
+interface QualityDiagnosis {
+  quality: ScriptQuality;
+  score: number;
+  issues: string[];
+  suggestions: string[];
 }
 
 export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: ScriptWorkspaceProps) {
   const navigate = useNavigate();
   
   // User level from EKB
-  const { userLevel, visibility } = useEditorialKnowledgeBase({
+  const { userLevel } = useEditorialKnowledgeBase({
     projectId,
     assetType: 'character',
   });
@@ -74,7 +137,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [status, setStatus] = useState<WorkflowStatus>('idle');
   const [progress, setProgress] = useState(0);
   const [generatedScript, setGeneratedScript] = useState<string | null>(null);
-  const [extractionResult, setExtractionResult] = useState<ExtractionResult | null>(null);
+  const [breakdownResult, setBreakdownResult] = useState<BreakdownResult | null>(null);
+  const [qualityDiagnosis, setQualityDiagnosis] = useState<QualityDiagnosis | null>(null);
 
   // Pro mode controls
   const [selectedModel, setSelectedModel] = useState<'rapido' | 'profesional'>('rapido');
@@ -104,6 +168,71 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     checkExistingScript();
   }, [projectId]);
 
+  // Evaluate script quality from breakdown result
+  const evaluateQuality = (breakdown: BreakdownResult): QualityDiagnosis => {
+    const issues: string[] = [];
+    const suggestions: string[] = [];
+    let score = 100;
+
+    const characterCount = breakdown.characters?.length || 0;
+    const sceneCount = breakdown.scenes?.length || 0;
+    const locationCount = breakdown.locations?.length || 0;
+    const hasProtagonist = breakdown.characters?.some(c => c.role === 'protagonist');
+    const hasSynopsis = breakdown.synopsis?.faithful_summary && breakdown.synopsis.faithful_summary.length > 50;
+
+    // Check for essential elements
+    if (characterCount === 0) {
+      issues.push('No se detectaron personajes');
+      score -= 30;
+    } else if (characterCount < 2) {
+      issues.push('Solo un personaje detectado');
+      score -= 15;
+    }
+
+    if (!hasProtagonist && characterCount > 0) {
+      suggestions.push('Considera definir un protagonista claro');
+      score -= 10;
+    }
+
+    if (sceneCount === 0) {
+      issues.push('No se detectaron escenas estructuradas');
+      score -= 30;
+    } else if (sceneCount < 3) {
+      issues.push('Pocas escenas detectadas');
+      score -= 15;
+    }
+
+    if (locationCount === 0) {
+      suggestions.push('Añade descripciones de localizaciones');
+      score -= 10;
+    }
+
+    if (!hasSynopsis) {
+      suggestions.push('El texto podría beneficiarse de más contexto narrativo');
+      score -= 10;
+    }
+
+    // Check for minimal content
+    const hasDialogue = breakdown.scenes?.some(s => 
+      s.characters_present && s.characters_present.length > 0
+    );
+    if (!hasDialogue) {
+      suggestions.push('Considera añadir diálogos o interacciones');
+    }
+
+    // Determine quality level
+    let quality: ScriptQuality;
+    if (score >= 70 && characterCount >= 2 && sceneCount >= 3) {
+      quality = 'solid';
+    } else if (score >= 40 && (characterCount >= 1 || sceneCount >= 1)) {
+      quality = 'incomplete';
+    } else {
+      quality = 'draft';
+    }
+
+    return { quality, score: Math.max(0, score), issues, suggestions };
+  };
+
   // Handle file upload
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,15 +247,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     setUploadedFileName(file.name);
     
     if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-      // Read text file directly
       const text = await file.text();
       setScriptText(text);
       toast.success('Archivo cargado correctamente');
     } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-      // For PDF, we'll need to extract text on the server
       toast.info('Procesando PDF...');
       
-      // Upload to storage first, then parse
       const fileName = `${projectId}/${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage
         .from('scripts')
@@ -138,7 +264,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         return;
       }
 
-      // Get public URL and parse
       const { data: urlData } = supabase.storage.from('scripts').getPublicUrl(fileName);
       
       try {
@@ -170,7 +295,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     setProgress(10);
 
     try {
-      // Call generate-outline-light first
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('generate-outline-light', {
         body: {
           projectId,
@@ -183,7 +307,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (outlineError) throw outlineError;
       setProgress(50);
 
-      // Generate full script from outline
       const { data: scriptData, error: scriptError } = await supabase.functions.invoke('script-generate', {
         body: {
           projectId,
@@ -199,7 +322,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       const rawScript = scriptData?.screenplay || scriptData?.script || '';
       setGeneratedScript(rawScript);
       
-      // Save to database
       await supabase.from('scripts').insert({
         project_id: projectId,
         raw_text: rawScript,
@@ -216,7 +338,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
   };
 
-  // Analyze existing script
+  // Analyze existing script with quality diagnosis
   const handleAnalyzeScript = async () => {
     const textToAnalyze = scriptText.trim();
     if (!textToAnalyze) {
@@ -242,32 +364,36 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (saveError) throw saveError;
       setProgress(40);
 
-      // Call script-breakdown to extract entities
+      // Call script-breakdown to analyze
       const { data: breakdownData, error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
         body: {
           projectId,
-          scriptId: savedScript.id,
           scriptText: textToAnalyze,
-          options: {
-            extractCharacters,
-            extractLocations,
-            extractScenes,
-          }
+          scriptId: savedScript.id,
+          language: 'es-ES',
         }
       });
 
       if (breakdownError) throw breakdownError;
       setProgress(80);
 
-      setExtractionResult({
+      const breakdown: BreakdownResult = breakdownData?.breakdown || {
         characters: breakdownData?.characters || [],
         locations: breakdownData?.locations || [],
         scenes: breakdownData?.scenes || [],
-      });
+        synopsis: breakdownData?.synopsis,
+        summary: breakdownData?.summary,
+      };
+
+      setBreakdownResult(breakdown);
+      
+      // Evaluate quality
+      const diagnosis = evaluateQuality(breakdown);
+      setQualityDiagnosis(diagnosis);
 
       setProgress(100);
       setStatus('success');
-      toast.success('¡Guion analizado!');
+      toast.success('¡Análisis completado!');
     } catch (err) {
       console.error('Analysis error:', err);
       setStatus('error');
@@ -287,32 +413,28 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         body: {
           projectId,
           scriptText: generatedScript,
-          options: {
-            extractCharacters: true,
-            extractLocations: true,
-            extractScenes: true,
-          }
+          language: 'es-ES',
         }
       });
 
       if (breakdownError) throw breakdownError;
       setProgress(80);
 
-      setExtractionResult({
+      const breakdown: BreakdownResult = breakdownData?.breakdown || {
         characters: breakdownData?.characters || [],
         locations: breakdownData?.locations || [],
         scenes: breakdownData?.scenes || [],
-      });
+        synopsis: breakdownData?.synopsis,
+        summary: breakdownData?.summary,
+      };
+
+      setBreakdownResult(breakdown);
+      const diagnosis = evaluateQuality(breakdown);
+      setQualityDiagnosis(diagnosis);
 
       setProgress(100);
       setStatus('success');
       toast.success('¡Proyecto preparado!');
-      
-      // Navigate to characters
-      setTimeout(() => {
-        navigate(`/projects/${projectId}/characters`);
-        onEntitiesExtracted?.();
-      }, 1000);
     } catch (err) {
       console.error('Extraction error:', err);
       setStatus('error');
@@ -320,10 +442,322 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
   };
 
+  // Auto-improve script (for incomplete/draft)
+  const handleImproveScript = async () => {
+    toast.info('Esta función estará disponible próximamente');
+  };
+
+  // Convert idea to script (when draft is detected)
+  const handleConvertToScript = () => {
+    setEntryMode('idea');
+    setIdeaText(scriptText);
+    setScriptText('');
+    setBreakdownResult(null);
+    setQualityDiagnosis(null);
+    setStatus('idle');
+  };
+
+  // Reset and start over
+  const handleStartOver = () => {
+    setBreakdownResult(null);
+    setQualityDiagnosis(null);
+    setScriptText('');
+    setGeneratedScript(null);
+    setStatus('idle');
+    setProgress(0);
+  };
+
   // Navigate after successful extraction
   const handleContinueToCharacters = () => {
     navigate(`/projects/${projectId}/characters`);
     onEntitiesExtracted?.();
+  };
+
+  // Render quality diagnosis card
+  const renderQualityDiagnosis = () => {
+    if (!qualityDiagnosis) return null;
+
+    const { quality, score, issues, suggestions } = qualityDiagnosis;
+    
+    const qualityConfig = {
+      solid: {
+        icon: CheckCircle,
+        color: 'text-green-600',
+        bg: 'bg-green-50 dark:bg-green-950/20',
+        border: 'border-green-200 dark:border-green-800',
+        title: '¡Guion sólido!',
+        description: 'Tu guion tiene una estructura completa y está listo para producción.',
+      },
+      incomplete: {
+        icon: AlertTriangle,
+        color: 'text-amber-600',
+        bg: 'bg-amber-50 dark:bg-amber-950/20',
+        border: 'border-amber-200 dark:border-amber-800',
+        title: 'Guion incompleto',
+        description: 'Faltan algunos elementos, pero tienes una buena base.',
+      },
+      draft: {
+        icon: Info,
+        color: 'text-blue-600',
+        bg: 'bg-blue-50 dark:bg-blue-950/20',
+        border: 'border-blue-200 dark:border-blue-800',
+        title: 'Esto parece una idea o borrador',
+        description: 'Necesita más desarrollo para convertirse en un guion completo.',
+      },
+    };
+
+    const config = qualityConfig[quality];
+    const Icon = config.icon;
+
+    return (
+      <Alert className={`${config.bg} ${config.border} mb-6`}>
+        <Icon className={`h-5 w-5 ${config.color}`} />
+        <AlertTitle className={`${config.color} font-semibold`}>{config.title}</AlertTitle>
+        <AlertDescription className="mt-2 space-y-3">
+          <p className="text-sm text-muted-foreground">{config.description}</p>
+          
+          {issues.length > 0 && (
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">Problemas detectados:</p>
+              <ul className="text-xs text-muted-foreground list-disc list-inside">
+                {issues.map((issue, i) => <li key={i}>{issue}</li>)}
+              </ul>
+            </div>
+          )}
+          
+          {suggestions.length > 0 && !isPro && (
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">Sugerencias:</p>
+              <ul className="text-xs text-muted-foreground list-disc list-inside">
+                {suggestions.slice(0, 2).map((sug, i) => <li key={i}>{sug}</li>)}
+              </ul>
+            </div>
+          )}
+          
+          {isPro && suggestions.length > 0 && (
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">Sugerencias:</p>
+              <ul className="text-xs text-muted-foreground list-disc list-inside">
+                {suggestions.map((sug, i) => <li key={i}>{sug}</li>)}
+              </ul>
+            </div>
+          )}
+
+          {/* CTAs based on quality */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            {quality === 'solid' && (
+              <Button onClick={handleContinueToCharacters} size="sm">
+                <ArrowRight className="h-4 w-4 mr-2" />
+                Continuar a Personajes
+              </Button>
+            )}
+            {quality === 'incomplete' && (
+              <>
+                <Button onClick={handleImproveScript} size="sm" variant="default">
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  Mejorar automáticamente
+                </Button>
+                <Button onClick={handleContinueToCharacters} size="sm" variant="outline">
+                  Continuar así
+                </Button>
+              </>
+            )}
+            {quality === 'draft' && (
+              <>
+                <Button onClick={handleConvertToScript} size="sm" variant="default">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Convertir idea en guion
+                </Button>
+                <Button onClick={handleStartOver} size="sm" variant="outline">
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Editar texto
+                </Button>
+              </>
+            )}
+          </div>
+        </AlertDescription>
+      </Alert>
+    );
+  };
+
+  // Render visual summary
+  const renderVisualSummary = () => {
+    if (!breakdownResult) return null;
+
+    const { synopsis, characters, locations, scenes, summary } = breakdownResult;
+    const protagonists = characters?.filter(c => c.role === 'protagonist') || [];
+    const supporting = characters?.filter(c => c.role === 'supporting') || [];
+    const estimatedRuntime = summary?.estimated_runtime_min || 
+      Math.round((scenes?.reduce((acc, s) => acc + (s.estimated_duration_sec || 60), 0) || 0) / 60);
+
+    return (
+      <div className="space-y-6">
+        {/* Main info cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Film className="h-4 w-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Escenas</span>
+            </div>
+            <p className="text-2xl font-bold">{scenes?.length || 0}</p>
+          </Card>
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Users className="h-4 w-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Personajes</span>
+            </div>
+            <p className="text-2xl font-bold">{characters?.length || 0}</p>
+          </Card>
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <MapPin className="h-4 w-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Localizaciones</span>
+            </div>
+            <p className="text-2xl font-bold">{locations?.length || 0}</p>
+          </Card>
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Clock className="h-4 w-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Duración</span>
+            </div>
+            <p className="text-2xl font-bold">{estimatedRuntime}<span className="text-sm font-normal">min</span></p>
+          </Card>
+        </div>
+
+        {/* Synopsis info */}
+        {synopsis && (
+          <Card className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BookOpen className="h-4 w-4 text-primary" />
+              <span className="font-medium">Resumen</span>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              {synopsis.faithful_summary || 'Sin resumen disponible'}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {synopsis.tone && (
+                <Badge variant="secondary" className="gap-1">
+                  <Palette className="h-3 w-3" />
+                  {synopsis.tone}
+                </Badge>
+              )}
+              {synopsis.conflict_type && (
+                <Badge variant="outline">
+                  Conflicto: {synopsis.conflict_type}
+                </Badge>
+              )}
+              {synopsis.narrative_scope && (
+                <Badge variant="outline">
+                  Alcance: {synopsis.narrative_scope}
+                </Badge>
+              )}
+              {synopsis.themes?.slice(0, 3).map((theme, i) => (
+                <Badge key={i} variant="outline" className="text-xs">
+                  {theme}
+                </Badge>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* Characters list */}
+        {characters && characters.length > 0 && (
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                <span className="font-medium">Personajes detectados</span>
+              </div>
+              <Badge variant="secondary">{characters.length}</Badge>
+            </div>
+            <ScrollArea className="max-h-48">
+              <div className="space-y-2">
+                {protagonists.length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Protagonistas</p>
+                    <div className="flex flex-wrap gap-2">
+                      {protagonists.map((char, i) => (
+                        <Badge key={i} variant="default" className="gap-1">
+                          {char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {supporting.length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Secundarios</p>
+                    <div className="flex flex-wrap gap-2">
+                      {supporting.map((char, i) => (
+                        <Badge key={i} variant="secondary">
+                          {char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {characters.filter(c => !['protagonist', 'supporting'].includes(c.role || '')).length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Otros</p>
+                    <div className="flex flex-wrap gap-2">
+                      {characters
+                        .filter(c => !['protagonist', 'supporting'].includes(c.role || ''))
+                        .slice(0, 10)
+                        .map((char, i) => (
+                          <Badge key={i} variant="outline" className="text-xs">
+                            {char.name}
+                          </Badge>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </Card>
+        )}
+
+        {/* Locations list */}
+        {locations && locations.length > 0 && (
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span className="font-medium">Localizaciones</span>
+              </div>
+              <Badge variant="secondary">{locations.length}</Badge>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {locations.slice(0, 12).map((loc, i) => (
+                <Badge key={i} variant="outline" className="gap-1">
+                  <Clapperboard className="h-3 w-3" />
+                  {loc.name}
+                </Badge>
+              ))}
+              {locations.length > 12 && (
+                <Badge variant="secondary">+{locations.length - 12} más</Badge>
+              )}
+            </div>
+          </Card>
+        )}
+
+        {/* Pro mode: production notes */}
+        {isPro && summary?.production_notes && (
+          <Accordion type="single" collapsible>
+            <AccordionItem value="notes">
+              <AccordionTrigger className="text-sm">
+                <div className="flex items-center gap-2">
+                  <Settings2 className="h-4 w-4" />
+                  Notas de producción
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-sm text-muted-foreground">{summary.production_notes}</p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
+      </div>
+    );
   };
 
   // If script already exists, show summary
@@ -373,7 +807,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {/* Option 1: I have an idea */}
           <Card 
             className="cursor-pointer hover:border-primary transition-colors group"
             onClick={() => setEntryMode('idea')}
@@ -395,7 +828,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             </CardContent>
           </Card>
 
-          {/* Option 2: I have a script */}
           <Card 
             className="cursor-pointer hover:border-primary transition-colors group"
             onClick={() => setEntryMode('existing')}
@@ -435,112 +867,119 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           </h2>
         </div>
 
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <div>
-              <Label htmlFor="idea">Describe tu historia</Label>
-              <Textarea
-                id="idea"
-                placeholder="Ej: Una comedia sobre un robot que quiere ser chef en un restaurante de alta cocina..."
-                value={ideaText}
-                onChange={(e) => setIdeaText(e.target.value)}
-                rows={6}
-                className="mt-2"
-                disabled={status === 'generating'}
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Incluye personajes, conflicto, tono y ambientación para mejores resultados
-              </p>
-            </div>
+        {/* Show results if we have them */}
+        {breakdownResult && qualityDiagnosis && (
+          <>
+            {renderQualityDiagnosis()}
+            {renderVisualSummary()}
+          </>
+        )}
 
-            {/* Pro mode: model selector */}
-            {isPro && (
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="advanced" className="border-none">
-                  <AccordionTrigger className="py-2 text-xs text-muted-foreground hover:no-underline">
-                    <div className="flex items-center gap-2">
-                      <Settings2 className="h-3 w-3" />
-                      Opciones avanzadas
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="space-y-3 pt-2">
-                    <div>
-                      <Label>Modelo de generación</Label>
-                      <Select value={selectedModel} onValueChange={(v) => setSelectedModel(v as any)}>
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="rapido">Rápido (GPT-4o-mini)</SelectItem>
-                          <SelectItem value="profesional">Profesional (GPT-4o)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            )}
-
-            {/* Progress */}
-            {status === 'generating' && (
-              <div className="space-y-2">
-                <Progress value={progress} />
-                <p className="text-xs text-muted-foreground text-center">
-                  Generando guion...
+        {/* Input form */}
+        {!breakdownResult && (
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              <div>
+                <Label htmlFor="idea">Describe tu historia</Label>
+                <Textarea
+                  id="idea"
+                  placeholder="Ej: Una comedia sobre un robot que quiere ser chef en un restaurante de alta cocina..."
+                  value={ideaText}
+                  onChange={(e) => setIdeaText(e.target.value)}
+                  rows={6}
+                  className="mt-2"
+                  disabled={status === 'generating'}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Incluye personajes, conflicto, tono y ambientación para mejores resultados
                 </p>
               </div>
-            )}
 
-            {/* Generated script preview */}
-            {generatedScript && status === 'success' && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle className="h-4 w-4" />
-                  <span className="text-sm font-medium">¡Guion generado!</span>
+              {isPro && (
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="advanced" className="border-none">
+                    <AccordionTrigger className="py-2 text-xs text-muted-foreground hover:no-underline">
+                      <div className="flex items-center gap-2">
+                        <Settings2 className="h-3 w-3" />
+                        Opciones avanzadas
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-3 pt-2">
+                      <div>
+                        <Label>Modelo de generación</Label>
+                        <Select value={selectedModel} onValueChange={(v) => setSelectedModel(v as any)}>
+                          <SelectTrigger className="mt-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="rapido">Rápido (GPT-4o-mini)</SelectItem>
+                            <SelectItem value="profesional">Profesional (GPT-4o)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              )}
+
+              {status === 'generating' && (
+                <div className="space-y-2">
+                  <Progress value={progress} />
+                  <p className="text-xs text-muted-foreground text-center">
+                    Generando guion...
+                  </p>
                 </div>
-                <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
-                  <pre className="text-xs whitespace-pre-wrap font-mono">
-                    {generatedScript.slice(0, 1000)}...
-                  </pre>
+              )}
+
+              {generatedScript && (status === 'success' || status === 'extracting') && !breakdownResult && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="h-4 w-4" />
+                    <span className="text-sm font-medium">¡Guion generado!</span>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
+                    <pre className="text-xs whitespace-pre-wrap font-mono">
+                      {generatedScript.slice(0, 1000)}...
+                    </pre>
+                  </div>
+                  <Button onClick={handlePrepareProject} className="w-full" disabled={status === 'extracting'}>
+                    {status === 'extracting' ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Preparando proyecto...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Preparar proyecto
+                      </>
+                    )}
+                  </Button>
                 </div>
-                <Button onClick={handlePrepareProject} className="w-full" disabled={['generating', 'analyzing', 'extracting'].includes(status)}>
-                  {['generating', 'analyzing', 'extracting'].includes(status) ? (
+              )}
+
+              {!generatedScript && (
+                <Button 
+                  onClick={handleGenerateScript} 
+                  className="w-full" 
+                  disabled={!ideaText.trim() || status === 'generating'}
+                >
+                  {status === 'generating' ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Preparando proyecto...
+                      Generando...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Preparar proyecto
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Generar guion
                     </>
                   )}
                 </Button>
-              </div>
-            )}
-
-            {/* Action button */}
-            {!generatedScript && (
-              <Button 
-                onClick={handleGenerateScript} 
-                className="w-full" 
-                disabled={!ideaText.trim() || status === 'generating'}
-              >
-                {status === 'generating' ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Generando...
-                  </>
-                ) : (
-                  <>
-                    <Wand2 className="h-4 w-4 mr-2" />
-                    Generar guion
-                  </>
-                )}
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }
@@ -550,7 +989,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     return (
       <div className="space-y-6 p-6 max-w-3xl mx-auto">
         <div className="flex items-center gap-3 mb-4">
-          <Button variant="ghost" size="sm" onClick={() => setEntryMode(null)}>
+          <Button variant="ghost" size="sm" onClick={() => { setEntryMode(null); handleStartOver(); }}>
             ← Volver
           </Button>
           <h2 className="text-xl font-bold flex items-center gap-2">
@@ -559,149 +998,129 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           </h2>
         </div>
 
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            {/* Input method tabs */}
-            <Tabs value={inputMethod} onValueChange={(v) => setInputMethod(v as InputMethod)}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="paste">Pegar texto</TabsTrigger>
-                <TabsTrigger value="upload">Subir archivo</TabsTrigger>
-              </TabsList>
+        {/* Show results if we have them */}
+        {breakdownResult && qualityDiagnosis && (
+          <>
+            {renderQualityDiagnosis()}
+            {renderVisualSummary()}
+            
+            {/* Action to restart */}
+            <div className="flex justify-center">
+              <Button variant="ghost" size="sm" onClick={handleStartOver}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Analizar otro guion
+              </Button>
+            </div>
+          </>
+        )}
 
-              <TabsContent value="paste" className="mt-4">
-                <Textarea
-                  placeholder="Pega aquí tu guion..."
-                  value={scriptText}
-                  onChange={(e) => setScriptText(e.target.value)}
-                  rows={12}
-                  disabled={status === 'analyzing'}
-                />
-              </TabsContent>
+        {/* Input form - only show if no results yet */}
+        {!breakdownResult && (
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              <Tabs value={inputMethod} onValueChange={(v) => setInputMethod(v as InputMethod)}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="paste">Pegar texto</TabsTrigger>
+                  <TabsTrigger value="upload">Subir archivo</TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="upload" className="mt-4">
-                <div 
-                  className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
-                  <p className="font-medium">
-                    {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Formatos permitidos: .txt, .pdf
-                  </p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".txt,.pdf,text/plain,application/pdf"
-                    onChange={handleFileUpload}
-                    className="hidden"
+                <TabsContent value="paste" className="mt-4">
+                  <Textarea
+                    placeholder="Pega aquí tu guion..."
+                    value={scriptText}
+                    onChange={(e) => setScriptText(e.target.value)}
+                    rows={12}
+                    disabled={status === 'analyzing'}
                   />
+                </TabsContent>
+
+                <TabsContent value="upload" className="mt-4">
+                  <div 
+                    className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
+                    <p className="font-medium">
+                      {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Formatos permitidos: .txt, .pdf
+                    </p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".txt,.pdf,text/plain,application/pdf"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </div>
+                  {scriptText && (
+                    <div className="mt-4 bg-muted/50 rounded-lg p-4 max-h-40 overflow-y-auto">
+                      <pre className="text-xs whitespace-pre-wrap font-mono">
+                        {scriptText.slice(0, 500)}...
+                      </pre>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+
+              {isPro && (
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="advanced" className="border-none">
+                    <AccordionTrigger className="py-2 text-xs text-muted-foreground hover:no-underline">
+                      <div className="flex items-center gap-2">
+                        <Settings2 className="h-3 w-3" />
+                        Opciones de extracción
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-3 pt-2">
+                      <div className="flex items-center gap-2">
+                        <Checkbox 
+                          id="chars" 
+                          checked={extractCharacters} 
+                          onCheckedChange={(c) => setExtractCharacters(!!c)} 
+                        />
+                        <Label htmlFor="chars" className="flex items-center gap-1 text-sm">
+                          <Users className="h-3 w-3" />
+                          Extraer personajes
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox 
+                          id="locs" 
+                          checked={extractLocations} 
+                          onCheckedChange={(c) => setExtractLocations(!!c)} 
+                        />
+                        <Label htmlFor="locs" className="flex items-center gap-1 text-sm">
+                          <MapPin className="h-3 w-3" />
+                          Extraer localizaciones
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox 
+                          id="scenes" 
+                          checked={extractScenes} 
+                          onCheckedChange={(c) => setExtractScenes(!!c)} 
+                        />
+                        <Label htmlFor="scenes" className="flex items-center gap-1 text-sm">
+                          <Film className="h-3 w-3" />
+                          Extraer escenas
+                        </Label>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              )}
+
+              {status === 'analyzing' && (
+                <div className="space-y-2">
+                  <Progress value={progress} />
+                  <p className="text-xs text-muted-foreground text-center">
+                    Analizando guion...
+                  </p>
                 </div>
-                {scriptText && (
-                  <div className="mt-4 bg-muted/50 rounded-lg p-4 max-h-40 overflow-y-auto">
-                    <pre className="text-xs whitespace-pre-wrap font-mono">
-                      {scriptText.slice(0, 500)}...
-                    </pre>
-                  </div>
-                )}
-              </TabsContent>
-            </Tabs>
+              )}
 
-            {/* Pro mode: extraction options */}
-            {isPro && (
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="advanced" className="border-none">
-                  <AccordionTrigger className="py-2 text-xs text-muted-foreground hover:no-underline">
-                    <div className="flex items-center gap-2">
-                      <Settings2 className="h-3 w-3" />
-                      Opciones de extracción
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="space-y-3 pt-2">
-                    <div className="flex items-center gap-2">
-                      <Checkbox 
-                        id="chars" 
-                        checked={extractCharacters} 
-                        onCheckedChange={(c) => setExtractCharacters(!!c)} 
-                      />
-                      <Label htmlFor="chars" className="flex items-center gap-1 text-sm">
-                        <Users className="h-3 w-3" />
-                        Extraer personajes
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Checkbox 
-                        id="locs" 
-                        checked={extractLocations} 
-                        onCheckedChange={(c) => setExtractLocations(!!c)} 
-                      />
-                      <Label htmlFor="locs" className="flex items-center gap-1 text-sm">
-                        <MapPin className="h-3 w-3" />
-                        Extraer localizaciones
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Checkbox 
-                        id="scenes" 
-                        checked={extractScenes} 
-                        onCheckedChange={(c) => setExtractScenes(!!c)} 
-                      />
-                      <Label htmlFor="scenes" className="flex items-center gap-1 text-sm">
-                        <Film className="h-3 w-3" />
-                        Extraer escenas
-                      </Label>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            )}
-
-            {/* Progress */}
-            {status === 'analyzing' && (
-              <div className="space-y-2">
-                <Progress value={progress} />
-                <p className="text-xs text-muted-foreground text-center">
-                  Analizando guion...
-                </p>
-              </div>
-            )}
-
-            {/* Extraction result */}
-            {extractionResult && status === 'success' && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle className="h-4 w-4" />
-                  <span className="text-sm font-medium">¡Análisis completado!</span>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-muted/50 rounded-lg p-3 text-center">
-                    <Users className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <p className="text-2xl font-bold">{extractionResult.characters.length}</p>
-                    <p className="text-xs text-muted-foreground">Personajes</p>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-3 text-center">
-                    <MapPin className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <p className="text-2xl font-bold">{extractionResult.locations.length}</p>
-                    <p className="text-xs text-muted-foreground">Localizaciones</p>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-3 text-center">
-                    <Film className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <p className="text-2xl font-bold">{extractionResult.scenes.length}</p>
-                    <p className="text-xs text-muted-foreground">Escenas</p>
-                  </div>
-                </div>
-
-                <Button onClick={handleContinueToCharacters} className="w-full">
-                  <ArrowRight className="h-4 w-4 mr-2" />
-                  Continuar a Personajes
-                </Button>
-              </div>
-            )}
-
-            {/* Action button */}
-            {!extractionResult && (
               <Button 
                 onClick={handleAnalyzeScript} 
                 className="w-full" 
@@ -719,9 +1138,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                   </>
                 )}
               </Button>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }
