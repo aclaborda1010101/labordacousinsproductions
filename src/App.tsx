@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { UserProfileProvider } from "@/contexts/UserProfileContext";
 import { DeveloperModeProvider } from "@/contexts/DeveloperModeContext";
+import { BackgroundTasksProvider } from "@/contexts/BackgroundTasksContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Pages
@@ -120,11 +121,13 @@ const App = () => (
           <AuthProvider>
             <UserProfileProvider>
               <DeveloperModeProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <AppRoutes />
-                </BrowserRouter>
+                <BackgroundTasksProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <AppRoutes />
+                  </BrowserRouter>
+                </BackgroundTasksProvider>
               </DeveloperModeProvider>
             </UserProfileProvider>
           </AuthProvider>
