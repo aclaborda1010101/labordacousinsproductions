@@ -1864,6 +1864,175 @@ export type Database = {
           },
         ]
       }
+      forge_actions: {
+        Row: {
+          action_data: Json
+          action_type: string
+          completed_at: string | null
+          conversation_id: string
+          created_at: string
+          error: string | null
+          id: string
+          message_id: string | null
+          result: Json | null
+          status: string | null
+        }
+        Insert: {
+          action_data: Json
+          action_type: string
+          completed_at?: string | null
+          conversation_id: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          message_id?: string | null
+          result?: Json | null
+          status?: string | null
+        }
+        Update: {
+          action_data?: Json
+          action_type?: string
+          completed_at?: string | null
+          conversation_id?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          message_id?: string | null
+          result?: Json | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_actions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "forge_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_actions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "forge_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          project_id: string
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          project_id: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          project_id?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_conversations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_messages: {
+        Row: {
+          action_executed: Json | null
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          intent: string | null
+          model_used: string | null
+          role: string
+        }
+        Insert: {
+          action_executed?: Json | null
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          intent?: string | null
+          model_used?: string | null
+          role: string
+        }
+        Update: {
+          action_executed?: Json | null
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          intent?: string | null
+          model_used?: string | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "forge_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_user_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          interaction_count: number | null
+          last_interaction_at: string | null
+          preferred_style: string | null
+          preferred_tone: string | null
+          remembered_context: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interaction_count?: number | null
+          last_interaction_at?: string | null
+          preferred_style?: string | null
+          preferred_tone?: string | null
+          remembered_context?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interaction_count?: number | null
+          last_interaction_at?: string | null
+          preferred_style?: string | null
+          preferred_tone?: string | null
+          remembered_context?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       frame_notes: {
         Row: {
           author_id: string
