@@ -1,5 +1,6 @@
 /**
  * Hook for Recommendations v1 - Engine + Preset recommendations
+ * Now includes EKB style bias support
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -9,7 +10,8 @@ import {
   AssetType,
   Phase,
   logRecommendationEvent,
-  isOverride
+  isOverride,
+  StyleBias
 } from '@/lib/recommendations';
 
 interface UseRecommendationsOptions {
@@ -17,6 +19,7 @@ interface UseRecommendationsOptions {
   assetType: AssetType;
   availablePresets: string[];
   phase?: Phase;
+  styleBias?: StyleBias;
   enabled?: boolean;
 }
 
@@ -38,6 +41,7 @@ export function useRecommendations({
   assetType,
   availablePresets,
   phase,
+  styleBias,
   enabled = true
 }: UseRecommendationsOptions): UseRecommendationsResult {
   const [loading, setLoading] = useState(true);
@@ -58,14 +62,14 @@ export function useRecommendations({
 
     setLoading(true);
     try {
-      const data = await getRecommendations(projectId, assetType, availablePresets, phase);
+      const data = await getRecommendations(projectId, assetType, availablePresets, phase, styleBias);
       setResult(data);
     } catch (err) {
       console.error('[useRecommendations] Error:', err);
     } finally {
       setLoading(false);
     }
-  }, [projectId, assetType, availablePresets, phase, enabled]);
+  }, [projectId, assetType, availablePresets, phase, styleBias, enabled]);
 
   useEffect(() => {
     fetchRecommendations();

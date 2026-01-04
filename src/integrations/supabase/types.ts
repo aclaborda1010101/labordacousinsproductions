@@ -1283,28 +1283,40 @@ export type Database = {
       }
       editorial_projects: {
         Row: {
+          animation_type: string | null
           created_at: string
+          format_profile: string | null
           id: string
           name: string
           owner_id: string
           phase: Database["public"]["Enums"]["editorial_project_phase"]
           updated_at: string
+          user_level: string | null
+          visual_style: string | null
         }
         Insert: {
+          animation_type?: string | null
           created_at?: string
+          format_profile?: string | null
           id?: string
           name: string
           owner_id: string
           phase?: Database["public"]["Enums"]["editorial_project_phase"]
           updated_at?: string
+          user_level?: string | null
+          visual_style?: string | null
         }
         Update: {
+          animation_type?: string | null
           created_at?: string
+          format_profile?: string | null
           id?: string
           name?: string
           owner_id?: string
           phase?: Database["public"]["Enums"]["editorial_project_phase"]
           updated_at?: string
+          user_level?: string | null
+          visual_style?: string | null
         }
         Relationships: []
       }
@@ -1473,6 +1485,111 @@ export type Database = {
           rule_name?: string
           updated_at?: string
           validation_checks?: Json | null
+        }
+        Relationships: []
+      }
+      ekb_animation_styles: {
+        Row: {
+          animation_type: string
+          created_at: string | null
+          id: string
+          lighting: string | null
+          name: string
+          narrative_traits: Json
+          preset_bias: Json
+          restrictions: string[]
+          typical_composition: string | null
+          visual_traits: Json
+        }
+        Insert: {
+          animation_type?: string
+          created_at?: string | null
+          id: string
+          lighting?: string | null
+          name: string
+          narrative_traits?: Json
+          preset_bias?: Json
+          restrictions?: string[]
+          typical_composition?: string | null
+          visual_traits?: Json
+        }
+        Update: {
+          animation_type?: string
+          created_at?: string | null
+          id?: string
+          lighting?: string | null
+          name?: string
+          narrative_traits?: Json
+          preset_bias?: Json
+          restrictions?: string[]
+          typical_composition?: string | null
+          visual_traits?: Json
+        }
+        Relationships: []
+      }
+      ekb_format_profiles: {
+        Row: {
+          activated_rules: string[]
+          avg_shot_duration_sec: number
+          created_at: string | null
+          id: string
+          name: string
+          recommended_presets: string[]
+          rhythm: string
+          visual_complexity: string
+        }
+        Insert: {
+          activated_rules?: string[]
+          avg_shot_duration_sec?: number
+          created_at?: string | null
+          id: string
+          name: string
+          recommended_presets?: string[]
+          rhythm?: string
+          visual_complexity?: string
+        }
+        Update: {
+          activated_rules?: string[]
+          avg_shot_duration_sec?: number
+          created_at?: string | null
+          id?: string
+          name?: string
+          recommended_presets?: string[]
+          rhythm?: string
+          visual_complexity?: string
+        }
+        Relationships: []
+      }
+      ekb_industry_rules: {
+        Row: {
+          applies_to: string[]
+          created_at: string | null
+          description: string
+          effect: Json
+          id: string
+          impact: string
+          is_active: boolean
+          name: string
+        }
+        Insert: {
+          applies_to?: string[]
+          created_at?: string | null
+          description: string
+          effect?: Json
+          id?: string
+          impact?: string
+          is_active?: boolean
+          name: string
+        }
+        Update: {
+          applies_to?: string[]
+          created_at?: string | null
+          description?: string
+          effect?: Json
+          id?: string
+          impact?: string
+          is_active?: boolean
+          name?: string
         }
         Relationships: []
       }
@@ -2833,6 +2950,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          animation_type: string | null
           bible_completeness_score: number | null
           budget_cap_episode_eur: number | null
           budget_cap_project_eur: number | null
@@ -2842,6 +2960,7 @@ export type Database = {
           engine_test_completed: boolean | null
           episodes_count: number
           format: Database["public"]["Enums"]["project_format"]
+          format_profile: string | null
           id: string
           master_language: string
           owner_id: string
@@ -2850,8 +2969,11 @@ export type Database = {
           target_languages: string[] | null
           title: string
           updated_at: string
+          user_level: string | null
+          visual_style: string | null
         }
         Insert: {
+          animation_type?: string | null
           bible_completeness_score?: number | null
           budget_cap_episode_eur?: number | null
           budget_cap_project_eur?: number | null
@@ -2861,6 +2983,7 @@ export type Database = {
           engine_test_completed?: boolean | null
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
+          format_profile?: string | null
           id?: string
           master_language?: string
           owner_id: string
@@ -2869,8 +2992,11 @@ export type Database = {
           target_languages?: string[] | null
           title: string
           updated_at?: string
+          user_level?: string | null
+          visual_style?: string | null
         }
         Update: {
+          animation_type?: string | null
           bible_completeness_score?: number | null
           budget_cap_episode_eur?: number | null
           budget_cap_project_eur?: number | null
@@ -2880,6 +3006,7 @@ export type Database = {
           engine_test_completed?: boolean | null
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
+          format_profile?: string | null
           id?: string
           master_language?: string
           owner_id?: string
@@ -2888,6 +3015,8 @@ export type Database = {
           target_languages?: string[] | null
           title?: string
           updated_at?: string
+          user_level?: string | null
+          visual_style?: string | null
         }
         Relationships: []
       }
