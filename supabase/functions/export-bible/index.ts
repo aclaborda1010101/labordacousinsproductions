@@ -129,10 +129,10 @@ serve(async (req) => {
       console.error('[export-bible] Error fetching canon assets:', canonError);
     }
 
-    // Fetch style pack
+    // Fetch style pack (using correct column names)
     const { data: stylePack } = await supabase
       .from('style_packs')
-      .select('description, tone, genre, era, color_palette, visual_keywords, reference_urls')
+      .select('description, tone, lens_style, realism_level, color_palette, reference_urls')
       .eq('project_id', body.projectId)
       .maybeSingle();
 
@@ -231,10 +231,10 @@ serve(async (req) => {
     const stylePackData: StylePackData | null = stylePack ? {
       description: stylePack.description,
       tone: stylePack.tone,
-      genre: stylePack.genre,
-      era: stylePack.era,
+      genre: stylePack.lens_style,
+      era: stylePack.realism_level,
       colorPalette: stylePack.color_palette,
-      keywords: stylePack.visual_keywords,
+      keywords: null,
       referenceUrls: stylePack.reference_urls,
     } : null;
 
