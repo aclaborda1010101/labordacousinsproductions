@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { UserProfileProvider } from "@/contexts/UserProfileContext";
+import { DeveloperModeProvider } from "@/contexts/DeveloperModeContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Pages
@@ -118,11 +119,13 @@ const App = () => (
         <LanguageProvider>
           <AuthProvider>
             <UserProfileProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <AppRoutes />
-              </BrowserRouter>
+              <DeveloperModeProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <AppRoutes />
+                </BrowserRouter>
+              </DeveloperModeProvider>
             </UserProfileProvider>
           </AuthProvider>
         </LanguageProvider>
