@@ -159,15 +159,17 @@ const OUTLINE_TOOL_SCHEMA = {
     },
     main_characters: {
       type: 'array',
+      description: 'TODOS los personajes: protagonistas, antagonistas, secundarios, recurrentes, cameos, colectivos',
       items: {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting', 'recurring'] },
+          role: { type: 'string', enum: ['protagonist', 'antagonist', 'supporting', 'recurring', 'cameo', 'extra_with_line', 'collective_entity'] },
+          entity_type: { type: 'string', enum: ['individual', 'collective', 'civilization', 'historical_figure'], description: 'Tipo de entidad' },
           description: { type: 'string', description: 'Físico + personalidad + FLAW' },
-          secret: { type: 'string', description: 'Qué oculta este personaje' },
-          want: { type: 'string', description: 'Deseo consciente' },
-          need: { type: 'string', description: 'Necesidad inconsciente' },
+          secret: { type: 'string', description: 'Qué oculta este personaje (opcional)' },
+          want: { type: 'string', description: 'Deseo consciente (opcional)' },
+          need: { type: 'string', description: 'Necesidad inconsciente (opcional)' },
           from_idea: { type: 'boolean', description: 'True si este personaje fue mencionado explícitamente en la idea' }
         },
         required: ['name', 'role', 'description']
@@ -179,7 +181,8 @@ const OUTLINE_TOOL_SCHEMA = {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT'] },
+          type: { type: 'string', enum: ['INT', 'EXT', 'INT/EXT', 'PLANETARY', 'COSMIC', 'HISTORICAL'] },
+          scale: { type: 'string', enum: ['room', 'building', 'city', 'continent', 'planetary', 'cosmic'] },
           description: { type: 'string' },
           atmosphere: { type: 'string', description: 'Qué SIENTE el espectador aquí' },
           from_idea: { type: 'boolean', description: 'True si esta locación fue mencionada explícitamente en la idea' }
@@ -189,7 +192,7 @@ const OUTLINE_TOOL_SCHEMA = {
     },
     main_props: {
       type: 'array',
-      description: 'Objetos importantes para la trama (armas, documentos, objetos simbólicos, vehículos)',
+      description: 'Objetos importantes para la trama (armas, documentos, objetos simbólicos, vehículos, tecnología)',
       items: {
         type: 'object',
         properties: {
@@ -202,6 +205,34 @@ const OUTLINE_TOOL_SCHEMA = {
         required: ['name', 'importance', 'description']
       }
     },
+    subplots: {
+      type: 'array',
+      description: 'Subtramas paralelas a la trama principal',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: 'Nombre descriptivo de la subtrama' },
+          description: { type: 'string', description: 'Resumen de qué trata la subtrama' },
+          characters_involved: { type: 'array', items: { type: 'string' }, description: 'Personajes implicados' },
+          resolution: { type: 'string', description: 'Cómo se resuelve (o si queda abierta)' }
+        },
+        required: ['name', 'description']
+      }
+    },
+    plot_twists: {
+      type: 'array',
+      description: 'Giros narrativos principales de la historia',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: 'Nombre del giro' },
+          episode: { type: 'number', description: 'Episodio donde ocurre' },
+          description: { type: 'string', description: 'Descripción del giro' },
+          impact: { type: 'string', enum: ['minor', 'major', 'paradigm_shift'], description: 'Nivel de impacto' }
+        },
+        required: ['name', 'description', 'impact']
+      }
+    },
     episode_beats: {
       type: 'array',
       items: {
@@ -211,7 +242,8 @@ const OUTLINE_TOOL_SCHEMA = {
           title: { type: 'string' },
           summary: { type: 'string', description: '3-4 frases: qué pasa + conflicto + consecuencia' },
           irreversible_event: { type: 'string', description: 'El evento que cambia todo este episodio' },
-          cliffhanger: { type: 'string', description: 'Cómo termina el episodio (debe generar NECESIDAD de ver más)' }
+          cliffhanger: { type: 'string', description: 'Cómo termina el episodio (debe generar NECESIDAD de ver más)' },
+          subplot_progress: { type: 'array', items: { type: 'string' }, description: 'Subtramas que avanzan en este episodio' }
         },
         required: ['episode', 'title', 'summary', 'cliffhanger']
       }
@@ -230,7 +262,7 @@ const OUTLINE_TOOL_SCHEMA = {
     },
     qc_status: { type: 'string', enum: ['pass', 'fail'], description: 'Auto-QC: pass si cumple todas las reglas' }
   },
-  required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'main_props', 'episode_beats', 'qc_status']
+  required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'main_props', 'subplots', 'plot_twists', 'episode_beats', 'qc_status']
 };
 
 // OpenAI API call

@@ -42,16 +42,23 @@ REGLAS FUNDAMENTALES (OBLIGATORIAS - VIOLACIÓN = FALLO CRÍTICO):
    - Sistemas conscientes (IAs, redes, entidades abstractas)
 
 4. CLASIFICACIÓN ESTRICTA DE PERSONAJES (solo basada en el texto):
-   - protagonist: Sostiene el arco central de la narrativa
-   - supporting: Función narrativa relevante, apoyo al protagonista
+   CATEGORÍAS OBLIGATORIAS - USA TODAS LAS QUE APLIQUEN:
+   - protagonist: Sostiene el arco central de la narrativa (máximo 3-4)
+   - antagonist: SOLO si el texto EXPLÍCITAMENTE presenta una fuerza opositora identificable
+   - supporting: Función narrativa relevante, apoyo al protagonista (personajes con nombre que aparecen en múltiples escenas)
+   - recurring: Aparecen más de una vez pero no tienen arco propio
+   - cameo: Aparición breve pero memorable (figuras históricas, celebridades mencionadas)
    - extra_with_line: Intervenciones puntuales con diálogo pero rol mínimo
-   - collective_entity: Civilizaciones, grupos, colectivos con agencia
+   - background: Figurantes, grupos de personas sin nombre individual
+   - collective_entity: Civilizaciones, grupos, consejos, organizaciones con agencia colectiva
    - cosmic_entity: Entidades de escala planetaria/cósmica/dimensional
    
    IMPORTANTE: 
-   - Solo usa "antagonist" si el texto EXPLÍCITAMENTE presenta una fuerza opositora identificable.
+   - EXTRAE TODOS los personajes mencionados, incluso si solo aparecen una vez.
+   - Los grupos (ej: "atlantes estelares", "Consejo de los Diez Reinos") son entidades colectivas válidas.
+   - Figuras históricas mencionadas (ej: "Jesús", "Platón") son cameos si se les referencia.
    - NO reduzcas el reparto solo a personajes humanos cotidianos.
-   - NO inventes antagonistas donde no los hay.
+   - Prefiere sobredetectar que infradetectar.
 
 5. LOCALIZACIONES AMPLIADAS:
    Reconoce como LOCALIZACIONES válidas:
@@ -142,14 +149,17 @@ FORMATO DE SALIDA OBLIGATORIO (JSON):
   "characters": [
     {
       "name": "string (nombre EXACTO del texto)",
-      "entity_type": "individual | collective | civilization | cosmic | lineage | ai | hybrid | not_specified",
-      "role": "protagonist | supporting | extra_with_line | collective_entity | cosmic_entity | antagonist_if_explicit",
+      "entity_type": "individual | collective | civilization | cosmic | lineage | ai | hybrid | historical_figure | not_specified",
+      "role": "protagonist | antagonist | supporting | recurring | cameo | extra_with_line | background | collective_entity | cosmic_entity",
+      "role_detail": "string (descripción específica del rol: ej. 'Guardián del Fuego', 'Mentor del protagonista')",
       "description": "string (SOLO lo que dice el texto)",
       "personality": "string (SOLO si está descrito)",
       "arc": "string (SOLO si es evidente en el texto)",
       "scale": "personal | generational | civilizational | cosmic",
+      "first_appearance": "string (escena o momento donde aparece por primera vez)",
       "scenes": [number array],
       "scenes_count": number,
+      "dialogue_lines": number,
       "priority": "P0 | P1 | P2",
       "notes": "string",
       "explicitly_described": boolean
@@ -222,10 +232,12 @@ FORMATO DE SALIDA OBLIGATORIO (JSON):
     "total_scenes": number,
     "total_characters": number,
     "protagonists": number,
+    "antagonists": number,
     "supporting_characters": number,
+    "recurring_characters": number,
+    "cameos": number,
     "extras_with_lines": number,
     "collective_entities": number,
-    "explicit_antagonists": number,
     "total_locations": number,
     "total_props": number,
     "total_set_pieces": number,

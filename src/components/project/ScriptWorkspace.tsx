@@ -45,6 +45,14 @@ import {
   RefreshCw,
   Edit3,
   Bell,
+  Zap,
+  GitBranch,
+  Crown,
+  Skull,
+  UserCheck,
+  UserPlus,
+  Star,
+  Users2,
 } from 'lucide-react';
 
 interface ScriptWorkspaceProps {
@@ -69,9 +77,13 @@ interface ScriptSynopsis {
 interface CharacterData {
   name: string;
   role?: string;
+  role_detail?: string;
   entity_type?: string;
   description?: string;
   priority?: string;
+  first_appearance?: string;
+  scenes_count?: number;
+  dialogue_lines?: number;
 }
 
 interface LocationData {
@@ -91,6 +103,20 @@ interface SceneData {
   estimated_duration_sec?: number;
 }
 
+interface SubplotData {
+  name: string;
+  description?: string;
+  characters_involved?: string[];
+  resolution?: string;
+}
+
+interface PlotTwistData {
+  name: string;
+  scene?: number;
+  description?: string;
+  impact?: 'minor' | 'major' | 'paradigm_shift';
+}
+
 interface BreakdownResult {
   synopsis?: ScriptSynopsis;
   characters: CharacterData[];
@@ -98,10 +124,21 @@ interface BreakdownResult {
   scenes: SceneData[];
   props?: any[];
   set_pieces?: any[];
+  subplots?: SubplotData[];
+  plot_twists?: PlotTwistData[];
   summary?: {
     total_scenes?: number;
     total_characters?: number;
+    protagonists?: number;
+    antagonists?: number;
+    supporting_characters?: number;
+    recurring_characters?: number;
+    cameos?: number;
+    extras_with_lines?: number;
+    collective_entities?: number;
     total_locations?: number;
+    total_subplots?: number;
+    total_plot_twists?: number;
     estimated_runtime_min?: number;
     analysis_confidence?: string;
     production_notes?: string;
@@ -715,11 +752,30 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const renderVisualSummary = () => {
     if (!breakdownResult) return null;
 
-    const { synopsis, characters, locations, scenes, summary } = breakdownResult;
+    const { synopsis, characters, locations, scenes, summary, subplots, plot_twists } = breakdownResult;
+    
+    // Categorize characters by role
     const protagonists = characters?.filter(c => c.role === 'protagonist') || [];
+    const antagonists = characters?.filter(c => c.role === 'antagonist') || [];
     const supporting = characters?.filter(c => c.role === 'supporting') || [];
+    const recurring = characters?.filter(c => c.role === 'recurring') || [];
+    const cameos = characters?.filter(c => c.role === 'cameo') || [];
+    const extrasWithLines = characters?.filter(c => c.role === 'extra_with_line') || [];
+    const collectiveEntities = characters?.filter(c => c.role === 'collective_entity' || c.entity_type === 'collective' || c.entity_type === 'civilization') || [];
+    
     const estimatedRuntime = summary?.estimated_runtime_min || 
       Math.round((scenes?.reduce((acc, s) => acc + (s.estimated_duration_sec || 60), 0) || 0) / 60);
+
+    // Character role config for display
+    const roleConfig: Record<string, { label: string; icon: React.ReactNode; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
+      protagonist: { label: 'Protagonistas', icon: <Crown className="h-3 w-3" />, variant: 'default' },
+      antagonist: { label: 'Antagonistas', icon: <Skull className="h-3 w-3" />, variant: 'destructive' },
+      supporting: { label: 'Secundarios', icon: <UserCheck className="h-3 w-3" />, variant: 'secondary' },
+      recurring: { label: 'Recurrentes', icon: <UserPlus className="h-3 w-3" />, variant: 'secondary' },
+      cameo: { label: 'Cameos', icon: <Star className="h-3 w-3" />, variant: 'outline' },
+      extra_with_line: { label: 'Extras con diálogo', icon: <Users className="h-3 w-3" />, variant: 'outline' },
+      collective_entity: { label: 'Entidades colectivas', icon: <Users2 className="h-3 w-3" />, variant: 'outline' },
+    };
 
     return (
       <div className="space-y-6">
@@ -791,7 +847,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           </Card>
         )}
 
-        {/* Characters list */}
+        {/* Characters list - All categories */}
         {characters && characters.length > 0 && (
           <Card className="p-4">
             <div className="flex items-center justify-between mb-3">
@@ -801,11 +857,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               </div>
               <Badge variant="secondary">{characters.length}</Badge>
             </div>
-            <ScrollArea className="max-h-48">
-              <div className="space-y-2">
+            <ScrollArea className="max-h-64">
+              <div className="space-y-3">
+                {/* Protagonists */}
                 {protagonists.length > 0 && (
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Protagonistas</p>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <Crown className="h-3 w-3" /> Protagonistas ({protagonists.length})
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {protagonists.map((char, i) => (
                         <Badge key={i} variant="default" className="gap-1">
@@ -815,9 +874,29 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                     </div>
                   </div>
                 )}
+                
+                {/* Antagonists */}
+                {antagonists.length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <Skull className="h-3 w-3" /> Antagonistas ({antagonists.length})
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {antagonists.map((char, i) => (
+                        <Badge key={i} variant="destructive" className="gap-1">
+                          {char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Supporting */}
                 {supporting.length > 0 && (
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Secundarios</p>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <UserCheck className="h-3 w-3" /> Secundarios ({supporting.length})
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {supporting.map((char, i) => (
                         <Badge key={i} variant="secondary">
@@ -827,23 +906,142 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                     </div>
                   </div>
                 )}
-                {characters.filter(c => !['protagonist', 'supporting'].includes(c.role || '')).length > 0 && (
+                
+                {/* Recurring */}
+                {recurring.length > 0 && (
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Otros</p>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <UserPlus className="h-3 w-3" /> Recurrentes ({recurring.length})
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      {characters
-                        .filter(c => !['protagonist', 'supporting'].includes(c.role || ''))
-                        .slice(0, 10)
-                        .map((char, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">
-                            {char.name}
-                          </Badge>
-                        ))}
+                      {recurring.map((char, i) => (
+                        <Badge key={i} variant="secondary">
+                          {char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Collective entities */}
+                {collectiveEntities.length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <Users2 className="h-3 w-3" /> Entidades colectivas ({collectiveEntities.length})
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {collectiveEntities.map((char, i) => (
+                        <Badge key={i} variant="outline" className="border-primary/50">
+                          {char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Cameos */}
+                {cameos.length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <Star className="h-3 w-3" /> Cameos ({cameos.length})
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {cameos.map((char, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">
+                          {char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Extras with lines */}
+                {extrasWithLines.length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <Users className="h-3 w-3" /> Extras con diálogo ({extrasWithLines.length})
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {extrasWithLines.slice(0, 8).map((char, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">
+                          {char.name}
+                        </Badge>
+                      ))}
+                      {extrasWithLines.length > 8 && (
+                        <Badge variant="secondary">+{extrasWithLines.length - 8} más</Badge>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
             </ScrollArea>
+          </Card>
+        )}
+
+        {/* Subplots */}
+        {subplots && subplots.length > 0 && (
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <GitBranch className="h-4 w-4 text-primary" />
+                <span className="font-medium">Tramas y subtramas</span>
+              </div>
+              <Badge variant="secondary">{subplots.length}</Badge>
+            </div>
+            <div className="space-y-2">
+              {subplots.slice(0, isPro ? 10 : 5).map((subplot, i) => (
+                <div key={i} className="p-2 bg-muted/50 rounded-lg">
+                  <p className="text-sm font-medium">{subplot.name}</p>
+                  {subplot.description && (
+                    <p className="text-xs text-muted-foreground mt-1">{subplot.description}</p>
+                  )}
+                  {isPro && subplot.characters_involved && subplot.characters_involved.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {subplot.characters_involved.map((char, j) => (
+                        <Badge key={j} variant="outline" className="text-xs">{char}</Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {subplots.length > (isPro ? 10 : 5) && (
+                <p className="text-xs text-muted-foreground">+{subplots.length - (isPro ? 10 : 5)} más</p>
+              )}
+            </div>
+          </Card>
+        )}
+
+        {/* Plot twists */}
+        {plot_twists && plot_twists.length > 0 && (
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="font-medium">Giros narrativos</span>
+              </div>
+              <Badge variant="secondary">{plot_twists.length}</Badge>
+            </div>
+            <div className="space-y-2">
+              {plot_twists.slice(0, isPro ? 10 : 4).map((twist, i) => (
+                <div key={i} className="p-2 bg-muted/50 rounded-lg flex items-start gap-2">
+                  <Badge 
+                    variant={twist.impact === 'paradigm_shift' ? 'destructive' : twist.impact === 'major' ? 'default' : 'secondary'}
+                    className="shrink-0 mt-0.5"
+                  >
+                    {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'}
+                  </Badge>
+                  <div>
+                    <p className="text-sm font-medium">{twist.name}</p>
+                    {twist.description && (
+                      <p className="text-xs text-muted-foreground mt-1">{twist.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {plot_twists.length > (isPro ? 10 : 4) && (
+                <p className="text-xs text-muted-foreground">+{plot_twists.length - (isPro ? 10 : 4)} más</p>
+              )}
+            </div>
           </Card>
         )}
 

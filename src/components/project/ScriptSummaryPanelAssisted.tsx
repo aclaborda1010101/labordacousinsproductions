@@ -38,6 +38,14 @@ import {
   Check,
   AlertCircle,
   Bell,
+  Crown,
+  Skull,
+  UserCheck,
+  UserPlus,
+  Star,
+  Users2,
+  GitBranch,
+  Zap,
 } from 'lucide-react';
 import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 
@@ -59,6 +67,8 @@ interface ScriptData {
   characters?: CharacterData[];
   locations?: LocationData[];
   props?: any[];
+  subplots?: SubplotData[];
+  plot_twists?: PlotTwistData[];
   counts?: {
     total_scenes?: number;
     total_dialogue_lines?: number;
@@ -84,6 +94,8 @@ interface TeaserData {
 interface CharacterData {
   name: string;
   role?: string;
+  role_detail?: string;
+  entity_type?: string;
   description?: string;
   priority?: string;
 }
@@ -92,6 +104,18 @@ interface LocationData {
   name: string;
   type?: string;
   description?: string;
+}
+
+interface SubplotData {
+  name: string;
+  description?: string;
+  characters_involved?: string[];
+}
+
+interface PlotTwistData {
+  name: string;
+  description?: string;
+  impact?: 'minor' | 'major' | 'paradigm_shift';
 }
 
 export function ScriptSummaryPanelAssisted({ 
@@ -136,6 +160,8 @@ export function ScriptSummaryPanelAssisted({
           characters: parsed.characters || parsed.main_characters || [],
           locations: parsed.locations || parsed.main_locations || [],
           props: parsed.props || [],
+          subplots: parsed.subplots || [],
+          plot_twists: parsed.plot_twists || [],
           counts: parsed.counts,
         });
       }
@@ -481,42 +507,150 @@ export function ScriptSummaryPanelAssisted({
         </CardHeader>
         
         <CardContent>
-          {/* Characters */}
-          {scriptData.characters && scriptData.characters.length > 0 && (
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-primary" />
-                <span className="font-medium text-sm">Personajes detectados</span>
+          {/* Characters - Categorized */}
+          {scriptData.characters && scriptData.characters.length > 0 && (() => {
+            const protagonists = scriptData.characters.filter(c => c.role === 'protagonist');
+            const antagonists = scriptData.characters.filter(c => c.role === 'antagonist');
+            const supporting = scriptData.characters.filter(c => c.role === 'supporting');
+            const recurring = scriptData.characters.filter(c => c.role === 'recurring');
+            const collectiveEntities = scriptData.characters.filter(c => 
+              c.role === 'collective_entity' || c.entity_type === 'collective' || c.entity_type === 'civilization'
+            );
+            const others = scriptData.characters.filter(c => 
+              !['protagonist', 'antagonist', 'supporting', 'recurring', 'collective_entity'].includes(c.role || '') &&
+              !['collective', 'civilization'].includes(c.entity_type || '')
+            );
+            
+            return (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="h-4 w-4 text-primary" />
+                  <span className="font-medium text-sm">Personajes detectados ({scriptData.characters.length})</span>
+                </div>
+                <div className="space-y-2">
+                  {/* Protagonists */}
+                  {protagonists.length > 0 && (
+                    <div className="flex flex-wrap gap-1 items-center">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+                        <Crown className="h-3 w-3" /> Protagonistas:
+                      </span>
+                      {protagonists.map((char, i) => (
+                        <Badge key={i} variant="default" className="text-xs">{char.name}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  {/* Antagonists */}
+                  {antagonists.length > 0 && (
+                    <div className="flex flex-wrap gap-1 items-center">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+                        <Skull className="h-3 w-3" /> Antagonistas:
+                      </span>
+                      {antagonists.map((char, i) => (
+                        <Badge key={i} variant="destructive" className="text-xs">{char.name}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  {/* Supporting */}
+                  {supporting.length > 0 && (
+                    <div className="flex flex-wrap gap-1 items-center">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+                        <UserCheck className="h-3 w-3" /> Secundarios:
+                      </span>
+                      {supporting.slice(0, 8).map((char, i) => (
+                        <Badge key={i} variant="secondary" className="text-xs">{char.name}</Badge>
+                      ))}
+                      {supporting.length > 8 && <Badge variant="outline" className="text-xs">+{supporting.length - 8}</Badge>}
+                    </div>
+                  )}
+                  {/* Collective Entities */}
+                  {collectiveEntities.length > 0 && (
+                    <div className="flex flex-wrap gap-1 items-center">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+                        <Users2 className="h-3 w-3" /> Colectivos:
+                      </span>
+                      {collectiveEntities.slice(0, 6).map((char, i) => (
+                        <Badge key={i} variant="outline" className="text-xs border-primary/50">{char.name}</Badge>
+                      ))}
+                      {collectiveEntities.length > 6 && <Badge variant="outline" className="text-xs">+{collectiveEntities.length - 6}</Badge>}
+                    </div>
+                  )}
+                  {/* Others (cameos, extras, etc.) */}
+                  {others.length > 0 && (
+                    <div className="flex flex-wrap gap-1 items-center">
+                      <span className="text-xs text-muted-foreground mr-1">Otros:</span>
+                      {others.slice(0, 6).map((char, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">{char.name}</Badge>
+                      ))}
+                      {others.length > 6 && <Badge variant="outline" className="text-xs">+{others.length - 6}</Badge>}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {scriptData.characters.slice(0, 10).map((char, i) => (
-                  <Badge key={i} variant="secondary" className="gap-1">
-                    {char.name}
-                    {char.role && <span className="text-muted-foreground">({char.role})</span>}
-                  </Badge>
-                ))}
-                {scriptData.characters.length > 10 && (
-                  <Badge variant="outline">+{scriptData.characters.length - 10} más</Badge>
-                )}
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Locations */}
           {scriptData.locations && scriptData.locations.length > 0 && (
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="h-4 w-4 text-primary" />
-                <span className="font-medium text-sm">Localizaciones detectadas</span>
+                <span className="font-medium text-sm">Localizaciones detectadas ({scriptData.locations.length})</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {scriptData.locations.slice(0, 8).map((loc, i) => (
+                {scriptData.locations.slice(0, 12).map((loc, i) => (
                   <Badge key={i} variant="outline">
                     {loc.name}
                   </Badge>
                 ))}
-                {scriptData.locations.length > 8 && (
-                  <Badge variant="secondary">+{scriptData.locations.length - 8} más</Badge>
+                {scriptData.locations.length > 12 && (
+                  <Badge variant="secondary">+{scriptData.locations.length - 12} más</Badge>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Subplots */}
+          {scriptData.subplots && scriptData.subplots.length > 0 && (
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <GitBranch className="h-4 w-4 text-primary" />
+                <span className="font-medium text-sm">Subtramas ({scriptData.subplots.length})</span>
+              </div>
+              <div className="space-y-1">
+                {scriptData.subplots.slice(0, 4).map((subplot, i) => (
+                  <div key={i} className="text-xs bg-muted/50 rounded px-2 py-1">
+                    <span className="font-medium">{subplot.name}</span>
+                    {subplot.description && (
+                      <span className="text-muted-foreground ml-1">- {subplot.description.slice(0, 80)}{subplot.description.length > 80 ? '...' : ''}</span>
+                    )}
+                  </div>
+                ))}
+                {scriptData.subplots.length > 4 && (
+                  <span className="text-xs text-muted-foreground">+{scriptData.subplots.length - 4} más</span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Plot Twists */}
+          {scriptData.plot_twists && scriptData.plot_twists.length > 0 && (
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="font-medium text-sm">Giros narrativos ({scriptData.plot_twists.length})</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {scriptData.plot_twists.slice(0, 5).map((twist, i) => (
+                  <Badge 
+                    key={i} 
+                    variant={twist.impact === 'paradigm_shift' ? 'destructive' : twist.impact === 'major' ? 'default' : 'secondary'}
+                    className="text-xs"
+                  >
+                    {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'} {twist.name}
+                  </Badge>
+                ))}
+                {scriptData.plot_twists.length > 5 && (
+                  <Badge variant="outline" className="text-xs">+{scriptData.plot_twists.length - 5} más</Badge>
                 )}
               </div>
             </div>
@@ -527,16 +661,16 @@ export function ScriptSummaryPanelAssisted({
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Box className="h-4 w-4 text-primary" />
-                <span className="font-medium text-sm">Props detectados</span>
+                <span className="font-medium text-sm">Props detectados ({scriptData.props.length})</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {scriptData.props.slice(0, 6).map((prop, i) => (
+                {scriptData.props.slice(0, 8).map((prop, i) => (
                   <Badge key={i} variant="outline" className="text-xs">
                     {typeof prop === 'string' ? prop : prop.name}
                   </Badge>
                 ))}
-                {scriptData.props.length > 6 && (
-                  <Badge variant="secondary">+{scriptData.props.length - 6} más</Badge>
+                {scriptData.props.length > 8 && (
+                  <Badge variant="secondary">+{scriptData.props.length - 8} más</Badge>
                 )}
               </div>
             </div>
