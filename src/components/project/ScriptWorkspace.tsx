@@ -20,7 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
-import { ScriptSummaryPanel } from './ScriptSummaryPanel';
+import { ScriptSummaryPanelAssisted } from './ScriptSummaryPanelAssisted';
 import {
   Lightbulb,
   FileText,
@@ -874,11 +874,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         </div>
 
         {/* Script Summary Panel with episodes, teasers, and actions */}
-        <ScriptSummaryPanel 
+        <ScriptSummaryPanelAssisted 
           projectId={projectId} 
           onScenesGenerated={() => {
             toast.success('Escenas generadas. Ve al módulo de Escenas para producir.');
           }}
+          onEntitiesExtracted={onEntitiesExtracted}
         />
 
         {/* Raw text preview (collapsed) */}
