@@ -1,5 +1,6 @@
 /**
- * useAutopilot - React hook for autopilot image generation
+ * useAutopilot v2 - React hook for autopilot image generation
+ * Enhanced with template step context support
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -19,6 +20,10 @@ export interface UseAutopilotOptions {
   availablePresets: string[];
   phase?: Phase;
   enabled?: boolean;
+  // v2: Template context
+  templateStepKey?: string;
+  templatePresetBias?: Record<string, number>;
+  styleBias?: Record<string, number>;
 }
 
 export interface UseAutopilotResult {
@@ -37,7 +42,10 @@ export function useAutopilot({
   assetType,
   availablePresets,
   phase,
-  enabled = true
+  enabled = true,
+  templateStepKey,
+  templatePresetBias,
+  styleBias,
 }: UseAutopilotOptions): UseAutopilotResult {
   const [loading, setLoading] = useState(true);
   const [decision, setDecision] = useState<AutopilotDecision | null>(null);
@@ -56,7 +64,12 @@ export function useAutopilot({
         projectId,
         assetType,
         availablePresets,
-        phase
+        phase,
+        {
+          templateStepKey,
+          templatePresetBias,
+          styleBias,
+        }
       );
       setDecision(result);
       setSettings(result.settings);
@@ -65,7 +78,7 @@ export function useAutopilot({
     } finally {
       setLoading(false);
     }
-  }, [projectId, assetType, availablePresets, phase, enabled]);
+  }, [projectId, assetType, availablePresets, phase, enabled, templateStepKey, templatePresetBias, styleBias]);
 
   useEffect(() => {
     fetchDecision();
@@ -74,7 +87,7 @@ export function useAutopilot({
   // Reset logged state when params change
   useEffect(() => {
     hasLoggedShown.current = false;
-  }, [projectId, assetType]);
+  }, [projectId, assetType, templateStepKey]);
 
   const logShown = useCallback(async () => {
     if (!decision || hasLoggedShown.current) return;

@@ -2130,6 +2130,7 @@ export type Database = {
           run_type: string | null
           status: string | null
           suggestions: Json | null
+          template_step_key: string | null
           triggered_rules: string[] | null
           used_asset_ids: string[] | null
           user_override: boolean | null
@@ -2168,6 +2169,7 @@ export type Database = {
           run_type?: string | null
           status?: string | null
           suggestions?: Json | null
+          template_step_key?: string | null
           triggered_rules?: string[] | null
           used_asset_ids?: string[] | null
           user_override?: boolean | null
@@ -2206,6 +2208,7 @@ export type Database = {
           run_type?: string | null
           status?: string | null
           suggestions?: Json | null
+          template_step_key?: string | null
           triggered_rules?: string[] | null
           used_asset_ids?: string[] | null
           user_override?: boolean | null
@@ -2950,6 +2953,8 @@ export type Database = {
       }
       projects: {
         Row: {
+          active_template_id: string | null
+          active_template_step_index: number | null
           animation_type: string | null
           bible_completeness_score: number | null
           budget_cap_episode_eur: number | null
@@ -2973,6 +2978,8 @@ export type Database = {
           visual_style: string | null
         }
         Insert: {
+          active_template_id?: string | null
+          active_template_step_index?: number | null
           animation_type?: string | null
           bible_completeness_score?: number | null
           budget_cap_episode_eur?: number | null
@@ -2996,6 +3003,8 @@ export type Database = {
           visual_style?: string | null
         }
         Update: {
+          active_template_id?: string | null
+          active_template_step_index?: number | null
           animation_type?: string | null
           bible_completeness_score?: number | null
           budget_cap_episode_eur?: number | null
@@ -3018,7 +3027,15 @@ export type Database = {
           user_level?: string | null
           visual_style?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_active_template_id_fkey"
+            columns: ["active_template_id"]
+            isOneToOne: false
+            referencedRelation: "short_templates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       prompt_cache: {
         Row: {
@@ -3646,6 +3663,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      short_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_range: string | null
+          id: string
+          name: string
+          pacing: string | null
+          recommended_shots: Json | null
+          steps: Json
+          style_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_range?: string | null
+          id?: string
+          name: string
+          pacing?: string | null
+          recommended_shots?: Json | null
+          steps?: Json
+          style_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_range?: string | null
+          id?: string
+          name?: string
+          pacing?: string | null
+          recommended_shots?: Json | null
+          steps?: Json
+          style_id?: string
+        }
+        Relationships: []
       }
       shots: {
         Row: {
