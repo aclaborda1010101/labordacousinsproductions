@@ -16,6 +16,7 @@ interface GenerateRunRequest {
   prompt: string;
   context?: string;
   params?: Record<string, unknown>;
+  parentRunId?: string; // For regeneration chains
 }
 
 interface GenerateRunResponse {
@@ -95,7 +96,8 @@ serve(async (req) => {
         composed_prompt: body.prompt + (body.context ? `\nContexto: ${body.context}` : ''),
         verdict: 'approved',
         warnings: [],
-        suggestions: []
+        suggestions: [],
+        parent_run_id: body.parentRunId || null  // For regeneration chains
       })
       .select('id')
       .single();
