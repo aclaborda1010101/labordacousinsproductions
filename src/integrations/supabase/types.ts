@@ -3728,6 +3728,8 @@ export type Database = {
           fields_json: Json | null
           hero: boolean | null
           id: string
+          keyframe_hints: Json | null
+          lighting: Json | null
           name: string | null
           prompt_json: Json | null
           render_status: string | null
@@ -3764,6 +3766,8 @@ export type Database = {
           fields_json?: Json | null
           hero?: boolean | null
           id?: string
+          keyframe_hints?: Json | null
+          lighting?: Json | null
           name?: string | null
           prompt_json?: Json | null
           render_status?: string | null
@@ -3800,6 +3804,8 @@ export type Database = {
           fields_json?: Json | null
           hero?: boolean | null
           id?: string
+          keyframe_hints?: Json | null
+          lighting?: Json | null
           name?: string | null
           prompt_json?: Json | null
           render_status?: string | null
