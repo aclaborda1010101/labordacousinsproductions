@@ -104,6 +104,7 @@ interface CharacterData {
   entity_type?: string;
   description?: string;
   priority?: string;
+  arc?: string;
 }
 
 interface LocationData {
@@ -301,47 +302,111 @@ export function ScriptSummaryPanelAssisted({
     if (!scriptData) return;
     
     setExtractingEntities(true);
+    let insertedCount = { characters: 0, locations: 0, props: 0 };
+    let errors: string[] = [];
+    
     try {
-      // Insert characters
+      // Get existing characters to avoid duplicates
+      const { data: existingChars } = await supabase
+        .from('characters')
+        .select('name')
+        .eq('project_id', projectId);
+      const existingCharNames = new Set((existingChars || []).map(c => c.name.toLowerCase()));
+
+      // Insert characters one by one, checking for duplicates
       if (scriptData.characters?.length) {
         for (const char of scriptData.characters) {
-          await supabase.from('characters').upsert({
+          if (!char.name || existingCharNames.has(char.name.toLowerCase())) continue;
+          
+          const { error } = await supabase.from('characters').insert({
             project_id: projectId,
             name: char.name,
-            role: char.role || char.description || null,
+            role: char.role_detail || char.role || char.description || null,
             bio: char.description || null,
-          }, { onConflict: 'project_id,name', ignoreDuplicates: true });
+            arc: char.arc || null,
+          });
+          
+          if (error) {
+            console.error('Error inserting character:', char.name, error);
+            errors.push(`Personaje "${char.name}": ${error.message}`);
+          } else {
+            insertedCount.characters++;
+            existingCharNames.add(char.name.toLowerCase());
+          }
         }
       }
+
+      // Get existing locations
+      const { data: existingLocs } = await supabase
+        .from('locations')
+        .select('name')
+        .eq('project_id', projectId);
+      const existingLocNames = new Set((existingLocs || []).map(l => l.name.toLowerCase()));
 
       // Insert locations
       if (scriptData.locations?.length) {
         for (const loc of scriptData.locations) {
-          await supabase.from('locations').upsert({
+          if (!loc.name || existingLocNames.has(loc.name.toLowerCase())) continue;
+          
+          const { error } = await supabase.from('locations').insert({
             project_id: projectId,
             name: loc.name,
             description: loc.description || loc.type || null,
-          }, { onConflict: 'project_id,name', ignoreDuplicates: true });
+          });
+          
+          if (error) {
+            console.error('Error inserting location:', loc.name, error);
+            errors.push(`Localización "${loc.name}": ${error.message}`);
+          } else {
+            insertedCount.locations++;
+            existingLocNames.add(loc.name.toLowerCase());
+          }
         }
       }
 
-      // Insert props if available
+      // Get existing props
+      const { data: existingProps } = await supabase
+        .from('props')
+        .select('name')
+        .eq('project_id', projectId);
+      const existingPropNames = new Set((existingProps || []).map(p => p.name.toLowerCase()));
+
+      // Insert props
       if (scriptData.props?.length) {
         for (const prop of scriptData.props) {
-          await supabase.from('props').upsert({
+          const propName = typeof prop === 'string' ? prop : prop.name;
+          if (!propName || existingPropNames.has(propName.toLowerCase())) continue;
+          
+          const { error } = await supabase.from('props').insert({
             project_id: projectId,
-            name: typeof prop === 'string' ? prop : prop.name,
+            name: propName,
             description: typeof prop === 'object' ? prop.description : null,
-          }, { onConflict: 'project_id,name', ignoreDuplicates: true });
+          });
+          
+          if (error) {
+            console.error('Error inserting prop:', propName, error);
+          } else {
+            insertedCount.props++;
+            existingPropNames.add(propName.toLowerCase());
+          }
         }
       }
 
       setEntitiesExtracted(true);
-      toast.success('Elementos añadidos a la Biblia');
+      
+      const totalInserted = insertedCount.characters + insertedCount.locations + insertedCount.props;
+      if (totalInserted > 0) {
+        toast.success(`Añadidos: ${insertedCount.characters} personajes, ${insertedCount.locations} localizaciones, ${insertedCount.props} props`);
+      } else if (errors.length > 0) {
+        toast.error(`Error al añadir elementos: ${errors[0]}`);
+      } else {
+        toast.info('Todos los elementos ya estaban en la Biblia');
+      }
+      
       onEntitiesExtracted?.();
     } catch (err) {
       console.error('Error extracting entities:', err);
-      toast.error('Error al exportar elementos');
+      toast.error('Error al exportar elementos a la Biblia');
     } finally {
       setExtractingEntities(false);
     }
