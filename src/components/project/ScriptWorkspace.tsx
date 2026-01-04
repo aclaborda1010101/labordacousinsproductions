@@ -226,6 +226,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   // Generation state
   const [status, setStatus] = useState<WorkflowStatus>('idle');
   const [progress, setProgress] = useState(0);
+  const [progressMessage, setProgressMessage] = useState('');
   const [generatedScript, setGeneratedScript] = useState<unknown>(null);
   const [breakdownResult, setBreakdownResult] = useState<BreakdownResult | null>(null);
   const [qualityDiagnosis, setQualityDiagnosis] = useState<QualityDiagnosis | null>(null);
@@ -436,17 +437,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
     setUploadedFileName(file.name);
     setStatus('analyzing');
-    setProgress(10);
+    setProgress(5);
+    setProgressMessage('Preparando archivo...');
     
     if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
       const text = await file.text();
       setScriptText(text);
       setStatus('idle');
       setProgress(0);
+      setProgressMessage('');
       toast.success('Archivo cargado correctamente');
     } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
       const fileSizeKB = Math.round(file.size / 1024);
       const estimatedPages = Math.ceil(file.size / 3500);
+      setProgressMessage(`Subiendo PDF (${fileSizeKB}KB, ~${estimatedPages} págs)...`);
       toast.info(`Procesando PDF (~${estimatedPages} páginas, ${fileSizeKB}KB)...`);
       
       const fileName = `${projectId}/${Date.now()}_${file.name}`;
@@ -458,16 +462,29 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         toast.error('Error al subir archivo');
         console.error(uploadError);
         setStatus('error');
+        setProgressMessage('');
         return;
       }
 
-      setProgress(30);
+      setProgress(20);
+      setProgressMessage('Archivo subido. Extrayendo texto con IA...');
       const { data: urlData } = supabase.storage.from('scripts').getPublicUrl(fileName);
       
       try {
         // Use dynamic timeout based on file size
         const timeoutMs = getTimeoutForFileSize(file.size);
         console.log(`[ScriptWorkspace] Using timeout ${timeoutMs}ms for ${fileSizeKB}KB PDF`);
+        
+        // Start progress simulation for long operations
+        const progressInterval = setInterval(() => {
+          setProgress(prev => {
+            if (prev < 60) return prev + 2;
+            if (prev < 80) return prev + 0.5;
+            return prev;
+          });
+        }, 2000);
+        
+        setProgressMessage(`Leyendo ${estimatedPages} páginas con IA (puede tardar ~${Math.ceil(estimatedPages / 2)}s)...`);
         
         const { data, error } = await invokeWithTimeout<{
           rawText?: string;
@@ -477,9 +494,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
         }>('parse-script', { pdfUrl: urlData.publicUrl, projectId }, timeoutMs);
 
+        clearInterval(progressInterval);
+        
         if (error) throw error;
         
-        setProgress(70);
+        setProgress(75);
+        setProgressMessage('Texto extraído. Analizando estructura del guion...');
         
         if (data?.needsManualInput) {
           toast.warning(data.error || 'El PDF requiere entrada manual.', {
@@ -488,6 +508,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           });
           setStatus('idle');
           setProgress(0);
+          setProgressMessage('');
           return;
         }
         
@@ -497,12 +518,16 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           if (stats) {
             console.log(`[ScriptWorkspace] PDF stats: ${stats.estimatedPages} pages, model: ${stats.modelUsed}`);
           }
+          setProgressMessage('Analizando personajes, locaciones y escenas...');
           toast.success('PDF procesado. Analizando guion...');
           // Auto-trigger analysis after PDF processing with the extracted text
           await handleAnalyzeScript(data.rawText);
+          // Force refresh to show the saved script
+          setRefreshTrigger(prev => prev + 1);
         } else if (data?.error) {
           toast.error(data.error);
           setStatus('error');
+          setProgressMessage('');
         }
       } catch (err) {
         console.error('PDF parse error:', err);
@@ -511,6 +536,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           ? `El PDF es muy grande. ${errorMsg}` 
           : 'Error al procesar el PDF. Intenta copiar y pegar el texto directamente.');
         setStatus('error');
+        setProgressMessage('');
       }
     }
   };
@@ -1464,7 +1490,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 <div className="space-y-2">
                   <Progress value={progress} />
                   <p className="text-xs text-muted-foreground text-center">
-                    Generando guion...
+                    {progressMessage || 'Generando guion...'}
                   </p>
                 </div>
               )}
@@ -1676,7 +1702,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 <div className="space-y-2">
                   <Progress value={progress} />
                   <p className="text-xs text-muted-foreground text-center">
-                    Analizando guion...
+                    {progressMessage || 'Analizando guion...'}
                   </p>
                 </div>
               )}
