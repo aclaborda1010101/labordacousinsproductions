@@ -178,12 +178,20 @@ export default function ProjectDetailPro({ project, setProject }: ProjectDetailP
 
       <RealtimeCollaboration projectId={project.id} currentSection={activeTab} />
 
-      {/* Production Director AI */}
+      {/* Production Director AI - Forge */}
       {showDirector ? (
         <ProductionDirectorPanel 
           projectId={project.id} 
           isOpen={showDirector} 
-          onClose={() => setShowDirector(false)} 
+          onClose={() => setShowDirector(false)}
+          onRefresh={async () => {
+            const { data } = await supabase
+              .from('projects')
+              .select('*')
+              .eq('id', project.id)
+              .single();
+            if (data) setProject(data);
+          }}
         />
       ) : (
         <ProductionDirectorTrigger onClick={() => setShowDirector(true)} />
