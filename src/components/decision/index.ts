@@ -11,5 +11,8 @@ export type {
   RiskFlags,
   TelemetrySummary,
   CanonSummary,
-  DecisionEventType
+  DecisionEventType,
+  OutputType,
+  OverrideReason,
+  ExtractedEntity
 } from '@/lib/decisionEngine';

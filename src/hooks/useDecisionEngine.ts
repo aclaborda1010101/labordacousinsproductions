@@ -9,7 +9,9 @@ import {
   type DecisionAssetType,
   type DecisionPhase,
   type UserMode,
-  type DecisionEventType
+  type DecisionEventType,
+  type OutputType,
+  type OverrideReason
 } from '@/lib/decisionEngine';
 import type { CreativeMode } from '@/lib/modeCapabilities';
 
@@ -18,6 +20,7 @@ export interface UseDecisionEngineProps {
   assetType: DecisionAssetType;
   creativeMode: CreativeMode;
   phase: DecisionPhase;
+  outputType?: OutputType;
   currentRunId?: string;
   currentPresetId?: string;
   currentEngine?: string;
@@ -38,24 +41,29 @@ export interface UseDecisionEngineReturn {
   // Log that decision was followed
   logFollowed: (chosenEngine?: string, chosenPreset?: string) => Promise<void>;
   // Log that decision was overridden
-  logOverridden: (chosenEngine?: string, chosenPreset?: string, chosenAction?: ActionIntent) => Promise<void>;
+  logOverridden: (reason: OverrideReason, chosenEngine?: string, chosenPreset?: string, chosenAction?: ActionIntent) => Promise<void>;
   // Log autopilot events
   logAutopilotPrompted: () => Promise<void>;
   logAutopilotExecuted: () => Promise<void>;
   // Log cost warning shown
   logCostWarning: () => Promise<void>;
+  // Log engine fallback applied
+  logEngineFallback: () => Promise<void>;
+  // Log chain limit reached
+  logChainLimitReached: () => Promise<void>;
   // Refresh the decision
   refresh: () => Promise<void>;
 }
 
 /**
- * Hook to use the Decision Engine for smart recommendations
+ * Hook to use the Decision Engine v1.1 for smart recommendations
  */
 export function useDecisionEngine({
   projectId,
   assetType,
   creativeMode,
   phase,
+  outputType = 'image',
   currentRunId,
   currentPresetId,
   currentEngine,
@@ -73,11 +81,12 @@ export function useDecisionEngine({
     userMode,
     phase,
     assetType,
+    outputType,
     currentRunId,
     currentPresetId,
     currentEngine,
     entityId
-  }), [projectId, userMode, phase, assetType, currentRunId, currentPresetId, currentEngine, entityId]);
+  }), [projectId, userMode, phase, assetType, outputType, currentRunId, currentPresetId, currentEngine, entityId]);
 
   const fetchDecision = useCallback(async (action: ActionIntent = 'generate', chainLength: number = 1) => {
     if (!enabled || !projectId) return null;
@@ -124,6 +133,7 @@ export function useDecisionEngine({
   }, [decision, projectId, assetType]);
 
   const logOverridden = useCallback(async (
+    overrideReason: OverrideReason,
     chosenEngine?: string, 
     chosenPreset?: string, 
     chosenAction?: ActionIntent
@@ -132,7 +142,8 @@ export function useDecisionEngine({
     await logDecisionEvent(projectId, assetType, 'decision_overridden', decision, {
       chosenEngine,
       chosenPreset,
-      chosenAction
+      chosenAction,
+      overrideReason
     });
   }, [decision, projectId, assetType]);
 
@@ -149,6 +160,16 @@ export function useDecisionEngine({
   const logCostWarning = useCallback(async () => {
     if (!decision || !projectId) return;
     await logDecisionEvent(projectId, assetType, 'cost_warning_shown', decision);
+  }, [decision, projectId, assetType]);
+
+  const logEngineFallback = useCallback(async () => {
+    if (!decision || !projectId) return;
+    await logDecisionEvent(projectId, assetType, 'engine_fallback_applied', decision);
+  }, [decision, projectId, assetType]);
+
+  const logChainLimitReached = useCallback(async () => {
+    if (!decision || !projectId) return;
+    await logDecisionEvent(projectId, assetType, 'chain_limit_reached', decision);
   }, [decision, projectId, assetType]);
 
   const refresh = useCallback(async () => {
@@ -174,6 +195,8 @@ export function useDecisionEngine({
     logAutopilotPrompted,
     logAutopilotExecuted,
     logCostWarning,
+    logEngineFallback,
+    logChainLimitReached,
     refresh
   };
 }

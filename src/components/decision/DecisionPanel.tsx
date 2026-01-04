@@ -9,7 +9,12 @@ import {
   Sparkles,
   CheckCircle,
   ArrowRight,
-  FileWarning
+  FileWarning,
+  FlaskConical,
+  Zap,
+  AlertCircle,
+  Link2,
+  RotateCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +33,52 @@ interface DecisionPanelProps {
 }
 
 /**
- * DecisionPanel - Shows recommendations from the Decision Engine
+ * Confidence badge component (v1.1)
+ */
+function ConfidenceBadge({ decision }: { decision: DecisionPack }) {
+  const { confidenceLabel, confidence } = decision;
+  const confidencePercent = Math.round(confidence * 100);
+  
+  switch (confidenceLabel) {
+    case 'high':
+      return (
+        <Badge variant="outline" className="text-xs bg-green-500/10 border-green-500/30 text-green-600">
+          <CheckCircle className="w-3 h-3 mr-1" />
+          Alta {confidencePercent}%
+        </Badge>
+      );
+    case 'few_data':
+      return (
+        <Badge variant="outline" className="text-xs bg-muted">
+          <FlaskConical className="w-3 h-3 mr-1" />
+          Pocos datos
+        </Badge>
+      );
+    case 'friction':
+      return (
+        <Badge variant="outline" className="text-xs bg-orange-500/10 border-orange-500/30 text-orange-600">
+          <AlertCircle className="w-3 h-3 mr-1" />
+          Fricción alta
+        </Badge>
+      );
+    case 'medium':
+      return (
+        <Badge variant="outline" className="text-xs">
+          <Zap className="w-3 h-3 mr-1" />
+          {confidencePercent}%
+        </Badge>
+      );
+    default:
+      return (
+        <Badge variant="outline" className="text-xs">
+          {confidencePercent}%
+        </Badge>
+      );
+  }
+}
+
+/**
+ * DecisionPanel v1.1 - Shows recommendations from the Decision Engine
  * 
  * In ASSISTED mode: Shows only a simple CTA based on recommendedAction
  * In DIRECTOR/PRO modes: Shows collapsible panel with details and "Aplicar" button
@@ -54,8 +104,10 @@ export function DecisionPanel({
 
   // Reset logged state when decision changes
   useEffect(() => {
-    setLogged(false);
-  }, [decision?.recommendedAction, decision?.recommendedPresetId]);
+    if (decision?.decisionId) {
+      setLogged(false);
+    }
+  }, [decision?.decisionId]);
 
   if (!decision || loading) {
     return null;
@@ -63,23 +115,29 @@ export function DecisionPanel({
 
   const isAssisted = creativeMode === 'ASSISTED';
   const hasRisks = decision.riskFlags.invention || decision.riskFlags.cost || decision.riskFlags.canon || decision.riskFlags.consistency;
-  const confidencePercent = Math.round(decision.confidence * 100);
 
   // ASSISTED mode: Simple inline CTA
   if (isAssisted) {
     return (
       <div className={cn(
         "flex items-center gap-2 p-2 rounded-lg bg-primary/5 border border-primary/20",
+        decision.chainLimitReached && "border-orange-500/30 bg-orange-500/5",
         className
       )}>
-        {decision.autopilotEligible && (
+        {decision.autopilotEligible && !decision.chainLimitReached && (
           <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
             <Sparkles className="w-3 h-3 mr-1" />
             Autopilot
           </Badge>
         )}
-        <span className="text-sm text-muted-foreground">{decision.message}</span>
-        {decision.nextSteps.length > 0 && (
+        {decision.chainLimitReached && (
+          <Badge variant="outline" className="bg-orange-500/10 text-orange-600 text-xs border-orange-500/30">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Límite
+          </Badge>
+        )}
+        <span className="text-sm text-muted-foreground flex-1">{decision.message}</span>
+        {decision.nextSteps.length > 0 && !decision.chainLimitReached && (
           <span className="text-xs text-muted-foreground">
             → {decision.nextSteps[0]}
           </span>
@@ -98,7 +156,8 @@ export function DecisionPanel({
           className={cn(
             "w-full justify-between px-3 py-2 h-auto",
             "bg-muted/50 hover:bg-muted/80 border border-border/50",
-            hasRisks && "border-warning/30 bg-warning/5"
+            hasRisks && "border-warning/30 bg-warning/5",
+            decision.chainLimitReached && "border-orange-500/40 bg-orange-500/5"
           )}
         >
           <div className="flex items-center gap-2">
@@ -107,18 +166,20 @@ export function DecisionPanel({
               decision.autopilotEligible ? "text-primary" : "text-muted-foreground"
             )} />
             <span className="text-sm font-medium">Recomendado</span>
-            {decision.autopilotEligible && (
+            {decision.autopilotEligible && !decision.chainLimitReached && (
               <Badge variant="outline" className="text-xs bg-primary/10 border-primary/30">
-                🤖 Autopilot {confidencePercent}%
+                🤖 Autopilot
               </Badge>
             )}
-            {!decision.autopilotEligible && confidencePercent > 0 && (
-              <Badge variant="outline" className="text-xs">
-                {confidencePercent}% conf.
-              </Badge>
-            )}
+            <ConfidenceBadge decision={decision} />
           </div>
           <div className="flex items-center gap-2">
+            {decision.chainLimitReached && (
+              <Badge variant="outline" className="text-xs border-orange-500/50 text-orange-600">
+                <RotateCw className="w-3 h-3 mr-1" />
+                Límite x{decision.chainLength}
+              </Badge>
+            )}
             {hasRisks && (
               <div className="flex gap-1">
                 {decision.riskFlags.invention && (
@@ -131,7 +192,7 @@ export function DecisionPanel({
                   <Shield className="w-3.5 h-3.5 text-warning" />
                 )}
                 {decision.riskFlags.consistency && (
-                  <AlertTriangle className="w-3.5 h-3.5 text-warning" />
+                  <Link2 className="w-3.5 h-3.5 text-orange-500" />
                 )}
               </div>
             )}
@@ -145,6 +206,14 @@ export function DecisionPanel({
       </CollapsibleTrigger>
 
       <CollapsibleContent className="mt-2 space-y-3 p-3 bg-muted/30 rounded-lg border border-border/50">
+        {/* Chain limit warning */}
+        {decision.chainLimitReached && (
+          <div className="flex items-center gap-2 p-2 bg-orange-500/10 border border-orange-500/30 rounded text-sm text-orange-700">
+            <AlertTriangle className="w-4 h-4" />
+            <span>Límite de intentos alcanzado ({decision.chainLength}). Considera cambiar estrategia.</span>
+          </div>
+        )}
+
         {/* Main recommendation */}
         <div className="space-y-1">
           <p className="text-sm font-medium text-foreground">{decision.message}</p>
@@ -169,12 +238,12 @@ export function DecisionPanel({
             {decision.riskFlags.canon && (
               <Badge variant="outline" className="text-xs border-warning/50 text-warning">
                 <Shield className="w-3 h-3 mr-1" />
-                Riesgo canon
+                Deriva canon
               </Badge>
             )}
             {decision.riskFlags.consistency && (
-              <Badge variant="outline" className="text-xs border-warning/50 text-warning">
-                <AlertTriangle className="w-3 h-3 mr-1" />
+              <Badge variant="outline" className="text-xs border-orange-500/50 text-orange-600">
+                <Link2 className="w-3 h-3 mr-1" />
                 Consistencia
               </Badge>
             )}
@@ -199,7 +268,12 @@ export function DecisionPanel({
                 Preset: {decision.recommendedPresetId}
               </Badge>
             )}
-            {decision.estimatedCost !== undefined && (
+            {decision.fallbackEngine && (
+              <Badge variant="outline" className="text-xs border-blue-500/50 text-blue-600">
+                Fallback: {formatEngineName(decision.fallbackEngine)}
+              </Badge>
+            )}
+            {decision.estimatedCost !== undefined && creativeMode === 'PRO' && (
               <Badge variant={decision.riskFlags.cost ? "destructive" : "outline"} className="text-xs">
                 <DollarSign className="w-3 h-3 mr-1" />
                 ${decision.estimatedCost.toFixed(3)}
@@ -250,9 +324,12 @@ export function DecisionPanel({
             size="sm"
             onClick={onApply}
             className="w-full"
+            variant={decision.recommendedAction === 'reinforce_canon_and_regenerate' ? 'default' : 'default'}
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            Aplicar recomendación
+            {decision.recommendedAction === 'reinforce_canon_and_regenerate' 
+              ? 'Reforzar Canon y Regenerar'
+              : 'Aplicar recomendación'}
           </Button>
         )}
       </CollapsibleContent>
@@ -270,18 +347,37 @@ export function DecisionBadge({
   decision: DecisionPack | null;
   onClick?: () => void;
 }) {
-  if (!decision || !decision.autopilotEligible) return null;
+  if (!decision) return null;
 
-  return (
-    <Badge 
-      variant="outline" 
-      className="text-xs bg-primary/10 border-primary/30 cursor-pointer hover:bg-primary/20"
-      onClick={onClick}
-    >
-      <Sparkles className="w-3 h-3 mr-1" />
-      Autopilot {Math.round(decision.confidence * 100)}%
-    </Badge>
-  );
+  // Show chain limit badge if reached
+  if (decision.chainLimitReached) {
+    return (
+      <Badge 
+        variant="outline" 
+        className="text-xs bg-orange-500/10 border-orange-500/30 text-orange-600 cursor-pointer"
+        onClick={onClick}
+      >
+        <AlertTriangle className="w-3 h-3 mr-1" />
+        Límite x{decision.chainLength}
+      </Badge>
+    );
+  }
+
+  // Show confidence badge
+  if (decision.autopilotEligible) {
+    return (
+      <Badge 
+        variant="outline" 
+        className="text-xs bg-primary/10 border-primary/30 cursor-pointer hover:bg-primary/20"
+        onClick={onClick}
+      >
+        <Sparkles className="w-3 h-3 mr-1" />
+        Autopilot {Math.round(decision.confidence * 100)}%
+      </Badge>
+    );
+  }
+
+  return <ConfidenceBadge decision={decision} />;
 }
 
 // Helper to format engine names

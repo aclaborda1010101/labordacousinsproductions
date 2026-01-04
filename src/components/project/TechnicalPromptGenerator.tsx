@@ -14,12 +14,10 @@ import {
 import { useTechnicalPrompt, Engine, PromptOptions, buildLocalPrompt } from '@/hooks/useTechnicalPrompt';
 
 const ENGINES: { value: Engine; label: string; description: string }[] = [
-  { value: 'chatgpt', label: 'ChatGPT', description: 'OpenAI - Motor por defecto para prompts' },
-  { value: 'claude', label: 'Claude', description: 'Anthropic - Razonamiento avanzado' },
-  { value: 'veo', label: 'Veo 3.1', description: 'Video generation - Cinemático' },
-  { value: 'kling', label: 'Kling 2.0', description: 'Video generation - Rápido' },
-  { value: 'flux', label: 'Flux', description: 'Imagen - Fotorealista' },
-  { value: 'midjourney', label: 'Midjourney', description: 'Imagen - Artístico' },
+  { value: 'nano-banana', label: 'Nano Banana', description: 'Personajes - Rápido y consistente' },
+  { value: 'flux', label: 'FLUX Pro Ultra', description: 'Alta calidad - Fotorealista' },
+  { value: 'veo', label: 'Veo 3.1', description: 'Video - Cinemático' },
+  { value: 'kling', label: 'Kling 2.0', description: 'Video - Rápido' },
 ];
 
 const SHOT_TYPES = [
@@ -54,7 +52,7 @@ export function TechnicalPromptGenerator({
   onPromptGenerated,
 }: TechnicalPromptGeneratorProps) {
   const { generating, generatePrompt, copyToClipboard } = useTechnicalPrompt();
-  const [engine, setEngine] = useState<Engine>('chatgpt');
+  const [engine, setEngine] = useState<Engine>('nano-banana');
   const [options, setOptions] = useState<PromptOptions>({
     shotType: '',
     expression: '',
