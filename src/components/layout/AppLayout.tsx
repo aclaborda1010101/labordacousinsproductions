@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { TaskNotificationCenter } from '@/components/notifications/TaskNotificationCenter';
 import { 
   Film, 
   Home, 
@@ -54,12 +55,12 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
-      {/* Logo */}
+      {/* Logo + Notifications */}
       <div className={cn(
         "h-16 flex items-center border-b border-sidebar-border",
         collapsed && !isMobile ? "px-3 justify-center" : "px-6"
       )}>
-        <Link to="/dashboard" className="flex items-center gap-3 group" onClick={() => isMobile && setMobileOpen(false)}>
+        <Link to="/dashboard" className="flex items-center gap-3 group flex-1" onClick={() => isMobile && setMobileOpen(false)}>
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-glow flex-shrink-0">
             <Clapperboard className="w-5 h-5 text-primary-foreground" />
           </div>
@@ -70,6 +71,8 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
           )}
         </Link>
+        {/* Notification bell in desktop sidebar */}
+        {!isMobile && <TaskNotificationCenter />}
       </div>
 
       {/* Developer Mode Badge */}
@@ -229,12 +232,13 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
           </SheetContent>
         </Sheet>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-1">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center">
             <Clapperboard className="w-4 h-4 text-primary-foreground" />
           </div>
           <span className="font-bold text-foreground text-sm">CINEFORGE</span>
         </div>
+        <TaskNotificationCenter />
       </div>
 
       {/* Desktop Sidebar */}

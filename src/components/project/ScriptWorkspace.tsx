@@ -20,6 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { ScriptSummaryPanelAssisted } from './ScriptSummaryPanelAssisted';
 import {
   Lightbulb,
@@ -43,6 +44,7 @@ import {
   Clapperboard,
   RefreshCw,
   Edit3,
+  Bell,
 } from 'lucide-react';
 
 interface ScriptWorkspaceProps {
@@ -159,6 +161,7 @@ function coerceScriptToString(input: unknown): string {
 
 export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: ScriptWorkspaceProps) {
   const navigate = useNavigate();
+  const { addTask, updateTask, completeTask, failTask, setIsOpen } = useBackgroundTasks();
   
   // User level from EKB
   const { userLevel } = useEditorialKnowledgeBase({
@@ -338,17 +341,37 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
   };
 
-  // Generate script from idea
-  const handleGenerateScript = async () => {
+  // Generate script from idea - with background task support
+  const handleGenerateScript = async (runInBackground = false) => {
     if (!ideaText.trim()) {
       toast.error('Escribe tu idea primero');
       return;
     }
 
-    setStatus('generating');
-    setProgress(10);
+    // Create background task
+    const taskId = addTask({
+      type: 'script_generation',
+      title: 'Generando guion desde idea',
+      description: ideaText.slice(0, 100) + (ideaText.length > 100 ? '...' : ''),
+      projectId,
+    });
+
+    if (runInBackground) {
+      toast.success('Generación iniciada en segundo plano', {
+        description: 'Puedes navegar a otras pantallas. Te notificaremos cuando termine.',
+        action: {
+          label: 'Ver progreso',
+          onClick: () => setIsOpen(true),
+        },
+      });
+    } else {
+      setStatus('generating');
+      setProgress(10);
+    }
 
     try {
+      updateTask(taskId, { progress: 10, description: 'Generando esquema...' });
+      
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('generate-outline-light', {
         body: {
           projectId,
@@ -359,7 +382,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       });
 
       if (outlineError) throw outlineError;
-      setProgress(50);
+      if (!runInBackground) setProgress(50);
+      updateTask(taskId, { progress: 50, description: 'Escribiendo guion...' });
 
       const { data: scriptData, error: scriptError } = await supabase.functions.invoke('script-generate', {
         body: {
@@ -371,7 +395,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       });
 
       if (scriptError) throw scriptError;
-      setProgress(100);
+      if (!runInBackground) setProgress(100);
+      updateTask(taskId, { progress: 90, description: 'Guardando...' });
 
       const rawScript = scriptData?.screenplay || scriptData?.script || '';
       setGeneratedScript(rawScript);
@@ -399,11 +424,17 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       setExistingScriptText(rawScript);
       setEntryMode(null);
 
-      setStatus('success');
+      completeTask(taskId, { title: parsedJson.title });
+      if (!runInBackground) {
+        setStatus('success');
+      }
       toast.success('¡Guion generado!');
     } catch (err) {
       console.error('Generation error:', err);
-      setStatus('error');
+      failTask(taskId, err instanceof Error ? err.message : 'Error desconocido');
+      if (!runInBackground) {
+        setStatus('error');
+      }
       toast.error('Error al generar el guion');
     }
   };
@@ -1085,23 +1116,33 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               })()}
 
               {!generatedScript && (
-                <Button 
-                  onClick={handleGenerateScript} 
-                  className="w-full" 
-                  disabled={!ideaText.trim() || status === 'generating'}
-                >
-                  {status === 'generating' ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Generando...
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="h-4 w-4 mr-2" />
-                      Generar guion
-                    </>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => handleGenerateScript(false)} 
+                    className="flex-1" 
+                    disabled={!ideaText.trim() || status === 'generating'}
+                  >
+                    {status === 'generating' ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generando...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="h-4 w-4 mr-2" />
+                        Generar guion
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleGenerateScript(true)} 
+                    disabled={!ideaText.trim() || status === 'generating'}
+                    title="Ejecutar en segundo plano"
+                  >
+                    <Bell className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
             </CardContent>
           </Card>

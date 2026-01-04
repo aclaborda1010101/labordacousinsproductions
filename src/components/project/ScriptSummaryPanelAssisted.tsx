@@ -2,6 +2,7 @@
  * ScriptSummaryPanelAssisted - Simplified summary for ASSISTED mode
  * Shows episodes, teasers, characters, locations with export to Bible
  * Generates scenes + shots automatically with clear messaging
+ * Supports background task execution for all generation processes
  */
 
 import { useState, useEffect } from 'react';
@@ -15,6 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import {
   Film,
   ChevronDown,
@@ -35,6 +37,7 @@ import {
   Download,
   Check,
   AlertCircle,
+  Bell,
 } from 'lucide-react';
 import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 
@@ -97,6 +100,7 @@ export function ScriptSummaryPanelAssisted({
   onEntitiesExtracted 
 }: ScriptSummaryPanelAssistedProps) {
   const navigate = useNavigate();
+  const { addTask, updateTask, completeTask, failTask, setIsOpen } = useBackgroundTasks();
   const [loading, setLoading] = useState(true);
   const [scriptData, setScriptData] = useState<ScriptData | null>(null);
   const [segmenting, setSegmenting] = useState(false);
@@ -105,6 +109,7 @@ export function ScriptSummaryPanelAssisted({
   const [extractingEntities, setExtractingEntities] = useState(false);
   const [entitiesExtracted, setEntitiesExtracted] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>('episodes');
+  const [runningInBackground, setRunningInBackground] = useState(false);
 
   // Load script data
   useEffect(() => {
@@ -212,21 +217,57 @@ export function ScriptSummaryPanelAssisted({
     }
   };
 
-  // Generate all scenes with shots
-  const generateAllScenesAndShots = async () => {
+  // Generate all scenes with shots - runs in background
+  const generateAllScenesAndShots = async (runInBackground = false) => {
     if (!scriptData?.episodes?.length) return;
     
-    setSegmenting(true);
     const episodes = scriptData.episodes.filter(ep => !segmentedEpisodes.has(ep.episode_number));
-    setSegmentProgress({ current: 0, total: episodes.length, phase: 'Preparando...' });
+    const totalItems = episodes.length + 
+      (scriptData.teasers?.teaser60 && !segmentedEpisodes.has(-1) ? 1 : 0) +
+      (scriptData.teasers?.teaser30 && !segmentedEpisodes.has(-2) ? 1 : 0);
+
+    if (totalItems === 0) {
+      toast.info('Todas las escenas ya están generadas');
+      return;
+    }
+
+    // Create background task
+    const taskId = addTask({
+      type: 'scene_generation',
+      title: 'Generando escenas y shots',
+      description: `${totalItems} episodios/teasers pendientes`,
+      projectId,
+      entityName: scriptData.title,
+      metadata: { episodeCount: episodes.length },
+    });
+
+    if (runInBackground) {
+      setRunningInBackground(true);
+      toast.success('Generación iniciada en segundo plano', {
+        description: 'Puedes navegar a otras pantallas. Te notificaremos cuando termine.',
+        action: {
+          label: 'Ver progreso',
+          onClick: () => setIsOpen(true),
+        },
+      });
+    } else {
+      setSegmenting(true);
+      setSegmentProgress({ current: 0, total: totalItems, phase: 'Preparando...' });
+    }
 
     try {
+      let completed = 0;
+
       for (let i = 0; i < episodes.length; i++) {
         const episode = episodes[i];
-        setSegmentProgress({ 
-          current: i + 1, 
-          total: episodes.length, 
-          phase: `Episodio ${episode.episode_number}: Generando escenas y shots...` 
+        const phase = `Episodio ${episode.episode_number}: Generando escenas y shots...`;
+        
+        if (!runInBackground) {
+          setSegmentProgress({ current: i + 1, total: totalItems, phase });
+        }
+        updateTask(taskId, { 
+          progress: Math.round((completed / totalItems) * 100),
+          description: phase,
         });
         
         const { error } = await supabase.functions.invoke('generate-scenes', {
@@ -240,15 +281,23 @@ export function ScriptSummaryPanelAssisted({
 
         if (error) {
           console.error(`Error en Episodio ${episode.episode_number}:`, error);
-          toast.error(`Error en Episodio ${episode.episode_number}`);
+          if (!runInBackground) {
+            toast.error(`Error en Episodio ${episode.episode_number}`);
+          }
         } else {
           setSegmentedEpisodes(prev => new Set([...prev, episode.episode_number]));
+          completed++;
         }
       }
 
       // Generate teasers if available
       if (scriptData.teasers?.teaser60 && !segmentedEpisodes.has(-1)) {
-        setSegmentProgress(prev => ({ ...prev, phase: 'Generando Teaser 60s...' }));
+        const phase = 'Generando Teaser 60s...';
+        if (!runInBackground) {
+          setSegmentProgress(prev => ({ ...prev, phase }));
+        }
+        updateTask(taskId, { description: phase, progress: Math.round((completed / totalItems) * 100) });
+        
         await supabase.functions.invoke('generate-scenes', {
           body: {
             projectId,
@@ -260,10 +309,16 @@ export function ScriptSummaryPanelAssisted({
           }
         });
         setSegmentedEpisodes(prev => new Set([...prev, -1]));
+        completed++;
       }
 
       if (scriptData.teasers?.teaser30 && !segmentedEpisodes.has(-2)) {
-        setSegmentProgress(prev => ({ ...prev, phase: 'Generando Teaser 30s...' }));
+        const phase = 'Generando Teaser 30s...';
+        if (!runInBackground) {
+          setSegmentProgress(prev => ({ ...prev, phase }));
+        }
+        updateTask(taskId, { description: phase, progress: Math.round((completed / totalItems) * 100) });
+        
         await supabase.functions.invoke('generate-scenes', {
           body: {
             projectId,
@@ -275,15 +330,21 @@ export function ScriptSummaryPanelAssisted({
           }
         });
         setSegmentedEpisodes(prev => new Set([...prev, -2]));
+        completed++;
       }
       
+      completeTask(taskId, { completedEpisodes: completed });
       toast.success('¡Proyecto listo para producción!');
       onScenesGenerated?.();
     } catch (err) {
       console.error('Error generating scenes:', err);
-      toast.error('Error al generar escenas');
+      failTask(taskId, err instanceof Error ? err.message : 'Error desconocido');
+      if (!runInBackground) {
+        toast.error('Error al generar escenas');
+      }
     } finally {
       setSegmenting(false);
+      setRunningInBackground(false);
       setSegmentProgress({ current: 0, total: 0, phase: '' });
     }
   };
@@ -510,18 +571,30 @@ export function ScriptSummaryPanelAssisted({
               </div>
             </div>
             {!allSegmented ? (
-              <Button 
-                onClick={generateAllScenesAndShots}
-                disabled={segmenting}
-                className="gap-2"
-              >
-                {segmenting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="h-4 w-4" />
-                )}
-                Generar Todo Automáticamente
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => generateAllScenesAndShots(false)}
+                  disabled={segmenting || runningInBackground}
+                  className="gap-2"
+                >
+                  {segmenting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  Generar Todo
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => generateAllScenesAndShots(true)}
+                  disabled={segmenting || runningInBackground}
+                  className="gap-2"
+                  title="Ejecutar en segundo plano"
+                >
+                  <Bell className="h-4 w-4" />
+                  En segundo plano
+                </Button>
+              </div>
             ) : (
               <Button 
                 onClick={() => navigate(`/projects/${projectId}/scenes`)}
