@@ -200,14 +200,64 @@ serve(async (req) => {
         };
         break;
 
-      case 'character':
+      case 'character': {
         functionName = 'generate-character';
+
+        const characterId = body.params?.characterId as string | undefined;
+        const slotType = (body.params?.slotType as string | undefined) || 'base_look';
+        let slotId = body.params?.slotId as string | undefined;
+
+        if (!characterId) {
+          throw new Error('Missing required param: params.characterId');
+        }
+
+        // Auto-provision a pack slot when the caller didn't specify one.
+        // This prevents the downstream function from falling back to the deprecated legacy flow.
+        if (!slotId) {
+          const { data: existingSlot, error: existingSlotError } = await supabaseAdmin
+            .from('character_pack_slots')
+            .select('id')
+            .eq('character_id', characterId)
+            .eq('slot_type', slotType)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (existingSlotError) {
+            console.error('[generate-run] Failed to lookup existing slot:', existingSlotError);
+          }
+
+          slotId = existingSlot?.id;
+
+          if (!slotId) {
+            const { data: newSlot, error: newSlotError } = await supabaseAdmin
+              .from('character_pack_slots')
+              .insert({
+                character_id: characterId,
+                slot_type: slotType,
+                required: true,
+                status: 'pending'
+              })
+              .select('id')
+              .single();
+
+            if (newSlotError) {
+              console.error('[generate-run] Failed to create character pack slot:', newSlotError);
+              throw new Error(`Failed to create character pack slot: ${newSlotError.message}`);
+            }
+
+            slotId = newSlot.id;
+          }
+
+          console.log(`[generate-run] Using slotId=${slotId} for characterId=${characterId}, slotType=${slotType}`);
+        }
+
         functionBody = {
-          slotId: body.params?.slotId,
-          characterId: body.params?.characterId,
-          characterName: body.params?.characterName || 'Character',
+          slotId,
+          characterId,
+          characterName: (body.params?.characterName as string | undefined) || 'Character',
           characterBio: body.prompt,
-          slotType: body.params?.slotType || 'base_look',
+          slotType,
           viewAngle: body.params?.viewAngle,
           expressionName: body.params?.expressionName,
           outfitDescription: body.params?.outfitDescription,
@@ -217,6 +267,7 @@ serve(async (req) => {
           allowTextToImage: body.params?.allowTextToImage
         };
         break;
+      }
 
       case 'location':
         functionName = 'generate-location';
@@ -243,8 +294,32 @@ serve(async (req) => {
     });
 
     if (fnError) {
-      console.error(`[generate-run] ${functionName} error:`, fnError);
-      throw new Error(fnError.message || `${functionName} failed`);
+      // Try to extract downstream status/body for actionable debugging.
+      // FunctionsHttpError carries a Response in `context`.
+      let downstreamStatus: number | undefined;
+      let downstreamBody = '';
+      try {
+        const ctx = (fnError as any)?.context as Response | undefined;
+        if (ctx) {
+          downstreamStatus = (ctx as any).status;
+          try {
+            downstreamBody = await ctx.text();
+          } catch {
+            downstreamBody = '';
+          }
+        }
+      } catch {
+        // ignore
+      }
+
+      console.error(`[generate-run] ${functionName} error:`, {
+        message: (fnError as any)?.message,
+        downstreamStatus,
+        downstreamBodyPreview: downstreamBody?.substring?.(0, 500)
+      });
+
+      const details = downstreamBody ? `: ${downstreamBody.substring(0, 800)}` : '';
+      throw new Error(`${functionName} failed (${downstreamStatus ?? 'unknown'})${details}`);
     }
 
     console.log(`[generate-run] ${functionName} response received`);
