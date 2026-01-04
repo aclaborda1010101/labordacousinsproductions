@@ -127,7 +127,10 @@ function TaskItem({ task, onRemove }: { task: BackgroundTask; onRemove: () => vo
               variant="ghost"
               size="icon"
               className="h-6 w-6"
-              onClick={() => setExpanded(!expanded)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpanded(!expanded);
+              }}
             >
               {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             </Button>
@@ -138,7 +141,10 @@ function TaskItem({ task, onRemove }: { task: BackgroundTask; onRemove: () => vo
               variant="ghost"
               size="icon"
               className="h-6 w-6 text-muted-foreground hover:text-destructive"
-              onClick={onRemove}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
             >
               <X className="h-3 w-3" />
             </Button>
@@ -212,7 +218,10 @@ export function TaskNotificationCenter() {
               variant="ghost"
               size="sm"
               className="h-7 text-xs"
-              onClick={clearCompleted}
+              onClick={(e) => {
+                e.stopPropagation();
+                clearCompleted();
+              }}
             >
               <Trash2 className="h-3 w-3 mr-1" />
               Limpiar
