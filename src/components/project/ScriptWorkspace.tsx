@@ -301,35 +301,60 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   // Refresh trigger for re-fetching script
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // Loading state for script data
+  const [isLoadingScript, setIsLoadingScript] = useState(true);
+
   // Check for existing script on mount or refresh
   const refreshScriptData = useCallback(async () => {
-    // Get project format
-    const { data: projectData } = await supabase
-      .from('projects')
-      .select('format')
-      .eq('id', projectId)
-      .maybeSingle();
+    setIsLoadingScript(true);
+    console.log('[ScriptWorkspace] Fetching script data for project:', projectId);
     
-    if (projectData?.format) {
-      setProjectFormat(projectData.format);
-    }
+    try {
+      // Get project format
+      const { data: projectData, error: projectError } = await supabase
+        .from('projects')
+        .select('format')
+        .eq('id', projectId)
+        .maybeSingle();
+      
+      if (projectError) {
+        console.error('[ScriptWorkspace] Error fetching project:', projectError);
+      }
+      
+      if (projectData?.format) {
+        setProjectFormat(projectData.format);
+      }
 
-    const { data } = await supabase
-      .from('scripts')
-      .select('id, raw_text')
-      .eq('project_id', projectId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      const { data, error } = await supabase
+        .from('scripts')
+        .select('id, raw_text, created_at')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-    if (data?.raw_text) {
-      setHasExistingScript(true);
-      // Ensure raw_text is always a string
-      const rawText = typeof data.raw_text === 'string' ? data.raw_text : JSON.stringify(data.raw_text);
-      setExistingScriptText(rawText);
-    } else {
-      setHasExistingScript(false);
-      setExistingScriptText('');
+      if (error) {
+        console.error('[ScriptWorkspace] Error fetching script:', error);
+        toast.error('Error al cargar el guion');
+      }
+
+      console.log('[ScriptWorkspace] Script data:', data ? { id: data.id, hasText: !!data.raw_text, textLength: data.raw_text?.length, createdAt: data.created_at } : 'No script found');
+
+      if (data?.raw_text) {
+        setHasExistingScript(true);
+        // Ensure raw_text is always a string
+        const rawText = typeof data.raw_text === 'string' ? data.raw_text : JSON.stringify(data.raw_text);
+        setExistingScriptText(rawText);
+        console.log('[ScriptWorkspace] Script loaded successfully, length:', rawText.length);
+      } else {
+        setHasExistingScript(false);
+        setExistingScriptText('');
+        console.log('[ScriptWorkspace] No existing script found for this project');
+      }
+    } catch (e) {
+      console.error('[ScriptWorkspace] Unexpected error:', e);
+    } finally {
+      setIsLoadingScript(false);
     }
   }, [projectId]);
 
@@ -1322,6 +1347,18 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (isLoadingScript) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando guion...</p>
+        </div>
       </div>
     );
   }
