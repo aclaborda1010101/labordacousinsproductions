@@ -23,8 +23,10 @@ import {
   Unlock,
   CheckCircle2,
   Check,
-  RotateCcw
+  RotateCcw,
+  Star
 } from 'lucide-react';
+import SetCanonModal from './SetCanonModal';
 
 interface Keyframe {
   id: string;
@@ -103,6 +105,8 @@ export default function KeyframeManager({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [uploadingSlot, setUploadingSlot] = useState<number | null>(null);
+  const [canonModal, setCanonModal] = useState<{ open: boolean; keyframe: Keyframe | null }>({ open: false, keyframe: null });
+  const [projectId, setProjectId] = useState<string | null>(null);
 
   // Calculate required keyframe slots based on duration
   const getRequiredSlots = useCallback(() => {
@@ -255,9 +259,10 @@ export default function KeyframeManager({
         .eq('id', shotId)
         .single();
       
-      const projectId = (shotData?.scenes as any)?.project_id || 'unknown';
+      const fetchedProjectId = (shotData?.scenes as any)?.project_id || 'unknown';
+      setProjectId(fetchedProjectId); // Store for canon modal
 
-      const payload = buildGenerationPayload(slotIndex, projectId, parentRunId);
+      const payload = buildGenerationPayload(slotIndex, fetchedProjectId, parentRunId);
       if (!payload) throw new Error('Invalid slot');
 
       // Use unified generateRun gateway
@@ -632,6 +637,22 @@ export default function KeyframeManager({
                     </Button>
                   )}
 
+                  {/* Set as Canon button - only for approved keyframes with runId */}
+                  {keyframe?.approved && keyframe?.run_id && keyframe?.image_url && (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-7 w-7 bg-yellow-500/90 hover:bg-yellow-500 text-black"
+                      title="Establecer como Canon ⭐"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCanonModal({ open: true, keyframe });
+                      }}
+                    >
+                      <Star className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
+
                   {/* Upload button */}
                   <label className="cursor-pointer">
                     <input
@@ -763,6 +784,20 @@ export default function KeyframeManager({
             {keyframes[selectedIndex].prompt_text || 'Sin prompt generado'}
           </p>
         </div>
+      )}
+
+      {/* Set Canon Modal */}
+      {canonModal.keyframe && projectId && (
+        <SetCanonModal
+          open={canonModal.open}
+          onOpenChange={(open) => setCanonModal({ ...canonModal, open })}
+          runId={canonModal.keyframe.run_id!}
+          imageUrl={canonModal.keyframe.image_url!}
+          projectId={projectId}
+          onSuccess={() => {
+            toast.success('Asset añadido al canon del proyecto');
+          }}
+        />
       )}
     </div>
   );
