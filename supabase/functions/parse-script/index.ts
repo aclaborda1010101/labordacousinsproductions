@@ -6,8 +6,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Maximum PDF size for AI processing (5MB - larger files should use chunking)
+const MAX_PDF_SIZE_FOR_AI = 5 * 1024 * 1024;
+// Maximum pages to process at once
+const MAX_PAGES_PER_CHUNK = 50;
+
 // Use AI to extract text from PDF by sending it as base64
-async function extractTextWithAI(pdfBytes: Uint8Array): Promise<string> {
+async function extractTextWithAI(pdfBytes: Uint8Array, isLargeFile: boolean = false): Promise<string> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   
   if (!LOVABLE_API_KEY) {
@@ -15,24 +20,22 @@ async function extractTextWithAI(pdfBytes: Uint8Array): Promise<string> {
     throw new Error("AI service not configured");
   }
 
-  console.log("Using AI to extract PDF text...");
+  console.log(`Using AI to extract PDF text... (large file: ${isLargeFile})`);
   
-  // Use Deno's built-in base64 encoder (handles large files properly)
   const pdfBase64 = encodeBase64(pdfBytes);
   console.log(`Encoded PDF to base64: ${pdfBase64.length} chars`);
 
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
-      messages: [
-        {
-          role: "system",
-          content: `You are a professional screenplay text extractor. Extract ALL text content from the provided PDF document.
+  // Use flash-lite for faster processing on large files
+  const model = isLargeFile ? "google/gemini-2.5-flash-lite" : "google/gemini-2.5-flash";
+  
+  // For large files, focus on key screenplay elements only
+  const systemPrompt = isLargeFile 
+    ? `Extract screenplay text from this PDF. Focus on:
+- Scene headings (INT./EXT.)
+- Character names and dialogue
+- Key action lines
+Return the text in screenplay format. Skip detailed descriptions if needed to complete faster.`
+    : `You are a professional screenplay text extractor. Extract ALL text content from the provided PDF document.
 
 CRITICAL RULES:
 - Extract the COMPLETE text, preserving the original screenplay structure
@@ -40,41 +43,71 @@ CRITICAL RULES:
 - Preserve scene breaks and dialogue formatting
 - Include footnotes and annotations if present
 - Output ONLY the extracted text verbatim, no summaries or metadata
-- If text is in Spanish, keep it in Spanish`
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "file",
-              file: {
-                filename: "script.pdf",
-                file_data: `data:application/pdf;base64,${pdfBase64}`
+- If text is in Spanish, keep it in Spanish`;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), isLargeFile ? 180000 : 120000); // 3min for large, 2min for normal
+
+  try {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "file",
+                file: {
+                  filename: "script.pdf",
+                  file_data: `data:application/pdf;base64,${pdfBase64}`
+                }
+              },
+              {
+                type: "text",
+                text: isLargeFile 
+                  ? "Extract the screenplay text from this PDF. Focus on scenes, characters, and dialogue."
+                  : "Extract all text from this PDF screenplay. Return the complete verbatim text."
               }
-            },
-            {
-              type: "text",
-              text: "Extract all text from this PDF screenplay. Return the complete verbatim text."
-            }
-          ]
-        }
-      ],
-      temperature: 0.1,
-      max_tokens: 100000
-    }),
-  });
+            ]
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: isLargeFile ? 50000 : 100000
+      }),
+      signal: controller.signal
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("AI extraction error:", response.status, errorText);
-    throw new Error(`AI extraction failed: ${response.status}`);
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("AI extraction error:", response.status, errorText);
+      throw new Error(`AI extraction failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const extractedText = data.choices?.[0]?.message?.content || "";
+    
+    console.log(`AI extracted ${extractedText.length} characters`);
+    return extractedText;
+  } catch (error: unknown) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error("AI extraction timed out");
+      throw new Error("AI extraction timed out - file too large");
+    }
+    throw error;
   }
-
-  const data = await response.json();
-  const extractedText = data.choices?.[0]?.message?.content || "";
-  
-  console.log(`AI extracted ${extractedText.length} characters`);
-  return extractedText;
 }
 
 // Fallback: Extract text from PDF using basic pattern matching
@@ -133,15 +166,36 @@ serve(async (req) => {
         
         const pdfBuffer = await pdfResponse.arrayBuffer();
         const pdfBytes = new Uint8Array(pdfBuffer);
-        console.log(`PDF downloaded: ${pdfBytes.length} bytes`);
+        const fileSizeKB = Math.round(pdfBytes.length / 1024);
+        console.log(`PDF downloaded: ${pdfBytes.length} bytes (${fileSizeKB}KB)`);
+        
+        // Determine if this is a large file
+        const isLargeFile = pdfBytes.length > 300000; // >300KB is considered large (approx 100+ pages)
+        
+        if (isLargeFile) {
+          console.log("Large PDF detected, using optimized extraction...");
+        }
         
         // Try AI extraction first
         let extractedText = "";
         try {
-          extractedText = await extractTextWithAI(pdfBytes);
+          extractedText = await extractTextWithAI(pdfBytes, isLargeFile);
         } catch (aiError) {
           console.warn("AI extraction failed, falling back to regex:", aiError);
           extractedText = extractTextFromPdfBytes(pdfBytes);
+          
+          // If regex extraction also yields poor results for large files, suggest manual input
+          if (isLargeFile && extractedText.length < 1000) {
+            return new Response(
+              JSON.stringify({ 
+                error: "Este guión es muy extenso para procesamiento automático. Por favor, copia el texto de las primeras 50-100 páginas y pégalo directamente.",
+                rawText: "",
+                needsManualInput: true,
+                hint: "Puedes procesar el guión por partes: primero el primer acto, luego el segundo, etc."
+              }),
+              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
         }
         
         console.log(`Extracted ${extractedText.length} characters from PDF`);
@@ -164,18 +218,31 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             rawText: textToProcess,
-            success: true 
+            success: true,
+            stats: {
+              originalSizeKB: fileSizeKB,
+              extractedChars: extractedText.length,
+              wasLargeFile: isLargeFile
+            }
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
         
       } catch (pdfError) {
         console.error("PDF processing error:", pdfError);
+        
+        // Provide more specific error messages
+        const errorMessage = pdfError instanceof Error ? pdfError.message : "Unknown error";
+        const isTimeout = errorMessage.includes("timed out") || errorMessage.includes("timeout");
+        
         return new Response(
           JSON.stringify({ 
-            error: "Error al procesar el PDF. Intenta copiar y pegar el texto directamente.",
+            error: isTimeout 
+              ? "El guión es demasiado largo para procesarlo completo. Intenta copiar y pegar solo las primeras 50 páginas."
+              : "Error al procesar el PDF. Intenta copiar y pegar el texto directamente.",
             rawText: "",
-            needsManualInput: true
+            needsManualInput: true,
+            hint: isTimeout ? "Puedes dividir el guión en partes (Acto 1, Acto 2, etc.) y procesarlas por separado." : undefined
           }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
