@@ -61,6 +61,8 @@ export default function LocationsList({ projectId }: LocationsListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [importingFromScript, setImportingFromScript] = useState(false);
+  const [scriptLocations, setScriptLocations] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -118,7 +120,69 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
   useEffect(() => {
     fetchLocations();
+    fetchScriptLocations();
   }, [projectId]);
+
+  const fetchScriptLocations = async () => {
+    const { data: script } = await supabase
+      .from('scripts')
+      .select('parsed_json')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (script?.parsed_json) {
+      const parsed = script.parsed_json as any;
+      setScriptLocations(parsed.locations || parsed.main_locations || []);
+    }
+  };
+
+  const handleImportFromScript = async () => {
+    if (!scriptLocations.length) {
+      toast.error('No hay localizaciones en el guion para importar');
+      return;
+    }
+
+    setImportingFromScript(true);
+    let insertedCount = 0;
+    
+    try {
+      const { data: existingLocs } = await supabase
+        .from('locations')
+        .select('name')
+        .eq('project_id', projectId);
+      const existingNames = new Set((existingLocs || []).map(l => l.name.toLowerCase()));
+
+      for (const loc of scriptLocations) {
+        if (!loc.name || existingNames.has(loc.name.toLowerCase())) continue;
+        
+        const { error } = await supabase.from('locations').insert({
+          project_id: projectId,
+          name: loc.name,
+          description: loc.description || loc.type || null,
+          variants: { day: true, night: true },
+        });
+        
+        if (!error) {
+          insertedCount++;
+          existingNames.add(loc.name.toLowerCase());
+        }
+      }
+
+      if (insertedCount > 0) {
+        toast.success(`${insertedCount} localizaciones importadas del guion`);
+        fetchLocations();
+      } else {
+        toast.info('Todas las localizaciones del guion ya estaban importadas');
+      }
+    } catch (err) {
+      console.error('Error importing locations:', err);
+      toast.error('Error al importar localizaciones');
+    } finally {
+      setImportingFromScript(false);
+    }
+  };
 
   const resetForm = () => {
     setFormData({ name: '', description: '', hasDay: true, hasNight: true });
@@ -361,6 +425,12 @@ export default function LocationsList({ projectId }: LocationsListProps) {
           <p className="text-muted-foreground">Define los escenarios de tu producción</p>
         </div>
         <div className="flex gap-2">
+          {scriptLocations.length > 0 && (
+            <Button variant="outline" onClick={handleImportFromScript} disabled={importingFromScript}>
+              {importingFromScript ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <MapPin className="w-4 h-4 mr-2" />}
+              Importar del Guion ({scriptLocations.length})
+            </Button>
+          )}
           {locations.length > 0 && (
             <Button variant="outline" onClick={handleGenerateAll} disabled={generatingAll}>
               {generatingAll ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <PlayCircle className="w-4 h-4 mr-2" />}
@@ -395,12 +465,22 @@ export default function LocationsList({ projectId }: LocationsListProps) {
               <MapPin className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No hay localizaciones aún</h3>
               <p className="text-muted-foreground mb-4">
-                Añade localizaciones para definir los escenarios
+                {scriptLocations.length > 0 
+                  ? `Hay ${scriptLocations.length} localizaciones detectadas en tu guion. Impórtalas para comenzar.`
+                  : 'Añade localizaciones para definir los escenarios'}
               </p>
-              <Button variant="gold" onClick={() => setShowAddDialog(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Añadir Primera Localización
-              </Button>
+              <div className="flex gap-2 justify-center">
+                {scriptLocations.length > 0 && (
+                  <Button variant="gold" onClick={handleImportFromScript} disabled={importingFromScript}>
+                    {importingFromScript ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <MapPin className="w-4 h-4 mr-2" />}
+                    Importar del Guion
+                  </Button>
+                )}
+                <Button variant={scriptLocations.length > 0 ? "outline" : "gold"} onClick={() => setShowAddDialog(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Crear Manualmente
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : filteredLocations.length === 0 ? (
