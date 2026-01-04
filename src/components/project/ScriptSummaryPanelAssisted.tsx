@@ -3,41 +3,38 @@
  * Shows episodes, teasers, characters, locations with export to Bible
  * Generates scenes + shots automatically with clear messaging
  * Supports background task execution for all generation processes
+ * 
+ * v2: Simplified UI with NextStepIndicator and fewer duplicate buttons
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Progress } from '@/components/ui/progress';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
+import { NextStepIndicator, determineWorkflowStep, WorkflowStep } from './NextStepIndicator';
 import {
   Film,
   ChevronDown,
   ChevronUp,
   Loader2,
   CheckCircle,
-  Scissors,
   FileDown,
   Clock,
   Users,
   MapPin,
-  Video,
-  Clapperboard,
   Play,
   Sparkles,
-  ArrowRight,
   Box,
   Download,
   Check,
-  AlertCircle,
-  Bell,
   Crown,
   Skull,
   UserCheck,
@@ -47,10 +44,13 @@ import {
   GitBranch,
   Zap,
   BookOpen,
+  MoreHorizontal,
+  Bell,
 } from 'lucide-react';
 import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import { exportBibleSummaryPDF } from '@/lib/exportBibleSummaryPDF';
 import { exportOutlinePDF } from '@/lib/exportOutlinePDF';
+import { useCreativeModeOptional } from '@/contexts/CreativeModeContext';
 
 interface ScriptSummaryPanelAssistedProps {
   projectId: string;
@@ -129,7 +129,10 @@ export function ScriptSummaryPanelAssisted({
   onEntitiesExtracted 
 }: ScriptSummaryPanelAssistedProps) {
   const navigate = useNavigate();
+  const creativeMode = useCreativeModeOptional();
+  const effectiveMode = creativeMode?.effectiveMode || 'ASSISTED';
   const { addTask, updateTask, completeTask, failTask, setIsOpen } = useBackgroundTasks();
+  
   const [loading, setLoading] = useState(true);
   const [scriptData, setScriptData] = useState<ScriptData | null>(null);
   const [segmenting, setSegmenting] = useState(false);
@@ -137,8 +140,19 @@ export function ScriptSummaryPanelAssisted({
   const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
   const [extractingEntities, setExtractingEntities] = useState(false);
   const [entitiesExtracted, setEntitiesExtracted] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<string | null>('episodes');
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [runningInBackground, setRunningInBackground] = useState(false);
+  
+  // Determine current workflow step
+  const allEpisodesSegmented = scriptData?.episodes?.every(ep => segmentedEpisodes.has(ep.episode_number)) ?? false;
+  
+  const currentStep = determineWorkflowStep({
+    hasScript: !!scriptData,
+    hasEntities: entitiesExtracted,
+    isExtractingEntities: extractingEntities,
+    hasScenes: allEpisodesSegmented,
+    isGeneratingScenes: segmenting,
+  });
 
   // Load script data
   useEffect(() => {
@@ -477,454 +491,363 @@ export function ScriptSummaryPanelAssisted({
   const hasTeasers = scriptData.teasers?.teaser60 || scriptData.teasers?.teaser30;
 
   return (
-    <div className="space-y-6">
-      {/* Header Card - Overview */}
+    <div className="space-y-4">
+      {/* Next Step Indicator - The single source of truth for "what to do next" */}
+      <NextStepIndicator
+        currentStep={currentStep}
+        onAction={() => {
+          if (currentStep === 'entities_needed') {
+            extractEntitiesToBible();
+          } else if (currentStep === 'scenes_needed') {
+            generateAllScenesAndShots(false);
+          } else if (currentStep === 'production_ready' || currentStep === 'scenes_ready') {
+            navigate(`/projects/${projectId}/scenes`);
+          }
+        }}
+        isLoading={extractingEntities || segmenting}
+        progress={segmenting && segmentProgress.total > 0 
+          ? Math.round((segmentProgress.current / segmentProgress.total) * 100) 
+          : undefined}
+        progressLabel={segmentProgress.phase || undefined}
+        onRunInBackground={effectiveMode !== 'ASSISTED' && currentStep === 'scenes_needed' 
+          ? () => generateAllScenesAndShots(true) 
+          : undefined}
+        mode={effectiveMode}
+      />
+
+      {/* Header Card - Overview (simplified) */}
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <CardTitle className="text-2xl flex items-center gap-3">
-                <div className="p-2 bg-primary/20 rounded-lg">
-                  <Film className="h-6 w-6 text-primary" />
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <div className="p-2 bg-primary/20 rounded-lg flex-shrink-0">
+                  <Film className="h-5 w-5 text-primary" />
                 </div>
-                {scriptData.title}
+                <span className="truncate">{scriptData.title}</span>
               </CardTitle>
-              <CardDescription className="mt-2 text-base">
-                {scriptData.synopsis?.slice(0, 200) || 'Tu proyecto está listo para producción'}
-                {(scriptData.synopsis?.length || 0) > 200 && '...'}
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent>
-          {/* Quick stats */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-            <div className="p-4 bg-background/50 rounded-xl text-center">
-              <div className="text-3xl font-bold text-primary">{scriptData.episodes.length}</div>
-              <div className="text-sm text-muted-foreground">
-                {projectFormat === 'film' ? 'Actos' : projectFormat === 'short' ? 'Partes' : 'Episodios'}
-              </div>
-            </div>
-            <div className="p-4 bg-background/50 rounded-xl text-center">
-              <div className="text-3xl font-bold text-primary">{totalScenes}</div>
-              <div className="text-sm text-muted-foreground">Escenas</div>
-            </div>
-            <div className="p-4 bg-background/50 rounded-xl text-center">
-              <div className="text-3xl font-bold text-primary">{scriptData.characters?.length || 0}</div>
-              <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-                <Users className="h-3 w-3" /> Personajes
-              </div>
-            </div>
-            <div className="p-4 bg-background/50 rounded-xl text-center">
-              <div className="text-3xl font-bold text-primary">{scriptData.locations?.length || 0}</div>
-              <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-                <MapPin className="h-3 w-3" /> Localizaciones
-              </div>
-            </div>
-            <div className="p-4 bg-background/50 rounded-xl text-center">
-              <div className="text-3xl font-bold text-primary">{scriptData.props?.length || 0}</div>
-              <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-                <Box className="h-3 w-3" /> Props
-              </div>
-            </div>
-          </div>
-
-          {/* Export actions */}
-          <div className="flex flex-wrap gap-3">
-            <Button onClick={handleExportOutlinePDF} className="gap-2">
-              <Sparkles className="h-4 w-4" />
-              Exportar Outline Pro
-            </Button>
-            <Button variant="outline" onClick={handleExportPDF}>
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar Guion PDF
-            </Button>
-            <Button variant="outline" onClick={handleExportBiblePDF}>
-              <BookOpen className="h-4 w-4 mr-2" />
-              Descargar Resumen Biblia
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Step 1: Export to Bible */}
-      <Card className={entitiesExtracted ? 'border-green-500/50 bg-green-500/5' : ''}>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${entitiesExtracted ? 'bg-green-500/20' : 'bg-muted'}`}>
-                {entitiesExtracted ? (
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                ) : (
-                  <span className="text-lg font-bold text-muted-foreground">1</span>
-                )}
-              </div>
-              <div>
-                <CardTitle className="text-lg">Exportar a la Biblia</CardTitle>
-                <CardDescription>
-                  Añade personajes, localizaciones y props detectados a tu proyecto
+              {scriptData.synopsis && (
+                <CardDescription className="mt-2 line-clamp-2">
+                  {scriptData.synopsis}
                 </CardDescription>
-              </div>
-            </div>
-            {!entitiesExtracted && (
-              <Button onClick={extractEntitiesToBible} disabled={extractingEntities}>
-                {extractingEntities ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4 mr-2" />
-                )}
-                Exportar a Biblia
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        
-        <CardContent>
-          {/* Characters - Categorized */}
-          {scriptData.characters && scriptData.characters.length > 0 && (() => {
-            const protagonists = scriptData.characters.filter(c => c.role === 'protagonist');
-            const antagonists = scriptData.characters.filter(c => c.role === 'antagonist');
-            const supporting = scriptData.characters.filter(c => c.role === 'supporting');
-            const recurring = scriptData.characters.filter(c => c.role === 'recurring');
-            const collectiveEntities = scriptData.characters.filter(c => 
-              c.role === 'collective_entity' || c.entity_type === 'collective' || c.entity_type === 'civilization'
-            );
-            const others = scriptData.characters.filter(c => 
-              !['protagonist', 'antagonist', 'supporting', 'recurring', 'collective_entity'].includes(c.role || '') &&
-              !['collective', 'civilization'].includes(c.entity_type || '')
-            );
-            
-            return (
-              <div className="mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className="h-4 w-4 text-primary" />
-                  <span className="font-medium text-sm">Personajes detectados ({scriptData.characters.length})</span>
-                </div>
-                <div className="space-y-2">
-                  {/* Protagonists */}
-                  {protagonists.length > 0 && (
-                    <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
-                        <Crown className="h-3 w-3" /> Protagonistas:
-                      </span>
-                      {protagonists.map((char, i) => (
-                        <Badge key={i} variant="default" className="text-xs">{char.name}</Badge>
-                      ))}
-                    </div>
-                  )}
-                  {/* Antagonists */}
-                  {antagonists.length > 0 && (
-                    <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
-                        <Skull className="h-3 w-3" /> Antagonistas:
-                      </span>
-                      {antagonists.map((char, i) => (
-                        <Badge key={i} variant="destructive" className="text-xs">{char.name}</Badge>
-                      ))}
-                    </div>
-                  )}
-                  {/* Supporting */}
-                  {supporting.length > 0 && (
-                    <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
-                        <UserCheck className="h-3 w-3" /> Secundarios:
-                      </span>
-                      {supporting.slice(0, 8).map((char, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">{char.name}</Badge>
-                      ))}
-                      {supporting.length > 8 && <Badge variant="outline" className="text-xs">+{supporting.length - 8}</Badge>}
-                    </div>
-                  )}
-                  {/* Collective Entities */}
-                  {collectiveEntities.length > 0 && (
-                    <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
-                        <Users2 className="h-3 w-3" /> Colectivos:
-                      </span>
-                      {collectiveEntities.map((char, i) => (
-                        <Badge key={i} variant="outline" className="text-xs border-primary/50">{char.name}</Badge>
-                      ))}
-                    </div>
-                  )}
-                  {/* Others (cameos, extras, etc.) */}
-                  {others.length > 0 && (
-                    <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground mr-1">Otros:</span>
-                      {others.map((char, i) => (
-                        <Badge key={i} variant="outline" className="text-xs">{char.name}</Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Locations */}
-          {scriptData.locations && scriptData.locations.length > 0 && (
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                <span className="font-medium text-sm">Localizaciones detectadas ({scriptData.locations.length})</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {scriptData.locations.map((loc, i) => (
-                  <Badge key={i} variant="outline">
-                    {loc.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Subplots */}
-          {scriptData.subplots && scriptData.subplots.length > 0 && (
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <GitBranch className="h-4 w-4 text-primary" />
-                <span className="font-medium text-sm">Subtramas ({scriptData.subplots.length})</span>
-              </div>
-              <div className="space-y-1">
-                {scriptData.subplots.map((subplot, i) => (
-                  <div key={i} className="text-xs bg-muted/50 rounded px-2 py-1">
-                    <span className="font-medium">{subplot.name}</span>
-                    {subplot.description && (
-                      <span className="text-muted-foreground ml-1">- {subplot.description}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Plot Twists */}
-          {scriptData.plot_twists && scriptData.plot_twists.length > 0 && (
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-primary" />
-                <span className="font-medium text-sm">Giros narrativos ({scriptData.plot_twists.length})</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {scriptData.plot_twists.map((twist, i) => (
-                  <Badge 
-                    key={i} 
-                    variant={twist.impact === 'paradigm_shift' ? 'destructive' : twist.impact === 'major' ? 'default' : 'secondary'}
-                    className="text-xs"
-                  >
-                    {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'} {twist.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Props */}
-          {scriptData.props && scriptData.props.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Box className="h-4 w-4 text-primary" />
-                <span className="font-medium text-sm">Props detectados ({scriptData.props.length})</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {scriptData.props.map((prop, i) => (
-                  <Badge key={i} variant="outline" className="text-xs">
-                    {typeof prop === 'string' ? prop : prop.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {entitiesExtracted && (
-            <div className="mt-4 flex items-center gap-2 text-green-600">
-              <Check className="h-4 w-4" />
-              <span className="text-sm">Elementos exportados correctamente</span>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Step 2: Generate Scenes & Shots */}
-      <Card className={allSegmented ? 'border-green-500/50 bg-green-500/5' : ''}>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${allSegmented ? 'bg-green-500/20' : 'bg-muted'}`}>
-                {allSegmented ? (
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                ) : (
-                  <span className="text-lg font-bold text-muted-foreground">2</span>
-                )}
-              </div>
-              <div>
-                <CardTitle className="text-lg">Preparar Producción</CardTitle>
-                <CardDescription>
-                  Genera automáticamente escenas, planos, transiciones y configuración técnica
-                </CardDescription>
-              </div>
-            </div>
-            {!allSegmented ? (
-              <div className="flex gap-2">
-                <Button 
-                  onClick={() => generateAllScenesAndShots(false)}
-                  disabled={segmenting || runningInBackground}
-                  className="gap-2"
-                >
-                  {segmenting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-4 w-4" />
-                  )}
-                  Generar Todo
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => generateAllScenesAndShots(true)}
-                  disabled={segmenting || runningInBackground}
-                  className="gap-2"
-                  title="Ejecutar en segundo plano"
-                >
-                  <Bell className="h-4 w-4" />
-                  En segundo plano
-                </Button>
-              </div>
-            ) : (
-              <Button 
-                onClick={() => navigate(`/projects/${projectId}/scenes`)}
-                className="gap-2"
-              >
-                <Play className="h-4 w-4" />
-                Ir a Producción
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        
-        <CardContent>
-          {/* Progress indicator */}
-          {segmenting && segmentProgress.total > 0 && (
-            <div className="mb-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>{segmentProgress.phase}</span>
-                <span>{segmentProgress.current}/{segmentProgress.total}</span>
-              </div>
-              <Progress value={(segmentProgress.current / segmentProgress.total) * 100} />
-            </div>
-          )}
-
-          {/* Info about what gets generated */}
-          {!allSegmented && !segmenting && (
-            <div className="p-4 bg-muted/30 rounded-lg mb-4">
-              <div className="flex items-start gap-3">
-                <Sparkles className="h-5 w-5 text-primary mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-medium mb-1">La IA generará automáticamente:</p>
-                  <ul className="text-muted-foreground space-y-1">
-                    <li>• Escenas con sluglines y descripciones</li>
-                    <li>• Shots con tipos de plano y composición</li>
-                    <li>• Movimientos de cámara y transiciones</li>
-                    <li>• Configuración de lentes y iluminación</li>
-                    <li>• Distribución de diálogos por plano</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Episodes overview */}
-          <Collapsible 
-            open={expandedSection === 'episodes'} 
-            onOpenChange={(open) => setExpandedSection(open ? 'episodes' : null)}
-          >
-            <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
-              <div className="flex items-center gap-2">
-                <Film className="h-4 w-4 text-primary" />
-                <span className="font-medium">Episodios ({scriptData.episodes.length})</span>
-              </div>
-              {expandedSection === 'episodes' ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
               )}
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <ScrollArea className="max-h-64 mt-3">
-                <div className="space-y-2">
-                  {scriptData.episodes.map((episode, idx) => (
-                    <div 
-                      key={idx}
-                      className="flex items-center justify-between p-3 bg-background rounded-lg border"
-                    >
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">
-                          Ep. {episode.episode_number}: {episode.title}
-                        </div>
-                        <div className="flex gap-2 mt-1">
-                          <Badge variant="secondary" className="text-xs">
-                            {episode.scenes?.length || 0} escenas
-                          </Badge>
-                          {episode.duration_min && (
-                            <Badge variant="outline" className="text-xs">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {episode.duration_min} min
-                            </Badge>
+            </div>
+            
+            {/* Consolidated Export Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <FileDown className="h-4 w-4" />
+                  Exportar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleExportOutlinePDF}>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Outline Pro (PDF)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportPDF}>
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Guion completo (PDF)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportBiblePDF}>
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Resumen Biblia (PDF)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="pt-0">
+          {/* Quick stats - More compact */}
+          <div className="grid grid-cols-5 gap-2">
+            <div className="p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-2xl font-bold text-primary">{scriptData.episodes.length}</div>
+              <div className="text-xs text-muted-foreground">
+                {projectFormat === 'film' ? 'Actos' : projectFormat === 'short' ? 'Partes' : 'Eps'}
+              </div>
+            </div>
+            <div className="p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-2xl font-bold text-primary">{totalScenes}</div>
+              <div className="text-xs text-muted-foreground">Escenas</div>
+            </div>
+            <div className="p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-2xl font-bold text-primary">{scriptData.characters?.length || 0}</div>
+              <div className="text-xs text-muted-foreground">Personajes</div>
+            </div>
+            <div className="p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-2xl font-bold text-primary">{scriptData.locations?.length || 0}</div>
+              <div className="text-xs text-muted-foreground">Locs</div>
+            </div>
+            <div className="p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-2xl font-bold text-primary">{scriptData.props?.length || 0}</div>
+              <div className="text-xs text-muted-foreground">Props</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Step 1: Export to Bible - Simplified, only show if not done */}
+      {!entitiesExtracted && (
+        <Card className="border-dashed">
+          <CardContent className="py-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-muted rounded-lg">
+                <Download className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">Exportar a Biblia</p>
+                <p className="text-xs text-muted-foreground">
+                  {scriptData.characters?.length || 0} personajes, {scriptData.locations?.length || 0} localizaciones
+                </p>
+              </div>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={extractEntitiesToBible} 
+                disabled={extractingEntities}
+              >
+                {extractingEntities ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Exportar'
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Entities extracted confirmation */}
+      {entitiesExtracted && (
+        <div className="flex items-center gap-2 text-sm text-green-600 px-1">
+          <Check className="h-4 w-4" />
+          <span>Elementos exportados a la Biblia</span>
+        </div>
+      )}
+
+      {/* Collapsible Details - Only for PRO/DIRECTOR modes */}
+      {effectiveMode !== 'ASSISTED' && (
+        <Collapsible 
+          open={expandedSection === 'details'} 
+          onOpenChange={(open) => setExpandedSection(open ? 'details' : null)}
+        >
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+            <span className="text-sm font-medium">Ver detalles del análisis</span>
+            {expandedSection === 'details' ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <Card className="mt-3 border-dashed">
+              <CardContent className="py-4 space-y-4">
+                {/* Characters - Categorized */}
+                {scriptData.characters && scriptData.characters.length > 0 && (() => {
+                  const protagonists = scriptData.characters.filter(c => c.role === 'protagonist');
+                  const antagonists = scriptData.characters.filter(c => c.role === 'antagonist');
+                  const supporting = scriptData.characters.filter(c => c.role === 'supporting');
+                  const collectiveEntities = scriptData.characters.filter(c => 
+                    c.role === 'collective_entity' || c.entity_type === 'collective' || c.entity_type === 'civilization'
+                  );
+                  const others = scriptData.characters.filter(c => 
+                    !['protagonist', 'antagonist', 'supporting', 'recurring', 'collective_entity'].includes(c.role || '') &&
+                    !['collective', 'civilization'].includes(c.entity_type || '')
+                  );
+                  
+                  return (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Users className="h-4 w-4 text-primary" />
+                        <span className="font-medium text-sm">Personajes ({scriptData.characters.length})</span>
+                      </div>
+                      <div className="space-y-2">
+                        {protagonists.length > 0 && (
+                          <div className="flex flex-wrap gap-1 items-center">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+                              <Crown className="h-3 w-3" /> Protagonistas:
+                            </span>
+                            {protagonists.map((char, i) => (
+                              <Badge key={i} variant="default" className="text-xs">{char.name}</Badge>
+                            ))}
+                          </div>
+                        )}
+                        {antagonists.length > 0 && (
+                          <div className="flex flex-wrap gap-1 items-center">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+                              <Skull className="h-3 w-3" /> Antagonistas:
+                            </span>
+                            {antagonists.map((char, i) => (
+                              <Badge key={i} variant="destructive" className="text-xs">{char.name}</Badge>
+                            ))}
+                          </div>
+                        )}
+                        {supporting.length > 0 && (
+                          <div className="flex flex-wrap gap-1 items-center">
+                            <span className="text-xs text-muted-foreground mr-1">Secundarios:</span>
+                            {supporting.map((char, i) => (
+                              <Badge key={i} variant="secondary" className="text-xs">{char.name}</Badge>
+                            ))}
+                          </div>
+                        )}
+                        {collectiveEntities.length > 0 && (
+                          <div className="flex flex-wrap gap-1 items-center">
+                            <span className="text-xs text-muted-foreground mr-1">Colectivos:</span>
+                            {collectiveEntities.map((char, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">{char.name}</Badge>
+                            ))}
+                          </div>
+                        )}
+                        {others.length > 0 && (
+                          <div className="flex flex-wrap gap-1 items-center">
+                            <span className="text-xs text-muted-foreground mr-1">Otros:</span>
+                            {others.map((char, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">{char.name}</Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Locations */}
+                {scriptData.locations && scriptData.locations.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">Localizaciones ({scriptData.locations.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.locations.map((loc, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">{loc.name}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Subplots */}
+                {scriptData.subplots && scriptData.subplots.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <GitBranch className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">Subtramas ({scriptData.subplots.length})</span>
+                    </div>
+                    <div className="space-y-1">
+                      {scriptData.subplots.map((subplot, i) => (
+                        <div key={i} className="text-xs bg-muted/50 rounded px-2 py-1">
+                          <span className="font-medium">{subplot.name}</span>
+                          {subplot.description && (
+                            <span className="text-muted-foreground ml-1">- {subplot.description}</span>
                           )}
                         </div>
-                      </div>
-                      {segmentedEpisodes.has(episode.episode_number) && (
-                        <Badge className="bg-green-600">
-                          <Check className="h-3 w-3 mr-1" />
-                          Listo
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Plot Twists */}
+                {scriptData.plot_twists && scriptData.plot_twists.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">Giros ({scriptData.plot_twists.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.plot_twists.map((twist, i) => (
+                        <Badge 
+                          key={i} 
+                          variant={twist.impact === 'paradigm_shift' ? 'destructive' : twist.impact === 'major' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {twist.impact === 'paradigm_shift' ? '💥' : twist.impact === 'major' ? '⚡' : '✨'} {twist.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+
+      {/* Episodes overview - Always visible, collapsed by default */}
+      <Collapsible 
+        open={expandedSection === 'episodes'} 
+        onOpenChange={(open) => setExpandedSection(open ? 'episodes' : null)}
+      >
+        <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-2">
+            <Film className="h-4 w-4 text-primary" />
+            <span className="font-medium text-sm">
+              {projectFormat === 'film' ? 'Actos' : projectFormat === 'short' ? 'Partes' : 'Episodios'} ({scriptData.episodes.length})
+            </span>
+            {allEpisodesSegmented && (
+              <Badge variant="outline" className="text-xs border-green-500/50 text-green-600">
+                ✓ Listos
+              </Badge>
+            )}
+          </div>
+          {expandedSection === 'episodes' ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <ScrollArea className="max-h-64 mt-3">
+            <div className="space-y-2">
+              {scriptData.episodes.map((episode, idx) => (
+                <div 
+                  key={idx}
+                  className="flex items-center justify-between p-3 bg-background rounded-lg border"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm truncate">
+                      {projectFormat === 'film' ? `Acto ${episode.episode_number}` : `Ep. ${episode.episode_number}`}: {episode.title}
+                    </div>
+                    <div className="flex gap-2 mt-1">
+                      <Badge variant="secondary" className="text-xs">
+                        {episode.scenes?.length || 0} escenas
+                      </Badge>
+                      {episode.duration_min && (
+                        <Badge variant="outline" className="text-xs">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {episode.duration_min} min
                         </Badge>
                       )}
                     </div>
-                  ))}
+                  </div>
+                  {segmentedEpisodes.has(episode.episode_number) && (
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  )}
                 </div>
-              </ScrollArea>
-            </CollapsibleContent>
-          </Collapsible>
+              ))}
+            </div>
+          </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
 
-          {/* Teasers */}
-          {hasTeasers && (
-            <div className="mt-4 grid md:grid-cols-2 gap-3">
-              {scriptData.teasers?.teaser60 && (
-                <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge className="bg-amber-500">Teaser 60s</Badge>
-                    {segmentedEpisodes.has(-1) && (
-                      <Check className="h-4 w-4 text-green-500" />
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground italic">
-                    "{scriptData.teasers.teaser60.logline?.slice(0, 80)}..."
-                  </p>
-                </div>
-              )}
-              {scriptData.teasers?.teaser30 && (
-                <div className="p-3 bg-red-500/10 rounded-lg border border-red-500/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge className="bg-red-500">Teaser 30s</Badge>
-                    {segmentedEpisodes.has(-2) && (
-                      <Check className="h-4 w-4 text-green-500" />
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground italic">
-                    "{scriptData.teasers.teaser30.logline?.slice(0, 80)}..."
-                  </p>
-                </div>
-              )}
+      {/* Teasers - Simplified */}
+      {hasTeasers && (
+        <div className="grid grid-cols-2 gap-2">
+          {scriptData.teasers?.teaser60 && (
+            <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/30 flex items-center justify-between">
+              <Badge className="bg-amber-500 text-xs">Teaser 60s</Badge>
+              {segmentedEpisodes.has(-1) && <Check className="h-4 w-4 text-green-500" />}
             </div>
           )}
-
-          {allSegmented && (
-            <div className="mt-4 flex items-center gap-2 text-green-600">
-              <CheckCircle className="h-4 w-4" />
-              <span className="text-sm">¡Todo listo! Tu proyecto tiene escenas y shots configurados</span>
+          {scriptData.teasers?.teaser30 && (
+            <div className="p-2 bg-red-500/10 rounded-lg border border-red-500/30 flex items-center justify-between">
+              <Badge className="bg-red-500 text-xs">Teaser 30s</Badge>
+              {segmentedEpisodes.has(-2) && <Check className="h-4 w-4 text-green-500" />}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      )}
     </div>
   );
 }
