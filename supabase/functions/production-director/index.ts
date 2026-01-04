@@ -1,9 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { requireAuthOrDemo, requireProjectAccess } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-demo-key',
 };
 
 // =============================================================================
@@ -495,7 +496,9 @@ serve(async (req) => {
   }
 
   try {
-    const { projectId, messages, userId, conversationId: existingConvId } = await req.json();
+    const { projectId, messages, conversationId: existingConvId } = await req.json();
+    const auth = await requireAuthOrDemo(req);
+    const userId = auth.userId;
 
     if (!projectId || !messages?.length) {
       return new Response(
@@ -511,8 +514,10 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    await requireProjectAccess(supabase, userId, projectId);
+
     // Obtener contexto completo
-    const context = await fetchFullContext(supabase, projectId, userId || 'anonymous');
+    const context = await fetchFullContext(supabase, projectId, userId);
     
     // Obtener o crear conversación
     let conversationId = existingConvId;
@@ -639,10 +644,19 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('forge error:', error);
+    const err = error instanceof Error ? error : new Error('Error interno');
+    const status =
+      err.message.includes('Authorization') ||
+      err.message.includes('Access denied') ||
+      err.message.includes('token') ||
+      err.message.includes('Project not found')
+        ? 401
+        : 500;
+
+    console.error('forge error:', err);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Error interno' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: err.message }),
+      { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

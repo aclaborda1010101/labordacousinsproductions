@@ -1,9 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { requireAuthOrDemo, requireProjectAccess } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-demo-key',
 };
 
 interface ProjectStats {
@@ -34,7 +35,9 @@ serve(async (req) => {
 
   try {
     const { projectId } = await req.json();
-    
+
+    const auth = await requireAuthOrDemo(req);
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -43,6 +46,8 @@ serve(async (req) => {
     if (!projectId) {
       throw new Error('Project ID is required');
     }
+
+    await requireProjectAccess(supabase, auth.userId, projectId);
 
     console.log(`[Forge Analytics] Analyzing project: ${projectId}`);
 
@@ -226,14 +231,19 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[Forge Analytics] Error:', error);
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    const err = error instanceof Error ? error : new Error('Unknown error');
+    const status =
+      err.message.includes('Authorization') ||
+      err.message.includes('Access denied') ||
+      err.message.includes('token') ||
+      err.message.includes('Project not found')
+        ? 401
+        : 500;
+
+    console.error('[Forge Analytics] Error:', err);
+    return new Response(JSON.stringify({ error: err.message }), {
+      status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

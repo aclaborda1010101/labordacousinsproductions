@@ -125,3 +125,21 @@ verify_jwt = false
 
 [functions.lora-training-webhook]
 verify_jwt = false
+
+[functions.production-director]
+verify_jwt = false
+
+[functions.forge-analytics]
+verify_jwt = false
+
+[functions.forge-generate-visual]
+verify_jwt = false
+
+[functions.forge-analyze-image]
+verify_jwt = false
+
+[functions.forge-stt]
+verify_jwt = false
+
+[functions.forge-tts]
+verify_jwt = false

@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuthOrDemo } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-demo-key',
 };
 
 serve(async (req) => {
@@ -11,6 +12,7 @@ serve(async (req) => {
   }
 
   try {
+    await requireAuthOrDemo(req);
     const { imageUrl, imageBase64, analysisType = 'reference', userQuery } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
@@ -108,14 +110,18 @@ Analiza esta imagen y define el estilo visual:
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[Forge Analyze] Error:', error);
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    const err = error instanceof Error ? error : new Error('Unknown error');
+    const status =
+      err.message.includes('Authorization') ||
+      err.message.includes('Access denied') ||
+      err.message.includes('token')
+        ? 401
+        : 500;
+
+    console.error('[Forge Analyze] Error:', err);
+    return new Response(JSON.stringify({ error: err.message }), {
+      status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

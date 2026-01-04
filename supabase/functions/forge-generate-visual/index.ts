@@ -1,9 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { requireAuthOrDemo, requireProjectAccess } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-demo-key',
 };
 
 serve(async (req) => {
@@ -13,6 +14,7 @@ serve(async (req) => {
 
   try {
     const { prompt, type = 'concept', projectId, conversationId } = await req.json();
+    const auth = await requireAuthOrDemo(req);
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {
@@ -78,6 +80,8 @@ serve(async (req) => {
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
       );
 
+      await requireProjectAccess(supabase, auth.userId, projectId);
+
       // Upload to storage
       const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, '');
       const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
@@ -117,14 +121,18 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[Forge Visual] Error:', error);
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    const err = error instanceof Error ? error : new Error('Unknown error');
+    const status =
+      err.message.includes('Authorization') ||
+      err.message.includes('Access denied') ||
+      err.message.includes('token')
+        ? 401
+        : 500;
+
+    console.error('[Forge Visual] Error:', err);
+    return new Response(JSON.stringify({ error: err.message }), {
+      status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });
