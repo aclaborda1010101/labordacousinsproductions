@@ -5,7 +5,75 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract text from PDF using basic pattern matching
+// Use AI to extract text from PDF by sending it as base64
+async function extractTextWithAI(pdfBase64: string): Promise<string> {
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  
+  if (!LOVABLE_API_KEY) {
+    console.error("LOVABLE_API_KEY not available");
+    throw new Error("AI service not configured");
+  }
+
+  console.log("Using AI to extract PDF text...");
+
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        {
+          role: "system",
+          content: `You are a professional document text extractor. Extract ALL text content from the provided PDF document.
+
+CRITICAL RULES:
+- Extract the COMPLETE text, preserving the original structure
+- Keep screenplay formatting: INT./EXT. headers, character names in CAPS, dialogue, parentheticals
+- Preserve line breaks between scenes and dialogue blocks
+- Include stage directions and action lines
+- Do NOT summarize - extract the FULL verbatim text
+- If there are footnotes or annotations, include them at the end
+- Output ONLY the extracted text, no explanations or metadata`
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "file",
+              file: {
+                filename: "script.pdf",
+                file_data: `data:application/pdf;base64,${pdfBase64}`
+              }
+            },
+            {
+              type: "text",
+              text: "Extract all text from this PDF screenplay document. Return the complete text preserving formatting."
+            }
+          ]
+        }
+      ],
+      temperature: 0.1,
+      max_tokens: 100000
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("AI extraction error:", response.status, errorText);
+    throw new Error(`AI extraction failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const extractedText = data.choices?.[0]?.message?.content || "";
+  
+  console.log(`AI extracted ${extractedText.length} characters`);
+  return extractedText;
+}
+
+// Fallback: Extract text from PDF using basic pattern matching
 function extractTextFromPdfBytes(pdfBytes: Uint8Array): string {
   const decoder = new TextDecoder('latin1');
   const rawContent = decoder.decode(pdfBytes);
@@ -22,7 +90,6 @@ function extractTextFromPdfBytes(pdfBytes: Uint8Array): string {
       const match = tj.match(/\(([^)\\]*(?:\\.[^)\\]*)*)\)/);
       if (match) {
         let text = match[1];
-        // Decode PDF escape sequences
         text = text
           .replace(/\\n/g, '\n')
           .replace(/\\r/g, '\r')
@@ -53,21 +120,10 @@ function extractTextFromPdfBytes(pdfBytes: Uint8Array): string {
     }
   }
   
-  // Method 2: Try to extract from stream objects if Method 1 fails
-  if (extractedText.length < 100) {
-    // Look for text in stream content
-    const streamMatches = rawContent.match(/stream\s*([\s\S]*?)\s*endstream/g) || [];
-    for (const stream of streamMatches) {
-      // Look for readable ASCII text patterns
-      const readableText = stream.match(/[A-Za-z][A-Za-z0-9\s.,!?'"()-]{10,}/g) || [];
-      extractedText += readableText.join(' ') + ' ';
-    }
-  }
-  
   // Clean up extracted text
   extractedText = extractedText
-    .replace(/\x00/g, '') // Remove null bytes
-    .replace(/[^\x20-\x7E\n\r\táéíóúñÁÉÍÓÚÑüÜ¿¡]/g, ' ') // Keep printable chars + Spanish
+    .replace(/\x00/g, '')
+    .replace(/[^\x20-\x7E\n\r\táéíóúñÁÉÍÓÚÑüÜ¿¡]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
   
@@ -87,7 +143,7 @@ serve(async (req) => {
 
     let textToProcess = scriptText;
 
-    // If pdfUrl is provided, fetch and extract text
+    // If pdfUrl is provided, fetch and extract text using AI
     if (pdfUrl && !scriptText) {
       console.log("Fetching PDF from:", pdfUrl);
       
@@ -101,12 +157,21 @@ serve(async (req) => {
         const pdfBytes = new Uint8Array(pdfBuffer);
         console.log(`PDF downloaded: ${pdfBytes.length} bytes`);
         
-        // Extract text from PDF
-        const extractedText = extractTextFromPdfBytes(pdfBytes);
+        // Convert to base64 for AI processing
+        const pdfBase64 = btoa(String.fromCharCode(...pdfBytes));
+        
+        // Try AI extraction first
+        let extractedText = "";
+        try {
+          extractedText = await extractTextWithAI(pdfBase64);
+        } catch (aiError) {
+          console.warn("AI extraction failed, falling back to regex:", aiError);
+          extractedText = extractTextFromPdfBytes(pdfBytes);
+        }
+        
         console.log(`Extracted ${extractedText.length} characters from PDF`);
         
         if (extractedText.length < 50) {
-          // If extraction failed, return a helpful message
           console.log("PDF text extraction yielded minimal results");
           return new Response(
             JSON.stringify({ 
@@ -149,9 +214,10 @@ serve(async (req) => {
       );
     }
 
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY is not configured");
+    // Use Lovable AI Gateway for parsing
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      console.error("LOVABLE_API_KEY is not configured");
       return new Response(
         JSON.stringify({ error: "AI service not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -189,14 +255,14 @@ Rules:
 - Keep summaries concise and action-focused
 - Return valid JSON only`;
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: `Parse this screenplay:\n\n${textToProcess}` }
