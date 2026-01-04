@@ -24,6 +24,7 @@ import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { ScriptSummaryPanelAssisted } from './ScriptSummaryPanelAssisted';
 import { exportOutlinePDF } from '@/lib/exportOutlinePDF';
+import { GenerationActionBar } from '@/components/generation/GenerationActionBar';
 import {
   Lightbulb,
   FileText,
@@ -55,6 +56,7 @@ import {
   UserPlus,
   Star,
   Users2,
+  FileDown,
 } from 'lucide-react';
 
 interface ScriptWorkspaceProps {
@@ -1403,10 +1405,27 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           </Accordion>
         )}
 
-        {/* Export action */}
-        <div className="flex justify-end pt-4">
-          <Button 
-            onClick={() => {
+        {/* Action bar with export */}
+        <GenerationActionBar
+          status={breakdownResult ? 'generated' : 'idle'}
+          hasOutput={!!breakdownResult}
+          isAccepted={hasExistingScript}
+          isCanon={false}
+          onGenerate={() => {}}
+          onAccept={() => {
+            setHasExistingScript(true);
+            toast.success('Outline aceptado');
+          }}
+          onRegenerate={() => {
+            setBreakdownResult(null);
+            setQualityDiagnosis(null);
+          }}
+          onSetCanon={() => {}}
+          showCanonButton={false}
+          extraAction={{
+            label: 'Exportar',
+            icon: <FileDown className="w-4 h-4 mr-2" />,
+            onClick: () => {
               try {
                 exportOutlinePDF({
                   title: 'Outline del Proyecto',
@@ -1429,13 +1448,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 console.error('Export error:', err);
                 toast.error('Error al exportar Outline');
               }
-            }}
-            className="gap-2"
-          >
-            <Sparkles className="h-4 w-4" />
-            Exportar Outline Pro
-          </Button>
-        </div>
+            },
+          }}
+        />
       </div>
     );
   };
