@@ -82,65 +82,65 @@ export default function ProjectDetailPro({ project, setProject }: ProjectDetailP
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Classic horizontal tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          <div className="border-b border-border bg-muted/30 px-4 shrink-0 overflow-x-auto">
-            <TabsList className="h-12 bg-transparent gap-1 flex-nowrap justify-start w-max">
-              <TabsTrigger
-                value="script"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+          <div className="border-b border-border bg-muted/30 px-4 shrink-0">
+            <TabsList className="h-12 bg-transparent gap-1 flex-wrap">
+              <TabsTrigger 
+                value="script" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
               >
                 <FileText className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Guion</span>
+                Guion
               </TabsTrigger>
-              <TabsTrigger
-                value="bible"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+              <TabsTrigger 
+                value="bible" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
               >
                 <Book className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Resumen</span>
+                Resumen
               </TabsTrigger>
-              <TabsTrigger
-                value="style"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+              <TabsTrigger 
+                value="style" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
               >
                 <Palette className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Estilo</span>
+                Estilo
               </TabsTrigger>
-              <TabsTrigger
-                value="characters"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+              <TabsTrigger 
+                value="characters" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
               >
                 <Users className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Personajes</span>
+                Personajes
               </TabsTrigger>
-              <TabsTrigger
-                value="locations"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+              <TabsTrigger 
+                value="locations" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
               >
                 <MapPin className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Localizaciones</span>
+                Localizaciones
               </TabsTrigger>
-              <TabsTrigger
-                value="props"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+              <TabsTrigger 
+                value="props" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
               >
                 <Box className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Props</span>
+                Props
               </TabsTrigger>
-              <TabsTrigger
-                value="scenes"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+              <TabsTrigger 
+                value="scenes" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
                 disabled={!bibleReady}
               >
                 <Clapperboard className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Escenas</span>
+                Escenas
               </TabsTrigger>
-              <TabsTrigger
-                value="renders"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2 shrink-0"
+              <TabsTrigger 
+                value="renders" 
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
                 disabled={!bibleReady}
               >
                 <Play className="w-4 h-4" />
-                <span className="sr-only sm:not-sr-only">Dailies</span>
+                Dailies
               </TabsTrigger>
             </TabsList>
           </div>
