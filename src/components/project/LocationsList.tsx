@@ -150,15 +150,23 @@ export default function LocationsList({ projectId }: LocationsListProps) {
     toast.info(`Generando ${location.name}...`);
 
     try {
+      const prompt = (location.description || '').trim() || location.name;
+
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
           projectId,
-          runType: 'location',
-          entityId: location.id,
-          entityName: location.name,
-          entityDescription: location.description || '',
-          preset: 'establishing_wide',
+          type: 'location',
           phase: 'exploration',
+          engine: 'fal-ai/flux-pro/v1.1-ultra',
+          engineSelectedBy: 'auto',
+          prompt,
+          context: `Location: ${location.name}`,
+          params: {
+            locationName: location.name,
+            viewAngle: 'establishing',
+            timeOfDay: 'day',
+            weather: 'clear',
+          },
         },
       });
 
@@ -177,7 +185,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       setGeneratingId(null);
     }
   };
-
   const handleAccept = async (location: Location) => {
     if (!location.current_run_id) return;
 
@@ -237,16 +244,24 @@ export default function LocationsList({ projectId }: LocationsListProps) {
     toast.info(`Generando nueva variante de ${location.name}...`);
 
     try {
+      const prompt = (location.description || '').trim() || location.name;
+
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
           projectId,
-          runType: 'location',
-          entityId: location.id,
-          entityName: location.name,
-          entityDescription: location.description || '',
-          preset: 'establishing_wide',
+          type: 'location',
           phase: 'exploration',
+          engine: 'fal-ai/flux-pro/v1.1-ultra',
+          engineSelectedBy: 'auto',
+          prompt,
+          context: `Location: ${location.name}`,
           parentRunId: location.accepted_run_id,
+          params: {
+            locationName: location.name,
+            viewAngle: 'establishing',
+            timeOfDay: 'day',
+            weather: 'clear',
+          },
         },
       });
 
@@ -264,7 +279,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       setGeneratingId(null);
     }
   };
-
   const handleGenerateAll = async () => {
     const toGenerate = locations.filter(l => !l.current_run_id);
     if (toGenerate.length === 0) {
