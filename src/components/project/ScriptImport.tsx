@@ -1639,7 +1639,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
@@ -1691,32 +1691,34 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       {/* Pipeline Status - Hidden for cleaner UI */}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="generate" className="flex items-center gap-2">
-            <Lightbulb className="w-4 h-4" />
-            Generar
-          </TabsTrigger>
-          <TabsTrigger value="import" className="flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            Importar
-          </TabsTrigger>
-          <TabsTrigger value="library" className="flex items-center gap-2">
-            <Film className="w-4 h-4" />
-            Referencias
-          </TabsTrigger>
-          <TabsTrigger value="summary" className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4" />
-            Resumen
-          </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2">
-            <History className="w-4 h-4" />
-            Histórico
-          </TabsTrigger>
-          <TabsTrigger value="doctor" className="flex items-center gap-2">
-            <Stethoscope className="w-4 h-4" />
-            Doctor
-          </TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="h-12 bg-transparent gap-1 flex-nowrap justify-start w-max">
+            <TabsTrigger value="generate" className="flex items-center gap-2 shrink-0">
+              <Lightbulb className="w-4 h-4" />
+              <span className="sr-only sm:not-sr-only">Generar</span>
+            </TabsTrigger>
+            <TabsTrigger value="import" className="flex items-center gap-2 shrink-0">
+              <FileText className="w-4 h-4" />
+              <span className="sr-only sm:not-sr-only">Importar</span>
+            </TabsTrigger>
+            <TabsTrigger value="library" className="flex items-center gap-2 shrink-0">
+              <Film className="w-4 h-4" />
+              <span className="sr-only sm:not-sr-only">Referencias</span>
+            </TabsTrigger>
+            <TabsTrigger value="summary" className="flex items-center gap-2 shrink-0">
+              <BookOpen className="w-4 h-4" />
+              <span className="sr-only sm:not-sr-only">Resumen</span>
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-2 shrink-0">
+              <History className="w-4 h-4" />
+              <span className="sr-only sm:not-sr-only">Histórico</span>
+            </TabsTrigger>
+            <TabsTrigger value="doctor" className="flex items-center gap-2 shrink-0">
+              <Stethoscope className="w-4 h-4" />
+              <span className="sr-only sm:not-sr-only">Doctor</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* GENERATE TAB */}
         <TabsContent value="generate" className="space-y-4">
@@ -2358,7 +2360,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 placeholder="INT. CAFETERÍA - DÍA&#10;&#10;SARA (30s) espera nerviosa..."
                 value={scriptText}
                 onChange={(e) => setScriptText(e.target.value)}
-                className="min-h-[300px] font-mono text-sm"
+                className="min-h-[220px] md:min-h-[300px] font-mono text-sm"
                 disabled={scriptLocked}
               />
               <div className="flex items-center justify-between">
