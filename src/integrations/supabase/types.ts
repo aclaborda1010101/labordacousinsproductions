@@ -2292,7 +2292,10 @@ export type Database = {
       }
       locations: {
         Row: {
+          accepted_run_id: string | null
+          canon_asset_id: string | null
           created_at: string
+          current_run_id: string | null
           description: string | null
           id: string
           name: string
@@ -2307,7 +2310,10 @@ export type Database = {
           variants: Json | null
         }
         Insert: {
+          accepted_run_id?: string | null
+          canon_asset_id?: string | null
           created_at?: string
+          current_run_id?: string | null
           description?: string | null
           id?: string
           name: string
@@ -2322,7 +2328,10 @@ export type Database = {
           variants?: Json | null
         }
         Update: {
+          accepted_run_id?: string | null
+          canon_asset_id?: string | null
           created_at?: string
+          current_run_id?: string | null
           description?: string | null
           id?: string
           name?: string
@@ -2337,6 +2346,27 @@ export type Database = {
           variants?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "locations_accepted_run_id_fkey"
+            columns: ["accepted_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "locations_canon_asset_id_fkey"
+            columns: ["canon_asset_id"]
+            isOneToOne: false
+            referencedRelation: "canon_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "locations_current_run_id_fkey"
+            columns: ["current_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "locations_project_id_fkey"
             columns: ["project_id"]

@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp, Copy, BookOpen, Play, PlayCircle } from 'lucide-react';
+import { Plus, MapPin, Loader2, Trash2, Edit2, Save, X, Sun, Moon, ChevronDown, ChevronUp, Copy, BookOpen, Play, PlayCircle, Image, Star } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LocationPackBuilder } from './LocationPackBuilder';
 import BibleProfileViewer from './BibleProfileViewer';
 import { EntityQCBadge } from './QCStatusBadge';
+import { LocationGenerationPanel } from './LocationGenerationPanel';
 
 interface LocationsProps { projectId: string; }
 
@@ -25,6 +26,10 @@ interface Location {
   variants: { day?: boolean; night?: boolean; weather?: string[] } | null;
   reference_urls: unknown;
   profile_json?: unknown;
+  // Unified generation system fields
+  current_run_id?: string | null;
+  accepted_run_id?: string | null;
+  canon_asset_id?: string | null;
 }
 
 export default function Locations({ projectId }: LocationsProps) {
@@ -543,6 +548,11 @@ export default function Locations({ projectId }: LocationsProps) {
                           <TabsTrigger value="bible">
                             Bible {location.profile_json && '✓'}
                           </TabsTrigger>
+                          <TabsTrigger value="generation">
+                            <Image className="w-4 h-4 mr-1" />
+                            Generación
+                            {location.canon_asset_id && <Star className="w-3 h-3 ml-1 text-amber-500" />}
+                          </TabsTrigger>
                         </TabsList>
                         <TabsContent value="pack">
                           <LocationPackBuilder
@@ -557,6 +567,20 @@ export default function Locations({ projectId }: LocationsProps) {
                           <BibleProfileViewer 
                             profile={location.profile_json as any} 
                             entityType="location" 
+                          />
+                        </TabsContent>
+                        <TabsContent value="generation">
+                          <LocationGenerationPanel
+                            location={{
+                              id: location.id,
+                              name: location.name,
+                              description: location.description,
+                              current_run_id: location.current_run_id,
+                              accepted_run_id: location.accepted_run_id,
+                              canon_asset_id: location.canon_asset_id,
+                            }}
+                            projectId={projectId}
+                            onUpdate={fetchLocations}
                           />
                         </TabsContent>
                       </Tabs>
