@@ -71,6 +71,8 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [importingFromScript, setImportingFromScript] = useState(false);
+  const [scriptCharacters, setScriptCharacters] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -128,9 +130,86 @@ export default function CharactersList({ projectId }: CharactersListProps) {
     setLoading(false);
   };
 
+  // Load characters and check for script characters
   useEffect(() => {
     fetchCharacters();
+    fetchScriptCharacters();
   }, [projectId]);
+
+  const fetchScriptCharacters = async () => {
+    const { data: script } = await supabase
+      .from('scripts')
+      .select('parsed_json')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (script?.parsed_json) {
+      const parsed = script.parsed_json as any;
+      setScriptCharacters(parsed.characters || parsed.main_characters || []);
+    }
+  };
+
+  const handleImportFromScript = async () => {
+    if (!scriptCharacters.length) {
+      toast.error('No hay personajes en el guion para importar');
+      return;
+    }
+
+    setImportingFromScript(true);
+    let insertedCount = 0;
+    
+    try {
+      // Get existing characters to avoid duplicates
+      const { data: existingChars } = await supabase
+        .from('characters')
+        .select('name')
+        .eq('project_id', projectId);
+      const existingNames = new Set((existingChars || []).map(c => c.name.toLowerCase()));
+
+      for (const char of scriptCharacters) {
+        if (!char.name || existingNames.has(char.name.toLowerCase())) continue;
+        
+        // Map script role to character_role enum
+        const roleMapping: Record<string, 'protagonist' | 'recurring' | 'episodic' | 'extra'> = {
+          'protagonist': 'protagonist',
+          'supporting': 'recurring',
+          'recurring': 'recurring',
+          'episodic': 'episodic',
+          'extra': 'extra',
+          'collective_entity': 'recurring',
+        };
+        const mappedRole = roleMapping[char.role] || 'recurring';
+        
+        const { error } = await supabase.from('characters').insert({
+          project_id: projectId,
+          name: char.name,
+          role: char.role_detail || char.role || char.description || null,
+          character_role: mappedRole,
+          bio: char.description || null,
+          arc: char.arc || null,
+        });
+        
+        if (!error) {
+          insertedCount++;
+          existingNames.add(char.name.toLowerCase());
+        }
+      }
+
+      if (insertedCount > 0) {
+        toast.success(`${insertedCount} personajes importados del guion`);
+        fetchCharacters();
+      } else {
+        toast.info('Todos los personajes del guion ya estaban importados');
+      }
+    } catch (err) {
+      console.error('Error importing characters:', err);
+      toast.error('Error al importar personajes');
+    } finally {
+      setImportingFromScript(false);
+    }
+  };
 
   const resetForm = () => {
     setFormData({ name: '', role: '', character_role: '', bio: '' });
@@ -385,6 +464,12 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           <p className="text-muted-foreground">Define los personajes de tu producción</p>
         </div>
         <div className="flex gap-2">
+          {scriptCharacters.length > 0 && (
+            <Button variant="outline" onClick={handleImportFromScript} disabled={importingFromScript}>
+              {importingFromScript ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Users className="w-4 h-4 mr-2" />}
+              Importar del Guion ({scriptCharacters.length})
+            </Button>
+          )}
           {characters.length > 0 && (
             <Button variant="outline" onClick={handleGenerateAll} disabled={generatingAll}>
               {generatingAll ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <PlayCircle className="w-4 h-4 mr-2" />}
@@ -419,12 +504,22 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No hay personajes aún</h3>
               <p className="text-muted-foreground mb-4">
-                Añade personajes para mantener la consistencia visual
+                {scriptCharacters.length > 0 
+                  ? `Hay ${scriptCharacters.length} personajes detectados en tu guion. Impórtalos para comenzar.`
+                  : 'Añade personajes para mantener la consistencia visual'}
               </p>
-              <Button variant="gold" onClick={() => setShowAddDialog(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Crear Primer Personaje
-              </Button>
+              <div className="flex gap-2 justify-center">
+                {scriptCharacters.length > 0 && (
+                  <Button variant="gold" onClick={handleImportFromScript} disabled={importingFromScript}>
+                    {importingFromScript ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Users className="w-4 h-4 mr-2" />}
+                    Importar del Guion
+                  </Button>
+                )}
+                <Button variant={scriptCharacters.length > 0 ? "outline" : "gold"} onClick={() => setShowAddDialog(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Crear Manualmente
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : filteredCharacters.length === 0 ? (
