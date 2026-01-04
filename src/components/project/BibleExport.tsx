@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Download, FileJson, FileText, Loader2, Star, ExternalLink } from 'lucide-react';
+import { Download, FileJson, FileText, Loader2, Star, ExternalLink, Printer } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { BibleProDocument } from './BibleProDocument';
 
 interface BibleExportProps {
   projectId: string;
@@ -20,22 +22,45 @@ interface CanonAsset {
   engine: string | null;
 }
 
+interface KeyframeData {
+  id: string;
+  imageUrl: string | null;
+  sceneNumber?: number;
+  shotNumber?: number;
+}
+
+interface StylePackData {
+  genre?: string;
+  tone?: string;
+  era?: string;
+  keywords?: string[];
+  colorPalette?: string[];
+  description?: string;
+}
+
 interface BibleData {
   projectId: string;
   projectTitle: string;
   exportedAt: string;
+  version?: string;
   canon: {
     characters: CanonAsset[];
     locations: CanonAsset[];
     style: CanonAsset[];
   };
+  keyframes?: KeyframeData[];
+  stylePack?: StylePackData;
+  heroImageUrl?: string;
 }
 
 export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
   const [exportingJson, setExportingJson] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [exportingPro, setExportingPro] = useState(false);
+  const [showProPreview, setShowProPreview] = useState(false);
+  const [proData, setProData] = useState<BibleData | null>(null);
   const [lastProExport, setLastProExport] = useState<{ url: string; date: Date } | null>(null);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const handleExportJSON = async () => {
     setExportingJson(true);
@@ -186,113 +211,174 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
     setExportingPro(true);
     try {
       const { data, error } = await supabase.functions.invoke('export-bible', {
-        body: { projectId, format: 'pdf', style: 'pro' }
+        body: { projectId, format: 'json', style: 'pro' }
       });
 
       if (error) throw error;
       if (!data.ok) throw new Error(data.error);
 
-      if (data.url) {
-        // PDF is stored in Supabase Storage
-        setLastProExport({ url: data.url, date: new Date() });
-        
-        // Trigger download
-        const a = document.createElement('a');
-        a.href = data.url;
-        a.download = data.fileName || `biblia-pro-${Date.now()}.pdf`;
-        a.target = '_blank';
-        a.click();
-        
-        toast.success('Biblia PRO generada y almacenada');
-      } else if (data.pdfBase64) {
-        // Fallback: PDF returned as base64
-        const binaryString = atob(data.pdfBase64);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        const blob = new Blob([bytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `biblia-pro-${projectTitle.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`;
-        a.click();
-        URL.revokeObjectURL(url);
-        
-        toast.success('Biblia PRO exportada');
+      // Fetch additional data for PRO document
+      const [keyframesRes, stylePackRes] = await Promise.all([
+        supabase
+          .from('keyframes')
+          .select('id, image_url, shot_id, shots(shot_number, scenes(scene_number))')
+          .eq('approved', true)
+          .order('created_at', { ascending: false })
+          .limit(16),
+        supabase
+          .from('style_packs')
+          .select('tone, color_palette, description, lens_style, realism_level')
+          .eq('project_id', projectId)
+          .maybeSingle()
+      ]);
+
+      // Find hero image - prefer first accepted keyframe with image
+      let heroImageUrl: string | undefined;
+      if (keyframesRes.data && keyframesRes.data.length > 0) {
+        const kfWithImage = keyframesRes.data.find(kf => kf.image_url);
+        if (kfWithImage) heroImageUrl = kfWithImage.image_url ?? undefined;
       }
+      if (!heroImageUrl && data.data.canon.characters[0]?.imageUrl) {
+        heroImageUrl = data.data.canon.characters[0].imageUrl;
+      }
+
+      const proDocData: BibleData = {
+        ...data.data,
+        version: '1.0',
+        heroImageUrl,
+        keyframes: keyframesRes.data?.map(kf => {
+          const shots = kf.shots as { shot_number?: number; scenes?: { scene_number?: number } } | null;
+          return {
+            id: kf.id,
+            imageUrl: kf.image_url,
+            shotNumber: shots?.shot_number,
+            sceneNumber: shots?.scenes?.scene_number
+          };
+        }) || [],
+        stylePack: stylePackRes.data ? {
+          tone: stylePackRes.data.tone ?? undefined,
+          colorPalette: stylePackRes.data.color_palette ?? undefined,
+          description: stylePackRes.data.description ?? undefined,
+          genre: stylePackRes.data.lens_style ?? undefined,
+          era: stylePackRes.data.realism_level ?? undefined
+        } : undefined
+      };
+
+      setProData(proDocData);
+      setShowProPreview(true);
+      setLastProExport({ url: '', date: new Date() });
+
     } catch (err) {
-      console.error('Error exporting PRO PDF:', err);
-      toast.error('Error al exportar la biblia PRO');
+      console.error('Error preparing PRO PDF:', err);
+      toast.error('Error al preparar la biblia PRO');
     } finally {
       setExportingPro(false);
     }
   };
 
+  const handlePrint = useCallback(() => {
+    // Open print dialog
+    window.print();
+    toast.success('Usa "Guardar como PDF" en el diálogo de impresión');
+  }, []);
+
+  const handleCloseProPreview = () => {
+    setShowProPreview(false);
+    setProData(null);
+  };
+
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportJSON}
-          disabled={exportingJson || exportingPdf || exportingPro}
-          className="gap-2"
-        >
-          {exportingJson ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <FileJson className="w-4 h-4" />
-          )}
-          JSON
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportPDF}
-          disabled={exportingJson || exportingPdf || exportingPro}
-          className="gap-2"
-        >
-          {exportingPdf ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <FileText className="w-4 h-4" />
-          )}
-          PDF Básico
-        </Button>
-        <Button
-          variant="gold"
-          size="sm"
-          onClick={handleExportPro}
-          disabled={exportingJson || exportingPdf || exportingPro}
-          className="gap-2"
-        >
-          {exportingPro ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Star className="w-4 h-4" />
-          )}
-          Biblia PRO
-        </Button>
-      </div>
-      
-      {lastProExport && (
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Badge variant="outline" className="gap-1">
-            <Download className="w-3 h-3" />
-            {lastProExport.date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-          </Badge>
-          <a 
-            href={lastProExport.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-primary hover:underline"
+    <>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportJSON}
+            disabled={exportingJson || exportingPdf || exportingPro}
+            className="gap-2"
           >
-            Abrir último export <ExternalLink className="w-3 h-3" />
-          </a>
+            {exportingJson ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileJson className="w-4 h-4" />
+            )}
+            JSON
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportPDF}
+            disabled={exportingJson || exportingPdf || exportingPro}
+            className="gap-2"
+          >
+            {exportingPdf ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileText className="w-4 h-4" />
+            )}
+            PDF Básico
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleExportPro}
+            disabled={exportingJson || exportingPdf || exportingPro}
+            className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-black font-medium"
+          >
+            {exportingPro ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Star className="w-4 h-4" />
+            )}
+            PDF PRO
+          </Button>
         </div>
-      )}
-    </div>
+        
+        {lastProExport && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Badge variant="outline" className="gap-1">
+              <Download className="w-3 h-3" />
+              {lastProExport.date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+            </Badge>
+            <span className="text-muted-foreground">PRO preview abierto</span>
+          </div>
+        )}
+      </div>
+
+      {/* PRO Preview Dialog */}
+      <Dialog open={showProPreview} onOpenChange={handleCloseProPreview}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-[900px] overflow-hidden flex flex-col">
+          <DialogHeader className="flex-shrink-0 flex flex-row items-center justify-between no-print">
+            <DialogTitle className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-amber-500" />
+              Biblia PRO Preview
+            </DialogTitle>
+            <Button 
+              onClick={handlePrint} 
+              className="gap-2 bg-amber-500 hover:bg-amber-600 text-black"
+            >
+              <Printer className="w-4 h-4" />
+              Imprimir / Guardar PDF
+            </Button>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-auto bg-gray-100 p-4 rounded-lg">
+            {proData && (
+              <div ref={printRef}>
+                <BibleProDocument 
+                  data={proData} 
+                  onReady={() => console.log('Document ready for print')}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex-shrink-0 text-xs text-muted-foreground text-center pt-2 no-print">
+            💡 Tip: Usa <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl/Cmd + P</kbd> → "Guardar como PDF" para exportar
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
