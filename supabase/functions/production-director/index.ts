@@ -109,6 +109,21 @@ const FORGE_TOOLS = [
         }
       }
     }
+  },
+  {
+    type: "function",
+    function: {
+      name: "generate_visual",
+      description: "Genera un concept art o visual para mostrar al usuario durante la conversación",
+      parameters: {
+        type: "object",
+        properties: {
+          prompt: { type: "string", description: "Descripción detallada del visual a generar" },
+          visual_type: { type: "string", enum: ["concept", "storyboard", "character", "location"], description: "Tipo de visual" }
+        },
+        required: ["prompt", "visual_type"]
+      }
+    }
   }
 ];
 
@@ -185,6 +200,14 @@ ${vocabularyGuide[profile.level]}
 - 🏔️ **Locaciones AI**: Escenarios generados para cada escena
 - 📝 **Guiones AI**: Desde idea hasta screenplay profesional
 - 🎵 **Audio AI**: Música y efectos (en desarrollo)
+- 🎨 **Concept Art AI**: Genera visuales durante la conversación para mostrar ideas
+
+### CUÁNDO GENERAR VISUALES:
+Cuando el usuario describe algo visual (personaje, escena, locación, estilo), OFRECE generar un concept art.
+Usa generate_visual cuando:
+- El usuario describe cómo quiere que se vea algo
+- Quiere ver una idea antes de crearla oficialmente
+- Pide "muéstrame", "genera un visual", "concept art", "cómo se vería"
 
 ### REGLA FUNDAMENTAL - NUNCA DESANIMES:
 - "Quiero un corto estilo Pixar" → ¡PERFECTO! Lo hacemos con AI
@@ -431,6 +454,16 @@ async function executeToolCall(supabase: any, toolCall: any, projectId: string, 
         result = { success: true, action: 'suggestion', context: parsedArgs.context };
         break;
 
+      case 'generate_visual':
+        // Esto lo manejará el cliente llamando a forge-generate-visual
+        result = { 
+          success: true, 
+          action: 'generate_visual',
+          prompt: parsedArgs.prompt,
+          visualType: parsedArgs.visual_type
+        };
+        break;
+
       default:
         result = { success: false, error: `Herramienta desconocida: ${name}` };
     }
@@ -589,12 +622,18 @@ serve(async (req) => {
         }, { onConflict: 'user_id' });
     }
 
+    // Detectar si hay una acción de generar visual
+    const visualAction = executedActions.find((a: any) => a.tool === 'generate_visual');
+    
     return new Response(
       JSON.stringify({
         content: assistantContent,
         actions: executedActions,
         conversationId,
-        profile: profile.level
+        profile: profile.level,
+        shouldGenerateVisual: !!visualAction,
+        visualPrompt: visualAction?.result?.prompt,
+        visualType: visualAction?.result?.visualType
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
