@@ -1,5 +1,6 @@
 import { useState, useEffect, forwardRef, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { invokeWithTimeout } from '@/lib/supabaseFetchWithTimeout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -723,21 +724,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 throw new Error('Aborted');
               }
               // V3.0: Call generate-script canonical router instead of legacy batch function
-              return await supabase.functions.invoke('generate-script', {
-                body: {
-                  outline: lightOutline,
-                  episodeNumber: epNum,
-                  language,
-                  batchIndex: batchIdx,
-                  previousScenes: allScenes,
-                  narrativeMode,
-                  // Dynamic batch config
-                  scenesPerBatch: SCENES_PER_BATCH,
-                  totalBatches: BATCHES_PER_EPISODE,
-                  isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1,
-                  // V3.0: Quality tier instead of model selection
-                  qualityTier,
-                },
+              return await invokeAuthedFunction('generate-script', {
+                outline: lightOutline,
+                episodeNumber: epNum,
+                language,
+                batchIndex: batchIdx,
+                previousScenes: allScenes,
+                narrativeMode,
+                // Dynamic batch config
+                scenesPerBatch: SCENES_PER_BATCH,
+                totalBatches: BATCHES_PER_EPISODE,
+                isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1,
+                // V3.0: Quality tier instead of model selection
+                qualityTier,
               });
             };
 
