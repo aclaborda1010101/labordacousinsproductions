@@ -1139,36 +1139,50 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       // If there was a network error or no data, try to recover from the database
       // (the backend may have completed successfully before the connection closed)
+      // For long scripts, the analysis can take 2-3 minutes, so we poll multiple times
       if (isNetworkError || !breakdownData) {
         console.log('[ScriptWorkspace] Network error or no data, attempting to recover from DB...');
-        toast.info('Verificando resultados del análisis...', { duration: 3000 });
+        toast.info('El análisis de guiones largos puede tardar unos minutos. Verificando...', { duration: 10000 });
         
-        // Wait a moment for the backend to finish saving
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        let recovered = false;
+        const maxRetries = 6; // Poll for up to 60 seconds (6 x 10s)
         
-        const { data: recoveredScript } = await supabase
-          .from('scripts')
-          .select('parsed_json')
-          .eq('id', savedScript.id)
-          .maybeSingle();
+        for (let retry = 0; retry < maxRetries && !recovered; retry++) {
+          // Wait progressively longer for the backend to finish
+          const waitTime = retry === 0 ? 3000 : 10000;
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          
+          console.log(`[ScriptWorkspace] Recovery attempt ${retry + 1}/${maxRetries}...`);
+          
+          const { data: recoveredScript } = await supabase
+            .from('scripts')
+            .select('parsed_json, status')
+            .eq('id', savedScript.id)
+            .maybeSingle();
+          
+          const pj = recoveredScript?.parsed_json as any;
+          if (pj && typeof pj === 'object' && (pj.characters?.length > 0 || pj.scenes?.length > 0)) {
+            console.log('[ScriptWorkspace] Successfully recovered breakdown from DB');
+            breakdownData = {
+              breakdown: {
+                characters: pj.characters || [],
+                locations: pj.locations || [],
+                scenes: pj.scenes || [],
+                props: pj.props || [],
+                synopsis: pj.synopsis,
+                subplots: pj.subplots || [],
+                plot_twists: pj.plot_twists || [],
+                summary: typeof pj.summary === 'string' ? pj.summary : pj.summary?.short || '',
+              }
+            };
+            recovered = true;
+          } else if (retry < maxRetries - 1) {
+            toast.info(`Procesando guion largo... (${retry + 2}/${maxRetries})`, { duration: 8000 });
+          }
+        }
         
-        const pj = recoveredScript?.parsed_json as any;
-        if (pj && typeof pj === 'object' && (pj.characters?.length > 0 || pj.scenes?.length > 0)) {
-          console.log('[ScriptWorkspace] Successfully recovered breakdown from DB');
-          breakdownData = {
-            breakdown: {
-              characters: pj.characters || [],
-              locations: pj.locations || [],
-              scenes: pj.scenes || [],
-              props: pj.props || [],
-              synopsis: pj.synopsis,
-              subplots: pj.subplots || [],
-              plot_twists: pj.plot_twists || [],
-              summary: typeof pj.summary === 'string' ? pj.summary : pj.summary?.short || '',
-            }
-          };
-        } else {
-          toast.error('Error de conexión. Intenta nuevamente.');
+        if (!recovered) {
+          toast.error('El análisis no se completó. El guion puede ser demasiado largo. Intenta dividirlo o usar un fragmento más corto.');
           setStatus('error');
           return;
         }
