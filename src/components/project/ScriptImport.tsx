@@ -227,6 +227,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [segmenting, setSegmenting] = useState(false);
   const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
   
+  // Imported script parsing state
+  const [parsingImportedScript, setParsingImportedScript] = useState(false);
+  
   // Dynamic batch configuration
   const [batchConfig, setBatchConfig] = useState<BatchConfig | null>(null);
 
@@ -505,6 +508,118 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const updatePipelineStep = (stepId: string, status: PipelineStep['status'], label?: string) => {
     setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status, label: label || s.label } : s));
     if (label) setCurrentStepLabel(label);
+  };
+
+  // Analyze imported script (PRO mode) - extracts characters, locations, scenes
+  const analyzeImportedScript = async () => {
+    if (!scriptText.trim() || scriptText.length < 200) {
+      toast.error('El guion debe tener al menos 200 caracteres');
+      return;
+    }
+
+    setParsingImportedScript(true);
+    toast.info('Analizando guion importado...');
+
+    try {
+      // 1. Save or update script in DB
+      const { data: existingScript } = await supabase
+        .from('scripts')
+        .select('id')
+        .eq('project_id', projectId)
+        .limit(1)
+        .maybeSingle();
+
+      let savedScript;
+      if (existingScript) {
+        const { data, error } = await supabase
+          .from('scripts')
+          .update({
+            raw_text: scriptText.trim(),
+            status: 'draft',
+          })
+          .eq('id', existingScript.id)
+          .select()
+          .single();
+        if (error) throw error;
+        savedScript = data;
+      } else {
+        const { data, error } = await supabase
+          .from('scripts')
+          .insert({
+            project_id: projectId,
+            raw_text: scriptText.trim(),
+            status: 'draft',
+          })
+          .select()
+          .single();
+        if (error) throw error;
+        savedScript = data;
+      }
+
+      if (!savedScript) throw new Error('No se pudo guardar el guion');
+
+      // 2. Call script-breakdown to analyze
+      const { data: breakdownData, error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
+        body: {
+          projectId,
+          scriptText: scriptText.trim(),
+          scriptId: savedScript.id,
+          language,
+          format,
+          episodesCount: format === 'series' ? episodesCount : 1,
+          episodeDurationMin,
+        }
+      });
+
+      if (breakdownError) throw breakdownError;
+
+      // 3. Transform breakdown into generatedScript format for display
+      const breakdown = breakdownData?.breakdown || breakdownData;
+      
+      const scriptData = {
+        title: breakdown?.title || 'Guion Importado',
+        logline: breakdown?.logline || breakdown?.synopsis?.slice(0, 150) || '',
+        synopsis: breakdown?.synopsis || '',
+        genre: breakdown?.genre || genre,
+        tone: breakdown?.tone || tone,
+        themes: breakdown?.themes || [],
+        main_characters: breakdown?.characters || [],
+        locations: breakdown?.locations || [],
+        props: breakdown?.props || [],
+        subplots: breakdown?.subplots || [],
+        plot_twists: breakdown?.plot_twists || breakdown?.plotTwists || [],
+        episodes: breakdown?.episodes || (breakdown?.scenes ? [{ 
+          episode_number: 1, 
+          title: breakdown?.title || 'Película',
+          synopsis: breakdown?.synopsis,
+          scenes: breakdown?.scenes 
+        }] : []),
+        counts: {
+          protagonists: breakdown?.characters?.filter((c: any) => c.role === 'protagonist')?.length || 0,
+          supporting: breakdown?.characters?.filter((c: any) => c.role === 'supporting')?.length || 0,
+          locations: breakdown?.locations?.length || 0,
+          total_scenes: breakdown?.scenes?.length || breakdown?.episodes?.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0,
+        }
+      };
+
+      // 4. Update parsed_json in DB
+      await supabase
+        .from('scripts')
+        .update({ parsed_json: scriptData })
+        .eq('id', savedScript.id);
+
+      // 5. Set local state
+      setGeneratedScript(scriptData);
+      setCurrentScriptId(savedScript.id);
+      setActiveTab('summary');
+      
+      toast.success('¡Guion analizado! Ve a la pestaña "Resumen" para ver el resultado.');
+    } catch (err: any) {
+      console.error('Error analyzing imported script:', err);
+      toast.error(err.message || 'Error al analizar el guion');
+    } finally {
+      setParsingImportedScript(false);
+    }
   };
 
   // Helper function to generate teaser scenes
@@ -2555,6 +2670,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">{scriptText.length} caracteres</p>
                 <div className="flex gap-2">
+                  <Button 
+                    variant="gold" 
+                    onClick={analyzeImportedScript} 
+                    disabled={parsingImportedScript || scriptText.length < 200}
+                  >
+                    {parsingImportedScript ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Analizando...</>
+                    ) : (
+                      <><Sparkles className="w-4 h-4 mr-2" />Analizar Guion</>
+                    )}
+                  </Button>
                   <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || scriptText.length < 200}>
                     {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
                     Script Doctor
