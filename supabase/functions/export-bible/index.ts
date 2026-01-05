@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -72,6 +73,14 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Authenticate request
+  let auth: AuthContext;
+  try {
+    auth = await requireAuthOrDemo(req);
+  } catch (error) {
+    return authErrorResponse(error as Error, corsHeaders);
+  }
+
   try {
     const body = await req.json();
     
@@ -85,11 +94,20 @@ serve(async (req) => {
       });
     }
 
+    // Validate project access
+    try {
+      await requireProjectAccess(auth.supabase, auth.userId, body.projectId);
+    } catch (error) {
+      return authErrorResponse(error as Error, corsHeaders);
+    }
+
+    // Use the authenticated user's supabase client for RLS-compliant queries
+    // But for export we need service role for full data access
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    console.log(`[export-bible] Starting export for project: ${body.projectId}`);
+    console.log(`[export-bible] Starting export for project: ${body.projectId} by user: ${auth.userId}`);
 
     // Parallel fetch all data
     const [

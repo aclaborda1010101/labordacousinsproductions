@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -437,6 +438,9 @@ function enforceV3Schema(result: any, config: ModelConfig): any {
 // MAIN HANDLER
 // =============================================================================
 interface GenerateScriptRequest {
+  // Project reference (for auth)
+  projectId?: string;
+  
   // Content inputs
   idea?: string;
   scenePrompt?: string;
@@ -472,11 +476,30 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Authenticate request
+  let auth: AuthContext;
+  try {
+    auth = await requireAuthOrDemo(req);
+  } catch (error) {
+    return authErrorResponse(error as Error, corsHeaders);
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 180000); // 3min timeout
 
   try {
     const request: GenerateScriptRequest = await req.json();
+    
+    // Validate project access if projectId provided
+    if (request.projectId) {
+      try {
+        await requireProjectAccess(auth.supabase, auth.userId, request.projectId);
+      } catch (error) {
+        clearTimeout(timeoutId);
+        return authErrorResponse(error as Error, corsHeaders);
+      }
+    }
+    
     const {
       idea,
       scenePrompt,
