@@ -18,7 +18,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.parse-script]
-verify_jwt = true
+verify_jwt = false
 
 [functions.develop-structure]
 verify_jwt = true
