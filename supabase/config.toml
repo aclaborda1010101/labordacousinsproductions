@@ -1,21 +1,85 @@
 project_id = "dzrfbulwiqhzxxbcnzhn"
 
+# =============================================================================
+# V3.0 SECURITY CONFIGURATION
+# verify_jwt = true for data-mutating or paid functions
+# verify_jwt = false ONLY for external webhooks
+# =============================================================================
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CANONICAL GENERATION CORE (V3.0)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.generate-script]
+verify_jwt = true
+
+[functions.script-generate]
+# THIN ALIAS to generate-script (backwards compatibility)
+verify_jwt = true
+
 [functions.parse-script]
 verify_jwt = true
+
+[functions.develop-structure]
+verify_jwt = true
+
+[functions.batch-orchestrator]
+verify_jwt = true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OUTLINE & SCRIPT UTILITIES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.generate-outline-light]
+verify_jwt = false
+
+[functions.script-breakdown]
+verify_jwt = false
+
+[functions.script-doctor]
+verify_jwt = false
+
+[functions.script-freeze]
+verify_jwt = false
+
+[functions.script-qc-outline]
+verify_jwt = false
+
+[functions.script-rewrite-outline]
+verify_jwt = false
+
+[functions.script-generate-outline]
+verify_jwt = false
+
+[functions.script-generate-screenplay]
+verify_jwt = false
+
+[functions.script-generate-episode]
+verify_jwt = false
+
+[functions.generate-episode-detailed]
+verify_jwt = false
+
+[functions.episode-generate-batch]
+verify_jwt = false
+
+[functions.generate-teasers]
+verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ASSET GENERATION (Characters, Locations, Shots)
+# ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-character]
 verify_jwt = false
 
-[functions.generate-scenes]
+[functions.generate-location]
 verify_jwt = false
 
 [functions.generate-outfit]
 verify_jwt = false
 
-[functions.engine-shootout]
-verify_jwt = false
-
-[functions.generate-location]
+[functions.generate-scenes]
 verify_jwt = false
 
 [functions.generate-shot]
@@ -24,8 +88,27 @@ verify_jwt = false
 [functions.generate-shot-details]
 verify_jwt = false
 
-[functions.qc-visual-identity]
+[functions.generate-keyframe]
 verify_jwt = false
+
+[functions.generate-visual-dna]
+verify_jwt = false
+
+[functions.generate-technical-prompt]
+verify_jwt = false
+
+[functions.generate-run]
+verify_jwt = false
+
+[functions.batch-generate]
+verify_jwt = false
+
+[functions.analyze-character-references]
+verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VIDEO ENGINES
+# ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.veo_start]
 verify_jwt = false
@@ -39,17 +122,25 @@ verify_jwt = false
 [functions.kling_poll]
 verify_jwt = false
 
-[functions.generate-keyframe]
+[functions.engine-shootout]
 verify_jwt = false
 
-[functions.script-generate]
+# ═══════════════════════════════════════════════════════════════════════════════
+# QC & VALIDATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.qc-visual-identity]
 verify_jwt = false
 
-[functions.script-doctor]
+[functions.validate-continuity-locks]
 verify_jwt = false
 
-[functions.script-breakdown]
+[functions.pre-render-qc-gate]
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# UTILITIES & HELPERS
+# ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.entity-builder]
 verify_jwt = false
@@ -60,59 +151,18 @@ verify_jwt = false
 [functions.audio-design]
 verify_jwt = false
 
-[functions.validate-continuity-locks]
-verify_jwt = false
-
-[functions.pre-render-qc-gate]
-verify_jwt = false
-
-[functions.batch-generate]
-verify_jwt = false
-
-[functions.generate-visual-dna]
-verify_jwt = false
-
-[functions.generate-technical-prompt]
-verify_jwt = false
-
-[functions.script-generate-outline]
-verify_jwt = false
-
-[functions.script-qc-outline]
-verify_jwt = false
-
-[functions.script-rewrite-outline]
-verify_jwt = false
-
-[functions.script-generate-screenplay]
-verify_jwt = false
-
-[functions.script-freeze]
-verify_jwt = false
-
-[functions.script-generate-episode]
-verify_jwt = false
-
-[functions.generate-outline-light]
-verify_jwt = false
-
-[functions.generate-episode-detailed]
-verify_jwt = false
-
-[functions.analyze-character-references]
-verify_jwt = false
-
-[functions.episode-generate-batch]
-verify_jwt = false
-
-[functions.generate-teasers]
-verify_jwt = false
-
-[functions.generate-run]
-verify_jwt = false
-
 [functions.export-bible]
+verify_jwt = true
+
+[functions.production-director]
 verify_jwt = false
+
+[functions.production-engine]
+verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DEVELOPER MODE
+# ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.unlock-developer-mode]
 verify_jwt = false
@@ -120,14 +170,20 @@ verify_jwt = false
 [functions.disable-developer-mode]
 verify_jwt = false
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# LORA TRAINING
+# ═══════════════════════════════════════════════════════════════════════════════
+
 [functions.train-character-lora]
 verify_jwt = false
 
 [functions.lora-training-webhook]
+# External webhook - MUST be public
 verify_jwt = false
 
-[functions.production-director]
-verify_jwt = false
+# ═══════════════════════════════════════════════════════════════════════════════
+# FORGE (AI Assistant)
+# ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.forge-analytics]
 verify_jwt = false
@@ -143,18 +199,3 @@ verify_jwt = false
 
 [functions.forge-tts]
 verify_jwt = false
-
-[functions.production-engine]
-verify_jwt = false
-
-[functions.generate-script]
-verify_jwt = false
-
-[functions.batch-orchestrator]
-verify_jwt = true
-
-[functions.develop-structure]
-verify_jwt = true
-
-[functions.export-bible]
-verify_jwt = true

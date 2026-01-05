@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
+import { parseJsonSafe, parseToolCallArgs, parseAnthropicToolUse, ParseResult } from "../_shared/llmJson.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -604,14 +605,51 @@ function buildStoryBibleBlock(
 }
 
 // =============================================================================
-// API CALLERS
+// FALLBACK RESULT BUILDER
+// =============================================================================
+function buildFallbackScriptResult(episodeNumber?: number, scenesPerBatch: number = 5): any {
+  return {
+    synopsis: 'Generación fallida - usar resultado degradado',
+    scenes: Array.from({ length: scenesPerBatch }, (_, i) => ({
+      scene_number: i + 1,
+      episode_number: episodeNumber || 1,
+      slugline: 'INT. UBICACIÓN - DÍA',
+      standardized_location: 'UBICACIÓN',
+      standardized_time: 'DAY',
+      location_type: 'INT',
+      action_summary: 'Por generar',
+      raw_content: '',
+      technical_metadata: {
+        _status: 'EMPTY',
+        camera: { lens: null, movement: null, framing: null },
+        lighting: { type: null, direction: null, mood: null },
+        sound: { sfx: [], ambience: [] },
+        color: { palette: null, contrast: null }
+      },
+      characters_present: [],
+      dialogue: [],
+      mood: 'neutral',
+      conflict: 'Por definir',
+      duration_seconds: 60
+    })),
+    characters_introduced: [],
+    locations_introduced: [],
+    uncertainties: [{ type: 'generation', description: 'Generación fallida', assumed_value: 'fallback' }],
+    new_entities_requested: []
+  };
+}
+
+// =============================================================================
+// API CALLERS WITH HARDENED PARSING
 // =============================================================================
 async function callOpenAI(
   systemPrompt: string,
   userPrompt: string,
   config: ModelConfig,
-  signal: AbortSignal
-): Promise<any> {
+  signal: AbortSignal,
+  episodeNumber?: number,
+  scenesPerBatch: number = 5
+): Promise<{ result: any; parseWarnings: string[] }> {
   const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
   if (!OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not configured');
 
@@ -644,19 +682,41 @@ async function callOpenAI(
   const data = await response.json();
   const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
   
-  if (!toolCall?.function?.arguments) {
-    throw new Error("No tool call in OpenAI response");
+  // Use hardened parsing
+  const parseResult = parseToolCallArgs(toolCall, V3_OUTPUT_SCHEMA.name, 'openai.generate_script');
+  
+  if (parseResult.ok && parseResult.json) {
+    return { result: parseResult.json, parseWarnings: parseResult.warnings };
   }
-
-  return JSON.parse(toolCall.function.arguments);
+  
+  // Try fallback from content
+  const content = data?.choices?.[0]?.message?.content;
+  if (content) {
+    const contentResult = parseJsonSafe(content, 'openai.content_fallback');
+    if (contentResult.ok && contentResult.json) {
+      return { 
+        result: contentResult.json, 
+        parseWarnings: [...parseResult.warnings, ...contentResult.warnings] 
+      };
+    }
+  }
+  
+  // Return degraded fallback
+  console.warn('[generate-script] OpenAI parse failed, using fallback');
+  return { 
+    result: buildFallbackScriptResult(episodeNumber, scenesPerBatch), 
+    parseWarnings: [...parseResult.warnings, 'OPENAI_PARSE_FAILED'] 
+  };
 }
 
 async function callAnthropic(
   systemPrompt: string,
   userPrompt: string,
   config: ModelConfig,
-  signal: AbortSignal
-): Promise<any> {
+  signal: AbortSignal,
+  episodeNumber?: number,
+  scenesPerBatch: number = 5
+): Promise<{ result: any; parseWarnings: string[] }> {
   const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
   if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
@@ -696,15 +756,20 @@ async function callAnthropic(
   }
 
   const data = await response.json();
-  const toolUse = data?.content?.find(
-    (b: any) => b?.type === "tool_use" && b?.name === V3_OUTPUT_SCHEMA.name
-  );
-
-  if (!toolUse?.input) {
-    throw new Error("No tool_use in Anthropic response");
+  
+  // Use hardened parsing
+  const parseResult = parseAnthropicToolUse(data?.content, V3_OUTPUT_SCHEMA.name, 'anthropic.generate_script');
+  
+  if (parseResult.ok && parseResult.json) {
+    return { result: parseResult.json, parseWarnings: parseResult.warnings };
   }
-
-  return toolUse.input;
+  
+  // Return degraded fallback
+  console.warn('[generate-script] Anthropic parse failed, using fallback');
+  return { 
+    result: buildFallbackScriptResult(episodeNumber, scenesPerBatch), 
+    parseWarnings: [...parseResult.warnings, 'ANTHROPIC_PARSE_FAILED'] 
+  };
 }
 
 // =============================================================================
@@ -1116,22 +1181,28 @@ IDIOMA: ${language}
     userPrompt += tierInstructions;
 
     // =========================================================================
-    // Call LLM
+    // Call LLM with hardened parsing
     // =========================================================================
-    let result: any;
+    let llmResult: { result: any; parseWarnings: string[] };
     
     if (config.provider === 'openai') {
-      result = await callOpenAI(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal);
+      llmResult = await callOpenAI(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
     } else if (config.provider === 'anthropic') {
-      result = await callAnthropic(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal);
+      llmResult = await callAnthropic(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
     } else {
       throw new Error(`Unknown provider: ${config.provider}`);
     }
 
     clearTimeout(timeoutId);
 
+    const { result, parseWarnings } = llmResult;
+
     // Enforce V3 schema compliance + mark Bible sources
     const v3Result = enforceV3Schema(result, config, bibleCharNames);
+
+    // Determine if this is a degraded result
+    const isDegraded = parseWarnings.length > 0;
+    const resultQuality = isDegraded ? 'DEGRADED' : 'FULL';
 
     console.log('[generate-script] Generated:', {
       scenesCount: v3Result.scenes?.length || 0,
@@ -1139,9 +1210,36 @@ IDIOMA: ${language}
       locationsIntroduced: v3Result.locations_introduced?.length || 0,
       uncertainties: v3Result.uncertainties?.length || 0,
       newEntitiesRequested: v3Result.new_entities_requested?.length || 0,
-      qualityTier
+      qualityTier,
+      resultQuality,
+      parseWarnings: parseWarnings.length > 0 ? parseWarnings.join(', ') : 'none'
     });
 
+    // Log parse warnings to editorial_events if degraded
+    if (isDegraded && projectId) {
+      try {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+        const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+        const supabase = createClient(supabaseUrl, serviceRoleKey);
+        
+        await supabase.from('editorial_events').insert({
+          project_id: projectId,
+          event_type: 'script_parse_warning',
+          asset_type: 'script',
+          payload: {
+            warnings: parseWarnings,
+            episode_number: episodeNumber,
+            batch_index: batchIndex,
+            quality_tier: qualityTier,
+            provider: config.provider
+          }
+        });
+      } catch (e) {
+        console.warn('[generate-script] Failed to log parse warning event:', e);
+      }
+    }
+
+    // Always return 200 with quality indicator (never 500 for parse issues)
     return new Response(
       JSON.stringify({
         ...v3Result,
@@ -1149,10 +1247,12 @@ IDIOMA: ${language}
           qualityTier,
           provider: config.provider,
           model: config.apiModel,
-          schemaVersion: '3.1',
+          schemaVersion: '3.2',
           bibleInjected: !!projectId,
           bibleCharacters: filteredBible.characters.length,
-          bibleLocations: filteredBible.locations.length
+          bibleLocations: filteredBible.locations.length,
+          resultQuality,
+          parseWarnings: parseWarnings.length > 0 ? parseWarnings : undefined
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -1162,13 +1262,28 @@ IDIOMA: ${language}
     clearTimeout(timeoutId);
     console.error('[generate-script] Error:', error);
     
-    const status = error.status || 500;
-    const message = error.message || 'Unknown error';
-    const retryable = error.retryable || false;
+    // For rate limits, return proper status
+    if (error.status === 429) {
+      return new Response(
+        JSON.stringify({ error: error.message || 'Rate limit exceeded', retryable: true }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // For other errors, return 200 with degraded fallback (never crash)
+    console.warn('[generate-script] Returning degraded fallback due to error');
+    const fallback = buildFallbackScriptResult(undefined, 5);
     
     return new Response(
-      JSON.stringify({ error: message, retryable }),
-      { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        ...fallback,
+        _meta: {
+          schemaVersion: '3.2',
+          resultQuality: 'DEGRADED',
+          parseWarnings: ['GENERATION_ERROR', error?.message || 'Unknown error']
+        }
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
