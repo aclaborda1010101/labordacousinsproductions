@@ -131,7 +131,15 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
       throw new Error(`FAL AI failed: ${response.status} - ${errorText}`);
     }
 
-    const result = await response.json();
+    // Safely parse JSON response
+    const responseText = await response.text();
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('[generate-location] Failed to parse FAL response:', responseText.substring(0, 500));
+      throw new Error(`FAL returned invalid JSON: ${responseText.substring(0, 200)}`);
+    }
     
     // Handle FAL async queue response
     if (result.request_id) {
@@ -151,7 +159,16 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
           },
         });
         
-        const status = await statusResponse.json();
+        // Safely parse status response
+        const statusText = await statusResponse.text();
+        let status;
+        try {
+          status = JSON.parse(statusText);
+        } catch (parseError) {
+          console.error('[generate-location] Failed to parse status response:', statusText.substring(0, 200));
+          attempts++;
+          continue;
+        }
         
         if (status.status === 'COMPLETED') {
           // Get result
@@ -161,7 +178,15 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
             },
           });
           
-          const finalResult = await resultResponse.json();
+          // Safely parse final result
+          const finalText = await resultResponse.text();
+          let finalResult;
+          try {
+            finalResult = JSON.parse(finalText);
+          } catch (parseError) {
+            console.error('[generate-location] Failed to parse final result:', finalText.substring(0, 200));
+            throw new Error('FAL returned invalid JSON for completed request');
+          }
           const imageUrl = finalResult.images?.[0]?.url;
           
           if (!imageUrl) {
