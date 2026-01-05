@@ -1115,6 +1115,16 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             return;
           }
 
+          if (breakdownError.status === 429) {
+            const retryAfter = breakdownError.retryAfter || 30;
+            toast.error('Límite de uso alcanzado', {
+              description: `Por favor espera ${retryAfter} segundos antes de intentar de nuevo.`,
+              duration: 10000,
+            });
+            setStatus('error');
+            return;
+          }
+
           toast.error(breakdownError.message || 'Error al analizar el guion');
           setStatus('error');
           return;

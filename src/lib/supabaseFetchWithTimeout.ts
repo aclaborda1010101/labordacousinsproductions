@@ -9,13 +9,17 @@ export class InvokeFunctionError extends Error {
   status: number;
   bodyText?: string;
   bodyJson?: unknown;
+  retryAfter?: number;
+  code?: string;
 
-  constructor(message: string, opts: { status: number; bodyText?: string; bodyJson?: unknown }) {
+  constructor(message: string, opts: { status: number; bodyText?: string; bodyJson?: unknown; retryAfter?: number; code?: string }) {
     super(message);
     this.name = 'InvokeFunctionError';
     this.status = opts.status;
     this.bodyText = opts.bodyText;
     this.bodyJson = opts.bodyJson;
+    this.retryAfter = opts.retryAfter;
+    this.code = opts.code;
   }
 }
 
@@ -146,9 +150,19 @@ export async function invokeWithTimeout<T = unknown>(
             ? (parsed as any).error
             : errorText || `HTTP ${response.status}`));
 
+      const retryAfter =
+        typeof parsed === 'object' && parsed && 'retryAfter' in parsed && typeof (parsed as any).retryAfter === 'number'
+          ? (parsed as any).retryAfter
+          : undefined;
+
+      const code =
+        typeof parsed === 'object' && parsed && 'code' in parsed && typeof (parsed as any).code === 'string'
+          ? (parsed as any).code
+          : undefined;
+
       return {
         data: null,
-        error: new InvokeFunctionError(message, { status: response.status, bodyText: errorText, bodyJson: parsed }),
+        error: new InvokeFunctionError(message, { status: response.status, bodyText: errorText, bodyJson: parsed, retryAfter, code }),
       };
     }
 
