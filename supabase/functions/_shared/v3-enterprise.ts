@@ -208,19 +208,14 @@ export interface LockResult {
 export async function v3AcquireProjectLock(
   supabase: SupabaseClient,
   projectId: string,
-  userId: string,
+  userId: string, // Kept for signature compatibility but NOT passed to RPC
   reason: string,
   durationSeconds = 600
 ): Promise<LockResult> {
-  // Use service role for lock operations
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const adminClient = createClient(supabaseUrl, serviceKey);
-  
+  // Use the user's authenticated client - JWT will be used by auth.uid() in Postgres
   try {
-    const { data, error } = await adminClient.rpc('acquire_project_lock', {
+    const { data, error } = await supabase.rpc('acquire_project_lock', {
       p_project_id: projectId,
-      p_user_id: userId,
       p_reason: reason,
       p_duration_seconds: durationSeconds,
     });

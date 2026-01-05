@@ -959,7 +959,6 @@ serve(async (req) => {
       
       const { data: lockResult, error: lockError } = await auth.supabase.rpc('acquire_project_lock', {
         p_project_id: request.projectId,
-        p_user_id: auth.userId,
         p_reason: 'script_generation',
         p_duration_seconds: 600 // 10 minutes max
       });

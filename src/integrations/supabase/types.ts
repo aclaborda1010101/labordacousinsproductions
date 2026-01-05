@@ -5137,15 +5137,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      acquire_project_lock: {
-        Args: {
-          p_duration_seconds?: number
-          p_project_id: string
-          p_reason: string
-          p_user_id: string
-        }
-        Returns: boolean
-      }
+      acquire_project_lock:
+        | {
+            Args: {
+              p_duration_seconds?: number
+              p_project_id: string
+              p_reason: string
+            }
+            Returns: boolean
+          }
+        | {
+            Args: {
+              p_duration_seconds?: number
+              p_project_id: string
+              p_reason: string
+              p_user_id: string
+            }
+            Returns: boolean
+          }
       calculate_pack_completeness: {
         Args: { p_character_id: string }
         Returns: number
