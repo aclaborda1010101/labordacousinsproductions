@@ -574,9 +574,67 @@ serve(async (req) => {
       const episodeTitle = episodeBeat?.title || `Episodio ${episodeNumber}`;
       const episodeSummary = episodeBeat?.summary || '';
       
+      // Build comprehensive outline context with ALL entities
+      let outlineContext = '';
+      
+      // Include logline and synopsis
+      if (outline.logline) {
+        outlineContext += `\nLOGLINE: ${outline.logline}`;
+      }
+      if (outline.synopsis) {
+        outlineContext += `\nSINOPSIS GENERAL: ${outline.synopsis}`;
+      }
+      
+      // Include ALL main characters from outline
+      if (outline.main_characters?.length) {
+        outlineContext += `\n\n=== PERSONAJES PRINCIPALES (${outline.main_characters.length}) ===`;
+        outline.main_characters.forEach((char: any) => {
+          outlineContext += `\n• ${char.name} (${char.role || 'supporting'}): ${char.description || ''}`;
+        });
+      }
+      
+      // Include ALL main locations from outline
+      if (outline.main_locations?.length) {
+        outlineContext += `\n\n=== LOCACIONES PRINCIPALES (${outline.main_locations.length}) ===`;
+        outline.main_locations.forEach((loc: any) => {
+          outlineContext += `\n• ${loc.name} (${loc.type || 'INT/EXT'}): ${loc.description || ''}`;
+        });
+      }
+      
+      // Include props if available
+      if (outline.main_props?.length) {
+        outlineContext += `\n\n=== PROPS IMPORTANTES ===`;
+        outline.main_props.slice(0, 10).forEach((prop: any) => {
+          outlineContext += `\n• ${prop.name} (${prop.importance || 'key'}): ${prop.description || ''} - ${prop.narrative_function || ''}`;
+        });
+      }
+      
+      // Include subplots if available
+      if (outline.subplots?.length) {
+        outlineContext += `\n\n=== SUBTRAMAS ===`;
+        outline.subplots.forEach((subplot: any) => {
+          outlineContext += `\n• ${subplot.name}: ${subplot.description || ''}`;
+          if (subplot.characters_involved?.length) {
+            outlineContext += ` [Personajes: ${subplot.characters_involved.join(', ')}]`;
+          }
+        });
+      }
+      
+      // Include plot twists if available
+      if (outline.plot_twists?.length) {
+        outlineContext += `\n\n=== GIROS NARRATIVOS ===`;
+        outline.plot_twists.forEach((twist: any) => {
+          outlineContext += `\n• Ep ${twist.episode || '?'}: ${twist.description || twist.title || ''}`;
+        });
+      }
+      
       userPrompt = `
 GENERA ${scenesPerBatch} ESCENAS EN FORMATO V3 SCHEMA
 
+=== CONTEXTO COMPLETO DEL PROYECTO ===
+${outlineContext}
+
+=== EPISODIO ACTUAL ===
 EPISODIO: ${episodeNumber} - "${episodeTitle}"
 BATCH: ${batchIndex + 1}${totalBatches ? ` de ${totalBatches}` : ''}
 ${isLastBatch ? '⚠️ ÚLTIMO BATCH - incluye resolución o cliffhanger' : ''}
@@ -592,8 +650,15 @@ ${previousScenes?.length ? `\nESCENAS ANTERIORES:\n${previousScenes.map(s => `- 
 ${contextBlock}
 
 IDIOMA: ${language}
-GÉNERO: ${genre || 'Drama'}
-TONO: ${tone || 'Cinematic'}
+GÉNERO: ${genre || outline.genre || 'Drama'}
+TONO: ${tone || outline.tone || 'Cinematic'}
+
+⚠️ IMPORTANTE:
+- UTILIZA los personajes del outline en las escenas
+- UTILIZA las locaciones del outline
+- INCORPORA los props narrativos relevantes
+- DESARROLLA las subtramas mencionadas
+- PREPARA los giros narrativos si corresponden a este episodio
 
 GENERA exactamente ${scenesPerBatch} escenas con V3 schema completo.
 Cada escena DEBE tener technical_metadata con _status.`;
