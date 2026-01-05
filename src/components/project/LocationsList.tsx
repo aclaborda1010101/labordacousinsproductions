@@ -417,29 +417,32 @@ export default function LocationsList({ projectId }: LocationsListProps) {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Localizaciones</h2>
-          <p className="text-muted-foreground">Define los escenarios de tu producción</p>
+          <h2 className="text-xl sm:text-2xl font-bold">Localizaciones</h2>
+          <p className="text-sm text-muted-foreground">Define los escenarios de tu producción</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {scriptLocations.length > 0 && (
-            <Button variant="outline" onClick={handleImportFromScript} disabled={importingFromScript}>
-              {importingFromScript ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <MapPin className="w-4 h-4 mr-2" />}
-              Importar del Guion ({scriptLocations.length})
+            <Button variant="outline" size="sm" onClick={handleImportFromScript} disabled={importingFromScript}>
+              {importingFromScript ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
+              <span className="ml-2 hidden sm:inline">Importar del Guion ({scriptLocations.length})</span>
+              <span className="ml-2 sm:hidden">Importar ({scriptLocations.length})</span>
             </Button>
           )}
           {locations.length > 0 && (
-            <Button variant="outline" onClick={handleGenerateAll} disabled={generatingAll}>
-              {generatingAll ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <PlayCircle className="w-4 h-4 mr-2" />}
-              Generar Todas
+            <Button variant="outline" size="sm" onClick={handleGenerateAll} disabled={generatingAll}>
+              {generatingAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}
+              <span className="ml-2 hidden sm:inline">Generar Todas</span>
+              <span className="ml-2 sm:hidden">Todas</span>
             </Button>
           )}
-          <Button variant="gold" onClick={() => setShowAddDialog(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Añadir Localización
+          <Button variant="gold" size="sm" onClick={() => setShowAddDialog(true)}>
+            <Plus className="w-4 h-4" />
+            <span className="ml-2 hidden sm:inline">Añadir Localización</span>
+            <span className="ml-2 sm:hidden">Añadir</span>
           </Button>
         </div>
       </div>

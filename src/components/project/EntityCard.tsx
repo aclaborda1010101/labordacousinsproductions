@@ -103,52 +103,107 @@ export function EntityCard({
         <CardContent className="p-0">
           {/* Collapsed header - always visible */}
           <CollapsibleTrigger asChild>
-            <div className="p-4 flex items-center gap-4 cursor-pointer hover:bg-muted/50 transition-colors">
-              {/* Image/Placeholder */}
-              <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
-                {imageUrl ? (
-                  <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="text-primary">{placeholderIcon}</div>
-                )}
-              </div>
-
-              {/* Name and description */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className="font-semibold text-foreground truncate">{name}</h3>
-                  {config.badge}
-                  {badges}
-                </div>
-                {description && (
-                  <p className="text-sm text-muted-foreground line-clamp-1">{description}</p>
-                )}
-              </div>
-
-              {/* Primary action button - single CTA per state */}
-              <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                <Button
-                  variant={config.actionVariant}
-                  size="sm"
-                  onClick={onPrimaryAction}
-                  disabled={isGenerating}
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generando...
-                    </>
+            <div className="p-3 sm:p-4 cursor-pointer hover:bg-muted/50 transition-colors">
+              {/* Desktop layout */}
+              <div className="hidden sm:flex items-center gap-4">
+                {/* Image/Placeholder */}
+                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+                  {imageUrl ? (
+                    <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
                   ) : (
-                    <>
-                      {config.actionIcon}
-                      {config.actionLabel}
-                    </>
+                    <div className="text-primary">{placeholderIcon}</div>
                   )}
-                </Button>
-                
-                {/* Expand indicator */}
-                <div className="text-muted-foreground">
-                  {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </div>
+
+                {/* Name and description */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                    <h3 className="font-semibold text-foreground truncate">{name}</h3>
+                    {config.badge}
+                    {badges}
+                  </div>
+                  {description && (
+                    <p className="text-sm text-muted-foreground line-clamp-1">{description}</p>
+                  )}
+                </div>
+
+                {/* Primary action button */}
+                <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant={config.actionVariant}
+                    size="sm"
+                    onClick={onPrimaryAction}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Generando...
+                      </>
+                    ) : (
+                      <>
+                        {config.actionIcon}
+                        {config.actionLabel}
+                      </>
+                    )}
+                  </Button>
+                  <div className="text-muted-foreground">
+                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile layout - stacked */}
+              <div className="flex sm:hidden flex-col gap-3">
+                <div className="flex items-start gap-3">
+                  {/* Image/Placeholder */}
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+                    {imageUrl ? (
+                      <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-primary">{placeholderIcon}</div>
+                    )}
+                  </div>
+
+                  {/* Name, badges, description */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground text-sm truncate">{name}</h3>
+                    <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                      {config.badge}
+                      {badges}
+                    </div>
+                    {description && (
+                      <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{description}</p>
+                    )}
+                  </div>
+
+                  {/* Expand indicator */}
+                  <div className="text-muted-foreground shrink-0">
+                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </div>
+                </div>
+
+                {/* Action button - full width on mobile */}
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant={config.actionVariant}
+                    size="sm"
+                    className="w-full"
+                    onClick={onPrimaryAction}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Generando...
+                      </>
+                    ) : (
+                      <>
+                        {config.actionIcon}
+                        {config.actionLabel}
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>
