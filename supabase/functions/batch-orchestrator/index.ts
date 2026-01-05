@@ -151,13 +151,21 @@ serve(async (req) => {
               await new Promise(r => setTimeout(r, 2000 * attempt)); // Backoff
             }
 
-            // Call generate-script canonical router with service role key
-            // (generate-script is also protected, we use service role for internal calls)
+            // Call generate-script canonical router
+            // IMPORTANT: forward the user's Authorization header so downstream auth works.
+            const incomingAuthHeader = req.headers.get('authorization');
+            if (!incomingAuthHeader) {
+              throw new Error('Missing Authorization header on batch-orchestrator request');
+            }
+
             const generateResponse = await fetch(`${supabaseUrl}/functions/v1/generate-script`, {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${supabaseKey}`,
                 'Content-Type': 'application/json',
+                // Use service role key as the functions gateway API key
+                apikey: supabaseKey,
+                // Forward user JWT for requireAuthOrDemo() inside generate-script
+                Authorization: incomingAuthHeader,
               },
               body: JSON.stringify({
                 projectId, // Pass projectId for tracking
