@@ -2540,6 +2540,87 @@ export type Database = {
           },
         ]
       }
+      generation_rate_limits: {
+        Row: {
+          created_at: string
+          function_name: string
+          id: string
+          project_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          function_name: string
+          id?: string
+          project_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          function_name?: string
+          id?: string
+          project_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      generation_run_logs: {
+        Row: {
+          cost_estimate_usd: number | null
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          finished_at: string | null
+          function_name: string
+          id: string
+          metadata: Json | null
+          model: string | null
+          project_id: string | null
+          provider: string | null
+          raw_snippet_hash: string | null
+          status: string
+          tokens_actual: number | null
+          tokens_estimated: number | null
+          user_id: string
+        }
+        Insert: {
+          cost_estimate_usd?: number | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          function_name: string
+          id?: string
+          metadata?: Json | null
+          model?: string | null
+          project_id?: string | null
+          provider?: string | null
+          raw_snippet_hash?: string | null
+          status?: string
+          tokens_actual?: number | null
+          tokens_estimated?: number | null
+          user_id: string
+        }
+        Update: {
+          cost_estimate_usd?: number | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          function_name?: string
+          id?: string
+          metadata?: Json | null
+          model?: string | null
+          project_id?: string | null
+          provider?: string | null
+          raw_snippet_hash?: string | null
+          status?: string
+          tokens_actual?: number | null
+          tokens_estimated?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       generation_runs: {
         Row: {
           accepted_at: string | null
@@ -5028,8 +5109,18 @@ export type Database = {
           usage_today: number
         }[]
       }
+      check_rate_limit: {
+        Args: {
+          p_function_name: string
+          p_max_per_minute?: number
+          p_project_id: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
       clean_expired_cache: { Args: never; Returns: number }
       cleanup_expired_locks: { Args: never; Returns: number }
+      cleanup_rate_limits: { Args: never; Returns: number }
       create_visual_dna_version: {
         Args: { char_id: string; modifications: Json; new_version_name: string }
         Returns: string

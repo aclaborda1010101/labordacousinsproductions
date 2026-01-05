@@ -1,11 +1,18 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { 
+  v3RequireAuth, 
+  v3RequireProjectAccess,
+  v3AcquireProjectLock,
+  v3ReleaseProjectLock,
+  v3CheckRateLimit,
+  v3LogRunStart,
+  v3LogRunComplete,
+  v3Error,
+  corsHeaders,
+  V3AuthContext
+} from "../_shared/v3-enterprise.ts";
 
 // ⚠️ MODEL CONFIGS - Multi-provider support
 type GenerationModelType = 'rapido' | 'profesional' | 'hollywood';
@@ -675,8 +682,19 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Track for logging
+  // =======================================================================
+  // V3.0 ENTERPRISE AUTHENTICATION
+  // =======================================================================
+  const authResult = await v3RequireAuth(req);
+  if (authResult instanceof Response) {
+    return authResult;
+  }
+  const auth: V3AuthContext = authResult;
+
+  // Track for logging and cleanup
   let projectId: string | null = null;
+  let lockAcquired = false;
+  let runId: string | null = null;
   const startTime = Date.now();
 
   try {
@@ -697,11 +715,48 @@ serve(async (req) => {
     projectId = project_id || null;
 
     if (!idea) {
-      return new Response(
-        JSON.stringify({ error: 'Idea requerida' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return v3Error('VALIDATION_ERROR', 'Idea requerida', 400);
     }
+
+    // =======================================================================
+    // V3.0 PROJECT ACCESS + LOCKING + RATE LIMIT
+    // =======================================================================
+    if (projectId) {
+      const accessResult = await v3RequireProjectAccess(auth, projectId);
+      if (accessResult instanceof Response) {
+        return accessResult;
+      }
+
+      // Acquire project lock
+      const lockResult = await v3AcquireProjectLock(
+        auth.supabase,
+        projectId,
+        auth.userId,
+        'outline_generation',
+        300 // 5 minutes max for outline
+      );
+
+      if (!lockResult.acquired) {
+        return v3Error('PROJECT_BUSY', 'Este proyecto ya está generando contenido', 409, lockResult.retryAfter);
+      }
+      lockAcquired = true;
+
+      // Check rate limit
+      const rateLimitResult = await v3CheckRateLimit(projectId, auth.userId, 'generate-outline-light', 5);
+      if (!rateLimitResult.allowed) {
+        await v3ReleaseProjectLock(projectId, auth.userId);
+        lockAcquired = false;
+        return v3Error('RATE_LIMIT_EXCEEDED', 'Demasiadas solicitudes, espera un momento', 429, rateLimitResult.retryAfter);
+      }
+    }
+
+    // Log run start
+    runId = await v3LogRunStart({
+      userId: auth.userId,
+      projectId: projectId || undefined,
+      functionName: 'generate-outline-light',
+      provider: generationModel === 'hollywood' ? 'anthropic' : 'openai',
+    });
 
     // Validate and get model config
     const modelKey = (generationModel as GenerationModelType) in MODEL_CONFIGS 
@@ -982,6 +1037,11 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
   } catch (error: any) {
     console.error('[OUTLINE ERROR]', error);
     
+    // Log failure
+    if (runId) {
+      await v3LogRunComplete(runId, 'failed', undefined, undefined, 'GENERATION_ERROR', error?.message);
+    }
+    
     // Log failure event
     if (projectId) {
       logEditorialEvent(projectId, 'outline_generation_failed', {
@@ -993,7 +1053,7 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
     // Handle structured errors with status codes (rate limits, etc.)
     if (error.status) {
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ success: false, code: 'API_ERROR', message: error.message }),
         { status: error.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -1012,5 +1072,19 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
+  } finally {
+    // =======================================================================
+    // V3.0 LOCK RELEASE - Always release lock on exit
+    // =======================================================================
+    if (lockAcquired && projectId) {
+      await v3ReleaseProjectLock(projectId, auth.userId);
+      console.log('[OUTLINE] Lock released for project:', projectId);
+    }
+
+    // Log run completion (if not already done in error handler)
+    if (runId) {
+      const durationMs = Date.now() - startTime;
+      await v3LogRunComplete(runId, 'success', undefined, undefined, undefined, undefined);
+    }
   }
 });

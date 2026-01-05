@@ -1,24 +1,25 @@
 project_id = "dzrfbulwiqhzxxbcnzhn"
 
 # =============================================================================
-# V3.0 SECURITY CONFIGURATION
-# verify_jwt = true for data-mutating or paid functions
-# verify_jwt = false ONLY for external webhooks
+# V3.0 ENTERPRISE SECURITY CONFIGURATION
+# verify_jwt = true for ALL functions that consume AI or CPU resources
+# verify_jwt = false ONLY for external webhooks (Replicate callbacks, etc.)
 # =============================================================================
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# CANONICAL GENERATION CORE (V3.0)
+# CANONICAL GENERATION CORE (V3.0 ENTERPRISE)
+# These functions MUST be protected - they consume expensive AI resources
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-script]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-generate]
 # THIN ALIAS to generate-script (backwards compatibility)
-verify_jwt = false
+verify_jwt = true
 
 [functions.parse-script]
-verify_jwt = false
+verify_jwt = true
 
 [functions.develop-structure]
 verify_jwt = true
@@ -27,175 +28,175 @@ verify_jwt = true
 verify_jwt = true
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# OUTLINE & SCRIPT UTILITIES
+# OUTLINE & SCRIPT UTILITIES (V3.0 PROTECTED)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-outline-light]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-breakdown]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-doctor]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-freeze]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-qc-outline]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-rewrite-outline]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-generate-outline]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-generate-screenplay]
-verify_jwt = false
+verify_jwt = true
 
 [functions.script-generate-episode]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-episode-detailed]
-verify_jwt = false
+verify_jwt = true
 
 [functions.episode-generate-batch]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-teasers]
-verify_jwt = false
+verify_jwt = true
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# ASSET GENERATION (Characters, Locations, Shots)
+# ASSET GENERATION (V3.0 PROTECTED - Expensive AI Operations)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-character]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-location]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-outfit]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-scenes]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-shot]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-shot-details]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-keyframe]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-visual-dna]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-technical-prompt]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-run]
-verify_jwt = false
+verify_jwt = true
 
 [functions.batch-generate]
-verify_jwt = false
+verify_jwt = true
 
 [functions.analyze-character-references]
-verify_jwt = false
+verify_jwt = true
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# VIDEO ENGINES
+# VIDEO ENGINES (V3.0 PROTECTED - Expensive Operations)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.veo_start]
-verify_jwt = false
+verify_jwt = true
 
 [functions.veo_poll]
-verify_jwt = false
+verify_jwt = true
 
 [functions.kling_start]
-verify_jwt = false
+verify_jwt = true
 
 [functions.kling_poll]
-verify_jwt = false
+verify_jwt = true
 
 [functions.engine-shootout]
-verify_jwt = false
+verify_jwt = true
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# QC & VALIDATION
+# QC & VALIDATION (V3.0 PROTECTED)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.qc-visual-identity]
-verify_jwt = false
+verify_jwt = true
 
 [functions.validate-continuity-locks]
-verify_jwt = false
+verify_jwt = true
 
 [functions.pre-render-qc-gate]
-verify_jwt = false
+verify_jwt = true
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# UTILITIES & HELPERS
+# UTILITIES & HELPERS (V3.0 PROTECTED)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.entity-builder]
-verify_jwt = false
+verify_jwt = true
 
 [functions.shot-suggest]
-verify_jwt = false
+verify_jwt = true
 
 [functions.audio-design]
-verify_jwt = false
+verify_jwt = true
 
 [functions.export-bible]
 verify_jwt = true
 
 [functions.production-director]
-verify_jwt = false
+verify_jwt = true
 
 [functions.production-engine]
-verify_jwt = false
+verify_jwt = true
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# DEVELOPER MODE
+# DEVELOPER MODE (Protected)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.unlock-developer-mode]
-verify_jwt = false
+verify_jwt = true
 
 [functions.disable-developer-mode]
-verify_jwt = false
+verify_jwt = true
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# LORA TRAINING
+# LORA TRAINING (Protected for start, public for webhook)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.train-character-lora]
-verify_jwt = false
+verify_jwt = true
 
 [functions.lora-training-webhook]
-# External webhook - MUST be public
+# External webhook from Replicate - MUST be public
 verify_jwt = false
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# FORGE (AI Assistant)
+# FORGE (AI Assistant - Protected)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.forge-analytics]
-verify_jwt = false
+verify_jwt = true
 
 [functions.forge-generate-visual]
-verify_jwt = false
+verify_jwt = true
 
 [functions.forge-analyze-image]
-verify_jwt = false
+verify_jwt = true
 
 [functions.forge-stt]
-verify_jwt = false
+verify_jwt = true
 
 [functions.forge-tts]
-verify_jwt = false
+verify_jwt = true
