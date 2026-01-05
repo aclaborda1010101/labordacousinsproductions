@@ -1,14 +1,35 @@
 /**
- * Helper to invoke Supabase Edge Functions with a custom timeout.
- * This is needed because supabase.functions.invoke doesn't support timeout options.
+ * Helper to invoke backend functions with a custom timeout.
+ *
+ * NOTE: This uses fetch directly because supabase.functions.invoke doesn't expose timeout/AbortSignal.
  */
+export type InvokeWithTimeoutOptions = {
+  timeoutMs?: number;
+  signal?: AbortSignal;
+};
+
 export async function invokeWithTimeout<T = unknown>(
   functionName: string,
   body: Record<string, unknown>,
-  timeoutMs = 120000 // 2 minutes default
+  timeoutMsOrOptions: number | InvokeWithTimeoutOptions = 120000
 ): Promise<{ data: T | null; error: Error | null }> {
+  const options: InvokeWithTimeoutOptions =
+    typeof timeoutMsOrOptions === 'number' ? { timeoutMs: timeoutMsOrOptions } : timeoutMsOrOptions;
+
+  const timeoutMs = options.timeoutMs ?? 120000;
+  const externalSignal = options.signal;
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  const onExternalAbort = () => controller.abort();
+  if (externalSignal) {
+    if (externalSignal.aborted) {
+      controller.abort();
+    } else {
+      externalSignal.addEventListener('abort', onExternalAbort, { once: true });
+    }
+  }
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -18,29 +39,43 @@ export async function invokeWithTimeout<T = unknown>(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
       },
       body: JSON.stringify(body),
       signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
+    if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
 
     if (!response.ok) {
       const errorText = await response.text();
       return { data: null, error: new Error(errorText || `HTTP ${response.status}`) };
     }
 
-    const data = await response.json() as T;
+    const data = (await response.json()) as T;
     return { data, error: null };
   } catch (err: unknown) {
     clearTimeout(timeoutId);
-    
-    if (err instanceof Error && err.name === 'AbortError') {
-      return { data: null, error: new Error(`Timeout: la generación tardó más de ${Math.round(timeoutMs / 1000)}s`) };
+    if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
+
+    // Abort can be either timeout or user cancel
+    const isAbort =
+      (err instanceof Error && err.name === 'AbortError') ||
+      (typeof err === 'object' && err && 'name' in err && (err as any).name === 'AbortError');
+
+    if (isAbort) {
+      if (externalSignal?.aborted) {
+        return { data: null, error: new Error('Cancelado por el usuario') };
+      }
+      return {
+        data: null,
+        error: new Error(`Timeout: la generación tardó más de ${Math.round(timeoutMs / 1000)}s`),
+      };
     }
-    
+
     return { data: null, error: err instanceof Error ? err : new Error('Unknown error') };
   }
 }
+
