@@ -500,14 +500,14 @@ IMPORTANTE:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'google/gemini-2.5-pro',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
         ],
         // Request tool calling for structured output
         tools: [BREAKDOWN_TOOL],
-        tool_choice: 'auto',
+        tool_choice: { type: 'function', function: { name: 'return_script_breakdown' } },
       }),
     });
 
