@@ -313,6 +313,10 @@ export default function ProjectDetail() {
     async function fetchProject() {
       if (!projectId || !user) return;
       
+      // Reset state when projectId changes to show loading and avoid stale data
+      setLoading(true);
+      setProject(null);
+      
       const { data, error } = await supabase
         .from('projects')
         .select('*')
