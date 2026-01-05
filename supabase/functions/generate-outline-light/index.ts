@@ -690,7 +690,8 @@ serve(async (req) => {
       narrativeMode, 
       densityTargets,
       generationModel = 'rapido',
-      project_id
+      project_id,
+      disableDensity = false // V3.0: Skip density constraints when true
     } = await req.json();
 
     projectId = project_id || null;
@@ -751,8 +752,8 @@ serve(async (req) => {
     // Select narrative mode prompt
     const modePrompt = NARRATIVE_MODE_PROMPTS[narrativeMode as keyof typeof NARRATIVE_MODE_PROMPTS] || NARRATIVE_MODE_PROMPTS.serie_adictiva;
 
-    // Build density constraints from targets
-    const densityConstraints = densityTargets ? `
+    // Build density constraints from targets (skip if disableDensity is true)
+    const densityConstraints = (!disableDensity && densityTargets) ? `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 DENSIDAD NARRATIVA (OBLIGATORIO CUMPLIR)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -812,7 +813,7 @@ REGLA CRÍTICA: Las entidades mencionadas en la IDEA tienen PRIORIDAD ABSOLUTA.
 
 Para cada entidad que crees, marca from_idea: true si fue mencionada explícitamente en la idea.
 Incluye en extracted_entities TODOS los nombres/lugares/objetos que identificaste.
-${densityTargets ? `
+${(!disableDensity && densityTargets) ? `
 DENSIDAD MÍNIMA REQUERIDA (si la idea no especifica más):
 - ${densityTargets.protagonists_min}+ protagonistas
 - ${densityTargets.supporting_min}+ secundarios  
@@ -820,6 +821,9 @@ DENSIDAD MÍNIMA REQUERIDA (si la idea no especifica más):
 - ${densityTargets.hero_props_min || 5}+ props clave
 - ${densityTargets.subplots_min}+ subtramas
 - ${densityTargets.twists_min}+ giros por episodio
+` : disableDensity ? `
+MODO LIBRE: Genera SOLO los personajes, locaciones y elementos que se desprendan naturalmente de la idea.
+NO inventes entidades adicionales. Sé fiel a lo que el usuario ha descrito.
 ` : `
 MÍNIMOS POR DEFECTO (si la idea no especifica más):
 - Personajes principales: MÍNIMO 5
