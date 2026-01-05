@@ -493,21 +493,37 @@ IMPORTANTE:
 
     console.log('Breaking down script, length:', scriptText.length, 'projectId:', projectId);
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Use Claude 3.5 Sonnet via direct Anthropic API for superior script understanding
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      console.error('ANTHROPIC_API_KEY not configured');
+      return new Response(
+        JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 16000,
+        system: SYSTEM_PROMPT,
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
         ],
-        // Request tool calling for structured output
-        tools: [BREAKDOWN_TOOL],
-        tool_choice: { type: 'function', function: { name: 'return_script_breakdown' } },
+        // Use tool calling for structured JSON output
+        tools: [{
+          name: 'return_script_breakdown',
+          description: 'Returns the structured script breakdown analysis',
+          input_schema: BREAKDOWN_TOOL.function.parameters,
+        }],
+        tool_choice: { type: 'tool', name: 'return_script_breakdown' },
       }),
     });
 
@@ -518,37 +534,36 @@ IMPORTANTE:
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'Payment required. Please add credits to your workspace.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
       const errorText = await response.text();
-      console.error('AI Gateway error:', response.status, errorText);
-      throw new Error(`AI Gateway error: ${response.status}`);
+      console.error('Anthropic API error:', response.status, errorText);
+      throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
 
-    // Prefer tool-calling (structured output) to avoid JSON formatting errors
-    const toolArgs = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments as string | undefined;
-    const content = data.choices?.[0]?.message?.content as string | undefined;
-
+    // Anthropic returns tool use in content array with type: 'tool_use'
     let breakdownData: any | null = null;
-
-    if (toolArgs) {
-      breakdownData = tryParseJson(toolArgs);
+    
+    // Check for tool_use blocks in Anthropic response format
+    const toolUseBlock = data.content?.find((block: any) => block.type === 'tool_use');
+    if (toolUseBlock?.input) {
+      breakdownData = toolUseBlock.input;
+      console.log('Parsed breakdown from Anthropic tool_use block');
     }
 
-    if (!breakdownData && content) {
-      breakdownData = tryParseJson(content);
+    // Fallback: check for text content and try to parse JSON
+    if (!breakdownData) {
+      const textBlock = data.content?.find((block: any) => block.type === 'text');
+      if (textBlock?.text) {
+        breakdownData = tryParseJson(textBlock.text);
+        console.log('Parsed breakdown from Anthropic text block');
+      }
     }
 
     if (!breakdownData) {
-      console.error('Could not parse breakdown from AI response', {
-        hasToolArgs: !!toolArgs,
-        hasContent: !!content,
+      console.error('Could not parse breakdown from Anthropic response', {
+        contentTypes: data.content?.map((b: any) => b.type),
+        stopReason: data.stop_reason,
       });
       return new Response(
         JSON.stringify({ error: 'No se pudo interpretar la respuesta del modelo. Reintenta.' }),
