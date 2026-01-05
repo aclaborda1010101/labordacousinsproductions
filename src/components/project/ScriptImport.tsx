@@ -414,8 +414,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             setGeneratedEpisodesList(episodes);
             setGeneratedScript(parsed);
             
+            // Use batch-based progress if available, otherwise fallback to episode-based
             const totalEps = storedState?.totalEpisodes || episodesCount;
-            const progress = 10 + Math.round((episodes.length / totalEps) * 75);
+            let progress: number;
+            if (storedState?.completedBatches && storedState?.totalBatches) {
+              progress = 10 + Math.round((storedState.completedBatches / storedState.totalBatches) * 75);
+            } else {
+              progress = 10 + Math.round((episodes.length / totalEps) * 75);
+            }
             setPipelineProgress(progress);
             
             // Only set currentEpisodeGenerating if there are more episodes to generate
@@ -792,7 +798,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       totalEpisodes,
       episodes: [],
       outline: lightOutline,
-      startedAt: Date.now()
+      startedAt: Date.now(),
+      completedBatches: 0,
+      totalBatches: totalEpisodes * calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, qualityTier).batchesPerEpisode
     });
 
     // V3.0: Calculate dynamic batch configuration based on complexity, episode duration, AND quality tier
@@ -958,7 +966,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setGeneratedEpisodesList([...episodes]);
 
         // Update localStorage state for background recovery
-        const currentProgress = 10 + Math.round((episodes.length / totalEpisodes) * 75);
+        // Use batch-based progress for accurate calculation
+        const batchesDoneThisRun = completedBatches;
+        const currentProgress = 10 + Math.round((batchesDoneThisRun / totalBatches) * 75);
         // Only save next episode if there are more to generate
         const nextEpisode = epNum < totalEpisodes ? epNum + 1 : totalEpisodes;
         savePipelineState({
@@ -968,7 +978,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           totalEpisodes,
           episodes: [...episodes],
           outline: lightOutline,
-          startedAt: loadPipelineState()?.startedAt || Date.now()
+          startedAt: loadPipelineState()?.startedAt || Date.now(),
+          completedBatches: batchesDoneThisRun,
+          totalBatches
         });
 
         if (!episodeError) {
