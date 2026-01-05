@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { EntityCard, getEntityStatus } from './EntityCard';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import CharacterPackMVP from './CharacterPackMVP';
+import { resolveImageModel } from '@/config/models';
 import {
   Plus,
   Users,
@@ -315,7 +316,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           projectId,
           type: 'character',
           phase: 'exploration',
-          engine: 'fal-ai/nano-banana-pro',
+          engine: resolveImageModel(),
           engineSelectedBy: 'auto',
           prompt,
           context: `Character: ${character.name}`,
@@ -323,7 +324,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
             characterId: character.id,
             characterName: character.name,
             slotType: 'base_look',
-            allowTextToImage: true, // Generate without reference image
+            allowTextToImage: true,
           },
         },
       });
@@ -419,7 +420,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           projectId,
           type: 'character',
           phase: 'exploration',
-          engine: 'fal-ai/nano-banana-pro',
+          engine: resolveImageModel(),
           engineSelectedBy: 'auto',
           prompt,
           context: `Character: ${character.name}`,

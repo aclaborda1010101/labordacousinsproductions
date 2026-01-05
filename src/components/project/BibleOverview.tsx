@@ -68,18 +68,29 @@ export default function BibleOverview({ project, setProject }: BibleOverviewProp
   const completedPoints = requirements.filter(r => r.complete).reduce((sum, r) => sum + r.points, 0);
   const missingRequirements = requirements.filter(r => !r.complete);
 
+  // Defensive helper for i18n sections (handles both string and object formats)
+  const getSectionLabel = (section: unknown): string => {
+    if (typeof section === 'string') return section;
+    return (section as { label?: string })?.label ?? '';
+  };
+  const getSectionDesc = (section: unknown): string => {
+    if (typeof section === 'string') return '';
+    return (section as { desc?: string })?.desc ?? '';
+  };
+
   const sections = [
-    { id: 'style', label: t.bible.sections.style.label, icon: Palette, complete: stats.style, path: '/style', desc: t.bible.sections.style.desc },
-    { id: 'characters', label: t.bible.sections.characters.label, icon: Users, complete: stats.characters >= 1, path: '/characters', desc: `${stats.characters} ${t.bible.sections.characters.desc}` },
-    { id: 'locations', label: t.bible.sections.locations.label, icon: MapPin, complete: stats.locations >= 1, path: '/locations', desc: `${stats.locations} ${t.bible.sections.locations.desc}` },
+    { id: 'style', label: getSectionLabel(t.bible.sections.style), icon: Palette, complete: stats.style, path: '/style', desc: getSectionDesc(t.bible.sections.style) },
+    { id: 'characters', label: getSectionLabel(t.bible.sections.characters), icon: Users, complete: stats.characters >= 1, path: '/characters', desc: `${stats.characters} ${getSectionDesc(t.bible.sections.characters)}` },
+    { id: 'locations', label: getSectionLabel(t.bible.sections.locations), icon: MapPin, complete: stats.locations >= 1, path: '/locations', desc: `${stats.locations} ${getSectionDesc(t.bible.sections.locations)}` },
   ];
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">{t.bible.title}</h2>
-          <p className="text-muted-foreground">{t.bible.subtitle}</p>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">{t.bible.title}</p>
+          <h2 className="text-2xl font-bold text-foreground">{project.title}</h2>
+          <p className="text-muted-foreground text-sm mt-1">{t.bible.subtitle}</p>
         </div>
         <BibleExport projectId={project.id} projectTitle={project.title} />
       </div>
