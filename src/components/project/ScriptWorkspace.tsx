@@ -826,38 +826,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         summary: breakdownData?.summary,
       };
 
-      // Update script with parsed_json for ScriptSummaryPanel
-      const parsedJson = {
-        title: breakdown.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Analizado',
-        synopsis: breakdown.synopsis?.faithful_summary || '',
-        episodes: breakdownData?.episodes || [{
-          episode_number: 1,
-          title: 'Episodio 1',
-          synopsis: breakdown.synopsis?.faithful_summary || '',
-          scenes: breakdown.scenes,
-          duration_min: breakdown.summary?.estimated_runtime_min || 10,
-        }],
-        characters: breakdown.characters || [],
-        locations: breakdown.locations || [],
-        scenes: breakdown.scenes || [],
-        props: breakdown.props || [],
-        subplots: breakdown.subplots || [],
-        plot_twists: breakdown.plot_twists || [],
-        teasers: breakdownData?.teasers,
-        counts: {
-          total_scenes: breakdown.scenes?.length || 0,
-          total_dialogue_lines: 0,
-        },
-      };
-
-      const { error: updateError } = await supabase.from('scripts')
-        .update({ parsed_json: JSON.parse(JSON.stringify(parsedJson)) })
-        .eq('id', savedScript.id);
-      
-      if (updateError) {
-        console.error('Error updating parsed_json:', updateError);
-        throw updateError;
-      }
+      // parsed_json se guarda en backend dentro de `script-breakdown` (cuando mandamos `scriptId`).
+      // Importante: NO lo sobrescribimos aquí, porque perderíamos la distribución correcta (p.ej. 8 episodios).
 
       setBreakdownResult(breakdown);
       
@@ -956,33 +926,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         summary: breakdownData?.summary,
       };
 
-      // Save parsed_json for persistence
-      const parsedJson = {
-        title: breakdown.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Generado',
-        synopsis: breakdown.synopsis?.faithful_summary || '',
-        episodes: breakdownData?.episodes || [{
-          episode_number: 1,
-          title: 'Episodio 1',
-          synopsis: breakdown.synopsis?.faithful_summary || '',
-          scenes: breakdown.scenes,
-          duration_min: breakdown.summary?.estimated_runtime_min || 10,
-        }],
-        characters: breakdown.characters || [],
-        locations: breakdown.locations || [],
-        scenes: breakdown.scenes || [],
-        props: breakdown.props || [],
-        subplots: breakdown.subplots || [],
-        plot_twists: breakdown.plot_twists || [],
-        teasers: breakdownData?.teasers,
-        counts: {
-          total_scenes: breakdown.scenes?.length || 0,
-          total_dialogue_lines: 0,
-        },
-      };
-
-      await supabase.from('scripts')
-        .update({ parsed_json: JSON.parse(JSON.stringify(parsedJson)) })
-        .eq('id', savedScript.id);
+      // parsed_json se guarda en backend dentro de `script-breakdown` (cuando mandamos `scriptId`).
+      // Importante: NO lo sobrescribimos aquí, porque perderíamos la distribución correcta (p.ej. 8 episodios).
 
       setBreakdownResult(breakdown);
       const diagnosis = evaluateQuality(breakdown);
