@@ -157,7 +157,7 @@ export default function EpisodeRegenerateDialog({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Narrative Mode Selection - Only in Pro/Director mode */}
+          {/* Narrative Mode Selection - Only in Pro mode */}
           {isPro && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">

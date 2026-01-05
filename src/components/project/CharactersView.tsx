@@ -1,7 +1,7 @@
 /**
  * CharactersView - Adaptive Character Interface by Creative Mode
  * ASSISTED: Simplified CharactersList
- * DIRECTOR/PRO: Full Characters.tsx with advanced tabs
+ * PRO: Full Characters.tsx with advanced tabs
  */
 
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
@@ -18,8 +18,8 @@ export default function CharactersView({ projectId }: CharactersViewProps) {
   const creativeModeContext = useCreativeModeOptional();
   const effectiveMode = creativeModeContext?.effectiveMode ?? 'ASSISTED';
 
-  // Developer Mode or DIRECTOR/PRO: Show full advanced interface
-  if (isDeveloperMode || effectiveMode === 'DIRECTOR' || effectiveMode === 'PRO') {
+  // Developer Mode or PRO: Show full advanced interface
+  if (isDeveloperMode || effectiveMode === 'PRO') {
     return <Characters projectId={projectId} />;
   }
 

@@ -44,7 +44,7 @@ interface NextStepIndicatorProps {
   // Run in background option
   onRunInBackground?: () => void;
   // Mode affects verbosity
-  mode?: 'ASSISTED' | 'DIRECTOR' | 'PRO';
+  mode?: 'ASSISTED' | 'PRO';
 }
 
 const STEP_CONFIG: Record<WorkflowStep, {

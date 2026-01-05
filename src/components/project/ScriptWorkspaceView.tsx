@@ -1,7 +1,7 @@
 /**
  * ScriptWorkspaceView - Adaptive Script Interface by Creative Mode
  * ASSISTED: Guided ScriptWorkspace with idea/analyze flow
- * DIRECTOR/PRO: Full ScriptImport with pipeline and advanced options
+ * PRO: Full ScriptImport with pipeline and advanced options
  */
 
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
@@ -18,8 +18,8 @@ export default function ScriptWorkspaceView({ projectId }: ScriptWorkspaceViewPr
   const creativeModeContext = useCreativeModeOptional();
   const effectiveMode = creativeModeContext?.effectiveMode ?? 'ASSISTED';
 
-  // Developer Mode or DIRECTOR/PRO: Show full ScriptImport with pipeline
-  if (isDeveloperMode || effectiveMode === 'DIRECTOR' || effectiveMode === 'PRO') {
+  // Developer Mode or PRO: Show full ScriptImport with pipeline
+  if (isDeveloperMode || effectiveMode === 'PRO') {
     return <ScriptImport projectId={projectId} />;
   }
 

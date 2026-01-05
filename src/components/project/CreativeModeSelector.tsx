@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCreativeMode, CreativeMode } from '@/contexts/CreativeModeContext';
 import { cn } from '@/lib/utils';
-import { Sparkles, Film, Crown, Info, ChevronDown } from 'lucide-react';
+import { Sparkles, Crown, Info, ChevronDown } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -39,14 +39,6 @@ const MODE_CONFIG: Record<CreativeMode, {
     color: 'text-emerald-600 dark:text-emerald-400',
     bgColor: 'bg-emerald-50 dark:bg-emerald-950/30',
     borderColor: 'border-emerald-200 dark:border-emerald-800',
-  },
-  DIRECTOR: {
-    label: 'Director',
-    shortLabel: 'Director',
-    icon: <Film className="h-3.5 w-3.5" />,
-    color: 'text-amber-600 dark:text-amber-400',
-    bgColor: 'bg-amber-50 dark:bg-amber-950/30',
-    borderColor: 'border-amber-200 dark:border-amber-800',
   },
   PRO: {
     label: 'Pro / Showrunner',
@@ -106,7 +98,7 @@ export function CreativeModeSelector({
       return;
     }
     
-    // Direct change between ASSISTED and DIRECTOR
+    // Direct change
     await setProjectMode(newMode);
     setIsOpen(false);
   };
@@ -197,7 +189,6 @@ export function CreativeModeSelector({
                           <div className={cn(
                             "w-2 h-2 rounded-full",
                             mode === 'ASSISTED' && "bg-emerald-500",
-                            mode === 'DIRECTOR' && "bg-amber-500",
                             mode === 'PRO' && "bg-rose-500"
                           )} />
                         )}
@@ -278,7 +269,7 @@ export function CreativeModeSelector({
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                Volver a modo {pendingMode === 'ASSISTED' ? 'Asistido' : 'Director'}
+                Volver a modo Asistido
               </DialogTitle>
               <DialogDescription className="text-left pt-2">
                 Los campos avanzados se ocultarán, pero tus valores se conservarán. 
