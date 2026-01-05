@@ -209,6 +209,106 @@ export type Database = {
         }
         Relationships: []
       }
+      batch_run_items: {
+        Row: {
+          batch_run_id: string
+          completed_at: string | null
+          created_at: string
+          created_scenes_count: number | null
+          episode_number: number
+          error: string | null
+          id: string
+          retry_count: number | null
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          batch_run_id: string
+          completed_at?: string | null
+          created_at?: string
+          created_scenes_count?: number | null
+          episode_number: number
+          error?: string | null
+          id?: string
+          retry_count?: number | null
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          batch_run_id?: string
+          completed_at?: string | null
+          created_at?: string
+          created_scenes_count?: number | null
+          episode_number?: number
+          error?: string | null
+          id?: string
+          retry_count?: number | null
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "batch_run_items_batch_run_id_fkey"
+            columns: ["batch_run_id"]
+            isOneToOne: false
+            referencedRelation: "batch_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      batch_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          episodes_done: number
+          episodes_failed: number
+          failed_episode_numbers: number[] | null
+          id: string
+          project_id: string
+          quality_tier: string
+          started_at: string
+          status: string
+          total_episodes: number
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          episodes_done?: number
+          episodes_failed?: number
+          failed_episode_numbers?: number[] | null
+          id?: string
+          project_id: string
+          quality_tier?: string
+          started_at?: string
+          status?: string
+          total_episodes?: number
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          episodes_done?: number
+          episodes_failed?: number
+          failed_episode_numbers?: number[] | null
+          id?: string
+          project_id?: string
+          quality_tier?: string
+          started_at?: string
+          status?: string
+          total_episodes?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "batch_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       canon_assets: {
         Row: {
           asset_type: string

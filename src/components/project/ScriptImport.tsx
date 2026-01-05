@@ -75,7 +75,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, GenerationModel, GENERATION_MODELS } from '@/lib/autoTargets';
+import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, QualityTier, QUALITY_TIERS } from '@/lib/autoTargets';
 import { useCreativeModeOptional } from '@/contexts/CreativeModeContext';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import {
@@ -127,19 +127,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // MASTER SHOWRUNNER: Narrative mode
   const [narrativeMode, setNarrativeMode] = useState<'serie_adictiva' | 'voz_de_autor' | 'giro_imprevisible'>('serie_adictiva');
   
-  // Generation model selection (speed vs quality) - default to 'rapido'
-  const [generationModel, setGenerationModel] = useState<GenerationModel>('rapido');
+  // V3.0: Quality tier selection (replaces legacy generationModel)
+  const [qualityTier, setQualityTier] = useState<QualityTier>('PRODUCTION');
   
-  // Creative mode context for gating generation models
+  // Creative mode context
   const creativeModeContext = useCreativeModeOptional();
   const effectiveCreativeMode = creativeModeContext?.effectiveMode ?? 'ASSISTED';
-  
-  // Available generation models based on creative mode
-  // PRO: all models (rapido, profesional, hollywood)
-  // ASSISTED: only rapido and profesional
-  const availableGenerationModels: GenerationModel[] = effectiveCreativeMode === 'PRO' 
-    ? ['rapido', 'profesional', 'hollywood']
-    : ['rapido', 'profesional'];
 
   // Auto/Pro mode
   const [proMode, setProMode] = useState(false);
@@ -574,22 +567,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     try {
       const t0 = Date.now();
-      // Timeout dinámico por modelo y nº de episodios (evita aborts falsos)
+      // Timeout dinámico por tier y nº de episodios (evita aborts falsos)
       const outlineEpisodes = format === 'series' ? episodesCount : 1;
       const timeoutMs = (() => {
-        if (generationModel === 'hollywood') {
+        if (qualityTier === 'PRODUCTION') {
           // Claude: más lento y con más variabilidad
           const base = 90000;
           const perEp = 25000;
           return Math.min(300000, Math.max(120000, base + perEp * outlineEpisodes));
         }
-        if (generationModel === 'profesional') {
-          // GPT-4o: normalmente rápido, pero puede tardar en outlines largos
-          const base = 45000;
-          const perEp = 12000;
-          return Math.min(180000, Math.max(60000, base + perEp * outlineEpisodes));
-        }
-        // GPT-4o-mini (rápido)
+        // DRAFT: GPT-4o-mini (rápido)
         const base = 30000;
         const perEp = 8000;
         return Math.min(150000, Math.max(60000, base + perEp * outlineEpisodes));
@@ -605,7 +592,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           language,
           narrativeMode,
           densityTargets: targets,
-          generationModel // Pass the selected model
+          qualityTier // V3.0: Pass quality tier instead of model
         },
         timeoutMs
       );
@@ -673,17 +660,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       startedAt: Date.now()
     });
 
-    // Calculate dynamic batch configuration based on complexity, episode duration, AND generation model
-    const modelConfig = GENERATION_MODELS[generationModel];
-    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, generationModel);
+    // V3.0: Calculate dynamic batch configuration based on complexity, episode duration, AND quality tier
+    const tierConfig = QUALITY_TIERS[qualityTier];
+    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, qualityTier);
     setBatchConfig(dynamicBatchConfig);
     
     const BATCHES_PER_EPISODE = dynamicBatchConfig.batchesPerEpisode;
     const SCENES_PER_BATCH = dynamicBatchConfig.scenesPerBatch;
     const DELAY_BETWEEN_BATCHES = dynamicBatchConfig.delayBetweenBatchesMs;
-    const DELAY_BETWEEN_EPISODES = modelConfig.delayBetweenEpisodesMs;
+    const DELAY_BETWEEN_EPISODES = tierConfig.delayBetweenEpisodesMs;
     
-    console.log(`[DYNAMIC BATCHES] Model: ${generationModel} | Complexity: ${complexity} | Config: ${BATCHES_PER_EPISODE} batches × ${SCENES_PER_BATCH} scenes = ${dynamicBatchConfig.estimatedScenesTotal} scenes/episode | Batch delay: ${DELAY_BETWEEN_BATCHES}ms | Episode delay: ${DELAY_BETWEEN_EPISODES}ms`);
+    console.log(`[V3.0 BATCH] Tier: ${qualityTier} | Complexity: ${complexity} | Config: ${BATCHES_PER_EPISODE} batches × ${SCENES_PER_BATCH} scenes = ${dynamicBatchConfig.estimatedScenesTotal} scenes/episode`);
     
     const totalBatches = totalEpisodes * BATCHES_PER_EPISODE;
     let completedBatches = 0;
@@ -705,18 +692,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         let synopsisFromClaude: string | null = null;
         let episodeError: string | null = null;
 
-        // Add delay BEFORE starting episode based on model's rate limits
+        // Add delay BEFORE starting episode based on tier rate limits
         if (epNum > 1) {
-          console.log(`[${generationModel.toUpperCase()}] Waiting ${DELAY_BETWEEN_EPISODES}ms before Episode ${epNum}...`);
+          console.log(`[${qualityTier}] Waiting ${DELAY_BETWEEN_EPISODES}ms before Episode ${epNum}...`);
           await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_EPISODES));
         }
 
         for (let batchIdx = 0; batchIdx < BATCHES_PER_EPISODE; batchIdx++) {
           if (controller.signal.aborted) break;
 
-          // Add delay between batches based on model's rate limits
+          // Add delay between batches based on tier rate limits
           if (batchIdx > 0) {
-            console.log(`[${generationModel.toUpperCase()}] Waiting ${DELAY_BETWEEN_BATCHES}ms before batch ${batchIdx + 1}...`);
+            console.log(`[${qualityTier}] Waiting ${DELAY_BETWEEN_BATCHES}ms before batch ${batchIdx + 1}...`);
             await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
           }
 
@@ -735,7 +722,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               if (controller.signal.aborted) {
                 throw new Error('Aborted');
               }
-              return await supabase.functions.invoke('episode-generate-batch', {
+              // V3.0: Call generate-script canonical router instead of legacy batch function
+              return await supabase.functions.invoke('generate-script', {
                 body: {
                   outline: lightOutline,
                   episodeNumber: epNum,
@@ -747,8 +735,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   scenesPerBatch: SCENES_PER_BATCH,
                   totalBatches: BATCHES_PER_EPISODE,
                   isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1,
-                  // Model selection for speed/quality
-                  generationModel,
+                  // V3.0: Quality tier instead of model selection
+                  qualityTier,
                 },
               });
             };
@@ -2316,35 +2304,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </p>
                 </div>
                 
-                {/* Generation Model Selector */}
+                {/* V3.0: Quality Tier Selector (replaces legacy model selector) */}
                 <div className="space-y-2 pt-4 border-t">
                   <Label className="flex items-center gap-2">
                     <Rocket className="w-4 h-4 text-primary" />
-                    Velocidad de Generación
+                    Modo de Generación
                   </Label>
-                  <Select value={generationModel} onValueChange={(v: GenerationModel) => setGenerationModel(v)}>
+                  <Select value={qualityTier} onValueChange={(v: QualityTier) => setQualityTier(v)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {availableGenerationModels.map((model) => (
-                        <SelectItem key={model} value={model}>
-                          {GENERATION_MODELS[model].displayName}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="DRAFT">
+                        {QUALITY_TIERS.DRAFT.displayName}
+                      </SelectItem>
+                      <SelectItem value="PRODUCTION">
+                        {QUALITY_TIERS.PRODUCTION.displayName}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    {GENERATION_MODELS[generationModel].description}
+                    {QUALITY_TIERS[qualityTier].description}
                   </p>
                   <div className="flex gap-2 flex-wrap mt-1">
                     <Badge variant="outline" className="text-xs">
-                      ~{GENERATION_MODELS[generationModel].estimatedTimePerEpisodeMin} min/ep
+                      ~{QUALITY_TIERS[qualityTier].estimatedTimePerEpisodeMin} min/ep
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      ~${GENERATION_MODELS[generationModel].costPerEpisodeUsd.toFixed(3)}/ep
-                    </Badge>
-                    {effectiveCreativeMode !== 'PRO' && (
-                      <Badge variant="secondary" className="text-xs">
-                        🎬 Hollywood requiere modo PRO
+                    {qualityTier === 'PRODUCTION' && (
+                      <Badge variant="secondary" className="text-xs bg-primary/10">
+                        ✨ Calidad Hollywood
                       </Badge>
                     )}
                   </div>
@@ -2405,17 +2391,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       <Badge variant="secondary" className="mt-1">{targets.dialogue_action_ratio}</Badge>
                     </div>
                     
-                    {/* Dynamic Batch Configuration Preview */}
+                    {/* V3.0: Dynamic Batch Configuration Preview */}
                     {(() => {
-                      const batchPreview = calculateDynamicBatches(targets, complexity, undefined, episodeDurationMin, generationModel);
-                      const modelCfg = GENERATION_MODELS[generationModel];
-                      const totalTimeMin = episodesCount * modelCfg.estimatedTimePerEpisodeMin;
-                      const totalCost = episodesCount * modelCfg.costPerEpisodeUsd;
+                      const batchPreview = calculateDynamicBatches(targets, complexity, undefined, episodeDurationMin, qualityTier);
+                      const tierCfg = QUALITY_TIERS[qualityTier];
+                      const totalTimeMin = episodesCount * tierCfg.estimatedTimePerEpisodeMin;
                       return (
                         <div className="col-span-2 pt-2 border-t mt-2">
                           <Label className="text-xs text-muted-foreground flex items-center gap-1">
                             <Settings2 className="w-3 h-3" />
-                            Estimación con {modelCfg.displayName}
+                            Estimación con {tierCfg.displayName}
                           </Label>
                           <div className="flex flex-wrap gap-2 mt-1">
                             <Badge variant="outline" className="text-xs">
@@ -2431,9 +2416,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           <div className="flex flex-wrap gap-2 mt-2">
                             <Badge variant="secondary" className="text-xs">
                               ⏱️ ~{totalTimeMin < 60 ? `${totalTimeMin.toFixed(0)} min` : `${(totalTimeMin / 60).toFixed(1)} hrs`} total
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              💰 ~${totalCost.toFixed(2)} total
                             </Badge>
                           </div>
                         </div>
