@@ -32,7 +32,8 @@ verify_jwt = true
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-outline-light]
-verify_jwt = true
+# Temporarily disable gateway JWT verification; function enforces auth internally (v3RequireAuth)
+verify_jwt = false
 
 [functions.script-breakdown]
 verify_jwt = true
