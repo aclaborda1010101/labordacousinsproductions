@@ -164,9 +164,45 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
  * More complex scripts = more batches = fewer scenes per batch = less tokens per call
  * This prevents timeouts and 429 rate limit errors
  */
-// Generation model types
+
+// =============================================================================
+// V3.0 UNIFIED QUALITY TIER SYSTEM
+// Replaces legacy generation model selection
+// =============================================================================
+export type QualityTier = 'DRAFT' | 'PRODUCTION';
+
+export interface QualityTierConfig {
+  tier: QualityTier;
+  displayName: string;
+  description: string;
+  estimatedTimePerEpisodeMin: number;
+  delayBetweenBatchesMs: number;
+  delayBetweenEpisodesMs: number;
+}
+
+export const QUALITY_TIERS: Record<QualityTier, QualityTierConfig> = {
+  DRAFT: {
+    tier: 'DRAFT',
+    displayName: '📝 Modo Borrador',
+    description: 'Rápido para revisión (GPT-4o-mini). ~2-5 min/episodio',
+    estimatedTimePerEpisodeMin: 2,
+    delayBetweenBatchesMs: 2000,
+    delayBetweenEpisodesMs: 3000
+  },
+  PRODUCTION: {
+    tier: 'PRODUCTION',
+    displayName: '🎬 Modo Producción',
+    description: 'Calidad Hollywood (Claude Sonnet). ~10-20 min/episodio',
+    estimatedTimePerEpisodeMin: 15,
+    delayBetweenBatchesMs: 30000,
+    delayBetweenEpisodesMs: 20000
+  }
+};
+
+// Legacy type alias for backward compatibility
 export type GenerationModel = 'rapido' | 'profesional' | 'hollywood';
 
+// Legacy config (deprecated - kept for migration)
 export interface GenerationModelConfig {
   model: GenerationModel;
   displayName: string;
@@ -179,37 +215,44 @@ export interface GenerationModelConfig {
   costPerEpisodeUsd: number;
 }
 
+// Map legacy models to new tiers
+export function legacyModelToTier(model: GenerationModel): QualityTier {
+  if (model === 'rapido' || model === 'profesional') return 'DRAFT';
+  return 'PRODUCTION';
+}
+
+// Legacy GENERATION_MODELS - deprecated, use QUALITY_TIERS
 export const GENERATION_MODELS: Record<GenerationModel, GenerationModelConfig> = {
   rapido: {
     model: 'rapido',
-    displayName: '⚡ Rápido',
-    description: 'GPT-4o-mini - 1-5 min/episodio, $0.007',
+    displayName: '⚡ Rápido (Legacy)',
+    description: 'Usar Modo Borrador',
     apiModel: 'gpt-4o-mini',
     provider: 'openai',
-    delayBetweenBatchesMs: 2000, // 2 seconds
-    delayBetweenEpisodesMs: 3000, // 3 seconds
+    delayBetweenBatchesMs: 2000,
+    delayBetweenEpisodesMs: 3000,
     estimatedTimePerEpisodeMin: 0.5,
     costPerEpisodeUsd: 0.007
   },
   profesional: {
     model: 'profesional',
-    displayName: '🎬 Profesional',
-    description: 'GPT-4o - 5-15 min total, $0.11',
+    displayName: '🎬 Profesional (Legacy)',
+    description: 'Usar Modo Borrador',
     apiModel: 'gpt-4o',
     provider: 'openai',
-    delayBetweenBatchesMs: 5000, // 5 seconds
-    delayBetweenEpisodesMs: 8000, // 8 seconds
+    delayBetweenBatchesMs: 5000,
+    delayBetweenEpisodesMs: 8000,
     estimatedTimePerEpisodeMin: 1.5,
     costPerEpisodeUsd: 0.11
   },
   hollywood: {
     model: 'hollywood',
-    displayName: '🏆 Hollywood',
-    description: 'Claude Sonnet - 2-3 hrs, máxima calidad literaria',
+    displayName: '🏆 Hollywood (Legacy)',
+    description: 'Usar Modo Producción',
     apiModel: 'claude-sonnet-4-20250514',
     provider: 'anthropic',
-    delayBetweenBatchesMs: 50000, // 50 seconds (rate limit)
-    delayBetweenEpisodesMs: 30000, // 30 seconds
+    delayBetweenBatchesMs: 50000,
+    delayBetweenEpisodesMs: 30000,
     estimatedTimePerEpisodeMin: 15,
     costPerEpisodeUsd: 0.16
   }
@@ -223,42 +266,34 @@ export interface BatchConfig {
 }
 
 /**
- * Calculate dynamic batch config based on complexity, duration, and model
+ * Calculate dynamic batch config based on complexity and quality tier
  */
 export function calculateDynamicBatches(
   targets: CalculatedTargets,
   complexity: 'simple' | 'medium' | 'high',
   episodeBeats?: any[],
   durationMin?: number,
-  generationModel: GenerationModel = 'hollywood'
+  qualityTier: QualityTier = 'PRODUCTION'
 ): BatchConfig {
-  // Duration scaling factor: more duration = more batches
-  const baseDuration = 45; // Default episode duration
+  const baseDuration = 45;
   const actualDuration = durationMin || baseDuration;
   const durationMultiplier = Math.max(0.7, Math.min(2, actualDuration / baseDuration));
   
-  // Base complexity score (0-100)
   let complexityScore = complexity === 'simple' ? 20 : complexity === 'medium' ? 50 : 80;
   
-  // Adjust based on episode beats if available
   if (episodeBeats && episodeBeats.length > 0) {
     const avgAmbition = episodeBeats.reduce((sum, beat) => {
       const amb = beat.ambition_score || beat.complexity || 50;
       return sum + amb;
     }, 0) / episodeBeats.length;
-    
-    // Add up to 15 points for high ambition
     complexityScore += Math.round((avgAmbition - 50) / 50 * 15);
   }
   
-  // Clamp to 0-100
   complexityScore = Math.max(0, Math.min(100, complexityScore));
   
-  // Get model-specific delay config
-  const modelConfig = GENERATION_MODELS[generationModel];
-  const delayMs = modelConfig.delayBetweenBatchesMs;
+  const tierConfig = QUALITY_TIERS[qualityTier];
+  const delayMs = tierConfig.delayBetweenBatchesMs;
   
-  // Base batches based on complexity score
   let baseBatches: number;
   let baseScenesPerBatch: number;
   
@@ -276,14 +311,12 @@ export function calculateDynamicBatches(
     baseScenesPerBatch = 3;
   }
   
-  // Apply duration multiplier to batches (not scenes per batch, to avoid token issues)
   const batchesPerEpisode = Math.max(2, Math.min(12, Math.round(baseBatches * durationMultiplier)));
-  const scenesPerBatch = baseScenesPerBatch; // Keep scenes per batch stable for token safety
   
   return {
     batchesPerEpisode,
-    scenesPerBatch,
+    scenesPerBatch: baseScenesPerBatch,
     delayBetweenBatchesMs: delayMs,
-    estimatedScenesTotal: batchesPerEpisode * scenesPerBatch
+    estimatedScenesTotal: batchesPerEpisode * baseScenesPerBatch
   };
 }

@@ -243,8 +243,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [isStreaming, setIsStreaming] = useState(false);
   const streamAbortRef = useRef<AbortController | null>(null);
 
-  // Pro mode controls
-  const [selectedModel, setSelectedModel] = useState<'rapido' | 'profesional'>('rapido');
+  // V3.0: Quality tier control (replaces legacy model selection)
+  const [qualityTier, setQualityTier] = useState<'DRAFT' | 'PRODUCTION'>('PRODUCTION');
   const [extractCharacters, setExtractCharacters] = useState(true);
   const [extractLocations, setExtractLocations] = useState(true);
   const [extractScenes, setExtractScenes] = useState(true);
@@ -276,7 +276,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         // This avoids jumping back into the old edit screen when a script already exists.
         if (draft.inputMethod) setInputMethod(draft.inputMethod);
         if (draft.uploadedFileName) setUploadedFileName(draft.uploadedFileName);
-        if (draft.selectedModel) setSelectedModel(draft.selectedModel);
+        if (draft.qualityTier) setQualityTier(draft.qualityTier);
         setHasDraft(true);
         console.log('[ScriptWorkspace] Draft restored:', draft.entryMode);
       }
@@ -302,12 +302,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         entryMode,
         inputMethod,
         uploadedFileName,
-        selectedModel,
+        qualityTier,
         savedAt: new Date().toISOString(),
       };
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     }
-  }, [ideaText, scriptText, entryMode, inputMethod, uploadedFileName, selectedModel, hasExistingScript, status, DRAFT_KEY]);
+  }, [ideaText, scriptText, entryMode, inputMethod, uploadedFileName, qualityTier, hasExistingScript, status, DRAFT_KEY]);
 
   // Clear draft when discarding
   const clearDraft = () => {
@@ -721,8 +721,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           format: projectFormat === 'film' ? 'film' : 'series',
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           language: 'es-ES',
-          generationModel: selectedModel,
-          model: selectedModel,
+          qualityTier, // V3.0: Pass quality tier
         }
       });
 
@@ -1881,14 +1880,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                     </AccordionTrigger>
                     <AccordionContent className="space-y-3 pt-2">
                       <div>
-                        <Label>Modelo de generación</Label>
-                        <Select value={selectedModel} onValueChange={(v) => setSelectedModel(v as any)}>
+                        <Label>Modo de generación</Label>
+                        <Select value={qualityTier} onValueChange={(v) => setQualityTier(v as 'DRAFT' | 'PRODUCTION')}>
                           <SelectTrigger className="mt-1">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="rapido">Rápido (GPT-4o-mini)</SelectItem>
-                            <SelectItem value="profesional">Profesional (GPT-4o)</SelectItem>
+                            <SelectItem value="DRAFT">📝 Borrador (Rápido)</SelectItem>
+                            <SelectItem value="PRODUCTION">🎬 Producción (Calidad)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
