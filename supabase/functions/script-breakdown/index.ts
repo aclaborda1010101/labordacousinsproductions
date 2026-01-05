@@ -465,17 +465,14 @@ serve(async (req) => {
       );
     }
 
-    // Truncate very long scripts to ensure we can process within timeout
-    // Claude can handle ~100k tokens, but processing time increases significantly
-    // We limit to ~50k characters to stay within Edge Function timeout (~60s)
-    const MAX_SCRIPT_LENGTH = 50000;
-    let processedScriptText = scriptText.trim();
-    let wasTruncated = false;
+    // Log warning for very long scripts that may hit timeout
+    // Edge Functions have ~60s timeout, Claude needs ~1s per 500 chars
+    const processedScriptText = scriptText.trim();
+    const estimatedProcessingTimeSec = Math.ceil(processedScriptText.length / 500);
+    const isLongScript = processedScriptText.length > 40000;
     
-    if (processedScriptText.length > MAX_SCRIPT_LENGTH) {
-      console.log(`Script too long (${processedScriptText.length} chars), truncating to ${MAX_SCRIPT_LENGTH}`);
-      processedScriptText = processedScriptText.slice(0, MAX_SCRIPT_LENGTH);
-      wasTruncated = true;
+    if (isLongScript) {
+      console.warn(`[script-breakdown] Long script detected: ${processedScriptText.length} chars, estimated ${estimatedProcessingTimeSec}s processing time`);
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -488,7 +485,7 @@ DESGLOSE DE PRODUCCIÓN SOLICITADO:
 
 PROJECT ID: ${projectId}
 IDIOMA DE RESPUESTA: ${language || 'es-ES'}
-${wasTruncated ? '\nNOTA: El guion fue truncado por ser demasiado largo. Analiza el contenido disponible.\n' : ''}
+${isLongScript ? '\nNOTA: Este es un guion extenso. Analiza todo el contenido disponible de forma exhaustiva.\n' : ''}
 GUION A DESGLOSAR:
 ---
 ${processedScriptText}
@@ -504,7 +501,7 @@ IMPORTANTE:
 - Asigna prioridades realistas
 - Incluye notas de producción útiles`;
 
-    console.log('Breaking down script, length:', processedScriptText.length, 'projectId:', projectId, 'truncated:', wasTruncated);
+    console.log('Breaking down script, length:', processedScriptText.length, 'projectId:', projectId, 'isLongScript:', isLongScript);
 
     // Use Claude 3.5 Sonnet via direct Anthropic API for superior script understanding
     const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');

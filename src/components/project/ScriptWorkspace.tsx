@@ -1061,6 +1061,19 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (!savedScript) throw new Error('Failed to save script');
       setProgress(40);
 
+      // Calculate dynamic timeout based on script length
+      // ~1 second per 200 characters, with min 60s and max 300s
+      const scriptLength = textToAnalyze.length;
+      const baseTimeoutSec = Math.max(60, Math.min(300, Math.ceil(scriptLength / 200)));
+      const dynamicTimeoutMs = baseTimeoutSec * 1000;
+      
+      // Calculate dynamic polling based on expected processing time
+      // More retries for longer scripts
+      const dynamicPollingRetries = scriptLength > 30000 ? 8 : scriptLength > 15000 ? 6 : 4;
+      const dynamicPollingDelaySec = scriptLength > 30000 ? 15 : 10;
+
+      console.log(`[ScriptWorkspace] Dynamic timeout: ${baseTimeoutSec}s for ${scriptLength} chars, polling: ${dynamicPollingRetries} retries @ ${dynamicPollingDelaySec}s`);
+
       // Call script-breakdown to analyze
       const invokeBreakdown = () =>
         invokeWithTimeout<any>(
@@ -1074,7 +1087,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             episodesCount: projectFormat === 'film' ? 1 : episodesCount,
             episodeDurationMin,
           },
-          { timeoutMs: 240000 }
+          { timeoutMs: dynamicTimeoutMs }
         );
 
       let { data: breakdownData, error: breakdownError } = await invokeBreakdown();
@@ -1139,20 +1152,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       // If there was a network error or no data, try to recover from the database
       // (the backend may have completed successfully before the connection closed)
-      // For long scripts, the analysis can take 2-3 minutes, so we poll multiple times
+      // Use dynamic polling based on script length calculated earlier
       if (isNetworkError || !breakdownData) {
         console.log('[ScriptWorkspace] Network error or no data, attempting to recover from DB...');
-        toast.info('El análisis de guiones largos puede tardar unos minutos. Verificando...', { duration: 10000 });
+        const estimatedMinutes = Math.ceil((dynamicPollingRetries * dynamicPollingDelaySec) / 60);
+        toast.info(`Procesando guion (${Math.round(scriptLength / 1000)}k caracteres). Verificando cada ${dynamicPollingDelaySec}s...`, { duration: 10000 });
         
         let recovered = false;
-        const maxRetries = 6; // Poll for up to 60 seconds (6 x 10s)
         
-        for (let retry = 0; retry < maxRetries && !recovered; retry++) {
-          // Wait progressively longer for the backend to finish
-          const waitTime = retry === 0 ? 3000 : 10000;
+        for (let retry = 0; retry < dynamicPollingRetries && !recovered; retry++) {
+          // Wait with dynamic delay
+          const waitTime = retry === 0 ? 3000 : dynamicPollingDelaySec * 1000;
           await new Promise(resolve => setTimeout(resolve, waitTime));
           
-          console.log(`[ScriptWorkspace] Recovery attempt ${retry + 1}/${maxRetries}...`);
+          console.log(`[ScriptWorkspace] Recovery attempt ${retry + 1}/${dynamicPollingRetries}...`);
           
           const { data: recoveredScript } = await supabase
             .from('scripts')
@@ -1176,13 +1189,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               }
             };
             recovered = true;
-          } else if (retry < maxRetries - 1) {
-            toast.info(`Procesando guion largo... (${retry + 2}/${maxRetries})`, { duration: 8000 });
+          } else if (retry < dynamicPollingRetries - 1) {
+            const remaining = dynamicPollingRetries - retry - 1;
+            toast.info(`Analizando guion... (${retry + 2}/${dynamicPollingRetries}, ~${remaining * dynamicPollingDelaySec}s restantes)`, { duration: 8000 });
           }
         }
         
         if (!recovered) {
-          toast.error('El análisis no se completó. El guion puede ser demasiado largo. Intenta dividirlo o usar un fragmento más corto.');
+          toast.error('El análisis no se completó a tiempo. Intenta con un guion más corto o vuelve a intentarlo.');
           setStatus('error');
           return;
         }
