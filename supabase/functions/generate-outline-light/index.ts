@@ -265,6 +265,101 @@ const OUTLINE_TOOL_SCHEMA = {
   required: ['title', 'logline', 'genre', 'tone', 'synopsis', 'main_characters', 'main_locations', 'main_props', 'subplots', 'plot_twists', 'episode_beats', 'qc_status']
 };
 
+// =============================================================================
+// ROBUST JSON PARSING (prevents 500s on malformed tool arguments)
+// =============================================================================
+function parseJsonSafe(raw: string, label: string): any {
+  const input = (raw ?? '').trim();
+  if (!input) throw new Error('Empty JSON input');
+
+  const cleanup = (s: string) => {
+    let t = (s ?? '').trim();
+    // Remove markdown fences
+    t = t.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    // Fix occasional union-type artifacts: "mood": "x" | "y"
+    t = t.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
+    t = t.replace(/:\s*"([^"]*)\s*\|\s*([^"]*)"/g, ': "$1 $2"');
+    return t;
+  };
+
+  const extractJson = (s: string) => {
+    const t = cleanup(s);
+    const md = t.match(/```json\s*([\s\S]*?)\s*```/i) || t.match(/```\s*([\s\S]*?)\s*```/i);
+    if (md?.[1]) return md[1].trim();
+    const obj = t.match(/\{[\s\S]*\}/);
+    if (obj?.[0]) return obj[0].trim();
+    const arr = t.match(/\[[\s\S]*\]/);
+    if (arr?.[0]) return arr[0].trim();
+    return t;
+  };
+
+  const tryParse = (candidate: string) => {
+    const t = cleanup(candidate);
+    return JSON.parse(t);
+  };
+
+  try {
+    return tryParse(input);
+  } catch (err) {
+    console.warn(`[OUTLINE] JSON parse failed (${label}). Attempting recovery...`);
+    console.warn('[OUTLINE] Raw (first 400 chars):', input.slice(0, 400));
+
+    // 1) Extract JSON from surrounding text
+    const extracted = extractJson(input);
+    try {
+      return tryParse(extracted);
+    } catch {
+      // 2) Attempt to recover truncated JSON by balancing braces/brackets
+      const lastBrace = Math.max(extracted.lastIndexOf('}'), extracted.lastIndexOf(']'));
+      if (lastBrace > 0) {
+        let fixed = extracted.substring(0, lastBrace + 1);
+
+        const openBraces = (fixed.match(/\{/g) || []).length;
+        const closeBraces = (fixed.match(/\}/g) || []).length;
+        const openBrackets = (fixed.match(/\[/g) || []).length;
+        const closeBrackets = (fixed.match(/\]/g) || []).length;
+
+        fixed += '}'.repeat(Math.max(0, openBraces - closeBraces));
+        fixed += ']'.repeat(Math.max(0, openBrackets - closeBrackets));
+
+        return tryParse(fixed);
+      }
+
+      throw err;
+    }
+  }
+}
+
+function normalizeOutline(input: any) {
+  const obj = (input && typeof input === 'object') ? input : {};
+  const extracted = (obj.extracted_entities && typeof obj.extracted_entities === 'object') ? obj.extracted_entities : {};
+
+  return {
+    ...obj,
+    title: obj.title ?? '',
+    logline: obj.logline ?? '',
+    genre: obj.genre ?? '',
+    tone: obj.tone ?? '',
+    narrative_mode: obj.narrative_mode ?? '',
+    synopsis: obj.synopsis ?? '',
+    qc_status: obj.qc_status === 'pass' || obj.qc_status === 'fail' ? obj.qc_status : 'fail',
+
+    extracted_entities: {
+      ...extracted,
+      characters_from_idea: Array.isArray(extracted.characters_from_idea) ? extracted.characters_from_idea : [],
+      locations_from_idea: Array.isArray(extracted.locations_from_idea) ? extracted.locations_from_idea : [],
+      props_from_idea: Array.isArray(extracted.props_from_idea) ? extracted.props_from_idea : [],
+    },
+
+    main_characters: Array.isArray(obj.main_characters) ? obj.main_characters : [],
+    main_locations: Array.isArray(obj.main_locations) ? obj.main_locations : [],
+    main_props: Array.isArray(obj.main_props) ? obj.main_props : [],
+    subplots: Array.isArray(obj.subplots) ? obj.subplots : [],
+    plot_twists: Array.isArray(obj.plot_twists) ? obj.plot_twists : [],
+    episode_beats: Array.isArray(obj.episode_beats) ? obj.episode_beats : [],
+  };
+}
+
 // OpenAI API call
 async function callOpenAI(
   apiKey: string,
@@ -314,26 +409,25 @@ async function callOpenAI(
   
   // Extract tool call result
   const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-  if (toolCall?.function?.name === 'deliver_outline') {
+  const toolArgs = toolCall?.function?.arguments;
+
+  if (toolCall?.function?.name === 'deliver_outline' && typeof toolArgs === 'string') {
     try {
-      return JSON.parse(toolCall.function.arguments);
+      return normalizeOutline(parseJsonSafe(toolArgs, 'openai.tool_call.arguments'));
     } catch {
-      throw new Error('Failed to parse OpenAI tool call response');
+      console.warn('[OUTLINE] Tool-call JSON invalid. Falling back to content parsing...');
     }
   }
-  
-  // Fallback: try to parse from content
+
+  // Fallback: try to parse from content (or tool args if present)
   const content = data.choices?.[0]?.message?.content ?? '';
-  const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    try {
-      return JSON.parse(jsonMatch[0]);
-    } catch {
-      throw new Error('No se pudo parsear el outline de OpenAI');
-    }
+  const candidate = content || (typeof toolArgs === 'string' ? toolArgs : '');
+
+  try {
+    return normalizeOutline(parseJsonSafe(candidate, 'openai.content'));
+  } catch {
+    throw new Error('OpenAI no devolvió outline válido');
   }
-  
-  throw new Error('OpenAI no devolvió outline válido');
 }
 
 // Anthropic API call
@@ -385,22 +479,18 @@ async function callAnthropic(
   // Extract tool use result
   const toolUse = data.content?.find((c: any) => c.type === 'tool_use' && c.name === 'deliver_outline');
   if (toolUse?.input) {
-    return toolUse.input;
+    return normalizeOutline(toolUse.input);
   }
 
   // Fallback: try to parse JSON from text
   const textBlock = data.content?.find((c: any) => c.type === 'text');
   const content = textBlock?.text ?? '';
-  const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    try {
-      return JSON.parse(jsonMatch[0]);
-    } catch {
-      throw new Error('No se pudo parsear el outline de Claude');
-    }
+
+  try {
+    return normalizeOutline(parseJsonSafe(content, 'anthropic.text'));
+  } catch {
+    throw new Error('Claude no devolvió outline');
   }
-  
-  throw new Error('Claude no devolvió outline');
 }
 
 serve(async (req) => {
