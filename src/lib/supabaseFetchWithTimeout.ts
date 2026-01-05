@@ -36,10 +36,29 @@ export async function invokeWithTimeout<T = unknown>(
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-  const {
+  // Try to get current session first
+  let {
     data: { session },
     error: sessionError,
   } = await supabase.auth.getSession();
+
+  // If session exists but might be expired, try to refresh
+  if (session) {
+    const expiresAt = session.expires_at ?? 0;
+    const now = Math.floor(Date.now() / 1000);
+    const bufferSeconds = 60; // Refresh if expiring within 60s
+    
+    if (expiresAt - now < bufferSeconds) {
+      console.log('[invokeWithTimeout] Session expiring soon, refreshing...');
+      const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+      if (!refreshError && refreshData.session) {
+        session = refreshData.session;
+        console.log('[invokeWithTimeout] Session refreshed successfully');
+      } else {
+        console.warn('[invokeWithTimeout] Failed to refresh session:', refreshError?.message);
+      }
+    }
+  }
 
   if (sessionError) {
     return { data: null, error: new Error(sessionError.message) };
