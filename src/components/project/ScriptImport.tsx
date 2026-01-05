@@ -339,7 +339,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Restore pipeline state on mount and poll for updates
   useEffect(() => {
     const storedState = loadPipelineState();
-    if (storedState && storedState.pipelineRunning) {
+    
+    // CRITICAL: Verify the stored state belongs to THIS project
+    // This prevents UI flickering when navigating between projects
+    if (storedState && storedState.pipelineRunning && storedState.projectId === projectId) {
       const totalEps = storedState.totalEpisodes || episodesCount;
       const storedEpisodes = (storedState.episodes as any[]) || [];
       const episodesDone = storedEpisodes.length;
@@ -377,6 +380,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
       toast.info('Generación en segundo plano detectada. Recargando estado...');
     } else {
+      // Clear orphaned state from different project
+      if (storedState && storedState.projectId !== projectId) {
+        clearPipelineState();
+      }
+      
       // No pipeline running - check for saved outline draft (pre-approval state)
       const outlineDraft = loadDraft<any>('outline', projectId);
       if (outlineDraft?.data && !lightOutline) {
@@ -792,6 +800,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     // Save initial pipeline state for background recovery
     savePipelineState({
+      projectId, // CRITICAL: Include projectId to prevent cross-project state conflicts
       pipelineRunning: true,
       progress: 10,
       currentEpisode: 1,
