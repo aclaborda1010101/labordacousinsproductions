@@ -247,6 +247,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   // File input ref
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // PDF processing cancellation + persistent error message (upload mode)
+  const pdfAbortRef = useRef<AbortController | null>(null);
+  const [pdfUploadError, setPdfUploadError] = useState<string | null>(null);
+
   // Voice recorder for idea input
   const voiceRecorder = useVoiceRecorder({
     onTranscript: (text) => {
@@ -494,7 +498,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   ];
   const [pdfMessageIndex, setPdfMessageIndex] = useState(0);
 
-  // Handle file upload
+  const cancelPdfProcessing = useCallback(() => {
+    pdfAbortRef.current?.abort();
+    pdfAbortRef.current = null;
+
+    setStatus('idle');
+    setProgress(0);
+    setProgressMessage('');
+    setPdfUploadError(null);
+    setUploadedFileName(null);
+
+    if (fileInputRef.current) fileInputRef.current.value = '';
+
+    toast.info('Procesamiento cancelado');
+  }, []);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -545,7 +563,13 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         // Use dynamic timeout based on file size
         const timeoutMs = getTimeoutForFileSize(file.size);
         console.log(`[ScriptWorkspace] Using timeout ${timeoutMs}ms for ${fileSizeKB}KB PDF`);
-        
+
+        // Allow user cancellation
+        pdfAbortRef.current?.abort();
+        const abortController = new AbortController();
+        pdfAbortRef.current = abortController;
+        setPdfUploadError(null);
+
         // Start progress simulation with rotating messages
         let progressValue = 20;
         let messageIdx = 0;
@@ -553,65 +577,97 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           // Update progress bar
           progressValue = Math.min(progressValue + (progressValue < 50 ? 2 : progressValue < 75 ? 1 : 0.3), 85);
           setProgress(progressValue);
-          
-          // Rotate messages every 8 seconds
+
+          // Rotate messages
           messageIdx = (messageIdx + 1) % PDF_PROCESSING_MESSAGES.length;
           setPdfMessageIndex(messageIdx);
         }, 3000);
-        
-        setProgressMessage(PDF_PROCESSING_MESSAGES[0]);
-        
-        const { data, error } = await invokeWithTimeout<{
-          rawText?: string;
-          error?: string;
-          needsManualInput?: boolean;
-          hint?: string;
-          stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
-        }>('parse-script', { pdfUrl: urlData.publicUrl, projectId }, timeoutMs);
 
-        clearInterval(progressInterval);
-        
-        if (error) throw error;
-        
-        setProgress(90);
-        setProgressMessage('✅ Texto extraído. Analizando estructura del guion...');
-        
-        if (data?.needsManualInput) {
-          toast.warning(data.error || 'El PDF requiere entrada manual.', {
-            description: data.hint,
-            duration: 8000,
-          });
-          setStatus('idle');
-          setProgress(0);
-          setProgressMessage('');
-          return;
-        }
-        
-        if (data?.rawText) {
-          setScriptText(data.rawText);
-          const stats = data.stats;
-          if (stats) {
-            console.log(`[ScriptWorkspace] PDF stats: ${stats.estimatedPages} pages, model: ${stats.modelUsed}`);
+        try {
+          setProgressMessage(PDF_PROCESSING_MESSAGES[0]);
+
+          const { data, error } = await invokeWithTimeout<{
+            rawText?: string;
+            error?: string;
+            needsManualInput?: boolean;
+            hint?: string;
+            stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
+          }>('parse-script', { pdfUrl: urlData.publicUrl, projectId }, { timeoutMs, signal: abortController.signal });
+
+          if (error) throw error;
+
+          setProgress(90);
+          setProgressMessage('✅ Texto extraído. Analizando estructura del guion...');
+
+          if (data?.needsManualInput) {
+            toast.warning(data.error || 'El PDF requiere entrada manual.', {
+              description: data.hint,
+              duration: 8000,
+            });
+            setStatus('idle');
+            setProgress(0);
+            setProgressMessage('');
+            setUploadedFileName(null);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
           }
-          setProgressMessage('🎯 Analizando personajes, locaciones y escenas...');
-          toast.success('PDF procesado. Analizando guion...');
-          // Auto-trigger analysis after PDF processing with the extracted text
-          await handleAnalyzeScript(data.rawText);
-          // Force refresh to show the saved script
-          setRefreshTrigger(prev => prev + 1);
-        } else if (data?.error) {
-          toast.error(data.error);
-          setStatus('error');
-          setProgressMessage('');
+
+          if (data?.rawText) {
+            setScriptText(data.rawText);
+            const stats = data.stats;
+            if (stats) {
+              console.log(`[ScriptWorkspace] PDF stats: ${stats.estimatedPages} pages, model: ${stats.modelUsed}`);
+            }
+            setProgressMessage('🎯 Analizando personajes, locaciones y escenas...');
+            toast.success('PDF procesado. Analizando guion...');
+            // Auto-trigger analysis after PDF processing with the extracted text
+            await handleAnalyzeScript(data.rawText);
+            // Force refresh to show the saved script
+            setRefreshTrigger(prev => prev + 1);
+          } else if (data?.error) {
+            toast.error(data.error);
+            setPdfUploadError(data.error);
+            setStatus('idle');
+            setProgress(0);
+            setProgressMessage('');
+          } else {
+            setPdfUploadError('No se pudo extraer texto del PDF.');
+            setStatus('idle');
+            setProgress(0);
+            setProgressMessage('');
+          }
+        } finally {
+          clearInterval(progressInterval);
+          pdfAbortRef.current = null;
         }
       } catch (err) {
         console.error('PDF parse error:', err);
         const errorMsg = err instanceof Error ? err.message : 'Error desconocido';
-        toast.error(errorMsg.includes('Timeout') 
-          ? `El PDF es muy grande. ${errorMsg}` 
-          : 'Error al procesar el PDF. Intenta copiar y pegar el texto directamente.');
-        setStatus('error');
+
+        if (errorMsg.toLowerCase().includes('cancelado')) {
+          setStatus('idle');
+          setProgress(0);
+          setProgressMessage('');
+          setUploadedFileName(null);
+          setPdfUploadError(null);
+          return;
+        }
+
+        // Avoid leaving the UI in a confusing "blocked" state
+        setStatus('idle');
+        setProgress(0);
         setProgressMessage('');
+        setPdfUploadError(
+          errorMsg.includes('Timeout')
+            ? `El PDF es muy grande. ${errorMsg}`
+            : 'Error al procesar el PDF. Intenta copiar y pegar el texto directamente.'
+        );
+
+        toast.error(
+          errorMsg.includes('Timeout')
+            ? `El PDF es muy grande. ${errorMsg}`
+            : 'Error al procesar el PDF. Intenta copiar y pegar el texto directamente.'
+        );
       }
     }
   };
@@ -1953,12 +2009,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                             style={{ backgroundSize: '200% 100%' }}
                           />
                         </div>
-                        <p className="text-sm text-muted-foreground animate-pulse">
-                          {progressMessage}
-                        </p>
+                        <p className="text-sm text-muted-foreground animate-pulse">{progressMessage}</p>
                         <p className="text-xs text-muted-foreground/60">
-                          No cierres esta página • Puede tardar hasta 2 minutos
+                          Si parece bloqueado, es normal: el PDF se está extrayendo.
                         </p>
+                        <Button type="button" variant="outline" size="sm" onClick={cancelPdfProcessing}>
+                          <Square className="h-4 w-4 mr-2" />
+                          Cancelar
+                        </Button>
                       </div>
                     </div>
                   ) : (
@@ -1982,14 +2040,43 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                         className="hidden"
                       />
                     </div>
+
+                    {pdfUploadError && (
+                      <Alert variant="destructive" className="mt-4">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>No se pudo procesar el PDF</AlertTitle>
+                        <AlertDescription>
+                          <p>{pdfUploadError}</p>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setPdfUploadError(null);
+                                setUploadedFileName(null);
+                                if (fileInputRef.current) fileInputRef.current.value = '';
+                                fileInputRef.current?.click();
+                              }}
+                            >
+                              Reintentar
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setInputMethod('paste');
+                              }}
+                            >
+                              Pegar texto
+                            </Button>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   )}
                   {scriptText && status !== 'analyzing' && (
-                    <div className="mt-4 bg-muted/50 rounded-lg p-4 max-h-40 overflow-y-auto">
-                      <pre className="text-xs whitespace-pre-wrap font-mono">
-                        {coerceScriptToString(scriptText).slice(0, 500)}...
-                      </pre>
-                    </div>
-                  )}
                 </TabsContent>
               </Tabs>
 
