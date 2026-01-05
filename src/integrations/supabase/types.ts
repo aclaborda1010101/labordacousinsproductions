@@ -209,6 +209,63 @@ export type Database = {
         }
         Relationships: []
       }
+      background_tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          entity_id: string | null
+          entity_name: string | null
+          error: string | null
+          id: string
+          metadata: Json | null
+          progress: number
+          project_id: string | null
+          result: Json | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
+          error?: string | null
+          id: string
+          metadata?: Json | null
+          progress?: number
+          project_id?: string | null
+          result?: Json | null
+          status?: string
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
+          error?: string | null
+          id?: string
+          metadata?: Json | null
+          progress?: number
+          project_id?: string | null
+          result?: Json | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       batch_run_items: {
         Row: {
           batch_run_id: string
@@ -5120,6 +5177,7 @@ export type Database = {
       }
       clean_expired_cache: { Args: never; Returns: number }
       cleanup_expired_locks: { Args: never; Returns: number }
+      cleanup_old_background_tasks: { Args: never; Returns: undefined }
       cleanup_rate_limits: { Args: never; Returns: number }
       create_visual_dna_version: {
         Args: { char_id: string; modifications: Json; new_version_name: string }
