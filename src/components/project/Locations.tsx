@@ -390,8 +390,9 @@ export default function Locations({ projectId }: LocationsProps) {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-4 sm:space-y-6">
+      {/* Header - Desktop */}
+      <div className="hidden sm:flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Localizaciones</h2>
           <p className="text-muted-foreground">Define los escenarios y ambientes de tu producción</p>
@@ -413,6 +414,35 @@ export default function Locations({ projectId }: LocationsProps) {
           )}
           <Button variant="gold" onClick={() => setShowAddDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />
+            Añadir Localización
+          </Button>
+        </div>
+      </div>
+
+      {/* Header - Mobile */}
+      <div className="flex sm:hidden flex-col gap-3">
+        <div>
+          <h2 className="text-xl font-bold text-foreground">Localizaciones</h2>
+          <p className="text-sm text-muted-foreground">Define los escenarios y ambientes de tu producción</p>
+        </div>
+        <div className="flex gap-2">
+          {locations.length > 0 && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={autoGenerateAllLocations}
+              disabled={autoGeneratingAll}
+            >
+              {autoGeneratingAll ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-1" />
+              ) : (
+                <PlayCircle className="w-4 h-4 mr-1" />
+              )}
+              Generar Todas
+            </Button>
+          )}
+          <Button variant="gold" size="sm" onClick={() => setShowAddDialog(true)}>
+            <Plus className="w-4 h-4 mr-1" />
             Añadir Localización
           </Button>
         </div>
@@ -494,12 +524,13 @@ export default function Locations({ projectId }: LocationsProps) {
                     open={expandedPackId === location.id}
                     onOpenChange={(open) => setExpandedPackId(open ? location.id : null)}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    {/* Location Card - Desktop */}
+                    <div className="hidden sm:flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                         <MapPin className="w-6 h-6 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <h3 className="font-semibold text-foreground">{location.name}</h3>
                           <div className="flex gap-1">
                             {location.variants?.day && (
@@ -521,7 +552,7 @@ export default function Locations({ projectId }: LocationsProps) {
                           <p className="text-sm text-muted-foreground italic">Sin descripción</p>
                         )}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 shrink-0 flex-wrap">
                         <Button 
                           variant="gold" 
                           size="sm"
@@ -580,16 +611,115 @@ export default function Locations({ projectId }: LocationsProps) {
                         </Button>
                       </div>
                     </div>
+
+                    {/* Location Card - Mobile */}
+                    <div className="flex sm:hidden flex-col gap-3">
+                      {/* Row 1: Avatar + Name + Expand */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <MapPin className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-foreground text-sm truncate">{location.name}</h3>
+                          <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                            {location.variants?.day && (
+                              <Sun className="w-3 h-3 text-yellow-500" />
+                            )}
+                            {location.variants?.night && (
+                              <Moon className="w-3 h-3 text-blue-400" />
+                            )}
+                            <EntityQCBadge
+                              entityType="location"
+                              hasProfile={!!location.profile_json}
+                              hasContinuityLock={!!(location.profile_json as any)?.continuity_lock}
+                            />
+                          </div>
+                        </div>
+                        <CollapsibleTrigger asChild>
+                          <Button variant="ghost" size="icon" className="shrink-0">
+                            {expandedPackId === location.id ? (
+                              <ChevronUp className="w-4 h-4" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </CollapsibleTrigger>
+                      </div>
+
+                      {/* Row 2: Description */}
+                      {location.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{location.description}</p>
+                      )}
+
+                      {/* Row 3: Primary action */}
+                      <Button 
+                        variant="gold" 
+                        size="sm"
+                        className="w-full"
+                        onClick={() => autoGenerateLocationPack(location)}
+                        disabled={autoGenerating === location.id}
+                      >
+                        {autoGenerating === location.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Generando...
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-4 h-4 mr-2" />
+                            Generar Pack
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Row 4: Secondary actions */}
+                      <div className="flex gap-1 justify-between">
+                        <div className="flex gap-1">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => generateProfileWithEntityBuilder(location)}
+                            disabled={generatingProfile === location.id}
+                          >
+                            {generatingProfile === location.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <BookOpen className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => duplicateLocation(location)}
+                            disabled={duplicating === location.id}
+                          >
+                            {duplicating === location.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => startEditing(location)}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteLocation(location.id)}>
+                            <Trash2 className="w-4 h-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
                     <CollapsibleContent className="mt-4">
                       <Tabs defaultValue="pack" className="w-full">
-                        <TabsList className="w-full justify-start mb-4">
-                          <TabsTrigger value="pack">Pack Builder</TabsTrigger>
-                          <TabsTrigger value="bible">
+                        <TabsList className="w-full justify-start mb-4 overflow-x-auto scrollbar-hide flex-nowrap">
+                          <TabsTrigger value="pack" className="shrink-0 whitespace-nowrap">Pack Builder</TabsTrigger>
+                          <TabsTrigger value="bible" className="shrink-0 whitespace-nowrap">
                             Bible {location.profile_json && '✓'}
                           </TabsTrigger>
-                          <TabsTrigger value="generation">
+                          <TabsTrigger value="generation" className="shrink-0 whitespace-nowrap">
                             <Image className="w-4 h-4 mr-1" />
-                            Generación
+                            <span className="hidden sm:inline">Generación</span><span className="sm:hidden">Gen.</span>
                             {location.canon_asset_id && <Star className="w-3 h-3 ml-1 text-amber-500" />}
                           </TabsTrigger>
                         </TabsList>
