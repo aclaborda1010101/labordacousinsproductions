@@ -314,7 +314,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setPdfProgress(100);
       } catch (err: any) {
         console.error('PDF processing error:', err);
-        toast.error(err.message || 'Error procesando PDF');
+        const errorMsg = err.message || 'Error procesando PDF';
+        
+        // Handle JWT/session errors with clear guidance
+        if (errorMsg.includes('401') || errorMsg.includes('JWT') || errorMsg.includes('Unauthorized') || errorMsg.includes('Sesión')) {
+          toast.error('Tu sesión ha expirado. Recarga la página para continuar.', {
+            duration: 8000,
+            action: {
+              label: 'Recargar',
+              onClick: () => window.location.reload()
+            }
+          });
+        } else {
+          toast.error(errorMsg);
+        }
       } finally {
         setPdfProcessing(false);
         pdfAbortRef.current = null;
@@ -2385,27 +2398,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </div>
                       <div className="space-y-2">
                         <Label>Duración/ep</Label>
-                        <Select value={String(episodeDurationMin)} onValueChange={(v) => setEpisodeDurationMin(Number(v))}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {[20, 30, 45, 60].map(n => (
-                              <SelectItem key={n} value={String(n)}>{n} min</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="flex items-center gap-2">
+                          <Input 
+                            type="number" 
+                            min={5} 
+                            max={180} 
+                            value={episodeDurationMin} 
+                            onChange={(e) => setEpisodeDurationMin(parseInt(e.target.value) || 30)} 
+                            className="w-20"
+                          />
+                          <span className="text-sm text-muted-foreground">min</span>
+                        </div>
                       </div>
                     </>
                   ) : (
                     <div className="space-y-2">
                       <Label>Duración</Label>
-                      <Select value={String(filmDurationMin)} onValueChange={(v) => setFilmDurationMin(Number(v))}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          {[80, 90, 100, 120].map(n => (
-                            <SelectItem key={n} value={String(n)}>{n} min</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex items-center gap-2">
+                        <Input 
+                          type="number" 
+                          min={10} 
+                          max={300} 
+                          value={filmDurationMin} 
+                          onChange={(e) => setFilmDurationMin(parseInt(e.target.value) || 90)} 
+                          className="w-20"
+                        />
+                        <span className="text-sm text-muted-foreground">min</span>
+                      </div>
                     </div>
                   )}
                 </div>
