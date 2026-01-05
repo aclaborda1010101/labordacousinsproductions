@@ -3704,6 +3704,7 @@ export type Database = {
           beats: Json | null
           character_ids: string[] | null
           characters_present: string[] | null
+          confidence_score: number | null
           created_at: string
           episode_no: number
           estimated_cost: Json | null
@@ -3733,6 +3734,7 @@ export type Database = {
           updated_at: string
           visual_fx_cues: string[] | null
           visual_style: string | null
+          visual_style_source: string | null
         }
         Insert: {
           approval_status?:
@@ -3744,6 +3746,7 @@ export type Database = {
           beats?: Json | null
           character_ids?: string[] | null
           characters_present?: string[] | null
+          confidence_score?: number | null
           created_at?: string
           episode_no?: number
           estimated_cost?: Json | null
@@ -3773,6 +3776,7 @@ export type Database = {
           updated_at?: string
           visual_fx_cues?: string[] | null
           visual_style?: string | null
+          visual_style_source?: string | null
         }
         Update: {
           approval_status?:
@@ -3784,6 +3788,7 @@ export type Database = {
           beats?: Json | null
           character_ids?: string[] | null
           characters_present?: string[] | null
+          confidence_score?: number | null
           created_at?: string
           episode_no?: number
           estimated_cost?: Json | null
@@ -3813,6 +3818,7 @@ export type Database = {
           updated_at?: string
           visual_fx_cues?: string[] | null
           visual_style?: string | null
+          visual_style_source?: string | null
         }
         Relationships: [
           {
