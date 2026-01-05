@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { invokeWithTimeout } from '@/lib/supabaseFetchWithTimeout';
+import { invokeWithTimeout, InvokeFunctionError } from '@/lib/supabaseFetchWithTimeout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -602,7 +602,41 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
           }>('parse-script', { pdfUrl: urlData.publicUrl, projectId, parseMode: 'extract_only' }, { timeoutMs, signal: abortController.signal });
 
-          if (error) throw error;
+          if (error) {
+            if (error instanceof InvokeFunctionError) {
+              const body = (error.bodyJson ?? {}) as any;
+              const code = typeof body?.code === 'string' ? body.code : undefined;
+              const retryAfter = typeof body?.retryAfter === 'number' ? body.retryAfter : 30;
+
+              console.warn('[ScriptWorkspace] parse-script failed', {
+                status: error.status,
+                code,
+                retryAfter,
+                message: error.message,
+                body,
+              });
+
+              if (error.status === 409 && code === 'PROJECT_BUSY') {
+                toast.warning('Proyecto ocupado', { description: `Reintento en ${retryAfter}s`, duration: 8000 });
+                setPdfUploadError(`Proyecto ocupado. Reintenta en ${retryAfter}s.`);
+                setStatus('idle');
+                setProgress(0);
+                setProgressMessage('');
+                return;
+              }
+
+              if (error.status === 401 || String(error.message).toLowerCase().includes('missing auth.uid')) {
+                toast.error('Sesión expirada. Inicia sesión de nuevo.', { duration: 8000 });
+                setPdfUploadError('Sesión expirada. Inicia sesión de nuevo.');
+                setStatus('idle');
+                setProgress(0);
+                setProgressMessage('');
+                return;
+              }
+            }
+
+            throw error;
+          }
 
           setProgress(90);
           setProgressMessage('✅ Texto extraído. Analizando estructura del guion...');

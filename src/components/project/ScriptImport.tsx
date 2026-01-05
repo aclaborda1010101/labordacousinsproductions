@@ -1,7 +1,7 @@
 import { useState, useEffect, forwardRef, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
-import { invokeWithTimeout } from '@/lib/supabaseFetchWithTimeout';
+import { invokeWithTimeout, InvokeFunctionError } from '@/lib/supabaseFetchWithTimeout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -271,7 +271,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       // PDF file - use AI extraction
       setPdfProcessing(true);
       setPdfProgress(10);
-      
+
       try {
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -289,12 +289,35 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         pdfAbortRef.current = controller;
 
         const timeoutMs = file.size < 300000 ? 150000 : 300000;
-        
-        const { data, error } = await invokeWithTimeout(
-          'parse-script',
-          { pdfBase64: base64, fileName: file.name, parseMode: 'extract_only', projectId },
-          timeoutMs
-        );
+
+        const invokeParse = () =>
+          invokeWithTimeout(
+            'parse-script',
+            { pdfBase64: base64, fileName: file.name, parseMode: 'extract_only', projectId },
+            { timeoutMs, signal: controller.signal }
+          );
+
+        let { data, error } = await invokeParse();
+
+        // Handle PROJECT_BUSY (409) without crashing the UI
+        if (error instanceof InvokeFunctionError) {
+          const body = (error.bodyJson ?? {}) as any;
+          const code = typeof body?.code === 'string' ? body.code : undefined;
+          const retryAfter = typeof body?.retryAfter === 'number' ? body.retryAfter : 30;
+
+          if (error.status === 409 && code === 'PROJECT_BUSY') {
+            toast.message('Proyecto ocupado', {
+              description: `Reintento en ${retryAfter}s...`,
+              duration: Math.min(8000, retryAfter * 1000),
+            });
+
+            // Keep UI responsive and retry once automatically
+            await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+            if (!controller.signal.aborted) {
+              ;({ data, error } = await invokeParse());
+            }
+          }
+        }
 
         setPdfProgress(80);
 
@@ -314,16 +337,41 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setPdfProgress(100);
       } catch (err: any) {
         console.error('PDF processing error:', err);
-        const errorMsg = err.message || 'Error procesando PDF';
-        
-        // Handle JWT/session errors with clear guidance
-        if (errorMsg.includes('401') || errorMsg.includes('JWT') || errorMsg.includes('Unauthorized') || errorMsg.includes('Sesión')) {
-          toast.error('Tu sesión ha expirado. Recarga la página para continuar.', {
+
+        const status = err instanceof InvokeFunctionError ? err.status : undefined;
+        const bodyJson = err instanceof InvokeFunctionError ? err.bodyJson : undefined;
+        const errorMsg = err?.message || 'Error procesando PDF';
+
+        // Log useful diagnostics for 401/409
+        if (status) {
+          console.warn('[parse-script][client] error', { status, bodyJson, message: errorMsg });
+        }
+
+        // Handle PROJECT_BUSY explicitly
+        if (err instanceof InvokeFunctionError && err.status === 409 && (err.bodyJson as any)?.code === 'PROJECT_BUSY') {
+          const retryAfter = typeof (err.bodyJson as any)?.retryAfter === 'number' ? (err.bodyJson as any).retryAfter : 30;
+          toast.warning('Proyecto ocupado', {
+            description: `Reintenta en ${retryAfter}s`,
+            duration: 8000,
+          });
+          return;
+        }
+
+        // Handle JWT/session errors with clear guidance (no blank screen)
+        if (
+          status === 401 ||
+          errorMsg.includes('401') ||
+          errorMsg.toLowerCase().includes('missing auth.uid') ||
+          errorMsg.includes('JWT') ||
+          errorMsg.includes('Unauthorized') ||
+          errorMsg.includes('Sesión')
+        ) {
+          toast.error('Tu sesión ha expirado. Inicia sesión de nuevo.', {
             duration: 8000,
             action: {
-              label: 'Recargar',
-              onClick: () => window.location.reload()
-            }
+              label: 'Ir a login',
+              onClick: () => (window.location.href = '/auth'),
+            },
           });
         } else {
           toast.error(errorMsg);
