@@ -704,27 +704,59 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         .limit(1)
         .maybeSingle();
 
+      let savedScriptId: string | null = existingScript?.id ?? null;
+
       if (existingScript) {
-        const { error: updateError } = await supabase
+        const { data: updated, error: updateError } = await supabase
           .from('scripts')
           .update({
             raw_text: rawScriptText,
             parsed_json: parsedJson,
             status: 'draft',
           })
-          .eq('id', existingScript.id);
+          .eq('id', existingScript.id)
+          .select('id')
+          .single();
 
         if (updateError) throw updateError;
+        savedScriptId = updated?.id ?? null;
       } else {
-        const { error: insertError } = await supabase.from('scripts').insert({
-          project_id: projectId,
-          raw_text: rawScriptText,
-          parsed_json: parsedJson,
-          status: 'draft',
-        });
+        const { data: inserted, error: insertError } = await supabase
+          .from('scripts')
+          .insert({
+            project_id: projectId,
+            raw_text: rawScriptText,
+            parsed_json: parsedJson,
+            status: 'draft',
+          })
+          .select('id')
+          .single();
 
         if (insertError) throw insertError;
+        savedScriptId = inserted?.id ?? null;
       }
+
+      if (!savedScriptId) {
+        throw new Error('No se pudo guardar el guion');
+      }
+
+      // IMPORTANT: run breakdown so episodes_count + min/ep are respected (e.g., 8 episodios)
+      updateTask(taskId, { progress: 95, description: 'Analizando estructura (episodios y duración)...' });
+      if (!runInBackground) setProgress(95);
+
+      const { error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
+        body: {
+          projectId,
+          scriptText: rawScriptText,
+          scriptId: savedScriptId,
+          language: 'es-ES',
+          format: projectFormat === 'film' ? 'film' : 'series',
+          episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+          episodeDurationMin,
+        },
+      });
+
+      if (breakdownError) throw breakdownError;
 
       setGeneratedScript(rawScriptText);
 
@@ -1481,6 +1513,16 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             </p>
           </div>
           <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleAnalyzeScript(existingScriptText)}
+              disabled={status === 'analyzing' || status === 'generating'}
+              title="Recalcular episodios, duración y entidades desde el texto actual"
+            >
+              <Search className="h-4 w-4 mr-2" />
+              Reanalizar
+            </Button>
             <Button variant="outline" size="sm" onClick={handleChangeScript}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Cambiar guión
