@@ -70,16 +70,34 @@ export async function invokeWithTimeout<T = unknown>(
   }
 
   try {
-    const response = await fetch(`${supabaseUrl}/functions/v1/${functionName}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: supabaseKey,
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
+    const doRequest = (token: string) =>
+      fetch(`${supabaseUrl}/functions/v1/${functionName}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: supabaseKey,
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+    let response = await doRequest(accessToken);
+
+    // If the backend rejects the token (common when session is stale), refresh and retry once.
+    if (response.status === 401) {
+      const firstErrorText = await response.text().catch(() => '');
+      console.warn('[invokeWithTimeout] 401 from function, refreshing session and retrying once...', firstErrorText);
+
+      const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+      const refreshedToken = refreshData.session?.access_token;
+
+      if (!refreshError && refreshedToken) {
+        response = await doRequest(refreshedToken);
+      } else {
+        return { data: null, error: new Error(firstErrorText || 'Unauthorized') };
+      }
+    }
 
     clearTimeout(timeoutId);
     if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
