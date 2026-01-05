@@ -5,10 +5,25 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 
+export class InvokeFunctionError extends Error {
+  status: number;
+  bodyText?: string;
+  bodyJson?: unknown;
+
+  constructor(message: string, opts: { status: number; bodyText?: string; bodyJson?: unknown }) {
+    super(message);
+    this.name = 'InvokeFunctionError';
+    this.status = opts.status;
+    this.bodyText = opts.bodyText;
+    this.bodyJson = opts.bodyJson;
+  }
+}
+
 export type InvokeWithTimeoutOptions = {
   timeoutMs?: number;
   signal?: AbortSignal;
 };
+
 
 export async function invokeWithTimeout<T = unknown>(
   functionName: string,
@@ -95,7 +110,20 @@ export async function invokeWithTimeout<T = unknown>(
       if (!refreshError && refreshedToken) {
         response = await doRequest(refreshedToken);
       } else {
-        return { data: null, error: new Error(firstErrorText || 'Unauthorized') };
+        let parsed: unknown;
+        try {
+          parsed = firstErrorText ? JSON.parse(firstErrorText) : undefined;
+        } catch {
+          parsed = undefined;
+        }
+        const message =
+          (typeof parsed === 'object' && parsed && 'message' in parsed && typeof (parsed as any).message === 'string'
+            ? (parsed as any).message
+            : firstErrorText || 'Unauthorized');
+        return {
+          data: null,
+          error: new InvokeFunctionError(message, { status: 401, bodyText: firstErrorText, bodyJson: parsed }),
+        };
       }
     }
 
@@ -103,8 +131,25 @@ export async function invokeWithTimeout<T = unknown>(
     if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      return { data: null, error: new Error(errorText || `HTTP ${response.status}`) };
+      const errorText = await response.text().catch(() => '');
+      let parsed: unknown;
+      try {
+        parsed = errorText ? JSON.parse(errorText) : undefined;
+      } catch {
+        parsed = undefined;
+      }
+
+      const message =
+        (typeof parsed === 'object' && parsed && 'message' in parsed && typeof (parsed as any).message === 'string'
+          ? (parsed as any).message
+          : (typeof parsed === 'object' && parsed && 'error' in parsed && typeof (parsed as any).error === 'string'
+            ? (parsed as any).error
+            : errorText || `HTTP ${response.status}`));
+
+      return {
+        data: null,
+        error: new InvokeFunctionError(message, { status: response.status, bodyText: errorText, bodyJson: parsed }),
+      };
     }
 
     const data = (await response.json()) as T;
