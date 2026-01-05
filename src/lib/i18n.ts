@@ -101,14 +101,16 @@ export const es = {
 
   // Bible Overview
   bible: {
-    title: 'Visión General de la Biblia',
+    title: 'Biblia del Proyecto',
     subtitle: 'El canon de tu producción',
     completeness: 'Nivel de Completitud',
     completeToUnlock: 'Completa la biblia al 85% para desbloquear escenas',
     sections: {
-      style: 'Estilo Visual',
-      characters: 'Personajes',
-      locations: 'Localizaciones',
+      style: { label: 'Estilo Visual', desc: 'Paleta, tono visual, reglas de look & feel' },
+      characters: { label: 'Personajes', desc: 'Reparto canónico, rasgos y Visual DNA' },
+      locations: { label: 'Localizaciones', desc: 'Mundos, sets, atmósferas y referencias' },
+      beats: { label: 'Estructura', desc: 'Beat sheet, actos y arcos narrativos' },
+      scenes: { label: 'Escenas', desc: 'Escenas generadas o importadas del guion' },
     },
     incomplete: 'Biblia Incompleta',
     completeFirst: 'Completa tu biblia de producción para desbloquear escenas.',
