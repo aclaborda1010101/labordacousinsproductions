@@ -3700,14 +3700,17 @@ export type Database = {
           approval_status: Database["public"]["Enums"]["approval_status"] | null
           approved: boolean | null
           assigned_role: Database["public"]["Enums"]["app_role"] | null
+          audio_cues: string[] | null
           beats: Json | null
           character_ids: string[] | null
+          characters_present: string[] | null
           created_at: string
           episode_no: number
           estimated_cost: Json | null
           id: string
           location_id: string | null
           max_attempts_override: number | null
+          metadata: Json | null
           mood: Json | null
           objective: string | null
           override_mode: string | null
@@ -3720,9 +3723,14 @@ export type Database = {
           scene_no: number
           script_id: string | null
           slugline: string
+          standardized_location: string | null
+          standardized_time: string | null
           summary: string | null
+          technical_notes: string | null
           time_of_day: string | null
           updated_at: string
+          visual_fx_cues: string[] | null
+          visual_style: string | null
         }
         Insert: {
           approval_status?:
@@ -3730,14 +3738,17 @@ export type Database = {
             | null
           approved?: boolean | null
           assigned_role?: Database["public"]["Enums"]["app_role"] | null
+          audio_cues?: string[] | null
           beats?: Json | null
           character_ids?: string[] | null
+          characters_present?: string[] | null
           created_at?: string
           episode_no?: number
           estimated_cost?: Json | null
           id?: string
           location_id?: string | null
           max_attempts_override?: number | null
+          metadata?: Json | null
           mood?: Json | null
           objective?: string | null
           override_mode?: string | null
@@ -3750,9 +3761,14 @@ export type Database = {
           scene_no: number
           script_id?: string | null
           slugline: string
+          standardized_location?: string | null
+          standardized_time?: string | null
           summary?: string | null
+          technical_notes?: string | null
           time_of_day?: string | null
           updated_at?: string
+          visual_fx_cues?: string[] | null
+          visual_style?: string | null
         }
         Update: {
           approval_status?:
@@ -3760,14 +3776,17 @@ export type Database = {
             | null
           approved?: boolean | null
           assigned_role?: Database["public"]["Enums"]["app_role"] | null
+          audio_cues?: string[] | null
           beats?: Json | null
           character_ids?: string[] | null
+          characters_present?: string[] | null
           created_at?: string
           episode_no?: number
           estimated_cost?: Json | null
           id?: string
           location_id?: string | null
           max_attempts_override?: number | null
+          metadata?: Json | null
           mood?: Json | null
           objective?: string | null
           override_mode?: string | null
@@ -3780,9 +3799,14 @@ export type Database = {
           scene_no?: number
           script_id?: string | null
           slugline?: string
+          standardized_location?: string | null
+          standardized_time?: string | null
           summary?: string | null
+          technical_notes?: string | null
           time_of_day?: string | null
           updated_at?: string
+          visual_fx_cues?: string[] | null
+          visual_style?: string | null
         }
         Relationships: [
           {

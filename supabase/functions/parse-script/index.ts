@@ -6,7 +6,89 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Dynamic configuration based on file size
+// =============================================================================
+// UNIVERSAL SCRIPT PARSER v2.1 - SYSTEM PROMPT
+// =============================================================================
+const UNIVERSAL_PARSER_PROMPT = `You are an elite Hollywood Production Supervisor capable of parsing screenplays in ANY language (English, Spanish, French, German, Italian, Portuguese, etc.).
+
+YOUR OBJECTIVE:
+Read the raw screenplay text and output a structured JSON object representing the full production breakdown with rich metadata for AI generation.
+
+CORE RULES:
+
+1. LANGUAGE AGNOSTICISM:
+   - Detect the script language automatically
+   - Recognize scene headers in ANY format: 'INT.', 'EXT.', 'INTERIOR', 'EXTERIOR', 'INT/EXT', 'I/E', 'INTERNO', 'EXTERNO', etc.
+   - Translate implied time/location cues into standardized English metadata:
+     * 'NOCHE' -> 'NIGHT', 'DÍA' -> 'DAY', 'AMANECER' -> 'DAWN', 'ATARDECER' -> 'DUSK'
+     * 'NUIT' -> 'NIGHT', 'JOUR' -> 'DAY'
+   - Keep the original text in 'slugline' but normalize to English in 'standardized_time' and 'standardized_location'
+
+2. FORMAT INTELLIGENCE (Series vs. Film):
+   - Scan the first pages for 'Episode', 'Chapter', 'Episodio', 'Capítulo', 'Pilot', 'Teaser'
+   - If detected, structure scenes with 'episode_number'. If not, assume episode_number: 1
+   - Detect 'Teaser', 'Cold Open', 'Prólogo' as specific acts
+
+3. CANON SCOUTING (The "Visual DNA" Layer):
+   - CHARACTERS: Identify characters who speak or are described. If a character appears in >3 scenes, flag 'suggest_canon: true'
+   - PROPS/OBJECTS: Identify objects interacting with characters (e.g., 'Poisoned Apple', 'Oppenheimer's Pipe'). If they have specific adjectives, extract those as 'visual_traits'
+   - LOCATIONS: Group scenes by location. If a location appears multiple times, flag it as a Recurring Set
+
+4. VISUAL & AUDIO EXTRACTION:
+   - visual_style: Look for '(B&W)', '(BLACK AND WHITE)', '(SEPIA)', '(FLASHBACK)', '(BLANCO Y NEGRO)'. Default is 'COLOR'
+   - audio_cues: Extract CAPITALIZED SOUNDS or 'Sound of...', 'SFX:', 'SONIDO DE...'
+   - visual_fx_cues: Look for 'INSERT CUT:', 'VFX:', 'CGI:', rapid montage descriptions
+   - technical_notes: Extract any camera directions found (CLOSE ON:, ZOOM, PAN, TRAVELLING, etc.)
+
+5. SCENE METADATA:
+   - Detect mood from action lines (tense, romantic, action, horror, comedy)
+   - Estimate dialogue_count per scene
+   - Identify lighting hints from descriptions ("dim light", "bright sun", "neon glow")
+
+OUTPUT JSON SCHEMA:
+{
+  "project_metadata": {
+    "type": "MOVIE" | "SERIES",
+    "detected_language": "es" | "en" | "fr" | "de" | "it" | "pt",
+    "title": "..." (if detectable from header),
+    "estimated_runtime_minutes": number (rough estimate based on page count)
+  },
+  "canon_suggestions": [
+    {
+      "type": "CHARACTER" | "PROP" | "LOCATION",
+      "name": "...",
+      "visual_traits": ["..."],
+      "appearances": number,
+      "suggest_canon": boolean,
+      "reason": "Appears in 5 scenes with consistent visual description"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "episode_number": 1,
+      "slugline": "INT. COCINA - NOCHE",
+      "standardized_location": "KITCHEN",
+      "standardized_time": "NIGHT",
+      "location_type": "INT" | "EXT" | "INT/EXT",
+      "visual_style": "COLOR" | "MONOCHROME" | "SEPIA",
+      "action_summary": "Brief summary of what happens",
+      "characters_present": ["Frank", "Jackie"],
+      "audio_cues": ["THUNDER", "FOOTSTEPS"],
+      "visual_fx_cues": ["Rain lashing window", "Lightning flash"],
+      "technical_notes": "CLOSE ON the knife. PAN to window.",
+      "dialogue_count": 5,
+      "mood": "tense",
+      "lighting_hints": "dim candlelight"
+    }
+  ]
+}
+
+CRITICAL: Return ONLY valid JSON. No markdown, no commentary.`;
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
 interface ProcessingConfig {
   model: string;
   timeoutMs: number;
@@ -17,43 +99,41 @@ interface ProcessingConfig {
 }
 
 function getProcessingConfig(fileSizeBytes: number): ProcessingConfig {
-  // Estimate pages: ~3.5KB per page average for screenplay PDFs
   const estimatedPages = Math.ceil(fileSizeBytes / 3500);
   
   if (fileSizeBytes < 100000) {
-    // Small: <100KB (~30 pages) - fastest processing
     return {
       model: "google/gemini-2.5-flash",
-      timeoutMs: 60000, // 1 min
+      timeoutMs: 60000,
       maxTokens: 50000,
       isLarge: false,
       estimatedPages,
       extractionPrompt: `Extract ALL text from this PDF screenplay. Preserve exact formatting:
-- Scene headings (INT./EXT.)
+- Scene headings (INT./EXT./INTERIOR/EXTERIOR)
 - Character names in CAPS before dialogue
 - Dialogue and parentheticals
 - Action lines
+- Any camera directions (CLOSE ON, INSERT, etc.)
 Return the complete verbatim text.`
     };
   } else if (fileSizeBytes < 300000) {
-    // Medium: 100-300KB (~30-85 pages)
     return {
       model: "google/gemini-2.5-flash",
-      timeoutMs: 120000, // 2 min
+      timeoutMs: 120000,
       maxTokens: 80000,
       isLarge: false,
       estimatedPages,
       extractionPrompt: `Extract the complete screenplay text. Preserve:
-- All scene headings (INT./EXT.)
+- All scene headings (INT./EXT. in any language)
 - Character names and dialogue
 - Action descriptions
+- Sound cues (CAPITALIZED sounds)
 Return verbatim text in screenplay format.`
     };
   } else if (fileSizeBytes < 600000) {
-    // Large: 300-600KB (~85-170 pages)
     return {
       model: "google/gemini-2.5-flash-lite",
-      timeoutMs: 180000, // 3 min
+      timeoutMs: 180000,
       maxTokens: 60000,
       isLarge: true,
       estimatedPages,
@@ -61,13 +141,13 @@ Return verbatim text in screenplay format.`
 - Scene headings (INT./EXT.)
 - Character names and key dialogue
 - Main action beats
+- Any visual style indicators (B&W, FLASHBACK)
 Summarize long descriptions if needed. Return in screenplay format.`
     };
   } else {
-    // Very large: >600KB (170+ pages)
     return {
       model: "google/gemini-2.5-flash-lite",
-      timeoutMs: 240000, // 4 min
+      timeoutMs: 240000,
       maxTokens: 50000,
       isLarge: true,
       estimatedPages,
@@ -75,24 +155,25 @@ Summarize long descriptions if needed. Return in screenplay format.`
 - All scene headings with locations
 - Character names and essential dialogue
 - Key plot points and action
+- Visual style markers (B&W, COLOR)
 Skip detailed descriptions. Return structured screenplay format.`
     };
   }
 }
 
-// Use AI to extract text from PDF
+// =============================================================================
+// PDF EXTRACTION
+// =============================================================================
 async function extractTextWithAI(pdfBytes: Uint8Array, config: ProcessingConfig): Promise<string> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   
   if (!LOVABLE_API_KEY) {
-    console.error("LOVABLE_API_KEY not available");
     throw new Error("AI service not configured");
   }
 
-  console.log(`Extracting PDF with config: model=${config.model}, timeout=${config.timeoutMs}ms, ~${config.estimatedPages} pages`);
+  console.log(`[parse-script] Extracting PDF: model=${config.model}, timeout=${config.timeoutMs}ms, ~${config.estimatedPages} pages`);
   
   const pdfBase64 = encodeBase64(pdfBytes);
-  console.log(`Encoded PDF to base64: ${pdfBase64.length} chars`);
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), config.timeoutMs);
@@ -138,26 +219,24 @@ async function extractTextWithAI(pdfBytes: Uint8Array, config: ProcessingConfig)
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("AI extraction error:", response.status, errorText);
+      console.error("[parse-script] AI extraction error:", response.status, errorText);
       throw new Error(`AI extraction failed: ${response.status}`);
     }
 
     const data = await response.json();
     const extractedText = data.choices?.[0]?.message?.content || "";
     
-    console.log(`AI extracted ${extractedText.length} characters`);
+    console.log(`[parse-script] AI extracted ${extractedText.length} characters`);
     return extractedText;
   } catch (error: unknown) {
     clearTimeout(timeoutId);
     if (error instanceof Error && error.name === 'AbortError') {
-      console.error("AI extraction timed out after", config.timeoutMs, "ms");
       throw new Error(`Timeout: el PDF (~${config.estimatedPages} páginas) tardó demasiado`);
     }
     throw error;
   }
 }
 
-// Fallback: Extract text from PDF using basic pattern matching
 function extractTextFromPdfBytes(pdfBytes: Uint8Array): string {
   const decoder = new TextDecoder('latin1');
   const rawContent = decoder.decode(pdfBytes);
@@ -183,11 +262,14 @@ function extractTextFromPdfBytes(pdfBytes: Uint8Array): string {
   
   return extractedText
     .replace(/\x00/g, '')
-    .replace(/[^\x20-\x7E\n\r\táéíóúñÁÉÍÓÚÑüÜ¿¡]/g, ' ')
+    .replace(/[^\x20-\x7E\n\r\táéíóúñÁÉÍÓÚÑüÜ¿¡àèìòùÀÈÌÒÙâêîôûÂÊÎÔÛäëïöüÄËÏÖÜçÇ]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
+// =============================================================================
+// MAIN HANDLER
+// =============================================================================
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -195,15 +277,15 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { scriptText, pdfUrl, projectId } = body;
+    const { scriptText, pdfUrl, projectId, parseMode } = body;
 
-    console.log("parse-script called with:", { hasPdfUrl: !!pdfUrl, hasScriptText: !!scriptText, projectId });
+    console.log("[parse-script] v2.1 called:", { hasPdfUrl: !!pdfUrl, hasScriptText: !!scriptText, projectId, parseMode });
 
     let textToProcess = scriptText;
 
-    // If pdfUrl is provided, fetch and extract text using AI
+    // Handle PDF extraction
     if (pdfUrl && !scriptText) {
-      console.log("Fetching PDF from:", pdfUrl);
+      console.log("[parse-script] Fetching PDF from:", pdfUrl);
       
       try {
         const pdfResponse = await fetch(pdfUrl);
@@ -214,25 +296,21 @@ serve(async (req) => {
         const pdfBuffer = await pdfResponse.arrayBuffer();
         const pdfBytes = new Uint8Array(pdfBuffer);
         const fileSizeKB = Math.round(pdfBytes.length / 1024);
-        console.log(`PDF downloaded: ${pdfBytes.length} bytes (${fileSizeKB}KB)`);
+        console.log(`[parse-script] PDF downloaded: ${pdfBytes.length} bytes (${fileSizeKB}KB)`);
         
-        // Get dynamic processing config based on file size
         const config = getProcessingConfig(pdfBytes.length);
-        console.log(`Processing config: ${config.estimatedPages} pages, model=${config.model}, timeout=${config.timeoutMs}ms`);
         
-        // Try AI extraction first
         let extractedText = "";
         try {
           extractedText = await extractTextWithAI(pdfBytes, config);
         } catch (aiError) {
-          console.warn("AI extraction failed, falling back to regex:", aiError);
+          console.warn("[parse-script] AI extraction failed, falling back to regex:", aiError);
           extractedText = extractTextFromPdfBytes(pdfBytes);
           
-          // If regex extraction also yields poor results for large files, suggest manual input
           if (config.isLarge && extractedText.length < 1000) {
             return new Response(
               JSON.stringify({ 
-                error: `Este guión (~${config.estimatedPages} páginas) es muy extenso. Por favor, copia el texto de las primeras 50 páginas y pégalo directamente.`,
+                error: `Este guión (~${config.estimatedPages} páginas) es muy extenso. Por favor, copia el texto y pégalo directamente.`,
                 rawText: "",
                 needsManualInput: true,
                 hint: "Puedes procesar el guión por partes: primero el primer acto, luego el segundo, etc.",
@@ -243,10 +321,7 @@ serve(async (req) => {
           }
         }
         
-        console.log(`Extracted ${extractedText.length} characters from PDF`);
-        
         if (extractedText.length < 50) {
-          console.log("PDF text extraction yielded minimal results");
           return new Response(
             JSON.stringify({ 
               error: "El PDF parece ser escaneado o tiene un formato no compatible. Por favor, copia y pega el texto directamente.",
@@ -259,26 +334,27 @@ serve(async (req) => {
         
         textToProcess = extractedText;
         
-        // Return raw text for the frontend to use
-        return new Response(
-          JSON.stringify({ 
-            rawText: textToProcess,
-            success: true,
-            stats: {
-              originalSizeKB: fileSizeKB,
-              extractedChars: extractedText.length,
-              estimatedPages: config.estimatedPages,
-              wasLargeFile: config.isLarge,
-              modelUsed: config.model
-            }
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        // If parseMode is 'extract_only', just return raw text
+        if (parseMode === 'extract_only') {
+          return new Response(
+            JSON.stringify({ 
+              rawText: textToProcess,
+              success: true,
+              stats: {
+                originalSizeKB: fileSizeKB,
+                extractedChars: extractedText.length,
+                estimatedPages: config.estimatedPages,
+                wasLargeFile: config.isLarge,
+                modelUsed: config.model
+              }
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
         
       } catch (pdfError) {
-        console.error("PDF processing error:", pdfError);
+        console.error("[parse-script] PDF processing error:", pdfError);
         
-        // Provide more specific error messages
         const errorMessage = pdfError instanceof Error ? pdfError.message : "Unknown error";
         const isTimeout = errorMessage.toLowerCase().includes("timeout");
         
@@ -303,20 +379,17 @@ serve(async (req) => {
       );
     }
 
-    // Use Lovable AI Gateway for parsing
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY is not configured");
       return new Response(
         JSON.stringify({ error: "AI service not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // If text was provided directly (not from PDF), run it through the same formatting AI
-    // This ensures consistent quality between PDF extraction and text input
+    // Format text if provided directly
     if (scriptText && !pdfUrl) {
-      console.log("Processing direct text input through formatting AI...");
+      console.log("[parse-script] Processing direct text input through formatting AI...");
       try {
         const formattingResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
@@ -329,20 +402,18 @@ serve(async (req) => {
             messages: [
               {
                 role: "system",
-                content: "You are a professional screenplay formatter. Your job is to take screenplay text (which may be poorly formatted) and reformat it into proper screenplay format. Output ONLY the reformatted text, no commentary."
+                content: "You are a professional screenplay formatter. Reformat poorly formatted screenplay text into proper format. Output ONLY the reformatted text."
               },
               {
                 role: "user",
-                content: `Reformat this text into proper screenplay format, preserving:
+                content: `Reformat this text into proper screenplay format:
 - Scene headings (INT./EXT.) in their own lines, uppercase
-- Character names in ALL CAPS before their dialogue
-- Dialogue properly indented after character names
-- Action lines/descriptions as regular text
-- Parentheticals in their proper place
+- Character names in ALL CAPS before dialogue
+- Dialogue properly indented
+- Action lines as regular text
+- Preserve any visual style markers (B&W, FLASHBACK, etc.)
 
-If the text is already well-formatted, return it as-is. If it's prose/narrative, convert it to screenplay format.
-
-Text to format:
+Text:
 ${textToProcess}`
               }
             ],
@@ -355,50 +426,19 @@ ${textToProcess}`
           const formattingData = await formattingResponse.json();
           const formattedText = formattingData.choices?.[0]?.message?.content || "";
           if (formattedText.length > textToProcess.length * 0.5) {
-            console.log(`Formatted text from ${textToProcess.length} to ${formattedText.length} chars`);
             textToProcess = formattedText;
-          } else {
-            console.log("Formatting result too short, keeping original text");
           }
-        } else {
-          console.warn("Formatting AI call failed, using original text");
         }
       } catch (formatError) {
-        console.warn("Error in text formatting step, using original text:", formatError);
+        console.warn("[parse-script] Error in text formatting step:", formatError);
       }
     }
 
-    const systemPrompt = `You are a professional script breakdown assistant. Analyze the provided screenplay text and extract scenes.
-
-For each scene, identify:
-1. Slugline (scene heading like "INT. COFFEE SHOP - DAY")
-2. A brief summary of what happens (1-2 sentences)
-3. Characters present (names only)
-4. Location name
-5. Time of day (day, night, dawn, dusk, continuous)
-6. Count of dialogue lines
-
-Return a JSON object with this structure:
-{
-  "scenes": [
-    {
-      "slugline": "INT. COFFEE SHOP - DAY",
-      "summary": "Sarah meets James for a tense confrontation about evidence.",
-      "characters": ["SARAH", "JAMES"],
-      "location": "Coffee Shop",
-      "time_of_day": "day",
-      "dialogue_count": 5
-    }
-  ]
-}
-
-Rules:
-- Split scenes at INT./EXT. headers
-- Extract character names from dialogue (they appear in ALL CAPS before dialogue)
-- Parse location from slugline
-- Keep summaries concise and action-focused
-- Return valid JSON only`;
-
+    // =============================================================================
+    // UNIVERSAL PARSER v2.1 - MAIN PARSING
+    // =============================================================================
+    console.log("[parse-script] Running Universal Parser v2.1...");
+    
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -408,10 +448,10 @@ Rules:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: `Parse this screenplay:\n\n${textToProcess}` }
+          { role: "system", content: UNIVERSAL_PARSER_PROMPT },
+          { role: "user", content: `Parse this screenplay completely:\n\n${textToProcess}` }
         ],
-        temperature: 0.3,
+        temperature: 0.2,
         response_format: { type: "json_object" }
       }),
     });
@@ -430,7 +470,7 @@ Rules:
         );
       }
       const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
+      console.error("[parse-script] AI gateway error:", response.status, errorText);
       return new Response(
         JSON.stringify({ error: "AI service error" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -441,36 +481,95 @@ Rules:
     const content = data.choices?.[0]?.message?.content || "";
 
     // Parse JSON from response
-    let scenes = [];
+    let parsedResult = {
+      project_metadata: {
+        type: 'MOVIE' as const,
+        detected_language: 'en',
+        title: null as string | null,
+        estimated_runtime_minutes: 0
+      },
+      canon_suggestions: [] as Array<{
+        type: string;
+        name: string;
+        visual_traits: string[];
+        appearances: number;
+        suggest_canon: boolean;
+        reason: string;
+      }>,
+      scenes: [] as Array<{
+        scene_number: number;
+        episode_number: number;
+        slugline: string;
+        standardized_location: string;
+        standardized_time: string;
+        location_type: string;
+        visual_style: string;
+        action_summary: string;
+        characters_present: string[];
+        audio_cues: string[];
+        visual_fx_cues: string[];
+        technical_notes: string;
+        dialogue_count: number;
+        mood: string;
+        lighting_hints: string;
+      }>
+    };
+    
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
-        scenes = parsed.scenes || [];
+        parsedResult = {
+          project_metadata: parsed.project_metadata || parsedResult.project_metadata,
+          canon_suggestions: parsed.canon_suggestions || [],
+          scenes: parsed.scenes || []
+        };
       }
     } catch (parseError) {
-      console.error("Error parsing AI response:", parseError);
-      console.log("Raw content:", content);
+      console.error("[parse-script] Error parsing AI response:", parseError);
+      console.log("[parse-script] Raw content preview:", content.substring(0, 500));
       
-      scenes = [{
+      // Fallback to basic scene
+      parsedResult.scenes = [{
+        scene_number: 1,
+        episode_number: 1,
         slugline: "SCENE 1",
-        summary: "Imported scene from script",
-        characters: [],
-        location: "Unknown",
-        time_of_day: "day",
-        dialogue_count: 0
+        standardized_location: "UNKNOWN",
+        standardized_time: "DAY",
+        location_type: "INT",
+        visual_style: "COLOR",
+        action_summary: "Imported scene from script",
+        characters_present: [],
+        audio_cues: [],
+        visual_fx_cues: [],
+        technical_notes: "",
+        dialogue_count: 0,
+        mood: "neutral",
+        lighting_hints: ""
       }];
     }
 
-    console.log(`Parsed ${scenes.length} scenes from script`);
+    console.log(`[parse-script] v2.1 Complete: ${parsedResult.scenes.length} scenes, ${parsedResult.canon_suggestions.length} canon suggestions, language=${parsedResult.project_metadata.detected_language}`);
 
+    // Return full parsed result with v2.1 structure
     return new Response(
-      JSON.stringify({ scenes, rawText: textToProcess }),
+      JSON.stringify({ 
+        ...parsedResult,
+        rawText: textToProcess,
+        // Legacy compatibility
+        scenes: parsedResult.scenes.map(s => ({
+          ...s,
+          summary: s.action_summary,
+          characters: s.characters_present,
+          location: s.standardized_location,
+          time_of_day: s.standardized_time?.toLowerCase() || 'day'
+        }))
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
   } catch (error) {
-    console.error("parse-script error:", error);
+    console.error("[parse-script] Error:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
