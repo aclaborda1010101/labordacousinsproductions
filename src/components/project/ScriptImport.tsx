@@ -89,6 +89,7 @@ import {
   updateOutlineTiming,
 } from '@/lib/scriptTimingModel';
 import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
+import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
 
 interface ScriptImportProps {
   projectId: string;
@@ -375,6 +376,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       }
 
       toast.info('Generación en segundo plano detectada. Recargando estado...');
+    } else {
+      // No pipeline running - check for saved outline draft (pre-approval state)
+      const outlineDraft = loadDraft<any>('outline', projectId);
+      if (outlineDraft?.data && !lightOutline) {
+        setLightOutline(outlineDraft.data);
+        updatePipelineStep('outline', 'success');
+        updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+        toast.info('Outline recuperado. Revísalo y apruébalo.');
+      }
     }
   }, [projectId, episodesCount]);
 
@@ -732,6 +742,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       });
 
       setLightOutline(data.outline);
+      // Persist outline to localStorage immediately so it survives re-renders/navigation
+      saveDraft('outline', projectId, data.outline);
       updatePipelineStep('outline', 'success');
       updatePipelineStep('approval', 'running', 'Esperando aprobación...');
       toast.success('Outline generado. Revísalo y apruébalo para continuar.');
@@ -768,6 +780,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     const totalEpisodes = lightOutline.episode_beats?.length || episodesCount;
     setTotalEpisodesToGenerate(totalEpisodes);
+
+    // Clear the outline draft since it's now saved in pipeline state
+    deleteDraft('outline', projectId);
 
     // Save initial pipeline state for background recovery
     savePipelineState({
