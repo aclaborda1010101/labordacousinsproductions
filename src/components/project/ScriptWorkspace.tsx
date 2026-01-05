@@ -248,6 +248,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [extractCharacters, setExtractCharacters] = useState(true);
   const [extractLocations, setExtractLocations] = useState(true);
   const [extractScenes, setExtractScenes] = useState(true);
+  
+  // V3.0: Disable narrative density (let AI generate based purely on user idea)
+  const [disableDensity, setDisableDensity] = useState(true); // Default: OFF (no density constraints)
 
   // File input ref
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -722,6 +725,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           language: 'es-ES',
           qualityTier, // V3.0: Pass quality tier
+          disableDensity, // V3.0: Skip density constraints if true
         }
       });
 
@@ -1888,7 +1892,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="space-y-3 pt-2">
-                      <div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="disableDensity"
+                          checked={disableDensity}
+                          onCheckedChange={(checked) => setDisableDensity(checked === true)}
+                        />
+                        <Label htmlFor="disableDensity" className="text-sm font-normal cursor-pointer">
+                          Sin densidad narrativa (solo lo que aportes)
+                        </Label>
+                      </div>
+                      <p className="text-xs text-muted-foreground pl-6">
+                        Desactiva los mínimos de personajes, locaciones y subtramas. La IA generará basándose únicamente en tu idea.
+                      </p>
+                      
+                      <div className="pt-2">
                         <Label>Modo de generación</Label>
                         <Select value={qualityTier} onValueChange={(v) => setQualityTier(v as 'DRAFT' | 'PRODUCTION')}>
                           <SelectTrigger className="mt-1">
