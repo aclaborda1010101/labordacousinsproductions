@@ -1257,7 +1257,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         }
       }
 
-      setProgress(80);
+      // Only set to 96 if we didn't come from recovery (which already set it higher)
+      if (!clientTimedOut && !isNetworkError) {
+        setProgress(96);
+      }
 
       const breakdown: BreakdownResult = breakdownData?.breakdown || {
         characters: breakdownData?.characters || [],
