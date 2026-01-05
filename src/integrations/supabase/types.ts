@@ -1069,6 +1069,132 @@ export type Database = {
           },
         ]
       }
+      cpe_canon_elements: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          priority: string
+          project_id: string
+          specs: Json
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          priority: string
+          project_id: string
+          specs?: Json
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          priority?: string
+          project_id?: string
+          specs?: Json
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cpe_canon_elements_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cpe_feed_blocks: {
+        Row: {
+          block_type: string
+          created_at: string
+          data: Json
+          id: string
+          project_id: string
+          status: string | null
+        }
+        Insert: {
+          block_type: string
+          created_at?: string
+          data?: Json
+          id?: string
+          project_id: string
+          status?: string | null
+        }
+        Update: {
+          block_type?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          project_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cpe_feed_blocks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cpe_scenes: {
+        Row: {
+          created_at: string
+          id: string
+          narrative: string | null
+          project_id: string
+          scene_order: number
+          script: string | null
+          slugline: string
+          status: string
+          technical_specs: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          narrative?: string | null
+          project_id: string
+          scene_order?: number
+          script?: string | null
+          slugline: string
+          status?: string
+          technical_specs?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          narrative?: string | null
+          project_id?: string
+          scene_order?: number
+          script?: string | null
+          slugline?: string
+          status?: string
+          technical_specs?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cpe_scenes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dailies_items: {
         Row: {
           assigned_to: string | null
