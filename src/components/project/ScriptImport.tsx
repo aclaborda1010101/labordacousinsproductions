@@ -131,6 +131,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // V3.0: Quality tier selection (replaces legacy generationModel)
   const [qualityTier, setQualityTier] = useState<QualityTier>('PRODUCTION');
   
+  // V3.0: Disable narrative density (let AI generate based purely on user idea)
+  const [disableDensity, setDisableDensity] = useState(true); // Default: OFF (no density constraints)
+  
   // Creative mode context
   const creativeModeContext = useCreativeModeOptional();
   const effectiveCreativeMode = creativeModeContext?.effectiveMode ?? 'ASSISTED';
@@ -593,7 +596,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           language,
           narrativeMode,
           densityTargets: targets,
-          qualityTier // V3.0: Pass quality tier instead of model
+          qualityTier, // V3.0: Pass quality tier instead of model
+          disableDensity // V3.0: Skip density constraints if true
         },
         timeoutMs
       );
@@ -2182,6 +2186,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   className="min-h-[120px]"
                   disabled={voiceRecorder.isRecording}
                 />
+                
+                {/* V3.0: Toggle para desactivar densidad narrativa */}
+                <div className="flex items-center space-x-2 pt-3 border-t border-border/50">
+                  <Checkbox
+                    id="disableDensityImport"
+                    checked={disableDensity}
+                    onCheckedChange={(checked) => setDisableDensity(checked === true)}
+                  />
+                  <Label htmlFor="disableDensityImport" className="text-sm font-normal cursor-pointer">
+                    Sin densidad narrativa
+                  </Label>
+                  <span className="text-xs text-muted-foreground">
+                    (genera solo lo que aportes)
+                  </span>
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
