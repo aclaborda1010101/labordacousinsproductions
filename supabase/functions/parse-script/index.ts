@@ -465,7 +465,7 @@ serve(async (req) => {
       // Check rate limit
       const rateLimitResult = await v3CheckRateLimit(projectId, auth.userId, 'parse-script', 5);
       if (!rateLimitResult.allowed) {
-        await v3ReleaseProjectLock(projectId, auth.userId);
+        await v3ReleaseProjectLock(auth.supabase, projectId);
         lockAcquired = false;
         return v3Error('RATE_LIMIT_EXCEEDED', 'Demasiadas solicitudes, espera un momento', 429, rateLimitResult.retryAfter);
       }
@@ -683,7 +683,7 @@ serve(async (req) => {
     // V3.0 LOCK RELEASE - Always release lock on exit
     // =======================================================================
     if (lockAcquired && projectId) {
-      await v3ReleaseProjectLock(projectId, auth.userId);
+      await v3ReleaseProjectLock(auth.supabase, projectId);
       console.log('[parse-script] Lock released for project:', projectId);
     }
 
