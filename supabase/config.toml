@@ -11,11 +11,11 @@ project_id = "dzrfbulwiqhzxxbcnzhn"
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-script]
-verify_jwt = true
+verify_jwt = false
 
 [functions.script-generate]
 # THIN ALIAS to generate-script (backwards compatibility)
-verify_jwt = true
+verify_jwt = false
 
 [functions.parse-script]
 verify_jwt = true
