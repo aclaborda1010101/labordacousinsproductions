@@ -95,23 +95,23 @@ export default function StylePack({ projectId }: StylePackProps) {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-2xl mx-auto space-y-4 sm:space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground">Estilo Visual</h2>
-        <p className="text-muted-foreground">Define las reglas visuales de tu producción</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">Estilo Visual</h2>
+        <p className="text-sm text-muted-foreground">Define las reglas visuales de tu producción</p>
       </div>
       
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Configuración Visual</CardTitle>
-          <CardDescription>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-base sm:text-lg">Configuración Visual</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             Estos ajustes definen el look cinematográfico de tu proyecto
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6">
           {/* Description field */}
           <div className="space-y-2">
-            <Label>Descripción del Estilo</Label>
+            <Label className="text-sm">Descripción del Estilo</Label>
             <Textarea
               value={stylePack.description}
               onChange={(e) => setStylePack({...stylePack, description: e.target.value})}
@@ -123,7 +123,7 @@ export default function StylePack({ projectId }: StylePackProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Relación de Aspecto</Label>
               <Select 

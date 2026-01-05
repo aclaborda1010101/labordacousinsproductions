@@ -1731,12 +1731,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-foreground">Guion (Generar / Importar)</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-lg sm:text-xl font-semibold text-foreground">Guion (Generar / Importar)</h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Pipeline completo: Idea → Outline → QC → Guion → Freeze
           </p>
         </div>
@@ -1747,8 +1747,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             size="sm"
             onClick={() => navigate(`/projects/${projectId}/`)}
           >
-            <Book className="w-4 h-4 mr-2" />
-            Editar Biblia
+            <Book className="w-4 h-4" />
+            <span className="ml-2 hidden sm:inline">Editar Biblia</span>
           </Button>
           
           {generatedScript && (
@@ -1758,12 +1758,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 size="sm"
                 onClick={scriptLocked ? unlockScript : freezeScript}
               >
-                {scriptLocked ? <Lock className="w-4 h-4 mr-2" /> : <Snowflake className="w-4 h-4 mr-2" />}
-                {scriptLocked ? 'Congelado' : 'Freeze Script'}
+                {scriptLocked ? <Lock className="w-4 h-4" /> : <Snowflake className="w-4 h-4" />}
+                <span className="ml-2 hidden sm:inline">{scriptLocked ? 'Congelado' : 'Freeze'}</span>
               </Button>
               <Button variant="outline" size="sm" onClick={analyzeWithDoctor} disabled={analyzing}>
-                {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
-                Script Doctor
+                {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Stethoscope className="w-4 h-4" />}
+                <span className="ml-2 hidden sm:inline">Doctor</span>
               </Button>
               {/* Delete Script Button */}
               <Button 
@@ -1772,8 +1772,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 onClick={deleteCurrentScript}
                 disabled={deletingScript}
               >
-                {deletingScript ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                Eliminar Guion
+                {deletingScript ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                <span className="ml-2 hidden sm:inline">Eliminar</span>
               </Button>
             </>
           )}
@@ -1783,32 +1783,37 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       {/* Pipeline Status - Hidden for cleaner UI */}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="generate" className="flex items-center gap-2">
-            <Lightbulb className="w-4 h-4" />
-            Generar
-          </TabsTrigger>
-          <TabsTrigger value="import" className="flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            Importar
-          </TabsTrigger>
-          <TabsTrigger value="library" className="flex items-center gap-2">
-            <Film className="w-4 h-4" />
-            Referencias
-          </TabsTrigger>
-          <TabsTrigger value="summary" className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4" />
-            Resumen
-          </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2">
-            <History className="w-4 h-4" />
-            Histórico
-          </TabsTrigger>
-          <TabsTrigger value="doctor" className="flex items-center gap-2">
-            <Stethoscope className="w-4 h-4" />
-            Doctor
-          </TabsTrigger>
-        </TabsList>
+        {/* Scrollable tabs for mobile */}
+        <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
+          <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-6 sm:w-full h-auto sm:h-10 gap-1 sm:gap-0">
+            <TabsTrigger value="generate" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              Generar
+            </TabsTrigger>
+            <TabsTrigger value="import" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              Importar
+            </TabsTrigger>
+            <TabsTrigger value="library" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <Film className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Referencias</span>
+              <span className="sm:hidden">Refs</span>
+            </TabsTrigger>
+            <TabsTrigger value="summary" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              Resumen
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Histórico</span>
+              <span className="sm:hidden">Hist.</span>
+            </TabsTrigger>
+            <TabsTrigger value="doctor" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              Doctor
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* GENERATE TAB */}
         <TabsContent value="generate" className="space-y-4">

@@ -83,64 +83,66 @@ export default function ProjectDetailPro({ project, setProject }: ProjectDetailP
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Classic horizontal tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          <div className="border-b border-border bg-muted/30 px-4 shrink-0">
-            <TabsList className="h-12 bg-transparent gap-1 flex-wrap">
+          {/* Scrollable tabs container for mobile */}
+          <div className="border-b border-border bg-muted/30 shrink-0 overflow-x-auto scrollbar-hide">
+            <TabsList className="h-12 bg-transparent gap-1 px-4 inline-flex w-max min-w-full sm:w-full sm:flex-wrap">
               <TabsTrigger 
                 value="script" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
               >
-                <FileText className="w-4 h-4" />
-                Guion
+                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Guion</span>
+                <span className="sm:hidden">Guion</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="bible" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
               >
-                <Book className="w-4 h-4" />
+                <Book className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Resumen
               </TabsTrigger>
               <TabsTrigger 
                 value="style" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
               >
-                <Palette className="w-4 h-4" />
+                <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Estilo
               </TabsTrigger>
               <TabsTrigger 
                 value="characters" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
               >
-                <Users className="w-4 h-4" />
+                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Personajes
               </TabsTrigger>
               <TabsTrigger 
                 value="locations" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
               >
-                <MapPin className="w-4 h-4" />
+                <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Localizaciones
               </TabsTrigger>
               <TabsTrigger 
                 value="props" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
               >
-                <Box className="w-4 h-4" />
+                <Box className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Props
               </TabsTrigger>
               <TabsTrigger 
                 value="scenes" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
                 disabled={!bibleReady}
               >
-                <Clapperboard className="w-4 h-4" />
+                <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Escenas
               </TabsTrigger>
               <TabsTrigger 
                 value="renders" 
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm"
                 disabled={!bibleReady}
               >
-                <Play className="w-4 h-4" />
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Dailies
               </TabsTrigger>
             </TabsList>
