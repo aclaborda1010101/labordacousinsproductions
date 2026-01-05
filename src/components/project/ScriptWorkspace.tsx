@@ -1100,7 +1100,11 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         }
       }
 
-      if (breakdownError) {
+      // Handle network errors that may occur after server completed processing
+      const isNetworkError = breakdownError instanceof Error && 
+        (breakdownError.message === 'Failed to fetch' || breakdownError.message.includes('connection'));
+
+      if (breakdownError && !isNetworkError) {
         if (breakdownError instanceof InvokeFunctionError) {
           const message = String(breakdownError.message || '').toLowerCase();
 
@@ -1131,6 +1135,43 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         }
 
         throw breakdownError;
+      }
+
+      // If there was a network error or no data, try to recover from the database
+      // (the backend may have completed successfully before the connection closed)
+      if (isNetworkError || !breakdownData) {
+        console.log('[ScriptWorkspace] Network error or no data, attempting to recover from DB...');
+        toast.info('Verificando resultados del análisis...', { duration: 3000 });
+        
+        // Wait a moment for the backend to finish saving
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const { data: recoveredScript } = await supabase
+          .from('scripts')
+          .select('parsed_json')
+          .eq('id', savedScript.id)
+          .maybeSingle();
+        
+        const pj = recoveredScript?.parsed_json as any;
+        if (pj && typeof pj === 'object' && (pj.characters?.length > 0 || pj.scenes?.length > 0)) {
+          console.log('[ScriptWorkspace] Successfully recovered breakdown from DB');
+          breakdownData = {
+            breakdown: {
+              characters: pj.characters || [],
+              locations: pj.locations || [],
+              scenes: pj.scenes || [],
+              props: pj.props || [],
+              synopsis: pj.synopsis,
+              subplots: pj.subplots || [],
+              plot_twists: pj.plot_twists || [],
+              summary: typeof pj.summary === 'string' ? pj.summary : pj.summary?.short || '',
+            }
+          };
+        } else {
+          toast.error('Error de conexión. Intenta nuevamente.');
+          setStatus('error');
+          return;
+        }
       }
 
       setProgress(80);
