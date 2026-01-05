@@ -151,10 +151,16 @@ interface ProcessingConfig {
   extractionPrompt: string;
   isLarge: boolean;
   estimatedPages: number;
+  needsChunking: boolean;
+  chunkSize: number;
 }
+
+const CHUNK_SIZE_CHARS = 80000; // ~40 pages per chunk
+const MAX_CHARS_FOR_SINGLE_ANALYSIS = 100000; // ~50 pages
 
 function getProcessingConfig(fileSizeBytes: number): ProcessingConfig {
   const estimatedPages = Math.ceil(fileSizeBytes / 3500);
+  const needsChunking = fileSizeBytes > 400000; // >400KB needs chunking
   
   if (fileSizeBytes < 100000) {
     return {
@@ -163,6 +169,8 @@ function getProcessingConfig(fileSizeBytes: number): ProcessingConfig {
       maxTokens: 50000,
       isLarge: false,
       estimatedPages,
+      needsChunking: false,
+      chunkSize: CHUNK_SIZE_CHARS,
       extractionPrompt: `Extract ALL text from this PDF screenplay VERBATIM. Preserve exact formatting:
 - Scene headings (INT./EXT./INTERIOR/EXTERIOR)
 - Character names in CAPS before dialogue
@@ -179,6 +187,8 @@ Return the complete verbatim text. DO NOT summarize or interpret.`
       maxTokens: 80000,
       isLarge: false,
       estimatedPages,
+      needsChunking: false,
+      chunkSize: CHUNK_SIZE_CHARS,
       extractionPrompt: `Extract the complete screenplay text VERBATIM. Preserve:
 - All scene headings (INT./EXT. in any language)
 - Character names and dialogue exactly as written
@@ -189,11 +199,13 @@ Return verbatim text in screenplay format. DO NOT interpret or add content.`
     };
   } else if (fileSizeBytes < 600000) {
     return {
-      model: "google/gemini-2.5-flash-lite",
+      model: "google/gemini-2.5-flash",
       timeoutMs: 180000,
-      maxTokens: 60000,
+      maxTokens: 100000,
       isLarge: true,
       estimatedPages,
+      needsChunking,
+      chunkSize: CHUNK_SIZE_CHARS,
       extractionPrompt: `Extract screenplay text focusing on:
 - Scene headings (INT./EXT.)
 - Character names and key dialogue
@@ -203,17 +215,19 @@ Preserve original text. Return in screenplay format.`
     };
   } else {
     return {
-      model: "google/gemini-2.5-flash-lite",
+      model: "google/gemini-2.5-flash",
       timeoutMs: 240000,
-      maxTokens: 50000,
+      maxTokens: 100000,
       isLarge: true,
       estimatedPages,
+      needsChunking: true,
+      chunkSize: CHUNK_SIZE_CHARS,
       extractionPrompt: `Extract key screenplay elements:
 - All scene headings with locations
 - Character names and essential dialogue
 - Key plot points and action
 - Visual style markers (B&W, COLOR)
-Skip detailed descriptions. Return structured screenplay format.`
+Preserve original text. Return in screenplay format.`
     };
   }
 }
@@ -454,96 +468,47 @@ serve(async (req) => {
     }
 
     // =============================================================================
-    // FORENSIC ANALYSIS v2.0 - PURE EXTRACTION WITH CONFIDENCE SCORES
+    // FORENSIC ANALYSIS v2.0 - WITH CHUNKING FOR LONG SCRIPTS
     // =============================================================================
     console.log("[parse-script] Running Forensic Analysis v2.0...");
     console.log(`[parse-script] Text to analyze: ${textToProcess.length} chars`);
     
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: FORENSIC_ANALYST_PROMPT },
-          { 
-            role: "user", 
-            content: `Perform forensic analysis on this screenplay. Extract data with confidence scores. DO NOT invent content.
-
-SOURCE TEXT:
-${textToProcess}` 
-          }
-        ],
-        temperature: 0.1, // Low temperature for analytical accuracy
-        response_format: { type: "json_object" }
-      }),
-    });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Usage limit reached. Please add credits." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const errorText = await response.text();
-      console.error("[parse-script] AI analysis error:", response.status, errorText);
-      throw new Error(`AI analysis failed: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-
-    if (!content) {
-      throw new Error("No analysis content received from AI");
-    }
-
-    // Parse and validate JSON
-    let analysisResult;
-    try {
-      analysisResult = JSON.parse(content);
-    } catch (parseError) {
-      console.error("[parse-script] JSON parse error:", parseError);
-      console.log("[parse-script] Raw content:", content.substring(0, 500));
-      
-      // Try to extract JSON from markdown blocks
-      const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || content.match(/```\s*([\s\S]*?)\s*```/);
-      if (jsonMatch) {
-        analysisResult = JSON.parse(jsonMatch[1]);
-      } else {
-        throw new Error("Failed to parse analysis result as JSON");
-      }
+    let analysisResult: Record<string, unknown>;
+    
+    // Check if we need to chunk the analysis
+    if (textToProcess.length > MAX_CHARS_FOR_SINGLE_ANALYSIS) {
+      console.log("[parse-script] Script is too long, using chunked analysis...");
+      analysisResult = await analyzeInChunks(textToProcess, LOVABLE_API_KEY);
+    } else {
+      // Single-pass analysis for shorter scripts
+      analysisResult = await analyzeScript(textToProcess, LOVABLE_API_KEY);
     }
 
     // Add analysis metadata
-    analysisResult.analysis_metadata = {
+    const analysisMetadata = {
       parser_version: "2.0",
       extraction_timestamp: new Date().toISOString(),
       source_type: sourceType,
       extraction_stats: extractionStats,
-      total_confidence_score: calculateAverageConfidence(analysisResult)
+      total_confidence_score: calculateAverageConfidence(analysisResult),
+      chunked: textToProcess.length > MAX_CHARS_FOR_SINGLE_ANALYSIS
     };
+    analysisResult.analysis_metadata = analysisMetadata;
 
+    const scenes = analysisResult.scenes as unknown[] | undefined;
+    const canonSuggestions = analysisResult.canon_suggestions as unknown[] | undefined;
+    
     console.log("[parse-script] Forensic analysis complete:", {
-      scenes: analysisResult.scenes?.length || 0,
-      canonSuggestions: analysisResult.canon_suggestions?.length || 0,
-      avgConfidence: analysisResult.analysis_metadata.total_confidence_score
+      scenes: scenes?.length || 0,
+      canonSuggestions: canonSuggestions?.length || 0,
+      avgConfidence: analysisMetadata.total_confidence_score
     });
 
     return new Response(
       JSON.stringify({
         success: true,
         ...analysisResult,
-        rawText: textToProcess.substring(0, 5000) // Include first 5000 chars for reference
+        rawText: textToProcess.substring(0, 5000)
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
@@ -556,6 +521,258 @@ ${textToProcess}`
     );
   }
 });
+
+// =============================================================================
+// CHUNKED ANALYSIS: Split long scripts and merge results
+// =============================================================================
+function splitIntoChunks(text: string, chunkSize: number): string[] {
+  const chunks: string[] = [];
+  const lines = text.split('\n');
+  let currentChunk = '';
+  
+  for (const line of lines) {
+    // Try to split at scene boundaries
+    const isSceneHeader = /^(INT\.|EXT\.|INT\/EXT\.|I\/E\.|INTERIOR|EXTERIOR|INTERNO|EXTERNO)/i.test(line.trim());
+    
+    if (currentChunk.length + line.length > chunkSize && currentChunk.length > 0) {
+      // If we're at a scene header, that's a good place to split
+      if (isSceneHeader) {
+        chunks.push(currentChunk.trim());
+        currentChunk = line + '\n';
+      } else {
+        // Otherwise, keep going until we find a scene header or hit the limit
+        currentChunk += line + '\n';
+        if (currentChunk.length > chunkSize * 1.2) {
+          chunks.push(currentChunk.trim());
+          currentChunk = '';
+        }
+      }
+    } else {
+      currentChunk += line + '\n';
+    }
+  }
+  
+  if (currentChunk.trim()) {
+    chunks.push(currentChunk.trim());
+  }
+  
+  return chunks;
+}
+
+async function analyzeScript(text: string, apiKey: string): Promise<Record<string, unknown>> {
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: FORENSIC_ANALYST_PROMPT },
+        { 
+          role: "user", 
+          content: `Perform forensic analysis on this screenplay. Extract data with confidence scores. DO NOT invent content.
+
+SOURCE TEXT:
+${text}` 
+        }
+      ],
+      temperature: 0.1,
+      response_format: { type: "json_object" }
+    }),
+  });
+
+  if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error("Rate limit exceeded. Please try again later.");
+    }
+    if (response.status === 402) {
+      throw new Error("Usage limit reached. Please add credits.");
+    }
+    const errorText = await response.text();
+    console.error("[parse-script] AI analysis error:", response.status, errorText);
+    throw new Error(`AI analysis failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+
+  if (!content) {
+    throw new Error("No analysis content received from AI");
+  }
+
+  return parseJsonSafe(content);
+}
+
+function parseJsonSafe(content: string): Record<string, unknown> {
+  try {
+    return JSON.parse(content);
+  } catch (parseError) {
+    console.error("[parse-script] JSON parse error, attempting recovery...");
+    console.log("[parse-script] Raw content (first 500 chars):", content.substring(0, 500));
+    
+    // Try to extract JSON from markdown blocks
+    const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || content.match(/```\s*([\s\S]*?)\s*```/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[1]);
+    }
+    
+    // Try to fix truncated JSON by finding last complete object/array
+    let fixedContent = content;
+    
+    // Remove trailing incomplete content
+    const lastBrace = Math.max(content.lastIndexOf('}'), content.lastIndexOf(']'));
+    if (lastBrace > 0) {
+      fixedContent = content.substring(0, lastBrace + 1);
+      
+      // Balance braces/brackets
+      const openBraces = (fixedContent.match(/{/g) || []).length;
+      const closeBraces = (fixedContent.match(/}/g) || []).length;
+      const openBrackets = (fixedContent.match(/\[/g) || []).length;
+      const closeBrackets = (fixedContent.match(/]/g) || []).length;
+      
+      fixedContent += '}'.repeat(Math.max(0, openBraces - closeBraces));
+      fixedContent += ']'.repeat(Math.max(0, openBrackets - closeBrackets));
+      
+      try {
+        return JSON.parse(fixedContent);
+      } catch {
+        console.error("[parse-script] JSON recovery failed");
+      }
+    }
+    
+    throw new Error("Failed to parse analysis result as JSON");
+  }
+}
+
+async function analyzeInChunks(fullText: string, apiKey: string): Promise<Record<string, unknown>> {
+  const chunks = splitIntoChunks(fullText, CHUNK_SIZE_CHARS);
+  console.log(`[parse-script] Split into ${chunks.length} chunks`);
+  
+  const chunkResults: Record<string, unknown>[] = [];
+  let sceneOffset = 0;
+  
+  for (let i = 0; i < chunks.length; i++) {
+    console.log(`[parse-script] Analyzing chunk ${i + 1}/${chunks.length} (${chunks[i].length} chars)...`);
+    
+    const chunkPrompt = `This is PART ${i + 1} of ${chunks.length} of a screenplay.
+${i > 0 ? `Previous parts contained ${sceneOffset} scenes. Continue scene numbering from ${sceneOffset + 1}.` : ''}
+${i === 0 ? 'Extract project metadata from this first part.' : 'Skip project metadata, only extract scenes and characters.'}
+
+Perform forensic analysis. Extract data with confidence scores. DO NOT invent content.
+
+SOURCE TEXT (Part ${i + 1}/${chunks.length}):
+${chunks[i]}`;
+
+    try {
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: FORENSIC_ANALYST_PROMPT },
+            { role: "user", content: chunkPrompt }
+          ],
+          temperature: 0.1,
+          response_format: { type: "json_object" }
+        }),
+      });
+
+      if (!response.ok) {
+        console.error(`[parse-script] Chunk ${i + 1} failed: ${response.status}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content;
+      
+      if (content) {
+        const chunkResult = parseJsonSafe(content);
+        chunkResults.push(chunkResult);
+        
+        // Update scene offset for next chunk
+        const scenes = chunkResult.scenes as unknown[];
+        if (Array.isArray(scenes)) {
+          sceneOffset += scenes.length;
+        }
+      }
+      
+      // Small delay between chunks to avoid rate limits
+      if (i < chunks.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+    } catch (chunkError) {
+      console.error(`[parse-script] Error in chunk ${i + 1}:`, chunkError);
+    }
+  }
+  
+  if (chunkResults.length === 0) {
+    throw new Error("All chunk analyses failed");
+  }
+  
+  // Merge all chunk results
+  return mergeChunkResults(chunkResults);
+}
+
+function mergeChunkResults(chunks: Record<string, unknown>[]): Record<string, unknown> {
+  const merged: Record<string, unknown> = {
+    project_metadata: chunks[0]?.project_metadata || {},
+    scenes: [],
+    canon_suggestions: []
+  };
+  
+  const allScenes: unknown[] = [];
+  const canonMap = new Map<string, unknown>();
+  
+  for (const chunk of chunks) {
+    // Merge scenes
+    const scenes = chunk.scenes;
+    if (Array.isArray(scenes)) {
+      allScenes.push(...scenes);
+    }
+    
+    // Merge canon suggestions (deduplicate by name)
+    const suggestions = chunk.canon_suggestions;
+    if (Array.isArray(suggestions)) {
+      for (const suggestion of suggestions) {
+        const sug = suggestion as Record<string, unknown>;
+        const nameObj = sug.name as Record<string, unknown>;
+        const name = nameObj?.value as string;
+        if (name) {
+          const existing = canonMap.get(name.toLowerCase()) as Record<string, unknown>;
+          if (existing) {
+            // Merge appearances
+            const existingApps = (existing.appearances as number) || 0;
+            const newApps = (sug.appearances as number) || 0;
+            existing.appearances = existingApps + newApps;
+            existing.suggest_canon = (existing.appearances as number) > 3;
+          } else {
+            canonMap.set(name.toLowerCase(), sug);
+          }
+        }
+      }
+    }
+  }
+  
+  // Renumber scenes sequentially
+  allScenes.forEach((scene, index) => {
+    const s = scene as Record<string, unknown>;
+    s.scene_number = index + 1;
+  });
+  
+  merged.scenes = allScenes;
+  merged.canon_suggestions = Array.from(canonMap.values());
+  
+  console.log(`[parse-script] Merged: ${allScenes.length} scenes, ${canonMap.size} canon suggestions`);
+  
+  return merged;
+}
 
 // =============================================================================
 // UTILITY: Calculate average confidence across all extracted data
