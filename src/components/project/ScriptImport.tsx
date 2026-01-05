@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef } from 'react';
+import { useState, useEffect, forwardRef, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeWithTimeout } from '@/lib/supabaseFetchWithTimeout';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { toast } from 'sonner';
 import ReferenceScriptLibrary from './ReferenceScriptLibrary';
 import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
+import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { 
   FileText, 
   Wand2, 
@@ -66,7 +67,10 @@ import {
   RotateCcw,
   Video,
   Play,
-  Clapperboard
+  Clapperboard,
+  Mic,
+  MicOff,
+  Upload
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -233,6 +237,103 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
   const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
+
+  // File upload for import tab
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [importMethod, setImportMethod] = useState<'paste' | 'upload'>('paste');
+  const [pdfProcessing, setPdfProcessing] = useState(false);
+  const [pdfProgress, setPdfProgress] = useState(0);
+  const pdfAbortRef = useRef<AbortController | null>(null);
+
+  // Voice recorder for idea input
+  const voiceRecorder = useVoiceRecorder({
+    onTranscript: (text) => {
+      setIdeaText((prev) => prev ? `${prev}\n\n${text}` : text);
+    },
+    maxDurationMs: 120000, // 2 minutes max
+  });
+
+  // Handle file upload for script import
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadedFileName(file.name);
+
+    if (file.name.endsWith('.txt')) {
+      // Plain text file
+      const text = await file.text();
+      setScriptText(text);
+      toast.success(`Archivo "${file.name}" cargado`);
+    } else if (file.name.endsWith('.pdf')) {
+      // PDF file - use AI extraction
+      setPdfProcessing(true);
+      setPdfProgress(10);
+      
+      try {
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            resolve(result.split(',')[1]);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        setPdfProgress(30);
+
+        const controller = new AbortController();
+        pdfAbortRef.current = controller;
+
+        const timeoutMs = file.size < 300000 ? 150000 : 300000;
+        
+        const { data, error } = await invokeWithTimeout(
+          'parse-script',
+          { pdfBase64: base64, fileName: file.name },
+          timeoutMs
+        );
+
+        setPdfProgress(80);
+
+        if (error) throw error;
+
+        const result = data as { extractedText?: string; rawText?: string } | null;
+        if (result?.extractedText) {
+          setScriptText(result.extractedText);
+          toast.success('PDF extraído correctamente');
+        } else if (result?.rawText) {
+          setScriptText(result.rawText);
+          toast.success('Texto extraído del PDF');
+        } else {
+          throw new Error('No se pudo extraer texto del PDF');
+        }
+
+        setPdfProgress(100);
+      } catch (err: any) {
+        console.error('PDF processing error:', err);
+        toast.error(err.message || 'Error procesando PDF');
+      } finally {
+        setPdfProcessing(false);
+        pdfAbortRef.current = null;
+      }
+    } else {
+      toast.error('Formato no soportado. Usa .txt o .pdf');
+    }
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const cancelPdfProcessing = () => {
+    pdfAbortRef.current?.abort();
+    setPdfProcessing(false);
+    setUploadedFileName(null);
+    toast.info('Procesamiento cancelado');
+  };
 
   // Restore pipeline state on mount and poll for updates
   useEffect(() => {
@@ -2048,14 +2149,51 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             {/* Idea & Format */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Tu Idea</CardTitle>
+                <CardTitle className="text-base flex items-center justify-between">
+                  <span>Tu Idea</span>
+                  <div className="flex items-center gap-2">
+                    {voiceRecorder.isRecording && (
+                      <div className="flex items-center gap-1.5 text-xs text-destructive animate-pulse">
+                        <div className="w-2 h-2 rounded-full bg-destructive" />
+                        {Math.floor(voiceRecorder.recordingTime / 60)}:{String(voiceRecorder.recordingTime % 60).padStart(2, '0')}
+                      </div>
+                    )}
+                    {voiceRecorder.isTranscribing && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Transcribiendo...
+                      </div>
+                    )}
+                    <Button
+                      type="button"
+                      variant={voiceRecorder.isRecording ? "destructive" : "outline"}
+                      size="sm"
+                      className="h-7 gap-1.5 text-xs"
+                      onClick={voiceRecorder.toggleRecording}
+                      disabled={pipelineRunning || voiceRecorder.isTranscribing}
+                    >
+                      {voiceRecorder.isRecording ? (
+                        <>
+                          <Square className="h-3 w-3" />
+                          Detener
+                        </>
+                      ) : (
+                        <>
+                          <Mic className="h-3.5 w-3.5" />
+                          Dictar
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Textarea
-                  placeholder="Ej: Una detective de homicidios descubre que su padre, un policía retirado, podría estar involucrado en una serie de asesinatos sin resolver..."
+                  placeholder="Ej: Una detective de homicidios descubre que su padre... (o pulsa 'Dictar' para usar tu voz)"
                   value={ideaText}
                   onChange={(e) => setIdeaText(e.target.value)}
                   className="min-h-[120px]"
+                  disabled={voiceRecorder.isRecording}
                 />
 
                 <div className="grid grid-cols-2 gap-4">
@@ -2344,17 +2482,71 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 Importar Guion Existente
               </CardTitle>
               <CardDescription>
-                Pega tu guion para analizarlo, ejecutar Script Doctor o Breakdown
+                Sube un archivo o pega tu guion para analizarlo
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Textarea
-                placeholder="INT. CAFETERÍA - DÍA&#10;&#10;SARA (30s) espera nerviosa..."
-                value={scriptText}
-                onChange={(e) => setScriptText(e.target.value)}
-                className="min-h-[300px] font-mono text-sm"
-                disabled={scriptLocked}
-              />
+              <Tabs value={importMethod} onValueChange={(v) => setImportMethod(v as 'paste' | 'upload')}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="paste">Pegar texto</TabsTrigger>
+                  <TabsTrigger value="upload">Subir archivo</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="paste" className="mt-4">
+                  <Textarea
+                    placeholder="INT. CAFETERÍA - DÍA&#10;&#10;SARA (30s) espera nerviosa..."
+                    value={scriptText}
+                    onChange={(e) => setScriptText(e.target.value)}
+                    className="min-h-[300px] font-mono text-sm"
+                    disabled={scriptLocked}
+                  />
+                </TabsContent>
+
+                <TabsContent value="upload" className="mt-4">
+                  {pdfProcessing ? (
+                    <div className="border-2 border-primary rounded-lg p-8 text-center bg-primary/5">
+                      <div className="relative mx-auto w-16 h-16 mb-4">
+                        <FileText className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto" />
+                        <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
+                        <div className="absolute inset-0 border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
+                      </div>
+                      <p className="font-medium text-primary mb-2">{uploadedFileName}</p>
+                      <div className="space-y-3 max-w-sm mx-auto">
+                        <Progress value={pdfProgress} className="h-2" />
+                        <p className="text-sm text-muted-foreground animate-pulse">Extrayendo texto del PDF...</p>
+                        <p className="text-xs text-muted-foreground/60">
+                          Esto puede tardar hasta 2 minutos para PDFs grandes
+                        </p>
+                        <Button type="button" variant="outline" size="sm" onClick={cancelPdfProcessing}>
+                          <Square className="h-4 w-4 mr-2" />
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div 
+                      className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
+                      <p className="font-medium">
+                        {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Formatos permitidos: .txt, .pdf
+                      </p>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".txt,.pdf,text/plain,application/pdf"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">{scriptText.length} caracteres</p>
                 <div className="flex gap-2">
