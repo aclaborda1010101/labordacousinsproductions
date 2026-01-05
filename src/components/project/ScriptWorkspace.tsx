@@ -1062,16 +1062,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       setProgress(40);
 
       // Calculate dynamic timeout based on script length
-      // Higher base: ~1 second per 100 characters, with min 120s and max 480s (8 min)
+      // AGGRESSIVE: ~1.5 seconds per 100 characters, with min 180s (3 min) and max 720s (12 min)
       const scriptLength = textToAnalyze.length;
-      const baseTimeoutSec = Math.max(120, Math.min(480, Math.ceil(scriptLength / 100)));
+      const baseTimeoutSec = Math.max(180, Math.min(720, Math.ceil(scriptLength / 70)));
       
       // Calculate dynamic polling based on expected processing time
-      // More retries for longer scripts with longer delays
-      const dynamicPollingRetries = scriptLength > 40000 ? 12 : scriptLength > 25000 ? 10 : scriptLength > 15000 ? 8 : 6;
-      const dynamicPollingDelaySec = scriptLength > 40000 ? 20 : scriptLength > 25000 ? 15 : 12;
+      // More retries for longer scripts with longer delays - DOUBLED values
+      const dynamicPollingRetries = scriptLength > 40000 ? 20 : scriptLength > 25000 ? 16 : scriptLength > 15000 ? 12 : 10;
+      const dynamicPollingDelaySec = scriptLength > 40000 ? 30 : scriptLength > 25000 ? 25 : 20;
 
       console.log(`[ScriptWorkspace] Dynamic timeout: ${baseTimeoutSec}s for ${scriptLength} chars, polling: ${dynamicPollingRetries} retries @ ${dynamicPollingDelaySec}s`);
+      toast.info(`Analizando guion de ${Math.round(scriptLength / 1000)}k caracteres...`, { 
+        description: `Timeout inicial: ${Math.round(baseTimeoutSec / 60)}min. Puede tardar varios minutos.`,
+        duration: 8000 
+      });
 
       // Retry with exponential backoff on timeouts
       let currentTimeoutMs = baseTimeoutSec * 1000;
@@ -1117,7 +1121,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           
           if (attemptNumber < maxAttempts) {
             // Exponential backoff: increase timeout by 50% each retry
-            currentTimeoutMs = Math.min(currentTimeoutMs * 1.5, 600000); // Max 10 min
+            currentTimeoutMs = Math.min(currentTimeoutMs * 1.75, 900000); // Max 15 min
             toast.warning(`Timeout en el análisis. Aumentando tiempo de espera...`, { 
               description: `Reintentando con ${Math.round(currentTimeoutMs / 1000)}s de timeout`,
               duration: 6000 
@@ -1219,16 +1223,24 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (isNetworkError || !breakdownData) {
         console.log('[ScriptWorkspace] Network error or no data, attempting to recover from DB...');
         const estimatedMinutes = Math.ceil((dynamicPollingRetries * dynamicPollingDelaySec) / 60);
-        toast.info(`Procesando guion (${Math.round(scriptLength / 1000)}k caracteres). Verificando cada ${dynamicPollingDelaySec}s...`, { duration: 10000 });
+        toast.info(`El servidor sigue procesando. Recuperando resultado...`, { 
+          description: `Verificando cada ${dynamicPollingDelaySec}s durante ~${estimatedMinutes} minutos`,
+          duration: 15000 
+        });
         
         let recovered = false;
         
         for (let retry = 0; retry < dynamicPollingRetries && !recovered; retry++) {
           // Wait with dynamic delay
-          const waitTime = retry === 0 ? 3000 : dynamicPollingDelaySec * 1000;
+          const waitTime = retry === 0 ? 5000 : dynamicPollingDelaySec * 1000;
           await new Promise(resolve => setTimeout(resolve, waitTime));
           
-          console.log(`[ScriptWorkspace] Recovery attempt ${retry + 1}/${dynamicPollingRetries}...`);
+          const remainingRetries = dynamicPollingRetries - retry - 1;
+          const remainingTime = Math.ceil((remainingRetries * dynamicPollingDelaySec) / 60);
+          console.log(`[ScriptWorkspace] Recovery attempt ${retry + 1}/${dynamicPollingRetries} (~${remainingTime}min remaining)...`);
+          
+          // Update progress to show we're still working
+          setProgress(85 + Math.floor((retry / dynamicPollingRetries) * 10)); // 85-95%
           
           const { data: recoveredScript } = await supabase
             .from('scripts')
