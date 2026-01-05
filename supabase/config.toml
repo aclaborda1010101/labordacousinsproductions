@@ -12,7 +12,8 @@ project_id = "dzrfbulwiqhzxxbcnzhn"
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-script]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via v3RequireAuth
+verify_jwt = false
 
 [functions.script-generate]
 # THIN ALIAS to generate-script (backwards compatibility)
