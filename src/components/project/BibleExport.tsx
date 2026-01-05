@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { toast } from 'sonner';
 import { FileJson, FileText, Loader2, Star, Printer, Clock } from 'lucide-react';
 import { BibleProDocument } from './BibleProDocument';
@@ -90,11 +90,12 @@ export function BibleExport({ projectId, projectTitle }: BibleExportProps) {
   const printRef = useRef<HTMLDivElement>(null);
 
   const fetchBibleData = async (): Promise<BibleData> => {
-    const { data, error } = await supabase.functions.invoke('export-bible', {
-      body: { projectId }
-    });
+    const { data, error } = await invokeAuthedFunction<{ ok: boolean; data: BibleData; error?: string }>(
+      'export-bible',
+      { projectId }
+    );
     if (error) throw error;
-    if (!data.ok) throw new Error(data.error);
+    if (!data?.ok) throw new Error(data?.error || 'Error al exportar');
     return data.data;
   };
 
