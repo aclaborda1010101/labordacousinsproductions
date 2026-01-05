@@ -594,43 +594,76 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         try {
           setProgressMessage(PDF_PROCESSING_MESSAGES[0]);
 
-          const { data, error } = await invokeWithTimeout<{
-            rawText?: string;
-            error?: string;
-            needsManualInput?: boolean;
-            hint?: string;
-            stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
-          }>('parse-script', { pdfUrl: urlData.publicUrl, projectId, parseMode: 'extract_only' }, { timeoutMs, signal: abortController.signal });
+          const invokeParse = () =>
+            invokeWithTimeout<{
+              rawText?: string;
+              error?: string;
+              needsManualInput?: boolean;
+              hint?: string;
+              stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
+            }>(
+              'parse-script',
+              { pdfUrl: urlData.publicUrl, projectId, parseMode: 'extract_only' },
+              { timeoutMs, signal: abortController.signal }
+            );
+
+          let { data, error } = await invokeParse();
+
+          // Handle PROJECT_BUSY (409) without crashing the UI; retry once.
+          if (error instanceof InvokeFunctionError) {
+            const body = (error.bodyJson ?? {}) as any;
+            const code = typeof body?.code === 'string' ? body.code : undefined;
+            const retryAfter = typeof body?.retryAfter === 'number' ? body.retryAfter : 30;
+
+            console.warn('[ScriptWorkspace] parse-script failed', {
+              status: error.status,
+              code,
+              retryAfter,
+              message: error.message,
+              body,
+            });
+
+            if (error.status === 409 && code === 'PROJECT_BUSY') {
+              toast.warning('Proyecto ocupado', {
+                description: `Reintento en ${retryAfter}s`,
+                duration: 8000,
+              });
+              setProgressMessage(`⏳ Proyecto ocupado. Reintento en ${retryAfter}s...`);
+
+              await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+              if (!abortController.signal.aborted) {
+                ;({ data, error } = await invokeParse());
+              }
+            }
+          }
 
           if (error) {
             if (error instanceof InvokeFunctionError) {
               const body = (error.bodyJson ?? {}) as any;
-              const code = typeof body?.code === 'string' ? body.code : undefined;
-              const retryAfter = typeof body?.retryAfter === 'number' ? body.retryAfter : 30;
+              const message = String(error.message || '').toLowerCase();
 
-              console.warn('[ScriptWorkspace] parse-script failed', {
+              console.warn('[ScriptWorkspace] parse-script final error', {
                 status: error.status,
-                code,
-                retryAfter,
                 message: error.message,
                 body,
               });
 
-              if (error.status === 409 && code === 'PROJECT_BUSY') {
-                toast.warning('Proyecto ocupado', { description: `Reintento en ${retryAfter}s`, duration: 8000 });
-                setPdfUploadError(`Proyecto ocupado. Reintenta en ${retryAfter}s.`);
+              if (error.status === 401 || message.includes('missing auth.uid')) {
+                toast.error('Sesión expirada. Inicia sesión de nuevo.', { duration: 8000 });
+                setPdfUploadError('Sesión expirada. Inicia sesión de nuevo.');
                 setStatus('idle');
                 setProgress(0);
                 setProgressMessage('');
                 return;
               }
 
-              if (error.status === 401 || String(error.message).toLowerCase().includes('missing auth.uid')) {
-                toast.error('Sesión expirada. Inicia sesión de nuevo.', { duration: 8000 });
-                setPdfUploadError('Sesión expirada. Inicia sesión de nuevo.');
+              if (error.status === 409) {
+                // Any other 409: keep it as a user-facing error without breaking UI
+                setPdfUploadError(error.message || 'Proyecto ocupado. Intenta de nuevo.');
                 setStatus('idle');
                 setProgress(0);
                 setProgressMessage('');
+                toast.error(error.message || 'Proyecto ocupado. Intenta de nuevo.');
                 return;
               }
             }
@@ -1007,19 +1040,67 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       setProgress(40);
 
       // Call script-breakdown to analyze
-      const { data: breakdownData, error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
-        body: {
-          projectId,
-          scriptText: textToAnalyze,
-          scriptId: savedScript.id,
-          language: 'es-ES',
-          format: projectFormat === 'film' ? 'film' : 'series',
-          episodesCount: projectFormat === 'film' ? 1 : episodesCount,
-          episodeDurationMin,
-        }
-      });
+      const invokeBreakdown = () =>
+        invokeWithTimeout<any>(
+          'script-breakdown',
+          {
+            projectId,
+            scriptText: textToAnalyze,
+            scriptId: savedScript.id,
+            language: 'es-ES',
+            format: projectFormat === 'film' ? 'film' : 'series',
+            episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+            episodeDurationMin,
+          },
+          { timeoutMs: 240000 }
+        );
 
-      if (breakdownError) throw breakdownError;
+      let { data: breakdownData, error: breakdownError } = await invokeBreakdown();
+
+      // Handle PROJECT_BUSY (409) without throwing unhandled exceptions; retry once.
+      if (breakdownError instanceof InvokeFunctionError) {
+        const body = (breakdownError.bodyJson ?? {}) as any;
+        const code = typeof body?.code === 'string' ? body.code : undefined;
+        const retryAfter = typeof body?.retryAfter === 'number' ? body.retryAfter : 30;
+
+        console.warn('[ScriptWorkspace] script-breakdown failed', {
+          status: breakdownError.status,
+          code,
+          retryAfter,
+          message: breakdownError.message,
+          body,
+        });
+
+        if (breakdownError.status === 409 && code === 'PROJECT_BUSY') {
+          toast.warning('Proyecto ocupado', { description: `Reintento en ${retryAfter}s`, duration: 8000 });
+          await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+          ;({ data: breakdownData, error: breakdownError } = await invokeBreakdown());
+        }
+      }
+
+      if (breakdownError) {
+        if (breakdownError instanceof InvokeFunctionError) {
+          const message = String(breakdownError.message || '').toLowerCase();
+
+          if (breakdownError.status === 401 || message.includes('missing auth.uid')) {
+            console.warn('[ScriptWorkspace] Unauthorized while analyzing script', {
+              status: breakdownError.status,
+              message: breakdownError.message,
+              body: breakdownError.bodyJson,
+            });
+            toast.error('Sesión expirada. Vuelve a iniciar sesión.', { duration: 8000 });
+            setStatus('error');
+            return;
+          }
+
+          toast.error(breakdownError.message || 'Error al analizar el guion');
+          setStatus('error');
+          return;
+        }
+
+        throw breakdownError;
+      }
+
       setProgress(80);
 
       const breakdown: BreakdownResult = breakdownData?.breakdown || {

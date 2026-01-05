@@ -644,19 +644,74 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (!savedScript) throw new Error('No se pudo guardar el guion');
 
       // 2. Call script-breakdown to analyze
-      const { data: breakdownData, error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
-        body: {
-          projectId,
-          scriptText: scriptText.trim(),
-          scriptId: savedScript.id,
-          language,
-          format,
-          episodesCount: format === 'series' ? episodesCount : 1,
-          episodeDurationMin,
-        }
-      });
+      const invokeBreakdown = () =>
+        invokeWithTimeout<any>(
+          'script-breakdown',
+          {
+            projectId,
+            scriptText: scriptText.trim(),
+            scriptId: savedScript.id,
+            language,
+            format,
+            episodesCount: format === 'series' ? episodesCount : 1,
+            episodeDurationMin,
+          },
+          { timeoutMs: 240000 }
+        );
 
-      if (breakdownError) throw breakdownError;
+      let { data: breakdownData, error: breakdownError } = await invokeBreakdown();
+
+      // Handle PROJECT_BUSY (409) without crashing the UI; retry once.
+      if (breakdownError instanceof InvokeFunctionError) {
+        const body = (breakdownError.bodyJson ?? {}) as any;
+        const code = typeof body?.code === 'string' ? body.code : undefined;
+        const retryAfter = typeof body?.retryAfter === 'number' ? body.retryAfter : 30;
+
+        console.warn('[ScriptImport] script-breakdown failed', {
+          status: breakdownError.status,
+          code,
+          retryAfter,
+          message: breakdownError.message,
+          body,
+        });
+
+        if (breakdownError.status === 409 && code === 'PROJECT_BUSY') {
+          toast.message('Proyecto ocupado', {
+            description: `Reintento en ${retryAfter}s...`,
+            duration: Math.min(8000, retryAfter * 1000),
+          });
+
+          await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+          ;({ data: breakdownData, error: breakdownError } = await invokeBreakdown());
+        }
+      }
+
+      if (breakdownError) {
+        if (breakdownError instanceof InvokeFunctionError) {
+          const message = String(breakdownError.message || '').toLowerCase();
+
+          if (breakdownError.status === 401 || message.includes('missing auth.uid')) {
+            console.warn('[ScriptImport] Unauthorized while analyzing imported script', {
+              status: breakdownError.status,
+              message: breakdownError.message,
+              body: breakdownError.bodyJson,
+            });
+            toast.error('Sesión expirada. Vuelve a iniciar sesión.', {
+              duration: 8000,
+              action: {
+                label: 'Ir a login',
+                onClick: () => navigate('/auth'),
+              },
+            });
+            return;
+          }
+
+          toast.error(breakdownError.message || 'Error al analizar el guion');
+          return;
+        }
+
+        throw breakdownError;
+      }
 
       // 3. Transform breakdown into generatedScript format for display
       const breakdown = breakdownData?.breakdown || breakdownData;
