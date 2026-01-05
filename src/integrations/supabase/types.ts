@@ -3323,6 +3323,41 @@ export type Database = {
           },
         ]
       }
+      project_locks: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          lock_reason: string | null
+          locked_by: string
+          project_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          lock_reason?: string | null
+          locked_by: string
+          project_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          lock_reason?: string | null
+          locked_by?: string
+          project_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_locks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_members: {
         Row: {
           created_at: string
@@ -4964,6 +4999,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      acquire_project_lock: {
+        Args: {
+          p_duration_seconds?: number
+          p_project_id: string
+          p_reason: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
       calculate_pack_completeness: {
         Args: { p_character_id: string }
         Returns: number
@@ -4985,6 +5029,7 @@ export type Database = {
         }[]
       }
       clean_expired_cache: { Args: never; Returns: number }
+      cleanup_expired_locks: { Args: never; Returns: number }
       create_visual_dna_version: {
         Args: { char_id: string; modifications: Json; new_version_name: string }
         Returns: string
@@ -5040,6 +5085,10 @@ export type Database = {
         Returns: undefined
       }
       record_anchor_usage: { Args: { p_anchor_id: string }; Returns: undefined }
+      release_project_lock: {
+        Args: { p_project_id: string; p_user_id: string }
+        Returns: undefined
+      }
       save_to_cache: {
         Args: {
           p_anchor_id: string
