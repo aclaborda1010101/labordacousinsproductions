@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -129,6 +130,7 @@ Return ONLY valid JSON. No markdown, no commentary.`;
 
 interface DevelopStructureRequest {
   idea: string;
+  projectId?: string;
   genre?: string;
   tone?: string;
   format?: 'film' | 'series';
@@ -144,8 +146,25 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Authenticate request
+  let auth: AuthContext;
+  try {
+    auth = await requireAuthOrDemo(req);
+  } catch (error) {
+    return authErrorResponse(error as Error, corsHeaders);
+  }
+
   try {
     const request: DevelopStructureRequest = await req.json();
+    
+    // Validate project access if projectId provided
+    if (request.projectId) {
+      try {
+        await requireProjectAccess(auth.supabase, auth.userId, request.projectId);
+      } catch (error) {
+        return authErrorResponse(error as Error, corsHeaders);
+      }
+    }
     const { 
       idea, 
       genre, 

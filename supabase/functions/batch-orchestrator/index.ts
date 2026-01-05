@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,6 +29,14 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Authenticate request
+  let auth: AuthContext;
+  try {
+    auth = await requireAuthOrDemo(req);
+  } catch (error) {
+    return authErrorResponse(error as Error, corsHeaders);
+  }
+
   const startedAt = Date.now();
 
   try {
@@ -50,7 +59,14 @@ serve(async (req) => {
       );
     }
 
-    // Initialize Supabase client
+    // Validate project access
+    try {
+      await requireProjectAccess(auth.supabase, auth.userId, projectId);
+    } catch (error) {
+      return authErrorResponse(error as Error, corsHeaders);
+    }
+
+    // Initialize Supabase client with service role for batch operations
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -60,7 +76,8 @@ serve(async (req) => {
       totalEpisodes,
       qualityTier,
       batchesPerEpisode,
-      scenesPerBatch
+      scenesPerBatch,
+      userId: auth.userId
     });
 
     // 1. Create batch_run record
@@ -134,7 +151,8 @@ serve(async (req) => {
               await new Promise(r => setTimeout(r, 2000 * attempt)); // Backoff
             }
 
-            // Call generate-script canonical router
+            // Call generate-script canonical router with service role key
+            // (generate-script is also protected, we use service role for internal calls)
             const generateResponse = await fetch(`${supabaseUrl}/functions/v1/generate-script`, {
               method: 'POST',
               headers: {
@@ -142,6 +160,7 @@ serve(async (req) => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
+                projectId, // Pass projectId for tracking
                 outline,
                 episodeNumber: epNum,
                 batchIndex: batchIdx,

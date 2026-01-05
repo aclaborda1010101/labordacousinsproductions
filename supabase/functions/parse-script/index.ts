@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { encodeBase64 } from "https://deno.land/std@0.208.0/encoding/base64.ts";
+import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -400,16 +401,34 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Authenticate request
+  let auth: AuthContext;
+  try {
+    auth = await requireAuthOrDemo(req);
+  } catch (error) {
+    return authErrorResponse(error as Error, corsHeaders);
+  }
+
   try {
     const body = await req.json();
     const { scriptText, pdfUrl, projectId, parseMode } = body;
 
-    console.log("[parse-script] v2.0 FORENSIC ANALYST called:", { 
+    // Validate project access if projectId provided
+    if (projectId) {
+      try {
+        await requireProjectAccess(auth.supabase, auth.userId, projectId);
+      } catch (error) {
+        return authErrorResponse(error as Error, corsHeaders);
+      }
+    }
+
+    console.log("[parse-script] v3.0 FORENSIC ANALYST called:", { 
       hasPdfUrl: !!pdfUrl, 
       hasScriptText: !!scriptText, 
       projectId, 
       parseMode,
-      textLength: scriptText?.length 
+      textLength: scriptText?.length,
+      userId: auth.userId
     });
 
     let textToProcess = scriptText;

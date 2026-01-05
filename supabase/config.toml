@@ -1,7 +1,7 @@
 project_id = "dzrfbulwiqhzxxbcnzhn"
 
 [functions.parse-script]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-character]
 verify_jwt = false
@@ -148,7 +148,13 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.generate-script]
-verify_jwt = false
+verify_jwt = true
 
 [functions.batch-orchestrator]
-verify_jwt = false
+verify_jwt = true
+
+[functions.develop-structure]
+verify_jwt = true
+
+[functions.export-bible]
+verify_jwt = true
