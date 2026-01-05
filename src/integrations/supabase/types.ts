@@ -2847,6 +2847,50 @@ export type Database = {
           },
         ]
       }
+      llm_failures: {
+        Row: {
+          created_at: string
+          function_name: string
+          id: string
+          model: string | null
+          parse_warnings: string[] | null
+          project_id: string | null
+          provider: string | null
+          raw_snippet: string | null
+          raw_snippet_hash: string | null
+        }
+        Insert: {
+          created_at?: string
+          function_name: string
+          id?: string
+          model?: string | null
+          parse_warnings?: string[] | null
+          project_id?: string | null
+          provider?: string | null
+          raw_snippet?: string | null
+          raw_snippet_hash?: string | null
+        }
+        Update: {
+          created_at?: string
+          function_name?: string
+          id?: string
+          model?: string | null
+          parse_warnings?: string[] | null
+          project_id?: string | null
+          provider?: string | null
+          raw_snippet?: string | null
+          raw_snippet_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "llm_failures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       location_pack_slots: {
         Row: {
           created_at: string
