@@ -887,9 +887,9 @@ export default function Characters({ projectId }: CharactersProps) {
                   </div>
                 ) : (
                   <>
-                    {/* Character Header */}
-                    <div className="p-4 flex items-start gap-4">
-                      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden">
+                    {/* Character Header - Desktop */}
+                    <div className="hidden sm:flex p-4 items-start gap-4">
+                      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden shrink-0">
                         {character.turnaround_urls?.front ? (
                           <img 
                             src={character.turnaround_urls.front} 
@@ -933,10 +933,9 @@ export default function Characters({ projectId }: CharactersProps) {
                           <p className="text-sm text-muted-foreground line-clamp-2">{character.bio}</p>
                         )}
                       </div>
-                      <div className="flex gap-1 flex-wrap">
+                      <div className="flex gap-1 flex-wrap shrink-0">
                         {character.character_role && (
                           <>
-                            {/* Auto Generate Button - Main action */}
                             <Button 
                               variant="gold" 
                               size="sm"
@@ -956,7 +955,6 @@ export default function Characters({ projectId }: CharactersProps) {
                                 </>
                               )}
                             </Button>
-                            {/* Pack Builder - Manual mode */}
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -965,7 +963,6 @@ export default function Characters({ projectId }: CharactersProps) {
                               <Package className="w-4 h-4 mr-1" />
                               Pack
                             </Button>
-                            {/* LoRA/Quick - Only show when pack is ≥90% complete */}
                             {(character.pack_completeness_score || 0) >= 90 && (
                               <Button 
                                 variant="outline" 
@@ -1029,6 +1026,150 @@ export default function Characters({ projectId }: CharactersProps) {
                         <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)} title="Eliminar">
                           <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
+                      </div>
+                    </div>
+
+                    {/* Character Header - Mobile */}
+                    <div className="flex sm:hidden flex-col p-3 gap-3">
+                      {/* Row 1: Avatar + Name + Expand */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xl overflow-hidden shrink-0">
+                          {character.turnaround_urls?.front ? (
+                            <img 
+                              src={character.turnaround_urls.front} 
+                              alt={character.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            character.name[0].toUpperCase()
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-foreground text-sm truncate">{character.name}</h3>
+                          <div className="flex items-center gap-1 mt-1 flex-wrap">
+                            {character.character_role && (
+                              <Badge variant="outline" className={`text-xs ${getCharacterRoleBadgeColor(character.character_role)}`}>
+                                {getCharacterRoleLabel(character.character_role)}
+                              </Badge>
+                            )}
+                            {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
+                              <Badge 
+                                variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
+                                className={`text-xs ${character.pack_completeness_score >= 90 ? "bg-green-600" : ""}`}
+                              >
+                                <Package className="w-3 h-3 mr-0.5" />
+                                {character.pack_completeness_score}%
+                              </Badge>
+                            )}
+                            <EntityQCBadge
+                              entityType="character"
+                              hasProfile={!!character.profile_json}
+                              packScore={character.pack_completeness_score || 0}
+                              hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                            />
+                          </div>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="shrink-0"
+                          onClick={() => setExpandedId(expandedId === character.id ? null : character.id)}
+                        >
+                          {expandedId === character.id ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+
+                      {/* Row 2: Bio (if exists) */}
+                      {character.bio && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{character.bio}</p>
+                      )}
+
+                      {/* Row 3: Primary action button */}
+                      {character.character_role && (
+                        <Button 
+                          variant="gold" 
+                          size="sm"
+                          className="w-full"
+                          onClick={() => autoGenerateCharacterPack(character)}
+                          disabled={autoGenerating === character.id}
+                        >
+                          {autoGenerating === character.id ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                              {autoGenProgress?.phase?.slice(0, 20) || 'Generando...'}
+                            </>
+                          ) : (
+                            <>
+                              <Play className="w-4 h-4 mr-2" />
+                              Generar Pack
+                            </>
+                          )}
+                        </Button>
+                      )}
+
+                      {/* Row 4: Secondary actions */}
+                      <div className="flex gap-1 justify-between">
+                        <div className="flex gap-1">
+                          {character.character_role && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setShowPackBuilder(character.id)}
+                            >
+                              <Package className="w-4 h-4" />
+                            </Button>
+                          )}
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => generateProfileWithEntityBuilder(character)}
+                            disabled={generatingProfile === character.id}
+                          >
+                            {generatingProfile === character.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <BookOpen className="w-4 h-4" />
+                            )}
+                          </Button>
+                          {(character.pack_completeness_score || 0) >= 90 && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setShowQuickStart(character.id)}
+                              className="border-amber-500/50 text-amber-600"
+                            >
+                              <Zap className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" onClick={() => startEditing(character)}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => duplicateCharacter(character)}
+                            disabled={duplicating === character.id}
+                          >
+                            {duplicating === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleExportPack(character)}
+                            disabled={exporting === character.id || !character.pack_completeness_score}
+                          >
+                            {exporting === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)}>
+                            <Trash2 className="w-4 h-4 text-destructive" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
 
