@@ -276,6 +276,179 @@ Si dudas sobre algo, indícalo como "no especificado" antes que inventarlo.
 
 IDIOMA: Responde en el idioma indicado.`;
 
+const BREAKDOWN_TOOL = {
+  type: 'function',
+  function: {
+    name: 'return_script_breakdown',
+    description: 'Devuelve el desglose completo del guion en un objeto estructurado.',
+    parameters: {
+      type: 'object',
+      properties: {
+        synopsis: {
+          type: 'object',
+          properties: {
+            faithful_summary: { type: 'string' },
+            conflict_type: { type: 'string' },
+            narrative_scope: { type: 'string' },
+            temporal_span: { type: 'string' },
+            tone: { type: 'string' },
+            themes: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['faithful_summary'],
+          additionalProperties: true,
+        },
+        scenes: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              scene_number: { type: 'number' },
+              slugline: { type: 'string' },
+              location_name: { type: 'string' },
+              location_type: { type: 'string' },
+              time_of_day: { type: 'string' },
+              era: { type: 'string' },
+              summary: { type: 'string' },
+              objective: { type: 'string' },
+              mood: { type: 'string' },
+              page_range: { type: 'string' },
+              estimated_duration_sec: { type: 'number' },
+              characters_present: { type: 'array', items: { type: 'string' } },
+              props_used: { type: 'array', items: { type: 'string' } },
+              continuity_notes: { type: 'string' },
+              priority: { type: 'string' },
+              complexity: { type: 'string' },
+            },
+            required: ['scene_number', 'slugline', 'summary'],
+            additionalProperties: true,
+          },
+        },
+        characters: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              entity_type: { type: 'string' },
+              role: { type: 'string' },
+              role_detail: { type: 'string' },
+              description: { type: 'string' },
+              personality: { type: 'string' },
+              arc: { type: 'string' },
+              scale: { type: 'string' },
+              first_appearance: { type: 'string' },
+              scenes: { type: 'array', items: { type: 'number' } },
+              scenes_count: { type: 'number' },
+              dialogue_lines: { type: 'number' },
+              priority: { type: 'string' },
+              notes: { type: 'string' },
+              explicitly_described: { type: 'boolean' },
+            },
+            required: ['name'],
+            additionalProperties: true,
+          },
+        },
+        locations: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              type: { type: 'string' },
+              scale: { type: 'string' },
+              era: { type: 'string' },
+              description: { type: 'string' },
+              scenes: { type: 'array', items: { type: 'number' } },
+              scenes_count: { type: 'number' },
+              priority: { type: 'string' },
+              explicitly_described: { type: 'boolean' },
+            },
+            required: ['name'],
+            additionalProperties: true,
+          },
+        },
+        props: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              type: { type: 'string' },
+              description: { type: 'string' },
+              importance: { type: 'string' },
+              scenes: { type: 'array', items: { type: 'number' } },
+              scenes_count: { type: 'number' },
+              priority: { type: 'string' },
+              explicitly_mentioned: { type: 'boolean' },
+            },
+            required: ['name'],
+            additionalProperties: true,
+          },
+        },
+        set_pieces: { type: 'array', items: { type: 'object', additionalProperties: true } },
+        subplots: { type: 'array', items: { type: 'object', additionalProperties: true } },
+        plot_twists: { type: 'array', items: { type: 'object', additionalProperties: true } },
+        continuity_anchors: { type: 'array', items: { type: 'object', additionalProperties: true } },
+        summary: {
+          type: 'object',
+          properties: {
+            total_scenes: { type: 'number' },
+            total_characters: { type: 'number' },
+            total_locations: { type: 'number' },
+            total_props: { type: 'number' },
+            estimated_runtime_min: { type: 'number' },
+            analysis_confidence: { type: 'string' },
+            production_notes: { type: 'string' },
+          },
+          required: ['total_scenes', 'total_characters', 'total_locations', 'total_props'],
+          additionalProperties: true,
+        },
+      },
+      required: ['synopsis', 'scenes', 'characters', 'locations', 'props', 'summary'],
+      additionalProperties: true,
+    },
+  },
+};
+
+const normalizeBreakdown = (input: any) => {
+  const obj = (input && typeof input === 'object') ? input : {};
+  return {
+    synopsis: obj.synopsis ?? { faithful_summary: '' },
+    scenes: Array.isArray(obj.scenes) ? obj.scenes : [],
+    characters: Array.isArray(obj.characters) ? obj.characters : [],
+    locations: Array.isArray(obj.locations) ? obj.locations : [],
+    props: Array.isArray(obj.props) ? obj.props : [],
+    set_pieces: Array.isArray(obj.set_pieces) ? obj.set_pieces : [],
+    subplots: Array.isArray(obj.subplots) ? obj.subplots : [],
+    plot_twists: Array.isArray(obj.plot_twists) ? obj.plot_twists : [],
+    continuity_anchors: Array.isArray(obj.continuity_anchors) ? obj.continuity_anchors : [],
+    summary: obj.summary ?? {
+      total_scenes: Array.isArray(obj.scenes) ? obj.scenes.length : 0,
+      total_characters: Array.isArray(obj.characters) ? obj.characters.length : 0,
+      total_locations: Array.isArray(obj.locations) ? obj.locations.length : 0,
+      total_props: Array.isArray(obj.props) ? obj.props.length : 0,
+      production_notes: '',
+    },
+  };
+};
+
+const tryParseJson = (raw: string) => {
+  const trimmed = (raw ?? '').trim();
+  if (!trimmed) return null;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // Fallback: try to extract the first JSON object
+    const match = trimmed.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try {
+      return JSON.parse(match[0]);
+    } catch {
+      return null;
+    }
+  }
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -330,8 +503,10 @@ IMPORTANTE:
         model: 'google/gemini-2.5-pro',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt }
+          { role: 'user', content: userPrompt },
         ],
+        tools: [BREAKDOWN_TOOL],
+        tool_choice: { type: 'function', function: { name: 'return_script_breakdown' } },
       }),
     });
 
@@ -354,44 +529,33 @@ IMPORTANTE:
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
 
-    if (!content) {
-      throw new Error('No content received from AI');
+    // Prefer tool-calling (structured output) to avoid JSON formatting errors
+    const toolArgs = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments as string | undefined;
+    const content = data.choices?.[0]?.message?.content as string | undefined;
+
+    let breakdownData: any | null = null;
+
+    if (toolArgs) {
+      breakdownData = tryParseJson(toolArgs);
     }
 
-    // Parse JSON from response
-    let breakdownData;
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        breakdownData = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
-      }
-    } catch (parseError) {
-      console.error('JSON parse error:', parseError);
-      // Return a structured fallback with basic parsing
-      breakdownData = {
-        scenes: [],
-        characters: [],
-        locations: [],
-        props: [],
-        wardrobe: [],
-        set_pieces: [],
-        vfx_sfx: [],
-        sound_music: [],
-        continuity_anchors: [],
-        summary: {
-          total_scenes: 0,
-          total_characters: 0,
-          total_locations: 0,
-          total_props: 0,
-          production_notes: 'Failed to parse breakdown. Please try again.'
-        },
-        raw_response: content
-      };
+    if (!breakdownData && content) {
+      breakdownData = tryParseJson(content);
     }
+
+    if (!breakdownData) {
+      console.error('Could not parse breakdown from AI response', {
+        hasToolArgs: !!toolArgs,
+        hasContent: !!content,
+      });
+      return new Response(
+        JSON.stringify({ error: 'No se pudo interpretar la respuesta del modelo. Reintenta.' }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    breakdownData = normalizeBreakdown(breakdownData);
 
     console.log('Script breakdown complete:', {
       scenes: breakdownData.scenes?.length || 0,
