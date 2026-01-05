@@ -237,6 +237,11 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [generatedScript, setGeneratedScript] = useState<unknown>(null);
   const [breakdownResult, setBreakdownResult] = useState<BreakdownResult | null>(null);
   const [qualityDiagnosis, setQualityDiagnosis] = useState<QualityDiagnosis | null>(null);
+  
+  // Streaming state for real-time script generation
+  const [streamingContent, setStreamingContent] = useState<string>('');
+  const [isStreaming, setIsStreaming] = useState(false);
+  const streamAbortRef = useRef<AbortController | null>(null);
 
   // Pro mode controls
   const [selectedModel, setSelectedModel] = useState<'rapido' | 'profesional'>('rapido');
@@ -672,7 +677,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
   };
 
-  // Generate script from idea - with background task support
+  // Generate script from idea - with streaming support
   const handleGenerateScript = async (runInBackground = false) => {
     if (!ideaText.trim()) {
       toast.error('Escribe tu idea primero');
@@ -698,11 +703,17 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     } else {
       setStatus('generating');
       setProgress(10);
+      setStreamingContent('');
+      setIsStreaming(true);
     }
+
+    // Abort controller for cancellation
+    streamAbortRef.current = new AbortController();
 
     try {
       updateTask(taskId, { progress: 10, description: 'Generando esquema...' });
       
+      // Generate outline first (non-streaming)
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('generate-outline-light', {
         body: {
           projectId,
@@ -711,18 +722,25 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           language: 'es-ES',
           generationModel: selectedModel,
-          // Back-compat for older request shapes
           model: selectedModel,
         }
       });
 
       if (outlineError) throw outlineError;
-      if (!runInBackground) setProgress(50);
-      updateTask(taskId, { progress: 50, description: 'Escribiendo guion...' });
+      if (!runInBackground) setProgress(30);
+      updateTask(taskId, { progress: 30, description: 'Escribiendo guion en tiempo real...' });
 
-      const { data: scriptData, error: scriptError } = await supabase.functions.invoke('script-generate', {
-        body: {
-          projectId,
+      // STREAMING: Fetch directly instead of supabase.functions.invoke
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      
+      const response = await fetch(`${supabaseUrl}/functions/v1/script-generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+        body: JSON.stringify({
           idea: ideaText,
           genre: '',
           tone: '',
@@ -730,43 +748,78 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           episodeDurationMin,
           language: 'es-ES',
-          // Optional extras (ignored by current function but kept for compatibility)
+          stream: true,
           outline: outlineData?.outline,
-          model: selectedModel,
-        }
+        }),
+        signal: streamAbortRef.current.signal,
       });
 
-      if (scriptError) throw scriptError;
-      if (!runInBackground) setProgress(100);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Error ${response.status}`);
+      }
+
+      // Process streaming response (Anthropic SSE format)
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No stream available');
+      
+      const decoder = new TextDecoder();
+      let fullText = '';
+      let buffer = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Process SSE events line by line
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+        
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const jsonStr = line.slice(6).trim();
+          if (!jsonStr || jsonStr === '[DONE]') continue;
+          
+          try {
+            const event = JSON.parse(jsonStr);
+            
+            // Anthropic streaming format: content_block_delta with text
+            if (event.type === 'content_block_delta' && event.delta?.text) {
+              fullText += event.delta.text;
+              setStreamingContent(fullText);
+              
+              // Update progress based on text length (rough estimate)
+              const estimatedProgress = Math.min(30 + (fullText.length / 50), 85);
+              if (!runInBackground) setProgress(estimatedProgress);
+            }
+          } catch (e) {
+            // Skip invalid JSON lines (keep-alive, etc.)
+          }
+        }
+      }
+      
+      // Streaming complete
+      setIsStreaming(false);
+      if (!runInBackground) setProgress(90);
       updateTask(taskId, { progress: 90, description: 'Guardando...' });
 
-      const scriptPayload: any = (scriptData as any)?.script ?? scriptData;
-
-      const rawScriptText = coerceScriptToString(
-        scriptPayload?.screenplay ??
-          scriptPayload?.screenplay_text ??
-          scriptPayload?.episodes?.[0]?.screenplay_text ??
-          scriptPayload?.episodes?.[0]?.screenplay ??
-          scriptPayload?.script ??
-          scriptPayload
-      );
-
-      if (!rawScriptText.trim()) {
+      const rawScriptText = fullText.trim();
+      if (!rawScriptText) {
         throw new Error('No se recibió texto de guion desde el generador');
       }
 
-      // Ensure parsed_json has required structure for ScriptSummaryPanel
+      // Build parsed_json structure
       const parsedJson = {
-        ...(scriptPayload ?? {}),
-        title: scriptPayload?.title || 'Guion Generado',
-        synopsis: scriptPayload?.synopsis || scriptPayload?.logline || '',
-        episodes: scriptPayload?.episodes || [],
-        teasers: scriptPayload?.teasers,
-        characters: scriptPayload?.characters || scriptPayload?.main_characters || [],
-        locations: scriptPayload?.locations || scriptPayload?.main_locations || [],
-        props: scriptPayload?.props || scriptPayload?.main_props || [],
-        subplots: scriptPayload?.subplots || [],
-        plot_twists: scriptPayload?.plot_twists || [],
+        title: 'Guion Generado',
+        synopsis: '',
+        episodes: [],
+        characters: [],
+        locations: [],
+        props: [],
+        subplots: [],
+        plot_twists: [],
       };
       
       // Upsert: update existing or create new (one script per project)
@@ -813,8 +866,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         throw new Error('No se pudo guardar el guion');
       }
 
-      // IMPORTANT: run breakdown so episodes_count + min/ep are respected (e.g., 8 episodios)
-      updateTask(taskId, { progress: 95, description: 'Analizando estructura (episodios y duración)...' });
+      // Run breakdown for episode structure
+      updateTask(taskId, { progress: 95, description: 'Analizando estructura...' });
       if (!runInBackground) setProgress(95);
 
       const { error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
@@ -832,6 +885,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (breakdownError) throw breakdownError;
 
       setGeneratedScript(rawScriptText);
+      setStreamingContent('');
 
       // Trigger refresh to show ScriptSummaryPanel
       setHasExistingScript(true);
@@ -845,6 +899,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       toast.success('¡Guion generado!');
     } catch (err) {
       console.error('Generation error:', err);
+      setStreamingContent('');
+      setIsStreaming(false);
       setGeneratedScript(null);
       failTask(taskId, err instanceof Error ? err.message : 'Error desconocido');
       if (!runInBackground) {
@@ -1898,6 +1954,36 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                     Puedes reintentar o modificar el texto.
                   </AlertDescription>
                 </Alert>
+              )}
+
+              {/* STREAMING PREVIEW - Show script as it's being written */}
+              {isStreaming && streamingContent && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-primary">
+                    <Edit3 className="h-4 w-4 animate-pulse" />
+                    <span className="font-medium">Escribiendo guion en tiempo real...</span>
+                    <span className="text-muted-foreground">({streamingContent.length} caracteres)</span>
+                  </div>
+                  <ScrollArea className="h-[400px] rounded-lg border bg-muted/30 p-4">
+                    <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed">
+                      {streamingContent}
+                      <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-0.5" />
+                    </pre>
+                  </ScrollArea>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      streamAbortRef.current?.abort();
+                      setIsStreaming(false);
+                      setStatus('idle');
+                      toast.info('Generación cancelada');
+                    }}
+                  >
+                    <Square className="h-3 w-3 mr-2" />
+                    Cancelar
+                  </Button>
+                </div>
               )}
 
               {(!generatedScript || status === 'error') && (
