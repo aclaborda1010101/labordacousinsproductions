@@ -363,7 +363,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       const { data, error } = await supabase
         .from('scripts')
-        .select('id, raw_text, created_at')
+        .select('id, raw_text, parsed_json, status, created_at')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -372,6 +372,28 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       if (error) {
         console.error('[ScriptWorkspace] Error fetching script:', error);
         toast.error('Error al cargar el guion');
+      }
+
+      console.log('[ScriptWorkspace] Script data:', data
+        ? { id: data.id, hasText: !!data.raw_text, textLength: data.raw_text?.length, hasParsedJson: !!data.parsed_json && Object.keys(data.parsed_json as object || {}).length > 0, status: data.status, createdAt: data.created_at }
+        : 'No script found');
+
+      // If we have parsed_json with content, hydrate the breakdown state
+      if (data?.parsed_json && typeof data.parsed_json === 'object' && Object.keys(data.parsed_json as object).length > 0) {
+        const pj = data.parsed_json as Record<string, unknown>;
+        const breakdown: BreakdownResult = {
+          characters: (pj.characters as BreakdownResult['characters']) || [],
+          locations: (pj.locations as BreakdownResult['locations']) || [],
+          scenes: (pj.scenes as BreakdownResult['scenes']) || [],
+          props: (pj.props as BreakdownResult['props']) || [],
+          synopsis: pj.synopsis as BreakdownResult['synopsis'],
+          subplots: (pj.subplots as BreakdownResult['subplots']) || [],
+          plot_twists: (pj.plot_twists as BreakdownResult['plot_twists']) || [],
+          summary: (typeof pj.summary === 'object' ? pj.summary : undefined) as BreakdownResult['summary'],
+        };
+        setBreakdownResult(breakdown);
+        setQualityDiagnosis(evaluateQuality(breakdown));
+        console.log('[ScriptWorkspace] Hydrated breakdown from parsed_json');
       }
 
       console.log('[ScriptWorkspace] Script data:', data ? { id: data.id, hasText: !!data.raw_text, textLength: data.raw_text?.length, createdAt: data.created_at } : 'No script found');
@@ -1132,6 +1154,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       
       // Reset entry mode to show the full ScriptSummaryPanelAssisted
       setEntryMode(null);
+      
+      // Force refresh to ensure we have the latest data from the DB (including backend-saved parsed_json)
+      setRefreshTrigger((prev) => prev + 1);
       
       toast.success('¡Análisis completado!');
     } catch (err) {
