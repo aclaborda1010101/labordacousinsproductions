@@ -29,6 +29,7 @@ import CharactersView from '@/components/project/CharactersView';
 import LocationsView from '@/components/project/LocationsView';
 import Scenes from '@/components/project/Scenes';
 import ScriptWorkspaceView from '@/components/project/ScriptWorkspaceView';
+import { CinematicProductionEngine } from '@/components/cpe';
 import RenderQueue from '@/components/project/RenderQueue';
 import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
 import { CreativeModeProvider, useCreativeModeOptional } from '@/contexts/CreativeModeContext';
@@ -47,12 +48,15 @@ interface Project {
   owner_id: string;
 }
 
+import { Wand2 } from 'lucide-react';
+
 // Simplified tabs: Guion, Biblia (unified), Escenas, Dailies/Export, Ajustes
 const PROJECT_TABS = [
   { id: 'script', path: '/script', label: 'Guion', icon: FileText, requiresBible: false },
   { id: 'bible', path: '', label: 'Biblia', icon: Book, requiresBible: false, description: 'Personajes, Localizaciones, Estilo' },
   { id: 'scenes', path: '/scenes', label: 'Escenas', icon: Clapperboard, requiresBible: true },
   { id: 'renders', path: '/renders', label: 'Dailies', icon: Play, requiresBible: true },
+  { id: 'engine', path: '/engine', label: 'Engine', icon: Wand2, requiresBible: false },
 ];
 
 // Inner component that uses creative mode context
@@ -253,6 +257,7 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
             <Route path="/script" element={<ScriptWorkspaceView projectId={project.id} />} />
             <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
             <Route path="/renders" element={<RenderQueue projectId={project.id} />} />
+            <Route path="/engine" element={<CinematicProductionEngine projectId={project.id} />} />
             <Route path="*" element={
               <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center">
