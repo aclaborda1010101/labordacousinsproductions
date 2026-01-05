@@ -527,8 +527,10 @@ export type Database = {
           arc: string | null
           bio: string | null
           canon_asset_id: string | null
+          canon_level: string | null
           canon_rules: Json | null
           character_role: Database["public"]["Enums"]["character_role"] | null
+          confidence: number | null
           created_at: string
           current_run_id: string | null
           expressions: Json | null
@@ -547,6 +549,7 @@ export type Database = {
           project_id: string
           role: string | null
           slot_config: Json | null
+          source: string | null
           token: string | null
           turnaround_urls: Json | null
           updated_at: string
@@ -560,8 +563,10 @@ export type Database = {
           arc?: string | null
           bio?: string | null
           canon_asset_id?: string | null
+          canon_level?: string | null
           canon_rules?: Json | null
           character_role?: Database["public"]["Enums"]["character_role"] | null
+          confidence?: number | null
           created_at?: string
           current_run_id?: string | null
           expressions?: Json | null
@@ -580,6 +585,7 @@ export type Database = {
           project_id: string
           role?: string | null
           slot_config?: Json | null
+          source?: string | null
           token?: string | null
           turnaround_urls?: Json | null
           updated_at?: string
@@ -593,8 +599,10 @@ export type Database = {
           arc?: string | null
           bio?: string | null
           canon_asset_id?: string | null
+          canon_level?: string | null
           canon_rules?: Json | null
           character_role?: Database["public"]["Enums"]["character_role"] | null
+          confidence?: number | null
           created_at?: string
           current_run_id?: string | null
           expressions?: Json | null
@@ -613,6 +621,7 @@ export type Database = {
           project_id?: string
           role?: string | null
           slot_config?: Json | null
+          source?: string | null
           token?: string | null
           turnaround_urls?: Json | null
           updated_at?: string
@@ -2810,6 +2819,8 @@ export type Database = {
         Row: {
           accepted_run_id: string | null
           canon_asset_id: string | null
+          canon_level: string | null
+          confidence: number | null
           created_at: string
           current_run_id: string | null
           description: string | null
@@ -2820,14 +2831,18 @@ export type Database = {
           props: Json | null
           reference_urls: Json | null
           sound_profile: Json | null
+          source: string | null
           status: string | null
           token: string | null
           updated_at: string
           variants: Json | null
+          visual_dna: Json | null
         }
         Insert: {
           accepted_run_id?: string | null
           canon_asset_id?: string | null
+          canon_level?: string | null
+          confidence?: number | null
           created_at?: string
           current_run_id?: string | null
           description?: string | null
@@ -2838,14 +2853,18 @@ export type Database = {
           props?: Json | null
           reference_urls?: Json | null
           sound_profile?: Json | null
+          source?: string | null
           status?: string | null
           token?: string | null
           updated_at?: string
           variants?: Json | null
+          visual_dna?: Json | null
         }
         Update: {
           accepted_run_id?: string | null
           canon_asset_id?: string | null
+          canon_level?: string | null
+          confidence?: number | null
           created_at?: string
           current_run_id?: string | null
           description?: string | null
@@ -2856,10 +2875,12 @@ export type Database = {
           props?: Json | null
           reference_urls?: Json | null
           sound_profile?: Json | null
+          source?: string | null
           status?: string | null
           token?: string | null
           updated_at?: string
           variants?: Json | null
+          visual_dna?: Json | null
         }
         Relationships: [
           {
@@ -3774,6 +3795,7 @@ export type Database = {
           standardized_location: string | null
           standardized_time: string | null
           summary: string | null
+          technical_metadata: Json | null
           technical_notes: string | null
           time_of_day: string | null
           updated_at: string
@@ -3816,6 +3838,7 @@ export type Database = {
           standardized_location?: string | null
           standardized_time?: string | null
           summary?: string | null
+          technical_metadata?: Json | null
           technical_notes?: string | null
           time_of_day?: string | null
           updated_at?: string
@@ -3858,6 +3881,7 @@ export type Database = {
           standardized_location?: string | null
           standardized_time?: string | null
           summary?: string | null
+          technical_metadata?: Json | null
           technical_notes?: string | null
           time_of_day?: string | null
           updated_at?: string
