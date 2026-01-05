@@ -3,6 +3,8 @@
  *
  * NOTE: This uses fetch directly because supabase.functions.invoke doesn't expose timeout/AbortSignal.
  */
+import { supabase } from '@/integrations/supabase/client';
+
 export type InvokeWithTimeoutOptions = {
   timeoutMs?: number;
   signal?: AbortSignal;
@@ -34,13 +36,27 @@ export async function invokeWithTimeout<T = unknown>(
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+
+  if (sessionError) {
+    return { data: null, error: new Error(sessionError.message) };
+  }
+
+  const accessToken = session?.access_token;
+  if (!accessToken) {
+    return { data: null, error: new Error('Sesión no válida. Vuelve a iniciar sesión.') };
+  }
+
   try {
     const response = await fetch(`${supabaseUrl}/functions/v1/${functionName}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(body),
       signal: controller.signal,

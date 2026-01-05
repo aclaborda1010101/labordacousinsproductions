@@ -732,12 +732,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       // STREAMING: Fetch directly instead of supabase.functions.invoke
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) {
+        throw new Error('Sesión expirada. Vuelve a iniciar sesión.');
+      }
+
       const response = await fetch(`${supabaseUrl}/functions/v1/script-generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
+          apikey: supabaseKey,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           idea: ideaText,
