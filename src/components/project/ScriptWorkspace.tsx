@@ -600,7 +600,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             needsManualInput?: boolean;
             hint?: string;
             stats?: { estimatedPages?: number; fileSizeKB?: number; modelUsed?: string };
-          }>('parse-script', { pdfUrl: urlData.publicUrl, projectId }, { timeoutMs, signal: abortController.signal });
+          }>('parse-script', { pdfUrl: urlData.publicUrl, projectId, parseMode: 'extract_only' }, { timeoutMs, signal: abortController.signal });
 
           if (error) throw error;
 

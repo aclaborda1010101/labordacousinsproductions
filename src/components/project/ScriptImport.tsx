@@ -292,7 +292,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         
         const { data, error } = await invokeWithTimeout(
           'parse-script',
-          { pdfBase64: base64, fileName: file.name },
+          { pdfBase64: base64, fileName: file.name, parseMode: 'extract_only', projectId },
           timeoutMs
         );
 

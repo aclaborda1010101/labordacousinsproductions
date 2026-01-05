@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { encodeBase64 } from "https://deno.land/std@0.208.0/encoding/base64.ts";
+import { encodeBase64, decodeBase64 } from "https://deno.land/std@0.208.0/encoding/base64.ts";
 import { 
   v3RequireAuth, 
   v3RequireProjectAccess,
@@ -425,8 +425,19 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { scriptText, pdfUrl, projectId: bodyProjectId, parseMode } = body;
+    const {
+      scriptText,
+      pdfUrl,
+      pdfBase64,
+      fileName,
+      projectId: bodyProjectId,
+      parseMode: bodyParseMode,
+    } = (body ?? {}) as Record<string, any>;
+
     projectId = bodyProjectId || null;
+
+    // Backwards-compat: old clients sent pdfBase64 and expected extract-only behavior
+    const parseMode: string | undefined = bodyParseMode ?? (pdfBase64 ? 'extract_only' : undefined);
 
     // =======================================================================
     // V3.0 PROJECT ACCESS + LOCKING + RATE LIMIT
@@ -468,103 +479,122 @@ serve(async (req) => {
       provider: 'gemini',
     });
 
-    console.log("[parse-script] v3.0 FORENSIC ANALYST called:", { 
-      hasPdfUrl: !!pdfUrl, 
-      hasScriptText: !!scriptText, 
-      projectId, 
+    console.log("[parse-script] v3.0 FORENSIC ANALYST called:", {
+      hasPdfUrl: !!pdfUrl,
+      hasPdfBase64: !!pdfBase64,
+      fileName,
+      hasScriptText: !!scriptText,
+      projectId,
       parseMode,
       textLength: scriptText?.length,
-      userId: auth.userId
+      userId: auth.userId,
     });
 
     let textToProcess = scriptText;
     let sourceType: "PDF" | "TEXT" = scriptText ? "TEXT" : "PDF";
     let extractionStats: Record<string, unknown> = {};
 
-    // Handle PDF extraction
-    if (pdfUrl && !scriptText) {
-      console.log("[parse-script] Fetching PDF from:", pdfUrl);
-      
+    // Handle PDF extraction (supports pdfUrl OR pdfBase64)
+    if ((pdfUrl || pdfBase64) && !scriptText) {
+      const sourceLabel = pdfUrl ? 'url' : 'base64';
+      console.log(
+        "[parse-script] Preparing PDF:",
+        sourceLabel,
+        pdfUrl ? pdfUrl : (fileName ?? 'inline_base64')
+      );
+
       try {
-        const pdfResponse = await fetch(pdfUrl);
-        if (!pdfResponse.ok) {
-          throw new Error(`Failed to fetch PDF: ${pdfResponse.status}`);
+        let pdfBytes: Uint8Array;
+
+        if (pdfUrl) {
+          const pdfResponse = await fetch(pdfUrl);
+          if (!pdfResponse.ok) {
+            throw new Error(`Failed to fetch PDF: ${pdfResponse.status}`);
+          }
+
+          const pdfBuffer = await pdfResponse.arrayBuffer();
+          pdfBytes = new Uint8Array(pdfBuffer);
+        } else {
+          const raw = String(pdfBase64 ?? '');
+          const cleaned = raw.includes('base64,') ? raw.split('base64,')[1] : raw;
+          pdfBytes = decodeBase64(cleaned);
         }
-        
-        const pdfBuffer = await pdfResponse.arrayBuffer();
-        const pdfBytes = new Uint8Array(pdfBuffer);
+
         const fileSizeKB = Math.round(pdfBytes.length / 1024);
-        console.log(`[parse-script] PDF downloaded: ${pdfBytes.length} bytes (${fileSizeKB}KB)`);
-        
+        console.log(`[parse-script] PDF ready: ${pdfBytes.length} bytes (${fileSizeKB}KB), source=${sourceLabel}`);
+
         const config = getProcessingConfig(pdfBytes.length);
         extractionStats = {
           originalSizeKB: fileSizeKB,
           estimatedPages: config.estimatedPages,
           wasLargeFile: config.isLarge,
-          modelUsed: config.model
+          modelUsed: config.model,
+          source: sourceLabel,
+          fileName,
         };
-        
+
         let extractedText = "";
         try {
           extractedText = await extractTextWithAI(pdfBytes, config);
         } catch (aiError) {
           console.warn("[parse-script] AI extraction failed, falling back to regex:", aiError);
           extractedText = extractTextFromPdfBytes(pdfBytes);
-          
+
           if (config.isLarge && extractedText.length < 1000) {
             return new Response(
-              JSON.stringify({ 
+              JSON.stringify({
                 error: `Este guión (~${config.estimatedPages} páginas) es muy extenso. Por favor, copia el texto y pégalo directamente.`,
                 rawText: "",
                 needsManualInput: true,
                 hint: "Puedes procesar el guión por partes: primero el primer acto, luego el segundo, etc.",
-                stats: extractionStats
+                stats: extractionStats,
               }),
               { headers: { ...corsHeaders, "Content-Type": "application/json" } }
             );
           }
         }
-        
+
         if (extractedText.length < 50) {
           return new Response(
-            JSON.stringify({ 
+            JSON.stringify({
               error: "El PDF parece ser escaneado o tiene un formato no compatible. Por favor, copia y pega el texto directamente.",
               rawText: "",
-              needsManualInput: true
+              needsManualInput: true,
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-        
+
         textToProcess = extractedText;
         extractionStats.extractedChars = extractedText.length;
-        
-        // If parseMode is 'extract_only', just return raw text
+
+        // If parseMode is 'extract_only', just return raw text (full)
         if (parseMode === 'extract_only') {
           return new Response(
-            JSON.stringify({ 
+            JSON.stringify({
               rawText: textToProcess,
+              extractedText: textToProcess,
               success: true,
-              stats: extractionStats
+              stats: extractionStats,
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-        
+
       } catch (pdfError) {
         console.error("[parse-script] PDF processing error:", pdfError);
-        
+
         const errorMessage = pdfError instanceof Error ? pdfError.message : "Unknown error";
         const isTimeout = errorMessage.toLowerCase().includes("timeout");
-        
+
         return new Response(
-          JSON.stringify({ 
-            error: isTimeout 
+          JSON.stringify({
+            error: isTimeout
               ? errorMessage
               : "Error al procesar el PDF. Intenta copiar y pegar el texto directamente.",
             rawText: "",
             needsManualInput: true,
-            hint: isTimeout ? "Puedes dividir el guión en partes (Acto 1, Acto 2, etc.) y procesarlas por separado." : undefined
+            hint: isTimeout ? "Puedes dividir el guión en partes (Acto 1, Acto 2, etc.) y procesarlas por separado." : undefined,
           }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
