@@ -1880,6 +1880,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 <p className="text-xs text-muted-foreground mt-1">
                   Incluye personajes, conflicto, tono y ambientación para mejores resultados
                 </p>
+                
+                {/* V3.0: Toggle para desactivar densidad narrativa - visible en todos los modos */}
+                <div className="flex items-center space-x-2 mt-3 pt-3 border-t border-border/50">
+                  <Checkbox
+                    id="disableDensityMain"
+                    checked={disableDensity}
+                    onCheckedChange={(checked) => setDisableDensity(checked === true)}
+                  />
+                  <Label htmlFor="disableDensityMain" className="text-sm font-normal cursor-pointer">
+                    Sin densidad narrativa
+                  </Label>
+                  <span className="text-xs text-muted-foreground">
+                    (genera solo lo que aportes)
+                  </span>
+                </div>
               </div>
 
               {isPro && (
