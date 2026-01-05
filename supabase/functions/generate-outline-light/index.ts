@@ -533,10 +533,10 @@ async function callOpenAI(
       model: config.apiModel,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
-      // Enforce JSON output format where supported
-      response_format: config.apiModel.includes('gpt-4') ? { type: 'json_object' } : undefined,
+      // NOTE: response_format: json_object requires "json" in the messages
+      // We use tool_choice instead which is more reliable for structured output
       messages: [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: systemPrompt + '\n\nResponde ÚNICAMENTE en formato JSON válido usando la herramienta deliver_outline.' },
         { role: 'user', content: userPrompt }
       ],
       tools: [
