@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,6 +36,19 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
     maxTokens: 4000,
     temperature: 0.8
   }
+};
+
+// =============================================================================
+// LIGHT MODE CONSTRAINTS (token safety)
+// =============================================================================
+const LIGHT_MODE_LIMITS = {
+  MAX_SCENES: 30,
+  MAX_SUMMARY_SENTENCES: 2,
+  MAX_CHARACTERS: 25,
+  MAX_LOCATIONS: 20,
+  MAX_PROPS: 15,
+  MAX_SUBPLOTS: 8,
+  MAX_TWISTS: 10
 };
 
 // MASTER SHOWRUNNER ENGINE - Narrative Mode System Prompts
@@ -266,12 +280,18 @@ const OUTLINE_TOOL_SCHEMA = {
 };
 
 // =============================================================================
-// ROBUST JSON PARSING (prevents 500s on malformed tool arguments)
+// ROBUST JSON PARSING V2 (HARDENED - never crashes)
 // =============================================================================
+
+/**
+ * Two-pass JSON parsing with salvage recovery.
+ * Returns parsed object or throws with detailed info.
+ */
 function parseJsonSafe(raw: string, label: string): any {
   const input = (raw ?? '').trim();
   if (!input) throw new Error('Empty JSON input');
 
+  // Pass 1: Clean common artifacts
   const cleanup = (s: string) => {
     let t = (s ?? '').trim();
     // Remove markdown fences
@@ -279,17 +299,69 @@ function parseJsonSafe(raw: string, label: string): any {
     // Fix occasional union-type artifacts: "mood": "x" | "y"
     t = t.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
     t = t.replace(/:\s*"([^"]*)\s*\|\s*([^"]*)"/g, ': "$1 $2"');
+    // Remove trailing commas before } or ]
+    t = t.replace(/,(\s*[}\]])/g, '$1');
     return t;
   };
 
-  const extractJson = (s: string) => {
+  // Extract largest balanced JSON structure
+  const extractLargestJson = (s: string): string => {
     const t = cleanup(s);
-    const md = t.match(/```json\s*([\s\S]*?)\s*```/i) || t.match(/```\s*([\s\S]*?)\s*```/i);
-    if (md?.[1]) return md[1].trim();
-    const obj = t.match(/\{[\s\S]*\}/);
-    if (obj?.[0]) return obj[0].trim();
-    const arr = t.match(/\[[\s\S]*\]/);
-    if (arr?.[0]) return arr[0].trim();
+    
+    // Try to find markdown-fenced JSON first
+    const mdMatch = t.match(/```json\s*([\s\S]*?)\s*```/i) || t.match(/```\s*([\s\S]*?)\s*```/i);
+    if (mdMatch?.[1]) return mdMatch[1].trim();
+    
+    // Find first { and extract to the matching }
+    const firstBrace = t.indexOf('{');
+    if (firstBrace === -1) {
+      // Try array
+      const firstBracket = t.indexOf('[');
+      if (firstBracket === -1) return t;
+      return t.substring(firstBracket);
+    }
+    return t.substring(firstBrace);
+  };
+
+  // Repair truncated JSON by balancing braces/brackets
+  const repairTruncation = (s: string): string => {
+    let t = cleanup(s);
+    
+    // Find last valid closing character
+    let lastValid = -1;
+    for (let i = t.length - 1; i >= 0; i--) {
+      if (t[i] === '}' || t[i] === ']' || t[i] === '"' || /[a-zA-Z0-9]/.test(t[i])) {
+        lastValid = i;
+        break;
+      }
+    }
+    
+    if (lastValid > 0 && lastValid < t.length - 1) {
+      t = t.substring(0, lastValid + 1);
+    }
+    
+    // Remove trailing incomplete key-value pairs
+    // Pattern: ,"key": or ,"key" at end
+    t = t.replace(/,\s*"[^"]*":\s*$/, '');
+    t = t.replace(/,\s*"[^"]*"\s*$/, '');
+    t = t.replace(/,\s*$/, '');
+    
+    // Count and balance
+    const openBraces = (t.match(/\{/g) || []).length;
+    const closeBraces = (t.match(/\}/g) || []).length;
+    const openBrackets = (t.match(/\[/g) || []).length;
+    const closeBrackets = (t.match(/\]/g) || []).length;
+    
+    // Close open strings if needed (heuristic)
+    const quotes = (t.match(/"/g) || []).length;
+    if (quotes % 2 !== 0) {
+      t += '"';
+    }
+    
+    // Add missing brackets first (inner), then braces (outer)
+    t += ']'.repeat(Math.max(0, openBrackets - closeBrackets));
+    t += '}'.repeat(Math.max(0, openBraces - closeBraces));
+    
     return t;
   };
 
@@ -298,50 +370,74 @@ function parseJsonSafe(raw: string, label: string): any {
     return JSON.parse(t);
   };
 
+  // Pass 1: Direct parse
   try {
     return tryParse(input);
-  } catch (err) {
-    console.warn(`[OUTLINE] JSON parse failed (${label}). Attempting recovery...`);
-    console.warn('[OUTLINE] Raw (first 400 chars):', input.slice(0, 400));
+  } catch (err1) {
+    console.warn(`[OUTLINE] JSON parse failed (${label}). Attempting extraction...`);
+    console.warn('[OUTLINE] Raw (first 500 chars):', input.slice(0, 500));
 
-    // 1) Extract JSON from surrounding text
-    const extracted = extractJson(input);
+    // Pass 2: Extract and parse
+    const extracted = extractLargestJson(input);
     try {
       return tryParse(extracted);
-    } catch {
-      // 2) Attempt to recover truncated JSON by balancing braces/brackets
-      const lastBrace = Math.max(extracted.lastIndexOf('}'), extracted.lastIndexOf(']'));
-      if (lastBrace > 0) {
-        let fixed = extracted.substring(0, lastBrace + 1);
-
-        const openBraces = (fixed.match(/\{/g) || []).length;
-        const closeBraces = (fixed.match(/\}/g) || []).length;
-        const openBrackets = (fixed.match(/\[/g) || []).length;
-        const closeBrackets = (fixed.match(/\]/g) || []).length;
-
-        fixed += '}'.repeat(Math.max(0, openBraces - closeBraces));
-        fixed += ']'.repeat(Math.max(0, openBrackets - closeBrackets));
-
-        return tryParse(fixed);
+    } catch (err2) {
+      console.warn(`[OUTLINE] Extraction failed. Attempting truncation repair...`);
+      
+      // Pass 3: Repair truncation
+      const repaired = repairTruncation(extracted);
+      try {
+        return tryParse(repaired);
+      } catch (err3) {
+        // Final attempt: aggressive repair
+        console.warn(`[OUTLINE] Repair failed. Trying aggressive salvage...`);
+        
+        // Try to at least get partial data by finding complete objects
+        const aggressiveRepair = repaired
+          .replace(/,\s*"[^"]*":\s*\{[^}]*$/g, '') // Remove incomplete nested objects
+          .replace(/,\s*"[^"]*":\s*\[[^\]]*$/g, '') // Remove incomplete arrays
+          .replace(/,\s*"[^"]*":\s*"[^"]*$/g, ''); // Remove incomplete strings
+        
+        try {
+          return tryParse(repairTruncation(aggressiveRepair));
+        } catch {
+          // Give up - will trigger fallback
+          throw new Error(`All JSON parse attempts failed for ${label}`);
+        }
       }
-
-      throw err;
     }
   }
 }
 
-function normalizeOutline(input: any) {
+/**
+ * Normalize and enforce LIGHT mode limits on outline.
+ */
+function normalizeOutline(input: any): any {
   const obj = (input && typeof input === 'object') ? input : {};
   const extracted = (obj.extracted_entities && typeof obj.extracted_entities === 'object') ? obj.extracted_entities : {};
 
+  // Truncate summary to 2 sentences max for LIGHT mode
+  const truncateSummary = (s: string): string => {
+    if (!s || typeof s !== 'string') return '';
+    const sentences = s.split(/(?<=[.!?])\s+/).slice(0, LIGHT_MODE_LIMITS.MAX_SUMMARY_SENTENCES);
+    return sentences.join(' ');
+  };
+
+  // Process episode beats with LIGHT constraints
+  let episodeBeats = Array.isArray(obj.episode_beats) ? obj.episode_beats : [];
+  episodeBeats = episodeBeats.slice(0, LIGHT_MODE_LIMITS.MAX_SCENES).map((b: any) => ({
+    ...b,
+    summary: truncateSummary(b?.summary || '')
+  }));
+
   return {
     ...obj,
-    title: obj.title ?? '',
-    logline: obj.logline ?? '',
-    genre: obj.genre ?? '',
-    tone: obj.tone ?? '',
-    narrative_mode: obj.narrative_mode ?? '',
-    synopsis: obj.synopsis ?? '',
+    title: obj.title ?? null,
+    logline: obj.logline ?? null,
+    genre: obj.genre ?? null,
+    tone: obj.tone ?? null,
+    narrative_mode: obj.narrative_mode ?? null,
+    synopsis: obj.synopsis ?? null,
     qc_status: obj.qc_status === 'pass' || obj.qc_status === 'fail' ? obj.qc_status : 'fail',
 
     extracted_entities: {
@@ -351,22 +447,82 @@ function normalizeOutline(input: any) {
       props_from_idea: Array.isArray(extracted.props_from_idea) ? extracted.props_from_idea : [],
     },
 
-    main_characters: Array.isArray(obj.main_characters) ? obj.main_characters : [],
-    main_locations: Array.isArray(obj.main_locations) ? obj.main_locations : [],
-    main_props: Array.isArray(obj.main_props) ? obj.main_props : [],
-    subplots: Array.isArray(obj.subplots) ? obj.subplots : [],
-    plot_twists: Array.isArray(obj.plot_twists) ? obj.plot_twists : [],
-    episode_beats: Array.isArray(obj.episode_beats) ? obj.episode_beats : [],
+    // Apply LIGHT mode caps
+    main_characters: (Array.isArray(obj.main_characters) ? obj.main_characters : []).slice(0, LIGHT_MODE_LIMITS.MAX_CHARACTERS),
+    main_locations: (Array.isArray(obj.main_locations) ? obj.main_locations : []).slice(0, LIGHT_MODE_LIMITS.MAX_LOCATIONS),
+    main_props: (Array.isArray(obj.main_props) ? obj.main_props : []).slice(0, LIGHT_MODE_LIMITS.MAX_PROPS),
+    subplots: (Array.isArray(obj.subplots) ? obj.subplots : []).slice(0, LIGHT_MODE_LIMITS.MAX_SUBPLOTS),
+    plot_twists: (Array.isArray(obj.plot_twists) ? obj.plot_twists : []).slice(0, LIGHT_MODE_LIMITS.MAX_TWISTS),
+    episode_beats: episodeBeats,
   };
 }
 
-// OpenAI API call
+/**
+ * Build degraded fallback outline when parsing completely fails.
+ */
+function buildFallbackOutline(expectedEpisodes: number): any {
+  return {
+    title: null,
+    logline: null,
+    genre: null,
+    tone: null,
+    narrative_mode: null,
+    synopsis: null,
+    qc_status: 'fail',
+    extracted_entities: {
+      characters_from_idea: [],
+      locations_from_idea: [],
+      props_from_idea: []
+    },
+    main_characters: [],
+    main_locations: [],
+    main_props: [],
+    subplots: [],
+    plot_twists: [],
+    episode_beats: Array.from({ length: expectedEpisodes }, (_, i) => ({
+      episode: i + 1,
+      title: `Episodio ${i + 1}`,
+      summary: 'Por generar',
+      cliffhanger: 'Por definir'
+    }))
+  };
+}
+
+/**
+ * Log event to editorial_events table (best-effort, non-blocking).
+ */
+async function logEditorialEvent(
+  projectId: string | null,
+  eventType: string,
+  payload: Record<string, any>
+): Promise<void> {
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !supabaseKey || !projectId) return;
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    await supabase.from('editorial_events').insert({
+      project_id: projectId,
+      event_type: eventType,
+      asset_type: 'outline',
+      payload
+    });
+  } catch (e) {
+    console.warn('[OUTLINE] Failed to log editorial event:', e);
+  }
+}
+
+// OpenAI API call with hardened parsing
 async function callOpenAI(
   apiKey: string,
   systemPrompt: string,
   userPrompt: string,
-  config: ModelConfig
-): Promise<any> {
+  config: ModelConfig,
+  expectedEpisodes: number
+): Promise<{ outline: any; parseWarnings: string[] }> {
+  const parseWarnings: string[] = [];
+  
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -377,6 +533,8 @@ async function callOpenAI(
       model: config.apiModel,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
+      // Enforce JSON output format where supported
+      response_format: config.apiModel.includes('gpt-4') ? { type: 'json_object' } : undefined,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -411,32 +569,44 @@ async function callOpenAI(
   const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
   const toolArgs = toolCall?.function?.arguments;
 
+  // Try tool call arguments first
   if (toolCall?.function?.name === 'deliver_outline' && typeof toolArgs === 'string') {
     try {
-      return normalizeOutline(parseJsonSafe(toolArgs, 'openai.tool_call.arguments'));
-    } catch {
+      return { outline: normalizeOutline(parseJsonSafe(toolArgs, 'openai.tool_call.arguments')), parseWarnings };
+    } catch (e) {
+      parseWarnings.push('TOOL_CALL_PARSE_FAILED');
       console.warn('[OUTLINE] Tool-call JSON invalid. Falling back to content parsing...');
     }
   }
 
-  // Fallback: try to parse from content (or tool args if present)
+  // Fallback: try to parse from content
   const content = data.choices?.[0]?.message?.content ?? '';
   const candidate = content || (typeof toolArgs === 'string' ? toolArgs : '');
 
-  try {
-    return normalizeOutline(parseJsonSafe(candidate, 'openai.content'));
-  } catch {
-    throw new Error('OpenAI no devolvió outline válido');
+  if (candidate) {
+    try {
+      return { outline: normalizeOutline(parseJsonSafe(candidate, 'openai.content')), parseWarnings };
+    } catch (e) {
+      parseWarnings.push('CONTENT_PARSE_FAILED');
+      console.warn('[OUTLINE] Content JSON also invalid. Using fallback outline.');
+    }
   }
+
+  // Return degraded fallback
+  parseWarnings.push('OPENAI_JSON_PARSE_FAILED');
+  return { outline: buildFallbackOutline(expectedEpisodes), parseWarnings };
 }
 
-// Anthropic API call
+// Anthropic API call with hardened parsing
 async function callAnthropic(
   apiKey: string,
   systemPrompt: string,
   userPrompt: string,
-  config: ModelConfig
-): Promise<any> {
+  config: ModelConfig,
+  expectedEpisodes: number
+): Promise<{ outline: any; parseWarnings: string[] }> {
+  const parseWarnings: string[] = [];
+  
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -476,27 +646,38 @@ async function callAnthropic(
 
   const data = await response.json();
 
-  // Extract tool use result
+  // Extract tool use result (Anthropic returns parsed object directly)
   const toolUse = data.content?.find((c: any) => c.type === 'tool_use' && c.name === 'deliver_outline');
-  if (toolUse?.input) {
-    return normalizeOutline(toolUse.input);
+  if (toolUse?.input && typeof toolUse.input === 'object') {
+    return { outline: normalizeOutline(toolUse.input), parseWarnings };
   }
 
   // Fallback: try to parse JSON from text
   const textBlock = data.content?.find((c: any) => c.type === 'text');
   const content = textBlock?.text ?? '';
 
-  try {
-    return normalizeOutline(parseJsonSafe(content, 'anthropic.text'));
-  } catch {
-    throw new Error('Claude no devolvió outline');
+  if (content) {
+    try {
+      return { outline: normalizeOutline(parseJsonSafe(content, 'anthropic.text')), parseWarnings };
+    } catch (e) {
+      parseWarnings.push('ANTHROPIC_TEXT_PARSE_FAILED');
+      console.warn('[OUTLINE] Anthropic text JSON invalid. Using fallback outline.');
+    }
   }
+
+  // Return degraded fallback
+  parseWarnings.push('ANTHROPIC_JSON_PARSE_FAILED');
+  return { outline: buildFallbackOutline(expectedEpisodes), parseWarnings };
 }
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Track for logging
+  let projectId: string | null = null;
+  const startTime = Date.now();
 
   try {
     const { 
@@ -508,8 +689,11 @@ serve(async (req) => {
       language, 
       narrativeMode, 
       densityTargets,
-      generationModel = 'rapido' // Default to fast model
+      generationModel = 'rapido',
+      project_id
     } = await req.json();
+
+    projectId = project_id || null;
 
     if (!idea) {
       return new Response(
@@ -561,6 +745,9 @@ serve(async (req) => {
       ? (explicitEpisodesCount ?? defaultEpisodesCount)
       : 1;
 
+    // Cap episodes for LIGHT mode
+    const cappedEpisodesCount = Math.min(desiredEpisodesCount, LIGHT_MODE_LIMITS.MAX_SCENES);
+
     // Select narrative mode prompt
     const modePrompt = NARRATIVE_MODE_PROMPTS[narrativeMode as keyof typeof NARRATIVE_MODE_PROMPTS] || NARRATIVE_MODE_PROMPTS.serie_adictiva;
 
@@ -590,23 +777,25 @@ IMPORTANTE: El outline DEBE cumplir estos mínimos para pasar QC. Si no los cump
 ${modePrompt}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${densityConstraints}
-Idioma de respuesta: ${language || 'es-ES'}`;
+Idioma de respuesta: ${language || 'es-ES'}
+
+FORMATO LIGHT: Mantén summaries en máximo 2 frases. No incluyas diálogos completos.`;
 
     const userPrompt = `Genera un OUTLINE profesional para:
 
 IDEA: ${idea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
-FORMATO: ${format === 'series' ? `Serie de ${desiredEpisodesCount} episodios` : 'Película'}
+FORMATO: ${format === 'series' ? `Serie de ${cappedEpisodesCount} episodios` : 'Película'}
 MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 REGLA DURA DE EPISODIOS (OBLIGATORIO)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 - "Capítulos" = EPISODIOS.
-- Debes generar EXACTAMENTE ${desiredEpisodesCount} episodios.
-- episode_beats debe contener EXACTAMENTE ${desiredEpisodesCount} elementos numerados 1..${desiredEpisodesCount}.
-- Si tu salida no tiene ${desiredEpisodesCount} beats, es INCORRECTA y debes rehacerla.
+- Debes generar EXACTAMENTE ${cappedEpisodesCount} episodios.
+- episode_beats debe contener EXACTAMENTE ${cappedEpisodesCount} elementos numerados 1..${cappedEpisodesCount}.
+- Si tu salida no tiene ${cappedEpisodesCount} beats, es INCORRECTA y debes rehacerla.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 EXTRACCIÓN DE ENTIDADES (PRIORIDAD MÁXIMA)
@@ -639,22 +828,25 @@ MÍNIMOS POR DEFECTO (si la idea no especifica más):
 - Si es serie: un beat con cliffhanger por episodio
 - Cada episodio DEBE tener un evento irreversible
 
+FORMATO LIGHT: Mantén summaries CORTOS (máx 2 frases). Sin diálogos.
+
 Usa la herramienta deliver_outline para entregar el resultado.
 Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
 
     console.log(
-      `[OUTLINE] Generating with ${modelConfig.apiModel} (${modelConfig.provider}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${desiredEpisodesCount}...`
+      `[OUTLINE] Generating with ${modelConfig.apiModel} (${modelConfig.provider}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount}...`
     );
 
-    // Call the appropriate API
-    let outline: any;
+    // Call the appropriate API with hardened parsing
+    let result: { outline: any; parseWarnings: string[] };
     if (modelConfig.provider === 'openai') {
-      outline = await callOpenAI(apiKey, systemPrompt, userPrompt, modelConfig);
+      result = await callOpenAI(apiKey, systemPrompt, userPrompt, modelConfig, cappedEpisodesCount);
     } else {
-      outline = await callAnthropic(apiKey, systemPrompt, userPrompt, modelConfig);
+      result = await callAnthropic(apiKey, systemPrompt, userPrompt, modelConfig, cappedEpisodesCount);
     }
 
-    const expectedEpisodes = format === 'series' ? desiredEpisodesCount : 1;
+    let { outline, parseWarnings } = result;
+    const expectedEpisodes = format === 'series' ? cappedEpisodesCount : 1;
 
     const buildPlaceholderBeats = (count: number) =>
       Array.from({ length: count }, (_, i) => ({
@@ -667,7 +859,7 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
     const hasEpisodeBeats = Array.isArray(outline?.episode_beats) && outline.episode_beats.length > 0;
 
     // If AI returned wrong number of episode beats, retry once with explicit correction
-    if (format === 'series' && hasEpisodeBeats && outline.episode_beats.length !== expectedEpisodes) {
+    if (format === 'series' && hasEpisodeBeats && outline.episode_beats.length !== expectedEpisodes && parseWarnings.length === 0) {
       console.warn(
         `[OUTLINE QC] episode_beats mismatch (got ${outline.episode_beats.length}, expected ${expectedEpisodes}). Retrying once...`
       );
@@ -683,11 +875,12 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
 
       try {
         const retried = modelConfig.provider === 'openai'
-          ? await callOpenAI(apiKey, systemPrompt, retryPrompt, modelConfig)
-          : await callAnthropic(apiKey, systemPrompt, retryPrompt, modelConfig);
+          ? await callOpenAI(apiKey, systemPrompt, retryPrompt, modelConfig, expectedEpisodes)
+          : await callAnthropic(apiKey, systemPrompt, retryPrompt, modelConfig, expectedEpisodes);
 
-        if (Array.isArray(retried?.episode_beats) && retried.episode_beats.length > 0) {
-          outline = retried;
+        if (Array.isArray(retried.outline?.episode_beats) && retried.outline.episode_beats.length > 0) {
+          outline = retried.outline;
+          parseWarnings = retried.parseWarnings;
         }
       } catch (e) {
         console.warn('[OUTLINE QC] Retry failed, will enforce beats length locally:', e);
@@ -746,24 +939,54 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
       outline.qc_warnings = qcIssues;
     }
 
+    // Determine quality level
+    const outlineQuality = parseWarnings.length > 0 ? 'DEGRADED' : 'FULL';
+
     console.log('[OUTLINE] Success:', outline.title, 
+      '| Quality:', outlineQuality,
       '| Model:', modelConfig.apiModel, 
       '| Mode:', outline.narrative_mode, 
       '| Characters:', outline.main_characters?.length, `(${entitiesFromIdea.characters} from idea)`,
       '| Locations:', outline.main_locations?.length, `(${entitiesFromIdea.locations} from idea)`,
       '| Props:', outline.main_props?.length, `(${entitiesFromIdea.props} from idea)`,
-      '| Episodes:', outline.episode_beats?.length
+      '| Episodes:', outline.episode_beats?.length,
+      '| Parse warnings:', parseWarnings.length > 0 ? parseWarnings.join(', ') : 'none'
     );
 
+    // Log to editorial_events if there were parse warnings
+    if (parseWarnings.length > 0 && projectId) {
+      logEditorialEvent(projectId, 'outline_parse_warning', {
+        warnings: parseWarnings,
+        model: modelConfig.apiModel,
+        duration_ms: Date.now() - startTime,
+        outline_quality: outlineQuality
+      });
+    }
+
+    // Always return 200 with success indicator
     return new Response(
-      JSON.stringify({ success: true, outline, model: modelConfig.apiModel }),
+      JSON.stringify({ 
+        success: parseWarnings.length === 0,
+        outline_quality: outlineQuality,
+        warnings: parseWarnings.length > 0 ? parseWarnings : undefined,
+        outline, 
+        model: modelConfig.apiModel 
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error: any) {
     console.error('[OUTLINE ERROR]', error);
     
-    // Handle structured errors with status codes
+    // Log failure event
+    if (projectId) {
+      logEditorialEvent(projectId, 'outline_generation_failed', {
+        error: error?.message || 'Unknown error',
+        duration_ms: Date.now() - startTime
+      });
+    }
+    
+    // Handle structured errors with status codes (rate limits, etc.)
     if (error.status) {
       return new Response(
         JSON.stringify({ error: error.message }),
@@ -771,9 +994,19 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
       );
     }
     
+    // For unstructured errors, return 200 with degraded outline instead of 500
+    console.warn('[OUTLINE] Returning degraded outline due to error');
+    const fallbackOutline = buildFallbackOutline(6);
+    
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        success: false,
+        outline_quality: 'DEGRADED',
+        warnings: ['GENERATION_ERROR', error?.message || 'Unknown error'],
+        outline: fallbackOutline,
+        model: 'fallback'
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
