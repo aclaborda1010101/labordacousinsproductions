@@ -148,7 +148,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.generate-script]
-verify_jwt = true
+verify_jwt = false
 
 [functions.batch-orchestrator]
 verify_jwt = true
