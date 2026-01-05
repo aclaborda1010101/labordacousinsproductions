@@ -132,7 +132,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // Available generation models based on creative mode
   // PRO: all models (rapido, profesional, hollywood)
-  // DIRECTOR/ASSISTED: only rapido and profesional
+  // ASSISTED: only rapido and profesional
   const availableGenerationModels: GenerationModel[] = effectiveCreativeMode === 'PRO' 
     ? ['rapido', 'profesional', 'hollywood']
     : ['rapido', 'profesional'];

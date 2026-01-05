@@ -41,19 +41,16 @@ interface CreativeModeContextType {
 
 const MODE_HIERARCHY: Record<CreativeMode, number> = {
   ASSISTED: 0,
-  DIRECTOR: 1,
-  PRO: 2,
+  PRO: 1,
 };
 
 const MODE_DESCRIPTIONS: Record<CreativeMode, string> = {
   ASSISTED: 'Modo Asistido activo: técnica y continuidad protegidas.',
-  DIRECTOR: 'Modo Director activo: puedes dirigir, el sistema te avisa si rompes reglas.',
   PRO: 'Modo Pro activo: control total. Los warnings no bloquean. Tú mandas.',
 };
 
 const MODE_TOOLTIPS: Record<CreativeMode, string> = {
   ASSISTED: 'La IA decide técnica y cobertura para máxima coherencia. Tú decides intención y tono.',
-  DIRECTOR: 'Desbloquea plano, movimiento y ritmo. La IA valida continuidad y avisa si algo rompe cine.',
   PRO: 'Control total tipo rodaje real. La IA no corrige tus decisiones: solo advierte.',
 };
 
@@ -179,10 +176,9 @@ export function CreativeModeProvider({
 
   // Helper to check if a field should be visible based on mode
   const isFieldVisible = useCallback((field: string, requiredMode: CreativeMode): boolean => {
-    // In lower modes, PRO-only fields are completely hidden
-    // In DIRECTOR mode, some PRO fields are visible but readonly
+    // In ASSISTED mode, PRO-only fields are completely hidden
     if (requiredMode === 'PRO') {
-      return effectiveMode === 'PRO' || effectiveMode === 'DIRECTOR';
+      return effectiveMode === 'PRO';
     }
     return MODE_HIERARCHY[effectiveMode] >= MODE_HIERARCHY[requiredMode];
   }, [effectiveMode]);

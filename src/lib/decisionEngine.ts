@@ -25,7 +25,7 @@ import {
 // TYPES
 // ─────────────────────────────────────────────────────────────
 
-export type UserMode = 'assisted' | 'director' | 'pro' | 'dev';
+export type UserMode = 'assisted' | 'pro' | 'dev';
 export type DecisionPhase = 'exploration' | 'production';
 export type DecisionAssetType = 'script_import' | 'character' | 'location' | 'keyframe' | 'video' | 'scene' | 'shot';
 export type ActionIntent = 'generate' | 'accept' | 'regenerate' | 'canon' | 'script_import' | 'reinforce_canon_and_regenerate';
@@ -845,7 +845,6 @@ export async function logDecisionEvent(
 export function creativeModeToUserMode(mode: CreativeMode): UserMode {
   switch (mode) {
     case 'ASSISTED': return 'assisted';
-    case 'DIRECTOR': return 'director';
     case 'PRO': return 'pro';
     default: return 'assisted';
   }

@@ -1,8 +1,8 @@
 // ============= CREATIVE MODE CAPABILITIES =============
 // This file defines what UI elements and editing capabilities are available
-// for each creative mode (ASSISTED, DIRECTOR, PRO)
+// for each creative mode (ASSISTED, PRO)
 
-export type CreativeMode = "ASSISTED" | "DIRECTOR" | "PRO";
+export type CreativeMode = "ASSISTED" | "PRO";
 
 export interface ModeCapabilities {
   // UI visibility
@@ -17,6 +17,9 @@ export interface ModeCapabilities {
     showTargetsNumeric: boolean;
     showOverrides: boolean;
     showPerSceneOverrideMode: boolean;
+    showPackSlots: boolean; // New: Show full character pack grid
+    showIdentityPack: boolean; // New: Show identity pack management
+    showVisualDNAEditor: boolean; // New: Show visual DNA editor
   };
   // Edit permissions
   edit: {
@@ -41,6 +44,8 @@ export interface ModeCapabilities {
     canEditCostModel: boolean;
     canAcceptWithWarnings: boolean;
     canOverrideQCBlocks: boolean;
+    canManagePackSlots: boolean; // New: Can manually fill pack slots
+    canTrainLoRA: boolean; // New: Can trigger LoRA training
   };
   // AI and QC behavior
   behavior: {
@@ -49,6 +54,7 @@ export interface ModeCapabilities {
     qcBlocksOnHardViolation: boolean;
     qcBlocksOnMediumViolation: boolean;
     qcWarningsOnly: boolean;
+    autoGeneratePackSlots: boolean; // New: Auto-generate extra slots after hero accept
   };
 }
 
@@ -65,6 +71,9 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       showTargetsNumeric: false,
       showOverrides: false,
       showPerSceneOverrideMode: false,
+      showPackSlots: false, // Hide pack grid in ASSISTED
+      showIdentityPack: false, // Hide identity pack in ASSISTED
+      showVisualDNAEditor: false, // Hide Visual DNA editor in ASSISTED
     },
     edit: {
       canEditAuthorDNA: false,
@@ -88,6 +97,8 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       canEditCostModel: false,
       canAcceptWithWarnings: false,
       canOverrideQCBlocks: false,
+      canManagePackSlots: false, // Cannot manually manage slots
+      canTrainLoRA: false, // Cannot train LoRA
     },
     behavior: {
       aiAutoDecidesTechnical: true,
@@ -95,51 +106,7 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       qcBlocksOnHardViolation: true,
       qcBlocksOnMediumViolation: true,
       qcWarningsOnly: false,
-    },
-  },
-
-  DIRECTOR: {
-    ui: {
-      showAdvancedSections: true,
-      showTechCameraFields: true,
-      showLensExactFields: false,
-      showLightingTechnicalFields: false,
-      showEditIntentFields: true,
-      showBlockingTimelineEditor: true,
-      showSeedAndModelParams: false,
-      showTargetsNumeric: false,
-      showOverrides: false,
-      showPerSceneOverrideMode: true,
-    },
-    edit: {
-      canEditAuthorDNA: false,
-      canLockAuthorDNA: true,
-      canEditWorldRules: false,
-      canEditContinuityLocks: true,
-      canChooseShotType: true,
-      canChooseMovement: true,
-      canChooseFocalApprox: true,
-      canChooseFocalExact: false,
-      canChooseCameraBody: false,
-      canChooseLensModel: false,
-      canChooseCameraHeightAngleDistance: false,
-      canEditLightingMood: true,
-      canEditLightingSetup: false,
-      canManualKeyframes: true,
-      canRequireMidKeyframes: false,
-      canSelectVideoEngine: true,
-      canSelectQualityTier: true,
-      canEditRetryBudget: true,
-      canEditCostModel: false,
-      canAcceptWithWarnings: true,
-      canOverrideQCBlocks: false,
-    },
-    behavior: {
-      aiAutoDecidesTechnical: true,
-      aiMayAutoFixHardIssues: true,
-      qcBlocksOnHardViolation: true,
-      qcBlocksOnMediumViolation: false,
-      qcWarningsOnly: false,
+      autoGeneratePackSlots: true, // Auto-generate profile + back after hero accept
     },
   },
 
@@ -155,6 +122,9 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       showTargetsNumeric: true,
       showOverrides: true,
       showPerSceneOverrideMode: true,
+      showPackSlots: true, // Show full pack grid
+      showIdentityPack: true, // Show identity pack management
+      showVisualDNAEditor: true, // Show Visual DNA editor
     },
     edit: {
       canEditAuthorDNA: true,
@@ -178,6 +148,8 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       canEditCostModel: true,
       canAcceptWithWarnings: true,
       canOverrideQCBlocks: true,
+      canManagePackSlots: true, // Full pack control
+      canTrainLoRA: true, // Can trigger LoRA training
     },
     behavior: {
       aiAutoDecidesTechnical: false,
@@ -185,6 +157,7 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       qcBlocksOnHardViolation: false,
       qcBlocksOnMediumViolation: false,
       qcWarningsOnly: true,
+      autoGeneratePackSlots: false, // No auto-generation, manual control
     },
   },
 } as const;

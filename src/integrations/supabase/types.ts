@@ -352,6 +352,7 @@ export type Database = {
           reference_anchor_id: string | null
           reference_weight: number | null
           required: boolean
+          run_id: string | null
           seed: number | null
           slot_index: number
           slot_type: string
@@ -375,6 +376,7 @@ export type Database = {
           reference_anchor_id?: string | null
           reference_weight?: number | null
           required?: boolean
+          run_id?: string | null
           seed?: number | null
           slot_index?: number
           slot_type: string
@@ -398,6 +400,7 @@ export type Database = {
           reference_anchor_id?: string | null
           reference_weight?: number | null
           required?: boolean
+          run_id?: string | null
           seed?: number | null
           slot_index?: number
           slot_type?: string
@@ -418,6 +421,13 @@ export type Database = {
             columns: ["outfit_id"]
             isOneToOne: false
             referencedRelation: "character_outfits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "character_pack_slots_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
             referencedColumns: ["id"]
           },
           {
@@ -503,6 +513,7 @@ export type Database = {
           current_run_id: string | null
           expressions: Json | null
           id: string
+          is_ready_for_video: boolean | null
           lora_trained_at: string | null
           lora_training_id: string | null
           lora_training_status: string | null
@@ -510,6 +521,7 @@ export type Database = {
           lora_url: string | null
           name: string
           pack_completeness_score: number | null
+          pack_status: string | null
           production_ready_slots: number | null
           profile_json: Json | null
           project_id: string
@@ -518,6 +530,7 @@ export type Database = {
           token: string | null
           turnaround_urls: Json | null
           updated_at: string
+          visual_dna: Json | null
           voice_card: Json | null
         }
         Insert: {
@@ -533,6 +546,7 @@ export type Database = {
           current_run_id?: string | null
           expressions?: Json | null
           id?: string
+          is_ready_for_video?: boolean | null
           lora_trained_at?: string | null
           lora_training_id?: string | null
           lora_training_status?: string | null
@@ -540,6 +554,7 @@ export type Database = {
           lora_url?: string | null
           name: string
           pack_completeness_score?: number | null
+          pack_status?: string | null
           production_ready_slots?: number | null
           profile_json?: Json | null
           project_id: string
@@ -548,6 +563,7 @@ export type Database = {
           token?: string | null
           turnaround_urls?: Json | null
           updated_at?: string
+          visual_dna?: Json | null
           voice_card?: Json | null
         }
         Update: {
@@ -563,6 +579,7 @@ export type Database = {
           current_run_id?: string | null
           expressions?: Json | null
           id?: string
+          is_ready_for_video?: boolean | null
           lora_trained_at?: string | null
           lora_training_id?: string | null
           lora_training_status?: string | null
@@ -570,6 +587,7 @@ export type Database = {
           lora_url?: string | null
           name?: string
           pack_completeness_score?: number | null
+          pack_status?: string | null
           production_ready_slots?: number | null
           profile_json?: Json | null
           project_id?: string
@@ -578,6 +596,7 @@ export type Database = {
           token?: string | null
           turnaround_urls?: Json | null
           updated_at?: string
+          visual_dna?: Json | null
           voice_card?: Json | null
         }
         Relationships: [

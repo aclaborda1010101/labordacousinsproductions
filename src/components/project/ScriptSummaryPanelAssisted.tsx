@@ -152,7 +152,7 @@ export function ScriptSummaryPanelAssisted({
   const [tempTitle, setTempTitle] = useState('');
   const titleInputRef = useRef<HTMLInputElement>(null);
   
-  const canEditTitles = effectiveMode === 'DIRECTOR' || effectiveMode === 'PRO';
+  const canEditTitles = effectiveMode === 'PRO';
   
   // Determine current workflow step
   const allEpisodesSegmented = scriptData?.episodes?.every(ep => segmentedEpisodes.has(ep.episode_number)) ?? false;
