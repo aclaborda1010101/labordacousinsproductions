@@ -1077,71 +1077,51 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         duration: 8000 
       });
 
-      // Retry with exponential backoff on timeouts
+      // SINGLE REQUEST: Don't retry with new requests - the backend continues processing even after client timeout!
+      // If client timeout occurs, go directly to DB polling recovery (the server keeps working)
       let currentTimeoutMs = baseTimeoutSec * 1000;
-      let attemptNumber = 0;
-      const maxAttempts = 3;
       let breakdownData: any = null;
       let breakdownError: Error | null = null;
-      let lastWasTimeout = false;
+      let clientTimedOut = false;
 
-      while (attemptNumber < maxAttempts) {
-        attemptNumber++;
-        
-        if (attemptNumber > 1) {
-          toast.info(`Reintento ${attemptNumber}/${maxAttempts} con timeout de ${Math.round(currentTimeoutMs / 1000)}s...`, { duration: 5000 });
-        }
+      console.log(`[ScriptWorkspace] Starting script-breakdown with timeout ${currentTimeoutMs}ms (${Math.round(currentTimeoutMs/1000)}s)`);
+      toast.info(`Procesando guion...`, { 
+        description: `Tiempo máximo de espera: ${Math.round(currentTimeoutMs/60000)} minutos. El servidor seguirá procesando aunque la conexión expire.`,
+        duration: 8000 
+      });
 
-        const result = await invokeWithTimeout<any>(
-          'script-breakdown',
-          {
-            projectId,
-            scriptText: textToAnalyze,
-            scriptId: savedScript.id,
-            language: 'es-ES',
-            format: projectFormat === 'film' ? 'film' : 'series',
-            episodesCount: projectFormat === 'film' ? 1 : episodesCount,
-            episodeDurationMin,
-          },
-          { timeoutMs: currentTimeoutMs }
-        );
+      const result = await invokeWithTimeout<any>(
+        'script-breakdown',
+        {
+          projectId,
+          scriptText: textToAnalyze,
+          scriptId: savedScript.id,
+          language: 'es-ES',
+          format: projectFormat === 'film' ? 'film' : 'series',
+          episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+          episodeDurationMin,
+        },
+        { timeoutMs: currentTimeoutMs }
+      );
 
-        breakdownData = result.data;
-        breakdownError = result.error;
+      breakdownData = result.data;
+      breakdownError = result.error;
 
-        // Check if it was a timeout error
-        const isTimeout = breakdownError instanceof Error && 
-          (breakdownError.message.includes('aborted') || 
-           breakdownError.message.includes('timeout') ||
-           breakdownError.name === 'AbortError');
+      // Check if it was a timeout error
+      const isTimeout = breakdownError instanceof Error && 
+        (breakdownError.message.includes('aborted') || 
+         breakdownError.message.includes('timeout') ||
+         breakdownError.name === 'AbortError');
 
-        if (isTimeout) {
-          lastWasTimeout = true;
-          console.warn(`[ScriptWorkspace] Timeout on attempt ${attemptNumber}, increasing timeout...`);
-          
-          if (attemptNumber < maxAttempts) {
-            // Exponential backoff: increase timeout by 50% each retry
-            currentTimeoutMs = Math.min(currentTimeoutMs * 1.75, 900000); // Max 15 min
-            toast.warning(`Timeout en el análisis. Aumentando tiempo de espera...`, { 
-              description: `Reintentando con ${Math.round(currentTimeoutMs / 1000)}s de timeout`,
-              duration: 6000 
-            });
-            // Brief pause before retry
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            continue;
-          }
-        }
-
-        // If no timeout error (success or other error), break the loop
-        break;
-      }
-
-      // If all attempts failed due to timeout, notify user clearly
-      if (lastWasTimeout && breakdownError) {
-        toast.error('El análisis excedió el tiempo máximo', {
-          description: `El guion (${Math.round(scriptLength / 1000)}k caracteres) es muy largo. Intenta dividirlo en partes más pequeñas.`,
-          duration: 12000,
+      if (isTimeout) {
+        clientTimedOut = true;
+        console.warn(`[ScriptWorkspace] Client timeout after ${currentTimeoutMs}ms - backend continues processing, will poll DB for result`);
+        toast.warning(`El servidor sigue procesando...`, { 
+          description: `La conexión expiró pero el análisis continúa en el servidor. Recuperando resultado automáticamente...`,
+          duration: 10000 
         });
+        // DON'T retry with new request - go directly to recovery polling below
+        // This is critical: a new request would restart the analysis from scratch!
       }
 
       // Handle PROJECT_BUSY (409) without throwing unhandled exceptions; retry once.
@@ -1217,14 +1197,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         throw breakdownError;
       }
 
-      // If there was a network error or no data, try to recover from the database
-      // (the backend may have completed successfully before the connection closed)
+      // If client timed out OR network error, try to recover from the database
+      // The backend may still be processing or may have completed - poll DB for result
       // Use dynamic polling based on script length calculated earlier
-      if (isNetworkError || !breakdownData) {
-        console.log('[ScriptWorkspace] Network error or no data, attempting to recover from DB...');
+      if (clientTimedOut || isNetworkError || !breakdownData) {
+        console.log(`[ScriptWorkspace] ${clientTimedOut ? 'Client timeout' : 'Network error'} - polling DB for backend result...`);
         const estimatedMinutes = Math.ceil((dynamicPollingRetries * dynamicPollingDelaySec) / 60);
-        toast.info(`El servidor sigue procesando. Recuperando resultado...`, { 
-          description: `Verificando cada ${dynamicPollingDelaySec}s durante ~${estimatedMinutes} minutos`,
+        toast.info(`Esperando resultado del servidor...`, { 
+          description: `Verificando cada ${dynamicPollingDelaySec}s durante ~${estimatedMinutes} minutos. El análisis sigue en proceso.`,
           duration: 15000 
         });
         
