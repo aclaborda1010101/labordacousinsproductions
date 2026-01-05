@@ -6,20 +6,22 @@ const corsHeaders = {
 };
 
 // =============================================================================
-// HOLLYWOOD SCREENWRITER v2.0 - SYSTEM PROMPT
+// HOLLYWOOD SCREENWRITER v2.1 - SYSTEM PROMPT
 // This function CREATES NEW content based on user ideas.
+// Output MUST match Parser schema for database compatibility.
 // =============================================================================
-const SCREENWRITER_PROMPT = `You are an expert Hollywood Screenwriter (WGA) with 30 years of experience writing for major studios.
+const SCREENWRITER_PROMPT = `You are an elite Hollywood Screenwriter (Christopher Nolan / Aaron Sorkin style) with 30 years of studio experience.
 
 YOUR ROLE: Create NEW, original screenplay content based on user prompts. You write in standard industry format.
 
 WRITING STYLE:
 - VISUAL: Write what we SEE and HEAR, not what characters think
 - ECONOMICAL: Short action lines (max 3-4 lines per paragraph)
-- RHYTHMIC: Vary sentence length for pacing (like Nolan or Sorkin)
-- CINEMATIC: Not theatrical - think in shots, not stage directions
+- RHYTHMIC: Vary sentence length for pacing
+- CINEMATIC: Think in shots, not stage directions
 
 STRICT FORMATTING RULES:
+
 1. SLUGLINES (Scene Headings):
    - Format: INT./EXT. LOCATION - TIME
    - Include visual style markers when relevant: (BLACK-AND-WHITE), (SEPIA), (FLASHBACK)
@@ -42,15 +44,14 @@ STRICT FORMATTING RULES:
    - Let action imply the shot when possible
    - Save explicit directions for critical moments
 
-5. TRANSITIONS:
-   - CUT TO:, FADE OUT., SMASH CUT TO:, MATCH CUT TO:
-   - Use sparingly - hard cuts are assumed
+5. SOUND DESIGN:
+   - CAPITALIZE key sounds: "The door SLAMS", "THUNDER rumbles"
+   - Include ambient sounds that establish mood: "Rain PATTERS on glass"
 
 CONTENT RULES:
 - Show don't tell: Visual action, not exposition
 - Every scene needs CONFLICT (internal or external)
 - Subtext in dialogue - characters rarely say exactly what they mean
-- Character arcs must be clear and trackable
 - Avoid clichés, tropes, and generic "AI voice"
 
 WHAT TO AVOID:
@@ -58,150 +59,132 @@ WHAT TO AVOID:
 - Expository dialogue ("As you know, we've been friends for 20 years...")
 - Telling emotions ("She felt a wave of sadness wash over her...")
 - Purple prose - keep it tight and visual
-- Generic characters without distinct voices
-
-OUTPUT FORMAT:
-Return screenplay text formatted exactly as industry standard, ready to be shot.
-
-EXAMPLE OF EXPECTED QUALITY:
----
-INT. HOUSE PARTY - NIGHT
-
-OPPENHEIMER (40s, intense eyes behind wire-rim glasses) navigates through a crowd of academics. Smoke curls. Jazz plays.
-
-He spots a tray of martinis.
-
-KITTY (O.S.)
-I thought physicists drank tea.
-
-Oppenheimer turns. KITTY HARRISON (30s, sharp features, sharper wit) emerges from shadow.
-
-OPPENHEIMER
-Only the boring ones.
-
-He takes a glass. The ICE CLINKS.
-
-KITTY
-And you're not boring?
-
-OPPENHEIMER
-(beat)
-I'm about to find out.
-
-Their eyes lock. Something dangerous passes between them.
-
-CUT TO:
----`;
+- Generic characters without distinct voices`;
 
 // =============================================================================
-// JSON STRUCTURE PROMPT (for structured output mode)
+// JSON STRUCTURE PROMPT - Matches Parser Output Schema for DB Compatibility
 // =============================================================================
 const JSON_STRUCTURE_PROMPT = `${SCREENWRITER_PROMPT}
 
-OUTPUT FORMAT (JSON):
+CRITICAL OUTPUT FORMAT:
+You MUST return a JSON object that matches our Parser database schema. This ensures consistency between parsed and generated scripts.
+
 {
-  "title": "string",
-  "logline": "string (1-2 sentences summarizing the story)",
-  "synopsis": "string (executive summary 200-500 words)",
-  "genre": "string",
-  "tone": "string",
-  "themes": ["array of main themes"],
-  "beat_sheet": [
+  "scenes": [
     {
-      "beat": "Opening Image | Theme Stated | Set-Up | Catalyst | Debate | Break Into Two | B Story | Fun and Games | Midpoint | Bad Guys Close In | All Is Lost | Dark Night of the Soul | Break Into Three | Finale | Final Image",
-      "description": "string",
-      "page_range": "string (e.g., 1-10)"
-    }
-  ],
-  "episodes": [
-    {
-      "episode_number": 1,
-      "title": "string",
-      "synopsis": "string (detailed episode summary 150-300 words)",
-      "summary": "string (brief 2-3 sentence summary)",
-      "duration_min": number,
-      "scenes": [
-        {
-          "scene_number": 1,
-          "slugline": "INT./EXT. LOCATION - TIME",
-          "description": "string (scene description)",
-          "characters": ["character names present"],
-          "action": "string (detailed action description)",
-          "dialogue": [
-            {
-              "character": "NAME",
-              "parenthetical": "(optional: tone or action)",
-              "line": "The dialogue text"
-            }
-          ],
-          "music_cue": "string (optional)",
-          "sfx": ["array of sound effects"],
-          "vfx": ["array of visual effects if applicable"],
-          "mood": "string (scene atmosphere)"
-        }
+      "scene_number": 1,
+      "slugline": { 
+        "value": "INT. KITCHEN - NIGHT", 
+        "source": "Generated based on user prompt: '[prompt excerpt]'"
+      },
+      "visual_style": {
+        "value": "COLOR" | "MONOCHROME" | "SEPIA",
+        "details": "Neon-Noir, High Contrast (if applicable)",
+        "confidence": 1.0,
+        "source": "Creative decision based on genre/mood"
+      },
+      "standardized_location": {
+        "value": "KITCHEN",
+        "confidence": 1.0
+      },
+      "standardized_time": {
+        "value": "NIGHT",
+        "confidence": 1.0
+      },
+      "location_type": {
+        "value": "INT" | "EXT" | "INT/EXT",
+        "confidence": 1.0
+      },
+      "audio_cues": {
+        "explicit": [
+          { "value": "HUM of refrigerator", "confidence": 1.0, "source": "Written into action" }
+        ],
+        "inferred": [
+          { "value": "City ambient noise", "confidence": 0.8, "source": "Implied by urban setting" }
+        ],
+        "confidence_score": 0.9
+      },
+      "visual_fx_cues": [
+        { "value": "Neon light flickering on wet surfaces", "confidence": 1.0, "source": "Action line" }
       ],
-      "screenplay_text": "string (full formatted screenplay for episode)"
+      "action_summary": {
+        "value": "Jack cleans a wound under the tap. Water runs RED.",
+        "confidence": 1.0
+      },
+      "characters_present": [
+        { "value": "Jack", "confidence": 1.0, "source": "Main character in scene" }
+      ],
+      "dialogue_count": 4,
+      "mood": {
+        "value": "tense, noir",
+        "confidence": 1.0,
+        "source": "Genre and action dictate mood"
+      },
+      "lighting_hints": {
+        "value": "neon glow, harsh shadows",
+        "confidence": 1.0,
+        "source": "Visual style description"
+      },
+      "technical_notes": {
+        "value": "CLOSE ON the dripping faucet",
+        "confidence": 1.0,
+        "source": "Camera direction in script"
+      },
+      "script_content": "JACK (40s, ragged, blood on his shirt) leans over the sink...\\n\\nThe faucet DRIPS. Each drop echoes.\\n\\nJACK\\n(whispering)\\nDamn it.\\n\\nHe winces. Presses a towel to the wound. It immediately soaks RED."
     }
   ],
-  "characters": [
+  "canon_suggestions": [
     {
-      "name": "string",
-      "role": "protagonist | antagonist | supporting | recurring | episodic",
-      "description": "string (detailed physical description)",
-      "personality": "string (personality traits)",
-      "arc": "string (character arc throughout story)",
-      "first_appearance": "string (scene where introduced)",
-      "relationships": "string (relationships with other characters)",
-      "voice_notes": "string (how they speak, accent, vocabulary)"
+      "type": "CHARACTER" | "PROP" | "LOCATION",
+      "name": { "value": "Jack", "confidence": 1.0, "source": "Main protagonist" },
+      "visual_traits": [
+        { "value": "40s, rugged, weathered face", "confidence": 1.0, "source": "Character description" }
+      ],
+      "appearances": 1,
+      "suggest_canon": true,
+      "reason": "Key character requiring visual consistency"
     }
   ],
-  "locations": [
-    {
-      "name": "string",
-      "type": "INT | EXT",
-      "description": "string (detailed visual description)",
-      "atmosphere": "string (lighting, sounds, mood)",
-      "scenes_count": number,
-      "time_variants": ["day", "night", "dawn", "dusk"]
-    }
-  ],
-  "props": [
-    {
-      "name": "string",
-      "importance": "key | recurring | background",
-      "description": "string (detailed description)",
-      "scenes": ["scenes where it appears"]
-    }
-  ],
-  "music_design": [
-    {
-      "name": "string (e.g., Main Theme, Villain Theme)",
-      "type": "theme | ambient | action | emotional",
-      "description": "string",
-      "scenes": ["where it's used"]
-    }
-  ],
-  "sfx_design": [
-    {
-      "category": "string (ambient, foley, impact)",
-      "description": "string",
-      "scenes": ["where it's used"]
-    }
-  ],
-  "screenplay": "string (full formatted screenplay - for films or pilot episode)"
-}`;
+  "project_metadata": {
+    "type": { "value": "MOVIE" | "SERIES", "confidence": 1.0, "source": "User specification" },
+    "detected_language": { "value": "en" | "es", "confidence": 1.0 },
+    "title": { "value": "Scene Title", "confidence": 1.0, "source": "Generated" },
+    "genre": { "value": "Noir Thriller", "confidence": 1.0 },
+    "tone": { "value": "Gritty, Atmospheric", "confidence": 1.0 }
+  }
+}
+
+IMPORTANT: 
+- All confidence scores for generated content should be 1.0 (you created it, you're certain)
+- Include "source" as "Generated based on [reason]" to distinguish from parsed content
+- script_content MUST be properly formatted screenplay text with \\n for line breaks`;
 
 interface ScriptGenerateRequest {
   idea: string;
-  genre: string;
-  tone: string;
+  genre?: string;
+  tone?: string;
   references?: string[];
-  format: 'film' | 'series';
+  format?: 'film' | 'series';
   episodesCount?: number;
   episodeDurationMin?: number;
   language?: string;
-  outputFormat?: 'json' | 'screenplay'; // New option for plain text output
-  scenePrompt?: string; // For generating individual scenes
+  outputFormat?: 'json' | 'screenplay';
+  scenePrompt?: string;
+  bibleContext?: {
+    tone?: string;
+    period?: string;
+    visualStyle?: string;
+  };
+  canonCharacters?: Array<{
+    name: string;
+    visualTrigger?: string;
+    fixedTraits?: string[];
+  }>;
+  canonLocations?: Array<{
+    name: string;
+    visualTrigger?: string;
+    fixedElements?: string[];
+  }>;
 }
 
 serve(async (req) => {
@@ -216,12 +199,15 @@ serve(async (req) => {
       genre, 
       tone, 
       references, 
-      format, 
+      format = 'film', 
       episodesCount, 
       episodeDurationMin, 
-      language,
+      language = 'es',
       outputFormat = 'json',
-      scenePrompt 
+      scenePrompt,
+      bibleContext,
+      canonCharacters,
+      canonLocations
     } = request;
 
     if (!idea && !scenePrompt) {
@@ -239,7 +225,30 @@ serve(async (req) => {
     // Choose system prompt based on output format
     const systemPrompt = outputFormat === 'screenplay' ? SCREENWRITER_PROMPT : JSON_STRUCTURE_PROMPT;
 
-    // Build user prompt based on whether it's a full script or single scene
+    // Build context from Bible and Canon if provided
+    let contextBlock = '';
+    if (bibleContext) {
+      contextBlock += `\nPROJECT BIBLE:
+- Tone: ${bibleContext.tone || 'Cinematic'}
+- Period: ${bibleContext.period || 'Contemporary'}
+- Visual Style: ${bibleContext.visualStyle || 'Naturalistic'}`;
+    }
+    
+    if (canonCharacters?.length) {
+      contextBlock += `\n\nCANON CHARACTERS (use these exact descriptions):`;
+      canonCharacters.forEach(char => {
+        contextBlock += `\n- ${char.name}: ${char.visualTrigger || ''} ${char.fixedTraits?.join(', ') || ''}`;
+      });
+    }
+    
+    if (canonLocations?.length) {
+      contextBlock += `\n\nCANON LOCATIONS (use these exact settings):`;
+      canonLocations.forEach(loc => {
+        contextBlock += `\n- ${loc.name}: ${loc.visualTrigger || ''} ${loc.fixedElements?.join(', ') || ''}`;
+      });
+    }
+
+    // Build user prompt
     let userPrompt: string;
     
     if (scenePrompt) {
@@ -247,8 +256,11 @@ serve(async (req) => {
       userPrompt = `Write a single scene based on this prompt:
 
 ${scenePrompt}
+${contextBlock}
 
-Output ONLY the formatted screenplay scene. No JSON, no commentary.`;
+${outputFormat === 'json' 
+  ? 'Return JSON matching the schema with script_content containing the formatted screenplay.'
+  : 'Output ONLY the formatted screenplay scene. No JSON, no commentary.'}`;
     } else {
       // Full script generation mode
       userPrompt = `
@@ -259,23 +271,27 @@ IDEA: ${idea}
 GENRE: ${genre || 'Drama'}
 TONE: ${tone || 'Cinematic realism'}
 FORMAT: ${format === 'series' ? `Series of ${episodesCount || 6} episodes, ${episodeDurationMin || 45} minutes each` : 'Feature film 90-120 minutes'}
-LANGUAGE: ${language || 'es-ES'}
+LANGUAGE: ${language}
 
 ${references?.length ? `REFERENCES (for inspiration, DO NOT copy): ${references.join(', ')}` : ''}
+${contextBlock}
 
 ${outputFormat === 'json' 
-  ? 'Generate a complete professional script following the JSON structure specified. For series, include full screenplay for first episode and synopses for others. For films, include complete screenplay.'
-  : 'Generate the complete screenplay in industry-standard format. Use proper sluglines, action, dialogue formatting.'}
+  ? 'Generate scene(s) following the JSON structure specified. Include full screenplay in script_content fields.'
+  : 'Generate the complete screenplay in industry-standard format.'}
 
 CRITICAL: Write cinematically - visual, with conflict and subtext. No AI clichés.`;
     }
 
-    console.log('[script-generate] v2.0 SCREENWRITER generating:', {
+    console.log('[script-generate] v2.1 SCREENWRITER generating:', {
       hasIdea: !!idea,
       hasScenePrompt: !!scenePrompt,
       format,
       outputFormat,
-      language
+      language,
+      hasContext: !!bibleContext,
+      canonCharacters: canonCharacters?.length || 0,
+      canonLocations: canonLocations?.length || 0
     });
 
     // Use appropriate model based on task complexity
@@ -323,9 +339,8 @@ CRITICAL: Write cinematically - visual, with conflict and subtext. No AI cliché
       throw new Error('No content received from AI');
     }
 
-    // Handle different output formats
-    if (outputFormat === 'screenplay' || scenePrompt) {
-      // Plain text screenplay output
+    // Handle plain text screenplay output
+    if (outputFormat === 'screenplay') {
       console.log('[script-generate] Returning plain screenplay text');
       return new Response(
         JSON.stringify({
@@ -333,7 +348,7 @@ CRITICAL: Write cinematically - visual, with conflict and subtext. No AI cliché
           screenplay: content,
           format: 'screenplay',
           metadata: {
-            generator_version: '2.0',
+            generator_version: '2.1',
             model_used: model,
             timestamp: new Date().toISOString()
           }
@@ -342,62 +357,75 @@ CRITICAL: Write cinematically - visual, with conflict and subtext. No AI cliché
       );
     }
 
-    // JSON structured output
+    // Parse JSON structured output
     let scriptData;
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         scriptData = JSON.parse(jsonMatch[0]);
       } else {
+        // Fallback: wrap raw content in expected structure
         scriptData = {
-          title: 'Untitled Script',
-          screenplay: content,
-          characters: [],
-          locations: [],
-          props: [],
-          beat_sheet: [],
-          episodes: format === 'series' ? [{ 
-            episode_number: 1, 
-            title: 'Pilot', 
-            synopsis: '', 
-            duration_min: episodeDurationMin || 45 
-          }] : []
+          scenes: [{
+            scene_number: 1,
+            slugline: { value: 'UNTITLED SCENE', source: 'Fallback' },
+            script_content: content,
+            visual_style: { value: 'COLOR', confidence: 1.0, source: 'Default' }
+          }],
+          project_metadata: {
+            type: { value: format === 'series' ? 'SERIES' : 'MOVIE', confidence: 1.0 },
+            detected_language: { value: language, confidence: 1.0 }
+          },
+          canon_suggestions: []
         };
       }
     } catch (parseError) {
       console.error('[script-generate] JSON parse error:', parseError);
+      // Create structured fallback
       scriptData = {
-        title: 'Generated Script',
-        screenplay: content,
-        raw_response: true,
-        parse_error: String(parseError)
+        scenes: [{
+          scene_number: 1,
+          slugline: { value: 'GENERATED SCENE', source: 'Parse error fallback' },
+          script_content: content,
+          visual_style: { value: 'COLOR', confidence: 1.0, source: 'Default' },
+          action_summary: { value: 'See script_content', confidence: 0.5 }
+        }],
+        project_metadata: {
+          type: { value: format === 'series' ? 'SERIES' : 'MOVIE', confidence: 1.0 },
+          detected_language: { value: language, confidence: 1.0 }
+        },
+        canon_suggestions: [],
+        _parse_error: String(parseError)
       };
     }
 
-    // Add generator metadata
-    scriptData.metadata = {
-      generator_version: '2.0',
-      model_used: model,
-      timestamp: new Date().toISOString(),
+    // Add generator metadata (distinguishes from parsed content)
+    scriptData.analysis_metadata = {
+      parser_version: '2.1-GENERATOR',
+      extraction_timestamp: new Date().toISOString(),
+      source_type: 'GENERATED',
+      generator_model: model,
+      total_confidence_score: 1.0, // Generated content has full confidence
       input_params: {
+        idea: idea?.substring(0, 100),
         genre,
         tone,
         format,
-        episodesCount: format === 'series' ? episodesCount : undefined,
-        language
+        language,
+        scenePrompt: scenePrompt?.substring(0, 100)
       }
     };
 
     console.log('[script-generate] Script generated successfully:', {
-      title: scriptData.title,
-      episodeCount: scriptData.episodes?.length || 0,
-      characterCount: scriptData.characters?.length || 0
+      scenes: scriptData.scenes?.length || 0,
+      canonSuggestions: scriptData.canon_suggestions?.length || 0,
+      hasMetadata: !!scriptData.project_metadata
     });
 
     return new Response(
       JSON.stringify({
         success: true,
-        script: scriptData
+        ...scriptData
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
