@@ -3707,6 +3707,7 @@ export type Database = {
           created_at: string
           episode_no: number
           estimated_cost: Json | null
+          forensic_metadata: Json | null
           id: string
           location_id: string | null
           max_attempts_override: number | null
@@ -3715,6 +3716,7 @@ export type Database = {
           objective: string | null
           override_mode: string | null
           padding_override: number | null
+          parse_confidence: number | null
           parsed_json: Json | null
           priority: Database["public"]["Enums"]["priority_level"]
           project_id: string
@@ -3745,6 +3747,7 @@ export type Database = {
           created_at?: string
           episode_no?: number
           estimated_cost?: Json | null
+          forensic_metadata?: Json | null
           id?: string
           location_id?: string | null
           max_attempts_override?: number | null
@@ -3753,6 +3756,7 @@ export type Database = {
           objective?: string | null
           override_mode?: string | null
           padding_override?: number | null
+          parse_confidence?: number | null
           parsed_json?: Json | null
           priority?: Database["public"]["Enums"]["priority_level"]
           project_id: string
@@ -3783,6 +3787,7 @@ export type Database = {
           created_at?: string
           episode_no?: number
           estimated_cost?: Json | null
+          forensic_metadata?: Json | null
           id?: string
           location_id?: string | null
           max_attempts_override?: number | null
@@ -3791,6 +3796,7 @@ export type Database = {
           objective?: string | null
           override_mode?: string | null
           padding_override?: number | null
+          parse_confidence?: number | null
           parsed_json?: Json | null
           priority?: Database["public"]["Enums"]["priority_level"]
           project_id?: string
