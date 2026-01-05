@@ -20,7 +20,8 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.parse-script]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via v3RequireAuth
+verify_jwt = false
 
 [functions.develop-structure]
 verify_jwt = true
