@@ -482,6 +482,18 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     return 300000;                                  // >600KB: 5 min
   };
 
+  // Animated progress messages during PDF processing
+  const PDF_PROCESSING_MESSAGES = [
+    '📄 Leyendo páginas del PDF...',
+    '🔍 Identificando formato de guion...',
+    '📝 Extrayendo diálogos y acciones...',
+    '🎬 Detectando escenas y sluglines...',
+    '👥 Identificando personajes...',
+    '🏠 Localizando escenarios...',
+    '⏱️ Casi listo, finalizando extracción...',
+  ];
+  const [pdfMessageIndex, setPdfMessageIndex] = useState(0);
+
   // Handle file upload
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -497,6 +509,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     setStatus('analyzing');
     setProgress(5);
     setProgressMessage('Preparando archivo...');
+    setPdfMessageIndex(0);
     
     if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
       const text = await file.text();
@@ -508,7 +521,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
       const fileSizeKB = Math.round(file.size / 1024);
       const estimatedPages = Math.ceil(file.size / 3500);
-      setProgressMessage(`Subiendo PDF (${fileSizeKB}KB, ~${estimatedPages} págs)...`);
+      setProgressMessage(`📤 Subiendo PDF (${fileSizeKB}KB, ~${estimatedPages} págs)...`);
       toast.info(`Procesando PDF (~${estimatedPages} páginas, ${fileSizeKB}KB)...`);
       
       const fileName = `${projectId}/${Date.now()}_${file.name}`;
@@ -524,8 +537,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         return;
       }
 
-      setProgress(20);
-      setProgressMessage('Archivo subido. Extrayendo texto con IA...');
+      setProgress(15);
+      setProgressMessage('✅ Archivo subido. Preparando análisis con IA...');
       const { data: urlData } = supabase.storage.from('scripts').getPublicUrl(fileName);
       
       try {
@@ -533,16 +546,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         const timeoutMs = getTimeoutForFileSize(file.size);
         console.log(`[ScriptWorkspace] Using timeout ${timeoutMs}ms for ${fileSizeKB}KB PDF`);
         
-        // Start progress simulation for long operations
+        // Start progress simulation with rotating messages
+        let progressValue = 20;
+        let messageIdx = 0;
         const progressInterval = setInterval(() => {
-          setProgress(prev => {
-            if (prev < 60) return prev + 2;
-            if (prev < 80) return prev + 0.5;
-            return prev;
-          });
-        }, 2000);
+          // Update progress bar
+          progressValue = Math.min(progressValue + (progressValue < 50 ? 2 : progressValue < 75 ? 1 : 0.3), 85);
+          setProgress(progressValue);
+          
+          // Rotate messages every 8 seconds
+          messageIdx = (messageIdx + 1) % PDF_PROCESSING_MESSAGES.length;
+          setPdfMessageIndex(messageIdx);
+        }, 3000);
         
-        setProgressMessage(`Leyendo ${estimatedPages} páginas con IA (puede tardar ~${Math.ceil(estimatedPages / 2)}s)...`);
+        setProgressMessage(PDF_PROCESSING_MESSAGES[0]);
         
         const { data, error } = await invokeWithTimeout<{
           rawText?: string;
@@ -556,8 +573,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         
         if (error) throw error;
         
-        setProgress(75);
-        setProgressMessage('Texto extraído. Analizando estructura del guion...');
+        setProgress(90);
+        setProgressMessage('✅ Texto extraído. Analizando estructura del guion...');
         
         if (data?.needsManualInput) {
           toast.warning(data.error || 'El PDF requiere entrada manual.', {
@@ -576,7 +593,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           if (stats) {
             console.log(`[ScriptWorkspace] PDF stats: ${stats.estimatedPages} pages, model: ${stats.modelUsed}`);
           }
-          setProgressMessage('Analizando personajes, locaciones y escenas...');
+          setProgressMessage('🎯 Analizando personajes, locaciones y escenas...');
           toast.success('PDF procesado. Analizando guion...');
           // Auto-trigger analysis after PDF processing with the extracted text
           await handleAnalyzeScript(data.rawText);
@@ -1919,26 +1936,54 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 </TabsContent>
 
                 <TabsContent value="upload" className="mt-4">
-                  <div 
-                    className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
-                    <p className="font-medium">
-                      {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Formatos permitidos: .txt, .pdf
-                    </p>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".txt,.pdf,text/plain,application/pdf"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                  </div>
-                  {scriptText && (
+                  {status === 'analyzing' && uploadedFileName ? (
+                    // Show animated processing state
+                    <div className="border-2 border-primary rounded-lg p-8 text-center bg-primary/5">
+                      <div className="relative mx-auto w-16 h-16 mb-4">
+                        <FileText className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto" />
+                        <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
+                        <div className="absolute inset-0 border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
+                      </div>
+                      <p className="font-medium text-primary mb-2">{uploadedFileName}</p>
+                      <div className="space-y-3 max-w-sm mx-auto">
+                        <div className="relative">
+                          <Progress value={progress} className="h-2" />
+                          <div 
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full animate-shimmer"
+                            style={{ backgroundSize: '200% 100%' }}
+                          />
+                        </div>
+                        <p className="text-sm text-muted-foreground animate-pulse">
+                          {progressMessage}
+                        </p>
+                        <p className="text-xs text-muted-foreground/60">
+                          No cierres esta página • Puede tardar hasta 2 minutos
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    // Normal upload state
+                    <div 
+                      className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
+                      <p className="font-medium">
+                        {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Formatos permitidos: .txt, .pdf
+                      </p>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".txt,.pdf,text/plain,application/pdf"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </div>
+                  )}
+                  {scriptText && status !== 'analyzing' && (
                     <div className="mt-4 bg-muted/50 rounded-lg p-4 max-h-40 overflow-y-auto">
                       <pre className="text-xs whitespace-pre-wrap font-mono">
                         {coerceScriptToString(scriptText).slice(0, 500)}...
@@ -1997,10 +2042,26 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               )}
 
               {status === 'analyzing' && (
-                <div className="space-y-2">
-                  <Progress value={progress} />
-                  <p className="text-xs text-muted-foreground text-center">
-                    {progressMessage || 'Analizando guion...'}
+                <div className="space-y-3 py-2">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-full">
+                      <Progress value={progress} className="h-2" />
+                      {/* Pulsing glow effect */}
+                      <div 
+                        className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 rounded-full animate-pulse"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-medium tabular-nums shrink-0 text-primary">
+                      {Math.round(progress)}%
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <span className="animate-pulse">{progressMessage || 'Analizando guion...'}</span>
+                  </div>
+                  <p className="text-xs text-center text-muted-foreground/70">
+                    Esto puede tomar hasta 2 minutos para PDFs grandes
                   </p>
                 </div>
               )}
