@@ -2020,63 +2020,64 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                       </div>
                     </div>
                   ) : (
-                    // Normal upload state
-                    <div 
-                      className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
-                      <p className="font-medium">
-                        {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Formatos permitidos: .txt, .pdf
-                      </p>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".txt,.pdf,text/plain,application/pdf"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                      />
-                    </div>
+                    <>
+                      {/* Normal upload state */}
+                      <div 
+                        className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
+                        <p className="font-medium">
+                          {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Formatos permitidos: .txt, .pdf
+                        </p>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".txt,.pdf,text/plain,application/pdf"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
+                      </div>
 
-                    {pdfUploadError && (
-                      <Alert variant="destructive" className="mt-4">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>No se pudo procesar el PDF</AlertTitle>
-                        <AlertDescription>
-                          <p>{pdfUploadError}</p>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setPdfUploadError(null);
-                                setUploadedFileName(null);
-                                if (fileInputRef.current) fileInputRef.current.value = '';
-                                fileInputRef.current?.click();
-                              }}
-                            >
-                              Reintentar
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setInputMethod('paste');
-                              }}
-                            >
-                              Pegar texto
-                            </Button>
-                          </div>
-                        </AlertDescription>
-                      </Alert>
-                    )}
+                      {pdfUploadError && (
+                        <Alert variant="destructive" className="mt-4">
+                          <AlertTriangle className="h-4 w-4" />
+                          <AlertTitle>No se pudo procesar el PDF</AlertTitle>
+                          <AlertDescription>
+                            <p>{pdfUploadError}</p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setPdfUploadError(null);
+                                  setUploadedFileName(null);
+                                  if (fileInputRef.current) fileInputRef.current.value = '';
+                                  fileInputRef.current?.click();
+                                }}
+                              >
+                                Reintentar
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setInputMethod('paste');
+                                }}
+                              >
+                                Pegar texto
+                              </Button>
+                            </div>
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </>
                   )}
-                  {scriptText && status !== 'analyzing' && (
                 </TabsContent>
               </Tabs>
 
