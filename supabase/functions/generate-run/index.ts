@@ -357,6 +357,26 @@ serve(async (req) => {
       console.error('[generate-run] Failed to update run:', updateError);
     }
 
+    // 5b) If this was a character slot generation, update the slot with the result
+    if (body.type === 'character' && body.params?.slotId) {
+      const slotId = body.params.slotId as string;
+      const { error: slotError } = await supabaseAdmin
+        .from('character_pack_slots')
+        .update({
+          status: 'generated',
+          image_url: outputUrl,
+          current_run_id: runId,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', slotId);
+      
+      if (slotError) {
+        console.error('[generate-run] Failed to update slot:', slotError);
+      } else {
+        console.log(`[generate-run] Updated slot ${slotId} with image`);
+      }
+    }
+
     console.log(`[generate-run] SUCCESS: runId=${runId}, outputUrl=${outputUrl.substring(0, 80)}...`);
 
     // 6) Return standardized response

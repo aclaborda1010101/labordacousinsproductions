@@ -1,6 +1,7 @@
 /**
  * CharactersList - MVP Clean UX for Characters
  * Single action per state, adapted by user level (Normal/Pro)
+ * Now with Iceberg Architecture: unified pack backend, adaptive UX
  */
 
 import { useState, useEffect } from 'react';
@@ -14,9 +15,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { EntityCard, getEntityStatus, EntityStatus } from './EntityCard';
+import { EntityCard, getEntityStatus } from './EntityCard';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import CharacterPackMVP from './CharacterPackMVP';
 import {
   Plus,
   Users,
@@ -24,9 +25,7 @@ import {
   Search,
   PlayCircle,
   Trash2,
-  Settings2,
-  Image,
-  History,
+  Video,
   RefreshCw,
 } from 'lucide-react';
 
@@ -46,10 +45,14 @@ interface Character {
   accepted_run_id?: string | null;
   canon_asset_id?: string | null;
   pack_completeness_score?: number | null;
+  pack_status?: string | null;
+  is_ready_for_video?: boolean | null;
   // Generated image URLs from generation_runs
   current_run_image?: string | null;
   accepted_run_image?: string | null;
   canon_image?: string | null;
+  // Hero slot image (primary display)
+  hero_image?: string | null;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -86,13 +89,31 @@ export default function CharactersList({ projectId }: CharactersListProps) {
       .from('characters')
       .select(`
         id, name, role, character_role, bio, arc, turnaround_urls, 
-        current_run_id, accepted_run_id, canon_asset_id, pack_completeness_score
+        current_run_id, accepted_run_id, canon_asset_id, pack_completeness_score,
+        pack_status, is_ready_for_video
       `)
       .eq('project_id', projectId)
       .order('created_at');
 
     if (data) {
-      // Fetch generated images from runs
+      // Fetch hero_front slots for each character
+      const charIds = data.map(c => c.id);
+      let heroImages: Record<string, string> = {};
+      
+      if (charIds.length > 0) {
+        const { data: heroSlots } = await supabase
+          .from('character_pack_slots')
+          .select('character_id, image_url')
+          .in('character_id', charIds)
+          .eq('slot_type', 'hero_front')
+          .not('image_url', 'is', null);
+        
+        if (heroSlots) {
+          heroImages = Object.fromEntries(heroSlots.map(s => [s.character_id, s.image_url!]));
+        }
+      }
+
+      // Fetch generated images from runs (fallback)
       const runIds = data.flatMap(c => [c.current_run_id, c.accepted_run_id].filter(Boolean)) as string[];
       const canonIds = data.map(c => c.canon_asset_id).filter(Boolean) as string[];
       
@@ -125,6 +146,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
         current_run_image: c.current_run_id ? runImages[c.current_run_id] : null,
         accepted_run_image: c.accepted_run_id ? runImages[c.accepted_run_id] : null,
         canon_image: c.canon_asset_id ? canonImages[c.canon_asset_id] : null,
+        hero_image: heroImages[c.id] || null,
       })));
     }
     setLoading(false);
@@ -534,8 +556,8 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           </Card>
         ) : (
           filteredCharacters.map(character => {
-            // Get best available image: canon > accepted > current > turnaround
-            const displayImage = character.canon_image || character.accepted_run_image || character.current_run_image || character.turnaround_urls?.front;
+            // Get best available image: hero > canon > accepted > current > turnaround
+            const displayImage = character.hero_image || character.canon_image || character.accepted_run_image || character.current_run_image || character.turnaround_urls?.front;
             
             return (
             <EntityCard
@@ -552,46 +574,34 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               onToggleExpand={() => setExpandedId(expandedId === character.id ? null : character.id)}
               onPrimaryAction={() => handlePrimaryAction(character)}
               badges={
-                character.character_role && (
-                  <Badge variant="secondary" className="text-xs">
-                    {ROLE_LABELS[character.character_role] || character.character_role}
-                  </Badge>
-                )
+                <>
+                  {character.character_role && (
+                    <Badge variant="secondary" className="text-xs">
+                      {ROLE_LABELS[character.character_role] || character.character_role}
+                    </Badge>
+                  )}
+                  {character.is_ready_for_video && (
+                    <Badge variant="pass" className="text-xs">
+                      <Video className="w-3 h-3 mr-1" />
+                      Video
+                    </Badge>
+                  )}
+                </>
               }
               expandedContent={
                 <div className="space-y-4">
-                  {/* Visual preview - show all available images */}
-                  <div className="space-y-3">
-                    {displayImage && (
-                      <div className="flex flex-col items-center gap-2">
-                        <img
-                          src={displayImage}
-                          alt={character.name}
-                          className="max-w-[280px] rounded-lg border shadow-sm"
-                        />
-                        <Badge variant={character.canon_image ? 'pass' : character.accepted_run_image ? 'secondary' : 'outline'} className="text-xs">
-                          {character.canon_image ? '⭐ Canon' : character.accepted_run_image ? '✓ Aceptado' : character.current_run_image ? 'Pendiente de revisión' : 'Referencia'}
-                        </Badge>
-                      </div>
-                    )}
-                    
-                    {/* Show pending vs accepted if different */}
-                    {character.current_run_image && character.accepted_run_image && character.current_run_image !== character.accepted_run_image && (
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="text-center">
-                          <img src={character.accepted_run_image} alt="Aceptado" className="w-full rounded-lg border" />
-                          <span className="text-xs text-muted-foreground mt-1">Aceptado</span>
-                        </div>
-                        <div className="text-center">
-                          <img src={character.current_run_image} alt="Nueva generación" className="w-full rounded-lg border border-primary" />
-                          <span className="text-xs text-primary mt-1">Nueva variante</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  {/* Character Pack MVP - Iceberg Architecture */}
+                  <CharacterPackMVP
+                    characterId={character.id}
+                    characterName={character.name}
+                    characterBio={character.bio}
+                    projectId={projectId}
+                    isPro={isPro}
+                    onPackComplete={() => fetchCharacters()}
+                  />
 
-                  {/* Editable fields */}
-                  <div className="grid gap-3">
+                  {/* Bio/Arc info */}
+                  <div className="grid gap-3 pt-2 border-t">
                     <div>
                       <Label className="text-xs text-muted-foreground">Biografía</Label>
                       <p className="text-sm">{character.bio || 'Sin descripción'}</p>
@@ -606,12 +616,6 @@ export default function CharactersList({ projectId }: CharactersListProps) {
 
                   {/* Quick actions */}
                   <div className="flex gap-2 flex-wrap">
-                    {character.current_run_id && !character.accepted_run_id && (
-                      <Button variant="outline" size="sm" onClick={() => handleRegenerate(character)}>
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Regenerar
-                      </Button>
-                    )}
                     <Button variant="ghost" size="sm" onClick={() => handleDeleteCharacter(character.id)}>
                       <Trash2 className="w-4 h-4 mr-2" />
                       Eliminar
@@ -626,28 +630,22 @@ export default function CharactersList({ projectId }: CharactersListProps) {
                       <span className="text-muted-foreground">ID</span>
                       <code className="text-xs bg-muted px-2 py-1 rounded">{character.id.slice(0, 8)}...</code>
                     </div>
-                    {character.current_run_id && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Run ID</span>
-                        <code className="text-xs bg-muted px-2 py-1 rounded">{character.current_run_id.slice(0, 8)}...</code>
-                      </div>
-                    )}
-                    {character.pack_completeness_score !== null && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Pack completeness</span>
-                        <span>{character.pack_completeness_score}%</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" disabled>
-                      <Image className="w-4 h-4 mr-2" />
-                      Ver pack completo
-                    </Button>
-                    <Button variant="outline" size="sm" disabled>
-                      <History className="w-4 h-4 mr-2" />
-                      Historial
-                    </Button>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Pack status</span>
+                      <Badge variant={character.pack_status === 'ready' ? 'pass' : 'secondary'}>
+                        {character.pack_status || 'hero_only'}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Completeness</span>
+                      <span>{character.pack_completeness_score || 0}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Video ready</span>
+                      <Badge variant={character.is_ready_for_video ? 'pass' : 'outline'}>
+                        {character.is_ready_for_video ? 'Sí' : 'No'}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               }

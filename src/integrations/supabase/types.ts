@@ -337,8 +337,10 @@ export type Database = {
       }
       character_pack_slots: {
         Row: {
+          accepted_run_id: string | null
           character_id: string
           created_at: string
+          current_run_id: string | null
           expression_name: string | null
           fix_notes: string | null
           generation_metadata: Json | null
@@ -361,8 +363,10 @@ export type Database = {
           view_angle: string | null
         }
         Insert: {
+          accepted_run_id?: string | null
           character_id: string
           created_at?: string
+          current_run_id?: string | null
           expression_name?: string | null
           fix_notes?: string | null
           generation_metadata?: Json | null
@@ -385,8 +389,10 @@ export type Database = {
           view_angle?: string | null
         }
         Update: {
+          accepted_run_id?: string | null
           character_id?: string
           created_at?: string
+          current_run_id?: string | null
           expression_name?: string | null
           fix_notes?: string | null
           generation_metadata?: Json | null
@@ -410,10 +416,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "character_pack_slots_accepted_run_id_fkey"
+            columns: ["accepted_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "character_pack_slots_character_id_fkey"
             columns: ["character_id"]
             isOneToOne: false
             referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "character_pack_slots_current_run_id_fkey"
+            columns: ["current_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
             referencedColumns: ["id"]
           },
           {
@@ -3276,6 +3296,8 @@ export type Database = {
           active_template_id: string | null
           active_template_step_index: number | null
           animation_type: string | null
+          autopilot_enabled: boolean | null
+          autopilot_max_runs_per_character: number | null
           bible_completeness_score: number | null
           budget_cap_episode_eur: number | null
           budget_cap_project_eur: number | null
@@ -3301,6 +3323,8 @@ export type Database = {
           active_template_id?: string | null
           active_template_step_index?: number | null
           animation_type?: string | null
+          autopilot_enabled?: boolean | null
+          autopilot_max_runs_per_character?: number | null
           bible_completeness_score?: number | null
           budget_cap_episode_eur?: number | null
           budget_cap_project_eur?: number | null
@@ -3326,6 +3350,8 @@ export type Database = {
           active_template_id?: string | null
           active_template_step_index?: number | null
           animation_type?: string | null
+          autopilot_enabled?: boolean | null
+          autopilot_max_runs_per_character?: number | null
           bible_completeness_score?: number | null
           budget_cap_episode_eur?: number | null
           budget_cap_project_eur?: number | null
@@ -4839,6 +4865,10 @@ export type Database = {
       }
       increment_user_usage: {
         Args: { p_cost: number; p_month: string; p_user_id: string }
+        Returns: undefined
+      }
+      recalc_character_pack: {
+        Args: { p_character_id: string }
         Returns: undefined
       }
       record_anchor_usage: { Args: { p_anchor_id: string }; Returns: undefined }
