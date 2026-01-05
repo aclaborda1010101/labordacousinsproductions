@@ -242,17 +242,13 @@ export async function v3AcquireProjectLock(
  * V3 Enterprise Project Lock Release
  */
 export async function v3ReleaseProjectLock(
+  supabase: SupabaseClient,
   projectId: string,
-  userId: string
+  userId?: string // Kept for signature compatibility but NOT used
 ): Promise<void> {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const adminClient = createClient(supabaseUrl, serviceKey);
-  
   try {
-    await adminClient.rpc('release_project_lock', {
+    await supabase.rpc('release_project_lock', {
       p_project_id: projectId,
-      p_user_id: userId,
     });
     console.log('[V3-LOCK] Lock released:', projectId);
   } catch (err) {
@@ -521,7 +517,7 @@ export async function v3Bootstrap(
     if (!rateLimitResult.allowed) {
       // Release lock if we acquired it
       if (requireLock) {
-        await v3ReleaseProjectLock(projectId, auth.userId);
+        await v3ReleaseProjectLock(auth.supabase, projectId);
       }
       return v3Error('RATE_LIMIT_EXCEEDED', 'Too many requests, please try again later', 429, rateLimitResult.retryAfter);
     }
@@ -537,7 +533,7 @@ export async function v3Bootstrap(
   // Cleanup function for finally {} blocks
   const cleanup = async () => {
     if (projectId && requireLock) {
-      await v3ReleaseProjectLock(projectId, auth.userId);
+      await v3ReleaseProjectLock(auth.supabase, projectId);
     }
   };
   

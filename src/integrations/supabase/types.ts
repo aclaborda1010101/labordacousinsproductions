@@ -5243,10 +5243,12 @@ export type Database = {
         Returns: undefined
       }
       record_anchor_usage: { Args: { p_anchor_id: string }; Returns: undefined }
-      release_project_lock: {
-        Args: { p_project_id: string; p_user_id: string }
-        Returns: undefined
-      }
+      release_project_lock:
+        | { Args: { p_project_id: string }; Returns: undefined }
+        | {
+            Args: { p_project_id: string; p_user_id: string }
+            Returns: undefined
+          }
       save_to_cache: {
         Args: {
           p_anchor_id: string
