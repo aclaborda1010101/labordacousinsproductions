@@ -1,11 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { encodeBase64 } from "https://deno.land/std@0.208.0/encoding/base64.ts";
-import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { 
+  v3RequireAuth, 
+  v3RequireProjectAccess,
+  v3AcquireProjectLock,
+  v3ReleaseProjectLock,
+  v3CheckRateLimit,
+  v3LogRunStart,
+  v3LogRunComplete,
+  v3Error,
+  v3ValidateFileSize,
+  corsHeaders,
+  V3AuthContext
+} from "../_shared/v3-enterprise.ts";
 
 // =============================================================================
 // FORENSIC SCRIPT ANALYST v3.0 - SYSTEM PROMPT
@@ -401,26 +408,65 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Authenticate request
-  let auth: AuthContext;
-  try {
-    auth = await requireAuthOrDemo(req);
-  } catch (error) {
-    return authErrorResponse(error as Error, corsHeaders);
+  // =======================================================================
+  // V3.0 ENTERPRISE AUTHENTICATION
+  // =======================================================================
+  const authResult = await v3RequireAuth(req);
+  if (authResult instanceof Response) {
+    return authResult;
   }
+  const auth: V3AuthContext = authResult;
+
+  // Track for logging and cleanup
+  let projectId: string | null = null;
+  let lockAcquired = false;
+  let runId: string | null = null;
+  const startTime = Date.now();
 
   try {
     const body = await req.json();
-    const { scriptText, pdfUrl, projectId, parseMode } = body;
+    const { scriptText, pdfUrl, projectId: bodyProjectId, parseMode } = body;
+    projectId = bodyProjectId || null;
 
-    // Validate project access if projectId provided
+    // =======================================================================
+    // V3.0 PROJECT ACCESS + LOCKING + RATE LIMIT
+    // =======================================================================
     if (projectId) {
-      try {
-        await requireProjectAccess(auth.supabase, auth.userId, projectId);
-      } catch (error) {
-        return authErrorResponse(error as Error, corsHeaders);
+      const accessResult = await v3RequireProjectAccess(auth, projectId);
+      if (accessResult instanceof Response) {
+        return accessResult;
+      }
+
+      // Acquire project lock for parse operations
+      const lockResult = await v3AcquireProjectLock(
+        auth.supabase,
+        projectId,
+        auth.userId,
+        'script_parsing',
+        300 // 5 minutes max
+      );
+
+      if (!lockResult.acquired) {
+        return v3Error('PROJECT_BUSY', 'Este proyecto ya está procesando un guión', 409, lockResult.retryAfter);
+      }
+      lockAcquired = true;
+
+      // Check rate limit
+      const rateLimitResult = await v3CheckRateLimit(projectId, auth.userId, 'parse-script', 5);
+      if (!rateLimitResult.allowed) {
+        await v3ReleaseProjectLock(projectId, auth.userId);
+        lockAcquired = false;
+        return v3Error('RATE_LIMIT_EXCEEDED', 'Demasiadas solicitudes, espera un momento', 429, rateLimitResult.retryAfter);
       }
     }
+
+    // Log run start
+    runId = await v3LogRunStart({
+      userId: auth.userId,
+      projectId: projectId || undefined,
+      functionName: 'parse-script',
+      provider: 'gemini',
+    });
 
     console.log("[parse-script] v3.0 FORENSIC ANALYST called:", { 
       hasPdfUrl: !!pdfUrl, 
@@ -588,10 +634,34 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("[parse-script] Fatal error:", error);
+    
+    // Log failure
+    if (runId) {
+      await v3LogRunComplete(runId, 'failed', undefined, undefined, 'PARSE_ERROR', error instanceof Error ? error.message : 'Unknown error');
+    }
+
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ 
+        success: false, 
+        code: 'PARSE_ERROR',
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
+  } finally {
+    // =======================================================================
+    // V3.0 LOCK RELEASE - Always release lock on exit
+    // =======================================================================
+    if (lockAcquired && projectId) {
+      await v3ReleaseProjectLock(projectId, auth.userId);
+      console.log('[parse-script] Lock released for project:', projectId);
+    }
+
+    // Log run completion (if not already done in error handler)
+    if (runId) {
+      const durationMs = Date.now() - startTime;
+      await v3LogRunComplete(runId, 'success');
+    }
   }
 });
 

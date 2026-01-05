@@ -1,10 +1,17 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { 
+  v3RequireAuth, 
+  v3RequireProjectAccess,
+  v3AcquireProjectLock,
+  v3ReleaseProjectLock,
+  v3CheckRateLimit,
+  v3LogRunStart,
+  v3LogRunComplete,
+  v3Error,
+  v3Success,
+  corsHeaders,
+  V3AuthContext
+} from "../_shared/v3-enterprise.ts";
 
 // =============================================================================
 // STORY ARCHITECT v3.0 - BLUEPRINT MODE
@@ -146,25 +153,25 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Authenticate request
-  let auth: AuthContext;
-  try {
-    auth = await requireAuthOrDemo(req);
-  } catch (error) {
-    return authErrorResponse(error as Error, corsHeaders);
+  // =======================================================================
+  // V3.0 ENTERPRISE AUTHENTICATION
+  // =======================================================================
+  const authResult = await v3RequireAuth(req);
+  if (authResult instanceof Response) {
+    return authResult;
   }
+  const auth: V3AuthContext = authResult;
+
+  // Track for logging and cleanup
+  let projectId: string | null = null;
+  let lockAcquired = false;
+  let runId: string | null = null;
+  const startTime = Date.now();
 
   try {
     const request: DevelopStructureRequest = await req.json();
+    projectId = request.projectId || null;
     
-    // Validate project access if projectId provided
-    if (request.projectId) {
-      try {
-        await requireProjectAccess(auth.supabase, auth.userId, request.projectId);
-      } catch (error) {
-        return authErrorResponse(error as Error, corsHeaders);
-      }
-    }
     const { 
       idea, 
       genre, 
@@ -178,19 +185,54 @@ serve(async (req) => {
     } = request;
 
     if (!idea) {
-      return new Response(
-        JSON.stringify({ error: 'Se requiere una idea para desarrollar la estructura' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return v3Error('VALIDATION_ERROR', 'Se requiere una idea para desarrollar la estructura', 400);
     }
+
+    // =======================================================================
+    // V3.0 PROJECT ACCESS + LOCKING + RATE LIMIT
+    // =======================================================================
+    if (projectId) {
+      const accessResult = await v3RequireProjectAccess(auth, projectId);
+      if (accessResult instanceof Response) {
+        return accessResult;
+      }
+
+      // Acquire project lock
+      const lockResult = await v3AcquireProjectLock(
+        auth.supabase,
+        projectId,
+        auth.userId,
+        'structure_development',
+        300
+      );
+
+      if (!lockResult.acquired) {
+        return v3Error('PROJECT_BUSY', 'Este proyecto ya está procesando una solicitud', 409, lockResult.retryAfter);
+      }
+      lockAcquired = true;
+
+      // Check rate limit
+      const rateLimitResult = await v3CheckRateLimit(projectId, auth.userId, 'develop-structure', 5);
+      if (!rateLimitResult.allowed) {
+        await v3ReleaseProjectLock(projectId, auth.userId);
+        lockAcquired = false;
+        return v3Error('RATE_LIMIT_EXCEEDED', 'Demasiadas solicitudes, espera un momento', 429, rateLimitResult.retryAfter);
+      }
+    }
+
+    // Log run start
+    runId = await v3LogRunStart({
+      userId: auth.userId,
+      projectId: projectId || undefined,
+      functionName: 'develop-structure',
+      provider: 'openai',
+      model: 'gpt-4o',
+    });
 
     // Use GPT-4o for fast, logical structure generation
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
     if (!OPENAI_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: 'OPENAI_API_KEY not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      throw new Error('OPENAI_API_KEY not configured');
     }
 
     // Build context from existing entities
@@ -289,6 +331,11 @@ Do NOT write dialogue or technical specs.`;
       assumptions: parsedStructure.assumptions?.length
     });
 
+    // Log success
+    if (runId) {
+      await v3LogRunComplete(runId, 'success');
+    }
+
     return new Response(
       JSON.stringify(parsedStructure),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -296,9 +343,20 @@ Do NOT write dialogue or technical specs.`;
 
   } catch (error) {
     console.error('[develop-structure] Error:', error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    
+    // Log failure
+    if (runId) {
+      await v3LogRunComplete(runId, 'failed', undefined, undefined, 'GENERATION_ERROR', error instanceof Error ? error.message : 'Unknown error');
+    }
+
+    return v3Error('INTERNAL_ERROR', error instanceof Error ? error.message : 'Unknown error', 500);
+  } finally {
+    // =======================================================================
+    // V3.0 LOCK RELEASE - Always release lock on exit
+    // =======================================================================
+    if (lockAcquired && projectId) {
+      await v3ReleaseProjectLock(projectId, auth.userId);
+      console.log('[develop-structure] Lock released for project:', projectId);
+    }
   }
 });
