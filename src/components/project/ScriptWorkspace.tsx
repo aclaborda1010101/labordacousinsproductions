@@ -1062,21 +1062,33 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       setProgress(40);
 
       // Calculate dynamic timeout based on script length
-      // ~1 second per 200 characters, with min 60s and max 300s
+      // Higher base: ~1 second per 100 characters, with min 120s and max 480s (8 min)
       const scriptLength = textToAnalyze.length;
-      const baseTimeoutSec = Math.max(60, Math.min(300, Math.ceil(scriptLength / 200)));
-      const dynamicTimeoutMs = baseTimeoutSec * 1000;
+      const baseTimeoutSec = Math.max(120, Math.min(480, Math.ceil(scriptLength / 100)));
       
       // Calculate dynamic polling based on expected processing time
-      // More retries for longer scripts
-      const dynamicPollingRetries = scriptLength > 30000 ? 8 : scriptLength > 15000 ? 6 : 4;
-      const dynamicPollingDelaySec = scriptLength > 30000 ? 15 : 10;
+      // More retries for longer scripts with longer delays
+      const dynamicPollingRetries = scriptLength > 40000 ? 12 : scriptLength > 25000 ? 10 : scriptLength > 15000 ? 8 : 6;
+      const dynamicPollingDelaySec = scriptLength > 40000 ? 20 : scriptLength > 25000 ? 15 : 12;
 
       console.log(`[ScriptWorkspace] Dynamic timeout: ${baseTimeoutSec}s for ${scriptLength} chars, polling: ${dynamicPollingRetries} retries @ ${dynamicPollingDelaySec}s`);
 
-      // Call script-breakdown to analyze
-      const invokeBreakdown = () =>
-        invokeWithTimeout<any>(
+      // Retry with exponential backoff on timeouts
+      let currentTimeoutMs = baseTimeoutSec * 1000;
+      let attemptNumber = 0;
+      const maxAttempts = 3;
+      let breakdownData: any = null;
+      let breakdownError: Error | null = null;
+      let lastWasTimeout = false;
+
+      while (attemptNumber < maxAttempts) {
+        attemptNumber++;
+        
+        if (attemptNumber > 1) {
+          toast.info(`Reintento ${attemptNumber}/${maxAttempts} con timeout de ${Math.round(currentTimeoutMs / 1000)}s...`, { duration: 5000 });
+        }
+
+        const result = await invokeWithTimeout<any>(
           'script-breakdown',
           {
             projectId,
@@ -1087,10 +1099,46 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             episodesCount: projectFormat === 'film' ? 1 : episodesCount,
             episodeDurationMin,
           },
-          { timeoutMs: dynamicTimeoutMs }
+          { timeoutMs: currentTimeoutMs }
         );
 
-      let { data: breakdownData, error: breakdownError } = await invokeBreakdown();
+        breakdownData = result.data;
+        breakdownError = result.error;
+
+        // Check if it was a timeout error
+        const isTimeout = breakdownError instanceof Error && 
+          (breakdownError.message.includes('aborted') || 
+           breakdownError.message.includes('timeout') ||
+           breakdownError.name === 'AbortError');
+
+        if (isTimeout) {
+          lastWasTimeout = true;
+          console.warn(`[ScriptWorkspace] Timeout on attempt ${attemptNumber}, increasing timeout...`);
+          
+          if (attemptNumber < maxAttempts) {
+            // Exponential backoff: increase timeout by 50% each retry
+            currentTimeoutMs = Math.min(currentTimeoutMs * 1.5, 600000); // Max 10 min
+            toast.warning(`Timeout en el análisis. Aumentando tiempo de espera...`, { 
+              description: `Reintentando con ${Math.round(currentTimeoutMs / 1000)}s de timeout`,
+              duration: 6000 
+            });
+            // Brief pause before retry
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            continue;
+          }
+        }
+
+        // If no timeout error (success or other error), break the loop
+        break;
+      }
+
+      // If all attempts failed due to timeout, notify user clearly
+      if (lastWasTimeout && breakdownError) {
+        toast.error('El análisis excedió el tiempo máximo', {
+          description: `El guion (${Math.round(scriptLength / 1000)}k caracteres) es muy largo. Intenta dividirlo en partes más pequeñas.`,
+          duration: 12000,
+        });
+      }
 
       // Handle PROJECT_BUSY (409) without throwing unhandled exceptions; retry once.
       if (breakdownError instanceof InvokeFunctionError) {
@@ -1109,7 +1157,22 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         if (breakdownError.status === 409 && code === 'PROJECT_BUSY') {
           toast.warning('Proyecto ocupado', { description: `Reintento en ${retryAfter}s`, duration: 8000 });
           await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
-          ;({ data: breakdownData, error: breakdownError } = await invokeBreakdown());
+          // Retry with current timeout settings
+          const retryResult = await invokeWithTimeout<any>(
+            'script-breakdown',
+            {
+              projectId,
+              scriptText: textToAnalyze,
+              scriptId: savedScript.id,
+              language: 'es-ES',
+              format: projectFormat === 'film' ? 'film' : 'series',
+              episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+              episodeDurationMin,
+            },
+            { timeoutMs: currentTimeoutMs }
+          );
+          breakdownData = retryResult.data;
+          breakdownError = retryResult.error;
         }
       }
 
