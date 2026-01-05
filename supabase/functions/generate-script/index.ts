@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 
 const corsHeaders = {
@@ -7,7 +8,7 @@ const corsHeaders = {
 };
 
 // =============================================================================
-// CANONICAL SCRIPT ROUTER v3.0
+// CANONICAL SCRIPT ROUTER v3.1 - WITH FULL BIBLE INJECTION
 // THE ONLY GENERATOR - All script generation goes through here
 // Outputs V3 schema ALWAYS regardless of qualityTier
 // =============================================================================
@@ -19,7 +20,7 @@ interface ModelConfig {
   provider: 'openai' | 'anthropic' | 'lovable';
   maxTokens: number;
   temperature: number;
-  confidenceRange: [number, number]; // [min, max]
+  confidenceRange: [number, number];
   technicalMetadataStatus: 'EMPTY' | 'PARTIAL';
 }
 
@@ -43,7 +44,7 @@ const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
 };
 
 // =============================================================================
-// V3 SYMMETRIC SYSTEM PROMPT - Same for all tiers
+// V3 SYMMETRIC SYSTEM PROMPT - WITH ANTI-INVENTION RULES
 // =============================================================================
 const V3_SYMMETRIC_PROMPT = `You are a Professional Screenwriter generating V3-compliant screenplay content.
 
@@ -104,6 +105,29 @@ V3 SCHEMA SYMMETRY (CRITICAL):
 
 ---
 
+⚠️ CRITICAL ENTITY RULES (NON-NEGOTIABLE):
+
+1. NEVER INVENT NEW CHARACTERS - Use ONLY:
+   - Characters from STORY_BIBLE (P0/P1/P2)
+   - Characters explicitly named in beats/outline
+   - Generic roles like "POLICÍA", "CAMARERO" for one-line appearances
+
+2. NEVER INVENT NEW LOCATIONS - Use ONLY:
+   - Locations from STORY_BIBLE
+   - Locations explicitly named in beats/outline
+   - Reasonable sub-areas of existing locations
+
+3. If you NEED a new character/location not in Bible:
+   - DO NOT use it in the script
+   - Add it to "new_entities_requested" array with reason
+   - Use a placeholder or generic role instead
+
+4. If information is missing or unclear:
+   - Add the gap to "uncertainties" array
+   - Make a reasonable choice and note it
+
+---
+
 CONTENT RULES:
 - Show don't tell
 - Every scene needs CONFLICT
@@ -111,7 +135,7 @@ CONTENT RULES:
 - Avoid clichés and AI voice`;
 
 // =============================================================================
-// TOOL SCHEMA FOR V3 OUTPUT
+// TOOL SCHEMA FOR V3 OUTPUT - Extended with uncertainties and new_entities_requested
 // =============================================================================
 const V3_OUTPUT_SCHEMA = {
   name: "generate_v3_screenplay",
@@ -176,8 +200,8 @@ const V3_OUTPUT_SCHEMA = {
                 type: "object",
                 properties: {
                   name: { type: "string" },
-                  canon_level: { type: "string", enum: ["P2", "P3"] },
-                  source: { type: "string", enum: ["GENERATED"] },
+                  canon_level: { type: "string", enum: ["P0", "P1", "P2", "P3"] },
+                  source: { type: "string", enum: ["BIBLE", "OUTLINE", "GENERATED"] },
                   confidence: { type: "number" }
                 }
               }
@@ -238,11 +262,346 @@ const V3_OUTPUT_SCHEMA = {
             }
           }
         }
+      },
+      uncertainties: {
+        type: "array",
+        description: "List of gaps or unclear information found during generation",
+        items: {
+          type: "object",
+          properties: {
+            type: { type: "string", enum: ["character_info", "location_info", "timeline", "motivation", "continuity"] },
+            description: { type: "string" },
+            assumed_value: { type: "string" }
+          }
+        }
+      },
+      new_entities_requested: {
+        type: "array",
+        description: "Entities that would be useful but were NOT in Bible - do not use in script",
+        items: {
+          type: "object",
+          properties: {
+            type: { type: "string", enum: ["character", "location", "prop"] },
+            name: { type: "string" },
+            reason: { type: "string" },
+            suggested_role: { type: "string" }
+          }
+        }
       }
     },
     required: ["scenes"]
   }
 };
+
+// =============================================================================
+// BIBLE FETCHER - Parallel fetch of project context
+// =============================================================================
+interface BibleContext {
+  project: any | null;
+  characters: any[];
+  locations: any[];
+  fetchErrors: string[];
+}
+
+async function fetchProjectBible(projectId: string): Promise<BibleContext> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabase = createClient(supabaseUrl, serviceRoleKey);
+  
+  const fetchErrors: string[] = [];
+  
+  // Parallel fetch with allSettled for robustness
+  const [projectResult, charactersResult, locationsResult] = await Promise.allSettled([
+    supabase
+      .from('projects')
+      .select('id, title, logline, genre, tone, narrative_framework, global_visual_dna, style_pack')
+      .eq('id', projectId)
+      .single(),
+    supabase
+      .from('characters')
+      .select('id, name, role, character_role, canon_level, visual_dna, bio, arc, profile_json')
+      .eq('project_id', projectId),
+    supabase
+      .from('locations')
+      .select('id, name, canon_level, visual_dna, description, narrative_role, profile_json')
+      .eq('project_id', projectId)
+  ]);
+  
+  let project = null;
+  let characters: any[] = [];
+  let locations: any[] = [];
+  
+  if (projectResult.status === 'fulfilled' && projectResult.value.data) {
+    project = projectResult.value.data;
+  } else {
+    fetchErrors.push('project_fetch_failed');
+    console.warn('[Bible] Project fetch failed:', projectResult);
+  }
+  
+  if (charactersResult.status === 'fulfilled' && charactersResult.value.data) {
+    characters = charactersResult.value.data;
+  } else {
+    fetchErrors.push('characters_fetch_failed');
+    console.warn('[Bible] Characters fetch failed:', charactersResult);
+  }
+  
+  if (locationsResult.status === 'fulfilled' && locationsResult.value.data) {
+    locations = locationsResult.value.data;
+  } else {
+    fetchErrors.push('locations_fetch_failed');
+    console.warn('[Bible] Locations fetch failed:', locationsResult);
+  }
+  
+  console.log('[Bible] Fetched:', {
+    hasProject: !!project,
+    charactersCount: characters.length,
+    locationsCount: locations.length,
+    errors: fetchErrors
+  });
+  
+  return { project, characters, locations, fetchErrors };
+}
+
+// =============================================================================
+// BIBLE FILTER - Filter to relevant entities based on beats
+// =============================================================================
+function filterBibleToRelevant(
+  bible: BibleContext,
+  outline: any,
+  episodeNumber?: number
+): { characters: any[], locations: any[] } {
+  // Extract names from outline/beats
+  const beatCharacterNames = new Set<string>();
+  const beatLocationNames = new Set<string>();
+  
+  // From main_characters in outline
+  if (outline?.main_characters) {
+    outline.main_characters.forEach((c: any) => {
+      if (c.name) beatCharacterNames.add(c.name.toLowerCase());
+    });
+  }
+  
+  // From episode_beats
+  if (outline?.episode_beats) {
+    const relevantBeats = episodeNumber 
+      ? [outline.episode_beats[episodeNumber - 1]].filter(Boolean)
+      : outline.episode_beats;
+    
+    relevantBeats.forEach((beat: any) => {
+      // Characters from beat
+      if (beat?.characters_present) {
+        beat.characters_present.forEach((c: any) => {
+          const name = typeof c === 'string' ? c : c.name;
+          if (name) beatCharacterNames.add(name.toLowerCase());
+        });
+      }
+      if (beat?.key_characters) {
+        beat.key_characters.forEach((c: any) => {
+          const name = typeof c === 'string' ? c : c.name;
+          if (name) beatCharacterNames.add(name.toLowerCase());
+        });
+      }
+      // Locations from beat
+      if (beat?.location) {
+        beatLocationNames.add(beat.location.toLowerCase());
+      }
+      if (beat?.locations) {
+        beat.locations.forEach((l: any) => {
+          const name = typeof l === 'string' ? l : l.name;
+          if (name) beatLocationNames.add(name.toLowerCase());
+        });
+      }
+    });
+  }
+  
+  // From main_locations in outline
+  if (outline?.main_locations) {
+    outline.main_locations.forEach((l: any) => {
+      if (l.name) beatLocationNames.add(l.name.toLowerCase());
+    });
+  }
+  
+  // Filter characters: include P0/P1 always + any mentioned in beats
+  const filteredCharacters = bible.characters.filter(char => {
+    const canonLevel = char.canon_level?.toUpperCase() || 'P3';
+    const isHighPriority = canonLevel === 'P0' || canonLevel === 'P1';
+    const isInBeats = beatCharacterNames.has(char.name?.toLowerCase());
+    return isHighPriority || isInBeats;
+  });
+  
+  // Filter locations: include P0/P1 always + any mentioned in beats
+  const filteredLocations = bible.locations.filter(loc => {
+    const canonLevel = loc.canon_level?.toUpperCase() || 'P3';
+    const isHighPriority = canonLevel === 'P0' || canonLevel === 'P1';
+    const isInBeats = beatLocationNames.has(loc.name?.toLowerCase());
+    return isHighPriority || isInBeats;
+  });
+  
+  console.log('[Bible] Filtered:', {
+    totalCharacters: bible.characters.length,
+    relevantCharacters: filteredCharacters.length,
+    totalLocations: bible.locations.length,
+    relevantLocations: filteredLocations.length,
+    beatCharacterNames: Array.from(beatCharacterNames).slice(0, 10),
+    beatLocationNames: Array.from(beatLocationNames).slice(0, 10)
+  });
+  
+  return { characters: filteredCharacters, locations: filteredLocations };
+}
+
+// =============================================================================
+// VISUAL DNA TRANSFORMER - Convert to readable constraints
+// =============================================================================
+function formatVisualDNA(visualDna: any): string {
+  if (!visualDna) return '';
+  
+  const constraints: string[] = [];
+  
+  // Hard traits (non-negotiable)
+  if (visualDna.hard_traits?.length) {
+    constraints.push(`FIJOS: ${visualDna.hard_traits.join(', ')}`);
+  }
+  
+  // Physical identity
+  if (visualDna.physical_identity) {
+    const pi = visualDna.physical_identity;
+    const parts: string[] = [];
+    if (pi.apparent_age) parts.push(`${pi.apparent_age} años aprox`);
+    if (pi.biological_sex) parts.push(pi.biological_sex);
+    if (pi.skin_tone) parts.push(`piel ${pi.skin_tone}`);
+    if (pi.body_type) parts.push(`complexión ${pi.body_type}`);
+    if (pi.height_category) parts.push(`estatura ${pi.height_category}`);
+    if (parts.length) constraints.push(`FÍSICO: ${parts.join(', ')}`);
+  }
+  
+  // Face geometry
+  if (visualDna.face_geometry) {
+    const fg = visualDna.face_geometry;
+    const parts: string[] = [];
+    if (fg.face_shape) parts.push(`rostro ${fg.face_shape}`);
+    if (fg.eye_color) parts.push(`ojos ${fg.eye_color}`);
+    if (fg.eye_shape) parts.push(`forma ${fg.eye_shape}`);
+    if (fg.nose_type) parts.push(`nariz ${fg.nose_type}`);
+    if (fg.distinctive_features?.length) parts.push(`rasgos: ${fg.distinctive_features.join(', ')}`);
+    if (parts.length) constraints.push(`ROSTRO: ${parts.join(', ')}`);
+  }
+  
+  // Hair
+  if (visualDna.hair) {
+    const h = visualDna.hair;
+    const parts: string[] = [];
+    if (h.color) parts.push(h.color);
+    if (h.texture) parts.push(h.texture);
+    if (h.length) parts.push(h.length);
+    if (h.style) parts.push(h.style);
+    if (parts.length) constraints.push(`CABELLO: ${parts.join(', ')}`);
+  }
+  
+  // Soft traits (suggestions)
+  if (visualDna.soft_traits?.length) {
+    constraints.push(`SUGERIDOS: ${visualDna.soft_traits.slice(0, 5).join(', ')}`);
+  }
+  
+  return constraints.join(' | ');
+}
+
+// =============================================================================
+// BUILD STORY BIBLE BLOCK
+// =============================================================================
+function buildStoryBibleBlock(
+  project: any | null,
+  characters: any[],
+  locations: any[],
+  outline: any
+): string {
+  let bible = `\n══════════════════════════════════════════════════════════════
+📖 STORY BIBLE (SOURCE OF TRUTH - DO NOT CONTRADICT)
+══════════════════════════════════════════════════════════════\n`;
+  
+  // Project info
+  if (project) {
+    bible += `\n▸ PROYECTO: ${project.title || 'Sin título'}`;
+    if (project.logline) bible += `\n▸ LOGLINE: ${project.logline}`;
+    if (project.genre) bible += `\n▸ GÉNERO: ${project.genre}`;
+    if (project.tone) bible += `\n▸ TONO: ${project.tone}`;
+    if (project.narrative_framework) {
+      const nf = project.narrative_framework;
+      if (nf.setting?.period) bible += `\n▸ ÉPOCA: ${nf.setting.period}`;
+      if (nf.setting?.location) bible += `\n▸ AMBIENTACIÓN: ${nf.setting.location}`;
+    }
+  }
+  
+  // Characters from Bible
+  if (characters.length > 0) {
+    bible += `\n\n═══ PERSONAJES CANON (${characters.length}) ═══`;
+    characters.forEach(char => {
+      const level = char.canon_level?.toUpperCase() || 'P3';
+      const role = char.character_role || char.role || 'supporting';
+      bible += `\n\n【${level}】 ${char.name} (${role})`;
+      
+      // Bio/Arc
+      if (char.bio) bible += `\n   Bio: ${char.bio.slice(0, 200)}${char.bio.length > 200 ? '...' : ''}`;
+      if (char.arc) bible += `\n   Arco: ${char.arc.slice(0, 150)}${char.arc.length > 150 ? '...' : ''}`;
+      
+      // Visual DNA formatted
+      const dnaStr = formatVisualDNA(char.visual_dna);
+      if (dnaStr) bible += `\n   Visual: ${dnaStr}`;
+      
+      // Profile extras
+      if (char.profile_json?.personality) {
+        bible += `\n   Personalidad: ${char.profile_json.personality.slice(0, 100)}`;
+      }
+    });
+  }
+  
+  // Locations from Bible
+  if (locations.length > 0) {
+    bible += `\n\n═══ LOCACIONES CANON (${locations.length}) ═══`;
+    locations.forEach(loc => {
+      const level = loc.canon_level?.toUpperCase() || 'P3';
+      bible += `\n\n【${level}】 ${loc.name}`;
+      
+      if (loc.description) bible += `\n   Desc: ${loc.description.slice(0, 200)}`;
+      if (loc.narrative_role) bible += `\n   Rol narrativo: ${loc.narrative_role}`;
+      
+      const dnaStr = formatVisualDNA(loc.visual_dna);
+      if (dnaStr) bible += `\n   Visual: ${dnaStr}`;
+    });
+  }
+  
+  // Add outline entities not in Bible (from parsed script)
+  const bibleCharNames = new Set(characters.map(c => c.name?.toLowerCase()));
+  const bibleLocNames = new Set(locations.map(l => l.name?.toLowerCase()));
+  
+  const outlineOnlyChars = outline?.main_characters?.filter(
+    (c: any) => c.name && !bibleCharNames.has(c.name.toLowerCase())
+  ) || [];
+  
+  const outlineOnlyLocs = outline?.main_locations?.filter(
+    (l: any) => l.name && !bibleLocNames.has(l.name.toLowerCase())
+  ) || [];
+  
+  if (outlineOnlyChars.length > 0) {
+    bible += `\n\n═══ PERSONAJES DEL OUTLINE (no en Bible aún) ═══`;
+    outlineOnlyChars.forEach((char: any) => {
+      bible += `\n• ${char.name} (${char.role || 'TBD'}): ${char.description || 'Sin descripción'}`;
+    });
+  }
+  
+  if (outlineOnlyLocs.length > 0) {
+    bible += `\n\n═══ LOCACIONES DEL OUTLINE (no en Bible aún) ═══`;
+    outlineOnlyLocs.forEach((loc: any) => {
+      bible += `\n• ${loc.name} (${loc.type || 'INT/EXT'}): ${loc.description || 'Sin descripción'}`;
+    });
+  }
+  
+  bible += `\n\n══════════════════════════════════════════════════════════════
+⚠️ REGLA: Usa SOLO los personajes y locaciones listados arriba.
+   Si necesitas uno nuevo, añádelo a "new_entities_requested".
+══════════════════════════════════════════════════════════════\n`;
+  
+  return bible;
+}
 
 // =============================================================================
 // API CALLERS
@@ -349,9 +708,41 @@ async function callAnthropic(
 }
 
 // =============================================================================
+// LOG BIBLE INJECTION EVENT
+// =============================================================================
+async function logBibleInjection(
+  projectId: string,
+  charactersCount: number,
+  locationsCount: number,
+  p0p1Count: number,
+  fetchErrors: string[]
+): Promise<void> {
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    
+    await supabase.from('editorial_events').insert({
+      project_id: projectId,
+      event_type: 'bible_injected',
+      asset_type: 'script',
+      payload: {
+        characters_included: charactersCount,
+        locations_included: locationsCount,
+        p0p1_entities: p0p1Count,
+        fetch_warnings: fetchErrors,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (e) {
+    console.warn('[generate-script] Failed to log bible injection event:', e);
+  }
+}
+
+// =============================================================================
 // POST-PROCESSING: Ensure V3 schema compliance
 // =============================================================================
-function enforceV3Schema(result: any, config: ModelConfig): any {
+function enforceV3Schema(result: any, config: ModelConfig, bibleCharNames: Set<string>): any {
   const [minConf, maxConf] = config.confidenceRange;
   
   // Ensure scenes array exists
@@ -371,11 +762,9 @@ function enforceV3Schema(result: any, config: ModelConfig): any {
         color: { palette: null, contrast: null }
       };
     } else {
-      // Ensure _status is set
       if (!scene.technical_metadata._status) {
         scene.technical_metadata._status = config.technicalMetadataStatus;
       }
-      // Ensure all sub-objects exist
       scene.technical_metadata.camera = scene.technical_metadata.camera || { lens: null, movement: null, framing: null };
       scene.technical_metadata.lighting = scene.technical_metadata.lighting || { type: null, direction: null, mood: null };
       scene.technical_metadata.sound = scene.technical_metadata.sound || { sfx: [], ambience: [] };
@@ -387,15 +776,19 @@ function enforceV3Schema(result: any, config: ModelConfig): any {
       scene.scene_number = idx + 1;
     }
 
-    // Process characters with confidence
+    // Process characters - mark source based on Bible
     if (scene.characters_present) {
-      scene.characters_present = scene.characters_present.map((char: any) => ({
-        ...char,
-        name: char.name || char.value || 'Unknown',
-        canon_level: char.canon_level || 'P3',
-        source: 'GENERATED',
-        confidence: char.confidence || (minConf + Math.random() * (maxConf - minConf))
-      }));
+      scene.characters_present = scene.characters_present.map((char: any) => {
+        const charName = (char.name || char.value || 'Unknown').toLowerCase();
+        const isFromBible = bibleCharNames.has(charName);
+        return {
+          ...char,
+          name: char.name || char.value || 'Unknown',
+          canon_level: isFromBible ? (char.canon_level || 'P2') : 'P3',
+          source: isFromBible ? 'BIBLE' : 'GENERATED',
+          confidence: char.confidence || (minConf + Math.random() * (maxConf - minConf))
+        };
+      });
     }
 
     return scene;
@@ -431,6 +824,10 @@ function enforceV3Schema(result: any, config: ModelConfig): any {
     }));
   }
 
+  // Ensure new output arrays exist
+  if (!result.uncertainties) result.uncertainties = [];
+  if (!result.new_entities_requested) result.new_entities_requested = [];
+
   return result;
 }
 
@@ -438,36 +835,25 @@ function enforceV3Schema(result: any, config: ModelConfig): any {
 // MAIN HANDLER
 // =============================================================================
 interface GenerateScriptRequest {
-  // Project reference (for auth)
   projectId?: string;
-  
-  // Content inputs
   idea?: string;
   scenePrompt?: string;
   outline?: any;
   episodeNumber?: number;
   batchIndex?: number;
   previousScenes?: any[];
-  
-  // Configuration
   qualityTier?: QualityTier;
   language?: string;
   genre?: string;
   tone?: string;
   format?: 'film' | 'series';
-  
-  // Canon context
   bibleContext?: any;
   canonCharacters?: any[];
   canonLocations?: any[];
-  
-  // Batch config
   scenesPerBatch?: number;
   totalBatches?: number;
   isLastBatch?: boolean;
   narrativeMode?: string;
-  
-  // Streaming (only for single scene)
   stream?: boolean;
 }
 
@@ -476,7 +862,6 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Authenticate request
   let auth: AuthContext;
   try {
     auth = await requireAuthOrDemo(req);
@@ -485,12 +870,11 @@ serve(async (req) => {
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 180000); // 3min timeout
+  const timeoutId = setTimeout(() => controller.abort(), 180000);
 
   try {
     const request: GenerateScriptRequest = await req.json();
     
-    // Validate project access if projectId provided
     if (request.projectId) {
       try {
         await requireProjectAccess(auth.supabase, auth.userId, request.projectId);
@@ -501,6 +885,7 @@ serve(async (req) => {
     }
     
     const {
+      projectId,
       idea,
       scenePrompt,
       outline,
@@ -522,7 +907,6 @@ serve(async (req) => {
       stream = false
     } = request;
 
-    // Validate inputs
     if (!idea && !scenePrompt && !outline) {
       clearTimeout(timeoutId);
       return new Response(
@@ -531,10 +915,9 @@ serve(async (req) => {
       );
     }
 
-    // Get tier config
     const config = TIER_CONFIGS[qualityTier] || TIER_CONFIGS.PRODUCTION;
     
-    console.log('[generate-script] v3.0 CANONICAL ROUTER:', {
+    console.log('[generate-script] v3.1 CANONICAL ROUTER + BIBLE:', {
       qualityTier,
       provider: config.provider,
       model: config.apiModel,
@@ -542,30 +925,78 @@ serve(async (req) => {
       episodeNumber,
       batchIndex,
       scenesPerBatch,
-      stream
+      projectId
     });
 
-    // Build context block
-    let contextBlock = '';
-    if (bibleContext) {
-      contextBlock += `\nPROJECT BIBLE:\n- Tone: ${bibleContext.tone || 'Cinematic'}\n- Period: ${bibleContext.period || 'Contemporary'}\n- Visual Style: ${bibleContext.visualStyle || 'Naturalistic'}`;
+    // =========================================================================
+    // FETCH PROJECT BIBLE (if projectId provided)
+    // =========================================================================
+    let bible: BibleContext = { project: null, characters: [], locations: [], fetchErrors: [] };
+    let filteredBible = { characters: [] as any[], locations: [] as any[] };
+    let storyBibleBlock = '';
+    
+    if (projectId) {
+      bible = await fetchProjectBible(projectId);
+      
+      // Filter to relevant entities
+      filteredBible = filterBibleToRelevant(bible, outline, episodeNumber);
+      
+      // Build the Story Bible block
+      storyBibleBlock = buildStoryBibleBlock(
+        bible.project,
+        filteredBible.characters,
+        filteredBible.locations,
+        outline
+      );
+      
+      // Count P0/P1 for logging
+      const p0p1Count = [...filteredBible.characters, ...filteredBible.locations].filter(
+        e => e.canon_level?.toUpperCase() === 'P0' || e.canon_level?.toUpperCase() === 'P1'
+      ).length;
+      
+      // Log injection event (fire and forget)
+      logBibleInjection(
+        projectId,
+        filteredBible.characters.length,
+        filteredBible.locations.length,
+        p0p1Count,
+        bible.fetchErrors
+      );
     }
     
-    if (canonCharacters?.length) {
-      contextBlock += `\n\nCANON CHARACTERS (P0/P1 - DO NOT CONTRADICT):`;
+    // Create set of Bible character names for post-processing
+    const bibleCharNames = new Set(
+      filteredBible.characters.map(c => c.name?.toLowerCase()).filter(Boolean)
+    );
+
+    // =========================================================================
+    // Build legacy context block (for backwards compatibility with passed context)
+    // =========================================================================
+    let legacyContextBlock = '';
+    if (bibleContext && !projectId) {
+      legacyContextBlock += `\nPROJECT BIBLE:\n- Tone: ${bibleContext.tone || 'Cinematic'}\n- Period: ${bibleContext.period || 'Contemporary'}\n- Visual Style: ${bibleContext.visualStyle || 'Naturalistic'}`;
+    }
+    
+    if (canonCharacters?.length && !projectId) {
+      legacyContextBlock += `\n\nCANON CHARACTERS (P0/P1 - DO NOT CONTRADICT):`;
       canonCharacters.forEach(char => {
-        contextBlock += `\n- ${char.name}: ${char.visualTrigger || ''} ${char.fixedTraits?.join(', ') || ''}`;
+        legacyContextBlock += `\n- ${char.name}: ${char.visualTrigger || ''} ${char.fixedTraits?.join(', ') || ''}`;
       });
     }
     
-    if (canonLocations?.length) {
-      contextBlock += `\n\nCANON LOCATIONS (P0/P1 - DO NOT CONTRADICT):`;
+    if (canonLocations?.length && !projectId) {
+      legacyContextBlock += `\n\nCANON LOCATIONS (P0/P1 - DO NOT CONTRADICT):`;
       canonLocations.forEach(loc => {
-        contextBlock += `\n- ${loc.name}: ${loc.visualTrigger || ''} ${loc.fixedElements?.join(', ') || ''}`;
+        legacyContextBlock += `\n- ${loc.name}: ${loc.visualTrigger || ''} ${loc.fixedElements?.join(', ') || ''}`;
       });
     }
 
+    // Use Bible block if available, else legacy
+    const contextBlock = storyBibleBlock || legacyContextBlock;
+
+    // =========================================================================
     // Build user prompt based on input type
+    // =========================================================================
     let userPrompt: string;
 
     if (outline && episodeNumber !== undefined && batchIndex !== undefined) {
@@ -574,65 +1005,53 @@ serve(async (req) => {
       const episodeTitle = episodeBeat?.title || `Episodio ${episodeNumber}`;
       const episodeSummary = episodeBeat?.summary || '';
       
-      // Build comprehensive outline context with ALL entities
+      // Build outline context
       let outlineContext = '';
+      if (outline.logline) outlineContext += `\nLOGLINE: ${outline.logline}`;
+      if (outline.synopsis) outlineContext += `\nSINOPSIS: ${outline.synopsis}`;
       
-      // Include logline and synopsis
-      if (outline.logline) {
-        outlineContext += `\nLOGLINE: ${outline.logline}`;
-      }
-      if (outline.synopsis) {
-        outlineContext += `\nSINOPSIS GENERAL: ${outline.synopsis}`;
-      }
-      
-      // Include ALL main characters from outline
-      if (outline.main_characters?.length) {
-        outlineContext += `\n\n=== PERSONAJES PRINCIPALES (${outline.main_characters.length}) ===`;
+      // Main characters from outline (not in Bible block already)
+      if (outline.main_characters?.length && !projectId) {
+        outlineContext += `\n\n=== PERSONAJES (${outline.main_characters.length}) ===`;
         outline.main_characters.forEach((char: any) => {
           outlineContext += `\n• ${char.name} (${char.role || 'supporting'}): ${char.description || ''}`;
         });
       }
       
-      // Include ALL main locations from outline
-      if (outline.main_locations?.length) {
-        outlineContext += `\n\n=== LOCACIONES PRINCIPALES (${outline.main_locations.length}) ===`;
+      // Main locations from outline (not in Bible block already)
+      if (outline.main_locations?.length && !projectId) {
+        outlineContext += `\n\n=== LOCACIONES (${outline.main_locations.length}) ===`;
         outline.main_locations.forEach((loc: any) => {
-          outlineContext += `\n• ${loc.name} (${loc.type || 'INT/EXT'}): ${loc.description || ''}`;
+          outlineContext += `\n• ${loc.name}: ${loc.description || ''}`;
         });
       }
       
-      // Include props if available
+      // Props
       if (outline.main_props?.length) {
-        outlineContext += `\n\n=== PROPS IMPORTANTES ===`;
-        outline.main_props.slice(0, 10).forEach((prop: any) => {
-          outlineContext += `\n• ${prop.name} (${prop.importance || 'key'}): ${prop.description || ''} - ${prop.narrative_function || ''}`;
+        outlineContext += `\n\n=== PROPS ===`;
+        outline.main_props.slice(0, 8).forEach((prop: any) => {
+          outlineContext += `\n• ${prop.name}: ${prop.description || ''} - ${prop.narrative_function || ''}`;
         });
       }
       
-      // Include subplots if available
+      // Subplots
       if (outline.subplots?.length) {
         outlineContext += `\n\n=== SUBTRAMAS ===`;
         outline.subplots.forEach((subplot: any) => {
           outlineContext += `\n• ${subplot.name}: ${subplot.description || ''}`;
-          if (subplot.characters_involved?.length) {
-            outlineContext += ` [Personajes: ${subplot.characters_involved.join(', ')}]`;
-          }
-        });
-      }
-      
-      // Include plot twists if available
-      if (outline.plot_twists?.length) {
-        outlineContext += `\n\n=== GIROS NARRATIVOS ===`;
-        outline.plot_twists.forEach((twist: any) => {
-          outlineContext += `\n• Ep ${twist.episode || '?'}: ${twist.description || twist.title || ''}`;
         });
       }
       
       userPrompt = `
+${contextBlock}
+
+═══════════════════════════════════════════════════════════════
+📝 INSTRUCCIONES DE GENERACIÓN
+═══════════════════════════════════════════════════════════════
+
 GENERA ${scenesPerBatch} ESCENAS EN FORMATO V3 SCHEMA
 
-=== CONTEXTO COMPLETO DEL PROYECTO ===
-${outlineContext}
+${outlineContext ? `=== CONTEXTO DEL OUTLINE ===${outlineContext}` : ''}
 
 === EPISODIO ACTUAL ===
 EPISODIO: ${episodeNumber} - "${episodeTitle}"
@@ -647,48 +1066,46 @@ ${episodeBeat?.scenes_summary || ''}
 ${narrativeMode ? `MODO NARRATIVO: ${narrativeMode}` : ''}
 ${previousScenes?.length ? `\nESCENAS ANTERIORES:\n${previousScenes.map(s => `- ${s.slugline}: ${s.action_summary || s.summary}`).join('\n')}` : ''}
 
-${contextBlock}
-
 IDIOMA: ${language}
-GÉNERO: ${genre || outline.genre || 'Drama'}
-TONO: ${tone || outline.tone || 'Cinematic'}
+GÉNERO: ${genre || outline.genre || bible.project?.genre || 'Drama'}
+TONO: ${tone || outline.tone || bible.project?.tone || 'Cinematic'}
 
-⚠️ IMPORTANTE:
-- UTILIZA los personajes del outline en las escenas
-- UTILIZA las locaciones del outline
-- INCORPORA los props narrativos relevantes
-- DESARROLLA las subtramas mencionadas
-- PREPARA los giros narrativos si corresponden a este episodio
+⚠️ REGLAS CRÍTICAS:
+1. USA SOLO personajes del STORY_BIBLE o explícitamente en el outline
+2. USA SOLO locaciones del STORY_BIBLE o explícitamente en el outline
+3. Si necesitas entidad nueva → añádela a "new_entities_requested", NO la uses
+4. Si algo no está claro → añádelo a "uncertainties"
 
-GENERA exactamente ${scenesPerBatch} escenas con V3 schema completo.
-Cada escena DEBE tener technical_metadata con _status.`;
+GENERA exactamente ${scenesPerBatch} escenas con V3 schema completo.`;
+
     } else if (scenePrompt) {
       // SINGLE SCENE MODE
       userPrompt = `
+${contextBlock}
+
 GENERA UNA ESCENA EN FORMATO V3 SCHEMA
 
 PROMPT: ${scenePrompt}
 
-${contextBlock}
-
 IDIOMA: ${language}
-FORMATO: Escena única con V3 schema completo.`;
+
+⚠️ USA SOLO personajes/locaciones del Bible o prompt. Ninguna invención.`;
+
     } else {
       // FULL SCRIPT MODE
       userPrompt = `
+${contextBlock}
+
 GENERA GUIÓN COMPLETO EN FORMATO V3 SCHEMA
 
 IDEA: ${idea}
 
-GÉNERO: ${genre || 'Drama'}
-TONO: ${tone || 'Cinematic realism'}
+GÉNERO: ${genre || bible.project?.genre || 'Drama'}
+TONO: ${tone || bible.project?.tone || 'Cinematic realism'}
 FORMATO: ${format === 'series' ? 'Serie' : 'Película'}
 IDIOMA: ${language}
 
-${contextBlock}
-
-Genera el guión completo con V3 schema.
-Cada escena DEBE tener technical_metadata con _status.`;
+⚠️ USA SOLO personajes/locaciones del Bible. Ninguna invención.`;
     }
 
     // Add tier-specific instructions
@@ -698,7 +1115,9 @@ Cada escena DEBE tener technical_metadata con _status.`;
     
     userPrompt += tierInstructions;
 
-    // Call appropriate API
+    // =========================================================================
+    // Call LLM
+    // =========================================================================
     let result: any;
     
     if (config.provider === 'openai') {
@@ -711,13 +1130,15 @@ Cada escena DEBE tener technical_metadata con _status.`;
 
     clearTimeout(timeoutId);
 
-    // Enforce V3 schema compliance
-    const v3Result = enforceV3Schema(result, config);
+    // Enforce V3 schema compliance + mark Bible sources
+    const v3Result = enforceV3Schema(result, config, bibleCharNames);
 
     console.log('[generate-script] Generated:', {
       scenesCount: v3Result.scenes?.length || 0,
       charactersIntroduced: v3Result.characters_introduced?.length || 0,
       locationsIntroduced: v3Result.locations_introduced?.length || 0,
+      uncertainties: v3Result.uncertainties?.length || 0,
+      newEntitiesRequested: v3Result.new_entities_requested?.length || 0,
       qualityTier
     });
 
@@ -728,7 +1149,10 @@ Cada escena DEBE tener technical_metadata con _status.`;
           qualityTier,
           provider: config.provider,
           model: config.apiModel,
-          schemaVersion: '3.0'
+          schemaVersion: '3.1',
+          bibleInjected: !!projectId,
+          bibleCharacters: filteredBible.characters.length,
+          bibleLocations: filteredBible.locations.length
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
