@@ -937,6 +937,10 @@ serve(async (req) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 180000);
 
+  // Track if we acquired a lock (for cleanup in finally)
+  let lockAcquired = false;
+  let projectIdForLock: string | null = null;
+
   try {
     const request: GenerateScriptRequest = await req.json();
     
@@ -946,6 +950,59 @@ serve(async (req) => {
       } catch (error) {
         clearTimeout(timeoutId);
         return authErrorResponse(error as Error, corsHeaders);
+      }
+
+      // =======================================================================
+      // V3.0 PROJECT LOCKING - Prevent concurrent generation on same project
+      // =======================================================================
+      projectIdForLock = request.projectId;
+      
+      const { data: lockResult, error: lockError } = await auth.supabase.rpc('acquire_project_lock', {
+        p_project_id: request.projectId,
+        p_user_id: auth.userId,
+        p_reason: 'script_generation',
+        p_duration_seconds: 600 // 10 minutes max
+      });
+
+      if (lockError) {
+        console.error('[generate-script] Lock acquisition error:', lockError);
+        // Continue anyway - don't block on lock errors
+      } else if (!lockResult) {
+        // Lock NOT acquired - project is busy
+        console.log('[generate-script] Project busy, lock not acquired:', request.projectId);
+        
+        // Get retry info from existing lock
+        const { data: existingLock } = await auth.supabase
+          .from('project_locks')
+          .select('expires_at, lock_reason')
+          .eq('project_id', request.projectId)
+          .single();
+
+        const retryAfterSec = existingLock?.expires_at
+          ? Math.max(10, Math.floor((new Date(existingLock.expires_at).getTime() - Date.now()) / 1000))
+          : 60;
+
+        clearTimeout(timeoutId);
+        return new Response(
+          JSON.stringify({
+            code: 'PROJECT_BUSY',
+            message: 'Este proyecto ya está generando un guión.',
+            retry_after_seconds: retryAfterSec,
+            lock_reason: existingLock?.lock_reason || 'script_generation'
+          }),
+          { 
+            status: 409, 
+            headers: { 
+              ...corsHeaders, 
+              'Content-Type': 'application/json',
+              'Retry-After': String(retryAfterSec)
+            } 
+          }
+        );
+      } else {
+        // Lock acquired successfully
+        lockAcquired = true;
+        console.log('[generate-script] Lock acquired for project:', request.projectId);
       }
     }
     
@@ -1285,5 +1342,21 @@ IDIOMA: ${language}
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
+  } finally {
+    // =======================================================================
+    // V3.0 LOCK RELEASE - Always release lock on exit (success or failure)
+    // =======================================================================
+    if (lockAcquired && projectIdForLock && auth?.supabase && auth?.userId) {
+      try {
+        await auth.supabase.rpc('release_project_lock', {
+          p_project_id: projectIdForLock,
+          p_user_id: auth.userId
+        });
+        console.log('[generate-script] Lock released for project:', projectIdForLock);
+      } catch (releaseError) {
+        // Don't fail the response if lock release fails - it will expire anyway
+        console.warn('[generate-script] Failed to release lock (will expire):', releaseError);
+      }
+    }
   }
 });

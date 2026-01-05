@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useBackgroundTasks, TaskType, BackgroundTask } from '@/contexts/BackgroundTasksContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useProjectLockRetry } from './useProjectLockRetry';
 
 interface GenerationTaskOptions {
   type: TaskType;
@@ -10,6 +11,8 @@ interface GenerationTaskOptions {
   entityId?: string;
   entityName?: string;
   metadata?: Record<string, any>;
+  enableLockRetry?: boolean; // Enable automatic retry for PROJECT_BUSY errors
+  maxLockRetries?: number;
 }
 
 interface GenerationResult<T> {
@@ -46,6 +49,7 @@ interface GenerationResult<T> {
  */
 export function useGenerationTask() {
   const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
+  const { executeWithRetry, isWaitingForRetry, retryInfo, cancelRetry } = useProjectLockRetry();
 
   // Run a simple generation task
   const runGeneration = useCallback(async <T,>(
@@ -161,6 +165,7 @@ export function useGenerationTask() {
   }, [addTask, updateTask, completeTask, failTask]);
 
   // Quick helper for Edge Function calls with automatic background tracking
+  // Supports automatic retry for PROJECT_BUSY (409) errors when enableLockRetry is true
   const invokeWithTracking = useCallback(async <T,>(
     functionName: string,
     body: Record<string, any>,
@@ -168,18 +173,42 @@ export function useGenerationTask() {
   ): Promise<GenerationResult<T>> => {
     return runGeneration(options, async (updateProgress) => {
       updateProgress(20);
+      
+      // If lock retry is enabled, wrap the call
+      if (options.enableLockRetry) {
+        const result = await executeWithRetry<T>(
+          () => supabase.functions.invoke(functionName, { body }),
+          { 
+            maxRetries: options.maxLockRetries ?? 3,
+            onRetryScheduled: (secs, attempt) => {
+              updateProgress(15); // Reset progress while waiting
+            }
+          }
+        );
+        updateProgress(90);
+        
+        if (result.error) throw result.error;
+        if (!result.data) throw new Error('No data returned');
+        return result.data;
+      }
+      
+      // Standard path without lock retry
       const { data, error } = await supabase.functions.invoke(functionName, { body });
       updateProgress(90);
       
       if (error) throw error;
       return data as T;
     });
-  }, [runGeneration]);
+  }, [runGeneration, executeWithRetry]);
 
   return {
     runGeneration,
     runPollingGeneration,
     invokeWithTracking,
+    // Lock retry state (for UI feedback)
+    isWaitingForLockRetry: isWaitingForRetry,
+    lockRetryInfo: retryInfo,
+    cancelLockRetry: cancelRetry,
   };
 }
 
