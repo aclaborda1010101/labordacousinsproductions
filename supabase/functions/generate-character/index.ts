@@ -33,8 +33,8 @@ interface SlotGenerateRequest {
 
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
 // See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
-// Character generation now uses nano-banana-pro via Lovable AI for reference-based generation
-const IMAGE_ENGINE = 'google/gemini-2.5-flash-image-preview'; // nano-banana-pro
+// Character generation now uses nano-banana (Gemini Flash Image) via Lovable AI
+const IMAGE_ENGINE = 'google/gemini-2.5-flash-image'; // nano-banana
 
 // ============================================
 // VISUAL DNA TYPES
