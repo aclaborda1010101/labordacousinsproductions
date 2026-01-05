@@ -1177,55 +1177,55 @@ export default function Characters({ projectId }: CharactersProps) {
                     {expandedId === character.id && (
                       <div className="border-t border-border">
                         <Tabs defaultValue="turnarounds" className="w-full">
-                          <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0">
+                          <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0 overflow-x-auto scrollbar-hide flex-nowrap">
                             <TabsTrigger 
                               value="turnarounds" 
-                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary shrink-0 whitespace-nowrap"
                             >
-                              <Eye className="w-4 h-4 mr-2" />
-                              Vistas ({Object.keys(character.turnaround_urls || {}).length})
+                              <Eye className="w-4 h-4 mr-1 sm:mr-2" />
+                              <span className="hidden sm:inline">Vistas</span> ({Object.keys(character.turnaround_urls || {}).length})
                             </TabsTrigger>
                             <TabsTrigger 
                               value="outfits"
-                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary shrink-0 whitespace-nowrap"
                             >
-                              <Shirt className="w-4 h-4 mr-2" />
-                              Vestuarios ({character.outfits?.length || 0})
+                              <Shirt className="w-4 h-4 mr-1 sm:mr-2" />
+                              <span className="hidden sm:inline">Vestuarios</span> ({character.outfits?.length || 0})
                             </TabsTrigger>
                             <TabsTrigger 
                               value="bible"
-                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary shrink-0 whitespace-nowrap"
                             >
-                              <BookOpen className="w-4 h-4 mr-2" />
+                              <BookOpen className="w-4 h-4 mr-1 sm:mr-2" />
                               Bible {character.profile_json && '✓'}
                             </TabsTrigger>
                             <TabsTrigger 
                               value="visual-dna"
-                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary shrink-0 whitespace-nowrap"
                             >
-                              <Dna className="w-4 h-4 mr-2" />
-                              Visual DNA
+                              <Dna className="w-4 h-4 mr-1 sm:mr-2" />
+                              <span className="hidden sm:inline">Visual</span> DNA
                             </TabsTrigger>
                             <TabsTrigger 
                               value="narrative"
-                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary shrink-0 whitespace-nowrap"
                             >
-                              <Book className="w-4 h-4 mr-2" />
-                              Narrativa
+                              <Book className="w-4 h-4 mr-1 sm:mr-2" />
+                              <span className="hidden sm:inline">Narrativa</span><span className="sm:hidden">Narr.</span>
                             </TabsTrigger>
                             <TabsTrigger 
                               value="prompts"
-                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary shrink-0 whitespace-nowrap"
                             >
-                              <Wand2 className="w-4 h-4 mr-2" />
+                              <Wand2 className="w-4 h-4 mr-1 sm:mr-2" />
                               Prompts
                             </TabsTrigger>
                             <TabsTrigger 
                               value="generation"
-                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary shrink-0 whitespace-nowrap"
                             >
-                              <Image className="w-4 h-4 mr-2" />
-                              Generación
+                              <Image className="w-4 h-4 mr-1 sm:mr-2" />
+                              <span className="hidden sm:inline">Generación</span><span className="sm:hidden">Gen.</span>
                               {character.canon_asset_id && <Star className="w-3 h-3 ml-1 text-amber-500" />}
                             </TabsTrigger>
                           </TabsList>
