@@ -1,13 +1,18 @@
 /**
- * Canonical Breakdown Normalizer v1.0
+ * Canonical Breakdown Normalizer v2.0
  * Converts any LLM output shape into a stable schema for UI consumption.
  * 
  * Guarantees:
- * - root.title always present
+ * - root.title always present (extracted from front-matter before first INT/EXT)
  * - characters separated into cast / featured_extras_with_lines / voices_and_functional
  * - collapses CONT'D duplicates
  * - counts always present and consistent
  * - props minimum enforcement for features (with warnings)
+ * 
+ * v2.0 HARD RULES:
+ * - If scenes_total > 0 and locations_base_total === 0 → rebuild from scene headings
+ * - If scenes_total > 50 and cast_characters_total === 0 → extract from raw text
+ * - Never overwrite good data with empty arrays
  */
 
 type AnyObj = Record<string, unknown>;
@@ -35,7 +40,11 @@ function isProbablyTitle(s: unknown): s is string {
   return true;
 }
 
-function pickTitle(input: AnyObj): string {
+// ═══════════════════════════════════════════════════════════════════════════════
+// PASO 3: TITLE EXTRACTION - From front-matter before first INT/EXT
+// ═══════════════════════════════════════════════════════════════════════════════
+function pickTitle(input: AnyObj, filename?: string): string {
+  // First try explicit fields
   const candidates = [
     (input?.title as string | undefined),
     ((input?.metadata as AnyObj)?.title as string | undefined),
@@ -45,25 +54,199 @@ function pickTitle(input: AnyObj): string {
   ];
 
   for (const c of candidates) {
-    if (isProbablyTitle(c)) return c.trim();
+    if (isProbablyTitle(c) && !isGenericTitle(c)) return c.trim();
   }
 
-  // Fallback: try to derive from first lines if text exists
+  // Try to extract from front-matter (text BEFORE first INT./EXT.)
   const rawText: string | undefined =
     (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
+  
   if (typeof rawText === "string" && rawText.trim()) {
-    const head = rawText.split("\n").slice(0, 25).map(l => l.trim()).filter(Boolean);
-    for (const line of head) {
+    // Find first scene heading
+    const firstSceneMatch = rawText.match(/^(INT\.|EXT\.|INT\/EXT)/im);
+    const frontMatter = firstSceneMatch 
+      ? rawText.slice(0, firstSceneMatch.index).trim()
+      : rawText.slice(0, 2000); // fallback: first 2000 chars
+    
+    const lines = frontMatter.split("\n").map(l => l.trim()).filter(Boolean);
+    
+    for (const line of lines) {
+      // Skip obvious non-title lines
+      if (/^(FADE IN|FADE OUT|CUT TO|WRITTEN BY|BY\s|DRAFT|REVISION)/i.test(line)) continue;
+      if (/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}/.test(line)) continue; // dates
+      if (/^page\s+\d/i.test(line)) continue;
+      
       const isAllCapsish =
         line.length <= TITLE_MAX_CHARS &&
         /[A-Z]/.test(line) &&
         line === line.toUpperCase() &&
         !/^INT\.|^EXT\.|^INT\/EXT/i.test(line);
-      if (isAllCapsish && isProbablyTitle(line)) return line.trim();
+      
+      if (isAllCapsish && isProbablyTitle(line) && !isGenericTitle(line)) {
+        return line.trim();
+      }
     }
   }
 
+  // Fallback: use filename if provided and valid
+  if (filename && typeof filename === "string") {
+    const cleanName = filename
+      .replace(/\.(pdf|txt|fountain|fdx)$/i, "")
+      .replace(/[-_]/g, " ")
+      .trim();
+    if (isProbablyTitle(cleanName) && !isGenericTitle(cleanName)) {
+      return cleanName;
+    }
+  }
+
+  // Last resort: return first candidate even if generic
+  for (const c of candidates) {
+    if (isProbablyTitle(c)) return c.trim();
+  }
+
   return "";
+}
+
+function isGenericTitle(s: string): boolean {
+  const generic = [
+    "GADGET", "UNTITLED", "SCRIPT", "SCREENPLAY", "DRAFT", 
+    "FINAL DRAFT", "REVISED", "NEW PROJECT", "PROJECT"
+  ];
+  return generic.includes(s.toUpperCase().trim());
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PASO 1: LOCATION EXTRACTION - From scene headings (no AI needed)
+// ═══════════════════════════════════════════════════════════════════════════════
+interface ParsedSceneHeading {
+  intExt: 'INT' | 'EXT' | 'INT/EXT';
+  locationBase: string;
+  timeOfDay: string;
+  fullHeading: string;
+}
+
+function parseSceneHeading(heading: string): ParsedSceneHeading | null {
+  if (!heading || typeof heading !== 'string') return null;
+  
+  const h = heading.trim().toUpperCase();
+  
+  // Match INT./EXT. patterns
+  const match = h.match(/^(INT|EXT|INT\/EXT|EXT\/INT)[\.\s]+(.+)$/i);
+  if (!match) return null;
+  
+  const intExt = match[1].replace('EXT/INT', 'INT/EXT') as 'INT' | 'EXT' | 'INT/EXT';
+  let rest = match[2].trim();
+  
+  // Extract time of day (after last dash or at end)
+  let timeOfDay = 'DAY';
+  const timeMatch = rest.match(/[-–—]\s*(DAY|NIGHT|MORNING|EVENING|AFTERNOON|DAWN|DUSK|LATER|CONTINUOUS|SAME|SUNSET|SUNRISE)\s*$/i);
+  if (timeMatch) {
+    timeOfDay = timeMatch[1].toUpperCase();
+    rest = rest.slice(0, timeMatch.index).trim();
+  }
+  
+  // Clean up trailing dashes
+  rest = rest.replace(/[-–—]+\s*$/, '').trim();
+  
+  // Location base is what remains
+  const locationBase = rest || 'UNKNOWN LOCATION';
+  
+  return {
+    intExt,
+    locationBase,
+    timeOfDay,
+    fullHeading: heading,
+  };
+}
+
+function extractLocationsFromScenes(scenes: unknown[]): { base: NormalizedLocation[]; variants: string[] } {
+  const locationMap = new Map<string, Set<string>>();
+  
+  for (const scene of scenes) {
+    const s = scene as AnyObj;
+    const heading = (s?.heading as string) || (s?.slugline as string) || (s?.scene_heading as string) || '';
+    
+    const parsed = parseSceneHeading(heading);
+    if (!parsed) continue;
+    
+    const baseKey = parsed.locationBase.toUpperCase();
+    if (!locationMap.has(baseKey)) {
+      locationMap.set(baseKey, new Set());
+    }
+    
+    // Track the variant (INT/EXT + time)
+    const variant = `${parsed.intExt}. ${parsed.locationBase} - ${parsed.timeOfDay}`;
+    locationMap.get(baseKey)!.add(variant);
+  }
+  
+  const base: NormalizedLocation[] = [];
+  const allVariants: string[] = [];
+  
+  for (const [name, variants] of locationMap) {
+    const variantsArr = Array.from(variants);
+    base.push({
+      name,
+      variants: variantsArr,
+    });
+    allVariants.push(...variantsArr);
+  }
+  
+  // Sort by number of variants (most used first)
+  base.sort((a, b) => b.variants.length - a.variants.length);
+  
+  return { base, variants: allVariants };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PASO 2A: CHARACTER EXTRACTION - From raw text (heuristic, no AI)
+// ═══════════════════════════════════════════════════════════════════════════════
+function extractCharacterCandidatesFromText(rawText: string): string[] {
+  if (!rawText || typeof rawText !== 'string') return [];
+  
+  const lines = rawText.split('\n');
+  const candidates = new Set<string>();
+  
+  // Pattern: lines in ALL CAPS that precede dialogue
+  // Typically: CHARACTER NAME (optionally with parenthetical)
+  // Then next line is dialogue
+  
+  for (let i = 0; i < lines.length - 1; i++) {
+    const line = lines[i].trim();
+    const nextLine = lines[i + 1]?.trim() || '';
+    
+    // Skip empty lines
+    if (!line) continue;
+    
+    // Must be ALL CAPS (or mostly)
+    if (line !== line.toUpperCase()) continue;
+    
+    // Must not be a scene heading
+    if (/^(INT\.|EXT\.|INT\/EXT)/i.test(line)) continue;
+    
+    // Must not be a transition
+    if (/^(FADE|CUT|DISSOLVE|SMASH|MATCH|WIPE|IRIS)/i.test(line)) continue;
+    
+    // Must not be too long (character names are typically short)
+    if (line.length > 40) continue;
+    
+    // Must not be a parenthetical only
+    if (/^\([^)]+\)$/.test(line)) continue;
+    
+    // Next line should have content (dialogue)
+    if (!nextLine || /^(INT\.|EXT\.|FADE|CUT)/i.test(nextLine)) continue;
+    
+    // Extract character name (before any parenthetical)
+    let charName = line.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    
+    // Clean up CONT'D, V.O., etc.
+    charName = normalizeCharacterName(charName);
+    
+    if (charName && charName.length >= 2 && charName.length <= 35) {
+      candidates.add(charName);
+    }
+  }
+  
+  return Array.from(candidates);
 }
 
 function normalizeCharacterName(nameRaw: unknown): string {
@@ -90,7 +273,10 @@ function isVoiceOrFunctional(name: string): boolean {
     u.includes("ANNOUNCER") ||
     u.includes("PA SYSTEM") ||
     u.includes("INTERCOM") ||
-    u.includes("NARRATOR")
+    u.includes("NARRATOR") ||
+    u.includes("SUPER:") ||
+    u.includes("TITLE:") ||
+    u.includes("CHYRON")
   );
 }
 
@@ -100,7 +286,8 @@ function isFeaturedExtraRole(name: string): boolean {
     "SOLDIER", "AIDE", "SECRETARY", "STUDENT", "SCIENTIST", "OFFICER",
     "GUARD", "DRIVER", "WAITER", "BARTENDER", "DOCTOR", "NURSE",
     "REPORTER", "POLICEMAN", "POLICE", "AGENT", "CLERK", "JUDGE",
-    "SENATOR", "CONGRESSMAN", "TECH", "OPERATOR", "MR.", "MRS."
+    "SENATOR", "CONGRESSMAN", "TECH", "OPERATOR", "MR.", "MRS.",
+    "MAN", "WOMAN", "BOY", "GIRL", "KID", "WORKER"
   ];
 
   const looksLabel = u === name && name.length <= 35 && !/[a-z]/.test(name);
@@ -108,7 +295,10 @@ function isFeaturedExtraRole(name: string): boolean {
   const hasCommaProper = /,/.test(name) && /[A-Z][a-z]/.test(name);
   if (hasCommaProper) return false;
 
-  return looksLabel && hasKeyword;
+  // Numbered roles like "SOLDIER #1"
+  const hasNumber = /#?\d+/.test(name);
+
+  return looksLabel && (hasKeyword || hasNumber);
 }
 
 function uniqueBy<T>(arr: T[], keyFn: (x: T) => string): T[] {
@@ -208,8 +398,9 @@ export interface NormalizedBreakdown {
   [key: string]: unknown;
 }
 
-export function normalizeBreakdown(input: AnyObj): NormalizedBreakdown {
+export function normalizeBreakdown(input: AnyObj, filename?: string): NormalizedBreakdown {
   const out: AnyObj = { ...input };
+  const warnings: BreakdownWarning[] = [];
 
   // Scenes
   const inputScenes = input.scenes as AnyObj | undefined;
@@ -220,8 +411,10 @@ export function normalizeBreakdown(input: AnyObj): NormalizedBreakdown {
     : safeArray(inputScenes?.list).length;
   (out.scenes as AnyObj).total = scenesTotal;
 
-  // Title (root)
-  out.title = pickTitle(input);
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PASO 3: Title (root) - from front-matter before first INT/EXT
+  // ═══════════════════════════════════════════════════════════════════════════
+  out.title = pickTitle(input, filename);
 
   // Metadata passthrough
   out.metadata = (out.metadata as AnyObj) || {};
@@ -229,13 +422,28 @@ export function normalizeBreakdown(input: AnyObj): NormalizedBreakdown {
     (out.metadata as AnyObj).title = out.title;
   }
 
-  // Locations: support both flat array and new shape
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PASO 1: Locations - extract from scene headings if empty
+  // ═══════════════════════════════════════════════════════════════════════════
   const inputLocations = input.locations;
   const flatLocations = safeArray(inputLocations);
   const baseLocationsInput = (inputLocations as AnyObj)?.base;
-  const baseLocations = safeArray(baseLocationsInput).length 
+  let baseLocations = safeArray(baseLocationsInput).length 
     ? safeArray(baseLocationsInput) 
     : flatLocations;
+
+  // HARD RULE: If scenes > 0 but locations empty, rebuild from scenes
+  const scenesList = safeArray((out.scenes as AnyObj)?.list);
+  if (scenesTotal > 0 && baseLocations.length === 0 && scenesList.length > 0) {
+    console.log(`[normalizeBreakdown] HARD RULE: Rebuilding locations from ${scenesList.length} scenes`);
+    const extracted = extractLocationsFromScenes(scenesList);
+    baseLocations = extracted.base;
+    (out as AnyObj)._locations_rebuilt = true;
+    warnings.push({
+      code: "LOCATIONS_REBUILT",
+      message: `Locations were empty despite ${scenesTotal} scenes. Rebuilt ${extracted.base.length} locations from scene headings.`,
+    });
+  }
 
   out.locations = out.locations || {};
   (out.locations as AnyObj).base = safeArray(baseLocations).map((l: unknown) => {
@@ -247,12 +455,38 @@ export function normalizeBreakdown(input: AnyObj): NormalizedBreakdown {
 
   (out.locations as AnyObj).variants = safeArray((inputLocations as AnyObj)?.variants);
 
-  // Characters: normalize from flat array into 3 groups
-  const flatChars = safeArray<CharacterInput>(input.characters).map((c) => ({
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PASO 2: Characters - normalize from flat array into 3 groups
+  // ═══════════════════════════════════════════════════════════════════════════
+  let flatChars = safeArray<CharacterInput>(input.characters).map((c) => ({
     ...c,
     name_raw: c?.name ?? "",
     name: normalizeCharacterName(c?.name ?? ""),
   })).filter((c) => c.name);
+
+  // HARD RULE: If scenes > 50 but no characters, try to extract from raw text
+  const rawText: string | undefined =
+    (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
+  
+  if (scenesTotal > 50 && flatChars.length === 0 && rawText) {
+    console.log(`[normalizeBreakdown] HARD RULE: Extracting characters from raw text (${scenesTotal} scenes, 0 characters)`);
+    const candidates = extractCharacterCandidatesFromText(rawText);
+    console.log(`[normalizeBreakdown] Found ${candidates.length} character candidates from text`);
+    
+    flatChars = candidates.map((name) => ({
+      name,
+      name_raw: name,
+      role: "unknown",
+      priority: "P5",
+      scenes_count: 0,
+    }));
+    
+    (out as AnyObj)._characters_extracted = true;
+    warnings.push({
+      code: "CHARACTERS_EXTRACTED",
+      message: `Characters were empty despite ${scenesTotal} scenes. Extracted ${candidates.length} candidates from dialogue cues.`,
+    });
+  }
 
   // Merge duplicates by normalized name
   const mergedMap = new Map<string, CharacterInput & { name_raw: string }>();
@@ -310,8 +544,7 @@ export function normalizeBreakdown(input: AnyObj): NormalizedBreakdown {
   // Enforce minimum props for feature scripts
   const minProps = isFeatureLength((out.scenes as AnyObj).total as number) ? 8 : 4;
   if ((out.props as unknown[]).length > 0 && (out.props as unknown[]).length < minProps) {
-    out._warnings = out._warnings || [];
-    (out._warnings as BreakdownWarning[]).push({
+    warnings.push({
       code: "PROPS_TOO_FEW",
       message: `Props count (${(out.props as unknown[]).length}) below minimum (${minProps}) for this script length.`,
     });
@@ -323,6 +556,11 @@ export function normalizeBreakdown(input: AnyObj): NormalizedBreakdown {
   // Counts: always compute
   const computedCounts = computeCounts(out);
   out.counts = computedCounts;
+
+  // Add warnings if any
+  if (warnings.length > 0) {
+    out._warnings = [...(safeArray(out._warnings) as BreakdownWarning[]), ...warnings];
+  }
 
   return out as NormalizedBreakdown;
 }
