@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+import { parseJsonSafe } from "../_shared/llmJson.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -340,18 +341,21 @@ serve(async (req) => {
     const userId = claimsData.user.id;
     console.log(`[generate-scenes] Authenticated user: ${userId}`);
 
+    const body = await req.json() as GenerateScenesRequest;
+
     const { 
       projectId, 
       episodeNo, 
       synopsis, 
       sceneCount = 8, 
       narrativeMode = 'SERIE_ADICTIVA',
-      generateFullShots = true,
       isTeaser, 
       teaserType, 
       teaserData 
-    } = await req.json() as GenerateScenesRequest;
-    
+    } = body;
+
+    const generateFullShots = body.generateFullShots ?? (isTeaser ? true : false);
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {
@@ -442,7 +446,8 @@ REQUISITOS:
 Retorna SOLO JSON válido con la estructura de escenas.`;
     } else {
       // EPISODE MODE - normal scene generation with narrative mode
-      userPrompt = `${narrativeModePrompt}
+      if (generateFullShots) {
+        userPrompt = `${narrativeModePrompt}
 
 ═══════════════════════════════════════════════════════
 GENERA ${sceneCount} ESCENAS COMPLETAS PARA EPISODIO ${episodeNo}
@@ -479,9 +484,59 @@ REQUISITOS CRÍTICOS:
    - continuity (wardrobe_notes, props_in_frame, match_to_previous)
 
 Retorna SOLO JSON válido, sin texto adicional.`;
+      } else {
+        userPrompt = `${narrativeModePrompt}
+
+═══════════════════════════════════════════════════════
+GENERA ${sceneCount} ESCENAS (SIN PLANOS) PARA EPISODIO ${episodeNo}
+═══════════════════════════════════════════════════════
+
+SINOPSIS:
+${synopsis}
+
+PERSONAJES DISPONIBLES:
+${characterList}
+
+LOCALIZACIONES DISPONIBLES:
+${locationList}
+
+REQUISITOS CRÍTICOS:
+1. Usa SOLO los personajes y localizaciones proporcionados
+2. Devuelve SOLO JSON válido (sin markdown, sin texto extra)
+3. FORMATO: Array de escenas
+4. NO incluyas "scene_setup" ni "shots"
+5. Campos requeridos por escena:
+   - scene_no (number)
+   - slugline (string)
+   - summary (string)
+   - time_of_day ("DAY" | "NIGHT")
+   - character_names (string[])
+   - location_name (string)
+   - mood (string)
+
+Retorna SOLO JSON válido.`;
+      }
     }
 
-    console.log('Calling AI for complete scene generation with shots...');
+    const outlineSystemPrompt = `Eres SHOWRUNNER profesional.
+Devuelve SOLO JSON válido (sin markdown, sin texto extra).
+
+Tu salida DEBE ser un array JSON [] de escenas.
+NO incluyas "scene_setup" ni "shots".
+
+Campos por escena (obligatorios):
+- scene_no (number)
+- slugline (string)
+- summary (string)
+- time_of_day ("DAY" | "NIGHT")
+- character_names (string[])
+- location_name (string)
+- mood (string)`;
+
+    const systemPrompt = generateFullShots ? SCENE_GENERATION_PROMPT : outlineSystemPrompt;
+    const maxTokens = generateFullShots ? 16000 : 3500;
+
+    console.log(`Calling AI for ${generateFullShots ? 'FULL scenes + shots' : 'scene outline'} generation...`);
 
     // Use AbortController with 150 second timeout
     const controller = new AbortController();
@@ -497,11 +552,11 @@ Retorna SOLO JSON válido, sin texto adicional.`;
         body: JSON.stringify({
           model: 'google/gemini-2.5-flash',
           messages: [
-            { role: 'system', content: SCENE_GENERATION_PROMPT },
+            { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
           ],
           temperature: 0.7,
-          max_tokens: 16000, // Increased for more detailed output
+          max_tokens: maxTokens,
         }),
         signal: controller.signal,
       });
@@ -528,93 +583,39 @@ Retorna SOLO JSON válido, sin texto adicional.`;
       }
 
       const aiData = await response.json();
-      let scenesText = aiData.choices?.[0]?.message?.content || '[]';
-      
-      // Clean up potential markdown formatting
-      scenesText = scenesText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      
-      console.log('AI response received, parsing complete scene data...');
+      const scenesTextRaw = aiData.choices?.[0]?.message?.content ?? '';
 
-      let generatedScenes;
-      try {
-        // Additional cleanup for common AI formatting issues
-        // Fix TypeScript-style union types that sometimes appear: "mood": "intense" | "dramatic"
-        scenesText = scenesText.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
-        // Fix single | in strings
-        scenesText = scenesText.replace(/:\s*"([^"]*)\s*\|\s*([^"]*)"/g, ': "$1"');
-        // Remove trailing commas before closing brackets
-        scenesText = scenesText.replace(/,(\s*[\]}])/g, '$1');
-        
-        generatedScenes = JSON.parse(scenesText);
-      } catch (parseError) {
-        console.warn('Initial parse failed, attempting repair...');
-        
-        // Attempt multi-pass repair
-        let repaired = scenesText;
-        
-        // Pass 1: Extract largest valid JSON array
-        const arrayMatch = repaired.match(/\[\s*\{[\s\S]*\}\s*\]/);
-        if (arrayMatch) {
-          repaired = arrayMatch[0];
-        }
-        
-        // Pass 2: Clean formatting issues
-        repaired = repaired.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
-        repaired = repaired.replace(/,(\s*[\]}])/g, '$1');
-        
-        // Pass 3: Repair truncated JSON by balancing braces
-        let openBraces = 0, openBrackets = 0;
-        for (const char of repaired) {
-          if (char === '{') openBraces++;
-          else if (char === '}') openBraces--;
-          else if (char === '[') openBrackets++;
-          else if (char === ']') openBrackets--;
-        }
-        
-        // Add missing closing braces/brackets
-        while (openBraces > 0) {
-          repaired += '}';
-          openBraces--;
-        }
-        while (openBrackets > 0) {
-          repaired += ']';
-          openBrackets--;
-        }
-        
-        // Pass 4: Fix truncated strings by adding closing quote before any brace we added
-        repaired = repaired.replace(/([^"\\])(")?(\s*[}\]])$/g, (match: string, pre: string, quote: string, close: string) => {
-          if (!quote && pre !== '"') {
-            return pre + '"' + close;
-          }
-          return match;
-        });
-        
-        // Pass 5: Remove incomplete trailing properties (e.g. "shutter_ang without closing)
-        repaired = repaired.replace(/,?\s*"[^"]+"\s*:\s*[^}\],"]*$/g, '');
-        
-        try {
-          generatedScenes = JSON.parse(repaired);
-          console.log(`JSON repaired successfully. Found ${generatedScenes.length} scenes.`);
-        } catch (e) {
-          console.error('Failed to parse even after repair. Raw (first 1000 chars):', repaired.substring(0, 1000));
-          
-          // Last resort: return partial data with whatever scenes parsed
-          // Try to find complete scene objects
-          const sceneMatches = repaired.match(/\{[^{}]*"scene_no"[^{}]*\}/g);
-          if (sceneMatches && sceneMatches.length > 0) {
-            console.log(`Extracted ${sceneMatches.length} partial scenes as fallback`);
-            generatedScenes = sceneMatches.map((s: string) => {
-              try { return JSON.parse(s); } catch { return null; }
-            }).filter(Boolean);
-            
-            if (generatedScenes.length === 0) {
-              throw new Error('Could not recover any valid scenes from AI response');
-            }
-          } else {
-            throw new Error('Invalid JSON response from AI - no recoverable scenes');
-          }
-        }
+      const parsed = parseJsonSafe<any>(scenesTextRaw, 'generate-scenes');
+
+      if (parsed.degraded) {
+        console.warn('[generate-scenes] Degraded JSON parse:', parsed.warnings, parsed.rawSnippetHash);
       }
+
+      let generatedScenes: any[] | null = null;
+      if (Array.isArray(parsed.json)) {
+        generatedScenes = parsed.json;
+      } else if (parsed.json && typeof parsed.json === 'object' && Array.isArray((parsed.json as any).scenes)) {
+        generatedScenes = (parsed.json as any).scenes;
+      }
+
+      if (!parsed.ok || !generatedScenes || generatedScenes.length === 0) {
+        console.error('[generate-scenes] Invalid JSON response from AI', {
+          ok: parsed.ok,
+          warnings: parsed.warnings,
+          rawSnippetHash: parsed.rawSnippetHash,
+        });
+
+        return new Response(JSON.stringify({
+          error: 'Invalid JSON response from AI',
+          warnings: parsed.warnings,
+          rawSnippetHash: parsed.rawSnippetHash,
+        }), {
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      console.log(`AI response parsed successfully. Scenes: ${generatedScenes.length}`);
 
       // Map character names to IDs
       const characterMap = new Map(characters?.map(c => [c.name.toLowerCase(), c.id]) || []);
