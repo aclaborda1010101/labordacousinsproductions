@@ -339,6 +339,24 @@ function cleanCharacterCue(raw: string): string {
   let name = raw.trim();
   name = name.replace(/\(V\.?O\.?\)|\(O\.?S\.?\)|\(CONT['']?D?\)|\(CONT\.\)|\(OFF\)|\(OVER\)/gi, '').trim();
   name = name.replace(/[()]/g, '').trim();
+
+  // Filter out common screenplay transitions / non-character cues
+  const upper = name.toUpperCase();
+  const banned = new Set([
+    'CUT TO',
+    'SMASH CUT',
+    'DISSOLVE TO',
+    'FADE IN',
+    'FADE OUT',
+    'FADE TO BLACK',
+    'TITLE',
+    'SUPER',
+    'MONTAGE',
+    'END',
+    'CONTINUED',
+  ]);
+  if (banned.has(upper)) return '';
+
   return name;
 }
 
@@ -377,59 +395,127 @@ function extractScenesFromScript(text: string): any[] {
 }
 
 function normalizeBreakdown(data: any, scriptText: string): any {
-  if (!data.scenes || !Array.isArray(data.scenes) || data.scenes.length === 0) {
+  const out: any = (data && typeof data === 'object') ? data : {};
+  const isLongScript = (scriptText || '').length > 40000;
+
+  const asArray = (v: any) => (Array.isArray(v) ? v : []);
+
+  // --- Scenes ---
+  const aiScenes = asArray(out.scenes);
+
+  // For long scripts, the model often returns a tiny sample of scenes due to output limits.
+  // If that happens, prefer a deterministic regex scene pass (sluglines + character cues).
+  const regexScenes = isLongScript ? extractScenesFromScript(scriptText) : [];
+
+  if (aiScenes.length === 0) {
     console.warn('[script-breakdown] No scenes returned by model, falling back to regex extraction');
-    data.scenes = extractScenesFromScript(scriptText);
+    out.scenes = regexScenes;
+  } else if (
+    isLongScript &&
+    regexScenes.length >= 20 &&
+    aiScenes.length < Math.min(12, Math.ceil(regexScenes.length * 0.15))
+  ) {
+    console.warn('[script-breakdown] Too few scenes returned by model for long script; using regex scene extraction instead', {
+      aiScenes: aiScenes.length,
+      regexScenes: regexScenes.length,
+    });
+    out.scenes = regexScenes;
+  } else {
+    out.scenes = aiScenes;
   }
 
-  // Extract global characters from scenes if missing
-  if (!data.characters || !Array.isArray(data.characters) || data.characters.length === 0) {
-    const charMap = new Map<string, { name: string; scenes_count: number }>();
-    for (const scene of (data.scenes || [])) {
-      for (const charName of (scene.characters_present || [])) {
-        const existing = charMap.get(charName.toLowerCase());
-        if (existing) {
-          existing.scenes_count++;
-        } else {
-          charMap.set(charName.toLowerCase(), { name: charName, scenes_count: 1 });
-        }
+  // --- Derive characters/locations from scenes (works for both AI scenes and regex scenes) ---
+  const derivedCharMap = new Map<string, { name: string; scenes_count: number }>();
+  const derivedLocMap = new Map<string, { name: string; type: string; scenes_count: number }>();
+
+  for (const scene of asArray(out.scenes)) {
+    // Characters
+    for (const charName of asArray(scene?.characters_present)) {
+      if (typeof charName !== 'string') continue;
+      const cleaned = cleanCharacterCue(charName);
+      if (!cleaned) continue;
+      const key = cleaned.toLowerCase();
+      const existing = derivedCharMap.get(key);
+      if (existing) existing.scenes_count++;
+      else derivedCharMap.set(key, { name: cleaned, scenes_count: 1 });
+    }
+
+    // Locations
+    const locNameRaw = (scene?.location_name || scene?.slugline || '') as string;
+    const locTypeRaw = (scene?.location_type || 'INT') as string;
+    const locName = typeof locNameRaw === 'string' ? locNameRaw.trim() : '';
+    const locType = typeof locTypeRaw === 'string' ? locTypeRaw : 'INT';
+    if (locName) {
+      const key = locName.toLowerCase();
+      const existing = derivedLocMap.get(key);
+      if (existing) existing.scenes_count++;
+      else derivedLocMap.set(key, { name: locName, type: locType, scenes_count: 1 });
+    }
+  }
+
+  const derivedCharacters = Array.from(derivedCharMap.values()).map(c => ({
+    name: c.name,
+    role: c.scenes_count >= 8 ? 'supporting' : c.scenes_count >= 3 ? 'recurring' : 'extra_with_line',
+    scenes_count: c.scenes_count,
+    priority: c.scenes_count >= 8 ? 'P1' : c.scenes_count >= 3 ? 'P2' : 'P3',
+  }));
+
+  const derivedLocations = Array.from(derivedLocMap.values()).map(l => ({
+    name: l.name,
+    type: l.type,
+    scenes_count: l.scenes_count,
+    priority: l.scenes_count >= 8 ? 'P1' : l.scenes_count >= 3 ? 'P2' : 'P3',
+  }));
+
+  // --- Characters ---
+  const existingCharacters = asArray(out.characters);
+  if (existingCharacters.length === 0) {
+    out.characters = derivedCharacters;
+    console.log(`[script-breakdown] Extracted ${out.characters.length} characters from scene data`);
+  } else if (isLongScript && derivedCharacters.length > existingCharacters.length) {
+    const existingNames = new Set(
+      existingCharacters
+        .map((c: any) => (typeof c?.name === 'string' ? c.name.toLowerCase() : ''))
+        .filter(Boolean)
+    );
+
+    const merged = [...existingCharacters];
+    for (const c of derivedCharacters) {
+      if (!existingNames.has(c.name.toLowerCase())) {
+        merged.push(c);
+        existingNames.add(c.name.toLowerCase());
       }
     }
-    data.characters = Array.from(charMap.values()).map(c => ({
-      name: c.name,
-      role: c.scenes_count >= 5 ? 'supporting' : c.scenes_count >= 2 ? 'recurring' : 'extra_with_line',
-      scenes_count: c.scenes_count,
-      priority: c.scenes_count >= 5 ? 'P1' : c.scenes_count >= 2 ? 'P2' : 'P3',
-    }));
-    console.log(`[script-breakdown] Extracted ${data.characters.length} characters from scene data`);
+
+    out.characters = merged;
+    console.log(`[script-breakdown] Augmented characters from scene cues (long script): ${existingCharacters.length} -> ${out.characters.length}`);
   }
 
-  // Extract global locations from scenes if missing
-  if (!data.locations || !Array.isArray(data.locations) || data.locations.length === 0) {
-    const locMap = new Map<string, { name: string; type: string; scenes_count: number }>();
-    for (const scene of (data.scenes || [])) {
-      const locName = scene.location_name || scene.slugline || '';
-      const locType = scene.location_type || 'INT';
-      if (locName) {
-        const key = locName.toLowerCase();
-        const existing = locMap.get(key);
-        if (existing) {
-          existing.scenes_count++;
-        } else {
-          locMap.set(key, { name: locName, type: locType, scenes_count: 1 });
-        }
+  // --- Locations ---
+  const existingLocations = asArray(out.locations);
+  if (existingLocations.length === 0) {
+    out.locations = derivedLocations;
+    console.log(`[script-breakdown] Extracted ${out.locations.length} locations from scene data`);
+  } else if (isLongScript && derivedLocations.length > existingLocations.length) {
+    const existingNames = new Set(
+      existingLocations
+        .map((l: any) => (typeof l?.name === 'string' ? l.name.toLowerCase() : ''))
+        .filter(Boolean)
+    );
+
+    const merged = [...existingLocations];
+    for (const l of derivedLocations) {
+      if (!existingNames.has(l.name.toLowerCase())) {
+        merged.push(l);
+        existingNames.add(l.name.toLowerCase());
       }
     }
-    data.locations = Array.from(locMap.values()).map(l => ({
-      name: l.name,
-      type: l.type,
-      scenes_count: l.scenes_count,
-      priority: l.scenes_count >= 5 ? 'P1' : l.scenes_count >= 2 ? 'P2' : 'P3',
-    }));
-    console.log(`[script-breakdown] Extracted ${data.locations.length} locations from scene data`);
+
+    out.locations = merged;
+    console.log(`[script-breakdown] Augmented locations from sluglines (long script): ${existingLocations.length} -> ${out.locations.length}`);
   }
 
-  return data;
+  return out;
 }
 
 function tryParseJson(text: string): any {
