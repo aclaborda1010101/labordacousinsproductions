@@ -331,15 +331,27 @@ export default function Characters({ projectId }: CharactersProps) {
     expressionName: string | null,
     slotIndex: number
   ) => {
-    // Create or get slot
-    const { data: existingSlot } = await supabase
+    // Create or get slot - handle null values properly (SQL null = null is false)
+    let query = supabase
       .from('character_pack_slots')
       .select('id')
       .eq('character_id', charId)
-      .eq('slot_type', slotType)
-      .eq('view_angle', viewAngle)
-      .eq('expression_name', expressionName)
-      .single();
+      .eq('slot_type', slotType);
+    
+    // Use .is() for null comparisons instead of .eq()
+    if (viewAngle === null) {
+      query = query.is('view_angle', null);
+    } else {
+      query = query.eq('view_angle', viewAngle);
+    }
+    
+    if (expressionName === null) {
+      query = query.is('expression_name', null);
+    } else {
+      query = query.eq('expression_name', expressionName);
+    }
+
+    const { data: existingSlot } = await query.maybeSingle();
 
     let slotId = existingSlot?.id;
 
