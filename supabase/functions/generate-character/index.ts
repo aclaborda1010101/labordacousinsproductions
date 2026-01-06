@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
+import { logGenerationCost } from "../_shared/cost-logging.ts";
+import { v3RequireAuth, v3RequireProjectAccess, V3AuthContext } from "../_shared/v3-enterprise.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -683,20 +684,27 @@ serve(async (req) => {
   }
 
   try {
+    // Gateway JWT verification may be disabled; enforce auth here
+    const authResult = await v3RequireAuth(req);
+    if (authResult instanceof Response) {
+      return authResult;
+    }
+    const auth: V3AuthContext = authResult;
+
     const body = await req.json();
-    
+
     // Check if this is a slot-based request or legacy request
     const isSlotRequest = 'slotId' in body;
-    
+
     if (isSlotRequest) {
-      return await handleSlotGeneration(body as SlotGenerateRequest);
+      return await handleSlotGeneration(body as SlotGenerateRequest, auth);
     } else {
       return await handleLegacyGeneration(body as LegacyCharacterRequest);
     }
   } catch (error) {
     console.error('Error in generate-character function:', error);
-    return new Response(JSON.stringify({ 
-      error: error instanceof Error ? error.message : 'Unknown error occurred' 
+    return new Response(JSON.stringify({
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -704,7 +712,7 @@ serve(async (req) => {
   }
 });
 
-async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Response> {
+async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthContext): Promise<Response> {
   console.log(`=== Slot Generation: ${request.slotType} for ${request.characterName} ===`);
   const startTime = Date.now();
   
@@ -729,6 +737,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
   if (charError || !character) {
     console.error('Character fetch error:', charError);
     throw new Error(`Character not found: ${request.characterId}`);
+  }
+
+  // Enforce project access (security) now that we know the character's project
+  const accessResult = await v3RequireProjectAccess(auth, character.project_id);
+  if (accessResult instanceof Response) {
+    return accessResult;
   }
 
   // Get active visual DNA
@@ -903,7 +917,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest): Promise<Respo
     .single();
 
   await logGenerationCost({
-    userId: '',
+    userId: auth.userId,
     projectId: charData?.project_id,
     characterId: request.characterId,
     slotId: request.slotId,

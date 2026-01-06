@@ -75,7 +75,7 @@ verify_jwt = true
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-character]
-verify_jwt = true
+verify_jwt = false
 
 [functions.generate-location]
 verify_jwt = true
