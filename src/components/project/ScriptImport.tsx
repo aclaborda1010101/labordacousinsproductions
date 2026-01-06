@@ -42,6 +42,7 @@ import {
   Stethoscope,
   Layers,
   AlertTriangle,
+  Info,
   ChevronDown,
   ChevronUp,
   Download,
@@ -235,6 +236,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [breakdownPro, setBreakdownPro] = useState<any>(null);
   const [generatingBreakdownPro, setGeneratingBreakdownPro] = useState(false);
   const [breakdownProSteps, setBreakdownProSteps] = useState<string[]>([]);
+  const [autoBreakdownPro, setAutoBreakdownPro] = useState(false);
   
   // Dynamic batch configuration
   const [batchConfig, setBatchConfig] = useState<BatchConfig | null>(null);
@@ -813,6 +815,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setActiveTab('summary');
       
       toast.success('¡Guion analizado! Ve a la pestaña "Resumen" para ver el resultado.');
+      
+      // 6. Auto-trigger pro breakdown if checkbox is enabled
+      if (autoBreakdownPro && scriptText.trim().length >= 200) {
+        // Use setTimeout to allow state to settle before triggering
+        setTimeout(() => {
+          generateBreakdownPro();
+        }, 500);
+      }
     } catch (err: any) {
       console.error('Error analyzing imported script:', err);
       toast.error(err.message || 'Error al analizar el guion');
@@ -3197,6 +3207,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   <div className="pt-4 border-t">
                     {!breakdownPro && !generatingBreakdownPro ? (
                       <div className="space-y-3">
+                        {/* Auto checkbox */}
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id="auto-breakdown"
+                            checked={autoBreakdownPro}
+                            onCheckedChange={(checked) => setAutoBreakdownPro(!!checked)}
+                          />
+                          <Label htmlFor="auto-breakdown" className="text-sm cursor-pointer">
+                            Generar breakdown completo automáticamente tras el outline
+                          </Label>
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-6 -mt-1">
+                          Útil para guiones finales o documentos de rodaje
+                        </p>
+                        
                         <Button 
                           onClick={generateBreakdownPro} 
                           variant="outline" 
@@ -3215,7 +3240,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <div className="p-1 hover:bg-muted rounded">
-                                <AlertTriangle className="w-4 h-4 text-muted-foreground" />
+                                <Info className="w-4 h-4 text-muted-foreground" />
                               </div>
                             </TooltipTrigger>
                             <TooltipContent side="left" className="max-w-xs">
