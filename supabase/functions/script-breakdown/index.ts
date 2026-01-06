@@ -11,7 +11,6 @@ interface ScriptBreakdownRequest {
   projectId: string;
   scriptId?: string;
   language?: string;
-  // Project planning hints (optional). If not provided, we load them from the project.
   format?: 'film' | 'series' | string;
   episodesCount?: number;
   episodeDurationMin?: number;
@@ -148,139 +147,67 @@ FORMATO DE SALIDA OBLIGATORIO (JSON):
       "characters_present": ["array de nombres TAL COMO aparecen en el texto"],
       "props_used": ["array de props MENCIONADOS en el texto"],
       "continuity_notes": "string",
-      "priority": "P0 | P1 | P2",
-      "complexity": "low | medium | high | epic"
+      "visual_markers": ["array de indicadores visuales explícitos"]
     }
   ],
   "characters": [
     {
-      "name": "string (nombre EXACTO del texto)",
-      "entity_type": "individual | collective | civilization | cosmic | lineage | ai | hybrid | historical_figure | not_specified",
+      "name": "string (TAL COMO aparece en el texto)",
       "role": "protagonist | antagonist | supporting | recurring | cameo | extra_with_line | background | collective_entity | cosmic_entity",
-      "role_detail": "string (descripción específica del rol: ej. 'Guardián del Fuego', 'Mentor del protagonista')",
-      "description": "string (SOLO lo que dice el texto)",
-      "personality": "string (SOLO si está descrito)",
-      "arc": "string (SOLO si es evidente en el texto)",
-      "scale": "personal | generational | civilizational | cosmic",
-      "first_appearance": "string (escena o momento donde aparece por primera vez)",
-      "scenes": [number array],
+      "role_detail": "string (función narrativa específica)",
+      "entity_type": "human | collective | cosmic | abstract | historical",
+      "description": "string (solo EXPLÍCITO en texto)",
+      "priority": "P1 | P2 | P3",
+      "first_appearance": "string (dónde aparece por primera vez)",
       "scenes_count": number,
-      "dialogue_lines": number,
-      "priority": "P0 | P1 | P2",
-      "notes": "string",
-      "explicitly_described": boolean
+      "dialogue_lines": number
     }
   ],
   "locations": [
     {
       "name": "string",
-      "type": "INT | EXT | INT/EXT | PLANETARY | ORBITAL | SUBTERRANEAN | DIMENSIONAL | HISTORICAL | SYMBOLIC",
-      "scale": "room | building | city | continent | planetary | stellar | cosmic | abstract",
-      "era": "string (solo si está explícito)",
-      "description": "string (SOLO lo descrito en el texto)",
-      "scenes": [number array],
+      "type": "INT | EXT | INT/EXT | COSMIC | HISTORICAL | DIMENSIONAL | SYMBOLIC",
+      "scale": "room | building | city | region | planet | cosmic | abstract",
+      "description": "string (solo EXPLÍCITO)",
       "scenes_count": number,
-      "priority": "P0 | P1 | P2",
-      "explicitly_described": boolean
+      "priority": "P1 | P2 | P3"
     }
   ],
   "props": [
     {
       "name": "string",
-      "type": "object | weapon | document | vehicle | artifact | technology | material | symbol | other",
-      "description": "string (SOLO lo mencionado)",
-      "importance": "key | recurring | background",
-      "scenes": [number array],
-      "scenes_count": number,
-      "priority": "P0 | P1 | P2",
-      "explicitly_mentioned": boolean
-    }
-  ],
-  "set_pieces": [
-    {
-      "name": "string",
-      "type": "action | ritual | transformation | revelation | confrontation | cataclysm | cosmic_event | other",
-      "description": "string (descripción fiel)",
-      "scenes": [number array],
-      "complexity": "low | medium | high | epic",
-      "explicitly_in_text": boolean
+      "description": "string",
+      "narrative_importance": "critical | important | minor",
+      "scenes_used": ["array de números de escena"]
     }
   ],
   "subplots": [
     {
       "name": "string",
-      "description": "string",
+      "description": "string (breve)",
       "characters_involved": ["array"],
-      "scenes": [number array],
-      "resolution": "string | not_resolved | not_specified"
+      "status": "introduced | developing | resolved | unresolved"
     }
   ],
   "plot_twists": [
     {
-      "name": "string",
-      "scene": number,
       "description": "string",
-      "impact": "minor | major | paradigm_shift",
-      "explicitly_in_text": boolean
-    }
-  ],
-  "continuity_anchors": [
-    {
-      "name": "string",
-      "type": "physical_state | emotional_state | temporal | civilizational | cosmic",
-      "description": "string",
-      "applies_from_scene": number,
-      "applies_to_scene": number | null,
-      "notes": "string"
+      "scene_number": number,
+      "impact": "major | moderate | minor"
     }
   ],
   "summary": {
     "total_scenes": number,
-    "total_characters": number,
-    "protagonists": number,
-    "antagonists": number,
-    "supporting_characters": number,
-    "recurring_characters": number,
-    "cameos": number,
-    "extras_with_lines": number,
-    "collective_entities": number,
-    "total_locations": number,
-    "total_props": number,
-    "total_set_pieces": number,
-    "total_subplots": number,
-    "total_plot_twists": number,
     "estimated_runtime_min": number,
-    "analysis_confidence": "high | medium | low",
-    "elements_not_specified": ["array de elementos que no están claros en el texto"],
     "production_notes": "string"
   }
-}
-
-═══════════════════════════════════════════════════════════════════
-PRIORIDADES:
-═══════════════════════════════════════════════════════════════════
-- P0: Imprescindible (protagonistas, localizaciones principales, elementos centrales)
-- P1: Importante (personajes secundarios, localizaciones recurrentes)
-- P2: Complementario (extras, localizaciones de una escena, elementos de fondo)
-
-═══════════════════════════════════════════════════════════════════
-RECORDATORIO FINAL:
-═══════════════════════════════════════════════════════════════════
-Tu análisis debe ser un DESGLOSE RIGUROSO Y FIEL al contenido original.
-- SIN invenciones
-- SIN simplificaciones forzadas
-- SIN conversión a géneros comerciales
-- SIN clichés de marketing
-
-Si dudas sobre algo, indícalo como "no especificado" antes que inventarlo.
-
-IDIOMA: Responde en el idioma indicado.`;
+}`;
 
 const BREAKDOWN_TOOL = {
-  type: 'function',
+  type: 'function' as const,
   function: {
     name: 'return_script_breakdown',
-    description: 'Devuelve el desglose completo del guion en un objeto estructurado.',
+    description: 'Returns the structured script breakdown analysis',
     parameters: {
       type: 'object',
       properties: {
@@ -292,10 +219,8 @@ const BREAKDOWN_TOOL = {
             narrative_scope: { type: 'string' },
             temporal_span: { type: 'string' },
             tone: { type: 'string' },
-            themes: { type: 'array', items: { type: 'string' } },
-          },
-          required: ['faithful_summary'],
-          additionalProperties: true,
+            themes: { type: 'array', items: { type: 'string' } }
+          }
         },
         scenes: {
           type: 'array',
@@ -316,12 +241,9 @@ const BREAKDOWN_TOOL = {
               characters_present: { type: 'array', items: { type: 'string' } },
               props_used: { type: 'array', items: { type: 'string' } },
               continuity_notes: { type: 'string' },
-              priority: { type: 'string' },
-              complexity: { type: 'string' },
-            },
-            required: ['scene_number', 'slugline', 'summary'],
-            additionalProperties: true,
-          },
+              visual_markers: { type: 'array', items: { type: 'string' } }
+            }
+          }
         },
         characters: {
           type: 'array',
@@ -329,24 +251,16 @@ const BREAKDOWN_TOOL = {
             type: 'object',
             properties: {
               name: { type: 'string' },
-              entity_type: { type: 'string' },
               role: { type: 'string' },
               role_detail: { type: 'string' },
+              entity_type: { type: 'string' },
               description: { type: 'string' },
-              personality: { type: 'string' },
-              arc: { type: 'string' },
-              scale: { type: 'string' },
-              first_appearance: { type: 'string' },
-              scenes: { type: 'array', items: { type: 'number' } },
-              scenes_count: { type: 'number' },
-              dialogue_lines: { type: 'number' },
               priority: { type: 'string' },
-              notes: { type: 'string' },
-              explicitly_described: { type: 'boolean' },
-            },
-            required: ['name'],
-            additionalProperties: true,
-          },
+              first_appearance: { type: 'string' },
+              scenes_count: { type: 'number' },
+              dialogue_lines: { type: 'number' }
+            }
+          }
         },
         locations: {
           type: 'array',
@@ -356,16 +270,11 @@ const BREAKDOWN_TOOL = {
               name: { type: 'string' },
               type: { type: 'string' },
               scale: { type: 'string' },
-              era: { type: 'string' },
               description: { type: 'string' },
-              scenes: { type: 'array', items: { type: 'number' } },
               scenes_count: { type: 'number' },
-              priority: { type: 'string' },
-              explicitly_described: { type: 'boolean' },
-            },
-            required: ['name'],
-            additionalProperties: true,
-          },
+              priority: { type: 'string' }
+            }
+          }
         },
         props: {
           type: 'array',
@@ -373,361 +282,216 @@ const BREAKDOWN_TOOL = {
             type: 'object',
             properties: {
               name: { type: 'string' },
-              type: { type: 'string' },
               description: { type: 'string' },
-              importance: { type: 'string' },
-              scenes: { type: 'array', items: { type: 'number' } },
-              scenes_count: { type: 'number' },
-              priority: { type: 'string' },
-              explicitly_mentioned: { type: 'boolean' },
-            },
-            required: ['name'],
-            additionalProperties: true,
-          },
+              narrative_importance: { type: 'string' },
+              scenes_used: { type: 'array', items: { type: 'number' } }
+            }
+          }
         },
-        set_pieces: { type: 'array', items: { type: 'object', additionalProperties: true } },
-        subplots: { type: 'array', items: { type: 'object', additionalProperties: true } },
-        plot_twists: { type: 'array', items: { type: 'object', additionalProperties: true } },
-        continuity_anchors: { type: 'array', items: { type: 'object', additionalProperties: true } },
+        subplots: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              description: { type: 'string' },
+              characters_involved: { type: 'array', items: { type: 'string' } },
+              status: { type: 'string' }
+            }
+          }
+        },
+        plot_twists: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              description: { type: 'string' },
+              scene_number: { type: 'number' },
+              impact: { type: 'string' }
+            }
+          }
+        },
         summary: {
           type: 'object',
           properties: {
             total_scenes: { type: 'number' },
-            total_characters: { type: 'number' },
-            total_locations: { type: 'number' },
-            total_props: { type: 'number' },
             estimated_runtime_min: { type: 'number' },
-            analysis_confidence: { type: 'string' },
-            production_notes: { type: 'string' },
-          },
-          required: ['total_scenes', 'total_characters', 'total_locations', 'total_props'],
-          additionalProperties: true,
-        },
+            production_notes: { type: 'string' }
+          }
+        }
       },
-      required: ['synopsis', 'scenes', 'characters', 'locations', 'props', 'summary'],
-      additionalProperties: true,
-    },
-  },
+      required: ['synopsis', 'scenes', 'characters', 'locations']
+    }
+  }
 };
 
-const SLUGLINE_RE = /^(INT\.\/EXT\.|EXT\.\/INT\.|INT\/EXT\.|INT\.|EXT\.|I\/E\.|EST\.)\b/i;
+// ===== SLUGLINE REGEX =====
+const SLUGLINE_RE = /^(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME))?$/i;
 
-const looksLikeCharacterCue = (line: string) => {
-  // Typical screenplay character cues are mostly uppercase and short.
-  const t = line.trim();
-  if (!t) return false;
-  if (t.length < 2 || t.length > 35) return false;
-  if (SLUGLINE_RE.test(t)) return false;
-  if (/^(CUT TO:|FADE IN:|FADE OUT\.|DISSOLVE TO:|SMASH CUT TO:|MATCH CUT TO:|THE END)\b/i.test(t)) return false;
-  // Must be mostly uppercase letters/spaces with optional punctuation.
-  return /^[A-Z0-9][A-Z0-9 '\-.()]+$/.test(t) && t === t.toUpperCase();
-};
+function looksLikeCharacterCue(line: string): boolean {
+  const trimmed = line.trim();
+  if (trimmed.length < 2 || trimmed.length > 50) return false;
+  if (/^[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+(\s*\(.*\))?$/.test(trimmed)) return true;
+  return false;
+}
 
-const cleanCharacterCue = (line: string) => {
-  let t = line.trim();
-  // Remove common suffixes like (V.O.), (O.S.), (CONT'D)
-  t = t.replace(/\((V\.O\.|O\.S\.|CONT\.?D?|OFF)\)\s*$/i, '').trim();
-  t = t.replace(/\bCONT\.?D?\b\s*$/i, '').trim();
-  // Remove trailing punctuation
-  t = t.replace(/[:.]+$/g, '').trim();
-  return t;
-};
+function cleanCharacterCue(raw: string): string {
+  let name = raw.trim();
+  name = name.replace(/\(V\.?O\.?\)|\(O\.?S\.?\)|\(CONT['']?D?\)|\(CONT\.\)|\(OFF\)|\(OVER\)/gi, '').trim();
+  name = name.replace(/[()]/g, '').trim();
+  return name;
+}
 
-const extractScenesFromScript = (raw: string) => {
-  const lines = (raw || '').split(/\r?\n/);
-
+function extractScenesFromScript(text: string): any[] {
+  const lines = text.split('\n');
   const scenes: any[] = [];
-  let current: any | null = null;
-  let sceneIndex = 0;
+  let currentScene: any = null;
+  let sceneNumber = 0;
 
-  const pushCurrent = () => {
-    if (!current) return;
-    // Ensure required fields exist
-    current.scene_number = current.scene_number ?? (sceneIndex + 1);
-    current.slugline = String(current.slugline || '').trim() || `ESCENA ${current.scene_number}`;
-    current.summary = String(current.summary || '').trim() || '—';
-    current.characters_present = Array.from(new Set(current.characters_present || [])).filter(Boolean);
-    current.props_used = Array.from(new Set(current.props_used || [])).filter(Boolean);
-    scenes.push(current);
-    current = null;
-  };
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    const match = SLUGLINE_RE.exec(line);
 
-  for (const rawLine of lines) {
-    const line = rawLine.replace(/\t/g, ' ').trimEnd();
-    const trimmed = line.trim();
-
-    if (!trimmed) continue;
-
-    // New scene slugline
-    if (SLUGLINE_RE.test(trimmed)) {
-      pushCurrent();
-      sceneIndex++;
-
-      const slugline = trimmed;
-      const typeMatch = slugline.match(/^(INT\.\/EXT\.|EXT\.\/INT\.|INT\/EXT\.|INT\.|EXT\.|I\/E\.|EST\.)/i);
-      const locationType = (typeMatch?.[1] || 'INT').toUpperCase();
-
-      const rest = slugline.replace(typeMatch?.[0] || '', '').trim();
-      const parts = rest.split(/\s*[-—]\s*/);
-      const locationName = (parts[0] || rest).trim();
-      const timeOfDay = (parts[1] || '').trim();
-
-      current = {
-        scene_number: sceneIndex,
-        slugline,
-        location_name: locationName,
-        location_type: locationType,
-        time_of_day: timeOfDay,
-        era: '',
+    if (match) {
+      if (currentScene) scenes.push(currentScene);
+      sceneNumber++;
+      currentScene = {
+        scene_number: sceneNumber,
+        slugline: line,
+        location_name: match[2]?.trim() || 'UNKNOWN',
+        location_type: match[1].toUpperCase().replace('.', ''),
+        time_of_day: match[3]?.toUpperCase() || 'NOT_SPECIFIED',
         summary: '',
-        objective: '',
-        mood: '',
-        page_range: '',
+        characters_present: [],
         estimated_duration_sec: 60,
-        characters_present: [] as string[],
-        props_used: [] as string[],
-        continuity_notes: '',
-        priority: 'P1',
-        complexity: 'medium',
       };
-      continue;
-    }
-
-    if (!current) continue; // ignore pre-slugline content
-
-    // Character cue inside the current scene
-    if (looksLikeCharacterCue(trimmed)) {
-      const name = cleanCharacterCue(trimmed);
-      if (name && name.length <= 40) current.characters_present.push(name);
-      continue;
-    }
-
-    // First action line becomes a minimal summary fallback
-    if (!current.summary) {
-      // Avoid using transitions or centered titles as summary
-      if (!/^(CUT TO:|FADE IN:|FADE OUT\.|DISSOLVE TO:|SMASH CUT TO:|MATCH CUT TO:)\b/i.test(trimmed)) {
-        current.summary = trimmed.slice(0, 180);
+    } else if (currentScene && looksLikeCharacterCue(line)) {
+      const charName = cleanCharacterCue(line);
+      if (charName && !currentScene.characters_present.includes(charName)) {
+        currentScene.characters_present.push(charName);
       }
     }
   }
-
-  pushCurrent();
+  if (currentScene) scenes.push(currentScene);
   return scenes;
-};
+}
 
-const normalizeBreakdown = (input: any, rawScriptText?: string) => {
-  const obj = (input && typeof input === 'object') ? input : {};
-  let scenes = Array.isArray(obj.scenes) ? obj.scenes : [];
-
-  // If the model returns an empty breakdown (common when output budget is tight),
-  // recover at least the scene skeleton from the raw screenplay text.
-  if (scenes.length === 0 && rawScriptText && rawScriptText.trim().length > 0) {
-    const extracted = extractScenesFromScript(rawScriptText);
-    if (extracted.length > 0) {
-      console.log(`[normalizeBreakdown] No scenes from model, extracted ${extracted.length} scenes from raw text fallback`);
-      scenes = extracted;
-    }
+function normalizeBreakdown(data: any, scriptText: string): any {
+  if (!data.scenes || !Array.isArray(data.scenes) || data.scenes.length === 0) {
+    console.warn('[script-breakdown] No scenes returned by model, falling back to regex extraction');
+    data.scenes = extractScenesFromScript(scriptText);
   }
 
-  // Extract characters from the model response, or infer from scenes if empty
-  let characters = Array.isArray(obj.characters) ? obj.characters : [];
-  if (characters.length === 0 && scenes.length > 0) {
-    console.log('[normalizeBreakdown] No characters array from model, extracting from scenes...');
-    const charMap = new Map<string, { name: string; scenes: number[]; scenes_count: number; dialogue_lines: number }>();
-    
-    for (const scene of scenes) {
-      const sceneNum = scene.scene_number ?? 0;
-      const charsInScene = Array.isArray(scene.characters_present) ? scene.characters_present : [];
-      
-      for (const charName of charsInScene) {
-        const normalized = String(charName).trim();
-        if (!normalized) continue;
-        
-        if (charMap.has(normalized)) {
-          const existing = charMap.get(normalized)!;
-          if (!existing.scenes.includes(sceneNum)) {
-            existing.scenes.push(sceneNum);
-            existing.scenes_count++;
-          }
-        } else {
-          charMap.set(normalized, {
-            name: normalized,
-            scenes: [sceneNum],
-            scenes_count: 1,
-            dialogue_lines: 0,
-          });
-        }
-      }
-    }
-    
-    // Convert to array and assign roles based on appearance frequency
-    characters = Array.from(charMap.values())
-      .sort((a, b) => b.scenes_count - a.scenes_count)
-      .map((c, idx) => ({
-        ...c,
-        entity_type: 'individual',
-        role: idx < 3 ? 'protagonist' : (c.scenes_count >= 5 ? 'supporting' : (c.scenes_count >= 2 ? 'recurring' : 'cameo')),
-        priority: idx < 3 ? 'P0' : (c.scenes_count >= 5 ? 'P1' : 'P2'),
-        description: '',
-        arc: '',
-        explicitly_described: false,
-      }));
-    
-    console.log(`[normalizeBreakdown] Extracted ${characters.length} characters from scenes`);
-  }
-  
-  // Extract locations from the model response, or infer from scenes if empty
-  let locations = Array.isArray(obj.locations) ? obj.locations : [];
-  if (locations.length === 0 && scenes.length > 0) {
-    console.log('[normalizeBreakdown] No locations array from model, extracting from scenes...');
-    const locMap = new Map<string, { name: string; type: string; scenes: number[]; scenes_count: number }>();
-    
-    for (const scene of scenes) {
-      const sceneNum = scene.scene_number ?? 0;
-      const locName = String(scene.location_name ?? scene.slugline ?? '').trim();
-      const locType = String(scene.location_type ?? 'INT').trim();
-      
-      if (!locName) continue;
-      
-      if (locMap.has(locName)) {
-        const existing = locMap.get(locName)!;
-        if (!existing.scenes.includes(sceneNum)) {
-          existing.scenes.push(sceneNum);
+  // Extract global characters from scenes if missing
+  if (!data.characters || !Array.isArray(data.characters) || data.characters.length === 0) {
+    const charMap = new Map<string, { name: string; scenes_count: number }>();
+    for (const scene of (data.scenes || [])) {
+      for (const charName of (scene.characters_present || [])) {
+        const existing = charMap.get(charName.toLowerCase());
+        if (existing) {
           existing.scenes_count++;
-        }
-      } else {
-        locMap.set(locName, {
-          name: locName,
-          type: locType,
-          scenes: [sceneNum],
-          scenes_count: 1,
-        });
-      }
-    }
-    
-    // Convert to array
-    locations = Array.from(locMap.values())
-      .sort((a, b) => b.scenes_count - a.scenes_count)
-      .map((l, idx) => ({
-        ...l,
-        scale: 'building',
-        priority: idx < 5 ? 'P0' : (l.scenes_count >= 3 ? 'P1' : 'P2'),
-        description: '',
-        explicitly_described: false,
-      }));
-    
-    console.log(`[normalizeBreakdown] Extracted ${locations.length} locations from scenes`);
-  }
-  
-  // Extract props from scenes if not provided
-  let props = Array.isArray(obj.props) ? obj.props : [];
-  if (props.length === 0 && scenes.length > 0) {
-    const propMap = new Map<string, { name: string; scenes: number[]; scenes_count: number }>();
-    
-    for (const scene of scenes) {
-      const sceneNum = scene.scene_number ?? 0;
-      const propsInScene = Array.isArray(scene.props_used) ? scene.props_used : [];
-      
-      for (const propName of propsInScene) {
-        const normalized = String(propName).trim();
-        if (!normalized) continue;
-        
-        if (propMap.has(normalized)) {
-          const existing = propMap.get(normalized)!;
-          if (!existing.scenes.includes(sceneNum)) {
-            existing.scenes.push(sceneNum);
-            existing.scenes_count++;
-          }
         } else {
-          propMap.set(normalized, {
-            name: normalized,
-            scenes: [sceneNum],
-            scenes_count: 1,
-          });
+          charMap.set(charName.toLowerCase(), { name: charName, scenes_count: 1 });
         }
       }
     }
-    
-    props = Array.from(propMap.values())
-      .sort((a, b) => b.scenes_count - a.scenes_count)
-      .map(p => ({
-        ...p,
-        type: 'object',
-        importance: p.scenes_count >= 3 ? 'key' : (p.scenes_count >= 2 ? 'recurring' : 'background'),
-        priority: p.scenes_count >= 3 ? 'P0' : 'P1',
-        description: '',
-        explicitly_mentioned: true,
-      }));
+    data.characters = Array.from(charMap.values()).map(c => ({
+      name: c.name,
+      role: c.scenes_count >= 5 ? 'supporting' : c.scenes_count >= 2 ? 'recurring' : 'extra_with_line',
+      scenes_count: c.scenes_count,
+      priority: c.scenes_count >= 5 ? 'P1' : c.scenes_count >= 2 ? 'P2' : 'P3',
+    }));
+    console.log(`[script-breakdown] Extracted ${data.characters.length} characters from scene data`);
   }
-  
-  return {
-    synopsis: obj.synopsis ?? { faithful_summary: '' },
-    scenes,
-    characters,
-    locations,
-    props,
-    set_pieces: Array.isArray(obj.set_pieces) ? obj.set_pieces : [],
-    subplots: Array.isArray(obj.subplots) ? obj.subplots : [],
-    plot_twists: Array.isArray(obj.plot_twists) ? obj.plot_twists : [],
-    continuity_anchors: Array.isArray(obj.continuity_anchors) ? obj.continuity_anchors : [],
-    summary: obj.summary ?? {
-      total_scenes: scenes.length,
-      total_characters: characters.length,
-      total_locations: locations.length,
-      total_props: props.length,
-      production_notes: '',
-    },
-  };
-};
 
-const tryParseJson = (raw: string) => {
-  const trimmed = (raw ?? '').trim();
-  if (!trimmed) return null;
+  // Extract global locations from scenes if missing
+  if (!data.locations || !Array.isArray(data.locations) || data.locations.length === 0) {
+    const locMap = new Map<string, { name: string; type: string; scenes_count: number }>();
+    for (const scene of (data.scenes || [])) {
+      const locName = scene.location_name || scene.slugline || '';
+      const locType = scene.location_type || 'INT';
+      if (locName) {
+        const key = locName.toLowerCase();
+        const existing = locMap.get(key);
+        if (existing) {
+          existing.scenes_count++;
+        } else {
+          locMap.set(key, { name: locName, type: locType, scenes_count: 1 });
+        }
+      }
+    }
+    data.locations = Array.from(locMap.values()).map(l => ({
+      name: l.name,
+      type: l.type,
+      scenes_count: l.scenes_count,
+      priority: l.scenes_count >= 5 ? 'P1' : l.scenes_count >= 2 ? 'P2' : 'P3',
+    }));
+    console.log(`[script-breakdown] Extracted ${data.locations.length} locations from scene data`);
+  }
+
+  return data;
+}
+
+function tryParseJson(text: string): any {
   try {
-    return JSON.parse(trimmed);
+    return JSON.parse(text);
   } catch {
-    // Fallback: try to extract the first JSON object
-    const match = trimmed.match(/\{[\s\S]*\}/);
-    if (!match) return null;
-    try {
-      return JSON.parse(match[0]);
-    } catch {
-      return null;
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch {
+        return null;
+      }
     }
+    return null;
   }
-};
+}
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+// ===== GET USER ID FROM AUTH HEADER =====
+async function getUserIdFromRequest(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader) return null;
+
+  const token = authHeader.replace('Bearer ', '');
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
+  if (!supabaseUrl || !supabaseKey) return null;
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error || !user) return null;
+  return user.id;
+}
+
+// ===== BACKGROUND PROCESSING FUNCTION =====
+async function processScriptBreakdownInBackground(
+  taskId: string,
+  request: ScriptBreakdownRequest,
+  userId: string
+): Promise<void> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+  const { scriptText, projectId, scriptId, language, format, episodesCount, episodeDurationMin } = request;
+  const processedScriptText = scriptText.trim();
 
   try {
-    const request: ScriptBreakdownRequest = await req.json();
-    const { scriptText, projectId, scriptId, language, format, episodesCount, episodeDurationMin } = request;
+    // Update task to running
+    await supabase.from('background_tasks').update({
+      status: 'running',
+      progress: 10,
+      description: 'Analizando estructura narrativa con Claude Haiku...',
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
 
-    if (!scriptText || scriptText.trim().length < 100) {
-      return new Response(
-        JSON.stringify({ error: 'Se requiere un guion con al menos 100 caracteres para analizar' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY not configured');
     }
 
-    // Log warning for very long scripts that may hit timeout
-    // Edge Functions have ~60s timeout, Claude needs ~1s per 500 chars
-    const processedScriptText = scriptText.trim();
-    const estimatedProcessingTimeSec = Math.ceil(processedScriptText.length / 500);
     const isLongScript = processedScriptText.length > 40000;
-    
-    if (isLongScript) {
-      console.warn(`[script-breakdown] Long script detected: ${processedScriptText.length} chars, estimated ${estimatedProcessingTimeSec}s processing time`);
-    }
-
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY no está configurada');
-    }
-
     const userPrompt = `
 DESGLOSE DE PRODUCCIÓN SOLICITADO:
 
@@ -749,18 +513,15 @@ IMPORTANTE:
 - Asigna prioridades realistas
 - Incluye notas de producción útiles`;
 
-    console.log('Breaking down script, length:', processedScriptText.length, 'projectId:', projectId, 'isLongScript:', isLongScript);
+    console.log('[script-breakdown-bg] Starting Claude Haiku analysis for task:', taskId, 'chars:', processedScriptText.length);
 
-    // Use Claude 3.5 Sonnet via direct Anthropic API for superior script understanding
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      console.error('ANTHROPIC_API_KEY not configured');
-      return new Response(
-        JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    await supabase.from('background_tasks').update({
+      progress: 25,
+      description: 'Enviando guion a Claude Haiku 3.5...',
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
 
+    // Use Claude 3.5 Haiku - fast and excellent for extraction
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -769,14 +530,10 @@ IMPORTANTE:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        // Claude 3.5 Haiku - fast and cost-effective
         model: 'claude-3-5-haiku-20241022',
         max_tokens: 8192,
         system: SYSTEM_PROMPT,
-        messages: [
-          { role: 'user', content: userPrompt },
-        ],
-        // Use tool calling for structured JSON output
+        messages: [{ role: 'user', content: userPrompt }],
         tools: [{
           name: 'return_script_breakdown',
           description: 'Returns the structured script breakdown analysis',
@@ -786,203 +543,263 @@ IMPORTANTE:
       }),
     });
 
+    await supabase.from('background_tasks').update({
+      progress: 60,
+      description: 'Procesando respuesta de Claude Haiku...',
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
+
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
       const errorText = await response.text();
-      console.error('Anthropic API error:', response.status, errorText);
+      console.error('[script-breakdown-bg] Anthropic API error:', response.status, errorText);
       throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
 
-    // Anthropic returns tool use in content array with type: 'tool_use'
-    let breakdownData: any | null = null;
-    
-    // Check for tool_use blocks in Anthropic response format
+    // Parse tool use response
+    let breakdownData: any = null;
     const toolUseBlock = data.content?.find((block: any) => block.type === 'tool_use');
     if (toolUseBlock?.input) {
       breakdownData = toolUseBlock.input;
-      console.log('Parsed breakdown from Anthropic tool_use block');
     }
 
-    // Fallback: check for text content and try to parse JSON
+    // Fallback to text block
     if (!breakdownData) {
       const textBlock = data.content?.find((block: any) => block.type === 'text');
       if (textBlock?.text) {
         breakdownData = tryParseJson(textBlock.text);
-        console.log('Parsed breakdown from Anthropic text block');
       }
     }
 
     if (!breakdownData) {
-      console.error('Could not parse breakdown from Anthropic response', {
-        contentTypes: data.content?.map((b: any) => b.type),
-        stopReason: data.stop_reason,
-      });
-      return new Response(
-        JSON.stringify({ error: 'No se pudo interpretar la respuesta del modelo. Reintenta.' }),
-        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      throw new Error('No se pudo interpretar la respuesta del modelo');
     }
 
     breakdownData = normalizeBreakdown(breakdownData, processedScriptText);
 
-    console.log('Script breakdown complete:', {
+    console.log('[script-breakdown-bg] Analysis complete:', {
       scenes: breakdownData.scenes?.length || 0,
       characters: breakdownData.characters?.length || 0,
       locations: breakdownData.locations?.length || 0,
-      props: breakdownData.props?.length || 0
     });
 
-    // Save parsed_json directly to the script if scriptId is provided
+    await supabase.from('background_tasks').update({
+      progress: 80,
+      description: 'Guardando resultados en base de datos...',
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
+
+    // Save to script if scriptId provided
     if (scriptId) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL');
-      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-      
-      if (supabaseUrl && supabaseServiceKey) {
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
-        
-        // Load project settings to respect episode count + duration
-        const { data: projectRow, error: projectRowError } = await supabase
-          .from('projects')
-          .select('format, episodes_count, target_duration_min')
-          .eq('id', projectId)
-          .maybeSingle();
+      const { data: projectRow } = await supabase
+        .from('projects')
+        .select('format, episodes_count, target_duration_min')
+        .eq('id', projectId)
+        .maybeSingle();
 
-        if (projectRowError) {
-          console.warn('Could not load project settings for breakdown:', projectRowError);
+      const safeInt = (v: unknown, fallback: number) => {
+        const n = Number(v);
+        return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+      };
+
+      const effectiveFormat = String(format ?? projectRow?.format ?? 'series');
+      const desiredEpisodesCount = effectiveFormat === 'series'
+        ? safeInt(episodesCount ?? projectRow?.episodes_count, 1)
+        : 1;
+      const desiredEpisodeDurationMin = safeInt(
+        episodeDurationMin ?? projectRow?.target_duration_min,
+        effectiveFormat === 'series' ? 45 : 100
+      );
+
+      const scenes = Array.isArray(breakdownData.scenes) ? breakdownData.scenes : [];
+      const synopsisText = breakdownData.synopsis?.faithful_summary || '';
+
+      const buildEpisodesFromScenes = (): any[] => {
+        if (desiredEpisodesCount <= 1) {
+          return [{
+            episode_number: 1,
+            title: effectiveFormat === 'film' ? 'Película' : 'Episodio 1',
+            synopsis: synopsisText,
+            scenes,
+            duration_min: safeInt(breakdownData.summary?.estimated_runtime_min, desiredEpisodeDurationMin),
+          }];
         }
 
-        const safeInt = (v: unknown, fallback: number) => {
-          const n = Number(v);
-          return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+        const defaultSceneSec = 60;
+        const getSceneSec = (s: any) => {
+          const n = Number(s?.estimated_duration_sec);
+          return Number.isFinite(n) && n > 0 ? n : defaultSceneSec;
         };
 
-        const safeFloat = (v: unknown, fallback: number) => {
-          const n = Number(v);
-          return Number.isFinite(n) && n > 0 ? n : fallback;
-        };
+        const targetEpisodeSec = desiredEpisodeDurationMin * 60;
+        const totalSec = scenes.reduce((acc: number, s: any) => acc + getSceneSec(s), 0);
 
-        const effectiveFormat = String(format ?? projectRow?.format ?? 'series');
-        const desiredEpisodesCount = effectiveFormat === 'series'
-          ? safeInt(episodesCount ?? projectRow?.episodes_count, 1)
-          : 1;
+        const groups: any[][] = [];
+        if (totalSec > 0 && targetEpisodeSec > 0) {
+          let bucket: any[] = [];
+          let bucketSec = 0;
 
-        const desiredEpisodeDurationMin = safeInt(
-          episodeDurationMin ?? projectRow?.target_duration_min,
-          effectiveFormat === 'series' ? 45 : 100
-        );
+          for (const s of scenes) {
+            bucket.push(s);
+            bucketSec += getSceneSec(s);
 
-        const scenes = Array.isArray(breakdownData.scenes) ? breakdownData.scenes : [];
-        const synopsisText = breakdownData.synopsis?.faithful_summary || '';
-
-        const buildEpisodesFromScenes = (): any[] => {
-          if (desiredEpisodesCount <= 1) {
-            return [{
-              episode_number: 1,
-              title: effectiveFormat === 'film' ? 'Película' : 'Episodio 1',
-              synopsis: synopsisText,
-              scenes,
-              duration_min: safeInt(breakdownData.summary?.estimated_runtime_min, desiredEpisodeDurationMin),
-            }];
-          }
-
-          const defaultSceneSec = 60;
-          const getSceneSec = (s: any) => safeFloat(s?.estimated_duration_sec, defaultSceneSec);
-
-          const targetEpisodeSec = desiredEpisodeDurationMin * 60;
-          const totalSec = scenes.reduce((acc: number, s: any) => acc + getSceneSec(s), 0);
-
-          const groups: any[][] = [];
-          if (totalSec > 0 && targetEpisodeSec > 0) {
-            let bucket: any[] = [];
-            let bucketSec = 0;
-
-            for (const s of scenes) {
-              bucket.push(s);
-              bucketSec += getSceneSec(s);
-
-              if (bucketSec >= targetEpisodeSec && groups.length < desiredEpisodesCount - 1) {
-                groups.push(bucket);
-                bucket = [];
-                bucketSec = 0;
-              }
-            }
-            groups.push(bucket);
-          } else {
-            const chunkSize = Math.max(1, Math.ceil(scenes.length / desiredEpisodesCount));
-            for (let i = 0; i < scenes.length; i += chunkSize) {
-              groups.push(scenes.slice(i, i + chunkSize));
+            if (bucketSec >= targetEpisodeSec && groups.length < desiredEpisodesCount - 1) {
+              groups.push(bucket);
+              bucket = [];
+              bucketSec = 0;
             }
           }
-
-          // Ensure exactly N episodes (pad or merge)
-          while (groups.length < desiredEpisodesCount) groups.push([]);
-          if (groups.length > desiredEpisodesCount) {
-            const extras = groups.splice(desiredEpisodesCount - 1);
-            groups[desiredEpisodesCount - 1] = extras.flat();
-          }
-
-          return groups.map((chunk, idx) => ({
-            episode_number: idx + 1,
-            title: `Episodio ${idx + 1}`,
-            synopsis: idx === 0 ? synopsisText : '',
-            scenes: chunk,
-            duration_min: desiredEpisodeDurationMin,
-          }));
-        };
-
-        const parsedEpisodes = buildEpisodesFromScenes();
-
-        // Build parsed_json structure for ScriptSummaryPanel
-        const parsedJson = {
-          title: breakdownData.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Analizado',
-          synopsis: synopsisText,
-          episodes: parsedEpisodes,
-          characters: breakdownData.characters || [],
-          locations: breakdownData.locations || [],
-          scenes,
-          props: breakdownData.props || [],
-          subplots: breakdownData.subplots || [],
-          plot_twists: breakdownData.plot_twists || [],
-          teasers: breakdownData.teasers,
-          counts: {
-            total_scenes: scenes.length || 0,
-            total_dialogue_lines: 0,
-          },
-        };
-
-        const { error: updateError } = await supabase
-          .from('scripts')
-          .update({ 
-            parsed_json: parsedJson,
-            status: 'analyzed'
-          })
-          .eq('id', scriptId);
-
-        if (updateError) {
-          console.error('Error saving parsed_json to script:', updateError);
+          groups.push(bucket);
         } else {
-          console.log('Successfully saved parsed_json to script:', scriptId);
+          const chunkSize = Math.max(1, Math.ceil(scenes.length / desiredEpisodesCount));
+          for (let i = 0; i < scenes.length; i += chunkSize) {
+            groups.push(scenes.slice(i, i + chunkSize));
+          }
         }
+
+        while (groups.length < desiredEpisodesCount) groups.push([]);
+        if (groups.length > desiredEpisodesCount) {
+          const extras = groups.splice(desiredEpisodesCount - 1);
+          groups[desiredEpisodesCount - 1] = extras.flat();
+        }
+
+        return groups.map((chunk, idx) => ({
+          episode_number: idx + 1,
+          title: `Episodio ${idx + 1}`,
+          synopsis: idx === 0 ? synopsisText : '',
+          scenes: chunk,
+          duration_min: desiredEpisodeDurationMin,
+        }));
+      };
+
+      const parsedEpisodes = buildEpisodesFromScenes();
+
+      const parsedJson = {
+        title: breakdownData.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Analizado',
+        synopsis: synopsisText,
+        episodes: parsedEpisodes,
+        characters: breakdownData.characters || [],
+        locations: breakdownData.locations || [],
+        scenes,
+        props: breakdownData.props || [],
+        subplots: breakdownData.subplots || [],
+        plot_twists: breakdownData.plot_twists || [],
+        teasers: breakdownData.teasers,
+        counts: {
+          total_scenes: scenes.length || 0,
+          total_dialogue_lines: 0,
+        },
+      };
+
+      const { error: updateError } = await supabase
+        .from('scripts')
+        .update({ 
+          parsed_json: parsedJson,
+          status: 'analyzed'
+        })
+        .eq('id', scriptId);
+
+      if (updateError) {
+        console.error('[script-breakdown-bg] Error saving parsed_json:', updateError);
+      } else {
+        console.log('[script-breakdown-bg] Saved parsed_json to script:', scriptId);
       }
     }
 
+    // Complete task with result
+    await supabase.from('background_tasks').update({
+      status: 'completed',
+      progress: 100,
+      description: 'Análisis completado',
+      result: { success: true, breakdown: breakdownData },
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
+
+    console.log('[script-breakdown-bg] Task completed successfully:', taskId);
+
+  } catch (error) {
+    console.error('[script-breakdown-bg] Error in background processing:', error);
+
+    await supabase.from('background_tasks').update({
+      status: 'failed',
+      progress: 0,
+      error: error instanceof Error ? error.message : 'Error desconocido',
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
+  }
+}
+
+// ===== MAIN HANDLER =====
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const request: ScriptBreakdownRequest = await req.json();
+    const { scriptText, projectId, scriptId } = request;
+
+    if (!scriptText || scriptText.trim().length < 100) {
+      return new Response(
+        JSON.stringify({ error: 'Se requiere un guion con al menos 100 caracteres para analizar' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get user ID from auth header
+    const userId = await getUserIdFromRequest(req);
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Create background task
+    const taskId = crypto.randomUUID();
+    const estimatedChars = scriptText.trim().length;
+    const estimatedPages = Math.ceil(estimatedChars / 3500);
+
+    await supabase.from('background_tasks').insert({
+      id: taskId,
+      user_id: userId,
+      project_id: projectId,
+      type: 'script_analysis',
+      title: 'Análisis de guion con Claude Haiku',
+      description: `Analizando ~${estimatedPages} páginas con IA...`,
+      status: 'pending',
+      progress: 0,
+      entity_id: scriptId || null,
+      metadata: { scriptLength: estimatedChars, estimatedPages },
+    });
+
+    console.log('[script-breakdown] Created background task:', taskId, 'for', estimatedChars, 'chars');
+
+    // Start background processing with waitUntil
+    // @ts-ignore - EdgeRuntime is available in Supabase Edge Functions
+    EdgeRuntime.waitUntil(processScriptBreakdownInBackground(taskId, request, userId));
+
+    // Return immediately with task ID
     return new Response(
       JSON.stringify({
         success: true,
-        breakdown: breakdownData
+        taskId,
+        message: 'Análisis iniciado en segundo plano',
+        polling: true,
+        estimatedTimeMin: Math.ceil(estimatedChars / 5000), // ~5000 chars/min with Haiku
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Error in script-breakdown:', error);
+    console.error('[script-breakdown] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

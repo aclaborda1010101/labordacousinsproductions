@@ -1018,7 +1018,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
   };
 
-  // Analyze existing script with quality diagnosis
+  // Analyze existing script with quality diagnosis - NEW: Background polling with Claude Haiku
   const handleAnalyzeScript = async (overrideText?: string) => {
     const textToAnalyze = (overrideText || scriptText).trim();
     if (!textToAnalyze) {
@@ -1027,7 +1027,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
 
     setStatus('analyzing');
-    setProgress(20);
+    setProgress(5);
 
     try {
       // Upsert: update existing or create new (one script per project)
@@ -1066,40 +1066,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       }
 
       if (!savedScript) throw new Error('Failed to save script');
-      setProgress(40);
+      setProgress(10);
 
-      // Calculate dynamic timeout based on script length
-      // AGGRESSIVE: ~1.5 seconds per 100 characters, with min 180s (3 min) and max 720s (12 min)
+      // Calculate estimated time for user feedback
       const scriptLength = textToAnalyze.length;
-      const baseTimeoutSec = Math.max(180, Math.min(720, Math.ceil(scriptLength / 70)));
+      const estimatedMinutes = Math.ceil(scriptLength / 5000); // ~5000 chars/min with Haiku
       
-      // Calculate dynamic polling based on expected processing time
-      // More retries for longer scripts with longer delays - DOUBLED values
-      const dynamicPollingRetries = scriptLength > 40000 ? 20 : scriptLength > 25000 ? 16 : scriptLength > 15000 ? 12 : 10;
-      const dynamicPollingDelaySec = scriptLength > 40000 ? 30 : scriptLength > 25000 ? 25 : 20;
-
-      console.log(`[ScriptWorkspace] Dynamic timeout: ${baseTimeoutSec}s for ${scriptLength} chars, polling: ${dynamicPollingRetries} retries @ ${dynamicPollingDelaySec}s`);
-      toast.info(`Analizando guion de ${Math.round(scriptLength / 1000)}k caracteres...`, { 
-        description: `Timeout inicial: ${Math.round(baseTimeoutSec / 60)}min. Puede tardar varios minutos.`,
+      console.log(`[ScriptWorkspace] Starting background analysis for ${scriptLength} chars (~${estimatedMinutes} min estimated)`);
+      toast.info(`Análisis iniciado con Claude Haiku 3.5`, { 
+        description: `Procesando ${Math.round(scriptLength / 1000)}k caracteres. Tiempo estimado: ~${estimatedMinutes} min. Puedes navegar a otras pantallas.`,
         duration: 8000 
       });
 
-      // SINGLE REQUEST: Don't retry with new requests - the backend continues processing even after client timeout!
-      // If client timeout occurs, go directly to DB polling recovery (the server keeps working)
-      let currentTimeoutMs = baseTimeoutSec * 1000;
-      let breakdownData: any = null;
-      let breakdownError: Error | null = null;
-      let clientTimedOut = false;
-
-      console.log(`[ScriptWorkspace] Starting script-breakdown with timeout ${currentTimeoutMs}ms (${Math.round(currentTimeoutMs/1000)}s)`);
-      toast.info(`Procesando guion...`, { 
-        description: `Tiempo máximo de espera: ${Math.round(currentTimeoutMs/60000)} minutos. El servidor seguirá procesando aunque la conexión expire.`,
-        duration: 8000 
-      });
-
-      const result = await invokeWithTimeout<any>(
-        'script-breakdown',
-        {
+      // Start background task
+      const { data: startData, error: startError } = await supabase.functions.invoke('script-breakdown', {
+        body: {
           projectId,
           scriptText: textToAnalyze,
           scriptId: savedScript.id,
@@ -1107,216 +1088,166 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           format: projectFormat === 'film' ? 'film' : 'series',
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           episodeDurationMin,
-        },
-        { timeoutMs: currentTimeoutMs }
-      );
-
-      breakdownData = result.data;
-      breakdownError = result.error;
-
-      // Check if it was a timeout error
-      const isTimeout = breakdownError instanceof Error && 
-        (breakdownError.message.includes('aborted') || 
-         breakdownError.message.includes('timeout') ||
-         breakdownError.name === 'AbortError');
-
-      if (isTimeout) {
-        clientTimedOut = true;
-        console.warn(`[ScriptWorkspace] Client timeout after ${currentTimeoutMs}ms - backend continues processing, will poll DB for result`);
-        toast.warning(`El servidor sigue procesando...`, { 
-          description: `La conexión expiró pero el análisis continúa en el servidor. Recuperando resultado automáticamente...`,
-          duration: 10000 
-        });
-        // DON'T retry with new request - go directly to recovery polling below
-        // This is critical: a new request would restart the analysis from scratch!
-      }
-
-      // Handle PROJECT_BUSY (409) without throwing unhandled exceptions; retry once.
-      if (breakdownError instanceof InvokeFunctionError) {
-        const body = (breakdownError.bodyJson ?? {}) as any;
-        const code = typeof body?.code === 'string' ? body.code : undefined;
-        const retryAfter = typeof body?.retryAfter === 'number' ? body.retryAfter : 30;
-
-        console.warn('[ScriptWorkspace] script-breakdown failed', {
-          status: breakdownError.status,
-          code,
-          retryAfter,
-          message: breakdownError.message,
-          body,
-        });
-
-        if (breakdownError.status === 409 && code === 'PROJECT_BUSY') {
-          toast.warning('Proyecto ocupado', { description: `Reintento en ${retryAfter}s`, duration: 8000 });
-          await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
-          // Retry with current timeout settings
-          const retryResult = await invokeWithTimeout<any>(
-            'script-breakdown',
-            {
-              projectId,
-              scriptText: textToAnalyze,
-              scriptId: savedScript.id,
-              language: 'es-ES',
-              format: projectFormat === 'film' ? 'film' : 'series',
-              episodesCount: projectFormat === 'film' ? 1 : episodesCount,
-              episodeDurationMin,
-            },
-            { timeoutMs: currentTimeoutMs }
-          );
-          breakdownData = retryResult.data;
-          breakdownError = retryResult.error;
         }
+      });
+
+      if (startError) {
+        console.error('[ScriptWorkspace] Failed to start analysis:', startError);
+        throw startError;
       }
 
-      // Handle network errors that may occur after server completed processing
-      const isNetworkError = breakdownError instanceof Error && 
-        (breakdownError.message === 'Failed to fetch' || breakdownError.message.includes('connection'));
+      const taskId = startData?.taskId;
+      if (!taskId) {
+        throw new Error('No se pudo iniciar el análisis en segundo plano');
+      }
 
-      if (breakdownError && !isNetworkError) {
-        if (breakdownError instanceof InvokeFunctionError) {
-          const message = String(breakdownError.message || '').toLowerCase();
+      console.log(`[ScriptWorkspace] Background task started: ${taskId}`);
+      setProgress(15);
 
-          if (breakdownError.status === 401 || message.includes('missing auth.uid')) {
-            console.warn('[ScriptWorkspace] Unauthorized while analyzing script', {
-              status: breakdownError.status,
-              message: breakdownError.message,
-              body: breakdownError.bodyJson,
-            });
-            toast.error('Sesión expirada. Vuelve a iniciar sesión.', { duration: 8000 });
-            setStatus('error');
-            return;
-          }
+      // Poll for task completion
+      const maxPollingTime = Math.max(300000, estimatedMinutes * 60 * 1000 * 2); // At least 5 min, or 2x estimated
+      const pollingInterval = 3000; // 3 seconds
+      const startTime = Date.now();
+      let completed = false;
+      let lastProgress = 15;
 
-          if (breakdownError.status === 429) {
-            const retryAfter = breakdownError.retryAfter || 30;
-            toast.error('Límite de uso alcanzado', {
-              description: `Por favor espera ${retryAfter} segundos antes de intentar de nuevo.`,
-              duration: 10000,
-            });
-            setStatus('error');
-            return;
-          }
+      while (!completed && (Date.now() - startTime) < maxPollingTime) {
+        await new Promise(resolve => setTimeout(resolve, pollingInterval));
 
-          toast.error(breakdownError.message || 'Error al analizar el guion');
-          setStatus('error');
-          return;
+        const { data: taskData, error: taskError } = await supabase
+          .from('background_tasks')
+          .select('status, progress, result, error, description')
+          .eq('id', taskId)
+          .maybeSingle();
+
+        if (taskError) {
+          console.warn('[ScriptWorkspace] Error polling task:', taskError);
+          continue;
         }
 
-        throw breakdownError;
-      }
+        if (!taskData) {
+          console.warn('[ScriptWorkspace] Task not found:', taskId);
+          continue;
+        }
 
-      // If client timed out OR network error, try to recover from the database
-      // The backend may still be processing or may have completed - poll DB for result
-      // Use dynamic polling based on script length calculated earlier
-      if (clientTimedOut || isNetworkError || !breakdownData) {
-        console.log(`[ScriptWorkspace] ${clientTimedOut ? 'Client timeout' : 'Network error'} - polling DB for backend result...`);
-        const estimatedMinutes = Math.ceil((dynamicPollingRetries * dynamicPollingDelaySec) / 60);
-        toast.info(`Esperando resultado del servidor...`, { 
-          description: `Verificando cada ${dynamicPollingDelaySec}s durante ~${estimatedMinutes} minutos. El análisis sigue en proceso.`,
-          duration: 15000 
-        });
-        
-        let recovered = false;
-        
-        for (let retry = 0; retry < dynamicPollingRetries && !recovered; retry++) {
-          // Wait with dynamic delay
-          const waitTime = retry === 0 ? 5000 : dynamicPollingDelaySec * 1000;
-          await new Promise(resolve => setTimeout(resolve, waitTime));
-          
-          const remainingRetries = dynamicPollingRetries - retry - 1;
-          const remainingTime = Math.ceil((remainingRetries * dynamicPollingDelaySec) / 60);
-          console.log(`[ScriptWorkspace] Recovery attempt ${retry + 1}/${dynamicPollingRetries} (~${remainingTime}min remaining)...`);
-          
-          // Update progress to show we're still working
-          setProgress(85 + Math.floor((retry / dynamicPollingRetries) * 10)); // 85-95%
-          
-          const { data: recoveredScript } = await supabase
-            .from('scripts')
-            .select('parsed_json, status')
-            .eq('id', savedScript.id)
-            .maybeSingle();
-          
-          const pj = recoveredScript?.parsed_json as any;
-          if (pj && typeof pj === 'object' && (pj.characters?.length > 0 || pj.scenes?.length > 0)) {
-            console.log('[ScriptWorkspace] Successfully recovered breakdown from DB');
-            breakdownData = {
-              breakdown: {
-                characters: pj.characters || [],
-                locations: pj.locations || [],
-                scenes: pj.scenes || [],
-                props: pj.props || [],
-                synopsis: pj.synopsis,
-                subplots: pj.subplots || [],
-                plot_twists: pj.plot_twists || [],
-                summary: typeof pj.summary === 'string' ? pj.summary : pj.summary?.short || '',
-              }
+        // Update progress UI
+        const taskProgress = taskData.progress || 0;
+        if (taskProgress > lastProgress) {
+          lastProgress = taskProgress;
+          setProgress(Math.max(15, Math.min(95, taskProgress)));
+        }
+
+        // Update progress message
+        if (taskData.description) {
+          setProgressMessage(taskData.description);
+        }
+
+        if (taskData.status === 'completed') {
+          completed = true;
+          console.log('[ScriptWorkspace] Background task completed successfully');
+
+          const result = taskData.result as any;
+          if (result?.success && result?.breakdown) {
+            const breakdown: BreakdownResult = {
+              characters: result.breakdown.characters || [],
+              locations: result.breakdown.locations || [],
+              scenes: result.breakdown.scenes || [],
+              props: result.breakdown.props || [],
+              synopsis: result.breakdown.synopsis,
+              subplots: result.breakdown.subplots || [],
+              plot_twists: result.breakdown.plot_twists || [],
+              summary: result.breakdown.summary,
             };
-            recovered = true;
-          } else if (retry < dynamicPollingRetries - 1) {
-            const remaining = dynamicPollingRetries - retry - 1;
-            toast.info(`Analizando guion... (${retry + 2}/${dynamicPollingRetries}, ~${remaining * dynamicPollingDelaySec}s restantes)`, { duration: 8000 });
+
+            setBreakdownResult(breakdown);
+            const diagnosis = evaluateQuality(breakdown);
+            setQualityDiagnosis(diagnosis);
+            setHasExistingScript(true);
+            setExistingScriptText(textToAnalyze);
+            setProgress(100);
+            setProgressMessage('');
+            setStatus('success');
+            setEntryMode(null);
+            setRefreshTrigger((prev) => prev + 1);
+            toast.success('¡Análisis completado con Claude Haiku!');
+            return;
           }
+        } else if (taskData.status === 'failed') {
+          completed = true;
+          console.error('[ScriptWorkspace] Background task failed:', taskData.error);
+          throw new Error(taskData.error || 'El análisis falló');
         }
-        
-        if (!recovered) {
-          toast.error('El análisis no se completó a tiempo. Intenta con un guion más corto o vuelve a intentarlo.');
-          setStatus('error');
+
+        // Show elapsed time to user
+        const elapsed = Math.round((Date.now() - startTime) / 1000);
+        if (elapsed % 15 === 0 && elapsed > 0) {
+          console.log(`[ScriptWorkspace] Polling... ${elapsed}s elapsed, progress: ${taskData.progress}%`);
+        }
+      }
+
+      if (!completed) {
+        // Timeout - try to recover from DB
+        console.warn('[ScriptWorkspace] Polling timeout, attempting DB recovery...');
+        toast.warning('El análisis está tardando más de lo esperado...', {
+          description: 'Verificando resultado en base de datos...',
+          duration: 8000,
+        });
+
+        // Check if script was updated with parsed_json
+        const { data: recoveredScript } = await supabase
+          .from('scripts')
+          .select('parsed_json, status')
+          .eq('id', savedScript.id)
+          .maybeSingle();
+
+        const pj = recoveredScript?.parsed_json as any;
+        if (pj && typeof pj === 'object' && (pj.characters?.length > 0 || pj.scenes?.length > 0)) {
+          console.log('[ScriptWorkspace] Recovered breakdown from DB');
+          
+          const breakdown: BreakdownResult = {
+            characters: pj.characters || [],
+            locations: pj.locations || [],
+            scenes: pj.scenes || [],
+            props: pj.props || [],
+            synopsis: pj.synopsis,
+            subplots: pj.subplots || [],
+            plot_twists: pj.plot_twists || [],
+            summary: pj.summary,
+          };
+
+          setBreakdownResult(breakdown);
+          const diagnosis = evaluateQuality(breakdown);
+          setQualityDiagnosis(diagnosis);
+          setHasExistingScript(true);
+          setExistingScriptText(textToAnalyze);
+          setProgress(100);
+          setProgressMessage('');
+          setStatus('success');
+          setEntryMode(null);
+          setRefreshTrigger((prev) => prev + 1);
+          toast.success('¡Análisis recuperado exitosamente!');
           return;
         }
+
+        throw new Error('El análisis no se completó a tiempo. Intenta con un guion más corto.');
       }
 
-      // Only set to 96 if we didn't come from recovery (which already set it higher)
-      if (!clientTimedOut && !isNetworkError) {
-        setProgress(96);
-      }
-
-      const breakdown: BreakdownResult = breakdownData?.breakdown || {
-        characters: breakdownData?.characters || [],
-        locations: breakdownData?.locations || [],
-        scenes: breakdownData?.scenes || [],
-        props: breakdownData?.props || [],
-        synopsis: breakdownData?.synopsis,
-        subplots: breakdownData?.subplots || [],
-        plot_twists: breakdownData?.plot_twists || [],
-        summary: breakdownData?.summary,
-      };
-
-      // parsed_json se guarda en backend dentro de `script-breakdown` (cuando mandamos `scriptId`).
-      // Importante: NO lo sobrescribimos aquí, porque perderíamos la distribución correcta (p.ej. 8 episodios).
-
-      setBreakdownResult(breakdown);
-      
-      // Evaluate quality
-      const diagnosis = evaluateQuality(breakdown);
-      setQualityDiagnosis(diagnosis);
-
-      // Mark as having script for the summary panel
-      setHasExistingScript(true);
-      setExistingScriptText(textToAnalyze);
-
-      setProgress(100);
-      setStatus('success');
-      
-      // Reset entry mode to show the full ScriptSummaryPanelAssisted
-      setEntryMode(null);
-      
-      // Force refresh to ensure we have the latest data from the DB (including backend-saved parsed_json)
-      setRefreshTrigger((prev) => prev + 1);
-      
-      toast.success('¡Análisis completado!');
     } catch (err) {
       console.error('Analysis error:', err);
       setStatus('error');
-      toast.error('Error al analizar el guion');
+      setProgress(0);
+      setProgressMessage('');
+      toast.error(err instanceof Error ? err.message : 'Error al analizar el guion');
     }
   };
 
-  // Prepare project (extract entities from generated script)
+  // Prepare project (extract entities from generated script) - NEW: Background polling
   const handlePrepareProject = async () => {
     const scriptTextNormalized = coerceScriptToString(generatedScript);
     if (!scriptTextNormalized) return;
 
     setStatus('extracting');
-    setProgress(20);
+    setProgress(5);
 
     try {
       // First save the script to the database
@@ -1355,9 +1286,18 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       }
 
       if (!savedScript) throw new Error('Failed to save script');
-      setProgress(40);
+      setProgress(10);
 
-      const { data: breakdownData, error: breakdownError } = await supabase.functions.invoke('script-breakdown', {
+      const scriptLength = scriptTextNormalized.length;
+      const estimatedMinutes = Math.ceil(scriptLength / 5000);
+
+      toast.info(`Extrayendo entidades con Claude Haiku 3.5`, { 
+        description: `Tiempo estimado: ~${estimatedMinutes} min`,
+        duration: 6000 
+      });
+
+      // Start background task
+      const { data: startData, error: startError } = await supabase.functions.invoke('script-breakdown', {
         body: {
           projectId,
           scriptText: scriptTextNormalized,
@@ -1369,42 +1309,81 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         }
       });
 
-      if (breakdownError) throw breakdownError;
-      setProgress(80);
+      if (startError) throw startError;
 
-      const breakdown: BreakdownResult = breakdownData?.breakdown || {
-        characters: breakdownData?.characters || [],
-        locations: breakdownData?.locations || [],
-        scenes: breakdownData?.scenes || [],
-        props: breakdownData?.props || [],
-        synopsis: breakdownData?.synopsis,
-        subplots: breakdownData?.subplots || [],
-        plot_twists: breakdownData?.plot_twists || [],
-        summary: breakdownData?.summary,
-      };
+      const taskId = startData?.taskId;
+      if (!taskId) {
+        throw new Error('No se pudo iniciar la extracción en segundo plano');
+      }
 
-      // parsed_json se guarda en backend dentro de `script-breakdown` (cuando mandamos `scriptId`).
-      // Importante: NO lo sobrescribimos aquí, porque perderíamos la distribución correcta (p.ej. 8 episodios).
+      setProgress(15);
 
-      setBreakdownResult(breakdown);
-      const diagnosis = evaluateQuality(breakdown);
-      setQualityDiagnosis(diagnosis);
+      // Poll for task completion
+      const maxPollingTime = Math.max(180000, estimatedMinutes * 60 * 1000 * 2);
+      const pollingInterval = 3000;
+      const startTime = Date.now();
+      let completed = false;
 
-      // Mark as having script for persistence
-      setHasExistingScript(true);
-      setExistingScriptText(scriptTextNormalized);
+      while (!completed && (Date.now() - startTime) < maxPollingTime) {
+        await new Promise(resolve => setTimeout(resolve, pollingInterval));
 
-      setProgress(100);
-      setStatus('success');
-      
-      // Reset entry mode to show the full ScriptSummaryPanelAssisted
-      setEntryMode(null);
-      
-      toast.success('¡Proyecto preparado!');
+        const { data: taskData } = await supabase
+          .from('background_tasks')
+          .select('status, progress, result, error, description')
+          .eq('id', taskId)
+          .maybeSingle();
+
+        if (!taskData) continue;
+
+        if (taskData.progress) {
+          setProgress(Math.max(15, Math.min(95, taskData.progress)));
+        }
+        if (taskData.description) {
+          setProgressMessage(taskData.description);
+        }
+
+        if (taskData.status === 'completed') {
+          completed = true;
+          const result = taskData.result as any;
+          if (result?.success && result?.breakdown) {
+            const breakdown: BreakdownResult = {
+              characters: result.breakdown.characters || [],
+              locations: result.breakdown.locations || [],
+              scenes: result.breakdown.scenes || [],
+              props: result.breakdown.props || [],
+              synopsis: result.breakdown.synopsis,
+              subplots: result.breakdown.subplots || [],
+              plot_twists: result.breakdown.plot_twists || [],
+              summary: result.breakdown.summary,
+            };
+
+            setBreakdownResult(breakdown);
+            const diagnosis = evaluateQuality(breakdown);
+            setQualityDiagnosis(diagnosis);
+            setHasExistingScript(true);
+            setExistingScriptText(scriptTextNormalized);
+            setProgress(100);
+            setProgressMessage('');
+            setStatus('success');
+            setEntryMode(null);
+            toast.success('¡Proyecto preparado con Claude Haiku!');
+            return;
+          }
+        } else if (taskData.status === 'failed') {
+          throw new Error(taskData.error || 'La extracción falló');
+        }
+      }
+
+      if (!completed) {
+        throw new Error('La extracción no se completó a tiempo');
+      }
+
     } catch (err) {
       console.error('Extraction error:', err);
       setStatus('error');
-      toast.error('Error al preparar el proyecto');
+      setProgress(0);
+      setProgressMessage('');
+      toast.error(err instanceof Error ? err.message : 'Error al preparar el proyecto');
     }
   };
 
