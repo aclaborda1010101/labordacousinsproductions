@@ -18,60 +18,145 @@ interface ScriptBreakdownRequest {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SIMPLE SCRIPT BREAKDOWN PROMPT (v7 - No Tools, Flexible JSON)
+// PHASE 1: SONNET - CANONICAL SKELETON (compact, fast)
 // ═══════════════════════════════════════════════════════════════════════════════
-const SYSTEM_PROMPT = `You are a professional film/TV script breakdown analyst.
+const SONNET_SYSTEM_PROMPT = `You are a CANONICAL SCREENPLAY ANALYST for Film/TV production.
 
-IMPORTANT:
-- Output MUST be valid JSON only. No markdown, no explanations.
-- Schema is flexible - include what you find.
-- If uncertain, include it anyway rather than failing.
+GOAL:
+Produce a stable, compact canonical breakdown that NEVER requires huge output.
+You must extract structure and an index, not every detail.
+
+OUTPUT LANGUAGE:
+Return all descriptive text fields in the requested language.
+Do NOT translate character names or scene headings.
 
 SOURCE RULE:
-If multiple documents exist, use ONLY the full screenplay
-(the one with repeated INT./EXT. scene headings).
+Use ONLY the full screenplay text (the document that contains many scene headings).
+Ignore outlines/treatments for counting.
 
-SCENES:
-- Each line starting with INT. or EXT. is ONE scene.
-- Count all of them. List them in order.
-- total MUST equal the number of scenes listed.
+SCENE COUNTING (NON-NEGOTIABLE):
+A SCENE = any line that begins with:
+INT. / EXT. / INT/EXT / EXT/INT (case-insensitive)
+Count EVERY heading. Do not merge scenes.
+scenes.total MUST equal scenes.list.length.
 
-CHARACTERS:
-Normalize names - remove CONT'D, (V.O.), (O.S.), etc.
-Group into:
-- cast (named characters with narrative weight)
-- featured_extras (roles like SOLDIER, AIDE, SECRETARY)
-- voices (VOICE, RADIO, ANNOUNCER)
+TITLE:
+Prefer the screenplay title on the first page (top, before first INT/EXT).
+If uncertain, keep title empty rather than inventing.
+
+CHARACTERS (CANONICAL ONLY):
+Return only the main cast (protagonists, co-protagonists, antagonists, key supporting).
+Do NOT enumerate every minor role here.
 
 LOCATIONS:
-- Extract base locations (group variants by removing DAY/NIGHT/etc).
-- Also extract full variants for production.
+Return BASE locations (group variants). Do NOT return all variants.
 
-PROPS:
-Include plot-critical, recurring, OR institutional/symbolic props.
+ACTS:
+If the screenplay does not explicitly label acts, infer 3-5 acts.
+Keep act summaries short.
+
+SUBPLOTS:
+Return 2–6 subplots (name + 1-line description).
+
+PRODUCTION FLAGS (HIGH LEVEL):
+Return only top-level flags: period, VFX, crowds, night shoots, stunts/safety.
+
+OUTPUT JSON ONLY (NO MARKDOWN, NO EXTRA TEXT).`;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 2: HAIKU PROMPTS - PARALLEL DETAIL PASSES
+// ═══════════════════════════════════════════════════════════════════════════════
+const HAIKU_PROPS_PROMPT = `You are a PRODUCTION PROPS BREAKDOWN ANALYST.
+
+OUTPUT LANGUAGE:
+Return all descriptive text fields in the requested language.
+Do NOT translate character names or scene headings.
+
+TASK:
+Return TWO prop lists:
+
+1) props_key (8–15 items for feature-length scripts):
+- plot-critical OR recurring OR iconic OR institutional/symbolic
+- institutional examples: classified documents, hearing microphones, badges/IDs, lab equipment, scientific apparatus, military vehicles, radios, period newspapers, briefcases, typewriters, telephones
+
+2) props_production (20–60 items for feature-length scripts):
+- department-relevant props that recur or define the world
+- avoid trivial one-off clutter
+
+MINIMUMS:
+- If scenes_total >= 80: props_key must be >= 10 and props_production >= 25.
+- If scenes_total < 80: props_key >= 6 and props_production >= 15.
+
+OUTPUT JSON ONLY:
+
+{
+  "props_key": [
+    { "name": "", "importance": "critical|high|medium", "why": "" }
+  ],
+  "props_production": [
+    { "name": "", "department": "art|costume|props|special|transport|sound|other", "why": "" }
+  ]
+}`;
+
+const HAIKU_CHARACTERS_PROMPT = `You are a CAST BREAKDOWN ANALYST.
+
+OUTPUT LANGUAGE:
+Return descriptions in the requested language.
+Do NOT translate names.
+
+NORMALIZATION (CRITICAL):
+Before output, normalize any character label:
+- Remove CONT'D / CONT'D / CONT. / CONTINUED
+- Remove (V.O.), (O.S.), (O.C.), (ON SCREEN), (OFF)
+- Trim spaces/punctuation
+
+CATEGORIES:
+1) cast_characters: named characters with narrative weight
+2) featured_extras_with_lines: role-based speakers without character arcs (SOLDIER, AIDE, SECRETARY...)
+3) voices_and_functional: VOICE, RADIO, ANNOUNCER, PA SYSTEM, INTERCOM
+
+OUTPUT JSON ONLY:
+
+{
+  "cast_characters": [
+    { "name": "", "role": "protagonist|co_protagonist|antagonist|supporting|minor", "scenes_count": 0, "why": "" }
+  ],
+  "featured_extras_with_lines": [
+    { "name": "", "scenes_count": 0, "why": "" }
+  ],
+  "voices_and_functional": [
+    { "name": "", "scenes_count": 0, "why": "" }
+  ]
+}`;
+
+const HAIKU_SETPIECES_PROMPT = `You are a SETPIECE + PRODUCTION FLAGS ANALYST.
+
+OUTPUT LANGUAGE:
+Return descriptions in the requested language.
+Do NOT translate scene headings.
 
 SETPIECES:
-Include action, trials, hearings, tests, chases, emotional peaks.
+Include not only action, also:
+- hearings/trials/interrogations with high dramatic weight
+- scientific tests/demonstrations
+- chases/escapes
+- emotional peaks
+- montages
 
-OUTPUT THIS JSON STRUCTURE:
+PRODUCTION FLAGS:
+List practical concerns:
+- stunts, fire/explosions, weapons, water, heights
+- VFX, period, crowds, animals, children, night shoots
+
+OUTPUT JSON ONLY:
+
 {
-  "title": "string",
-  "scenes": {
-    "total": number,
-    "list": [{"number": 1, "heading": "INT. LOCATION - DAY", "location_base": "LOCATION"}]
-  },
-  "characters": {
-    "cast": [{"name": "CHARACTER", "scenes_count": 5}],
-    "featured_extras": [],
-    "voices": []
-  },
-  "locations": {
-    "base": [{"name": "LOCATION", "scenes_count": 3}],
-    "variants": [{"name": "INT. LOCATION - DAY", "base": "LOCATION"}]
-  },
-  "props": [{"name": "ITEM", "importance": "high"}],
-  "setpieces": [{"name": "ACTION SEQUENCE", "type": "chase"}],
-  "notes": "any production notes"
+  "setpieces": [
+    { "name": "", "type": "action|trial|test|montage|emotional|other", "why": "" }
+  ],
+  "production_flags": [
+    { "flag": "", "severity": "low|medium|high", "why": "" }
+  ]
 }`;
 
 // ===== SLUGLINE REGEX =====
@@ -86,36 +171,17 @@ function looksLikeCharacterCue(line: string): boolean {
 
 function cleanCharacterCue(raw: string): string {
   let name = raw.trim();
-  // Remove CONT'D, V.O., O.S., etc.
   name = name.replace(/\s*(CONT['']?D?\.?|CONTINUED|CONT\.)\s*/gi, '').trim();
   name = name.replace(/\(V\.?O\.?\)|\(O\.?S\.?\)|\(O\.?C\.?\)|\(ON\s?SCREEN\)|\(OFF\)/gi, '').trim();
   name = name.replace(/[()]/g, '').trim();
 
-  // Filter out common screenplay transitions / non-character cues
   const upper = name.toUpperCase();
   const banned = new Set([
-    'CUT TO',
-    'SMASH CUT',
-    'DISSOLVE TO',
-    'FADE IN',
-    'FADE OUT',
-    'FADE TO BLACK',
-    'TITLE',
-    'SUPER',
-    'MONTAGE',
-    'END',
-    'CONTINUED',
-    'THE END',
-    'CREDITS',
-    'BLACK',
-    'FLASHBACK',
-    'INTERCUT',
-    'BACK TO',
-    'MATCH CUT',
-    'JUMP CUT',
+    'CUT TO', 'SMASH CUT', 'DISSOLVE TO', 'FADE IN', 'FADE OUT', 'FADE TO BLACK',
+    'TITLE', 'SUPER', 'MONTAGE', 'END', 'CONTINUED', 'THE END', 'CREDITS', 'BLACK',
+    'FLASHBACK', 'INTERCUT', 'BACK TO', 'MATCH CUT', 'JUMP CUT',
   ]);
   if (banned.has(upper)) return '';
-
   return name;
 }
 
@@ -136,7 +202,6 @@ function extractScenesFromScript(text: string): any[] {
       const intExt = match[1].toUpperCase().replace('.', '').replace('-', '');
       const time = match[3]?.toUpperCase() || '';
       
-      // Normalize base location (remove time suffixes)
       const locationBase = locationRaw
         .replace(/\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|LATER|CONTINUOUS|SAME|MOMENTS LATER|B&W|COLOR).*$/i, '')
         .trim();
@@ -162,13 +227,10 @@ function extractScenesFromScript(text: string): any[] {
   return scenes;
 }
 
-// Add scriptText info to breakdown for the shared normalizer
 function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   const out: any = (data && typeof data === 'object') ? data : {};
-  
   const asArray = (v: any) => (Array.isArray(v) ? v : []);
 
-  // --- Pre-count expected scenes from script text ---
   const expectedHeadings: string[] = [];
   const scriptLines = scriptText.split(/\r?\n/);
   for (const line of scriptLines) {
@@ -180,10 +242,8 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   const expectedSceneCount = expectedHeadings.length;
   console.log(`[script-breakdown] Expected scene count from regex: ${expectedSceneCount}`);
 
-  // --- Scenes fallback logic ---
   const aiScenesList = asArray(out.scenes?.list);
   const regexScenes = extractScenesFromScript(scriptText);
-
   const aiSceneCountTooLow = expectedSceneCount > 0 && aiScenesList.length < expectedSceneCount * 0.5;
 
   if (aiScenesList.length === 0 && regexScenes.length > 0) {
@@ -200,14 +260,12 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
     out.scenes = { total: aiScenesList.length, list: aiScenesList };
   }
 
-  // Ensure scenes.total matches scenes.list.length
   if (out.scenes?.list) {
     out.scenes.total = out.scenes.list.length;
   }
 
   console.log(`[script-breakdown] Final scene count: ${out.scenes?.total || 0} (expected: ${expectedSceneCount})`);
 
-  // Add validation metadata
   out.validation = {
     scene_headings_found: expectedSceneCount,
     scenes_total_equals_list_length: out.scenes?.total === out.scenes?.list?.length,
@@ -215,9 +273,7 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
     source_reason: expectedSceneCount > 0 ? 'Found INT./EXT. scene headings' : 'No standard screenplay headings found'
   };
 
-  // Add raw text for title extraction fallback
   out.raw_text = scriptText.slice(0, 5000);
-
   return out;
 }
 
@@ -237,7 +293,6 @@ function tryParseJson(text: string): any {
   }
 }
 
-// ===== GET USER ID FROM AUTH HEADER =====
 async function getUserIdFromRequest(req: Request): Promise<string | null> {
   const authHeader = req.headers.get('Authorization');
   if (!authHeader) return null;
@@ -253,7 +308,54 @@ async function getUserIdFromRequest(req: Request): Promise<string | null> {
   return user.id;
 }
 
-// ===== BACKGROUND PROCESSING FUNCTION =====
+// ═══════════════════════════════════════════════════════════════════════════════
+// HELPER: Call Anthropic API
+// ═══════════════════════════════════════════════════════════════════════════════
+async function callAnthropic(
+  apiKey: string,
+  model: string,
+  systemPrompt: string,
+  userPrompt: string,
+  maxTokens: number
+): Promise<any> {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`[callAnthropic] API error for ${model}:`, response.status, errorText.slice(0, 300));
+    throw new Error(`Anthropic API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const textBlock = data.content?.find((block: any) => block.type === 'text');
+  if (!textBlock?.text) {
+    throw new Error('No text content in response');
+  }
+  
+  const parsed = tryParseJson(textBlock.text);
+  if (!parsed) {
+    throw new Error('Failed to parse JSON from response');
+  }
+  
+  return parsed;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BACKGROUND PROCESSING - TWO-PHASE ARCHITECTURE
+// ═══════════════════════════════════════════════════════════════════════════════
 async function processScriptBreakdownInBackground(
   taskId: string,
   request: ScriptBreakdownRequest,
@@ -265,13 +367,13 @@ async function processScriptBreakdownInBackground(
 
   const { scriptText, projectId, scriptId, language, format, episodesCount, episodeDurationMin } = request;
   const processedScriptText = scriptText.trim();
+  const lang = language || 'es-ES';
 
   try {
-    // Update task to running
     await supabase.from('background_tasks').update({
       status: 'running',
-      progress: 10,
-      description: 'Analizando estructura narrativa con Claude Sonnet 4...',
+      progress: 5,
+      description: 'Fase 1: Analizando estructura con Claude Sonnet...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
@@ -279,11 +381,10 @@ async function processScriptBreakdownInBackground(
     if (!ANTHROPIC_API_KEY) {
       throw new Error('ANTHROPIC_API_KEY not configured');
     }
-    const isLongScript = processedScriptText.length > 40000;
 
-    // ══════════════════════════════════════════════════════════════════════
-    // PRE-COUNT SCENE HEADINGS (critical for accurate scene counting)
-    // ══════════════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PRE-COUNT SCENE HEADINGS
+    // ═══════════════════════════════════════════════════════════════════════════
     const headingLines: string[] = [];
     const scriptLines = processedScriptText.split(/\r?\n/);
     for (const line of scriptLines) {
@@ -292,114 +393,182 @@ async function processScriptBreakdownInBackground(
         headingLines.push(trimmed);
       }
     }
-    console.log(`[script-breakdown-bg] PRE-COUNTED ${headingLines.length} scene headings`);
+    console.log(`[script-breakdown] PRE-COUNTED ${headingLines.length} scene headings`);
 
-    const userPrompt = `
-═══════════════════════════════════════════════════════════════════════════════
-SCENE COUNTING RULES (CRITICAL - READ BEFORE ANYTHING ELSE)
-═══════════════════════════════════════════════════════════════════════════════
+    // Extract a sample of scenes for Haiku passes
+    const sceneSample = headingLines.slice(0, 40).map((h, i) => `${i + 1}. ${h}`).join('\n');
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PHASE 1: SONNET - CANONICAL SKELETON
+    // ═══════════════════════════════════════════════════════════════════════════
+    const sonnetUserPrompt = `
+OUTPUT LANGUAGE: ${lang}
 
-I have PRE-SCANNED this script and found EXACTLY ${headingLines.length} scene headings (lines starting with INT./EXT.).
-
+SCENE COUNTING (CRITICAL):
+I have PRE-SCANNED this script and found EXACTLY ${headingLines.length} scene headings.
 YOUR scenes.list ARRAY MUST CONTAIN EXACTLY ${headingLines.length} ENTRIES.
-YOUR scenes.total MUST EQUAL ${headingLines.length}.
-YOUR counts.scenes_total MUST EQUAL ${headingLines.length}.
 
-Here are the scene headings I found:
-${headingLines.slice(0, 50).map((h, i) => `${i + 1}. ${h}`).join('\n')}${headingLines.length > 50 ? `\n... and ${headingLines.length - 50} more scenes` : ''}
+Here are some scene headings I found:
+${headingLines.slice(0, 30).map((h, i) => `${i + 1}. ${h}`).join('\n')}${headingLines.length > 30 ? `\n... and ${headingLines.length - 30} more scenes` : ''}
 
 RULES:
-- RULE 1: Same location + different time = DIFFERENT scenes
-- RULE 2: Same location + INT vs EXT = DIFFERENT scenes
-- RULE 3: Do NOT merge, group, or summarize scenes. List ALL ${headingLines.length} individually.
-- RULE 4: If your scenes array has fewer than ${headingLines.length} entries, you made an error.
+- Same location + different time = DIFFERENT scenes
+- Do NOT merge or summarize scenes
 
-═══════════════════════════════════════════════════════════════════════════════
-PRODUCTION BREAKDOWN REQUEST
-═══════════════════════════════════════════════════════════════════════════════
-
-PROJECT ID: ${projectId}
-RESPONSE LANGUAGE: ${language || 'es-ES'}
-${isLongScript ? '\nNOTE: This is a long script. Analyze all available content exhaustively.\n' : ''}
+OUTPUT JSON STRUCTURE:
+{
+  "title": "",
+  "writers": [],
+  "logline": "",
+  "synopsis": "",
+  "acts": [{ "act": 1, "summary": "" }],
+  "scenes": {
+    "total": ${headingLines.length},
+    "list": [{ "number": 1, "heading": "", "int_ext": "INT|EXT", "location_base": "", "time": "" }]
+  },
+  "characters_main": [{ "name": "", "role": "protagonist|antagonist|supporting", "one_liner": "" }],
+  "locations_base": [{ "name": "", "scenes_count_est": 0 }],
+  "subplots": [{ "name": "", "description": "" }],
+  "production": { "dialogue_density": "medium", "cast_size": "medium", "complexity": "medium", "flags": [] }
+}
 
 SCRIPT TO ANALYZE:
 ---
 ${processedScriptText}
----
+---`;
 
-Perform an EXHAUSTIVE breakdown of this script. Extract ALL production entities following the JSON format specified.
-
-IMPORTANT:
-- Be exhaustive: don't miss any character, prop, or location
-- COUNT EXACTLY ${headingLines.length} SCENES (one per INT./EXT. found)
-- Normalize character names (remove CONT'D, V.O., O.S., etc.)
-- Separate CAST characters from FEATURED EXTRAS from VOICES
-- Group locations into BASE (for Bible) and VARIANTS (for Production)
-- Assign realistic priorities
-- Include useful production notes`;
-
-    console.log('[script-breakdown-bg] Starting Claude Sonnet 4 analysis for task:', taskId, 'chars:', processedScriptText.length);
-
+    console.log('[script-breakdown] Phase 1: Starting Sonnet analysis...');
+    
     await supabase.from('background_tasks').update({
-      progress: 25,
-      description: 'Enviando guion a Claude Sonnet 4...',
+      progress: 15,
+      description: 'Fase 1: Claude Sonnet analizando estructura...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    // Use Claude Sonnet 4 - NO TOOLS, just JSON output
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20250514',
-        max_tokens: 16000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: userPrompt }],
-        // NO TOOLS - just ask for JSON directly
-      }),
+    const canonicalData = await callAnthropic(
+      ANTHROPIC_API_KEY,
+      'claude-sonnet-4-5-20250514',
+      SONNET_SYSTEM_PROMPT,
+      sonnetUserPrompt,
+      12000
+    );
+
+    console.log('[script-breakdown] Phase 1 complete:', {
+      title: canonicalData.title,
+      scenes: canonicalData.scenes?.total || canonicalData.scenes?.list?.length || 0,
+      mainChars: canonicalData.characters_main?.length || 0,
+      locations: canonicalData.locations_base?.length || 0,
     });
 
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PHASE 2: HAIKU PARALLEL PASSES
+    // ═══════════════════════════════════════════════════════════════════════════
     await supabase.from('background_tasks').update({
-      progress: 60,
-      description: 'Procesando respuesta de Claude Sonnet 4...',
+      progress: 40,
+      description: 'Fase 2: Extrayendo props, personajes y setpieces en paralelo...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('[script-breakdown-bg] Anthropic API error:', response.status, errorText.slice(0, 500));
-      // DO NOT proceed - throw error to prevent overwriting good data
-      throw new Error(`Anthropic API error: ${response.status} - ${errorText.slice(0, 200)}`);
-    }
+    const contextForHaiku = `
+CONTEXT FROM CANONICAL BREAKDOWN:
+- Title: ${canonicalData.title || 'Unknown'}
+- Synopsis: ${canonicalData.synopsis || canonicalData.logline || ''}
+- Scenes total: ${canonicalData.scenes?.total || headingLines.length}
+- Main characters: ${(canonicalData.characters_main || []).map((c: any) => c.name).join(', ')}
+- Base locations: ${(canonicalData.locations_base || []).map((l: any) => l.name).join(', ')}
 
-    const data = await response.json();
+SAMPLE SCENE HEADINGS:
+${sceneSample}
 
-    // Parse text response (no tools)
-    let breakdownData: any = null;
-    const textBlock = data.content?.find((block: any) => block.type === 'text');
-    if (textBlock?.text) {
-      breakdownData = tryParseJson(textBlock.text);
-    }
+OUTPUT LANGUAGE: ${lang}`;
 
-    if (!breakdownData) {
-      console.error('[script-breakdown-bg] Failed to parse JSON from response');
-      // DO NOT overwrite existing data - throw error
-      throw new Error('No se pudo interpretar la respuesta del modelo como JSON');
-    }
+    // Launch all 3 Haiku passes in parallel
+    console.log('[script-breakdown] Phase 2: Starting parallel Haiku passes...');
+
+    const [propsResult, charactersResult, setpiecesResult] = await Promise.allSettled([
+      // Props pass
+      callAnthropic(
+        ANTHROPIC_API_KEY,
+        'claude-3-5-haiku-20241022',
+        HAIKU_PROPS_PROMPT,
+        contextForHaiku + `\n\nExtract all production props from this screenplay world.`,
+        4000
+      ),
+      // Characters pass  
+      callAnthropic(
+        ANTHROPIC_API_KEY,
+        'claude-3-5-haiku-20241022',
+        HAIKU_CHARACTERS_PROMPT,
+        contextForHaiku + `\n\nExtract ALL characters categorized properly. Include minor roles.`,
+        4000
+      ),
+      // Setpieces pass
+      callAnthropic(
+        ANTHROPIC_API_KEY,
+        'claude-3-5-haiku-20241022',
+        HAIKU_SETPIECES_PROMPT,
+        contextForHaiku + `\n\nExtract all setpieces and production flags.`,
+        3000
+      ),
+    ]);
+
+    console.log('[script-breakdown] Phase 2 complete:', {
+      props: propsResult.status,
+      characters: charactersResult.status,
+      setpieces: setpiecesResult.status,
+    });
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // BACKEND NORMALIZATION (all validation happens here, not in Claude schema)
+    // MERGE ALL RESULTS
     // ═══════════════════════════════════════════════════════════════════════════
-    // Step 1: Enrich with regex-extracted scenes and validation metadata
-    const enrichedData = enrichBreakdownWithScriptData(breakdownData, processedScriptText);
-    // Step 2: Normalize into canonical schema (title, counts, characters split, etc.)
+    await supabase.from('background_tasks').update({
+      progress: 70,
+      description: 'Fusionando resultados y normalizando...',
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
+
+    // Extract results (use empty objects for failed passes)
+    const propsData = propsResult.status === 'fulfilled' ? propsResult.value : {};
+    const charactersData = charactersResult.status === 'fulfilled' ? charactersResult.value : {};
+    const setpiecesData = setpiecesResult.status === 'fulfilled' ? setpiecesResult.value : {};
+
+    // Merge into unified breakdown
+    const mergedBreakdown: any = {
+      ...canonicalData,
+      // Props from Haiku
+      props: [
+        ...(propsData.props_key || []),
+        ...(propsData.props_production || []),
+      ],
+      props_key: propsData.props_key || [],
+      props_production: propsData.props_production || [],
+      // Characters from Haiku (more complete than Sonnet's characters_main)
+      characters: {
+        cast: charactersData.cast_characters || [],
+        featured_extras_with_lines: charactersData.featured_extras_with_lines || [],
+        voices_and_functional: charactersData.voices_and_functional || [],
+      },
+      // Keep Sonnet's main characters for reference
+      characters_main: canonicalData.characters_main || [],
+      // Setpieces from Haiku
+      setpieces: setpiecesData.setpieces || [],
+      production_flags: setpiecesData.production_flags || [],
+      // Locations from Sonnet
+      locations: {
+        base: (canonicalData.locations_base || []).map((l: any) => ({
+          name: l.name,
+          scenes_count: l.scenes_count_est || 0,
+          variants: [],
+        })),
+        variants: [],
+      },
+    };
+
+    // Enrich with regex data and normalize
+    const enrichedData = enrichBreakdownWithScriptData(mergedBreakdown, processedScriptText);
     const normalizedData = normalizeBreakdown(enrichedData);
 
-    console.log('[script-breakdown-bg] Analysis complete:', {
+    console.log('[script-breakdown] Normalization complete:', {
       scenes: normalizedData.counts?.scenes_total || 0,
       cast: normalizedData.counts?.cast_characters_total || 0,
       extras: normalizedData.counts?.featured_extras_total || 0,
@@ -409,12 +578,14 @@ IMPORTANT:
     });
 
     await supabase.from('background_tasks').update({
-      progress: 80,
+      progress: 85,
       description: 'Guardando resultados en base de datos...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    // Save to script if scriptId provided
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SAVE TO DATABASE
+    // ═══════════════════════════════════════════════════════════════════════════
     if (scriptId) {
       const { data: projectRow } = await supabase
         .from('projects')
@@ -436,9 +607,8 @@ IMPORTANT:
         effectiveFormat === 'series' ? 45 : 100
       );
 
-      // Convert new scene format to flat array for episodes
       const scenesList = Array.isArray(normalizedData.scenes?.list) ? normalizedData.scenes.list : [];
-      const synopsisText = (enrichedData.synopsis?.summary || enrichedData.synopsis?.logline || '') as string;
+      const synopsisText = (enrichedData.synopsis || canonicalData.synopsis || canonicalData.logline || '') as string;
 
       const buildEpisodesFromScenes = (): any[] => {
         if (desiredEpisodesCount <= 1) {
@@ -451,7 +621,6 @@ IMPORTANT:
           }];
         }
 
-        // Simple even distribution for series
         const chunkSize = Math.max(1, Math.ceil(scenesList.length / desiredEpisodesCount));
         const groups: any[][] = [];
         for (let i = 0; i < scenesList.length; i += chunkSize) {
@@ -479,7 +648,6 @@ IMPORTANT:
       const allCharacters: any[] = [];
       const chars = normalizedData.characters || {};
       
-      // New canonical format: cast, featured_extras_with_lines, voices_and_functional
       for (const c of (chars.cast || [])) {
         allCharacters.push({ ...c, role: c.role || 'supporting', priority: c.priority || 'P2' });
       }
@@ -490,7 +658,6 @@ IMPORTANT:
         allCharacters.push({ ...c, role: 'voice', priority: 'P3' });
       }
 
-      // Flatten locations for backward compatibility
       const allLocations: any[] = [];
       const locs = normalizedData.locations || {};
       for (const loc of (locs.base || [])) {
@@ -498,48 +665,58 @@ IMPORTANT:
       }
 
       const parsedJson = {
-        // Schema version for future migrations
-        schema_version: 'v7-canonical',
-        breakdown_version: 2,
+        schema_version: 'v8-two-phase',
+        breakdown_version: 3,
         
-        // ═══════════════════════════════════════════════════════════════════════════
-        // CANONICAL ROOT-LEVEL FIELDS (UI reads from here)
-        // ═══════════════════════════════════════════════════════════════════════════
+        // Canonical root-level fields
         title: normalizedData.title || 'Guion Analizado',
         metadata: normalizedData.metadata || { title: normalizedData.title },
         counts: normalizedData.counts,
         
-        // Synopsis (from enrichedData since normalizer doesn't touch it)
         synopsis: synopsisText,
-        logline: (enrichedData.synopsis?.logline || '') as string,
+        logline: (canonicalData.logline || '') as string,
+        
+        // From Sonnet
+        acts: canonicalData.acts || [],
+        subplots: canonicalData.subplots || [],
+        production: canonicalData.production || {},
         
         // Scenes in canonical format
         scenes: normalizedData.scenes,
         
-        // Characters in CANONICAL format (UI should use this)
+        // Characters (Haiku-enriched)
         characters: normalizedData.characters,
-        // Also keep flat array for backward compatibility
+        characters_main: canonicalData.characters_main || [],
         characters_flat: allCharacters,
         
-        // Locations in CANONICAL format
+        // Locations
         locations: normalizedData.locations,
-        // Also keep flat array for backward compatibility
         locations_flat: allLocations,
         
-        // Props and setpieces
+        // Props (Haiku-enriched)
         props: normalizedData.props || [],
-        setpieces: normalizedData.setpieces || [],
+        props_key: mergedBreakdown.props_key || [],
+        props_production: mergedBreakdown.props_production || [],
         
-        // Validation and warnings
+        // Setpieces (Haiku-enriched)
+        setpieces: normalizedData.setpieces || [],
+        production_flags: mergedBreakdown.production_flags || [],
+        
+        // Validation
         validation: enrichedData.validation || {},
         _warnings: normalizedData._warnings || [],
+        _phase_status: {
+          sonnet: 'success',
+          haiku_props: propsResult.status,
+          haiku_characters: charactersResult.status,
+          haiku_setpieces: setpiecesResult.status,
+        },
         
-        // Episodes for series format
+        // Episodes
         episodes: parsedEpisodes,
       };
 
-      console.log('[script-breakdown-bg] Canonical title:', parsedJson.title);
-      console.log('[script-breakdown-bg] Counts:', parsedJson.counts);
+      console.log('[script-breakdown] Saving parsed_json with title:', parsedJson.title);
 
       const { error: updateError } = await supabase
         .from('scripts')
@@ -550,26 +727,26 @@ IMPORTANT:
         .eq('id', scriptId);
 
       if (updateError) {
-        console.error('[script-breakdown-bg] Error saving parsed_json:', updateError);
+        console.error('[script-breakdown] Error saving parsed_json:', updateError);
       } else {
-        console.log('[script-breakdown-bg] Saved parsed_json to script:', scriptId);
+        console.log('[script-breakdown] Saved parsed_json to script:', scriptId);
       }
     }
 
-    // Complete task with result
+    // Complete task
     await supabase.from('background_tasks').update({
       status: 'completed',
       progress: 100,
-      description: 'Análisis completado',
+      description: 'Análisis completado (Sonnet + Haiku)',
       result: { success: true, breakdown: normalizedData },
       completed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    console.log('[script-breakdown-bg] Task completed successfully:', taskId);
+    console.log('[script-breakdown] Task completed successfully:', taskId);
 
   } catch (error) {
-    console.error('[script-breakdown-bg] Error in background processing:', error);
+    console.error('[script-breakdown] Error in background processing:', error);
 
     await supabase.from('background_tasks').update({
       status: 'failed',
@@ -581,7 +758,9 @@ IMPORTANT:
   }
 }
 
-// ===== MAIN HANDLER =====
+// ═══════════════════════════════════════════════════════════════════════════════
+// MAIN HANDLER
+// ═══════════════════════════════════════════════════════════════════════════════
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -598,7 +777,6 @@ serve(async (req) => {
       );
     }
 
-    // Get user ID from auth header
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return new Response(
@@ -611,7 +789,6 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Create background task
     const taskId = crypto.randomUUID();
     const estimatedChars = scriptText.trim().length;
     const estimatedPages = Math.ceil(estimatedChars / 3500);
@@ -621,28 +798,26 @@ serve(async (req) => {
       user_id: userId,
       project_id: projectId,
       type: 'script_analysis',
-      title: 'Análisis de guion con Claude Sonnet 4',
-      description: `Analizando ~${estimatedPages} páginas con IA...`,
+      title: 'Análisis de guion (Sonnet + Haiku)',
+      description: `Analizando ~${estimatedPages} páginas...`,
       status: 'pending',
       progress: 0,
       entity_id: scriptId || null,
-      metadata: { scriptLength: estimatedChars, estimatedPages },
+      metadata: { scriptLength: estimatedChars, estimatedPages, architecture: 'two-phase' },
     });
 
     console.log('[script-breakdown] Created background task:', taskId, 'for', estimatedChars, 'chars');
 
-    // Start background processing with waitUntil
     // @ts-ignore - EdgeRuntime is available in Supabase Edge Functions
     EdgeRuntime.waitUntil(processScriptBreakdownInBackground(taskId, request, userId));
 
-    // Return immediately with task ID
     return new Response(
       JSON.stringify({
         success: true,
         taskId,
-        message: 'Análisis iniciado en segundo plano',
+        message: 'Análisis iniciado (arquitectura de dos fases)',
         polling: true,
-        estimatedTimeMin: Math.ceil(estimatedChars / 5000),
+        estimatedTimeMin: Math.ceil(estimatedChars / 8000), // Faster estimate with parallel processing
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
