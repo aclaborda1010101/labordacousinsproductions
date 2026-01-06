@@ -388,11 +388,15 @@ async function callAIJson({ modelKey, systemPrompt, userPrompt, maxTokens, label
         
         if (typeof content === 'string' && content.trim()) {
           console.log(`[${label}] Anthropic SUCCESS: ${content.length} chars`);
+          // Log first/last 200 chars for truncation debugging
+          console.log(`[${label}] Content preview: START=${content.slice(0, 200)}...END=${content.slice(-200)}`);
           
           const parsed = parseJsonSafe<any>(content, label);
           if (parsed.ok && parsed.json) {
             return { data: parsed.json, providerInfo };
           }
+          // Log parse failure details
+          console.error(`[${label}] JSON_PARSE_FAILED:`, { warnings: parsed.warnings, hash: parsed.rawSnippetHash });
           throw new Error('JSON_PARSE_FAILED');
         }
         throw new Error('NO_CONTENT_IN_RESPONSE');
@@ -404,9 +408,14 @@ async function callAIJson({ modelKey, systemPrompt, userPrompt, maxTokens, label
       
       providerInfo.anthropic_error = `${response.status}: ${errorBody.slice(0, 200)}`;
       
-      // DON'T fallback for auth errors that need user action
-      if (response.status === 401) {
-        throw new Error(`ANTHROPIC_AUTH_INVALID: Check API key permissions`);
+      // DON'T fallback for definitive auth/permission errors
+      if (response.status === 401 || response.status === 403) {
+        throw new Error(`ANTHROPIC_AUTH_INVALID_${response.status}: Check API key permissions`);
+      }
+      
+      // 404 might be bad endpoint/model - log but allow fallback with warning
+      if (response.status === 404) {
+        console.warn(`[${label}] LIKELY_BAD_ENDPOINT_OR_MODEL - 404 from Anthropic, falling back but this should be investigated`);
       }
       
     } catch (anthropicError) {
@@ -472,16 +481,27 @@ async function callAIJson({ modelKey, systemPrompt, userPrompt, maxTokens, label
   }
   
   const data = await response.json();
-  const content = data?.choices?.[0]?.message?.content;
+  
+  // Multi-format content extraction (different gateways/providers)
+  const content = 
+    data?.choices?.[0]?.message?.content ||  // OpenAI format
+    data?.output_text ||                      // Some gateways
+    data?.content?.[0]?.text ||               // Anthropic format
+    data?.candidates?.[0]?.content?.parts?.[0]?.text || // Gemini format
+    null;
   
   if (typeof content !== 'string' || !content.trim()) {
+    console.error(`[${label}] GATEWAY_NO_CONTENT - response structure:`, JSON.stringify(data).slice(0, 500));
     throw new Error('GATEWAY_NO_CONTENT');
   }
   
   console.log(`[${label}] Gateway SUCCESS: ${content.length} chars`);
+  // Log first/last 200 chars for truncation debugging
+  console.log(`[${label}] Content preview: START=${content.slice(0, 200)}...END=${content.slice(-200)}`);
   
   const parsed = parseJsonSafe<any>(content, label);
   if (!parsed.ok || !parsed.json) {
+    console.error(`[${label}] GATEWAY_JSON_PARSE_FAILED:`, { warnings: parsed.warnings, hash: parsed.rawSnippetHash });
     throw new Error('GATEWAY_JSON_PARSE_FAILED');
   }
   
@@ -893,11 +913,47 @@ OUTPUT LANGUAGE: ${lang}`;
 
   } catch (error) {
     console.error('[script-breakdown] Error in background processing:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+
+    // DON'T overwrite parsed_json on error - only store error info
+    // Use a separate update that preserves existing data
+    if (request.scriptId) {
+      try {
+        // Get existing parsed_json to preserve it
+        const { data: existingScript } = await supabase
+          .from('scripts')
+          .select('parsed_json')
+          .eq('id', request.scriptId)
+          .maybeSingle();
+        
+        const existingJson = existingScript?.parsed_json || {};
+        
+        // Only update _last_error, don't overwrite the rest
+        await supabase
+          .from('scripts')
+          .update({
+            parsed_json: {
+              ...existingJson,
+              _last_error: {
+                message: errorMessage,
+                timestamp: new Date().toISOString(),
+              },
+            },
+            status: 'error',
+          })
+          .eq('id', request.scriptId);
+          
+        console.log('[script-breakdown] Saved _last_error without overwriting parsed_json');
+      } catch (saveErr) {
+        console.error('[script-breakdown] Failed to save error to script:', saveErr);
+      }
+    }
 
     await supabase.from('background_tasks').update({
       status: 'failed',
       progress: 0,
-      error: error instanceof Error ? error.message : 'Error desconocido',
+      error: errorMessage,
       completed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
