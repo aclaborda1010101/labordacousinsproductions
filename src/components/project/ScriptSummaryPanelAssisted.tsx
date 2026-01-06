@@ -181,15 +181,50 @@ export function ScriptSummaryPanelAssisted({
 
       if (script?.parsed_json) {
         const parsed = script.parsed_json as any;
+        
+        // Hydrate characters - handle both nested (characters.cast) and flat formats
+        let characters: any[] = [];
+        if (Array.isArray(parsed.characters)) {
+          characters = parsed.characters;
+        } else if (parsed.characters?.cast && Array.isArray(parsed.characters.cast)) {
+          characters = parsed.characters.cast;
+        } else if (Array.isArray(parsed.main_characters)) {
+          characters = parsed.main_characters;
+        }
+        
+        // Hydrate locations - handle both nested (locations.base) and flat formats
+        let locations: any[] = [];
+        if (Array.isArray(parsed.locations)) {
+          locations = parsed.locations;
+        } else if (parsed.locations?.base && Array.isArray(parsed.locations.base)) {
+          locations = parsed.locations.base;
+        } else if (Array.isArray(parsed.main_locations)) {
+          locations = parsed.main_locations;
+        }
+        
+        // Hydrate props - handle both nested (props.items) and flat formats
+        let props: any[] = [];
+        if (Array.isArray(parsed.props)) {
+          props = parsed.props;
+        } else if (parsed.props?.items && Array.isArray(parsed.props.items)) {
+          props = parsed.props.items;
+        }
+        
+        console.log('[ScriptSummary] Hydrated counts:', { 
+          characters: characters.length, 
+          locations: locations.length, 
+          props: props.length 
+        });
+        
         setScriptData({
           id: script.id,
           title: parsed.title || 'Guion',
           synopsis: parsed.synopsis || parsed.logline,
           episodes: parsed.episodes || [],
           teasers: parsed.teasers,
-          characters: parsed.characters || parsed.main_characters || [],
-          locations: parsed.locations || parsed.main_locations || [],
-          props: parsed.props || [],
+          characters,
+          locations,
+          props,
           subplots: parsed.subplots || [],
           plot_twists: parsed.plot_twists || [],
           counts: parsed.counts,
