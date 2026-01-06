@@ -238,6 +238,14 @@ const CHARACTER_CUE_BANNED = new Set([
   'ANGLE ON', 'CLOSE ON', 'INSERT', 'POV', 'WIDE', 'TIGHT', 'OVER', 
   'MORE', 'CONTINUOUS', 'LATER', 'SAME', 'DAY', 'NIGHT', 'MORNING', 
   'EVENING', 'DAWN', 'DUSK', 'SUNSET', 'SUNRISE',
+  // Additional editing/technical terms
+  'QUICK CUTS', 'QUICK CUT', 'TIME CUT', 'PRELAP', 'PRE-LAP', 'SERIES OF SHOTS',
+  'BEGIN TITLES', 'END TITLES', 'MAIN TITLES', 'OPENING CREDITS', 'CLOSING CREDITS',
+  'NEXT AFTERNOON', 'NEXT MORNING', 'NEXT DAY', 'HOURS LATER', 'MOMENTS LATER',
+  'THE NEXT', 'THAT NIGHT', 'THAT DAY', 'THAT EVENING',
+  // Sound effects and onomatopoeia patterns
+  'BLAM', 'BAM', 'BANG', 'BOOM', 'CRASH', 'SLAM', 'THUD', 'CLICK', 'BEEP', 'RING',
+  'PLEASE STAND BY', 'STAND BY', 'WE INTERRUPT', 'BREAKING NEWS',
 ]);
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -259,6 +267,13 @@ function isSceneHeading(text: string): boolean {
 // Action lines and technical cues
 function isActionOrTechnicalLine(text: string): boolean {
   const t = text.toUpperCase().trim();
+  const original = text.trim();
+  
+  // 🛡️ PURE PUNCTUATION or special chars only (e.g., "...", "---", "***")
+  if (/^[.…\-–—*#_=+~`'"!?@$%^&(){}\[\]<>|\\/:;,]+$/.test(original)) return true;
+  
+  // 🛡️ PURE NUMBERS (scene numbers like "102", "114")
+  if (/^\d+$/.test(original)) return true;
   
   // Scene heading (anywhere in the string)
   if (isSceneHeading(t)) return true;
@@ -272,11 +287,35 @@ function isActionOrTechnicalLine(text: string): boolean {
   // Contains time of day indicators (scene heading fragments)
   if (/\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|MORNING|EVENING|CONTINUOUS|LATER|SAME)\s*$/i.test(t)) return true;
   
-  // Too long to be a character name (scene descriptions)
-  if (t.length > 40) return true;
+  // Too long to be a character name (scene descriptions) - reduced from 40 to 35
+  if (t.length > 35) return true;
   
   // Contains forward slash typical of INT/EXT or location separator
   if (/\bINT\/|EXT\//.test(t)) return true;
+  
+  // 🛡️ SOUND EFFECTS: Repeated letters pattern (BLAMMMMM, CRAAAASH, BOOOOOM)
+  if (/(.)\1{3,}/.test(t)) return true;
+  
+  // 🛡️ DIALOGUE FRAGMENTS: Contains common dialogue patterns
+  // - Questions (ends with ?)
+  // - Statements with multiple words that look like sentences
+  // - Contains "YOU", "I'M", "WE", "THEY" etc. in sentence context
+  if (/\?$/.test(original)) return true;
+  if (/^(DID|DO|DOES|CAN|COULD|WOULD|SHOULD|WILL|ARE|IS|WAS|WERE|HAVE|HAS|HAD)\s/i.test(t)) return true;
+  if (/\b(YOU|I'M|I AM|WE'RE|THEY'RE|HE'S|SHE'S|IT'S|THAT'S|THERE'S|HERE'S|LET'S)\b/i.test(t) && t.split(/\s+/).length > 3) return true;
+  
+  // 🛡️ INSTRUCTIONS: Common screenplay action/instruction phrases
+  if (/^(HEAR|WE SEE|WE HEAR|CUT|ANGLE|SHOT OF|CLOSE UP|WIDE SHOT|PAN|TILT|ZOOM|TRACKING|DOLLY)/i.test(t)) return true;
+  if (/\bHEAR\s+(LAUGHTER|MUSIC|SOUND|NOISE|VOICE)/i.test(t)) return true;
+  
+  // 🛡️ SONG LYRICS / SINGING: Contains "SINGING" or common lyric indicators
+  if (/\bSINGING\b/i.test(t) && t.split(/\s+/).length > 3) return true;
+  
+  // 🛡️ ENDINGS: Lines ending with dashes (incomplete sentences)
+  if (/--$|—$|–$/.test(original)) return true;
+  
+  // 🛡️ STARTS WITH COMMON NON-NAME WORDS
+  if (/^(THAT|THIS|THOSE|THESE|WHAT|WHERE|WHEN|WHY|HOW|GOOD|BAD|TURN|WATCH|LOOK|HEAR)\s/i.test(t) && t.split(/\s+/).length > 3) return true;
   
   return false;
 }
