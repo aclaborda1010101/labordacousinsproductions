@@ -271,7 +271,7 @@ async function processScriptBreakdownInBackground(
     await supabase.from('background_tasks').update({
       status: 'running',
       progress: 10,
-      description: 'Analizando estructura narrativa con Claude Haiku...',
+      description: 'Analizando estructura narrativa con Claude Sonnet 4...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
@@ -338,15 +338,15 @@ IMPORTANT:
 - Assign realistic priorities
 - Include useful production notes`;
 
-    console.log('[script-breakdown-bg] Starting Claude Haiku analysis for task:', taskId, 'chars:', processedScriptText.length);
+    console.log('[script-breakdown-bg] Starting Claude Sonnet 4 analysis for task:', taskId, 'chars:', processedScriptText.length);
 
     await supabase.from('background_tasks').update({
       progress: 25,
-      description: 'Enviando guion a Claude Haiku 3.5...',
+      description: 'Enviando guion a Claude Sonnet 4...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    // Use Claude 3.5 Haiku - NO TOOLS, just JSON output
+    // Use Claude Sonnet 4 - NO TOOLS, just JSON output
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -355,8 +355,8 @@ IMPORTANT:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 8192,
+        model: 'claude-sonnet-4-5-20250514',
+        max_tokens: 16000,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userPrompt }],
         // NO TOOLS - just ask for JSON directly
@@ -365,7 +365,7 @@ IMPORTANT:
 
     await supabase.from('background_tasks').update({
       progress: 60,
-      description: 'Procesando respuesta de Claude Haiku...',
+      description: 'Procesando respuesta de Claude Sonnet 4...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
@@ -621,7 +621,7 @@ serve(async (req) => {
       user_id: userId,
       project_id: projectId,
       type: 'script_analysis',
-      title: 'Análisis de guion con Claude Haiku',
+      title: 'Análisis de guion con Claude Sonnet 4',
       description: `Analizando ~${estimatedPages} páginas con IA...`,
       status: 'pending',
       progress: 0,
