@@ -381,15 +381,16 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       // If we have parsed_json with content, hydrate the breakdown state
       if (data?.parsed_json && typeof data.parsed_json === 'object' && Object.keys(data.parsed_json as object).length > 0) {
         const pj = data.parsed_json as Record<string, unknown>;
+        const payload = (pj as any)?.breakdown ?? pj;
         const breakdown: BreakdownResult = {
-          characters: (pj.characters as BreakdownResult['characters']) || [],
-          locations: (pj.locations as BreakdownResult['locations']) || [],
-          scenes: (pj.scenes as BreakdownResult['scenes']) || [],
-          props: (pj.props as BreakdownResult['props']) || [],
-          synopsis: pj.synopsis as BreakdownResult['synopsis'],
-          subplots: (pj.subplots as BreakdownResult['subplots']) || [],
-          plot_twists: (pj.plot_twists as BreakdownResult['plot_twists']) || [],
-          summary: (typeof pj.summary === 'object' ? pj.summary : undefined) as BreakdownResult['summary'],
+          characters: (payload.characters as BreakdownResult['characters']) || [],
+          locations: (payload.locations as BreakdownResult['locations']) || [],
+          scenes: (payload.scenes as BreakdownResult['scenes']) || [],
+          props: (payload.props as BreakdownResult['props']) || [],
+          synopsis: payload.synopsis as BreakdownResult['synopsis'],
+          subplots: (payload.subplots as BreakdownResult['subplots']) || [],
+          plot_twists: (payload.plot_twists as BreakdownResult['plot_twists']) || [],
+          summary: (typeof payload.summary === 'object' ? payload.summary : undefined) as BreakdownResult['summary'],
         };
         setBreakdownResult(breakdown);
         setQualityDiagnosis(evaluateQuality(breakdown));
@@ -1035,6 +1036,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         .from('scripts')
         .select('id')
         .eq('project_id', projectId)
+        .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
@@ -1147,16 +1149,23 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           console.log('[ScriptWorkspace] Background task completed successfully');
 
           const result = taskData.result as any;
-          if (result?.success && result?.breakdown) {
+          const payload = result?.breakdown ?? result;
+
+          const looksLikeBreakdown =
+            payload &&
+            typeof payload === 'object' &&
+            (Array.isArray(payload.characters) || Array.isArray(payload.scenes) || Array.isArray(payload.locations));
+
+          if (looksLikeBreakdown) {
             const breakdown: BreakdownResult = {
-              characters: result.breakdown.characters || [],
-              locations: result.breakdown.locations || [],
-              scenes: result.breakdown.scenes || [],
-              props: result.breakdown.props || [],
-              synopsis: result.breakdown.synopsis,
-              subplots: result.breakdown.subplots || [],
-              plot_twists: result.breakdown.plot_twists || [],
-              summary: result.breakdown.summary,
+              characters: payload.characters || [],
+              locations: payload.locations || [],
+              scenes: payload.scenes || [],
+              props: payload.props || [],
+              synopsis: payload.synopsis,
+              subplots: payload.subplots || [],
+              plot_twists: payload.plot_twists || [],
+              summary: payload.summary,
             };
 
             setBreakdownResult(breakdown);
@@ -1169,9 +1178,52 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             setStatus('success');
             setEntryMode(null);
             setRefreshTrigger((prev) => prev + 1);
-            toast.success('¡Análisis completado con Claude Haiku!');
+            toast.success('¡Análisis completado!');
             return;
           }
+
+          // If the task completed but the result shape is unexpected, recover from DB
+          console.warn('[ScriptWorkspace] Task completed but result shape unexpected, attempting DB recovery');
+          const { data: recoveredScript } = await supabase
+            .from('scripts')
+            .select('parsed_json')
+            .eq('id', savedScript.id)
+            .maybeSingle();
+
+          const pj = (recoveredScript?.parsed_json as any) ?? null;
+          const recoveredPayload = pj?.breakdown ?? pj;
+
+          if (
+            recoveredPayload &&
+            typeof recoveredPayload === 'object' &&
+            (Array.isArray(recoveredPayload.characters) || Array.isArray(recoveredPayload.scenes))
+          ) {
+            const breakdown: BreakdownResult = {
+              characters: recoveredPayload.characters || [],
+              locations: recoveredPayload.locations || [],
+              scenes: recoveredPayload.scenes || [],
+              props: recoveredPayload.props || [],
+              synopsis: recoveredPayload.synopsis,
+              subplots: recoveredPayload.subplots || [],
+              plot_twists: recoveredPayload.plot_twists || [],
+              summary: recoveredPayload.summary,
+            };
+
+            setBreakdownResult(breakdown);
+            const diagnosis = evaluateQuality(breakdown);
+            setQualityDiagnosis(diagnosis);
+            setHasExistingScript(true);
+            setExistingScriptText(textToAnalyze);
+            setProgress(100);
+            setProgressMessage('');
+            setStatus('success');
+            setEntryMode(null);
+            setRefreshTrigger((prev) => prev + 1);
+            toast.success('¡Análisis completado!');
+            return;
+          }
+
+          throw new Error('El análisis terminó pero no devolvió datos interpretables.');
         } else if (taskData.status === 'failed') {
           completed = true;
           console.error('[ScriptWorkspace] Background task failed:', taskData.error);
@@ -1201,18 +1253,23 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           .maybeSingle();
 
         const pj = recoveredScript?.parsed_json as any;
-        if (pj && typeof pj === 'object' && (pj.characters?.length > 0 || pj.scenes?.length > 0)) {
+        const recoveredPayload = pj?.breakdown ?? pj;
+        if (
+          recoveredPayload &&
+          typeof recoveredPayload === 'object' &&
+          (recoveredPayload.characters?.length > 0 || recoveredPayload.scenes?.length > 0)
+        ) {
           console.log('[ScriptWorkspace] Recovered breakdown from DB');
-          
+
           const breakdown: BreakdownResult = {
-            characters: pj.characters || [],
-            locations: pj.locations || [],
-            scenes: pj.scenes || [],
-            props: pj.props || [],
-            synopsis: pj.synopsis,
-            subplots: pj.subplots || [],
-            plot_twists: pj.plot_twists || [],
-            summary: pj.summary,
+            characters: recoveredPayload.characters || [],
+            locations: recoveredPayload.locations || [],
+            scenes: recoveredPayload.scenes || [],
+            props: recoveredPayload.props || [],
+            synopsis: recoveredPayload.synopsis,
+            subplots: recoveredPayload.subplots || [],
+            plot_twists: recoveredPayload.plot_twists || [],
+            summary: recoveredPayload.summary,
           };
 
           setBreakdownResult(breakdown);
