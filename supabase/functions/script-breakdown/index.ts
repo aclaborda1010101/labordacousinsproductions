@@ -410,10 +410,125 @@ const BREAKDOWN_TOOL = {
   },
 };
 
-const normalizeBreakdown = (input: any) => {
+const SLUGLINE_RE = /^(INT\.\/EXT\.|EXT\.\/INT\.|INT\/EXT\.|INT\.|EXT\.|I\/E\.|EST\.)\b/i;
+
+const looksLikeCharacterCue = (line: string) => {
+  // Typical screenplay character cues are mostly uppercase and short.
+  const t = line.trim();
+  if (!t) return false;
+  if (t.length < 2 || t.length > 35) return false;
+  if (SLUGLINE_RE.test(t)) return false;
+  if (/^(CUT TO:|FADE IN:|FADE OUT\.|DISSOLVE TO:|SMASH CUT TO:|MATCH CUT TO:|THE END)\b/i.test(t)) return false;
+  // Must be mostly uppercase letters/spaces with optional punctuation.
+  return /^[A-Z0-9][A-Z0-9 '\-.()]+$/.test(t) && t === t.toUpperCase();
+};
+
+const cleanCharacterCue = (line: string) => {
+  let t = line.trim();
+  // Remove common suffixes like (V.O.), (O.S.), (CONT'D)
+  t = t.replace(/\((V\.O\.|O\.S\.|CONT\.?D?|OFF)\)\s*$/i, '').trim();
+  t = t.replace(/\bCONT\.?D?\b\s*$/i, '').trim();
+  // Remove trailing punctuation
+  t = t.replace(/[:.]+$/g, '').trim();
+  return t;
+};
+
+const extractScenesFromScript = (raw: string) => {
+  const lines = (raw || '').split(/\r?\n/);
+
+  const scenes: any[] = [];
+  let current: any | null = null;
+  let sceneIndex = 0;
+
+  const pushCurrent = () => {
+    if (!current) return;
+    // Ensure required fields exist
+    current.scene_number = current.scene_number ?? (sceneIndex + 1);
+    current.slugline = String(current.slugline || '').trim() || `ESCENA ${current.scene_number}`;
+    current.summary = String(current.summary || '').trim() || '—';
+    current.characters_present = Array.from(new Set(current.characters_present || [])).filter(Boolean);
+    current.props_used = Array.from(new Set(current.props_used || [])).filter(Boolean);
+    scenes.push(current);
+    current = null;
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.replace(/\t/g, ' ').trimEnd();
+    const trimmed = line.trim();
+
+    if (!trimmed) continue;
+
+    // New scene slugline
+    if (SLUGLINE_RE.test(trimmed)) {
+      pushCurrent();
+      sceneIndex++;
+
+      const slugline = trimmed;
+      const typeMatch = slugline.match(/^(INT\.\/EXT\.|EXT\.\/INT\.|INT\/EXT\.|INT\.|EXT\.|I\/E\.|EST\.)/i);
+      const locationType = (typeMatch?.[1] || 'INT').toUpperCase();
+
+      const rest = slugline.replace(typeMatch?.[0] || '', '').trim();
+      const parts = rest.split(/\s*[-—]\s*/);
+      const locationName = (parts[0] || rest).trim();
+      const timeOfDay = (parts[1] || '').trim();
+
+      current = {
+        scene_number: sceneIndex,
+        slugline,
+        location_name: locationName,
+        location_type: locationType,
+        time_of_day: timeOfDay,
+        era: '',
+        summary: '',
+        objective: '',
+        mood: '',
+        page_range: '',
+        estimated_duration_sec: 60,
+        characters_present: [] as string[],
+        props_used: [] as string[],
+        continuity_notes: '',
+        priority: 'P1',
+        complexity: 'medium',
+      };
+      continue;
+    }
+
+    if (!current) continue; // ignore pre-slugline content
+
+    // Character cue inside the current scene
+    if (looksLikeCharacterCue(trimmed)) {
+      const name = cleanCharacterCue(trimmed);
+      if (name && name.length <= 40) current.characters_present.push(name);
+      continue;
+    }
+
+    // First action line becomes a minimal summary fallback
+    if (!current.summary) {
+      // Avoid using transitions or centered titles as summary
+      if (!/^(CUT TO:|FADE IN:|FADE OUT\.|DISSOLVE TO:|SMASH CUT TO:|MATCH CUT TO:)\b/i.test(trimmed)) {
+        current.summary = trimmed.slice(0, 180);
+      }
+    }
+  }
+
+  pushCurrent();
+  return scenes;
+};
+
+const normalizeBreakdown = (input: any, rawScriptText?: string) => {
   const obj = (input && typeof input === 'object') ? input : {};
-  const scenes = Array.isArray(obj.scenes) ? obj.scenes : [];
-  
+  let scenes = Array.isArray(obj.scenes) ? obj.scenes : [];
+
+  // If the model returns an empty breakdown (common when output budget is tight),
+  // recover at least the scene skeleton from the raw screenplay text.
+  if (scenes.length === 0 && rawScriptText && rawScriptText.trim().length > 0) {
+    const extracted = extractScenesFromScript(rawScriptText);
+    if (extracted.length > 0) {
+      console.log(`[normalizeBreakdown] No scenes from model, extracted ${extracted.length} scenes from raw text fallback`);
+      scenes = extracted;
+    }
+  }
+
   // Extract characters from the model response, or infer from scenes if empty
   let characters = Array.isArray(obj.characters) ? obj.characters : [];
   if (characters.length === 0 && scenes.length > 0) {
@@ -716,7 +831,7 @@ IMPORTANTE:
       );
     }
 
-    breakdownData = normalizeBreakdown(breakdownData);
+    breakdownData = normalizeBreakdown(breakdownData, processedScriptText);
 
     console.log('Script breakdown complete:', {
       scenes: breakdownData.scenes?.length || 0,
