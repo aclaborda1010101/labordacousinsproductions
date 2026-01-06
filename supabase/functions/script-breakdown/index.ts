@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { normalizeBreakdown, type NormalizedBreakdown } from "../_shared/normalizeBreakdown.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -161,8 +162,8 @@ function extractScenesFromScript(text: string): any[] {
   return scenes;
 }
 
-// Normalize breakdown to ensure counts are consistent
-function normalizeBreakdown(data: any, scriptText: string): any {
+// Add scriptText info to breakdown for the shared normalizer
+function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   const out: any = (data && typeof data === 'object') ? data : {};
   
   const asArray = (v: any) => (Array.isArray(v) ? v : []);
@@ -179,11 +180,10 @@ function normalizeBreakdown(data: any, scriptText: string): any {
   const expectedSceneCount = expectedHeadings.length;
   console.log(`[script-breakdown] Expected scene count from regex: ${expectedSceneCount}`);
 
-  // --- Scenes ---
+  // --- Scenes fallback logic ---
   const aiScenesList = asArray(out.scenes?.list);
   const regexScenes = extractScenesFromScript(scriptText);
 
-  // Decide whether to use AI scenes or regex fallback
   const aiSceneCountTooLow = expectedSceneCount > 0 && aiScenesList.length < expectedSceneCount * 0.5;
 
   if (aiScenesList.length === 0 && regexScenes.length > 0) {
@@ -207,170 +207,16 @@ function normalizeBreakdown(data: any, scriptText: string): any {
 
   console.log(`[script-breakdown] Final scene count: ${out.scenes?.total || 0} (expected: ${expectedSceneCount})`);
 
-  // --- Derive characters from scenes if AI didn't provide them ---
-  const derivedCharMap = new Map<string, { name: string; scenes_count: number; dialogue_lines: number }>();
-  const derivedLocBaseMap = new Map<string, { name: string; scenes_count: number; variants_count: number }>();
-  const derivedLocVariantMap = new Map<string, any>();
-
-  for (const scene of asArray(out.scenes?.list)) {
-    // Characters
-    for (const charName of asArray(scene?.characters_present)) {
-      if (typeof charName !== 'string') continue;
-      const cleaned = cleanCharacterCue(charName);
-      if (!cleaned) continue;
-      const key = cleaned.toLowerCase();
-      const existing = derivedCharMap.get(key);
-      if (existing) {
-        existing.scenes_count++;
-        existing.dialogue_lines++;
-      } else {
-        derivedCharMap.set(key, { name: cleaned, scenes_count: 1, dialogue_lines: 1 });
-      }
-    }
-
-    // Locations (base and variant)
-    const locBase = (scene?.location_base || scene?.location_raw || '') as string;
-    const locVariant = scene?.heading || '';
-    
-    if (locBase) {
-      const baseKey = locBase.toLowerCase();
-      const existing = derivedLocBaseMap.get(baseKey);
-      if (existing) {
-        existing.scenes_count++;
-      } else {
-        derivedLocBaseMap.set(baseKey, { name: locBase, scenes_count: 1, variants_count: 0 });
-      }
-      
-      // Track variant
-      if (locVariant && !derivedLocVariantMap.has(locVariant)) {
-        derivedLocVariantMap.set(locVariant, {
-          name: locVariant,
-          base: locBase,
-          int_ext: scene?.int_ext || 'INT',
-          time: scene?.time || '',
-          tags: scene?.tags || [],
-          scenes: [scene?.number || 0]
-        });
-        const baseEntry = derivedLocBaseMap.get(baseKey);
-        if (baseEntry) baseEntry.variants_count++;
-      } else if (locVariant) {
-        derivedLocVariantMap.get(locVariant)?.scenes?.push(scene?.number || 0);
-      }
-    }
-  }
-
-  // Build derived characters by role (simple heuristic)
-  const derivedCharacters = Array.from(derivedCharMap.values());
-  derivedCharacters.sort((a, b) => b.scenes_count - a.scenes_count);
-  
-  const protagonists: any[] = [];
-  const secondary: any[] = [];
-  const minor: any[] = [];
-  const featuredExtras: any[] = [];
-  
-  derivedCharacters.forEach((c, idx) => {
-    const charObj = { name: c.name, scenes_count: c.scenes_count, dialogue_lines: c.dialogue_lines };
-    if (idx < 2 && c.scenes_count >= 5) {
-      protagonists.push({ ...charObj, arc: 'Inferred from scene presence' });
-    } else if (c.scenes_count >= 3) {
-      secondary.push({ ...charObj, role_detail: 'Recurring character' });
-    } else if (c.scenes_count >= 2) {
-      minor.push(charObj);
-    } else {
-      featuredExtras.push(charObj);
-    }
-  });
-
-  // --- Ensure characters object exists with proper structure ---
-  // Support both old format (protagonists/secondary/etc) and new simplified format (cast/featured_extras/voices)
-  const inputChars = out.characters || {};
-  
-  if (Array.isArray(inputChars.cast) || Array.isArray(inputChars.featured_extras)) {
-    // New simplified format - convert to standard format for compatibility
-    out.characters = {
-      protagonists: [],
-      co_protagonists: [],
-      antagonists: [],
-      secondary: asArray(inputChars.cast),
-      minor: [],
-      featured_extras_with_lines: asArray(inputChars.featured_extras),
-      voices_and_functional: asArray(inputChars.voices)
-    };
-    console.log(`[script-breakdown] Using simplified character format: ${asArray(inputChars.cast).length} cast, ${asArray(inputChars.featured_extras).length} extras`);
-  } else if (!inputChars.protagonists && !inputChars.secondary) {
-    // No characters from AI - use derived
-    out.characters = {
-      protagonists: protagonists,
-      co_protagonists: [],
-      antagonists: [],
-      secondary: secondary,
-      minor: minor,
-      featured_extras_with_lines: featuredExtras,
-      voices_and_functional: []
-    };
-    console.log(`[script-breakdown] Built characters from scene data: ${derivedCharacters.length} total`);
-  }
-
-  // --- Ensure locations object exists with proper structure ---
-  const inputLocs = out.locations || {};
-  
-  if (Array.isArray(inputLocs.base) && !inputLocs.base?.list) {
-    // New simplified format - base is array directly
-    out.locations = {
-      base: { total: inputLocs.base.length, list: inputLocs.base },
-      variants: { total: asArray(inputLocs.variants).length, list: asArray(inputLocs.variants) }
-    };
-    console.log(`[script-breakdown] Using simplified location format: ${inputLocs.base.length} base locations`);
-  } else if (!inputLocs.base && !inputLocs.variants) {
-    const baseList = Array.from(derivedLocBaseMap.values());
-    const variantList = Array.from(derivedLocVariantMap.values());
-    
-    out.locations = {
-      base: { total: baseList.length, list: baseList },
-      variants: { total: variantList.length, list: variantList }
-    };
-    console.log(`[script-breakdown] Built locations from scene data: ${baseList.length} base, ${variantList.length} variants`);
-  }
-
-  // --- Ensure counts object exists and is consistent ---
-  const chars = out.characters || {};
-  const locs = out.locations || {};
-  const props = asArray(out.props_key || out.props);
-  const setpieces = asArray(out.setpieces);
-  
-  const castCount = 
-    asArray(chars.protagonists).length +
-    asArray(chars.co_protagonists).length +
-    asArray(chars.antagonists).length +
-    asArray(chars.secondary).length +
-    asArray(chars.minor).length;
-  
-  const extrasCount = asArray(chars.featured_extras_with_lines).length;
-  const voicesCount = asArray(chars.voices_and_functional).length;
-
-  out.counts = {
-    scenes_total: out.scenes?.total || out.scenes?.list?.length || 0,
-    cast_characters_total: castCount,
-    featured_extras_total: extrasCount,
-    voices_total: voicesCount,
-    locations_base_total: locs.base?.total || locs.base?.list?.length || asArray(locs.base).length || 0,
-    locations_variants_total: locs.variants?.total || locs.variants?.list?.length || asArray(locs.variants).length || 0,
-    props_total: props.length,
-    setpieces_total: setpieces.length
+  // Add validation metadata
+  out.validation = {
+    scene_headings_found: expectedSceneCount,
+    scenes_total_equals_list_length: out.scenes?.total === out.scenes?.list?.length,
+    used_source: expectedSceneCount > 0 ? 'screenplay' : 'unknown',
+    source_reason: expectedSceneCount > 0 ? 'Found INT./EXT. scene headings' : 'No standard screenplay headings found'
   };
-  
-  // Also store props in standard location
-  out.props_key = props;
 
-  // --- Ensure validation object ---
-  if (!out.validation) {
-    out.validation = {
-      scene_headings_found: expectedSceneCount,
-      scenes_total_equals_list_length: out.scenes?.total === out.scenes?.list?.length,
-      used_source: expectedSceneCount > 0 ? 'screenplay' : 'unknown',
-      source_reason: expectedSceneCount > 0 ? 'Found INT./EXT. scene headings' : 'No standard screenplay headings found'
-    };
-  }
+  // Add raw text for title extraction fallback
+  out.raw_text = scriptText.slice(0, 5000);
 
   return out;
 }
@@ -548,15 +394,18 @@ IMPORTANT:
     // ═══════════════════════════════════════════════════════════════════════════
     // BACKEND NORMALIZATION (all validation happens here, not in Claude schema)
     // ═══════════════════════════════════════════════════════════════════════════
-    breakdownData = normalizeBreakdown(breakdownData, processedScriptText);
+    // Step 1: Enrich with regex-extracted scenes and validation metadata
+    const enrichedData = enrichBreakdownWithScriptData(breakdownData, processedScriptText);
+    // Step 2: Normalize into canonical schema (title, counts, characters split, etc.)
+    const normalizedData = normalizeBreakdown(enrichedData);
 
     console.log('[script-breakdown-bg] Analysis complete:', {
-      scenes: breakdownData.counts?.scenes_total || 0,
-      cast: breakdownData.counts?.cast_characters_total || 0,
-      extras: breakdownData.counts?.featured_extras_total || 0,
-      voices: breakdownData.counts?.voices_total || 0,
-      locationsBase: breakdownData.counts?.locations_base_total || 0,
-      props: breakdownData.counts?.props_total || 0,
+      scenes: normalizedData.counts?.scenes_total || 0,
+      cast: normalizedData.counts?.cast_characters_total || 0,
+      extras: normalizedData.counts?.featured_extras_total || 0,
+      voices: normalizedData.counts?.voices_total || 0,
+      locationsBase: normalizedData.counts?.locations_base_total || 0,
+      props: normalizedData.counts?.props_total || 0,
     });
 
     await supabase.from('background_tasks').update({
@@ -588,8 +437,8 @@ IMPORTANT:
       );
 
       // Convert new scene format to flat array for episodes
-      const scenesList = Array.isArray(breakdownData.scenes?.list) ? breakdownData.scenes.list : [];
-      const synopsisText = breakdownData.synopsis?.summary || breakdownData.synopsis?.logline || '';
+      const scenesList = Array.isArray(normalizedData.scenes?.list) ? normalizedData.scenes.list : [];
+      const synopsisText = (enrichedData.synopsis?.summary || enrichedData.synopsis?.logline || '') as string;
 
       const buildEpisodesFromScenes = (): any[] => {
         if (desiredEpisodesCount <= 1) {
@@ -626,28 +475,13 @@ IMPORTANT:
 
       const parsedEpisodes = buildEpisodesFromScenes();
 
-      // Extract title from metadata
-      const extractedTitle = breakdownData.metadata?.title || null;
-      const extractedWriters = breakdownData.metadata?.writers || [];
-
-      // Flatten characters for backward compatibility
+      // Build flattened characters for backward compatibility
       const allCharacters: any[] = [];
-      const chars = breakdownData.characters || {};
+      const chars = normalizedData.characters || {};
       
-      for (const c of (chars.protagonists || [])) {
-        allCharacters.push({ ...c, role: 'protagonist', priority: 'P1' });
-      }
-      for (const c of (chars.co_protagonists || [])) {
-        allCharacters.push({ ...c, role: 'co_protagonist', priority: 'P1' });
-      }
-      for (const c of (chars.antagonists || [])) {
-        allCharacters.push({ ...c, role: 'antagonist', priority: 'P1' });
-      }
-      for (const c of (chars.secondary || [])) {
-        allCharacters.push({ ...c, role: 'secondary', priority: 'P2' });
-      }
-      for (const c of (chars.minor || [])) {
-        allCharacters.push({ ...c, role: 'minor', priority: 'P3' });
+      // New canonical format: cast, featured_extras_with_lines, voices_and_functional
+      for (const c of (chars.cast || [])) {
+        allCharacters.push({ ...c, role: c.role || 'supporting', priority: c.priority || 'P2' });
       }
       for (const c of (chars.featured_extras_with_lines || [])) {
         allCharacters.push({ ...c, role: 'featured_extra', priority: 'P3' });
@@ -658,52 +492,54 @@ IMPORTANT:
 
       // Flatten locations for backward compatibility
       const allLocations: any[] = [];
-      const locs = breakdownData.locations || {};
-      for (const loc of (locs.base?.list || [])) {
+      const locs = normalizedData.locations || {};
+      for (const loc of (locs.base || [])) {
         allLocations.push({ ...loc, type: 'base' });
       }
 
       const parsedJson = {
         // Schema version for future migrations
-        schema_version: 'v6-hollywood',
-        breakdown_version: 1,
+        schema_version: 'v7-canonical',
+        breakdown_version: 2,
         
-        // Core metadata
-        title: extractedTitle || 'Guion Analizado',
-        writers: extractedWriters,
-        metadata: breakdownData.metadata || null,
+        // ═══════════════════════════════════════════════════════════════════════════
+        // CANONICAL ROOT-LEVEL FIELDS (UI reads from here)
+        // ═══════════════════════════════════════════════════════════════════════════
+        title: normalizedData.title || 'Guion Analizado',
+        metadata: normalizedData.metadata || { title: normalizedData.title },
+        counts: normalizedData.counts,
+        
+        // Synopsis (from enrichedData since normalizer doesn't touch it)
         synopsis: synopsisText,
-        logline: breakdownData.synopsis?.logline || '',
+        logline: (enrichedData.synopsis?.logline || '') as string,
         
-        // Production counts (new v6 format)
-        counts: breakdownData.counts,
+        // Scenes in canonical format
+        scenes: normalizedData.scenes,
         
-        // Scenes in new format
-        scenes: breakdownData.scenes,
+        // Characters in CANONICAL format (UI should use this)
+        characters: normalizedData.characters,
+        // Also keep flat array for backward compatibility
+        characters_flat: allCharacters,
         
-        // Characters in new categorized format + flat array for compatibility
-        characters_categorized: breakdownData.characters,
-        characters: allCharacters,
-        
-        // Locations in new format + flat array for compatibility
-        locations_structured: breakdownData.locations,
-        locations: allLocations,
+        // Locations in CANONICAL format
+        locations: normalizedData.locations,
+        // Also keep flat array for backward compatibility
+        locations_flat: allLocations,
         
         // Props and setpieces
-        props_key: breakdownData.props_key || [],
-        props: breakdownData.props_key || [],
-        setpieces: breakdownData.setpieces || [],
+        props: normalizedData.props || [],
+        setpieces: normalizedData.setpieces || [],
         
-        // Production info
-        production: breakdownData.production || {},
-        validation: breakdownData.validation || {},
+        // Validation and warnings
+        validation: enrichedData.validation || {},
+        _warnings: normalizedData._warnings || [],
         
         // Episodes for series format
         episodes: parsedEpisodes,
       };
 
-      console.log('[script-breakdown-bg] Extracted title:', extractedTitle, 'writers:', extractedWriters);
-      console.log('[script-breakdown-bg] Counts:', breakdownData.counts);
+      console.log('[script-breakdown-bg] Canonical title:', parsedJson.title);
+      console.log('[script-breakdown-bg] Counts:', parsedJson.counts);
 
       const { error: updateError } = await supabase
         .from('scripts')
@@ -725,7 +561,7 @@ IMPORTANT:
       status: 'completed',
       progress: 100,
       description: 'Análisis completado',
-      result: { success: true, breakdown: breakdownData },
+      result: { success: true, breakdown: normalizedData },
       completed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
