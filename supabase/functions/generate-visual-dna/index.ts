@@ -39,9 +39,9 @@ serve(async (req) => {
       throw new Error('Character not found');
     }
 
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY not configured');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY not configured');
     }
 
     const userPrompt = `Genera un Visual DNA completo para este personaje:
@@ -97,45 +97,59 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
   }
 }`;
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    console.log('Calling Lovable AI Gateway for Visual DNA generation...');
+
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.3,
-        response_format: { type: 'json_object' }
       }),
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Lovable AI Gateway error:', response.status, errorText);
+      
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: 'Payment required' }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: 'Payment required. Please add credits to your workspace.' }), { 
+          status: 402, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
       }
-      throw new Error(`AI Gateway error: ${response.status}`);
+      throw new Error(`AI Gateway error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
 
+    console.log('Received response from AI, parsing JSON...');
+
     let visualDNA;
     try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        visualDNA = JSON.parse(jsonMatch[0]);
-      }
+      // Try to extract JSON from markdown code blocks or raw content
+      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || content.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : content;
+      visualDNA = JSON.parse(jsonStr.trim());
+      console.log('Visual DNA parsed successfully');
     } catch (e) {
       console.error('JSON parse error:', e);
-      throw new Error('Failed to parse Visual DNA');
+      console.error('Raw content:', content?.substring(0, 500));
+      throw new Error('Failed to parse Visual DNA from AI response');
     }
 
     return new Response(
