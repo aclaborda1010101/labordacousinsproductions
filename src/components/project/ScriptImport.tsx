@@ -576,28 +576,41 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             const scenes = (parsed.scenes || []) as any[];
             const episodesArr = (parsed.episodes || []) as any[];
             
-            const existingCounts = parsed.counts as Record<string, number> | undefined;
+            const existingCounts = parsed.counts as Record<string, any> | undefined;
             const protagonists = existingCounts?.protagonists || chars.filter((c: any) => c.role === 'protagonist' || c.priority === 'P0').length;
             const supporting = existingCounts?.supporting || chars.filter((c: any) => c.role === 'supporting' || c.priority === 'P1').length;
             const heroProps = existingCounts?.hero_props || propsArr.filter((p: any) => p.importance === 'hero' || p.priority === 'P0').length;
             const totalScenes = existingCounts?.total_scenes || scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0;
-            
+
             const hydratedScript = {
               ...parsed,
               main_characters: chars,
               characters: chars,
               counts: {
+                ...(existingCounts || {}),
                 protagonists,
                 supporting,
                 locations: locs.length,
                 total_scenes: totalScenes,
                 hero_props: heroProps,
                 props: propsArr.length,
-                ...(existingCounts || {})
-              }
+                setpieces:
+                  typeof (existingCounts as any)?.setpieces === 'number'
+                    ? (existingCounts as any).setpieces
+                    : Array.isArray((parsed as any).setpieces)
+                      ? (parsed as any).setpieces.length
+                      : 0,
+              },
             };
-            
+
             setGeneratedScript(hydratedScript);
+
+            // Rehydrate Pro breakdown (if it exists in DB)
+            const storedBreakdownPro = (parsed as any).breakdown_pro;
+            if (storedBreakdownPro && typeof storedBreakdownPro === 'object') {
+              setBreakdownPro(storedBreakdownPro);
+            }
+
             // Load teasers from parsed_json if they exist
             if (parsed.teasers) {
               setGeneratedTeasers(parsed.teasers);
@@ -3133,24 +3146,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         />
                         <DensityCompareCard 
                           label="Localizaciones" 
-                          achieved={generatedScript.counts?.locations || generatedScript.density_achieved?.locations || 0} 
+                          achieved={generatedScript.counts?.locations || breakdownPro?.counts?.locations || generatedScript.density_achieved?.locations || 0} 
                           target={generatedScript.density_targets?.locations_min}
                         />
                         <DensityCompareCard 
                           label="Escenas Totales" 
-                          achieved={generatedScript.counts?.total_scenes || generatedScript.density_achieved?.total_scenes || 0} 
+                          achieved={breakdownPro?.counts?.scenes || generatedScript.counts?.total_scenes || generatedScript.density_achieved?.total_scenes || 0} 
                           target={generatedScript.density_targets?.scenes_per_episode ? (generatedScript.density_targets.scenes_per_episode * (generatedScript.episodes?.length || 1)) : generatedScript.density_targets?.scenes_target}
                         />
                       </div>
                       <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
                         <DensityCompareCard 
                           label="Props Clave" 
-                          achieved={generatedScript.counts?.hero_props || 0} 
+                          achieved={breakdownPro?.props?.length || generatedScript.counts?.hero_props || 0} 
                           target={generatedScript.density_targets?.hero_props_min}
                         />
                         <DensityCompareCard 
                           label="Setpieces" 
-                          achieved={generatedScript.counts?.setpieces || 0} 
+                          achieved={breakdownPro?.setpieces?.length || generatedScript.counts?.setpieces || 0} 
                           target={generatedScript.density_targets?.setpieces_min}
                         />
                         <DensityCompareCard 
