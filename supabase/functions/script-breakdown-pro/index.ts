@@ -525,20 +525,50 @@ Return ONLY the JSON breakdown.`;
 
     // Save to script if scriptId provided
     if (scriptId) {
-      const { error: updateError } = await supabase
+      const { data: existingScript, error: fetchError } = await supabase
         .from('scripts')
-        .update({
-          parsed_json: {
-            ...breakdown,
-            breakdown_pro: true,
-          },
-        })
-        .eq('id', scriptId);
-      
-      if (updateError) {
-        console.error('[breakdown-pro] Error saving to script:', updateError);
+        .select('id, project_id, parsed_json')
+        .eq('id', scriptId)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error('[breakdown-pro] Error loading existing script:', fetchError);
+      } else if (!existingScript) {
+        console.warn('[breakdown-pro] Script not found, cannot persist breakdown:', scriptId);
+      } else if (existingScript.project_id !== projectId) {
+        console.warn('[breakdown-pro] Project mismatch, refusing to persist breakdown', {
+          scriptId,
+          expectedProjectId: projectId,
+          actualProjectId: existingScript.project_id,
+        });
       } else {
-        console.log('[breakdown-pro] Saved breakdown to script', scriptId);
+        const existingParsed =
+          existingScript.parsed_json && typeof existingScript.parsed_json === 'object'
+            ? (existingScript.parsed_json as Record<string, unknown>)
+            : {};
+
+        const mergedParsed = {
+          ...existingParsed,
+          breakdown_pro: breakdown,
+          // Keep a canonical copy of screenplay-derived counts for the Master Script dashboard
+          counts: {
+            ...(((existingParsed as any).counts && typeof (existingParsed as any).counts === 'object') ? (existingParsed as any).counts : {}),
+            total_scenes: typeof breakdown?.counts?.scenes === 'number' ? breakdown.counts.scenes : (existingParsed as any)?.counts?.total_scenes,
+            locations: typeof breakdown?.counts?.locations === 'number' ? breakdown.counts.locations : (existingParsed as any)?.counts?.locations,
+            setpieces: Array.isArray(breakdown?.setpieces) ? breakdown.setpieces.length : (existingParsed as any)?.counts?.setpieces,
+          },
+        };
+
+        const { error: updateError } = await supabase
+          .from('scripts')
+          .update({ parsed_json: mergedParsed })
+          .eq('id', scriptId);
+
+        if (updateError) {
+          console.error('[breakdown-pro] Error saving to script:', updateError);
+        } else {
+          console.log('[breakdown-pro] Saved breakdown to script', scriptId);
+        }
       }
     }
 
