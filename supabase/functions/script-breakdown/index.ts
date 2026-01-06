@@ -769,8 +769,8 @@ IMPORTANTE:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        // Try Haiku 4 for faster response (user requested)
-        model: 'claude-haiku-4-20250514',
+        // Claude 3.5 Haiku - fast and cost-effective
+        model: 'claude-3-5-haiku-20241022',
         max_tokens: 8192,
         system: SYSTEM_PROMPT,
         messages: [
