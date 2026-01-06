@@ -22,14 +22,36 @@ serve(async (req) => {
   }
 
   try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+
+    // Validate auth (gateway JWT verification is disabled for this function)
+    const authHeader = req.headers.get('authorization') ?? req.headers.get('Authorization') ?? '';
+    if (!supabaseAnonKey) {
+      throw new Error('SUPABASE_ANON_KEY not configured');
+    }
+
+    const supabaseAuthed = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: authHeader ? { Authorization: authHeader } : {},
+      },
+    });
+
+    const { data: authData, error: authError } = await supabaseAuthed.auth.getUser();
+    if (authError || !authData?.user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid JWT' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { characterId, characterName } = await req.json();
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     // Fetch character data
-    const { data: character } = await supabase
+    const { data: character } = await supabaseAdmin
       .from('characters')
       .select('*')
       .eq('id', characterId)
@@ -97,7 +119,10 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
   }
 }`;
 
-    console.log('Calling Lovable AI Gateway for Visual DNA generation...');
+    console.log('Calling Lovable AI Gateway for Visual DNA generation...', {
+      characterId,
+      userId: authData.user.id,
+    });
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -118,17 +143,17 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Lovable AI Gateway error:', response.status, errorText);
-      
+
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), { 
-          status: 429, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: 'Payment required. Please add credits to your workspace.' }), { 
-          status: 402, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        return new Response(JSON.stringify({ error: 'Payment required. Please add credits to your workspace.' }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       throw new Error(`AI Gateway error: ${response.status} - ${errorText}`);
@@ -142,9 +167,9 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
     let visualDNA;
     try {
       // Try to extract JSON from markdown code blocks or raw content
-      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || content.match(/\{[\s\S]*\}/);
-      const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : content;
-      visualDNA = JSON.parse(jsonStr.trim());
+      const jsonMatch = content?.match(/```(?:json)?\s*([\s\S]*?)```/) || content?.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? ((jsonMatch as any)[1] || (jsonMatch as any)[0]) : content;
+      visualDNA = JSON.parse((jsonStr || '').trim());
       console.log('Visual DNA parsed successfully');
     } catch (e) {
       console.error('JSON parse error:', e);

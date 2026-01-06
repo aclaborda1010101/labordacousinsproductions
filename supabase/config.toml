@@ -96,7 +96,8 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-visual-dna]
-verify_jwt = true
+# Gateway JWT disabled; function validates auth internally to avoid "Invalid JWT" at gateway layer
+verify_jwt = false
 
 [functions.generate-technical-prompt]
 verify_jwt = true
