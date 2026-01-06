@@ -17,184 +17,61 @@ interface ScriptBreakdownRequest {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PROFESSIONAL SCRIPT BREAKDOWN ANALYST PROMPT (v6 - Hollywood Production Standard)
+// SIMPLE SCRIPT BREAKDOWN PROMPT (v7 - No Tools, Flexible JSON)
 // ═══════════════════════════════════════════════════════════════════════════════
-const SYSTEM_PROMPT = `You are a PROFESSIONAL SCRIPT BREAKDOWN ANALYST for Film/TV production.
+const SYSTEM_PROMPT = `You are a professional film/TV script breakdown analyst.
 
-Your job is NOT to summarize. Your job is a production-grade breakdown.
+IMPORTANT:
+- Output MUST be valid JSON only. No markdown, no explanations.
+- Schema is flexible - include what you find.
+- If uncertain, include it anyway rather than failing.
 
-═══════════════════════════════════════════════════════════
-CRITICAL: SOURCE SELECTION (MULTI-DOC SAFETY)
-═══════════════════════════════════════════════════════════
+SOURCE RULE:
+If multiple documents exist, use ONLY the full screenplay
+(the one with repeated INT./EXT. scene headings).
 
-If multiple documents are present (outline, synopsis, treatment, bible, notes, screenplay):
-1) ALWAYS use the FULL SCREENPLAY as the only source for counts.
-2) The FULL SCREENPLAY is the document containing repeated scene headings:
-   INT. / EXT. / INT/EXT and dialogue blocks.
-3) Ignore outlines/treatments for counts. They can only be used for context if needed.
+SCENES:
+- Each line starting with INT. or EXT. is ONE scene.
+- Count all of them. List them in order.
+- total MUST equal the number of scenes listed.
 
-═══════════════════════════════════════════════════════════
-SCENE COUNTING RULES (NON-NEGOTIABLE)
-═══════════════════════════════════════════════════════════
+CHARACTERS:
+Normalize names - remove CONT'D, (V.O.), (O.S.), etc.
+Group into:
+- cast (named characters with narrative weight)
+- featured_extras (roles like SOLDIER, AIDE, SECRETARY)
+- voices (VOICE, RADIO, ANNOUNCER)
 
-SCENE = each line that begins with any of:
-- "INT."  "EXT."  "INT/EXT"  "EXT/INT"  "INT.-"  "EXT.-"  (case-insensitive)
+LOCATIONS:
+- Extract base locations (group variants by removing DAY/NIGHT/etc).
+- Also extract full variants for production.
 
-Count EVERY heading as ONE scene.
-Do NOT merge scenes. Do NOT group scenes.
-Output ALL scene headings in order.
+PROPS:
+Include plot-critical, recurring, OR institutional/symbolic props.
 
-scenes.total MUST equal scenes.list.length MUST equal the number of headings found.
-If headings exist and you output scenes.total=0, that is an error.
+SETPIECES:
+Include action, trials, hearings, tests, chases, emotional peaks.
 
-═══════════════════════════════════════════════════════════
-CHARACTER EXTRACTION (HOLLYWOOD-SAFE)
-═══════════════════════════════════════════════════════════
-
-A CHARACTER is:
-- any named speaker in a dialogue block
-- OR a clearly named person in action who affects the plot
-
-IMPORTANT NORMALIZATION (DO BEFORE COUNTING):
-Normalize character names to avoid duplicates:
-- Remove suffixes: "CONT'D", "CONT'D", "CONT'D.", "CONT.", "CONTINUED"
-- Remove parentheticals: "(V.O.)", "(O.S.)", "(O.C.)", "(ON SCREEN)", "(OFF)"
-- Trim extra spaces/punctuation
-
-Examples:
-"OPPENHEIMER CONT'D" -> "OPPENHEIMER"
-"STRAUSS (V.O.)" -> "STRAUSS"
-
-CHARACTER CATEGORIES (PRODUCTION ACCURATE):
-Return characters in THREE groups:
-
-1) CAST_CHARACTERS (named characters with narrative weight)
-   - protagonists, antagonists, secondary, minor
-
-2) FEATURED_EXTRAS_WITH_LINES (role-based speakers without character arcs)
-   - e.g. "SOLDIER", "AIDE", "SECRETARY", "STUDENT", "WEATHERMAN", "RADIO TECH"
-
-3) VOICES_AND_FUNCTIONAL (voices and functional labels)
-   - e.g. "VOICE", "FEMALE VOICE", "RADIO", "ANNOUNCER", "PA SYSTEM"
-
-CLASSIFICATION RULES:
-- PROTAGONIST: drives the main story + has a clear arc
-- CO-PROTAGONIST (if applicable): shares major narrative weight + has own arc
-- ANTAGONIST: primary opposing force
-- SECONDARY: recurring characters impacting plot across multiple scenes
-- MINOR: named but limited plot impact
-- Any generic role without a personal arc goes to FEATURED_EXTRAS_WITH_LINES.
-
-═══════════════════════════════════════════════════════════
-LOCATION EXTRACTION (BIBLE vs PRODUCTION)
-═══════════════════════════════════════════════════════════
-
-Extract locations from scene headings and provide TWO levels:
-
-A) BASE LOCATIONS (for Bible)
-- Normalize variants into a base group:
-  - remove time-of-day suffixes ("DAY", "NIGHT", "MORNING", "LATER", "MOMENTS LATER")
-  - remove style tags ("B&W", "BLACK-AND-WHITE", "COLOUR", "COLOR")
-  - remove "SAME" / "CONTINUOUS" / "ANGLE" / "MOMENTS LATER"
-
-Example variants -> base:
-"Senate Office -- Day (B&W)" -> "Senate Office"
-"Corridor, Berkeley -- Moments Later" -> "Corridor, Berkeley"
-
-B) LOCATION VARIANTS (for Production)
-- Keep original heading-derived variants with int/ext + time + tags.
-
-Output:
-- locations.base.total + locations.base.list (grouped)
-- locations.variants.total + locations.variants.list (detailed)
-Include scenes_count per base location.
-
-═══════════════════════════════════════════════════════════
-PROPS (KEY + INSTITUTIONAL/SYMBOLIC)
-═══════════════════════════════════════════════════════════
-
-Extract KEY PROPS as:
-- plot-critical objects
-- recurring or visually iconic objects
-- institutional/symbolic objects crucial to the story world
-  (documents, classified files, court microphones, scientific devices, uniforms, vehicles, weapons)
-
-Do NOT list trivial background items unless they recur or matter.
-
-═══════════════════════════════════════════════════════════
-SETPIECES (NOT ONLY ACTION)
-═══════════════════════════════════════════════════════════
-
-Extract major setpieces:
-- chases, crashes, fights, escapes
-- trials/hearings/interrogations with high dramatic weight
-- scientific demonstrations/tests
-- musical or montage sequences
-- major confrontations or emotional peaks
-
-═══════════════════════════════════════════════════════════
-PRODUCTION FLAGS
-═══════════════════════════════════════════════════════════
-
-Detect and list:
-- stunts: cars, crashes, falls, fights
-- safety: fire, explosions, weapons, water, heights
-- complexity: VFX, crowds, period, multiple locations, night shoots, large cast`;
-
-// Simplified tool schema to avoid Anthropic 400 errors
-const BREAKDOWN_TOOL = {
-  type: 'function' as const,
-  function: {
-    name: 'return_script_breakdown',
-    description: 'Returns the structured script breakdown analysis following Hollywood production standards',
-    parameters: {
-      type: 'object',
-      properties: {
-        metadata: {
-          type: 'object',
-          description: 'Script metadata: title, writers array, draft, date'
-        },
-        scenes: {
-          type: 'object',
-          description: 'Object with total (integer) and list (array of scene objects with number, heading, location_raw, location_base, int_ext, time, tags)'
-        },
-        characters: {
-          type: 'object',
-          description: 'Object with arrays: protagonists, co_protagonists, antagonists, secondary, minor, featured_extras_with_lines, voices_and_functional. Each character has name, scenes_count, dialogue_lines'
-        },
-        counts: {
-          type: 'object',
-          description: 'Object with integer counts: scenes_total, cast_characters_total, featured_extras_total, voices_total, locations_base_total, locations_variants_total, props_total, setpieces_total'
-        },
-        locations: {
-          type: 'object',
-          description: 'Object with base (total + list of name, scenes_count, variants_count) and variants (total + list of name, base, int_ext, time, tags, scenes array)'
-        },
-        props_key: {
-          type: 'array',
-          description: 'Array of key props with name, importance (critical/high/medium), why'
-        },
-        setpieces: {
-          type: 'array',
-          description: 'Array of setpieces with name, type, why'
-        },
-        production: {
-          type: 'object',
-          description: 'Object with dialogue_density, cast_size, complexity (low/medium/high), stunts_safety_flags array, notes'
-        },
-        validation: {
-          type: 'object',
-          description: 'Object with scene_headings_found (integer), scenes_total_equals_list_length (boolean), used_source, source_reason'
-        },
-        synopsis: {
-          type: 'object',
-          description: 'Object with logline and summary strings'
-        }
-      },
-      required: ['metadata', 'scenes', 'characters', 'counts', 'locations']
-    }
-  }
-};
+OUTPUT THIS JSON STRUCTURE:
+{
+  "title": "string",
+  "scenes": {
+    "total": number,
+    "list": [{"number": 1, "heading": "INT. LOCATION - DAY", "location_base": "LOCATION"}]
+  },
+  "characters": {
+    "cast": [{"name": "CHARACTER", "scenes_count": 5}],
+    "featured_extras": [],
+    "voices": []
+  },
+  "locations": {
+    "base": [{"name": "LOCATION", "scenes_count": 3}],
+    "variants": [{"name": "INT. LOCATION - DAY", "base": "LOCATION"}]
+  },
+  "props": [{"name": "ITEM", "importance": "high"}],
+  "setpieces": [{"name": "ACTION SEQUENCE", "type": "chase"}],
+  "notes": "any production notes"
+}`;
 
 // ===== SLUGLINE REGEX =====
 const SLUGLINE_RE = /^(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME))?$/i;
@@ -405,7 +282,23 @@ function normalizeBreakdown(data: any, scriptText: string): any {
   });
 
   // --- Ensure characters object exists with proper structure ---
-  if (!out.characters || typeof out.characters !== 'object' || Array.isArray(out.characters)) {
+  // Support both old format (protagonists/secondary/etc) and new simplified format (cast/featured_extras/voices)
+  const inputChars = out.characters || {};
+  
+  if (Array.isArray(inputChars.cast) || Array.isArray(inputChars.featured_extras)) {
+    // New simplified format - convert to standard format for compatibility
+    out.characters = {
+      protagonists: [],
+      co_protagonists: [],
+      antagonists: [],
+      secondary: asArray(inputChars.cast),
+      minor: [],
+      featured_extras_with_lines: asArray(inputChars.featured_extras),
+      voices_and_functional: asArray(inputChars.voices)
+    };
+    console.log(`[script-breakdown] Using simplified character format: ${asArray(inputChars.cast).length} cast, ${asArray(inputChars.featured_extras).length} extras`);
+  } else if (!inputChars.protagonists && !inputChars.secondary) {
+    // No characters from AI - use derived
     out.characters = {
       protagonists: protagonists,
       co_protagonists: [],
@@ -419,7 +312,16 @@ function normalizeBreakdown(data: any, scriptText: string): any {
   }
 
   // --- Ensure locations object exists with proper structure ---
-  if (!out.locations || typeof out.locations !== 'object') {
+  const inputLocs = out.locations || {};
+  
+  if (Array.isArray(inputLocs.base) && !inputLocs.base?.list) {
+    // New simplified format - base is array directly
+    out.locations = {
+      base: { total: inputLocs.base.length, list: inputLocs.base },
+      variants: { total: asArray(inputLocs.variants).length, list: asArray(inputLocs.variants) }
+    };
+    console.log(`[script-breakdown] Using simplified location format: ${inputLocs.base.length} base locations`);
+  } else if (!inputLocs.base && !inputLocs.variants) {
     const baseList = Array.from(derivedLocBaseMap.values());
     const variantList = Array.from(derivedLocVariantMap.values());
     
@@ -433,7 +335,7 @@ function normalizeBreakdown(data: any, scriptText: string): any {
   // --- Ensure counts object exists and is consistent ---
   const chars = out.characters || {};
   const locs = out.locations || {};
-  const props = asArray(out.props_key);
+  const props = asArray(out.props_key || out.props);
   const setpieces = asArray(out.setpieces);
   
   const castCount = 
@@ -451,11 +353,14 @@ function normalizeBreakdown(data: any, scriptText: string): any {
     cast_characters_total: castCount,
     featured_extras_total: extrasCount,
     voices_total: voicesCount,
-    locations_base_total: locs.base?.total || locs.base?.list?.length || 0,
-    locations_variants_total: locs.variants?.total || locs.variants?.list?.length || 0,
+    locations_base_total: locs.base?.total || locs.base?.list?.length || asArray(locs.base).length || 0,
+    locations_variants_total: locs.variants?.total || locs.variants?.list?.length || asArray(locs.variants).length || 0,
     props_total: props.length,
     setpieces_total: setpieces.length
   };
+  
+  // Also store props in standard location
+  out.props_key = props;
 
   // --- Ensure validation object ---
   if (!out.validation) {
@@ -595,7 +500,7 @@ IMPORTANT:
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    // Use Claude 3.5 Haiku - fast and excellent for extraction
+    // Use Claude 3.5 Haiku - NO TOOLS, just JSON output
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -608,12 +513,7 @@ IMPORTANT:
         max_tokens: 16384,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userPrompt }],
-        tools: [{
-          name: 'return_script_breakdown',
-          description: 'Returns the structured script breakdown analysis',
-          input_schema: BREAKDOWN_TOOL.function.parameters,
-        }],
-        tool_choice: { type: 'tool', name: 'return_script_breakdown' },
+        // NO TOOLS - just ask for JSON directly
       }),
     });
 
@@ -625,31 +525,29 @@ IMPORTANT:
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[script-breakdown-bg] Anthropic API error:', response.status, errorText);
-      throw new Error(`Anthropic API error: ${response.status}`);
+      console.error('[script-breakdown-bg] Anthropic API error:', response.status, errorText.slice(0, 500));
+      // DO NOT proceed - throw error to prevent overwriting good data
+      throw new Error(`Anthropic API error: ${response.status} - ${errorText.slice(0, 200)}`);
     }
 
     const data = await response.json();
 
-    // Parse tool use response
+    // Parse text response (no tools)
     let breakdownData: any = null;
-    const toolUseBlock = data.content?.find((block: any) => block.type === 'tool_use');
-    if (toolUseBlock?.input) {
-      breakdownData = toolUseBlock.input;
-    }
-
-    // Fallback to text block
-    if (!breakdownData) {
-      const textBlock = data.content?.find((block: any) => block.type === 'text');
-      if (textBlock?.text) {
-        breakdownData = tryParseJson(textBlock.text);
-      }
+    const textBlock = data.content?.find((block: any) => block.type === 'text');
+    if (textBlock?.text) {
+      breakdownData = tryParseJson(textBlock.text);
     }
 
     if (!breakdownData) {
-      throw new Error('No se pudo interpretar la respuesta del modelo');
+      console.error('[script-breakdown-bg] Failed to parse JSON from response');
+      // DO NOT overwrite existing data - throw error
+      throw new Error('No se pudo interpretar la respuesta del modelo como JSON');
     }
 
+    // ═══════════════════════════════════════════════════════════════════════════
+    // BACKEND NORMALIZATION (all validation happens here, not in Claude schema)
+    // ═══════════════════════════════════════════════════════════════════════════
     breakdownData = normalizeBreakdown(breakdownData, processedScriptText);
 
     console.log('[script-breakdown-bg] Analysis complete:', {
