@@ -90,6 +90,9 @@ function isActionOrInsert(name: string): boolean {
   // 🛡️ Scene headings are NEVER characters
   if (isSceneHeading(u)) return true;
   
+  // 🛡️ Pure numbers are scene numbers, NOT characters (e.g., "102", "114", "126")
+  if (/^\d+$/.test(name.trim())) return true;
+  
   // Starts with number followed by words (likely scene number + heading)
   if (/^\d+\s+[A-Z]/.test(u) && u.length > 15) return true;
   
