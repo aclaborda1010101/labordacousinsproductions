@@ -64,7 +64,7 @@ function isPlaceholderTitle(s: string): boolean {
 // 🧹 REGLA 3 - BLACKLIST DURA: Expanded ~200+ terms
 // ═══════════════════════════════════════════════════════════════════════════════
 const CHARACTER_BLACKLIST = new Set([
-  // === EFECTOS DE SONIDO ===
+  // === EFECTOS DE SONIDO (Ultra-strict) ===
   'BLAM', 'BLAMMMMMMM', 'CRASH', 'BANG', 'WHOOSH', 'THUD', 'CLANG',
   'WHAM', 'BOOM', 'RING', 'BEEP', 'DING', 'HONK', 'SCREECH', 'BAM',
   'CRAAAASSSHHHHHH', 'BLAMMMMMM', 'SLAM', 'CLICK', 'POP', 'SPLASH',
@@ -73,7 +73,7 @@ const CHARACTER_BLACKLIST = new Set([
   'WHACK', 'PLOP', 'DRIP', 'SWOOSH', 'ZOOM', 'VROOM', 'SCREEEECH',
   'CRUNCH', 'SIZZLE', 'GROWL', 'SHRIEK', 'YELL', 'SCREAM', 'GASP',
   'SIGH', 'GROAN', 'MOAN', 'WAIL', 'HOWL', 'BARK', 'MEOW', 'CHIRP',
-  'TWEET', 'SQUAWK', 'KAPOW', 'ZAP', 'SMASH',
+  'TWEET', 'SQUAWK', 'KAPOW', 'ZAP', 'SMASH', 'BAM.', 'BLAM.',
   
   // === INSTRUCCIONES DE CÁMARA/EDICIÓN ===
   'QUICK CUTS', 'JUMP CUT', 'MATCH CUT', 'SMASH CUT', 'TIME CUT',
@@ -133,7 +133,45 @@ const CHARACTER_BLACKLIST = new Set([
   'PREVIOUSLY', 'RECAP', 'FLASHFORWARD', 'DREAM SEQUENCE',
   'FANTASY', 'IMAGINATION', 'MEMORY', 'VISION',
   'END', 'CONTINUED', 'CREDITS', 'INTERCUT', 'BACK TO',
+  
+  // === SUFIJOS BASURA (from Joker analysis) ===
+  'JOKER D', 'MOM V0', 'CLERK D', 'BURKE', 'JOKER ON TV',
+  'JOKER RANDALL', 'GOOD NIGHT', 'AND ALWAYS REMEMBER',
+  'ALWAYS REMEMBER', 'TO BE CONTINUED',
 ]);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 🎭 CHARACTER ALIASES - For deduplication (same character, different names)
+// ═══════════════════════════════════════════════════════════════════════════════
+const CHARACTER_ALIASES: Record<string, string> = {
+  // Joker (2019) - canonical mappings
+  'JOKER': 'ARTHUR FLECK',
+  'ARTHUR': 'ARTHUR FLECK',
+  'HAPPY': 'ARTHUR FLECK',
+  'MOM': 'PENNY FLECK',
+  'PENNY': 'PENNY FLECK',
+  'MOTHER': 'PENNY FLECK',
+  'BURKE': 'DET. BURKE',
+  'DETECTIVE BURKE': 'DET. BURKE',
+  'GARRITY': 'DET. GARRITY',
+  'DETECTIVE GARRITY': 'DET. GARRITY',
+  // Common family aliases
+  'GRANDMA': 'GRANDMOTHER',
+  'GRANNY': 'GRANDMOTHER',
+  'GRANDPA': 'GRANDFATHER',
+  'MA': 'MOTHER',
+  'PA': 'FATHER',
+  'DAD': 'FATHER',
+  'DADDY': 'FATHER',
+  'MOMMY': 'MOTHER',
+  'MAMA': 'MOTHER',
+  'PAPA': 'FATHER',
+};
+
+function getCanonicalCharacterName(name: string): string {
+  const upper = name.toUpperCase().trim();
+  return CHARACTER_ALIASES[upper] || name;
+}
 
 // 🛡️ Scene heading detector (numbered or not) - prevents "32 INT. GOTHAM..." from being a character
 function isSceneHeading(text: string): boolean {
@@ -554,7 +592,7 @@ function normalizeCharacterName(nameRaw: unknown): string {
   if (typeof nameRaw !== "string") return "";
   let n = nameRaw.trim();
 
-  // Strip common screenplay suffixes
+  // Strip common screenplay suffixes (standard)
   n = n
     .replace(/\bCONT['']?D\.?\b/gi, "")
     .replace(/\bCONT\.?\b/gi, "")
@@ -562,6 +600,20 @@ function normalizeCharacterName(nameRaw: unknown): string {
     .replace(/\((V\.O\.|O\.S\.|O\.C\.|VO|OS|OC|ON SCREEN|OFF|CONT'D|CONTD)\)/gi, "")
     .replace(/\(V\.O\.\)/gi, "")
     .replace(/\(O\.S\.\)/gi, "")
+    .trim();
+  
+  // 🛡️ ULTRA-STRICT: Remove garbage suffixes (JOKER D, MOM V0, CLERK D, etc.)
+  n = n
+    .replace(/\s+D$/gi, "")           // "JOKER D" → "JOKER"
+    .replace(/\s+V\d*$/gi, "")        // "MOM V0" → "MOM"
+    .replace(/\s+VO$/gi, "")          // "CLERK VO" → "CLERK"
+    .replace(/\s+OS$/gi, "")          // "ARTHUR OS" → "ARTHUR"
+    .replace(/\s+OC$/gi, "")          // "PENNY OC" → "PENNY"
+    .replace(/\s+ON\s+TV$/gi, "")     // "JOKER ON TV" → "JOKER"
+    .replace(/\s+ON\s+SCREEN$/gi, "") // "MURRAY ON SCREEN" → "MURRAY"
+    .replace(/\s+ON\s+PHONE$/gi, "")  // "MOM ON PHONE" → "MOM"
+    .replace(/\s+ON\s+RADIO$/gi, "")  // "ANNOUNCER ON RADIO" → "ANNOUNCER"
+    .replace(/\s+\d+$/g, "")          // "GUARD 1" → "GUARD" (keep numbered for extras)
     .replace(/\s+/g, " ")
     .trim();
 
@@ -974,24 +1026,63 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
     }
   }
   
-  // Use LLM results if available, otherwise fallback to classified candidates
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🛡️ CRITICAL FIX: ALWAYS FILTER AI-returned characters through isActionOrInsert
+  // The LLM returns garbage like BAM., JOKER D, MOM V0, QUICK CUTS, etc.
+  // This post-processing filter is MANDATORY regardless of source.
+  // ═══════════════════════════════════════════════════════════════════════════
+  const filterCharacterArray = (arr: unknown[]): NormalizedCharacter[] => {
+    return safeArray(arr)
+      .map((c: unknown) => {
+        const char = c as AnyObj;
+        const rawName = String(char?.name || '');
+        const cleanedName = normalizeCharacterName(rawName);
+        return {
+          ...char,
+          name: cleanedName,
+          scenes_count: (char?.scenes_count as number) ?? 0,
+        } as NormalizedCharacter;
+      })
+      .filter((c) => {
+        if (!c.name || c.name.length < 2) {
+          console.log(`[normalizeBreakdown] 🧹 FILTERED (too short): "${c.name}"`);
+          discardedCandidates.push(c.name || '(empty)');
+          return false;
+        }
+        if (isActionOrInsert(c.name)) {
+          console.log(`[normalizeBreakdown] 🧹 FILTERED (blacklist): "${c.name}"`);
+          discardedCandidates.push(c.name);
+          return false;
+        }
+        return true;
+      });
+  };
+  
+  // Filter ALL character sources through the blacklist
+  const filteredPrevCast = filterCharacterArray(safeArray(prevCharacters?.cast));
+  const filteredPrevFeatured = filterCharacterArray(safeArray(prevCharacters?.featured_extras_with_lines));
+  const filteredPrevVoices = filterCharacterArray(safeArray(prevCharacters?.voices_and_functional));
+  
+  console.log(`[normalizeBreakdown] Post-filter: cast=${filteredPrevCast.length}, featured=${filteredPrevFeatured.length}, voices=${filteredPrevVoices.length}`);
+  
+  // Use FILTERED LLM results if available, otherwise fallback to classified candidates
   (out.characters as AnyObj).cast =
-    safeArray(prevCharacters?.cast).length > 0
-      ? safeArray(prevCharacters?.cast)
+    filteredPrevCast.length > 0
+      ? uniqueBy(filteredPrevCast, (c) => c.name.toUpperCase())
       : cast.length > 0 
         ? uniqueBy(cast, (c) => c.name.toUpperCase())
         : uniqueBy(classifiedFromCandidates.cast, (c) => c.name.toUpperCase());
 
   (out.characters as AnyObj).featured_extras_with_lines =
-    safeArray(prevCharacters?.featured_extras_with_lines).length > 0
-      ? safeArray(prevCharacters?.featured_extras_with_lines)
+    filteredPrevFeatured.length > 0
+      ? uniqueBy(filteredPrevFeatured, (c) => c.name.toUpperCase())
       : featured.length > 0
         ? uniqueBy(featured, (c) => c.name.toUpperCase())
         : uniqueBy(classifiedFromCandidates.featured, (c) => c.name.toUpperCase());
 
   (out.characters as AnyObj).voices_and_functional =
-    safeArray(prevCharacters?.voices_and_functional).length > 0
-      ? safeArray(prevCharacters?.voices_and_functional)
+    filteredPrevVoices.length > 0
+      ? uniqueBy(filteredPrevVoices, (c) => c.name.toUpperCase())
       : voices.length > 0
         ? uniqueBy(voices, (c) => c.name.toUpperCase())
         : uniqueBy(classifiedFromCandidates.voices, (c) => c.name.toUpperCase());
