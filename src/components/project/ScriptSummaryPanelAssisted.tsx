@@ -78,6 +78,11 @@ interface ScriptData {
   counts?: {
     total_scenes?: number;
     total_dialogue_lines?: number;
+    cast_characters_total?: number;
+    featured_extras_total?: number;
+    voices_total?: number;
+    characters_total?: number;
+    locations_base_total?: number;
   };
 }
 
@@ -221,20 +226,31 @@ export function ScriptSummaryPanelAssisted({
           props = parsed.props.items;
         }
         
+        // Compute total characters across ALL categories (cast + featured + voices)
+        const castLen = Array.isArray(parsed.characters?.cast) ? parsed.characters.cast.length : characters.length;
+        const featuredLen = Array.isArray(parsed.characters?.featured_extras_with_lines) ? parsed.characters.featured_extras_with_lines.length : 0;
+        const voicesLen = Array.isArray(parsed.characters?.voices_and_functional) ? parsed.characters.voices_and_functional.length : 0;
+        const totalCharacters = castLen + featuredLen + voicesLen;
+        
         // Use counts from parsed_json if available, otherwise compute
         const counts = parsed.counts || {
-          cast_characters_total: characters.length,
-          featured_extras_total: parsed.characters?.featured_extras_with_lines?.length || 0,
-          voices_total: parsed.characters?.voices_and_functional?.length || 0,
+          cast_characters_total: castLen,
+          featured_extras_total: featuredLen,
+          voices_total: voicesLen,
+          characters_total: totalCharacters,
           locations_base_total: locations.length,
         };
         
+        // Ensure characters_total is always the sum
+        counts.characters_total = (counts.cast_characters_total || 0) + (counts.featured_extras_total || 0) + (counts.voices_total || 0);
+        
         console.log('[ScriptSummary] Hydrated counts:', { 
-          characters: characters.length,
-          allCategories: allCharacterCategories.length,
+          cast: castLen,
+          featured: featuredLen,
+          voices: voicesLen,
+          total: counts.characters_total,
           locations: locations.length, 
           props: props.length,
-          counts,
         });
         
         setScriptData({
@@ -807,7 +823,7 @@ export function ScriptSummaryPanelAssisted({
               <div className="text-xs text-muted-foreground">Escenas</div>
             </div>
             <div className="p-3 bg-background/50 rounded-lg text-center">
-              <div className="text-2xl font-bold text-primary">{scriptData.characters?.length || 0}</div>
+              <div className="text-2xl font-bold text-primary">{scriptData.counts?.characters_total || scriptData.characters?.length || 0}</div>
               <div className="text-xs text-muted-foreground">Personajes</div>
             </div>
             <div className="p-3 bg-background/50 rounded-lg text-center">
@@ -833,7 +849,7 @@ export function ScriptSummaryPanelAssisted({
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">Exportar a Biblia</p>
                 <p className="text-xs text-muted-foreground">
-                  {scriptData.characters?.length || 0} personajes, {scriptData.locations?.length || 0} localizaciones
+                  {scriptData.counts?.characters_total || scriptData.characters?.length || 0} personajes, {scriptData.locations?.length || 0} localizaciones
                 </p>
               </div>
               <Button 

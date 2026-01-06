@@ -247,15 +247,24 @@ function extractCharacterCandidatesFull(scriptText: string): { candidates: strin
   for (let i = 0; i < lines.length - 1; i++) {
     const line = lines[i];
     const trimmed = line.trim();
-    const nextLine = lines[i + 1]?.trim() || '';
     
     // Skip empty lines
     if (!trimmed) continue;
     
     // Character cue detection criteria:
     // a) ALL CAPS (2-40 chars)
-    // b) Followed by dialogue (non-caps line) or parenthetical
+    // b) Followed by dialogue (non-caps line), parenthetical, or blank + dialogue
     // c) Not a scene heading or transition
+    
+    // Find next non-empty line (lookahead up to 2 lines for blank line handling)
+    let nextContent = '';
+    for (let j = 1; j <= 2 && (i + j) < lines.length; j++) {
+      const candidate = lines[i + j]?.trim() || '';
+      if (candidate) {
+        nextContent = candidate;
+        break;
+      }
+    }
     
     if (
       trimmed === trimmed.toUpperCase() &&
@@ -264,8 +273,8 @@ function extractCharacterCandidatesFull(scriptText: string): { candidates: strin
       !/^(INT\.|EXT\.|INT\/EXT|I\/E)/i.test(trimmed) &&
       !/^(FADE|CUT|DISSOLVE|SMASH|WIPE|IRIS)/i.test(trimmed) &&
       !/^\([^)]+\)$/.test(trimmed) && // Not a parenthetical-only line
-      nextLine && // Must have content after
-      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextLine) // Next line not a heading/transition
+      nextContent && // Must have content after (can skip 1 blank)
+      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextContent) // Next content not a heading/transition
     ) {
       // Normalize: remove parentheticals (V.O.), (O.S.), (CONT'D), etc.
       let charName = trimmed
