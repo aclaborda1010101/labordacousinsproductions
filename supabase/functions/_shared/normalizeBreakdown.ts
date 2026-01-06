@@ -1,20 +1,26 @@
 /**
- * Canonical Breakdown Normalizer v3.0
+ * Canonical Breakdown Normalizer v4.0
  * Converts any LLM output shape into a stable schema for UI consumption.
  * 
- * Guarantees:
- * - root.title always present via resolveTitle() with strict precedence
- * - characters separated into cast / featured_extras_with_lines / voices_and_functional
- * - collapses CONT'D duplicates
- * - counts always present and consistent
- * - props minimum enforcement for features (with warnings)
+ * REGLAS DEFINITIVAS:
  * 
- * v3.0 HARD RULES:
- * - resolveTitle(): project.title > metadata.title (if not placeholder) > filename > "Untitled Script"
- * - character_candidates_full extracted deterministically from FULL script
- * - If scenes_total > 0 and locations_base_total === 0 → rebuild from scene headings
- * - If cast < minExpected for scene count → inject from character_candidates
- * - Never overwrite good data with empty arrays
+ * 🔒 REGLA 1 - TÍTULO BLOQUEADO:
+ *    Una vez definido (project.title o metadata.title válido), NO se toca.
+ *    Sin LLM, sin heurística, sin fallback, sin normalizador.
+ * 
+ * 🎭 REGLA 2 - CANON DE PERSONAJES EN 3 CAPAS:
+ *    A) Cast real: aparece ≥2 escenas O tiene diálogo, NO es verbo/acción/insert
+ *    B) Extras con diálogo: SENATOR, AIDE, SOLDIER (sección aparte)
+ *    C) Ruido/acciones/inserts: INSERT, CUT, LOUD, etc. → _discarded_candidates[]
+ * 
+ * 🧹 REGLA 3 - BLACKLIST DURA:
+ *    Regex para acciones/inserts que NUNCA son personajes.
+ * 
+ * Garantías:
+ * - characters_total = cast.length + featured_extras.length + voices.length
+ * - Cast objetivo: 100-120 para scripts largos
+ * - Total objetivo: 120-160
+ * - No más "subir tolerancia"
  */
 
 type AnyObj = Record<string, unknown>;
@@ -51,6 +57,26 @@ function isPlaceholderTitle(s: string): boolean {
   // Check for common draft indicators
   if (/\b(DRAFT|REVISION|REV\.?)\s*\d*\s*$/i.test(s.trim())) return true;
   
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 🧹 REGLA 3 - BLACKLIST DURA: Acciones/inserts que NUNCA son personajes
+// ═══════════════════════════════════════════════════════════════════════════════
+const ACTION_INSERT_BLACKLIST = /^(INSERT|CUT|LOUD|MORTIFYING|ROLLS|LIGHT|SILENCE|SOUND|FX|SFX|VFX|BOOM|BANG|CRASH|EXPLOSION|THUNDER|LIGHTNING|FLASH|BLACKOUT|WHITEOUT|STATIC|NOISE|BEEP|RING|BUZZ|CLICK|SNAP|SLAM|THUD|WHOOSH|SWOOSH|ZOOM|PAN|TILT|TRACK|DOLLY|CRANE|AERIAL|UNDERWATER|SLOW MOTION|FREEZE FRAME|SPLIT SCREEN|MONTAGE|FLASHBACK|DREAM|NIGHTMARE|MEMORY|VISION|HALLUCINATION|ANGLE|CLOSE|WIDE|MEDIUM|EXTREME|ESTABLISHING|MASTER|TWO SHOT|THREE SHOT|GROUP SHOT|REACTION|REVERSE|OVER THE SHOULDER|POV|POINT OF VIEW|SUBJECTIVE|OBJECTIVE|HAND HELD|STEADICAM|TRACKING|MOVING|STATIC|LOCKED|DUTCH|CANTED|HIGH|LOW|EYE LEVEL|BIRDS EYE|WORMS EYE|MATCH|JUMP|SMASH|WHIP|FADE|DISSOLVE|WIPE|IRIS)(\s|$)/i;
+
+const NOISE_PATTERNS = /^(THE |A |AN )?(SOUND OF|SOUNDS OF|NOISE|FX:|SFX:|VFX:|INSERT:|TITLE:|SUPER:|CHYRON:|CAPTION:|SUBTITLE:|TEXT:|CARD:|SCREEN:|DISPLAY:|MONITOR:|TV:|TELEVISION:|RADIO:|PHONE:|TELEPHONE:|INTERCOM:|PA:|LOUDSPEAKER:|SPEAKER:|ANNOUNCEMENT:|BROADCAST:|RECORDING:|TAPE:|VIDEO:|FOOTAGE:|CLIP:|IMAGE:|PHOTO:|PICTURE:|GRAPHIC:|ANIMATION:|CGI:|EFFECT:|TRANSITION:|CUT:|FADE:|DISSOLVE:|WIPE:|IRIS:)/i;
+
+// Verbs that look like character cues but are actions
+const VERB_ACTION_BLACKLIST = /^(ROLLS|WALKS|RUNS|SITS|STANDS|LOOKS|TURNS|OPENS|CLOSES|PICKS|PUTS|TAKES|GIVES|HOLDS|DROPS|THROWS|CATCHES|PUSHES|PULLS|HITS|KICKS|PUNCHES|GRABS|REACHES|TOUCHES|POINTS|WAVES|NODS|SHAKES|SMILES|FROWNS|LAUGHS|CRIES|SCREAMS|SHOUTS|WHISPERS|SPEAKS|TALKS|SAYS|ASKS|ANSWERS|REPLIES|RESPONDS|CONTINUES|BEGINS|STARTS|STOPS|ENDS|FINISHES|ENTERS|EXITS|LEAVES|ARRIVES|APPROACHES|RETREATS|ADVANCES|MOVES|STEPS|JUMPS|LEAPS|FALLS|RISES|CLIMBS|DESCENDS|ASCENDS)(\s|$)/i;
+
+function isActionOrInsert(name: string): boolean {
+  const u = name.toUpperCase().trim();
+  if (ACTION_INSERT_BLACKLIST.test(u)) return true;
+  if (NOISE_PATTERNS.test(u)) return true;
+  if (VERB_ACTION_BLACKLIST.test(u)) return true;
+  // All lowercase words (likely description, not character)
+  if (/^[a-z\s]+$/.test(name.trim())) return true;
   return false;
 }
 
@@ -510,6 +536,7 @@ export interface NormalizedBreakdown {
 export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitle?: string): NormalizedBreakdown {
   const out: AnyObj = { ...input };
   const warnings: BreakdownWarning[] = [];
+  const discardedCandidates: string[] = []; // 🧹 REGLA 3: Track noise/actions
 
   // Scenes
   const inputScenes = input.scenes as AnyObj | undefined;
@@ -521,42 +548,57 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
   (out.scenes as AnyObj).total = scenesTotal;
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // TITLE CANONICALIZATION (P0) - resolveTitle() with strict precedence
+  // 🔒 REGLA 1: TÍTULO BLOQUEADO
+  // Una vez definido, NO se toca. Sin LLM, sin heurística, sin fallback.
   // ═══════════════════════════════════════════════════════════════════════════
-  const rawText: string | undefined =
-    (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
+  const existingLockedTitle = (input?._title_locked as string) || null;
   
-  const metadataTitle = 
-    (input?.title as string) ||
-    ((input?.metadata as AnyObj)?.title as string) ||
-    (((input?.breakdown_pro as AnyObj)?.metadata as AnyObj)?.title as string);
-  
-  const resolved = resolveTitle({
-    projectTitle,
-    metadataTitle,
-    filename,
-    rawText,
-  });
-  
-  out.title = resolved.canonical_title;
-  out._title_source = resolved.source;
-  
-  // Metadata passthrough + working_title preservation
-  out.metadata = (out.metadata as AnyObj) || {};
-  (out.metadata as AnyObj).title = resolved.canonical_title;
-  
-  if (resolved.working_title) {
-    (out.metadata as AnyObj).working_title = resolved.working_title;
-    console.log(`[normalizeBreakdown] Working title preserved: "${resolved.working_title}" (not shown as main title)`);
-  }
-  
-  console.log(`[normalizeBreakdown] Title resolved: "${resolved.canonical_title}" (source: ${resolved.source})`);
-  
-  if (resolved.source === 'fallback') {
-    warnings.push({
-      code: "TITLE_FALLBACK",
-      message: `Could not determine script title from project, metadata, or filename. Using "${resolved.canonical_title}".`,
+  if (existingLockedTitle && !isPlaceholderTitle(existingLockedTitle)) {
+    // 🔒 TÍTULO YA BLOQUEADO - No tocar
+    out.title = existingLockedTitle;
+    out._title_source = "locked";
+    out._title_locked = existingLockedTitle;
+    out.metadata = (out.metadata as AnyObj) || {};
+    (out.metadata as AnyObj).title = existingLockedTitle;
+    console.log(`[normalizeBreakdown] 🔒 TÍTULO BLOQUEADO: "${existingLockedTitle}" (no se modifica)`);
+  } else {
+    // Primera vez: resolver y bloquear
+    const rawText: string | undefined =
+      (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
+    
+    const metadataTitle = 
+      (input?.title as string) ||
+      ((input?.metadata as AnyObj)?.title as string) ||
+      (((input?.breakdown_pro as AnyObj)?.metadata as AnyObj)?.title as string);
+    
+    const resolved = resolveTitle({
+      projectTitle,
+      metadataTitle,
+      filename,
+      rawText,
     });
+    
+    out.title = resolved.canonical_title;
+    out._title_source = resolved.source;
+    out._title_locked = resolved.canonical_title; // 🔒 BLOQUEAR
+    
+    // Metadata passthrough + working_title preservation
+    out.metadata = (out.metadata as AnyObj) || {};
+    (out.metadata as AnyObj).title = resolved.canonical_title;
+    
+    if (resolved.working_title) {
+      (out.metadata as AnyObj).working_title = resolved.working_title;
+      console.log(`[normalizeBreakdown] Working title preserved: "${resolved.working_title}" (not shown as main title)`);
+    }
+    
+    console.log(`[normalizeBreakdown] 🔒 TÍTULO BLOQUEADO: "${resolved.canonical_title}" (source: ${resolved.source})`);
+    
+    if (resolved.source === 'fallback') {
+      warnings.push({
+        code: "TITLE_FALLBACK",
+        message: `Could not determine script title from project, metadata, or filename. Using "${resolved.canonical_title}".`,
+      });
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -620,27 +662,32 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
       : derivedLocationVariants;
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PASO 2: Characters - normalize from flat array into 3 groups
+  // 🎭 REGLA 2: Characters - normalize from flat array into 3 groups
+  // Con blacklist dura para acciones/inserts
   // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Get raw text for fallback extraction (declare here for scope)
+  const rawTextForChars: string | undefined =
+    (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
+  
   let flatChars = safeArray<CharacterInput>(input.characters).map((c) => ({
     ...c,
     name_raw: c?.name ?? "",
     name: normalizeCharacterName(c?.name ?? ""),
-  })).filter((c) => c.name);
+  })).filter((c) => c.name && !isActionOrInsert(c.name)); // 🧹 REGLA 3: Filter noise
 
   // HARD RULE: If scenes > 50 but no characters, try multiple sources
   // Priority 1: character_candidates[] (already extracted)
   const characterCandidatesRaw = safeArray(input?.character_candidates);
   const characterCandidatesNormalized = characterCandidatesRaw
     .map((c: unknown) => normalizeCharacterName(c))
-    .filter((n): n is string => !!n);
+    .filter((n): n is string => !!n && !isActionOrInsert(n)); // 🧹 REGLA 3: Filter noise
 
   // Used to ensure the dashboard doesn't show 0 when candidates exist
-  // Note: rawText already declared above for title resolution
   const candidatesForPromotion: string[] = characterCandidatesNormalized.length
     ? characterCandidatesNormalized
-    : typeof rawText === "string" && rawText.trim()
-      ? extractCharacterCandidatesFromText(rawText)
+    : typeof rawTextForChars === "string" && rawTextForChars.trim()
+      ? extractCharacterCandidatesFromText(rawTextForChars).filter(n => !isActionOrInsert(n))
       : [];
 
   if (scenesTotal > 50 && flatChars.length === 0) {
@@ -654,9 +701,9 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
       console.log(
         `[normalizeBreakdown] Using ${candidates.length} pre-extracted character_candidates`,
       );
-    } else if (typeof rawText === "string" && rawText.trim()) {
+    } else if (typeof rawTextForChars === "string" && rawTextForChars.trim()) {
       // Fallback: extract from raw text
-      candidates = extractCharacterCandidatesFromText(rawText);
+      candidates = extractCharacterCandidatesFromText(rawTextForChars).filter(n => !isActionOrInsert(n));
       source = "raw_text";
       console.log(`[normalizeBreakdown] Extracted ${candidates.length} characters from raw_text`);
     } else {
@@ -774,12 +821,11 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
         : uniqueBy(classifiedFromCandidates.voices, (c) => c.name.toUpperCase());
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // HARD FALLBACK: Scaled tolerance based on scene count
-  // For large scripts (e.g. 200+ scenes), we expect 120+ speaking entities overall
-  // (cast + featured extras + voices).
+  // 🎭 SCALED TOLERANCE: Augment if below expected counts
+  // Cast objetivo: 100-120 para scripts largos
+  // Total objetivo: 120-160
   // ═══════════════════════════════════════════════════════════════════════════
-  const bannedNames = /^(CUT TO|DISSOLVE TO|FADE|INT\.|EXT\.|TITLE|SUPER|MONTAGE|CONTINUOUS|LATER|SAME|DAY|NIGHT|MORNING|EVENING|DAWN|DUSK|INTERCUT|FLASHBACK|BACK TO|END OF|THE END|CONTINUED|MORE|BLACK|ANGLE ON|CLOSE ON|INSERT|POV|WIDE|TIGHT|OVER|MATCH CUT|JUMP CUT|SMASH CUT)$/i;
-
+  
   const cleanCharNameForPromotion = (s: string): string => {
     if (!s) return "";
     let n = normalizeCharacterName(s);
@@ -788,11 +834,12 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
     return n;
   };
 
+  // 🧹 REGLA 3: Filter all promotable candidates through blacklist
   const promotableAll = uniqueBy(
     candidatesForPromotion
       .map((n) => cleanCharNameForPromotion(String(n)))
       .filter((n): n is string => !!n && n.length >= 2 && n.length <= 50)
-      .filter((n) => !bannedNames.test(n)),
+      .filter((n) => !isActionOrInsert(n)), // 🧹 Use new blacklist
     (n) => n.toUpperCase(),
   );
 
@@ -821,11 +868,14 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
     (c) => String((c as AnyObj)?.name || "").toUpperCase(),
   );
 
+  // Objetivos profesionales:
+  // Cast: 100-120 para scripts largos (200+ scenes)
+  // Total: 120-160
   const minCharactersExpected =
-    scenesTotal >= 200 ? 120 :
-    scenesTotal >= 100 ? 80 :
-    scenesTotal >= 50 ? 40 :
-    20;
+    scenesTotal >= 200 ? 100 :
+    scenesTotal >= 100 ? 70 :
+    scenesTotal >= 50 ? 35 :
+    15;
 
   const currentCast = safeArray((out.characters as AnyObj).cast) as AnyObj[];
   const currentFeatured = safeArray((out.characters as AnyObj).featured_extras_with_lines) as AnyObj[];
@@ -920,6 +970,12 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
       message: `Characters total (${before.total}) below minimum expected (${minCharactersExpected}) for ${scenesTotal} scenes. Added cast(+${injectedCast.length}), featured(+${injectedFeatured.length}), voices(+${injectedVoices.length}) from deterministic extraction.`,
     });
   }
+  
+  // 🧹 REGLA 3: Store discarded candidates for debugging
+  if (discardedCandidates.length > 0) {
+    (out as AnyObj)._discarded_candidates = discardedCandidates;
+  }
+
   // Props: prefer input.props; fallback props_key
   const propsInput = safeArray(input.props).length ? safeArray(input.props) : safeArray(input.props_key);
   out.props = propsInput;
@@ -936,7 +992,7 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
   // Setpieces
   out.setpieces = safeArray(input.setpieces);
 
-  // Counts: always compute
+  // Counts: always compute (characters_total = cast + featured + voices)
   const computedCounts = computeCounts(out);
   out.counts = computedCounts;
 
@@ -945,13 +1001,20 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
     out._warnings = [...(safeArray(out._warnings) as BreakdownWarning[]), ...warnings];
   }
 
-  // TEMP: verification log (remove after confirming counts are non-zero)
+  // FINAL LOG: cast, featured, voices, total
+  const finalCast = safeArray(((out.characters as AnyObj) ?? {})?.cast).length;
+  const finalFeatured = safeArray(((out.characters as AnyObj) ?? {})?.featured_extras_with_lines).length;
+  const finalVoices = safeArray(((out.characters as AnyObj) ?? {})?.voices_and_functional).length;
+  const finalTotal = finalCast + finalFeatured + finalVoices;
+  
   console.log("[FINAL COUNTS CHECK]", {
     scenes: (out.scenes as AnyObj)?.total,
     locations: safeArray(((out.locations as AnyObj) ?? {})?.base).length,
-    characters: safeArray(((out.characters as AnyObj) ?? {})?.cast).length,
+    cast: finalCast,
+    featured: finalFeatured,
+    voices: finalVoices,
+    characters_total: finalTotal,
   });
 
   return out as NormalizedBreakdown;
 }
-
