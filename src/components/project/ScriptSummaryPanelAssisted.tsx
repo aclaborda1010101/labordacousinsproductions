@@ -892,85 +892,35 @@ export function ScriptSummaryPanelAssisted({
           <CollapsibleContent>
             <Card className="mt-3 border-dashed">
               <CardContent className="py-4 space-y-4">
-              {/* Characters - Cast (Main) */}
-                {scriptData.characters && scriptData.characters.length > 0 && (() => {
-                  const protagonists = scriptData.characters.filter(c => c.role === 'protagonist');
-                  const antagonists = scriptData.characters.filter(c => c.role === 'antagonist');
-                  const supporting = scriptData.characters.filter(c => c.role === 'supporting');
-                  const collectiveEntities = scriptData.characters.filter(c => 
-                    c.role === 'collective_entity' || c.entity_type === 'collective' || c.entity_type === 'civilization'
-                  );
-                  const others = scriptData.characters.filter(c => 
-                    !['protagonist', 'antagonist', 'supporting', 'recurring', 'collective_entity'].includes(c.role || '') &&
-                    !['collective', 'civilization'].includes(c.entity_type || '')
-                  );
-                  
-                  return (
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Users className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm">Cast Principal ({scriptData.characters.length})</span>
-                      </div>
-                      <div className="space-y-2">
-                        {protagonists.length > 0 && (
-                          <div className="flex flex-wrap gap-1 items-center">
-                            <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
-                              <Crown className="h-3 w-3" /> Protagonistas:
-                            </span>
-                            {protagonists.map((char, i) => (
-                              <Badge key={i} variant="default" className="text-xs">{char.name}</Badge>
-                            ))}
-                          </div>
-                        )}
-                        {antagonists.length > 0 && (
-                          <div className="flex flex-wrap gap-1 items-center">
-                            <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
-                              <Skull className="h-3 w-3" /> Antagonistas:
-                            </span>
-                            {antagonists.map((char, i) => (
-                              <Badge key={i} variant="destructive" className="text-xs">{char.name}</Badge>
-                            ))}
-                          </div>
-                        )}
-                        {supporting.length > 0 && (
-                          <div className="flex flex-wrap gap-1 items-center">
-                            <span className="text-xs text-muted-foreground mr-1">Secundarios:</span>
-                            {supporting.map((char, i) => (
-                              <Badge key={i} variant="secondary" className="text-xs">{char.name}</Badge>
-                            ))}
-                          </div>
-                        )}
-                        {collectiveEntities.length > 0 && (
-                          <div className="flex flex-wrap gap-1 items-center">
-                            <span className="text-xs text-muted-foreground mr-1">Colectivos:</span>
-                            {collectiveEntities.map((char, i) => (
-                              <Badge key={i} variant="outline" className="text-xs">{char.name}</Badge>
-                            ))}
-                          </div>
-                        )}
-                        {others.length > 0 && (
-                          <div className="flex flex-wrap gap-1 items-center">
-                            <span className="text-xs text-muted-foreground mr-1">Otros:</span>
-                            {others.map((char, i) => (
-                              <Badge key={i} variant="outline" className="text-xs">{char.name}</Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                {/* Characters - Cast (Main) */}
+                {scriptData.characters && scriptData.characters.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">Cast Principal ({scriptData.characters.length})</span>
                     </div>
-                  );
-                })()}
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.characters.map((char, i) => (
+                        <Badge key={`${char.name}-${i}`} variant="outline" className="text-xs">
+                          {char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Featured Extras with Lines */}
                 {scriptData.featured_extras && scriptData.featured_extras.length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <UserPlus className="h-4 w-4 text-amber-500" />
+                      <UserPlus className="h-4 w-4 text-primary" />
                       <span className="font-medium text-sm">Extras con Diálogo ({scriptData.featured_extras.length})</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {scriptData.featured_extras.map((char, i) => (
-                        <Badge key={i} variant="outline" className="text-xs border-amber-500/50 text-amber-600">{char.name}</Badge>
+                        <Badge key={`${char.name}-${i}`} variant="secondary" className="text-xs">
+                          {char.name}
+                        </Badge>
                       ))}
                     </div>
                   </div>
@@ -980,12 +930,14 @@ export function ScriptSummaryPanelAssisted({
                 {scriptData.voices && scriptData.voices.length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Users2 className="h-4 w-4 text-blue-500" />
+                      <Users2 className="h-4 w-4 text-primary" />
                       <span className="font-medium text-sm">Voces y Funcionales ({scriptData.voices.length})</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {scriptData.voices.map((char, i) => (
-                        <Badge key={i} variant="outline" className="text-xs border-blue-500/50 text-blue-600">{char.name}</Badge>
+                        <Badge key={`${char.name}-${i}`} variant="outline" className="text-xs">
+                          {char.name}
+                        </Badge>
                       ))}
                     </div>
                   </div>
@@ -1000,7 +952,9 @@ export function ScriptSummaryPanelAssisted({
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {scriptData.locations.map((loc, i) => (
-                        <Badge key={i} variant="outline" className="text-xs">{loc.name}</Badge>
+                        <Badge key={`${loc.name}-${i}`} variant="outline" className="text-xs">
+                          {loc.name}
+                        </Badge>
                       ))}
                     </div>
                   </div>
@@ -1010,14 +964,16 @@ export function ScriptSummaryPanelAssisted({
                 {scriptData.props && scriptData.props.length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Box className="h-4 w-4 text-green-500" />
+                      <Box className="h-4 w-4 text-primary" />
                       <span className="font-medium text-sm">Props / Attrezzo ({scriptData.props.length})</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {scriptData.props.map((prop, i) => {
                         const propName = typeof prop === 'string' ? prop : prop.name;
                         return (
-                          <Badge key={i} variant="outline" className="text-xs border-green-500/50 text-green-600">{propName}</Badge>
+                          <Badge key={`${propName}-${i}`} variant="outline" className="text-xs">
+                            {propName}
+                          </Badge>
                         );
                       })}
                     </div>
