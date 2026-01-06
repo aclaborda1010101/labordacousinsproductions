@@ -123,29 +123,68 @@ function isTechnicalTerm(text: string): boolean {
 
 /**
  * Detecta si un string parece un efecto de sonido usando heurísticas
+ * (incluye onomatopeyas clásicas tipo BAM., BANG!, etc.)
  */
 function isSoundEffect(text: string): boolean {
-  const normalized = text.trim().toUpperCase();
-  
+  const raw = text.trim().toUpperCase();
+  const normalized = raw.replace(/[.!,?;:]+$/g, "").trim();
+
+  // Hard pass: onomatopeyas conocidas (con o sin puntuación)
+  const ONOMATOPOEIA = new Set([
+    "BAM",
+    "BLAM",
+    "BANG",
+    "BOOM",
+    "CRASH",
+    "SLAM",
+    "THUD",
+    "CLICK",
+    "BEEP",
+    "RING",
+    "WHOOSH",
+    "SCREECH",
+    "CLANG",
+    "WHAM",
+    "DING",
+    "HONK",
+    "BUZZ",
+    "HISS",
+    "POP",
+    "CRACK",
+    "SNAP",
+    "SPLASH",
+    "THUMP",
+    "CRUNCH",
+    "SIZZLE",
+    "RUMBLE",
+    "ROAR",
+    "SMASH",
+    "WHACK",
+    "THWACK",
+    "KAPOW",
+    "ZAP",
+  ]);
+  if (ONOMATOPOEIA.has(normalized)) return true;
+
   // Patrón 1: Letras repetidas (3+) - BLAMMM, CRAAASH, BOOOM
   if (/(.)\1{2,}/.test(normalized)) return true;
-  
+
   // Patrón 2: Palabras cortas que terminan en consonantes explosivas
-  if (/^[A-Z]{2,6}(M{2,}|K|P|T|SH|CH|NG)!*\.?$/.test(normalized)) {
-    const commonEndings = ['AM', 'UM', 'IM', 'OM', 'AN', 'EN', 'IN', 'ON'];
+  if (/^[A-Z]{2,6}(M{2,}|K|P|T|SH|CH|NG)$/.test(normalized)) {
+    const commonEndings = ["AM", "UM", "IM", "OM", "AN", "EN", "IN", "ON"];
     const lastTwo = normalized.slice(-2);
     if (!commonEndings.includes(lastTwo)) return true;
   }
-  
+
   // Patrón 3: Palabras muy cortas (2-4 letras) sin vocales normales
-  if (/^[BCDFGHJKLMNPQRSTVWXZ]{2,4}!*\.?$/.test(normalized)) return true;
-  
+  if (/^[BCDFGHJKLMNPQRSTVWXZ]{2,4}$/.test(normalized)) return true;
+
   // Patrón 4: Exclamaciones puras
-  if (/^[A-Z]{1,3}!+$/.test(normalized)) return true;
-  
+  if (/^[A-Z]{1,3}!+$/.test(raw)) return true;
+
   // Patrón 5: Terminan en puntuación agresiva
-  if (/^[A-Z]+[!.]{2,}$/.test(normalized)) return true;
-  
+  if (/^[A-Z]+[!.]{2,}$/.test(raw)) return true;
+
   return false;
 }
 
@@ -1116,9 +1155,10 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
         const char = c as AnyObj;
         const rawName = String(char?.name || '');
         const cleanedName = normalizeCharacterName(rawName);
+        const canonicalName = getCanonicalCharacterName(cleanedName);
         return {
           ...char,
-          name: cleanedName,
+          name: canonicalName,
           scenes_count: (char?.scenes_count as number) ?? 0,
         } as NormalizedCharacter;
       })
@@ -1177,6 +1217,8 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
     let n = normalizeCharacterName(s);
     // Extra cleaning
     n = n.replace(/[^\p{L}\p{N}\s\-'.]/gu, "").replace(/\s+/g, " ").trim();
+    // Canonicalize (if we have an alias mapping)
+    n = getCanonicalCharacterName(n);
     return n;
   };
 
