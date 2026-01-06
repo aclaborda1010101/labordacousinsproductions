@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { normalizeBreakdown, type NormalizedBreakdown } from "../_shared/normalizeBreakdown.ts";
+import { parseJsonSafe } from "../_shared/llmJson.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -309,96 +310,72 @@ async function getUserIdFromRequest(req: Request): Promise<string | null> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// HELPER: Call Anthropic API (with model fallback)
+// HELPER: Call Lovable AI Gateway (OpenAI-compatible) and parse JSON safely
 // ═══════════════════════════════════════════════════════════════════════════════
-function buildModelFallbacks(primary: string): string[] {
-  // NOTE: Anthropic model availability can vary by account/key.
-  // We try a small ordered list to avoid hard failures on 404 "model not found".
-  if (/claude-3-5-sonnet-20241022/i.test(primary)) {
-    return [
-      primary,
-      'claude-3-5-sonnet-latest',
-      'claude-3-5-sonnet-20240620',
-      // alternative naming sometimes seen in docs/providers
-      'claude-3-5-sonnet-v2@20241022',
-      'claude-3-5-sonnet@20240620',
-    ];
+const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+
+type CallAIJsonArgs = {
+  model: string;
+  systemPrompt: string;
+  userPrompt: string;
+  maxTokens: number;
+  label: string;
+};
+
+async function callAIJson({ model, systemPrompt, userPrompt, maxTokens, label }: CallAIJsonArgs): Promise<any> {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) {
+    throw new Error('LOVABLE_API_KEY not configured');
   }
 
-  if (/claude-3-5-haiku-20241022/i.test(primary)) {
-    return [
-      primary,
-      'claude-3-5-haiku-latest',
-      'claude-3-5-haiku@20241022',
-    ];
-  }
-
-  // Default: try the given model only
-  return [primary];
-}
-
-async function callAnthropic(
-  apiKey: string,
-  model: string,
-  systemPrompt: string,
-  userPrompt: string,
-  maxTokens: number
-): Promise<any> {
-  const candidates = buildModelFallbacks(model);
-  let lastErrText = '';
-  let lastStatus = 0;
-
-  for (const candidate of candidates) {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: candidate,
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      lastErrText = errorText;
-      lastStatus = response.status;
-
-      // If model is not found, try next fallback model.
-      if (response.status === 404) {
-        console.error(`[callAnthropic] Model not found: ${candidate} (trying fallback if available)`, errorText.slice(0, 200));
-        continue;
-      }
-
-      console.error(`[callAnthropic] API error for ${candidate}:`, response.status, errorText.slice(0, 300));
-      throw new Error(`Anthropic API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const textBlock = data.content?.find((block: any) => block.type === 'text');
-    if (!textBlock?.text) {
-      throw new Error('No text content in response');
-    }
-
-    const parsed = tryParseJson(textBlock.text);
-    if (!parsed) {
-      throw new Error('Failed to parse JSON from response');
-    }
-
-    // Success
-    return parsed;
-  }
-
-  console.error(`[callAnthropic] All model fallbacks failed for primary=${model}`, {
-    lastStatus,
-    lastErr: lastErrText?.slice(0, 300),
+  const response = await fetch(AI_GATEWAY_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${LOVABLE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: maxTokens,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+    }),
   });
-  throw new Error(`Anthropic API error: ${lastStatus || 404}`);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('[callAIJson] Gateway error:', response.status, errorText.slice(0, 400));
+
+    if (response.status === 429) {
+      throw new Error('RATE_LIMIT_EXCEEDED');
+    }
+    if (response.status === 402) {
+      throw new Error('PAYMENT_REQUIRED');
+    }
+
+    throw new Error(`AI_GATEWAY_ERROR_${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data?.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || !content.trim()) {
+    console.error('[callAIJson] No content in gateway response:', JSON.stringify(data)?.slice(0, 500));
+    throw new Error('MODEL_OUTPUT_INVALID');
+  }
+
+  const parsed = parseJsonSafe<any>(content, label);
+  if (!parsed.ok || !parsed.json) {
+    console.error('[callAIJson] JSON parse failed:', { label, warnings: parsed.warnings, hash: parsed.rawSnippetHash });
+    throw new Error('MODEL_OUTPUT_INVALID');
+  }
+
+  if (parsed.degraded) {
+    console.warn('[callAIJson] Degraded JSON parse:', { label, warnings: parsed.warnings, hash: parsed.rawSnippetHash });
+  }
+
+  return parsed.json;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -425,10 +402,7 @@ async function processScriptBreakdownInBackground(
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY not configured');
-    }
+    // Use Lovable AI Gateway (configured automatically in this environment)
 
     // ═══════════════════════════════════════════════════════════════════════════
     // PRE-COUNT SCENE HEADINGS
@@ -485,21 +459,21 @@ SCRIPT TO ANALYZE:
 ${processedScriptText}
 ---`;
 
-    console.log('[script-breakdown] Phase 1: Starting Sonnet analysis...');
+    console.log('[script-breakdown] Phase 1: Starting canonical analysis (gateway)...');
     
     await supabase.from('background_tasks').update({
       progress: 15,
-      description: 'Fase 1: Claude Sonnet analizando estructura...',
+      description: 'Fase 1: Analizando estructura (IA)...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    const canonicalData = await callAnthropic(
-      ANTHROPIC_API_KEY,
-      'claude-3-5-sonnet-20241022',
-      SONNET_SYSTEM_PROMPT,
-      sonnetUserPrompt,
-      12000
-    );
+    const canonicalData = await callAIJson({
+      model: 'google/gemini-2.5-pro',
+      systemPrompt: SONNET_SYSTEM_PROMPT,
+      userPrompt: sonnetUserPrompt,
+      maxTokens: 8000,
+      label: 'script_breakdown_canonical',
+    });
 
     console.log('[script-breakdown] Phase 1 complete:', {
       title: canonicalData.title,
@@ -535,29 +509,29 @@ OUTPUT LANGUAGE: ${lang}`;
 
     const [propsResult, charactersResult, setpiecesResult] = await Promise.allSettled([
       // Props pass
-      callAnthropic(
-        ANTHROPIC_API_KEY,
-        'claude-3-5-haiku-20241022',
-        HAIKU_PROPS_PROMPT,
-        contextForHaiku + `\n\nExtract all production props from this screenplay world.`,
-        4000
-      ),
-      // Characters pass  
-      callAnthropic(
-        ANTHROPIC_API_KEY,
-        'claude-3-5-haiku-20241022',
-        HAIKU_CHARACTERS_PROMPT,
-        contextForHaiku + `\n\nExtract ALL characters categorized properly. Include minor roles.`,
-        4000
-      ),
+      callAIJson({
+        model: 'google/gemini-2.5-flash',
+        systemPrompt: HAIKU_PROPS_PROMPT,
+        userPrompt: contextForHaiku + `\n\nExtract all production props from this screenplay world.`,
+        maxTokens: 3000,
+        label: 'script_breakdown_props',
+      }),
+      // Characters pass
+      callAIJson({
+        model: 'google/gemini-2.5-flash',
+        systemPrompt: HAIKU_CHARACTERS_PROMPT,
+        userPrompt: contextForHaiku + `\n\nExtract ALL characters categorized properly. Include minor roles.`,
+        maxTokens: 3000,
+        label: 'script_breakdown_characters',
+      }),
       // Setpieces pass
-      callAnthropic(
-        ANTHROPIC_API_KEY,
-        'claude-3-5-haiku-20241022',
-        HAIKU_SETPIECES_PROMPT,
-        contextForHaiku + `\n\nExtract all setpieces and production flags.`,
-        3000
-      ),
+      callAIJson({
+        model: 'google/gemini-2.5-flash',
+        systemPrompt: HAIKU_SETPIECES_PROMPT,
+        userPrompt: contextForHaiku + `\n\nExtract all setpieces and production flags.`,
+        maxTokens: 2000,
+        label: 'script_breakdown_setpieces',
+      }),
     ]);
 
     console.log('[script-breakdown] Phase 2 complete:', {
