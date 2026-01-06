@@ -14,6 +14,7 @@ export type TaskType =
   | 'pdf_export'
   | 'batch_generation'
   | 'script_breakdown'
+  | 'script_analysis'
   | 'outfit_generation'
   | 'visual_dna'
   | 'other';
