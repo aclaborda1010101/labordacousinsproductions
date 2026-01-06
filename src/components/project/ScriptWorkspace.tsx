@@ -405,10 +405,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         const rawText = typeof data.raw_text === 'string' ? data.raw_text : JSON.stringify(data.raw_text);
         setExistingScriptText(rawText);
         console.log('[ScriptWorkspace] Script loaded successfully, length:', rawText.length);
+      } else if (data) {
+        // Script row exists but has no text yet (e.g. upload-only / transient state)
+        // Do NOT clear previously loaded state to avoid flicker.
+        console.warn('[ScriptWorkspace] Script row found but raw_text empty; keeping last known script in UI');
       } else {
-        setHasExistingScript(false);
-        setExistingScriptText('');
-        console.log('[ScriptWorkspace] No existing script found for this project');
+        // Sometimes the backend can temporarily return 0 rows (e.g. session refresh / RLS timing).
+        // Clearing state here makes the UI look like the analysis "lost" data.
+        console.warn('[ScriptWorkspace] No script returned; keeping last known script in UI');
       }
     } catch (e) {
       console.error('[ScriptWorkspace] Unexpected error:', e);
