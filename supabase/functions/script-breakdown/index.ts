@@ -240,68 +240,104 @@ const CHARACTER_CUE_BANNED = new Set([
   'EVENING', 'DAWN', 'DUSK', 'SUNSET', 'SUNRISE',
 ]);
 
-function extractCharacterCandidatesFull(scriptText: string): { candidates: string[]; stats: { total: number; top10: string[] } } {
+function extractCharacterCandidatesFull(
+  scriptText: string,
+): { candidates: string[]; stats: { total: number; top10: string[] } } {
   const lines = scriptText.split(/\r?\n/);
   const candidateCounts = new Map<string, number>();
-  
+
+  // PASS A: strict-ish speaker cue scan with lookahead (good precision)
   for (let i = 0; i < lines.length - 1; i++) {
     const line = lines[i];
     const trimmed = line.trim();
-    
+
     // Skip empty lines
     if (!trimmed) continue;
-    
+
     // Character cue detection criteria:
-    // a) ALL CAPS (2-40 chars)
-    // b) Followed by dialogue (non-caps line), parenthetical, or blank + dialogue
-    // c) Not a scene heading or transition
-    
+    // a) ALL CAPS (2-50 chars)
+    // b) Followed by something that is NOT a heading/transition (lookahead allows blank line)
+    // c) Not a scene heading, transition, or parenthetical-only line
+
     // Find next non-empty line (lookahead up to 2 lines for blank line handling)
-    let nextContent = '';
-    for (let j = 1; j <= 2 && (i + j) < lines.length; j++) {
-      const candidate = lines[i + j]?.trim() || '';
+    let nextContent = "";
+    for (let j = 1; j <= 2 && i + j < lines.length; j++) {
+      const candidate = lines[i + j]?.trim() || "";
       if (candidate) {
         nextContent = candidate;
         break;
       }
     }
-    
+
     if (
       trimmed === trimmed.toUpperCase() &&
       trimmed.length >= 2 &&
-      trimmed.length <= 40 &&
+      trimmed.length <= 50 &&
       !/^(INT\.|EXT\.|INT\/EXT|I\/E)/i.test(trimmed) &&
       !/^(FADE|CUT|DISSOLVE|SMASH|WIPE|IRIS)/i.test(trimmed) &&
       !/^\([^)]+\)$/.test(trimmed) && // Not a parenthetical-only line
-      nextContent && // Must have content after (can skip 1 blank)
-      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextContent) // Next content not a heading/transition
+      nextContent &&
+      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextContent)
     ) {
       // Normalize: remove parentheticals (V.O.), (O.S.), (CONT'D), etc.
       let charName = trimmed
-        .replace(/\s*\([^)]*\)\s*$/g, '')
-        .replace(/\bCONT['']?D\.?\b/gi, '')
-        .replace(/\bCONT\.?\b/gi, '')
-        .replace(/\bCONTINUED\b/gi, '')
-        .replace(/\s+/g, ' ')
+        .replace(/\s*\([^)]*\)\s*$/g, "")
+        .replace(/\bCONT['']?D\.?\b/gi, "")
+        .replace(/\bCONT\.?\b/gi, "")
+        .replace(/\bCONTINUED\b/gi, "")
+        .replace(/\s+/g, " ")
         .trim();
-      
-      // De-duplicate by canonical key
+
       const canonicalKey = charName.toUpperCase();
-      
+
       // Filter out non-characters
-      if (!charName || charName.length < 2 || charName.length > 35) continue;
+      if (!charName || charName.length < 2 || charName.length > 50) continue;
       if (CHARACTER_CUE_BANNED.has(canonicalKey)) continue;
       if (/^(INT\.|EXT\.)/.test(charName)) continue;
-      
+
       candidateCounts.set(canonicalKey, (candidateCounts.get(canonicalKey) || 0) + 1);
     }
   }
-  
+
+  // PASS B: in-scene cue scan (captures cues that fail lookahead due to PDF/text extraction quirks)
+  // This intentionally shares the same banned list, so it stays reasonably clean.
+  try {
+    const regexScenes = extractScenesFromScript(scriptText);
+    for (const scene of regexScenes) {
+      const present = Array.isArray((scene as any)?.characters_present)
+        ? ((scene as any).characters_present as unknown[])
+        : [];
+
+      for (const rawName of present) {
+        const cleaned = cleanCharacterCue(String(rawName));
+        if (!cleaned) continue;
+
+        const charName = cleaned
+          .replace(/\s*\([^)]*\)\s*$/g, "")
+          .replace(/\bCONT['']?D\.?\b/gi, "")
+          .replace(/\bCONT\.?\b/gi, "")
+          .replace(/\bCONTINUED\b/gi, "")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        const canonicalKey = charName.toUpperCase();
+
+        if (!charName || charName.length < 2 || charName.length > 50) continue;
+        if (CHARACTER_CUE_BANNED.has(canonicalKey)) continue;
+        if (/^(INT\.|EXT\.)/.test(charName)) continue;
+
+        candidateCounts.set(canonicalKey, (candidateCounts.get(canonicalKey) || 0) + 1);
+      }
+    }
+  } catch (e) {
+    console.warn("[script-breakdown] regexScenes character extraction failed", e);
+  }
+
   // Sort by frequency (most dialogue lines first)
   const sorted = Array.from(candidateCounts.entries())
     .sort((a, b) => b[1] - a[1])
     .map(([name]) => name);
-  
+
   return {
     candidates: sorted,
     stats: {
