@@ -71,6 +71,8 @@ interface ScriptData {
     teaser30?: TeaserData;
   };
   characters?: CharacterData[];
+  featured_extras?: CharacterData[];
+  voices?: CharacterData[];
   locations?: LocationData[];
   props?: any[];
   subplots?: SubplotData[];
@@ -188,24 +190,19 @@ export function ScriptSummaryPanelAssisted({
         const parsed = script.parsed_json as any;
         
         // Hydrate characters - handle nested (characters.cast + featured_extras + voices) and flat formats
-        // Also combine all character categories for total count (CAMBIO 4 - no cap)
         let characters: any[] = [];
-        let allCharacterCategories: any[] = [];
+        let featured_extras: any[] = [];
+        let voices: any[] = [];
         
         if (Array.isArray(parsed.characters)) {
           characters = parsed.characters;
-          allCharacterCategories = parsed.characters;
         } else if (parsed.characters && typeof parsed.characters === 'object') {
-          // Nested format: combine all categories
-          const cast = Array.isArray(parsed.characters.cast) ? parsed.characters.cast : [];
-          const featured = Array.isArray(parsed.characters.featured_extras_with_lines) ? parsed.characters.featured_extras_with_lines : [];
-          const voices = Array.isArray(parsed.characters.voices_and_functional) ? parsed.characters.voices_and_functional : [];
-          
-          characters = cast; // UI shows cast as main list
-          allCharacterCategories = [...cast, ...featured, ...voices];
+          // Nested format: get all categories
+          characters = Array.isArray(parsed.characters.cast) ? parsed.characters.cast : [];
+          featured_extras = Array.isArray(parsed.characters.featured_extras_with_lines) ? parsed.characters.featured_extras_with_lines : [];
+          voices = Array.isArray(parsed.characters.voices_and_functional) ? parsed.characters.voices_and_functional : [];
         } else if (Array.isArray(parsed.main_characters)) {
           characters = parsed.main_characters;
-          allCharacterCategories = parsed.main_characters;
         }
         
         // Hydrate locations - handle both nested (locations.base) and flat formats
@@ -227,9 +224,9 @@ export function ScriptSummaryPanelAssisted({
         }
         
         // Compute total characters across ALL categories (cast + featured + voices)
-        const castLen = Array.isArray(parsed.characters?.cast) ? parsed.characters.cast.length : characters.length;
-        const featuredLen = Array.isArray(parsed.characters?.featured_extras_with_lines) ? parsed.characters.featured_extras_with_lines.length : 0;
-        const voicesLen = Array.isArray(parsed.characters?.voices_and_functional) ? parsed.characters.voices_and_functional.length : 0;
+        const castLen = characters.length;
+        const featuredLen = featured_extras.length;
+        const voicesLen = voices.length;
         const totalCharacters = castLen + featuredLen + voicesLen;
         
         // Use counts from parsed_json if available, otherwise compute
@@ -259,12 +256,14 @@ export function ScriptSummaryPanelAssisted({
           synopsis: parsed.synopsis || parsed.logline,
           episodes: parsed.episodes || [],
           teasers: parsed.teasers,
-          characters, // Show cast in main list
+          characters,
+          featured_extras,
+          voices,
           locations,
           props,
           subplots: parsed.subplots || [],
           plot_twists: parsed.plot_twists || [],
-          counts, // Use the full counts object
+          counts,
         });
       }
 
@@ -893,7 +892,7 @@ export function ScriptSummaryPanelAssisted({
           <CollapsibleContent>
             <Card className="mt-3 border-dashed">
               <CardContent className="py-4 space-y-4">
-                {/* Characters - Categorized */}
+              {/* Characters - Cast (Main) */}
                 {scriptData.characters && scriptData.characters.length > 0 && (() => {
                   const protagonists = scriptData.characters.filter(c => c.role === 'protagonist');
                   const antagonists = scriptData.characters.filter(c => c.role === 'antagonist');
@@ -910,7 +909,7 @@ export function ScriptSummaryPanelAssisted({
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <Users className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm">Personajes ({scriptData.characters.length})</span>
+                        <span className="font-medium text-sm">Cast Principal ({scriptData.characters.length})</span>
                       </div>
                       <div className="space-y-2">
                         {protagonists.length > 0 && (
@@ -962,6 +961,36 @@ export function ScriptSummaryPanelAssisted({
                   );
                 })()}
 
+                {/* Featured Extras with Lines */}
+                {scriptData.featured_extras && scriptData.featured_extras.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <UserPlus className="h-4 w-4 text-amber-500" />
+                      <span className="font-medium text-sm">Extras con Diálogo ({scriptData.featured_extras.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.featured_extras.map((char, i) => (
+                        <Badge key={i} variant="outline" className="text-xs border-amber-500/50 text-amber-600">{char.name}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Voices and Functional */}
+                {scriptData.voices && scriptData.voices.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users2 className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium text-sm">Voces y Funcionales ({scriptData.voices.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.voices.map((char, i) => (
+                        <Badge key={i} variant="outline" className="text-xs border-blue-500/50 text-blue-600">{char.name}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Locations */}
                 {scriptData.locations && scriptData.locations.length > 0 && (
                   <div>
@@ -973,6 +1002,24 @@ export function ScriptSummaryPanelAssisted({
                       {scriptData.locations.map((loc, i) => (
                         <Badge key={i} variant="outline" className="text-xs">{loc.name}</Badge>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Props */}
+                {scriptData.props && scriptData.props.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Box className="h-4 w-4 text-green-500" />
+                      <span className="font-medium text-sm">Props / Attrezzo ({scriptData.props.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.props.map((prop, i) => {
+                        const propName = typeof prop === 'string' ? prop : prop.name;
+                        return (
+                          <Badge key={i} variant="outline" className="text-xs border-green-500/50 text-green-600">{propName}</Badge>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
