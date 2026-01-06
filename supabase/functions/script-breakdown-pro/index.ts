@@ -18,51 +18,56 @@ interface BreakdownProRequest {
 // ═══════════════════════════════════════════════════════════════════════════════
 const PRODUCTION_ANALYST_PROMPT = `You are a PROFESSIONAL SCRIPT BREAKDOWN ANALYST (film/TV production).
 
-DOCUMENT PRIORITY (CRITICAL):
-If multiple document types exist (outline, treatment, synopsis, bible, screenplay):
-1. ALWAYS prioritize the document with "INT./EXT." scene headings
-2. This looks like a SCREENPLAY: contains scene headings, character dialogue blocks, action lines
-3. Ignore outlines/synopses/treatments for counts and structure
-4. If no screenplay format found, analyze as narrative document and flag it
-
 ═══════════════════════════════════════════════════════════════════════════════
-DEFINITIONS (STRICT - FOLLOW EXACTLY):
+TASK: Script breakdown. Count scenes and extract data.
 ═══════════════════════════════════════════════════════════════════════════════
 
-SCENE = Each unique scene heading line starting with INT./EXT./INT-EXT counts as ONE scene.
-        Do NOT group scenes. Count every single heading.
+STEP 1 - COUNT SCENES (CRITICAL - DO THIS FIRST):
+Search for EVERY line starting with "INT." or "EXT." (including "INT/EXT", "I/E").
+Each one = 1 scene. You MUST list them all.
 
-CHARACTER ROLES (by narrative weight):
+Example from a typical script:
+- "INT. CASA DEL DIRECTOR – NOCHE" = scene 1
+- "EXT. CASA DEL DIRECTOR – NOCHE" = scene 2  
+- "INT. COBERTIZO – NOCHE" = scene 3
+- etc.
+
+Count ALL of them. Do NOT return 0 or a low number if there are more headings.
+scenes.total MUST match the exact number of INT./EXT. lines found.
+
+STEP 2 - EXTRACT METADATA:
+From the beginning of the script (before first INT./EXT.):
+- Title (look for title page)
+- Writers/Authors
+- Draft version
+- Date
+
+STEP 3 - EXTRACT CHARACTERS:
+Every name in UPPERCASE before dialogue = character.
+Example: "MIGUEL" and "EL DIRECTOR" are characters.
+Classify them by narrative weight:
 - PROTAGONIST: Drives the main story, has a full character arc, appears in most scenes
-- CO_PROTAGONIST: Has significant independent arc, shares narrative weight with protagonist
-- SECONDARY: Recurring character that affects plot across multiple scenes (5+ scenes)
+- CO_PROTAGONIST: Has significant independent arc, shares narrative weight
+- SECONDARY: Recurring character that affects plot (5+ scenes)
 - MINOR: Appears in 2-4 scenes with some dialogue
-- BACKGROUND: Extras, crowd, non-speaking or single-line characters
+- BACKGROUND: Extras, crowd, non-speaking
 
-KEY PROP: Object that is recurring (3+ scenes), iconic, symbolic, or plot-critical
-SETPIECE: Standout sequence - action, chase, musical number, confrontation, emotional climax, montage
+STEP 4 - EXTRACT LOCATIONS:
+From scene headings. Example: "CASA DEL DIRECTOR", "COBERTIZO", "CALLE"
+List each unique location with its INT/EXT variants.
 
-═══════════════════════════════════════════════════════════════════════════════
-EXTRACTION TASKS (DO IN ORDER):
-═══════════════════════════════════════════════════════════════════════════════
+STEP 5 - EXTRACT KEY PROPS:
+Objects important to plot: weapons, documents, vehicles, devices, etc.
+Mark importance as: critical (plot-essential) | high (recurring) | medium (notable)
 
-A) LITERAL EXTRACTION (from screenplay text only):
-   1. Extract ALL scene headings - count them individually (do not group)
-   2. Extract character list (all speaking + key non-speaking)
-   3. Extract unique locations from scene headings
-   4. Extract key props (recurring, iconic, plot-critical objects)
-   5. Detect setpieces from action sequences
+STEP 6 - IDENTIFY SETPIECES:
+Standout sequences: action, chase, musical, confrontation, emotional climax, montage
 
-B) NARRATIVE INFERENCE (based on extracted evidence):
-   1. Identify protagonist(s) with 1-sentence justification
-   2. Identify co-protagonist(s) if any
-   3. Classify all other characters by role weight
-
-C) PRODUCTION SIGNALS:
-   - Dialogue density: low (under 40%) | medium (40-60%) | high (over 60%)
-   - Cast size: small (<10) | medium (10-25) | large (>25)
-   - Complexity: low | medium | high (based on stunts, VFX, locations, night shoots)
-   - Safety flags: cars, weapons, fire, water, heights, pyro, animals, children
+STEP 7 - PRODUCTION SIGNALS:
+- Dialogue density: low (under 40%) | medium (40-60%) | high (over 60%)
+- Cast size: small (<10) | medium (10-25) | large (>25)
+- Complexity: low | medium | high
+- Safety flags: cars, weapons, fire, water, heights, pyro, animals, children
 
 ═══════════════════════════════════════════════════════════════════════════════
 OUTPUT FORMAT (STRICT JSON):
@@ -75,11 +80,18 @@ Return ONLY valid JSON with this exact structure:
     "confidence": "high|medium|low",
     "reason": "why this classification"
   },
+  "metadata": {
+    "title": "string or null",
+    "writers": ["array of writer names"],
+    "draft": "string or null",
+    "date": "string or null"
+  },
   "counts": {
     "scenes": number,
     "locations": number,
     "characters": number
   },
+  "scene_list": ["INT. LOCATION - TIME", "EXT. LOCATION - TIME", ...],
   "characters": {
     "protagonists": [
       {"name": "string", "reason": "1-sentence justification", "scenes_count": number}
@@ -135,14 +147,13 @@ Return ONLY valid JSON with this exact structure:
 }
 
 ═══════════════════════════════════════════════════════════════════════════════
-QUALITY RULES (MANDATORY):
+CRITICAL RULES:
 ═══════════════════════════════════════════════════════════════════════════════
-- Do NOT invent scenes, characters, props, or locations
-- Never return scenes: 0 unless the screenplay format is truly missing
-- Count EVERY scene heading individually
-- If uncertain about something, mark in notes rather than guessing
-- No promotional language or clichés in synopsis
-- Be exhaustive: extract ALL characters, not just main ones`;
+1. counts.scenes MUST equal scene_list.length
+2. Do NOT return scenes: 0 if the script has INT./EXT. headings
+3. Do NOT invent scenes, characters, props, or locations
+4. Be exhaustive: extract ALL characters and ALL scene headings
+5. If you found 11 scene headings, total must be 11, not 2 or 0`;
 
 const BREAKDOWN_TOOL = {
   type: 'function' as const,
