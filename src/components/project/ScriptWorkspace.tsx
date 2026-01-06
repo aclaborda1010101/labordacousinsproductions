@@ -508,12 +508,19 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     return { quality, score: Math.max(0, score), issues, suggestions };
   };
 
-  // Calculate dynamic timeout based on file size
+  // Calculate dynamic timeout based on file size (pages ≈ KB/3.5)
+  // Extended timeouts for large Hollywood scripts (100+ pages)
   const getTimeoutForFileSize = (fileSizeBytes: number): number => {
-    if (fileSizeBytes < 100000) return 90000;      // <100KB: 1.5 min
-    if (fileSizeBytes < 300000) return 150000;     // 100-300KB: 2.5 min
-    if (fileSizeBytes < 600000) return 240000;     // 300-600KB: 4 min
-    return 300000;                                  // >600KB: 5 min
+    const fileSizeKB = fileSizeBytes / 1024;
+    const estimatedPages = Math.ceil(fileSizeKB / 3.5);
+    
+    // Base: 1.5s per page + buffer for large scripts
+    if (estimatedPages < 30) return 90000;          // <30 pages: 1.5 min
+    if (estimatedPages < 60) return 150000;         // 30-60 pages: 2.5 min
+    if (estimatedPages < 100) return 240000;        // 60-100 pages: 4 min
+    if (estimatedPages < 150) return 360000;        // 100-150 pages: 6 min
+    if (estimatedPages < 200) return 480000;        // 150-200 pages: 8 min
+    return 600000;                                   // >200 pages: 10 min
   };
 
   // Animated progress messages during PDF processing

@@ -288,7 +288,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         const controller = new AbortController();
         pdfAbortRef.current = controller;
 
-        const timeoutMs = file.size < 300000 ? 150000 : 300000;
+        // Extended timeouts for large Hollywood scripts (pages ≈ KB/3.5)
+        const fileSizeKB = file.size / 1024;
+        const estimatedPages = Math.ceil(fileSizeKB / 3.5);
+        const timeoutMs = estimatedPages < 60 ? 150000 
+          : estimatedPages < 100 ? 240000 
+          : estimatedPages < 150 ? 360000 
+          : estimatedPages < 200 ? 480000 
+          : 600000; // >200 pages: 10 min
 
         const invokeParse = () =>
           invokeWithTimeout(
