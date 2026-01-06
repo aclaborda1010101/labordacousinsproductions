@@ -340,6 +340,8 @@ function extractCharacterCandidatesFull(
       if (CHARACTER_CUE_BANNED.has(canonicalKey)) continue;
       if (isSceneHeading(charName)) continue;
       if (isActionOrTechnicalLine(charName)) continue;
+      // 🛡️ HARD FILTER: Reject pure numbers (scene numbers like "102", "114")
+      if (/^\d+$/.test(charName.trim())) continue;
 
       candidateCounts.set(canonicalKey, (candidateCounts.get(canonicalKey) || 0) + 1);
     }
@@ -376,6 +378,8 @@ function extractCharacterCandidatesFull(
         if (CHARACTER_CUE_BANNED.has(canonicalKey)) continue;
         if (isSceneHeading(charName)) continue;
         if (isActionOrTechnicalLine(charName)) continue;
+        // 🛡️ HARD FILTER: Reject pure numbers (scene numbers like "102", "114")
+        if (/^\d+$/.test(charName.trim())) continue;
 
         candidateCounts.set(canonicalKey, (candidateCounts.get(canonicalKey) || 0) + 1);
       }
