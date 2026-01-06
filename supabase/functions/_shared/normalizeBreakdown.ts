@@ -1,17 +1,19 @@
 /**
- * Canonical Breakdown Normalizer v2.0
+ * Canonical Breakdown Normalizer v3.0
  * Converts any LLM output shape into a stable schema for UI consumption.
  * 
  * Guarantees:
- * - root.title always present (extracted from front-matter before first INT/EXT)
+ * - root.title always present via resolveTitle() with strict precedence
  * - characters separated into cast / featured_extras_with_lines / voices_and_functional
  * - collapses CONT'D duplicates
  * - counts always present and consistent
  * - props minimum enforcement for features (with warnings)
  * 
- * v2.0 HARD RULES:
+ * v3.0 HARD RULES:
+ * - resolveTitle(): project.title > metadata.title (if not placeholder) > filename > "Untitled Script"
+ * - character_candidates_full extracted deterministically from FULL script
  * - If scenes_total > 0 and locations_base_total === 0 → rebuild from scene headings
- * - If scenes_total > 50 and cast_characters_total === 0 → extract from raw text
+ * - If cast < minExpected for scene count → inject from character_candidates
  * - Never overwrite good data with empty arrays
  */
 
@@ -19,6 +21,38 @@ type AnyObj = Record<string, unknown>;
 
 const TITLE_MAX_WORDS = 12;
 const TITLE_MAX_CHARS = 80;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PLACEHOLDER TITLES - These should NEVER be used as canonical_title
+// ═══════════════════════════════════════════════════════════════════════════════
+const PLACEHOLDER_TITLES = [
+  "GADGET", "© 2022 SYNCOPY", "SYNCOPY", "UNTITLED", "DRAFT", "SCREENPLAY", "SCRIPT",
+  "FINAL DRAFT", "REVISED", "NEW PROJECT", "PROJECT", "SHOOTING SCRIPT", "FINAL",
+  "WHITE", "BLUE", "PINK", "YELLOW", "GREEN", "BUFF", "GOLDENROD", "SALMON",
+  "CHERRY", "TAN", "2ND BLUE", "2ND PINK", "2ND YELLOW", "2ND GREEN",
+  "PRODUCTION DRAFT", "SHOOTING DRAFT", "REVISED DRAFT",
+];
+
+const BAD_TITLE_PATTERNS = /^(©|COPYRIGHT|\d{4}$|SYNCOPY|WARNER|UNIVERSAL|NETFLIX|DISNEY|PARAMOUNT|SONY|FOX|MGM|LIONSGATE|A24|FOCUS|COLUMBIA|DREAMWORKS|AMBLIN|LEGENDARY|NEW LINE|HBO|AMAZON|APPLE|SEARCHLIGHT|WORKING TITLE)/i;
+
+function isPlaceholderTitle(s: string): boolean {
+  if (!s || typeof s !== "string") return true;
+  const upper = s.toUpperCase().trim();
+  
+  // Check exact matches
+  if (PLACEHOLDER_TITLES.includes(upper)) return true;
+  
+  // Check bad patterns (copyright, studios, years)
+  if (BAD_TITLE_PATTERNS.test(s.trim())) return true;
+  
+  // Check if it's mostly punctuation/symbols
+  if (/^[©®™\d\s\-_.]+$/.test(s.trim())) return true;
+  
+  // Check for common draft indicators
+  if (/\b(DRAFT|REVISION|REV\.?)\s*\d*\s*$/i.test(s.trim())) return true;
+  
+  return false;
+}
 
 function isFeatureLength(scenesTotal: number): boolean {
   return scenesTotal >= 80;
@@ -41,40 +75,87 @@ function isProbablyTitle(s: unknown): s is string {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PASO 3: TITLE EXTRACTION - From front-matter before first INT/EXT
+// TITLE CANONICALIZATION - resolveTitle() with strict precedence
 // ═══════════════════════════════════════════════════════════════════════════════
-function pickTitle(input: AnyObj, filename?: string): string {
-  // First try explicit fields
-  const candidates = [
-    (input?.title as string | undefined),
-    ((input?.metadata as AnyObj)?.title as string | undefined),
-    (((input?.breakdown_pro as AnyObj)?.metadata as AnyObj)?.title as string | undefined),
-    ((input?.outline as AnyObj)?.title as string | undefined),
-    ((input?.script as AnyObj)?.title as string | undefined),
-  ];
+interface TitleContext {
+  projectTitle?: string;
+  metadataTitle?: string;
+  filename?: string;
+  rawText?: string;
+}
 
-  for (const c of candidates) {
-    if (isProbablyTitle(c) && !isGenericTitle(c)) return c.trim();
-  }
+interface ResolvedTitle {
+  canonical_title: string;
+  working_title?: string;
+  source: 'project' | 'metadata' | 'filename' | 'frontmatter' | 'fallback';
+}
 
-  // Try to extract from front-matter (text BEFORE first INT./EXT.)
-  const rawText: string | undefined =
-    (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
+function toTitleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+function resolveTitle(ctx: TitleContext): ResolvedTitle {
+  let working_title: string | undefined;
   
-  if (typeof rawText === "string" && rawText.trim()) {
-    // Find first scene heading
-    const firstSceneMatch = rawText.match(/^(INT\.|EXT\.|INT\/EXT)/im);
+  // 1) project.title (if exists and not empty/placeholder)
+  if (ctx.projectTitle && ctx.projectTitle.trim() && !isPlaceholderTitle(ctx.projectTitle)) {
+    return { 
+      canonical_title: ctx.projectTitle.trim(), 
+      working_title,
+      source: 'project' 
+    };
+  }
+  
+  // 2) metadata.title (if not placeholder)
+  if (ctx.metadataTitle && ctx.metadataTitle.trim()) {
+    if (isPlaceholderTitle(ctx.metadataTitle)) {
+      // Save as working_title but don't use as canonical
+      working_title = ctx.metadataTitle.trim();
+    } else if (isProbablyTitle(ctx.metadataTitle)) {
+      return { 
+        canonical_title: ctx.metadataTitle.trim(), 
+        working_title,
+        source: 'metadata' 
+      };
+    }
+  }
+  
+  // 3) filename -> Title Case
+  if (ctx.filename && ctx.filename.trim()) {
+    const cleanName = ctx.filename
+      .replace(/\.(pdf|txt|fountain|fdx|docx?)$/i, "")
+      .replace(/[-_]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    
+    if (cleanName && cleanName.length >= 2 && !isPlaceholderTitle(cleanName)) {
+      return { 
+        canonical_title: toTitleCase(cleanName), 
+        working_title,
+        source: 'filename' 
+      };
+    }
+  }
+  
+  // 4) Try to extract from front-matter (before first INT/EXT)
+  if (ctx.rawText && typeof ctx.rawText === "string" && ctx.rawText.trim()) {
+    const firstSceneMatch = ctx.rawText.match(/^(INT\.|EXT\.|INT\/EXT)/im);
     const frontMatter = firstSceneMatch 
-      ? rawText.slice(0, firstSceneMatch.index).trim()
-      : rawText.slice(0, 2000); // fallback: first 2000 chars
+      ? ctx.rawText.slice(0, firstSceneMatch.index).trim()
+      : ctx.rawText.slice(0, 2000);
     
     const lines = frontMatter.split("\n").map(l => l.trim()).filter(Boolean);
     
     for (const line of lines) {
       // Skip obvious non-title lines
-      if (/^(FADE IN|FADE OUT|CUT TO|WRITTEN BY|BY\s|DRAFT|REVISION)/i.test(line)) continue;
+      if (/^(FADE IN|FADE OUT|CUT TO|WRITTEN BY|BY\s|DRAFT|REVISION|BASED ON)/i.test(line)) continue;
       if (/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}/.test(line)) continue; // dates
       if (/^page\s+\d/i.test(line)) continue;
+      if (isPlaceholderTitle(line)) continue;
       
       const isAllCapsish =
         line.length <= TITLE_MAX_CHARS &&
@@ -82,45 +163,22 @@ function pickTitle(input: AnyObj, filename?: string): string {
         line === line.toUpperCase() &&
         !/^INT\.|^EXT\.|^INT\/EXT/i.test(line);
       
-      if (isAllCapsish && isProbablyTitle(line) && !isGenericTitle(line)) {
-        return line.trim();
+      if (isAllCapsish && isProbablyTitle(line)) {
+        return { 
+          canonical_title: line.trim(), 
+          working_title,
+          source: 'frontmatter' 
+        };
       }
     }
   }
-
-  // Fallback: use filename if provided and valid
-  if (filename && typeof filename === "string") {
-    const cleanName = filename
-      .replace(/\.(pdf|txt|fountain|fdx)$/i, "")
-      .replace(/[-_]/g, " ")
-      .trim();
-    if (isProbablyTitle(cleanName) && !isGenericTitle(cleanName)) {
-      return cleanName;
-    }
-  }
-
-  // Last resort: return first candidate even if generic
-  for (const c of candidates) {
-    if (isProbablyTitle(c)) return c.trim();
-  }
-
-  return "";
-}
-
-function isGenericTitle(s: string): boolean {
-  const generic = [
-    "GADGET", "UNTITLED", "SCRIPT", "SCREENPLAY", "DRAFT", 
-    "FINAL DRAFT", "REVISED", "NEW PROJECT", "PROJECT",
-    "SHOOTING SCRIPT", "FINAL", "WHITE", "BLUE", "PINK", "YELLOW"
-  ];
-  const upper = s.toUpperCase().trim();
-  if (generic.includes(upper)) return true;
   
-  // Also reject copyright lines, studio names, dates
-  const badPatterns = /^(©|COPYRIGHT|\d{4}|SYNCOPY|WARNER|UNIVERSAL|NETFLIX|DISNEY|PARAMOUNT|SONY|FOX|MGM|LIONSGATE|A24|FOCUS)/i;
-  if (badPatterns.test(s.trim())) return true;
-  
-  return false;
+  // 5) Fallback
+  return { 
+    canonical_title: "Untitled Script", 
+    working_title,
+    source: 'fallback' 
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -299,47 +357,57 @@ function normalizeCharacterName(nameRaw: unknown): string {
     .replace(/\bCONT['']?D\.?\b/gi, "")
     .replace(/\bCONT\.?\b/gi, "")
     .replace(/\bCONTINUED\b/gi, "")
-    .replace(/\((V\.O\.|O\.S\.|O\.C\.|VO|OS|OC|ON SCREEN|OFF)\)/gi, "")
+    .replace(/\((V\.O\.|O\.S\.|O\.C\.|VO|OS|OC|ON SCREEN|OFF|CONT'D|CONTD)\)/gi, "")
+    .replace(/\(V\.O\.\)/gi, "")
+    .replace(/\(O\.S\.\)/gi, "")
     .replace(/\s+/g, " ")
     .trim();
 
   return n;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// CHARACTER CLASSIFICATION - Generic role detection
+// ═══════════════════════════════════════════════════════════════════════════════
+const VOICE_FUNCTIONAL_KEYWORDS = [
+  "VOICE", "RADIO", "ANNOUNCER", "PA SYSTEM", "INTERCOM", "NARRATOR",
+  "SUPER:", "TITLE:", "CHYRON", "TELEPHONE", "PHONE", "LOUDSPEAKER",
+  "SPEAKER", "BROADCAST", "RECORDING", "TAPE", "TV ", "TELEVISION",
+];
+
+const GENERIC_ROLE_KEYWORDS = [
+  "SOLDIER", "AIDE", "SECRETARY", "STUDENT", "SCIENTIST", "OFFICER",
+  "GUARD", "DRIVER", "WAITER", "BARTENDER", "DOCTOR", "NURSE",
+  "REPORTER", "POLICEMAN", "POLICE", "AGENT", "CLERK", "JUDGE",
+  "SENATOR", "CONGRESSMAN", "TECH", "OPERATOR", "MR.", "MRS.",
+  "MAN", "WOMAN", "BOY", "GIRL", "KID", "WORKER", "CROWD", "GROUP",
+  "STAFF", "CREW", "ATTENDANT", "OFFICIAL", "LAWYER", "WITNESS",
+  "PILOT", "COP", "DETECTIVE", "INSPECTOR", "CHIEF", "CAPTAIN",
+  "GENERAL", "COLONEL", "MAJOR", "LIEUTENANT", "SERGEANT", "CORPORAL",
+  "PRIVATE", "SAILOR", "MARINE", "AIRMAN", "MP", "SECURITY",
+];
+
 function isVoiceOrFunctional(name: string): boolean {
   const u = name.toUpperCase();
-  return (
-    u.includes("VOICE") ||
-    u.includes("RADIO") ||
-    u.includes("ANNOUNCER") ||
-    u.includes("PA SYSTEM") ||
-    u.includes("INTERCOM") ||
-    u.includes("NARRATOR") ||
-    u.includes("SUPER:") ||
-    u.includes("TITLE:") ||
-    u.includes("CHYRON")
-  );
+  return VOICE_FUNCTIONAL_KEYWORDS.some(k => u.includes(k));
 }
 
 function isFeaturedExtraRole(name: string): boolean {
   const u = name.toUpperCase();
-  const roleKeywords = [
-    "SOLDIER", "AIDE", "SECRETARY", "STUDENT", "SCIENTIST", "OFFICER",
-    "GUARD", "DRIVER", "WAITER", "BARTENDER", "DOCTOR", "NURSE",
-    "REPORTER", "POLICEMAN", "POLICE", "AGENT", "CLERK", "JUDGE",
-    "SENATOR", "CONGRESSMAN", "TECH", "OPERATOR", "MR.", "MRS.",
-    "MAN", "WOMAN", "BOY", "GIRL", "KID", "WORKER"
-  ];
-
+  
+  // Must be ALL CAPS (screenplay convention for extras)
   const looksLabel = u === name && name.length <= 35 && !/[a-z]/.test(name);
-  const hasKeyword = roleKeywords.some(k => u.includes(k));
+  if (!looksLabel) return false;
+  
+  // Comma with proper noun = named character, not extra
   const hasCommaProper = /,/.test(name) && /[A-Z][a-z]/.test(name);
   if (hasCommaProper) return false;
-
-  // Numbered roles like "SOLDIER #1"
-  const hasNumber = /#?\d+/.test(name);
-
-  return looksLabel && (hasKeyword || hasNumber);
+  
+  const hasGenericKeyword = GENERIC_ROLE_KEYWORDS.some(k => u.includes(k));
+  const hasNumber = /#?\d+/.test(name); // "SOLDIER #1", "GUARD 2"
+  const isGenericPair = /^(MAN|WOMAN|BOY|GIRL)\s*\d*$/i.test(name);
+  
+  return hasGenericKeyword || hasNumber || isGenericPair;
 }
 
 function uniqueBy<T>(arr: T[], keyFn: (x: T) => string): T[] {
@@ -439,7 +507,7 @@ export interface NormalizedBreakdown {
   [key: string]: unknown;
 }
 
-export function normalizeBreakdown(input: AnyObj, filename?: string): NormalizedBreakdown {
+export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitle?: string): NormalizedBreakdown {
   const out: AnyObj = { ...input };
   const warnings: BreakdownWarning[] = [];
 
@@ -453,14 +521,42 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
   (out.scenes as AnyObj).total = scenesTotal;
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PASO 3: Title (root) - from front-matter before first INT/EXT
+  // TITLE CANONICALIZATION (P0) - resolveTitle() with strict precedence
   // ═══════════════════════════════════════════════════════════════════════════
-  out.title = pickTitle(input, filename);
-
-  // Metadata passthrough
+  const rawText: string | undefined =
+    (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
+  
+  const metadataTitle = 
+    (input?.title as string) ||
+    ((input?.metadata as AnyObj)?.title as string) ||
+    (((input?.breakdown_pro as AnyObj)?.metadata as AnyObj)?.title as string);
+  
+  const resolved = resolveTitle({
+    projectTitle,
+    metadataTitle,
+    filename,
+    rawText,
+  });
+  
+  out.title = resolved.canonical_title;
+  out._title_source = resolved.source;
+  
+  // Metadata passthrough + working_title preservation
   out.metadata = (out.metadata as AnyObj) || {};
-  if (!(out.metadata as AnyObj).title && out.title) {
-    (out.metadata as AnyObj).title = out.title;
+  (out.metadata as AnyObj).title = resolved.canonical_title;
+  
+  if (resolved.working_title) {
+    (out.metadata as AnyObj).working_title = resolved.working_title;
+    console.log(`[normalizeBreakdown] Working title preserved: "${resolved.working_title}" (not shown as main title)`);
+  }
+  
+  console.log(`[normalizeBreakdown] Title resolved: "${resolved.canonical_title}" (source: ${resolved.source})`);
+  
+  if (resolved.source === 'fallback') {
+    warnings.push({
+      code: "TITLE_FALLBACK",
+      message: `Could not determine script title from project, metadata, or filename. Using "${resolved.canonical_title}".`,
+    });
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -539,10 +635,8 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     .map((c: unknown) => normalizeCharacterName(c))
     .filter((n): n is string => !!n);
 
-  const rawText: string | undefined =
-    (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
-
   // Used to ensure the dashboard doesn't show 0 when candidates exist
+  // Note: rawText already declared above for title resolution
   const candidatesForPromotion: string[] = characterCandidatesNormalized.length
     ? characterCandidatesNormalized
     : typeof rawText === "string" && rawText.trim()
