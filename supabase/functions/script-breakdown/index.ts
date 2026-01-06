@@ -400,29 +400,49 @@ function normalizeBreakdown(data: any, scriptText: string): any {
 
   const asArray = (v: any) => (Array.isArray(v) ? v : []);
 
+  // --- Pre-count expected scenes from script text ---
+  const expectedHeadings: string[] = [];
+  const scriptLines = scriptText.split(/\r?\n/);
+  for (const line of scriptLines) {
+    const trimmed = line.trim();
+    if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
+      expectedHeadings.push(trimmed);
+    }
+  }
+  const expectedSceneCount = expectedHeadings.length;
+  console.log(`[script-breakdown] Expected scene count from regex: ${expectedSceneCount}`);
+
   // --- Scenes ---
   const aiScenes = asArray(out.scenes);
 
   // For long scripts, the model often returns a tiny sample of scenes due to output limits.
   // If that happens, prefer a deterministic regex scene pass (sluglines + character cues).
-  const regexScenes = isLongScript ? extractScenesFromScript(scriptText) : [];
+  const regexScenes = extractScenesFromScript(scriptText);
+
+  // Decide whether to use AI scenes or regex fallback
+  const aiSceneCountTooLow = expectedSceneCount > 0 && aiScenes.length < expectedSceneCount * 0.5;
 
   if (aiScenes.length === 0) {
     console.warn('[script-breakdown] No scenes returned by model, falling back to regex extraction');
     out.scenes = regexScenes;
-  } else if (
-    isLongScript &&
-    regexScenes.length >= 20 &&
-    aiScenes.length < Math.min(12, Math.ceil(regexScenes.length * 0.15))
-  ) {
-    console.warn('[script-breakdown] Too few scenes returned by model for long script; using regex scene extraction instead', {
+  } else if (aiSceneCountTooLow) {
+    console.warn('[script-breakdown] AI returned too few scenes, using regex fallback', {
       aiScenes: aiScenes.length,
+      expectedScenes: expectedSceneCount,
       regexScenes: regexScenes.length,
     });
-    out.scenes = regexScenes;
+    // Use regex scenes if they're closer to expected count
+    if (regexScenes.length >= aiScenes.length) {
+      out.scenes = regexScenes;
+    } else {
+      out.scenes = aiScenes;
+    }
   } else {
     out.scenes = aiScenes;
   }
+
+  console.log(`[script-breakdown] Final scene count: ${out.scenes.length} (expected: ${expectedSceneCount})`);
+
 
   // --- Derive characters/locations from scenes (works for both AI scenes and regex scenes) ---
   const derivedCharMap = new Map<string, { name: string; scenes_count: number }>();
@@ -576,10 +596,44 @@ async function processScriptBreakdownInBackground(
     if (!ANTHROPIC_API_KEY) {
       throw new Error('ANTHROPIC_API_KEY not configured');
     }
-
     const isLongScript = processedScriptText.length > 40000;
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PRE-COUNT SCENE HEADINGS (critical for accurate scene counting)
+    // ══════════════════════════════════════════════════════════════════════
+    const headingLines: string[] = [];
+    const scriptLines = processedScriptText.split(/\r?\n/);
+    for (const line of scriptLines) {
+      const trimmed = line.trim();
+      if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
+        headingLines.push(trimmed);
+      }
+    }
+    console.log(`[script-breakdown-bg] PRE-COUNTED ${headingLines.length} scene headings`);
+
     const userPrompt = `
-DESGLOSE DE PRODUCCIÓN SOLICITADO:
+═══════════════════════════════════════════════════════════════════════════════
+SCENE COUNTING RULES (CRITICAL - READ BEFORE ANYTHING ELSE)
+═══════════════════════════════════════════════════════════════════════════════
+
+I have PRE-SCANNED this script and found EXACTLY ${headingLines.length} scene headings (lines starting with INT./EXT.).
+
+YOUR SCENES ARRAY MUST CONTAIN EXACTLY ${headingLines.length} ENTRIES.
+
+Here are the scene headings I found:
+${headingLines.map((h, i) => `${i + 1}. ${h}`).join('\n')}
+
+RULES:
+- RULE 1: Same location + different time = DIFFERENT scenes
+  Example: "INT. COBERTIZO – NOCHE" and "INT. COBERTIZO – DÍA" are TWO scenes
+- RULE 2: Same location + INT vs EXT = DIFFERENT scenes
+  Example: "INT. CASA – NOCHE" and "EXT. CASA – NOCHE" are TWO scenes
+- RULE 3: Do NOT merge, group, or summarize scenes. List ALL ${headingLines.length} individually.
+- RULE 4: If your scenes array has fewer than ${headingLines.length} entries, you made an error.
+
+═══════════════════════════════════════════════════════════════════════════════
+DESGLOSE DE PRODUCCIÓN SOLICITADO
+═══════════════════════════════════════════════════════════════════════════════
 
 PROJECT ID: ${projectId}
 IDIOMA DE RESPUESTA: ${language || 'es-ES'}
@@ -593,6 +647,7 @@ Realiza un desglose EXHAUSTIVO de este guion. Extrae TODAS las entidades de prod
 
 IMPORTANTE:
 - Sé exhaustivo: no dejes ningún personaje, prop o localización sin detectar
+- CUENTA EXACTAMENTE ${headingLines.length} ESCENAS (una por cada INT./EXT. encontrado)
 - Mantén consistencia en los nombres (mismo personaje = mismo nombre exacto)
 - Detecta variantes de localizaciones y agrúpalas
 - Identifica riesgos de continuidad
