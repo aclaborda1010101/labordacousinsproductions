@@ -310,24 +310,142 @@ async function getUserIdFromRequest(req: Request): Promise<string | null> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// HELPER: Call Lovable AI Gateway (OpenAI-compatible) and parse JSON safely
+// HELPER: Call Anthropic with diagnostic logging + Gateway fallback
 // ═══════════════════════════════════════════════════════════════════════════════
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
+// Model mapping: Anthropic -> Gateway equivalent
+const MODEL_MAP: Record<string, { anthropic: string; gateway: string }> = {
+  sonnet: { anthropic: 'claude-3-5-sonnet-20241022', gateway: 'google/gemini-2.5-pro' },
+  haiku: { anthropic: 'claude-3-5-haiku-20241022', gateway: 'google/gemini-2.5-flash' },
+};
+
 type CallAIJsonArgs = {
-  model: string;
+  modelKey: 'sonnet' | 'haiku';
   systemPrompt: string;
   userPrompt: string;
   maxTokens: number;
   label: string;
 };
 
-async function callAIJson({ model, systemPrompt, userPrompt, maxTokens, label }: CallAIJsonArgs): Promise<any> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) {
-    throw new Error('LOVABLE_API_KEY not configured');
-  }
+type ProviderInfo = {
+  provider: 'anthropic' | 'gateway';
+  model: string;
+  fallback_used: boolean;
+  anthropic_error?: string;
+};
 
+async function callAIJson({ modelKey, systemPrompt, userPrompt, maxTokens, label }: CallAIJsonArgs): Promise<{ data: any; providerInfo: ProviderInfo }> {
+  const models = MODEL_MAP[modelKey];
+  const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DIAGNOSTIC LOGGING
+  // ═══════════════════════════════════════════════════════════════════════════
+  console.log(`[${label}] DIAGNOSTIC:`, {
+    provider_attempt: 'anthropic',
+    endpoint: ANTHROPIC_API_URL,
+    model: models.anthropic,
+    anthropic_key_present: !!ANTHROPIC_API_KEY,
+    anthropic_key_length: ANTHROPIC_API_KEY?.length || 0,
+    lovable_key_present: !!LOVABLE_API_KEY,
+    supabase_project: Deno.env.get('SUPABASE_URL')?.split('//')[1]?.split('.')[0] || 'unknown',
+  });
+  
+  let providerInfo: ProviderInfo = {
+    provider: 'anthropic',
+    model: models.anthropic,
+    fallback_used: false,
+  };
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TRY ANTHROPIC FIRST (if key exists)
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (ANTHROPIC_API_KEY) {
+    try {
+      console.log(`[${label}] Calling Anthropic: ${models.anthropic}`);
+      
+      const response = await fetch(ANTHROPIC_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: models.anthropic,
+          max_tokens: maxTokens,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userPrompt }],
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const content = data?.content?.[0]?.text;
+        
+        if (typeof content === 'string' && content.trim()) {
+          console.log(`[${label}] Anthropic SUCCESS: ${content.length} chars`);
+          
+          const parsed = parseJsonSafe<any>(content, label);
+          if (parsed.ok && parsed.json) {
+            return { data: parsed.json, providerInfo };
+          }
+          throw new Error('JSON_PARSE_FAILED');
+        }
+        throw new Error('NO_CONTENT_IN_RESPONSE');
+      }
+      
+      // Anthropic returned error - log details
+      const errorBody = await response.text();
+      console.error(`[${label}] Anthropic ERROR ${response.status}:`, errorBody.slice(0, 500));
+      
+      providerInfo.anthropic_error = `${response.status}: ${errorBody.slice(0, 200)}`;
+      
+      // DON'T fallback for auth errors that need user action
+      if (response.status === 401) {
+        throw new Error(`ANTHROPIC_AUTH_INVALID: Check API key permissions`);
+      }
+      
+    } catch (anthropicError) {
+      const errMsg = anthropicError instanceof Error ? anthropicError.message : String(anthropicError);
+      console.error(`[${label}] Anthropic failed:`, errMsg);
+      providerInfo.anthropic_error = errMsg;
+      
+      // If it's a definitive auth error, don't try gateway
+      if (errMsg.includes('ANTHROPIC_AUTH')) {
+        throw anthropicError;
+      }
+    }
+    
+    console.log(`[${label}] Anthropic failed, falling back to Gateway...`);
+  } else {
+    console.warn(`[${label}] ANTHROPIC_API_KEY not found in secrets, using Gateway directly`);
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FALLBACK TO LOVABLE AI GATEWAY
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (!LOVABLE_API_KEY) {
+    throw new Error('Neither ANTHROPIC_API_KEY nor LOVABLE_API_KEY configured');
+  }
+  
+  providerInfo = {
+    provider: 'gateway',
+    model: models.gateway,
+    fallback_used: !!ANTHROPIC_API_KEY,
+    anthropic_error: providerInfo.anthropic_error,
+  };
+  
+  console.log(`[${label}] DIAGNOSTIC (fallback):`, {
+    provider: 'gateway',
+    endpoint: AI_GATEWAY_URL,
+    model: models.gateway,
+    fallback_reason: providerInfo.anthropic_error || 'no_anthropic_key',
+  });
+  
   const response = await fetch(AI_GATEWAY_URL, {
     method: 'POST',
     headers: {
@@ -335,7 +453,7 @@ async function callAIJson({ model, systemPrompt, userPrompt, maxTokens, label }:
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model,
+      model: models.gateway,
       max_tokens: maxTokens,
       messages: [
         { role: 'system', content: systemPrompt },
@@ -343,39 +461,31 @@ async function callAIJson({ model, systemPrompt, userPrompt, maxTokens, label }:
       ],
     }),
   });
-
+  
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('[callAIJson] Gateway error:', response.status, errorText.slice(0, 400));
-
-    if (response.status === 429) {
-      throw new Error('RATE_LIMIT_EXCEEDED');
-    }
-    if (response.status === 402) {
-      throw new Error('PAYMENT_REQUIRED');
-    }
-
+    console.error(`[${label}] Gateway error:`, response.status, errorText.slice(0, 400));
+    
+    if (response.status === 429) throw new Error('RATE_LIMIT_EXCEEDED');
+    if (response.status === 402) throw new Error('PAYMENT_REQUIRED');
     throw new Error(`AI_GATEWAY_ERROR_${response.status}`);
   }
-
+  
   const data = await response.json();
   const content = data?.choices?.[0]?.message?.content;
+  
   if (typeof content !== 'string' || !content.trim()) {
-    console.error('[callAIJson] No content in gateway response:', JSON.stringify(data)?.slice(0, 500));
-    throw new Error('MODEL_OUTPUT_INVALID');
+    throw new Error('GATEWAY_NO_CONTENT');
   }
-
+  
+  console.log(`[${label}] Gateway SUCCESS: ${content.length} chars`);
+  
   const parsed = parseJsonSafe<any>(content, label);
   if (!parsed.ok || !parsed.json) {
-    console.error('[callAIJson] JSON parse failed:', { label, warnings: parsed.warnings, hash: parsed.rawSnippetHash });
-    throw new Error('MODEL_OUTPUT_INVALID');
+    throw new Error('GATEWAY_JSON_PARSE_FAILED');
   }
-
-  if (parsed.degraded) {
-    console.warn('[callAIJson] Degraded JSON parse:', { label, warnings: parsed.warnings, hash: parsed.rawSnippetHash });
-  }
-
-  return parsed.json;
+  
+  return { data: parsed.json, providerInfo };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -459,23 +569,29 @@ SCRIPT TO ANALYZE:
 ${processedScriptText}
 ---`;
 
-    console.log('[script-breakdown] Phase 1: Starting canonical analysis (gateway)...');
+    console.log('[script-breakdown] Phase 1: Starting canonical analysis (Anthropic -> Gateway fallback)...');
     
     await supabase.from('background_tasks').update({
       progress: 15,
-      description: 'Fase 1: Analizando estructura (IA)...',
+      description: 'Fase 1: Analizando estructura (Anthropic)...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    const canonicalData = await callAIJson({
-      model: 'google/gemini-2.5-pro',
+    const canonicalResult = await callAIJson({
+      modelKey: 'sonnet',
       systemPrompt: SONNET_SYSTEM_PROMPT,
       userPrompt: sonnetUserPrompt,
       maxTokens: 8000,
       label: 'script_breakdown_canonical',
     });
+    
+    const canonicalData = canonicalResult.data;
+    const sonnetProviderInfo = canonicalResult.providerInfo;
 
     console.log('[script-breakdown] Phase 1 complete:', {
+      provider: sonnetProviderInfo.provider,
+      model: sonnetProviderInfo.model,
+      fallback_used: sonnetProviderInfo.fallback_used,
       title: canonicalData.title,
       scenes: canonicalData.scenes?.total || canonicalData.scenes?.list?.length || 0,
       mainChars: canonicalData.characters_main?.length || 0,
@@ -510,7 +626,7 @@ OUTPUT LANGUAGE: ${lang}`;
     const [propsResult, charactersResult, setpiecesResult] = await Promise.allSettled([
       // Props pass
       callAIJson({
-        model: 'google/gemini-2.5-flash',
+        modelKey: 'haiku',
         systemPrompt: HAIKU_PROPS_PROMPT,
         userPrompt: contextForHaiku + `\n\nExtract all production props from this screenplay world.`,
         maxTokens: 3000,
@@ -518,7 +634,7 @@ OUTPUT LANGUAGE: ${lang}`;
       }),
       // Characters pass
       callAIJson({
-        model: 'google/gemini-2.5-flash',
+        modelKey: 'haiku',
         systemPrompt: HAIKU_CHARACTERS_PROMPT,
         userPrompt: contextForHaiku + `\n\nExtract ALL characters categorized properly. Include minor roles.`,
         maxTokens: 3000,
@@ -526,7 +642,7 @@ OUTPUT LANGUAGE: ${lang}`;
       }),
       // Setpieces pass
       callAIJson({
-        model: 'google/gemini-2.5-flash',
+        modelKey: 'haiku',
         systemPrompt: HAIKU_SETPIECES_PROMPT,
         userPrompt: contextForHaiku + `\n\nExtract all setpieces and production flags.`,
         maxTokens: 2000,
@@ -550,9 +666,13 @@ OUTPUT LANGUAGE: ${lang}`;
     }).eq('id', taskId);
 
     // Extract results (use empty objects for failed passes)
-    const propsData = propsResult.status === 'fulfilled' ? propsResult.value : {};
-    const charactersData = charactersResult.status === 'fulfilled' ? charactersResult.value : {};
-    const setpiecesData = setpiecesResult.status === 'fulfilled' ? setpiecesResult.value : {};
+    // Extract results (use empty objects for failed passes)
+    const propsData = propsResult.status === 'fulfilled' ? propsResult.value.data : {};
+    const charactersData = charactersResult.status === 'fulfilled' ? charactersResult.value.data : {};
+    const setpiecesData = setpiecesResult.status === 'fulfilled' ? setpiecesResult.value.data : {};
+    
+    // Collect provider info for telemetry
+    const haikuProviderInfo = propsResult.status === 'fulfilled' ? propsResult.value.providerInfo : null;
 
     // Merge into unified breakdown
     const mergedBreakdown: any = {
@@ -732,6 +852,10 @@ OUTPUT LANGUAGE: ${lang}`;
           haiku_props: propsResult.status,
           haiku_characters: charactersResult.status,
           haiku_setpieces: setpiecesResult.status,
+        },
+        _provider_info: {
+          sonnet: sonnetProviderInfo,
+          haiku: haikuProviderInfo,
         },
         
         // Episodes
