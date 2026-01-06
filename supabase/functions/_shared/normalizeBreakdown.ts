@@ -61,14 +61,79 @@ function isPlaceholderTitle(s: string): boolean {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🧹 REGLA 3 - BLACKLIST DURA: Acciones/inserts que NUNCA son personajes
+// 🧹 REGLA 3 - BLACKLIST DURA: Expanded ~200+ terms
 // ═══════════════════════════════════════════════════════════════════════════════
-const ACTION_INSERT_BLACKLIST = /^(INSERT|CUT|LOUD|MORTIFYING|ROLLS|LIGHT|SILENCE|SOUND|FX|SFX|VFX|BOOM|BANG|CRASH|EXPLOSION|THUNDER|LIGHTNING|FLASH|BLACKOUT|WHITEOUT|STATIC|NOISE|BEEP|RING|BUZZ|CLICK|SNAP|SLAM|THUD|WHOOSH|SWOOSH|ZOOM|PAN|TILT|TRACK|DOLLY|CRANE|AERIAL|UNDERWATER|SLOW MOTION|FREEZE FRAME|SPLIT SCREEN|MONTAGE|FLASHBACK|DREAM|NIGHTMARE|MEMORY|VISION|HALLUCINATION|ANGLE|CLOSE|WIDE|MEDIUM|EXTREME|ESTABLISHING|MASTER|TWO SHOT|THREE SHOT|GROUP SHOT|REACTION|REVERSE|OVER THE SHOULDER|POV|POINT OF VIEW|SUBJECTIVE|OBJECTIVE|HAND HELD|STEADICAM|TRACKING|MOVING|STATIC|LOCKED|DUTCH|CANTED|HIGH|LOW|EYE LEVEL|BIRDS EYE|WORMS EYE|MATCH|JUMP|SMASH|WHIP|FADE|DISSOLVE|WIPE|IRIS)(\s|$)/i;
-
-const NOISE_PATTERNS = /^(THE |A |AN )?(SOUND OF|SOUNDS OF|NOISE|FX:|SFX:|VFX:|INSERT:|TITLE:|SUPER:|CHYRON:|CAPTION:|SUBTITLE:|TEXT:|CARD:|SCREEN:|DISPLAY:|MONITOR:|TV:|TELEVISION:|RADIO:|PHONE:|TELEPHONE:|INTERCOM:|PA:|LOUDSPEAKER:|SPEAKER:|ANNOUNCEMENT:|BROADCAST:|RECORDING:|TAPE:|VIDEO:|FOOTAGE:|CLIP:|IMAGE:|PHOTO:|PICTURE:|GRAPHIC:|ANIMATION:|CGI:|EFFECT:|TRANSITION:|CUT:|FADE:|DISSOLVE:|WIPE:|IRIS:)/i;
-
-// Verbs that look like character cues but are actions
-const VERB_ACTION_BLACKLIST = /^(ROLLS|WALKS|RUNS|SITS|STANDS|LOOKS|TURNS|OPENS|CLOSES|PICKS|PUTS|TAKES|GIVES|HOLDS|DROPS|THROWS|CATCHES|PUSHES|PULLS|HITS|KICKS|PUNCHES|GRABS|REACHES|TOUCHES|POINTS|WAVES|NODS|SHAKES|SMILES|FROWNS|LAUGHS|CRIES|SCREAMS|SHOUTS|WHISPERS|SPEAKS|TALKS|SAYS|ASKS|ANSWERS|REPLIES|RESPONDS|CONTINUES|BEGINS|STARTS|STOPS|ENDS|FINISHES|ENTERS|EXITS|LEAVES|ARRIVES|APPROACHES|RETREATS|ADVANCES|MOVES|STEPS|JUMPS|LEAPS|FALLS|RISES|CLIMBS|DESCENDS|ASCENDS)(\s|$)/i;
+const CHARACTER_BLACKLIST = new Set([
+  // === EFECTOS DE SONIDO ===
+  'BLAM', 'BLAMMMMMMM', 'CRASH', 'BANG', 'WHOOSH', 'THUD', 'CLANG',
+  'WHAM', 'BOOM', 'RING', 'BEEP', 'DING', 'HONK', 'SCREECH', 'BAM',
+  'CRAAAASSSHHHHHH', 'BLAMMMMMM', 'SLAM', 'CLICK', 'POP', 'SPLASH',
+  'CRACK', 'SNAP', 'THUMP', 'CLUNK', 'BUZZ', 'HISS', 'ROAR', 'RUMBLE',
+  'WHIR', 'CREAK', 'SQUEAK', 'RATTLE', 'CLATTER', 'THWACK', 'SMACK',
+  'WHACK', 'PLOP', 'DRIP', 'SWOOSH', 'ZOOM', 'VROOM', 'SCREEEECH',
+  'CRUNCH', 'SIZZLE', 'GROWL', 'SHRIEK', 'YELL', 'SCREAM', 'GASP',
+  'SIGH', 'GROAN', 'MOAN', 'WAIL', 'HOWL', 'BARK', 'MEOW', 'CHIRP',
+  'TWEET', 'SQUAWK', 'KAPOW', 'ZAP', 'SMASH',
+  
+  // === INSTRUCCIONES DE CÁMARA/EDICIÓN ===
+  'QUICK CUTS', 'JUMP CUT', 'MATCH CUT', 'SMASH CUT', 'TIME CUT',
+  'CUT TO', 'FADE IN', 'FADE OUT', 'DISSOLVE', 'FLASH', 'IRIS OUT',
+  'PUSH IN', 'PULL BACK', 'TRACKING', 'HANDHELD', 'POV',
+  'CLOSE ON', 'ANGLE ON', 'WE SEE', 'FROM BEHIND', 'WIDER ANGLE',
+  'STAY ON', 'HOLD', 'BEAT', 'SUPER', 'TITLE', 'INSERT', 'MONTAGE',
+  'EXTREME CLOSE', 'WIDE SHOT', 'MEDIUM SHOT', 'TWO SHOT',
+  'ESTABLISHING', 'AERIAL', 'UNDERWATER', 'CRANE SHOT', 'DOLLY',
+  'STEADICAM', 'FREEZE FRAME', 'SLOW MOTION', 'SPLIT SCREEN',
+  'REVERSE ANGLE', 'OVER SHOULDER', 'CLOSE UP', 'MEDIUM CLOSE',
+  'FULL SHOT', 'LONG SHOT', 'EXTREME LONG', 'INSERT SHOT',
+  'CUTAWAY', 'REACTION SHOT', 'MASTER SHOT', 'COVERAGE',
+  'RACK FOCUS', 'PULL FOCUS', 'FOCUS ON', 'REVEAL',
+  'WIPE TO', 'IRIS IN', 'FADE TO BLACK', 'FADE TO WHITE',
+  'PRELAP', 'PRE-LAP', 'SERIES OF SHOTS', 'QUICK CUT',
+  'DISSOLVE TO', 'BEGIN TITLES', 'END TITLES', 'MAIN TITLES',
+  'OPENING CREDITS', 'CLOSING CREDITS', 'MORE',
+  
+  // === INDICADORES DE TIEMPO ===
+  'MORNING', 'AFTERNOON', 'EVENING', 'NIGHT', 'DAWN', 'DUSK', 'DAY',
+  'MAGIC HOUR', 'CONTINUOUS', 'LATER', 'MOMENTS LATER', 'SAME',
+  'NEXT', 'NEXT DAY', 'NEXT AFTERNOON', 'FLASHBACK', 'PRESENT DAY',
+  'EARLY MORNING', 'LATE NIGHT', 'SUNSET', 'SUNRISE', 'MIDDAY',
+  'MIDNIGHT', 'GOLDEN HOUR', 'BLUE HOUR', 'PRE-DAWN', 'TWILIGHT',
+  'HOURS LATER', 'DAYS LATER', 'WEEKS LATER', 'MONTHS LATER',
+  'YEARS LATER', 'THE NEXT DAY', 'THE FOLLOWING', 'SOMETIME LATER',
+  'A MOMENT LATER', 'SECONDS LATER', 'MINUTES LATER',
+  'NEXT MORNING', 'THE NEXT', 'THAT NIGHT', 'THAT DAY', 'THAT EVENING',
+  
+  // === TEXTO DE PANTALLA/TÉCNICO ===
+  'PLEASE STAND BY', 'BLACK', 'WHITE', 'COLOUR', 'COLOR', 'B&W',
+  'WIDE', 'CLOSE', 'MEDIUM', 'TIGHT', 'OVER BLACK', 'THE END',
+  'TITLE CARD', 'END CREDITS', 'SUPER TITLE', 'CHYRON',
+  'LOWER THIRD', 'GRAPHIC', 'TEXT ON SCREEN',
+  'STAND BY', 'WE INTERRUPT', 'BREAKING NEWS',
+  
+  // === LÍNEAS DE ACCIÓN ===
+  'HEAR LAUGHTER', 'WE HEAR', 'SUDDENLY', 'MEANWHILE', 'SILENCE',
+  'SOUND OF', 'SOUNDS OF', 'THE SOUND', 'A SOUND', 'NOISE OF',
+  'WE FOLLOW', 'WE MOVE', 'WE TRACK', 'WE PAN', 'WE TILT',
+  'WE DOLLY', 'WE CRANE', 'WE PUSH', 'WE PULL', 'WE ZOOM',
+  'CAMERA MOVES', 'CAMERA FOLLOWS', 'CAMERA TRACKS', 'CAMERA PANS',
+  
+  // === ONOMATOPEYAS Y EXCLAMACIONES ===
+  'WHAT', 'YES', 'NO', 'OKAY', 'OH', 'AH', 'HEY', 'STOP', 'GO',
+  'WAIT', 'LOOK', 'LISTEN', 'HELP', 'RUN', 'COME', 'HERE',
+  'UGH', 'OOH', 'AAH', 'EEK', 'OW', 'OUCH', 'YIKES', 'WHOA',
+  'WOW', 'GEE', 'GOSH', 'DAMN', 'DAMMIT',
+  'HMM', 'HUH', 'EH', 'UM', 'UH', 'ER',
+  
+  // === OTROS INVÁLIDOS ===
+  'APPLAUSE', 'LAUGHTER', 'PAUSE', 'BLACKOUT', 'DARKNESS',
+  'LIGHT', 'SHADOW', 'QUIET', 'STILLNESS',
+  'END OF ACT', 'ACT ONE', 'ACT TWO', 'ACT THREE', 'SCENE',
+  'OPENING', 'CLOSING', 'TEASER', 'TAG', 'COLD OPEN',
+  'PREVIOUSLY', 'RECAP', 'FLASHFORWARD', 'DREAM SEQUENCE',
+  'FANTASY', 'IMAGINATION', 'MEMORY', 'VISION',
+  'END', 'CONTINUED', 'CREDITS', 'INTERCUT', 'BACK TO',
+]);
 
 // 🛡️ Scene heading detector (numbered or not) - prevents "32 INT. GOTHAM..." from being a character
 function isSceneHeading(text: string): boolean {
@@ -86,24 +151,108 @@ function isSceneHeading(text: string): boolean {
 
 function isActionOrInsert(name: string): boolean {
   const u = name.toUpperCase().trim();
+  const original = name.trim();
+  const words = u.split(/\s+/).filter(w => w.length > 0);
   
-  // 🛡️ Scene headings are NEVER characters
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 1: Character names are 1-3 words maximum
+  // ══════════════════════════════════════════════════════════════════════════
+  if (words.length > 3) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 2: Too short
+  // ══════════════════════════════════════════════════════════════════════════
+  if (u.length < 2) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 3: 🛡️ Scene headings are NEVER characters
+  // ══════════════════════════════════════════════════════════════════════════
   if (isSceneHeading(u)) return true;
   
-  // 🛡️ Pure numbers are scene numbers, NOT characters (e.g., "102", "114", "126")
-  if (/^\d+$/.test(name.trim())) return true;
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 4: 🛡️ Pure numbers are scene numbers, NOT characters
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/^\d+$/.test(original)) return true;
   
-  // Starts with number followed by words (likely scene number + heading)
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 5: Repeated letters (3+) - BLAMMMMM, CRAAAASH, NOOOOO
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/(.)\1{2,}/.test(u)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 6: Contains -- or ... (dialogue fragments)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/--|\.\.\.?|—|–/.test(original)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 7: Pure punctuation
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/^[.…\-–—*#_=+~`'"!?@$%^&(){}\[\]<>|\\/:;,]+$/.test(original)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 8: Ends with problematic punctuation
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/[!?,;:'"\-]$/.test(original)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 9: Starts with punctuation
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/^[!?,;:'"\-.]/.test(original)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 10: Starts with number + words (scene heading fragments)
+  // ══════════════════════════════════════════════════════════════════════════
   if (/^\d+\s+[A-Z]/.test(u) && u.length > 15) return true;
   
-  // Too long to be a character name
-  if (u.length > 40) return true;
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 11: Too long (real character names rarely exceed 35 chars)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (u.length > 35) return true;
   
-  if (ACTION_INSERT_BLACKLIST.test(u)) return true;
-  if (NOISE_PATTERNS.test(u)) return true;
-  if (VERB_ACTION_BLACKLIST.test(u)) return true;
-  // All lowercase words (likely description, not character)
-  if (/^[a-z\s]+$/.test(name.trim())) return true;
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 12: Technical camera/shot terms
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/^(ANGLE|CLOSE|WIDE|MEDIUM|EXTREME|SHOT|INSERT|POV|REVERSE|OVER|ON:|PUSH|PULL|TRACK|DOLLY|PAN|TILT|ZOOM|CRANE|AERIAL|HANDHELD|STEADICAM)/i.test(u)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 13: Action/instruction phrases
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/^(HEAR|WE SEE|WE HEAR|CUT|FADE|DISSOLVE|FLASH|TITLE|SUPER|BLACK|WHITE)/i.test(u)) return true;
+  if (/\bHEAR\s+(LAUGHTER|MUSIC|SOUND|NOISE|VOICE|A\s)/i.test(u)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 14: Common sentence starters (dialogue fragments)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/^(DID|DO|DOES|CAN|COULD|WOULD|SHOULD|WILL|ARE|IS|WAS|WERE|HAVE|HAS|HAD|THAT|THIS|THOSE|THESE|WHAT|WHERE|WHEN|WHY|HOW|GOOD|BAD|TURN|WATCH|LOOK|PLEASE|JUST|NOW|THEN|BUT|AND|OR|IF|SO|AS|TO|FOR|WITH|FROM|ABOUT)\s/i.test(u) && words.length > 2) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 15: Contains pronouns (dialogue fragments)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/\b(YOU|I'M|I AM|WE'RE|THEY'RE|HE'S|SHE'S|IT'S|THAT'S|THERE'S|HERE'S|LET'S|WE'LL|YOU'LL|I'LL|DON'T|WON'T|CAN'T|ISN'T|AREN'T|WASN'T|WEREN'T|HAVEN'T|HASN'T)\b/i.test(u)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 16: Blacklist exact match
+  // ══════════════════════════════════════════════════════════════════════════
+  if (CHARACTER_BLACKLIST.has(u)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 17: Any word in blacklist (for >3 char words)
+  // ══════════════════════════════════════════════════════════════════════════
+  for (const word of words) {
+    if (word.length > 3 && CHARACTER_BLACKLIST.has(word)) return true;
+  }
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 18: All lowercase (likely description, not character)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (/^[a-z\s]+$/.test(original)) return true;
+  
+  // ══════════════════════════════════════════════════════════════════════════
+  // RULE 19: Single-word onomatopoeia
+  // ══════════════════════════════════════════════════════════════════════════
+  const ONOMATOPOEIA = /^(BLAM|BAM|BANG|BOOM|CRASH|SLAM|THUD|CLICK|BEEP|RING|WHOOSH|SCREECH|CLANG|WHAM|DING|HONK|BUZZ|HISS|POP|CRACK|SNAP|SPLASH|THUMP|CRUNCH|SIZZLE|RUMBLE|ROAR|SMASH|WHACK|THWACK|KAPOW|ZAP|WHIR|CLUNK|SQUEAK|GROWL|SHRIEK|YELL|SCREAM|GASP|SIGH|GROAN|MOAN|WAIL|HOWL|BARK|MEOW|CHIRP|TWEET|SQUAWK)$/i;
+  if (words.length === 1 && ONOMATOPOEIA.test(u)) return true;
+  
   return false;
 }
 
