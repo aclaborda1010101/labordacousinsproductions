@@ -1955,8 +1955,69 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     );
   };
 
-  // If script already exists, show summary with episodes panel
+  // Loading state (do not show summary until script data is fully loaded)
+  if (isLoadingScript) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando datos del guion...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If script already exists, show summary with episodes panel.
+  // Gate it until parsed data is hydrated to avoid showing an empty/partial summary.
   if (hasExistingScript && !entryMode) {
+    // If we're re-analyzing from the summary screen, show a dedicated progress view.
+    if (status === 'analyzing') {
+      return (
+        <div className="flex items-center justify-center p-6">
+          <Card className="w-full max-w-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                Analizando guion…
+              </CardTitle>
+              <CardDescription>
+                No cierres esta página • Puede tardar varios minutos
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Progress value={progress} className="h-2 flex-1" />
+                <span className="text-xs font-medium tabular-nums shrink-0 text-primary">
+                  {Math.round(progress)}%
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {progressMessage || 'Procesando…'}
+              </p>
+              <Button variant="outline" size="sm" className="w-full" onClick={() => setIsOpen(true)}>
+                Ver tareas
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    // If we have a script row but no parsed breakdown yet, keep showing a loader (not the summary).
+    if (!breakdownResult) {
+      return (
+        <div className="flex items-center justify-center p-12">
+          <div className="text-center space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+            <p className="text-sm text-muted-foreground">Preparando resumen…</p>
+            <Button variant="outline" size="sm" onClick={() => setIsOpen(true)}>
+              Ver tareas
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-6 p-6">
         {/* Quick actions header */}
@@ -1975,7 +2036,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               variant="outline"
               size="sm"
               onClick={() => handleAnalyzeScript(existingScriptText)}
-              disabled={status === 'analyzing' || status === 'generating'}
+              disabled={status === 'generating'}
               title="Recalcular episodios, duración y entidades desde el texto actual"
             >
               <Search className="h-4 w-4 mr-2" />
@@ -1989,8 +2050,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         </div>
 
         {/* Script Summary Panel with episodes, teasers, and actions */}
-        <ScriptSummaryPanelAssisted 
-          projectId={projectId} 
+        <ScriptSummaryPanelAssisted
+          projectId={projectId}
           projectFormat={projectFormat}
           onScenesGenerated={() => {
             toast.success('Escenas generadas. Ve al módulo de Escenas para producir.');
@@ -2001,9 +2062,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         {/* Raw text preview (collapsed) */}
         <Accordion type="single" collapsible>
           <AccordionItem value="raw-text">
-            <AccordionTrigger className="text-sm">
-              Ver texto del guion
-            </AccordionTrigger>
+            <AccordionTrigger className="text-sm">Ver texto del guion</AccordionTrigger>
             <AccordionContent>
               <div className="bg-muted/50 rounded-lg p-4 max-h-60 overflow-y-auto">
                 <pre className="text-xs whitespace-pre-wrap font-mono">
@@ -2014,18 +2073,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-      </div>
-    );
-  }
-
-  // Loading state
-  if (isLoadingScript) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          <p className="text-sm text-muted-foreground">Cargando guion...</p>
-        </div>
       </div>
     );
   }
