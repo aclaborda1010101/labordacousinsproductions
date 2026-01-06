@@ -769,9 +769,8 @@ IMPORTANTE:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        // NOTE: This project Anthropic key has access to Claude Sonnet 4 (Claude 3.5 IDs return 404).
-        // We keep max_tokens moderate to speed up responses and avoid oversized payloads.
-        model: 'claude-sonnet-4-20250514',
+        // Try Haiku 4 for faster response (user requested)
+        model: 'claude-haiku-4-20250514',
         max_tokens: 8192,
         system: SYSTEM_PROMPT,
         messages: [
