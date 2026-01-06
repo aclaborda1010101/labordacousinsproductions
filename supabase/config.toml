@@ -87,7 +87,8 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-scenes]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
 
 [functions.generate-shot]
 verify_jwt = true
