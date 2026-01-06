@@ -447,7 +447,7 @@ ${processedScriptText}
 
     const canonicalData = await callAnthropic(
       ANTHROPIC_API_KEY,
-      'claude-sonnet-4-5-20250514',
+      'claude-3-5-sonnet-20241022',
       SONNET_SYSTEM_PROMPT,
       sonnetUserPrompt,
       12000
