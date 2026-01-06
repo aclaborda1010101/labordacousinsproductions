@@ -356,7 +356,7 @@ IMPORTANT:
       },
       body: JSON.stringify({
         model: 'claude-3-5-haiku-20241022',
-        max_tokens: 16384,
+        max_tokens: 8192,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userPrompt }],
         // NO TOOLS - just ask for JSON directly
