@@ -276,9 +276,10 @@ Return verbatim text in screenplay format. DO NOT interpret or add content.`
 Preserve original text. Return in screenplay format.`
     };
   } else {
+    // Use flash-lite for very large scripts (>600KB) - fastest model for high-volume extraction
     return {
-      model: "google/gemini-2.5-flash",
-      timeoutMs: 240000,
+      model: "google/gemini-2.5-flash-lite",
+      timeoutMs: 180000, // 3 min - flash-lite is much faster
       maxTokens: 100000,
       isLarge: true,
       estimatedPages,
