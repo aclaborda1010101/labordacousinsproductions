@@ -425,13 +425,6 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     refreshScriptData();
   }, [refreshScriptData, refreshTrigger]);
 
-  // If a script already exists, always show the summary screen.
-  // This avoids landing back in the old entry/edit screens after navigating away.
-  useEffect(() => {
-    if (hasExistingScript && entryMode) {
-      setEntryMode(null);
-    }
-  }, [hasExistingScript, entryMode]);
   
 
   // Function to reset and allow uploading a new script
