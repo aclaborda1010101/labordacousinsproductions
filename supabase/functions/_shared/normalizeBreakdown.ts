@@ -159,13 +159,10 @@ function parseSceneHeading(heading: string): ParsedSceneHeading | null {
   };
 }
 
-function extractLocationsFromScenes(scenes: unknown[]): { base: NormalizedLocation[]; variants: string[] } {
+function extractLocationsFromHeadings(headings: string[]): { base: NormalizedLocation[]; variants: string[] } {
   const locationMap = new Map<string, Set<string>>();
   
-  for (const scene of scenes) {
-    const s = scene as AnyObj;
-    const heading = (s?.heading as string) || (s?.slugline as string) || (s?.scene_heading as string) || '';
-    
+  for (const heading of headings) {
     const parsed = parseSceneHeading(heading);
     if (!parsed) continue;
     
@@ -195,6 +192,42 @@ function extractLocationsFromScenes(scenes: unknown[]): { base: NormalizedLocati
   base.sort((a, b) => b.variants.length - a.variants.length);
   
   return { base, variants: allVariants };
+}
+
+// Helper to get all headings from multiple possible sources
+function collectHeadings(obj: AnyObj): string[] {
+  // Priority 1: scenes.list[].heading (already normalized in out.scenes.list)
+  const scenesList = safeArray((obj?.scenes as AnyObj)?.list);
+  const fromScenesList = scenesList
+    .map((s: unknown) => {
+      const scene = s as AnyObj;
+      return (scene?.heading as string) || (scene?.slugline as string) || (scene?.scene_heading as string) || '';
+    })
+    .filter((h): h is string => typeof h === 'string' && h.trim().length > 0);
+  
+  if (fromScenesList.length > 0) {
+    console.log(`[collectHeadings] Found ${fromScenesList.length} headings from scenes.list`);
+    return fromScenesList;
+  }
+  
+  // Priority 2: scene_headings_raw[]
+  const sceneHeadingsRaw = safeArray(obj?.scene_headings_raw);
+  if (sceneHeadingsRaw.length > 0) {
+    const filtered = sceneHeadingsRaw.filter((h): h is string => typeof h === 'string' && h.trim().length > 0);
+    console.log(`[collectHeadings] Found ${filtered.length} headings from scene_headings_raw`);
+    return filtered;
+  }
+  
+  // Priority 3: scene_headings[]
+  const sceneHeadings = safeArray(obj?.scene_headings);
+  if (sceneHeadings.length > 0) {
+    const filtered = sceneHeadings.filter((h): h is string => typeof h === 'string' && h.trim().length > 0);
+    console.log(`[collectHeadings] Found ${filtered.length} headings from scene_headings`);
+    return filtered;
+  }
+  
+  console.log(`[collectHeadings] No headings found in any source`);
+  return [];
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -432,17 +465,26 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     ? safeArray(baseLocationsInput) 
     : flatLocations;
 
-  // HARD RULE: If scenes > 0 but locations empty, rebuild from scenes
-  const scenesList = safeArray((out.scenes as AnyObj)?.list);
-  if (scenesTotal > 0 && baseLocations.length === 0 && scenesList.length > 0) {
-    console.log(`[normalizeBreakdown] HARD RULE: Rebuilding locations from ${scenesList.length} scenes`);
-    const extracted = extractLocationsFromScenes(scenesList);
-    baseLocations = extracted.base;
-    (out as AnyObj)._locations_rebuilt = true;
-    warnings.push({
-      code: "LOCATIONS_REBUILT",
-      message: `Locations were empty despite ${scenesTotal} scenes. Rebuilt ${extracted.base.length} locations from scene headings.`,
-    });
+  // Collect headings from all possible sources (use `out` which has scenes.list populated)
+  const allHeadings = collectHeadings(out);
+  
+  // HARD RULE: If scenes > 0 but locations empty, rebuild from headings
+  if (scenesTotal > 0 && baseLocations.length === 0) {
+    if (allHeadings.length > 0) {
+      console.log(`[normalizeBreakdown] HARD RULE: Rebuilding locations from ${allHeadings.length} headings`);
+      const extracted = extractLocationsFromHeadings(allHeadings);
+      baseLocations = extracted.base;
+      (out as AnyObj)._locations_rebuilt = true;
+      warnings.push({
+        code: "LOCATIONS_REBUILT",
+        message: `Locations were empty despite ${scenesTotal} scenes. Rebuilt ${extracted.base.length} locations from ${allHeadings.length} scene headings.`,
+      });
+    } else {
+      warnings.push({
+        code: "NO_SCENE_HEADINGS",
+        message: `scenes_total=${scenesTotal} but no scenes.list[].heading nor scene_headings_raw found. Cannot derive locations.`,
+      });
+    }
   }
 
   out.locations = out.locations || {};
@@ -464,28 +506,51 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     name: normalizeCharacterName(c?.name ?? ""),
   })).filter((c) => c.name);
 
-  // HARD RULE: If scenes > 50 but no characters, try to extract from raw text
+  // HARD RULE: If scenes > 50 but no characters, try multiple sources
+  // Priority 1: character_candidates[] (already extracted)
+  const characterCandidates = safeArray(input?.character_candidates);
   const rawText: string | undefined =
     (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
   
-  if (scenesTotal > 50 && flatChars.length === 0 && rawText) {
-    console.log(`[normalizeBreakdown] HARD RULE: Extracting characters from raw text (${scenesTotal} scenes, 0 characters)`);
-    const candidates = extractCharacterCandidatesFromText(rawText);
-    console.log(`[normalizeBreakdown] Found ${candidates.length} character candidates from text`);
+  if (scenesTotal > 50 && flatChars.length === 0) {
+    let candidates: string[] = [];
+    let source = "";
     
-    flatChars = candidates.map((name) => ({
-      name,
-      name_raw: name,
-      role: "unknown",
-      priority: "P5",
-      scenes_count: 0,
-    }));
+    if (characterCandidates.length > 0) {
+      // Use pre-extracted candidates
+      candidates = characterCandidates
+        .map((c: unknown) => normalizeCharacterName(c))
+        .filter((n): n is string => !!n);
+      source = "character_candidates";
+      console.log(`[normalizeBreakdown] Using ${candidates.length} pre-extracted character_candidates`);
+    } else if (rawText) {
+      // Fallback: extract from raw text
+      candidates = extractCharacterCandidatesFromText(rawText);
+      source = "raw_text";
+      console.log(`[normalizeBreakdown] Extracted ${candidates.length} characters from raw_text`);
+    } else {
+      warnings.push({
+        code: "NO_CHARACTER_INPUT",
+        message: `scenes_total=${scenesTotal} but no characters array, character_candidates, or raw_text found.`,
+      });
+    }
     
-    (out as AnyObj)._characters_extracted = true;
-    warnings.push({
-      code: "CHARACTERS_EXTRACTED",
-      message: `Characters were empty despite ${scenesTotal} scenes. Extracted ${candidates.length} candidates from dialogue cues.`,
-    });
+    if (candidates.length > 0) {
+      flatChars = candidates.map((name) => ({
+        name,
+        name_raw: name,
+        role: "unknown",
+        priority: "P5",
+        scenes_count: 0,
+      }));
+      
+      (out as AnyObj)._characters_extracted = true;
+      (out as AnyObj)._characters_source = source;
+      warnings.push({
+        code: "CHARACTERS_EXTRACTED",
+        message: `Characters were empty despite ${scenesTotal} scenes. Extracted ${candidates.length} candidates from ${source}.`,
+      });
+    }
   }
 
   // Merge duplicates by normalized name
