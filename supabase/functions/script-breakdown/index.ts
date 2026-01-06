@@ -309,8 +309,34 @@ async function getUserIdFromRequest(req: Request): Promise<string | null> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// HELPER: Call Anthropic API
+// HELPER: Call Anthropic API (with model fallback)
 // ═══════════════════════════════════════════════════════════════════════════════
+function buildModelFallbacks(primary: string): string[] {
+  // NOTE: Anthropic model availability can vary by account/key.
+  // We try a small ordered list to avoid hard failures on 404 "model not found".
+  if (/claude-3-5-sonnet-20241022/i.test(primary)) {
+    return [
+      primary,
+      'claude-3-5-sonnet-latest',
+      'claude-3-5-sonnet-20240620',
+      // alternative naming sometimes seen in docs/providers
+      'claude-3-5-sonnet-v2@20241022',
+      'claude-3-5-sonnet@20240620',
+    ];
+  }
+
+  if (/claude-3-5-haiku-20241022/i.test(primary)) {
+    return [
+      primary,
+      'claude-3-5-haiku-latest',
+      'claude-3-5-haiku@20241022',
+    ];
+  }
+
+  // Default: try the given model only
+  return [primary];
+}
+
 async function callAnthropic(
   apiKey: string,
   model: string,
@@ -318,39 +344,61 @@ async function callAnthropic(
   userPrompt: string,
   maxTokens: number
 ): Promise<any> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: maxTokens,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
+  const candidates = buildModelFallbacks(model);
+  let lastErrText = '';
+  let lastStatus = 0;
+
+  for (const candidate of candidates) {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: candidate,
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      lastErrText = errorText;
+      lastStatus = response.status;
+
+      // If model is not found, try next fallback model.
+      if (response.status === 404) {
+        console.error(`[callAnthropic] Model not found: ${candidate} (trying fallback if available)`, errorText.slice(0, 200));
+        continue;
+      }
+
+      console.error(`[callAnthropic] API error for ${candidate}:`, response.status, errorText.slice(0, 300));
+      throw new Error(`Anthropic API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const textBlock = data.content?.find((block: any) => block.type === 'text');
+    if (!textBlock?.text) {
+      throw new Error('No text content in response');
+    }
+
+    const parsed = tryParseJson(textBlock.text);
+    if (!parsed) {
+      throw new Error('Failed to parse JSON from response');
+    }
+
+    // Success
+    return parsed;
+  }
+
+  console.error(`[callAnthropic] All model fallbacks failed for primary=${model}`, {
+    lastStatus,
+    lastErr: lastErrText?.slice(0, 300),
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error(`[callAnthropic] API error for ${model}:`, response.status, errorText.slice(0, 300));
-    throw new Error(`Anthropic API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const textBlock = data.content?.find((block: any) => block.type === 'text');
-  if (!textBlock?.text) {
-    throw new Error('No text content in response');
-  }
-  
-  const parsed = tryParseJson(textBlock.text);
-  if (!parsed) {
-    throw new Error('Failed to parse JSON from response');
-  }
-  
-  return parsed;
+  throw new Error(`Anthropic API error: ${lastStatus || 404}`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
