@@ -123,6 +123,12 @@ FORMATO DE SALIDA OBLIGATORIO (JSON):
 ═══════════════════════════════════════════════════════════════════
 
 {
+  "metadata": {
+    "title": "string (título del guión TAL COMO aparece en la portada, ej: 'PLAN DE RODAJE')",
+    "writers": ["array de nombres de guionistas/autores"],
+    "draft": "string (versión del borrador si aparece)",
+    "date": "string (fecha si aparece)"
+  },
   "synopsis": {
     "faithful_summary": "string (resumen fiel al contenido, sin clichés)",
     "conflict_type": "ethical | historical | structural | civilizational | internal | systemic | philosophical | existential | interpersonal | external_threat",
@@ -816,8 +822,23 @@ IMPORTANTE:
 
       const parsedEpisodes = buildEpisodesFromScenes();
 
+      // Extract title from multiple possible sources in the AI response
+      const extractedTitle = 
+        breakdownData.metadata?.title ||
+        breakdownData.synopsis?.title ||
+        breakdownData.title ||
+        null;
+      
+      // Extract writers
+      const extractedWriters = 
+        breakdownData.metadata?.writers ||
+        breakdownData.writers ||
+        [];
+
       const parsedJson = {
-        title: breakdownData.synopsis?.faithful_summary?.slice(0, 50) || 'Guion Analizado',
+        title: extractedTitle || 'Guion Analizado',
+        writers: extractedWriters,
+        metadata: breakdownData.metadata || null,
         synopsis: synopsisText,
         episodes: parsedEpisodes,
         characters: breakdownData.characters || [],
@@ -832,6 +853,8 @@ IMPORTANTE:
           total_dialogue_lines: 0,
         },
       };
+
+      console.log('[script-breakdown-bg] Extracted title:', extractedTitle, 'writers:', extractedWriters);
 
       const { error: updateError } = await supabase
         .from('scripts')

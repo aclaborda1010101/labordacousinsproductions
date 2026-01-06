@@ -582,8 +582,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             const heroProps = existingCounts?.hero_props || propsArr.filter((p: any) => p.importance === 'hero' || p.priority === 'P0').length;
             const totalScenes = existingCounts?.total_scenes || scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0;
 
+            // Extract title from multiple possible locations
+            const extractedTitle = 
+              (parsed as any).title || 
+              (parsed as any).metadata?.title ||
+              (parsed as any).synopsis?.title ||
+              (parsed as any).breakdown_pro?.metadata?.title ||
+              null;
+
+            // Extract writers from metadata
+            const extractedWriters = 
+              (parsed as any).writers ||
+              (parsed as any).metadata?.writers ||
+              (parsed as any).breakdown_pro?.metadata?.writers ||
+              [];
+
             const hydratedScript = {
               ...parsed,
+              title: extractedTitle,
+              writers: extractedWriters,
               main_characters: chars,
               characters: chars,
               counts: {
