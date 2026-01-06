@@ -547,22 +547,72 @@ Retorna SOLO JSON válido, sin texto adicional.`;
         
         generatedScenes = JSON.parse(scenesText);
       } catch (parseError) {
-        console.error('Failed to parse AI response:', scenesText.substring(0, 500));
+        console.warn('Initial parse failed, attempting repair...');
         
-        // Attempt to extract valid JSON array
-        const arrayMatch = scenesText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+        // Attempt multi-pass repair
+        let repaired = scenesText;
+        
+        // Pass 1: Extract largest valid JSON array
+        const arrayMatch = repaired.match(/\[\s*\{[\s\S]*\}\s*\]/);
         if (arrayMatch) {
-          try {
-            let extracted = arrayMatch[0];
-            extracted = extracted.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
-            extracted = extracted.replace(/,(\s*[\]}])/g, '$1');
-            generatedScenes = JSON.parse(extracted);
-            console.log('Successfully extracted and parsed JSON from response');
-          } catch (e) {
-            throw new Error('Invalid JSON response from AI');
+          repaired = arrayMatch[0];
+        }
+        
+        // Pass 2: Clean formatting issues
+        repaired = repaired.replace(/"([^"]+)"\s*\|\s*"[^"]+"/g, '"$1"');
+        repaired = repaired.replace(/,(\s*[\]}])/g, '$1');
+        
+        // Pass 3: Repair truncated JSON by balancing braces
+        let openBraces = 0, openBrackets = 0;
+        for (const char of repaired) {
+          if (char === '{') openBraces++;
+          else if (char === '}') openBraces--;
+          else if (char === '[') openBrackets++;
+          else if (char === ']') openBrackets--;
+        }
+        
+        // Add missing closing braces/brackets
+        while (openBraces > 0) {
+          repaired += '}';
+          openBraces--;
+        }
+        while (openBrackets > 0) {
+          repaired += ']';
+          openBrackets--;
+        }
+        
+        // Pass 4: Fix truncated strings by adding closing quote before any brace we added
+        repaired = repaired.replace(/([^"\\])(")?(\s*[}\]])$/g, (match: string, pre: string, quote: string, close: string) => {
+          if (!quote && pre !== '"') {
+            return pre + '"' + close;
           }
-        } else {
-          throw new Error('Invalid JSON response from AI');
+          return match;
+        });
+        
+        // Pass 5: Remove incomplete trailing properties (e.g. "shutter_ang without closing)
+        repaired = repaired.replace(/,?\s*"[^"]+"\s*:\s*[^}\],"]*$/g, '');
+        
+        try {
+          generatedScenes = JSON.parse(repaired);
+          console.log(`JSON repaired successfully. Found ${generatedScenes.length} scenes.`);
+        } catch (e) {
+          console.error('Failed to parse even after repair. Raw (first 1000 chars):', repaired.substring(0, 1000));
+          
+          // Last resort: return partial data with whatever scenes parsed
+          // Try to find complete scene objects
+          const sceneMatches = repaired.match(/\{[^{}]*"scene_no"[^{}]*\}/g);
+          if (sceneMatches && sceneMatches.length > 0) {
+            console.log(`Extracted ${sceneMatches.length} partial scenes as fallback`);
+            generatedScenes = sceneMatches.map((s: string) => {
+              try { return JSON.parse(s); } catch { return null; }
+            }).filter(Boolean);
+            
+            if (generatedScenes.length === 0) {
+              throw new Error('Could not recover any valid scenes from AI response');
+            }
+          } else {
+            throw new Error('Invalid JSON response from AI - no recoverable scenes');
+          }
         }
       }
 
