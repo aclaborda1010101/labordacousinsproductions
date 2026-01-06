@@ -402,6 +402,86 @@ function extractTextFromPdfBytes(pdfBytes: Uint8Array): string {
 }
 
 // =============================================================================
+// CAMBIO B: CHARACTER CANDIDATE EXTRACTION (Heuristic, no AI)
+// Extracts ALL CAPS lines that precede dialogue as potential character names
+// =============================================================================
+function extractCharacterCandidates(rawText: string): string[] {
+  if (!rawText || typeof rawText !== 'string') return [];
+  
+  const lines = rawText.split('\n');
+  const candidates = new Set<string>();
+  
+  for (let i = 0; i < lines.length - 1; i++) {
+    const line = lines[i].trim();
+    const nextLine = lines[i + 1]?.trim() || '';
+    
+    // Skip empty lines
+    if (!line) continue;
+    
+    // Must be ALL CAPS (or mostly)
+    if (line !== line.toUpperCase()) continue;
+    
+    // Must not be a scene heading
+    if (/^(INT\.|EXT\.|INT\/EXT|I\/E\.|INTERIOR|EXTERIOR)/i.test(line)) continue;
+    
+    // Must not be a transition
+    if (/^(FADE|CUT TO|DISSOLVE|SMASH CUT|MATCH CUT|WIPE|IRIS|BLACK|WHITE|END|TITLE|SUPER)/i.test(line)) continue;
+    
+    // Must not be too long (character names are typically short)
+    if (line.length > 45) continue;
+    
+    // Must not be a parenthetical only
+    if (/^\([^)]+\)$/.test(line)) continue;
+    
+    // Must not be time/page markers
+    if (/^(CONTINUED|MORE|\d+\.|PAGE\s+\d)/i.test(line)) continue;
+    
+    // Next line should have content (dialogue indicator)
+    if (!nextLine || /^(INT\.|EXT\.|FADE|CUT|--)/i.test(nextLine)) continue;
+    
+    // Extract character name (before any parenthetical)
+    let charName = line.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    
+    // Clean up CONT'D, V.O., O.S., etc.
+    charName = charName
+      .replace(/\bCONT['']?D\.?\b/gi, '')
+      .replace(/\bCONT\.?\b/gi, '')
+      .replace(/\bCONTINUED\b/gi, '')
+      .replace(/\((V\.O\.|O\.S\.|O\.C\.|VO|OS|OC|ON SCREEN|OFF|OVER|PRELAP|SINGING|WHISPERS?|SHOUTING|YELLING|READING|THINKING)\)/gi, '')
+      .replace(/\s*#\d+/g, '') // Remove #1, #2 etc
+      .replace(/\s+/g, ' ')
+      .trim();
+    
+    // Final validation
+    if (charName && charName.length >= 2 && charName.length <= 40 && !/^\d+$/.test(charName)) {
+      candidates.add(charName);
+    }
+  }
+  
+  return Array.from(candidates).sort();
+}
+
+// =============================================================================
+// SCENE HEADING EXTRACTION (Heuristic, no AI)
+// Extracts all INT./EXT. headings for location derivation
+// =============================================================================
+function extractSceneHeadings(rawText: string): string[] {
+  if (!rawText || typeof rawText !== 'string') return [];
+  
+  const headings: string[] = [];
+  const lines = rawText.split('\n');
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (/^(INT\.|EXT\.|INT\/EXT|I\/E\.|INTERIOR|EXTERIOR)/i.test(trimmed)) {
+      headings.push(trimmed);
+    }
+  }
+  
+  return headings;
+}
+
+// =============================================================================
 // MAIN HANDLER
 // =============================================================================
 serve(async (req) => {
@@ -618,6 +698,18 @@ serve(async (req) => {
     }
 
     // =============================================================================
+    // CAMBIO B: EXTRACT CHARACTER CANDIDATES + SCENE HEADINGS (Heuristic, no AI)
+    // This ensures we ALWAYS have this data even if AI analysis fails
+    // =============================================================================
+    const characterCandidates = extractCharacterCandidates(textToProcess);
+    const sceneHeadings = extractSceneHeadings(textToProcess);
+    
+    console.log("[parse-script] Heuristic extraction complete:", {
+      character_candidates: characterCandidates.length,
+      scene_headings: sceneHeadings.length,
+    });
+
+    // =============================================================================
     // FORENSIC ANALYSIS v2.0 - WITH CHUNKING FOR LONG SCRIPTS
     // =============================================================================
     console.log("[parse-script] Running Forensic Analysis v2.0...");
@@ -634,22 +726,53 @@ serve(async (req) => {
       analysisResult = await analyzeScript(textToProcess, LOVABLE_API_KEY);
     }
 
+    // =============================================================================
+    // CAMBIO A: ALWAYS persist scene headings for location derivation
+    // =============================================================================
+    // Ensure scenes object exists with headings
+    if (!analysisResult.scenes) {
+      analysisResult.scenes = { list: [], total: 0 };
+    }
+    
+    const existingScenes = (analysisResult.scenes as Record<string, unknown>)?.list as unknown[];
+    if (!existingScenes || existingScenes.length === 0) {
+      // Fallback: create minimal scene entries from extracted headings
+      (analysisResult.scenes as Record<string, unknown>).list = sceneHeadings.map((heading, idx) => ({
+        number: idx + 1,
+        heading: heading,
+        _source: 'heuristic_extraction'
+      }));
+      (analysisResult.scenes as Record<string, unknown>).total = sceneHeadings.length;
+      console.log(`[parse-script] Rebuilt scenes from ${sceneHeadings.length} extracted headings`);
+    }
+
     // Add analysis metadata
     const analysisMetadata = {
-      parser_version: "2.0",
+      parser_version: "2.1", // Updated version
       extraction_timestamp: new Date().toISOString(),
       source_type: sourceType,
       extraction_stats: extractionStats,
       total_confidence_score: calculateAverageConfidence(analysisResult),
-      chunked: textToProcess.length > MAX_CHARS_FOR_SINGLE_ANALYSIS
+      chunked: textToProcess.length > MAX_CHARS_FOR_SINGLE_ANALYSIS,
+      heuristic_extraction: {
+        character_candidates_count: characterCandidates.length,
+        scene_headings_count: sceneHeadings.length,
+      }
     };
     analysisResult.analysis_metadata = analysisMetadata;
+    
+    // CAMBIO B: Always include character_candidates for downstream processing
+    analysisResult.character_candidates = characterCandidates;
+    
+    // Also include raw scene headings for location derivation
+    analysisResult.scene_headings_raw = sceneHeadings;
 
-    const scenes = analysisResult.scenes as unknown[] | undefined;
+    const scenes = (analysisResult.scenes as Record<string, unknown>)?.list as unknown[] | undefined;
     const canonSuggestions = analysisResult.canon_suggestions as unknown[] | undefined;
     
     console.log("[parse-script] Forensic analysis complete:", {
       scenes: scenes?.length || 0,
+      character_candidates: characterCandidates.length,
       canonSuggestions: canonSuggestions?.length || 0,
       avgConfidence: analysisMetadata.total_confidence_score
     });
