@@ -234,14 +234,51 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
 
   const expectedHeadings: string[] = [];
   const scriptLines = scriptText.split(/\r?\n/);
-  for (const line of scriptLines) {
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EXTRACT scene headings AND character candidates in one pass
+  // ═══════════════════════════════════════════════════════════════════════════
+  const characterCandidates = new Set<string>();
+  
+  for (let i = 0; i < scriptLines.length; i++) {
+    const line = scriptLines[i];
     const trimmed = line.trim();
+    
+    // Scene headings
     if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
       expectedHeadings.push(trimmed);
+      continue;
+    }
+    
+    // Character cue detection (ALL CAPS, not too long, followed by content)
+    const nextLine = scriptLines[i + 1]?.trim() || '';
+    if (
+      trimmed &&
+      trimmed === trimmed.toUpperCase() &&
+      trimmed.length >= 2 &&
+      trimmed.length <= 40 &&
+      nextLine &&
+      !/^(INT\.|EXT\.|FADE|CUT|DISSOLVE|SMASH|WIPE)/i.test(trimmed) &&
+      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextLine) &&
+      !/^\([^)]+\)$/.test(trimmed)
+    ) {
+      // Clean character name
+      let charName = trimmed
+        .replace(/\s*\([^)]*\)\s*$/, '')  // Remove parentheticals (V.O.), (O.S.)
+        .replace(/\bCONT['']?D\.?\b/gi, '')
+        .replace(/\bCONT\.?\b/gi, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      if (charName && charName.length >= 2 && charName.length <= 35) {
+        characterCandidates.add(charName);
+      }
     }
   }
+  
   const expectedSceneCount = expectedHeadings.length;
   console.log(`[script-breakdown] Expected scene count from regex: ${expectedSceneCount}`);
+  console.log(`[script-breakdown] Character candidates extracted: ${characterCandidates.size}`);
 
   const aiScenesList = asArray(out.scenes?.list);
   const regexScenes = extractScenesFromScript(scriptText);
@@ -274,7 +311,14 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
     source_reason: expectedSceneCount > 0 ? 'Found INT./EXT. scene headings' : 'No standard screenplay headings found'
   };
 
-  out.raw_text = scriptText.slice(0, 5000);
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PERSIST character_candidates and raw_text for normalizer fallback
+  // ═══════════════════════════════════════════════════════════════════════════
+  out.character_candidates = Array.from(characterCandidates);
+  out.scene_headings_raw = expectedHeadings;
+  // Keep enough raw_text for title extraction (first 10KB)
+  out.raw_text = scriptText.slice(0, 10000);
+  
   return out;
 }
 
