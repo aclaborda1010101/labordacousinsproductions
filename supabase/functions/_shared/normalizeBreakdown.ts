@@ -467,13 +467,29 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
 
   // Collect headings from all possible sources (use `out` which has scenes.list populated)
   const allHeadings = collectHeadings(out);
-  
-  // HARD RULE: If scenes > 0 but locations empty, rebuild from headings
-  if (scenesTotal > 0 && baseLocations.length === 0) {
+
+  // Normalize locations payload (it can come as flat array or as { base, variants })
+  let derivedLocationsBase: NormalizedLocation[] = safeArray(baseLocations)
+    .map((l: unknown) => {
+      const loc = l as AnyObj;
+      const name = typeof loc?.name === "string" ? (loc.name as string).trim() : "";
+      const variants = safeArray(loc?.variants).map((v: unknown) => String(v));
+      return { name, variants } as NormalizedLocation;
+    })
+    .filter((l: NormalizedLocation) => l.name);
+
+  let derivedLocationVariants: unknown[] = safeArray((inputLocations as AnyObj)?.variants);
+
+  // HARD RULE: If scenes > 0 but we still have 0 locations, rebuild from headings
+  if (scenesTotal > 0 && derivedLocationsBase.length === 0) {
     if (allHeadings.length > 0) {
-      console.log(`[normalizeBreakdown] HARD RULE: Rebuilding locations from ${allHeadings.length} headings`);
+      console.log(
+        `[normalizeBreakdown] HARD RULE: Rebuilding locations from ${allHeadings.length} headings`,
+      );
       const extracted = extractLocationsFromHeadings(allHeadings);
-      baseLocations = extracted.base;
+      derivedLocationsBase = extracted.base;
+      derivedLocationVariants = extracted.variants;
+
       (out as AnyObj)._locations_rebuilt = true;
       warnings.push({
         code: "LOCATIONS_REBUILT",
@@ -487,15 +503,17 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     }
   }
 
-  out.locations = out.locations || {};
-  (out.locations as AnyObj).base = safeArray(baseLocations).map((l: unknown) => {
-    const loc = l as AnyObj;
-    const name = typeof loc?.name === "string" ? (loc.name as string).trim() : "";
-    const variants = safeArray(loc?.variants).map((v: unknown) => String(v));
-    return { name, variants };
-  }).filter((l: NormalizedLocation) => l.name);
-
-  (out.locations as AnyObj).variants = safeArray((inputLocations as AnyObj)?.variants);
+  // IMPORTANT: write into the FINAL object (out) and do not overwrite good data with empties
+  const prevLocations = out.locations as AnyObj | undefined;
+  out.locations = out.locations ?? {};
+  (out.locations as AnyObj).base =
+    safeArray(prevLocations?.base).length > 0
+      ? safeArray(prevLocations?.base)
+      : derivedLocationsBase;
+  (out.locations as AnyObj).variants =
+    safeArray(prevLocations?.variants).length > 0
+      ? safeArray(prevLocations?.variants)
+      : derivedLocationVariants;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // PASO 2: Characters - normalize from flat array into 3 groups
@@ -508,22 +526,33 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
 
   // HARD RULE: If scenes > 50 but no characters, try multiple sources
   // Priority 1: character_candidates[] (already extracted)
-  const characterCandidates = safeArray(input?.character_candidates);
+  const characterCandidatesRaw = safeArray(input?.character_candidates);
+  const characterCandidatesNormalized = characterCandidatesRaw
+    .map((c: unknown) => normalizeCharacterName(c))
+    .filter((n): n is string => !!n);
+
   const rawText: string | undefined =
     (input?.raw_text as string) || (input?.text as string) || (input?.script_text as string);
-  
+
+  // Used to ensure the dashboard doesn't show 0 when candidates exist
+  const candidatesForPromotion: string[] = characterCandidatesNormalized.length
+    ? characterCandidatesNormalized
+    : typeof rawText === "string" && rawText.trim()
+      ? extractCharacterCandidatesFromText(rawText)
+      : [];
+
   if (scenesTotal > 50 && flatChars.length === 0) {
     let candidates: string[] = [];
     let source = "";
-    
-    if (characterCandidates.length > 0) {
+
+    if (characterCandidatesNormalized.length > 0) {
       // Use pre-extracted candidates
-      candidates = characterCandidates
-        .map((c: unknown) => normalizeCharacterName(c))
-        .filter((n): n is string => !!n);
+      candidates = characterCandidatesNormalized;
       source = "character_candidates";
-      console.log(`[normalizeBreakdown] Using ${candidates.length} pre-extracted character_candidates`);
-    } else if (rawText) {
+      console.log(
+        `[normalizeBreakdown] Using ${candidates.length} pre-extracted character_candidates`,
+      );
+    } else if (typeof rawText === "string" && rawText.trim()) {
       // Fallback: extract from raw text
       candidates = extractCharacterCandidatesFromText(rawText);
       source = "raw_text";
@@ -534,7 +563,7 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
         message: `scenes_total=${scenesTotal} but no characters array, character_candidates, or raw_text found.`,
       });
     }
-    
+
     if (candidates.length > 0) {
       flatChars = candidates.map((name) => ({
         name,
@@ -543,7 +572,7 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
         priority: "P5",
         scenes_count: 0,
       }));
-      
+
       (out as AnyObj)._characters_extracted = true;
       (out as AnyObj)._characters_source = source;
       warnings.push({
@@ -596,11 +625,45 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     });
   }
 
-  out.characters = {
-    cast: uniqueBy(cast, (c) => c.name.toUpperCase()),
-    featured_extras_with_lines: uniqueBy(featured, (c) => c.name.toUpperCase()),
-    voices_and_functional: uniqueBy(voices, (c) => c.name.toUpperCase()),
-  };
+  // IMPORTANT: write into FINAL object (out) and do not overwrite good data with empties
+  const prevCharacters = out.characters as AnyObj | undefined;
+  out.characters = out.characters ?? {};
+
+  (out.characters as AnyObj).cast =
+    safeArray(prevCharacters?.cast).length > 0
+      ? safeArray(prevCharacters?.cast)
+      : uniqueBy(cast, (c) => c.name.toUpperCase());
+
+  (out.characters as AnyObj).featured_extras_with_lines =
+    safeArray(prevCharacters?.featured_extras_with_lines).length > 0
+      ? safeArray(prevCharacters?.featured_extras_with_lines)
+      : uniqueBy(featured, (c) => c.name.toUpperCase());
+
+  (out.characters as AnyObj).voices_and_functional =
+    safeArray(prevCharacters?.voices_and_functional).length > 0
+      ? safeArray(prevCharacters?.voices_and_functional)
+      : uniqueBy(voices, (c) => c.name.toUpperCase());
+
+  // If cast is still empty but we do have candidates, promote them (avoid a permanent "0")
+  const promotableCandidates = uniqueBy(
+    candidatesForPromotion
+      .map((n) => normalizeCharacterName(n))
+      .filter((n): n is string => !!n)
+      .filter((n) => !isVoiceOrFunctional(n) && !isFeaturedExtraRole(n))
+      .map((name) => ({ name, scenes_count: 0 } as NormalizedCharacter)),
+    (c) => c.name.toUpperCase(),
+  );
+
+  if (safeArray((out.characters as AnyObj).cast).length === 0 && promotableCandidates.length > 0) {
+    (out.characters as AnyObj).cast = promotableCandidates.map((c) => ({
+      name: c.name,
+      priority: "P2",
+      role: "supporting",
+      scenes_count: c.scenes_count ?? 0,
+    }));
+    (out as AnyObj)._cast_promoted_from_candidates = true;
+  }
+
 
   // Props: prefer input.props; fallback props_key
   const propsInput = safeArray(input.props).length ? safeArray(input.props) : safeArray(input.props_key);
@@ -627,5 +690,13 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     out._warnings = [...(safeArray(out._warnings) as BreakdownWarning[]), ...warnings];
   }
 
+  // TEMP: verification log (remove after confirming counts are non-zero)
+  console.log("[FINAL COUNTS CHECK]", {
+    scenes: (out.scenes as AnyObj)?.total,
+    locations: safeArray(((out.locations as AnyObj) ?? {})?.base).length,
+    characters: safeArray(((out.characters as AnyObj) ?? {})?.cast).length,
+  });
+
   return out as NormalizedBreakdown;
 }
+
