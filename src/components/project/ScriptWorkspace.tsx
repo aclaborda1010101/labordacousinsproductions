@@ -2386,13 +2386,27 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 </TabsList>
 
                 <TabsContent value="paste" className="mt-4">
-                  <Textarea
-                    placeholder="Pega aquí tu guion..."
-                    value={scriptText}
-                    onChange={(e) => setScriptText(e.target.value)}
-                    rows={12}
-                    disabled={status === 'analyzing'}
-                  />
+                  {status === 'analyzing' ? (
+                    // Show animated processing state for paste mode
+                    <div className="border-2 border-primary rounded-lg p-8 text-center bg-primary/5">
+                      <div className="relative mx-auto w-16 h-16 mb-4">
+                        <FileText className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto" />
+                        <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
+                        <div className="absolute inset-0 border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">Analizando guion...</p>
+                      <p className="text-xs text-muted-foreground">
+                        No cierres esta página • Puede tardar varios minutos
+                      </p>
+                    </div>
+                  ) : (
+                    <Textarea
+                      placeholder="Pega aquí tu guion..."
+                      value={scriptText}
+                      onChange={(e) => setScriptText(e.target.value)}
+                      rows={12}
+                    />
+                  )}
                 </TabsContent>
 
                 <TabsContent value="upload" className="mt-4">
