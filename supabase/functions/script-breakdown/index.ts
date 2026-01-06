@@ -247,46 +247,87 @@ const RE_MULTI_SPACE = /\s+/g;
 const RE_QUOTES = /^["""']+|["""']+$/g;
 const RE_CONTD = /\bCONT'?D\b/gi;
 
-// Stage / technical / comms patterns commonly misdetected as characters
+// ═══════════════════════════════════════════════════════════════════════════════
+// AGGRESSIVE TECHNICAL SUFFIX PATTERNS (Top Gun / aviation script problems)
+// ═══════════════════════════════════════════════════════════════════════════════
 const RE_TO_SELF = /\bTO\s+SELF\b/i;
 const RE_TO_HIMSELF = /\bTO\s+HIMSELF\b/i;
 const RE_TO_HERSELF = /\bTO\s+HERSELF\b/i;
-const RE_BREAKING = /\bBREAK(ING|S)?\b/i;
-const RE_EJECT = /\bEJECT(ED|S)?\b/i;
-const RE_IMPACT = /\bIMPACT\b/i;
+const RE_BREAKING = /\bBREAK(ING|S)?\s*(RIGHT|LEFT)?\.?$/i;
+const RE_EJECT = /\bEJECT(ED|S)?\.?$/i;
+const RE_IMPACT = /\bIMPACT\.?$/i;
 const RE_ROUTE = /\b(ROUTE|ALT|ALTS|LEVEL FLIGHT|SURFACES|TONE|ALARM|END ALTS)\b/i;
 const RE_ALL_CAPS = /^[A-Z0-9\s.'-]+$/;
 const RE_HAS_SENTENCE_PUNCT = /[.!?…]+$/; // ends with punctuation → likely dialogue fragment/state
-const RE_ID_CODE = /^[A-Z]{1,3}\d{1,4}$/; // AA17, E299, AG279
-const RE_NUMERIC_HEAVY = /\d{2,}/;
-const RE_VOICE_WORD = /\b(VOICE|RADIO|LOUDSPEAKER|ANNOUNCER|COMMS|MISSION CONTROL|CONTROL|TOWER|INTERCOM)\b/i;
-const RE_ROLE_GENERIC = /\b(OFFICER|SOLDIER|DOCTOR|NURSE|DETECTIVE|COP|POLICE|AGENT|AIDE|CHAIRMAN|COUNSEL|BARTENDER|PILOT|CAPTAIN|GENERAL|SENATOR|RECEPTIONIST|DIRECTOR|PRODUCER|TECH|TECHNICIAN|SCIENTIST|GUARD|SECURITY|CLERK)\b/i;
-const RE_SCREENPLAY_TOKEN = /\b(INSERT CUT|MONTAGE|SUPER TITLE|TITLE CARD|CUT TO|FADE (IN|OUT)|DISSOLVE|INTERCUT|ESTABLISHING)\b/i;
 
-// ---------- Normalization ----------
+// ═══════════════════════════════════════════════════════════════════════════════
+// SCRIPT CODES & ID PATTERNS (scene markers, continuity codes)
+// ═══════════════════════════════════════════════════════════════════════════════
+const RE_ID_CODE = /^[A-Z]{1,3}\d{1,4}$/; // AA17, E299, AG279
+const RE_SCENE_CODE = /^[A-Z]+\d+[A-Z]?$/i; // A127, B56, EE313, E299
+const RE_NUMERIC_HEAVY = /\d{2,}/;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TECHNICAL SUFFIX PATTERNS (MUST BE FILTERED)
+// These appear after character names and contaminate the cast list
+// ═══════════════════════════════════════════════════════════════════════════════
+const RE_TECH_SUFFIX = /\s+(D|V0|VO|OS|ALT|ALTS|PRE-?LAP|POST-?LAP|INTO RADIO|OVER RADIO|ON RADIO|TO RADIO|WHISPERS?|SCREAMS?|YELLS?|SHOUTS?|CRYING|LAUGHING|SINGING|MUTTERS?|MUMBLES?)\s*$/i;
+const RE_TECH_SUFFIX_ONLY = /^(D|V0|VO|OS|ALT|ALTS|PRE-?LAP|POST-?LAP)$/i;
+
+// Voice/functional patterns
+const RE_VOICE_WORD = /\b(VOICE|RADIO|LOUDSPEAKER|ANNOUNCER|COMMS|MISSION CONTROL|CONTROL|TOWER|INTERCOM|PA\s*SYSTEM|SPEAKER|FLIGHT\s*DECK)\b/i;
+const RE_ROLE_GENERIC = /\b(OFFICER|SOLDIER|DOCTOR|NURSE|DETECTIVE|COP|POLICE|AGENT|AIDE|CHAIRMAN|COUNSEL|BARTENDER|PILOT|CAPTAIN|GENERAL|SENATOR|RECEPTIONIST|DIRECTOR|PRODUCER|TECH|TECHNICIAN|SCIENTIST|GUARD|SECURITY|CLERK)\b/i;
+const RE_SCREENPLAY_TOKEN = /\b(INSERT CUT|MONTAGE|SUPER TITLE|TITLE CARD|CUT TO|FADE (IN|OUT)|DISSOLVE|INTERCUT|ESTABLISHING|QUICK CUTS?)\b/i;
+
+// ---------- Normalization (aggressive cleaning) ----------
 function normalizeCharacterLabel(inputRaw: string): string {
   if (!inputRaw) return "";
   let s = inputRaw.trim();
   s = s.replace(RE_QUOTES, "");
   s = s.replace(RE_PARENS, " ");
   s = s.replace(RE_CONTD, " ");
+  // Remove technical suffixes BEFORE other processing
+  s = s.replace(RE_TECH_SUFFIX, "");
   s = s.replace(/[,:;]+$/g, "");
   s = s.replace(RE_MULTI_SPACE, " ").trim();
   return s;
 }
 
-// ---------- Detection: discard vs classify ----------
+// ---------- Detection: HARD DISCARD RULES ----------
+
+// Check for technical suffix (D, V0, ALT, PRELAP, INTO RADIO, etc.)
+function hasTechnicalSuffix(name: string): boolean {
+  return RE_TECH_SUFFIX.test(name) || RE_TECH_SUFFIX_ONLY.test(name.trim());
+}
+
+// Check for scene/continuity codes (A127, E299, EE313)
+function isSceneCode(name: string): boolean {
+  const t = name.trim();
+  if (RE_SCENE_CODE.test(t)) return true;
+  if (RE_ID_CODE.test(t)) return true;
+  return false;
+}
+
 function isLikelyDialogueFragmentOrState(name: string): boolean {
+  // Ends with punctuation (HOLY SHIT., CAPTURED., EJECT.)
   if (RE_HAS_SENTENCE_PUNCT.test(name)) return true;
+  // Multi-word phrases with punctuation
   const words = name.split(" ").filter(Boolean);
-  if (words.length >= 4 && /[.!?]/.test(name)) return true;
+  if (words.length >= 3 && /[.!?]/.test(name)) return true;
+  // Contains verbs in present tense (likely action description)
+  if (/\b(BREAKS?|EJECTS?|IMPACTS?|SCREAMS?|YELLS?|SHOUTS?|WHISPERS?)\b/i.test(name)) return true;
   return false;
 }
 
 function isRadioCallOrAction(name: string): boolean {
+  // TO SELF, TO HIMSELF, TO HERSELF
   if (RE_TO_SELF.test(name) || RE_TO_HIMSELF.test(name) || RE_TO_HERSELF.test(name)) return true;
+  // BREAKING RIGHT, EJECT, IMPACT
   if (RE_BREAKING.test(name) || RE_EJECT.test(name) || RE_IMPACT.test(name)) return true;
+  // ROUTE, ALT, SURFACES, ALARM
   if (RE_ROUTE.test(name)) return true;
+  // INTO RADIO, OVER RADIO, ON RADIO
+  if (/\b(INTO|OVER|ON|TO)\s+RADIO\b/i.test(name)) return true;
   return false;
 }
 
@@ -304,6 +345,7 @@ function isGenericRole(name: string): boolean {
 
 function isLikelyCodeOrCallsign(name: string): boolean {
   if (RE_ID_CODE.test(name)) return true;
+  if (RE_SCENE_CODE.test(name)) return true;
   if (RE_NUMERIC_HEAVY.test(name) && name.length <= 8) return true;
   return false;
 }
@@ -342,9 +384,38 @@ function classifyCharacters(rawCandidates: string[]): CharBuckets {
   const seen = new Set<string>();
 
   for (const raw of rawCandidates || []) {
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STEP 1: Check ORIGINAL input for technical suffixes BEFORE normalization
+    // This catches things like "MAVERICK D", "WARLOCK PRELAP", "ROOSTER WHISPERS"
+    // ═══════════════════════════════════════════════════════════════════════════
+    if (hasTechnicalSuffix(raw)) {
+      console.log('[classify] Discarded tech suffix (raw):', raw);
+      buckets.discarded.push(raw);
+      continue;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STEP 2: Check for scene/continuity codes (A127, E299, EE313, B56)
+    // ═══════════════════════════════════════════════════════════════════════════
+    if (isSceneCode(raw)) {
+      console.log('[classify] Discarded scene code:', raw);
+      buckets.discarded.push(raw);
+      continue;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STEP 3: Normalize (removes parentheticals, CONT'D, tech suffixes)
+    // ═══════════════════════════════════════════════════════════════════════════
     const name0 = normalizeCharacterLabel(raw);
     if (!name0 || name0.length < 2) {
       buckets.discarded.push(raw || '(empty)');
+      continue;
+    }
+
+    // Double-check normalized result doesn't have tech suffix or is a code
+    if (hasTechnicalSuffix(name0) || isSceneCode(name0)) {
+      console.log('[classify] Discarded after normalization:', name0);
+      buckets.discarded.push(name0);
       continue;
     }
 
@@ -355,14 +426,14 @@ function classifyCharacters(rawCandidates: string[]): CharBuckets {
       continue;
     }
 
-    // discard phrases/states (Top Gun problem)
+    // discard phrases/states (Top Gun problem: PHOENIX EJECT., HOLY SHIT.)
     if (isLikelyDialogueFragmentOrState(name0)) {
       console.log('[classify] Discarded dialogue fragment:', name0);
       buckets.discarded.push(name0);
       continue;
     }
 
-    // discard pure action/radio-call lines (Top Gun problem)
+    // discard pure action/radio-call lines (MAVERICK TO SELF, BLUE ROUTE)
     if (isRadioCallOrAction(name0)) {
       if (isVoiceFunctional(name0)) {
         addUnique(buckets.voices_and_functional, seen, name0);
@@ -373,15 +444,16 @@ function classifyCharacters(rawCandidates: string[]): CharBuckets {
       continue;
     }
 
-    // Voice/functional bucket
+    // Voice/functional bucket (RADIO, TOWER, INTERCOM, FLIGHT DECK SPEAKER)
     if (isVoiceFunctional(name0)) {
       addUnique(buckets.voices_and_functional, seen, name0);
       continue;
     }
 
-    // Codes/callsigns: treat as featured extras (they speak, but not principal cast)
+    // Codes/callsigns that slipped through: treat as discarded (not even extras)
     if (isLikelyCodeOrCallsign(name0)) {
-      addUnique(buckets.featured_extras_with_lines, seen, name0);
+      console.log('[classify] Discarded code/callsign:', name0);
+      buckets.discarded.push(name0);
       continue;
     }
 
