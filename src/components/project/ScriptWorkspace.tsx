@@ -452,16 +452,19 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     const suggestions: string[] = [];
     let score = 100;
 
-    // Handle both nested (characters.cast) and flat array formats
+    // Handle both nested and flat array formats for all fields
     const charactersArray = Array.isArray(breakdown.characters) 
       ? breakdown.characters 
       : (breakdown.characters as any)?.cast || [];
     const locationsArray = Array.isArray(breakdown.locations)
       ? breakdown.locations
       : (breakdown.locations as any)?.base || [];
+    const scenesArray = Array.isArray(breakdown.scenes)
+      ? breakdown.scenes
+      : (breakdown.scenes as any)?.list || [];
 
     const characterCount = charactersArray.length;
-    const sceneCount = breakdown.scenes?.length || 0;
+    const sceneCount = scenesArray.length || (breakdown.scenes as any)?.total || 0;
     const locationCount = locationsArray.length;
     const hasProtagonist = charactersArray.some((c: any) => c.role === 'protagonist');
     const hasSynopsis = breakdown.synopsis?.faithful_summary && breakdown.synopsis.faithful_summary.length > 50;
@@ -499,7 +502,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     }
 
     // Check for minimal content
-    const hasDialogue = breakdown.scenes?.some(s => 
+    const hasDialogue = scenesArray.some((s: any) => 
       s.characters_present && s.characters_present.length > 0
     );
     if (!hasDialogue) {
