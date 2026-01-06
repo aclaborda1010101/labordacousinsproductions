@@ -110,9 +110,17 @@ function pickTitle(input: AnyObj, filename?: string): string {
 function isGenericTitle(s: string): boolean {
   const generic = [
     "GADGET", "UNTITLED", "SCRIPT", "SCREENPLAY", "DRAFT", 
-    "FINAL DRAFT", "REVISED", "NEW PROJECT", "PROJECT"
+    "FINAL DRAFT", "REVISED", "NEW PROJECT", "PROJECT",
+    "SHOOTING SCRIPT", "FINAL", "WHITE", "BLUE", "PINK", "YELLOW"
   ];
-  return generic.includes(s.toUpperCase().trim());
+  const upper = s.toUpperCase().trim();
+  if (generic.includes(upper)) return true;
+  
+  // Also reject copyright lines, studio names, dates
+  const badPatterns = /^(©|COPYRIGHT|\d{4}|SYNCOPY|WARNER|UNIVERSAL|NETFLIX|DISNEY|PARAMOUNT|SONY|FOX|MGM|LIONSGATE|A24|FOCUS)/i;
+  if (badPatterns.test(s.trim())) return true;
+  
+  return false;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -645,9 +653,10 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
       : uniqueBy(voices, (c) => c.name.toUpperCase());
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // HARD FALLBACK: If cast < 20 and we have many candidates, inject them
+  // HARD FALLBACK: Scaled tolerance based on scene count
+  // For Oppenheimer-sized scripts (279 scenes), we expect 120+ characters
   // ═══════════════════════════════════════════════════════════════════════════
-  const bannedNames = /^(CUT TO|DISSOLVE TO|FADE|INT\.|EXT\.|TITLE|SUPER|MONTAGE|CONTINUOUS|LATER|SAME|DAY|NIGHT|MORNING|EVENING|DAWN|DUSK|INTERCUT|FLASHBACK|BACK TO|END OF|THE END|CONTINUED|MORE)$/i;
+  const bannedNames = /^(CUT TO|DISSOLVE TO|FADE|INT\.|EXT\.|TITLE|SUPER|MONTAGE|CONTINUOUS|LATER|SAME|DAY|NIGHT|MORNING|EVENING|DAWN|DUSK|INTERCUT|FLASHBACK|BACK TO|END OF|THE END|CONTINUED|MORE|BLACK|ANGLE ON|CLOSE ON|INSERT|POV|WIDE|TIGHT|OVER|MATCH CUT|JUMP CUT|SMASH CUT)$/i;
   
   const cleanCharNameForPromotion = (s: string): string => {
     if (!s) return "";
@@ -667,12 +676,21 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     (c) => c.name.toUpperCase(),
   );
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SCALED TOLERANCE: min cast expected based on scene count
+  // ═══════════════════════════════════════════════════════════════════════════
   const currentCastLen = safeArray((out.characters as AnyObj).cast).length;
-  const shouldInjectCandidates = currentCastLen < 20 && promotableCandidates.length >= 20;
+  const minCastExpected =
+    scenesTotal >= 200 ? 120 :
+    scenesTotal >= 100 ? 80 :
+    scenesTotal >= 50 ? 40 :
+    20;
+
+  const shouldInjectCandidates = promotableCandidates.length > currentCastLen && currentCastLen < minCastExpected;
 
   if (shouldInjectCandidates) {
     console.log(
-      `[normalizeBreakdown] HARD FALLBACK: Injecting ${promotableCandidates.length} candidates into cast (was ${currentCastLen})`,
+      `[normalizeBreakdown] SCALED FALLBACK: scenes=${scenesTotal}, minExpected=${minCastExpected}, current=${currentCastLen}, candidates=${promotableCandidates.length}`,
     );
     (out.characters as AnyObj).cast = promotableCandidates.map((c) => ({
       name: c.name,
@@ -684,7 +702,7 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
     (out as AnyObj)._cast_promoted_from_candidates = true;
     warnings.push({
       code: "CAST_INJECTED_FROM_CANDIDATES",
-      message: `LLM returned only ${currentCastLen} cast. Injected ${promotableCandidates.length} from character_candidates.`,
+      message: `LLM returned ${currentCastLen} cast (min expected ${minCastExpected} for ${scenesTotal} scenes). Injected ${promotableCandidates.length} from character_candidates.`,
     });
   } else if (currentCastLen === 0 && promotableCandidates.length > 0) {
     // Original fallback for completely empty cast
