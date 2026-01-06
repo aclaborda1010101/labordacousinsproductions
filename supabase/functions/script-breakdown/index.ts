@@ -316,8 +316,9 @@ const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // Model mapping: Anthropic -> Gateway equivalent
+// Updated 2025-01: claude-3-5-sonnet-20241022 deprecated, use claude-sonnet-4-20250514
 const MODEL_MAP: Record<string, { anthropic: string; gateway: string }> = {
-  sonnet: { anthropic: 'claude-3-5-sonnet-20241022', gateway: 'google/gemini-2.5-pro' },
+  sonnet: { anthropic: 'claude-sonnet-4-20250514', gateway: 'google/gemini-2.5-pro' },
   haiku: { anthropic: 'claude-3-5-haiku-20241022', gateway: 'google/gemini-2.5-flash' },
 };
 
