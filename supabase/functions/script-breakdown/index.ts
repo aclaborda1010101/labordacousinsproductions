@@ -1246,6 +1246,143 @@ OUTPUT LANGUAGE: ${lang}`;
 
       const parsedEpisodes = buildEpisodesFromScenes();
 
+      // ============================================
+      // FILTRO OBLIGATORIO - PEGAR DESPUÉS DEL PARSE
+      // ============================================
+      function filterCharacters(analysis: any): any {
+        console.log('=== FILTER EXECUTING ===');
+
+        // Función para validar UN nombre
+        const isValid = (name: string): boolean => {
+          if (!name || name.length < 2) return false;
+          const n = name.toUpperCase().trim();
+
+          // Rechazar letras repetidas 3+
+          if (/(.)\1{2,}/.test(n)) return false;
+
+          // Rechazar sufijos basura
+          if (/\s+(D|V0|VO|OS)$/i.test(n)) return false;
+
+          // Rechazar efectos de sonido
+          if (/^(BAM|BLAM|CRASH|BANG|BOOM|SLAM|THUD)\.?$/i.test(n)) return false;
+
+          // Rechazar técnicos
+          if (/^(QUICK CUTS|FADE|CUT TO|CLOSE ON|ANGLE|POV|MONTAGE)$/i.test(n)) return false;
+
+          // Rechazar tiempo
+          if (/^(MORNING|NIGHT|DAY|LATER|CONTINUOUS)$/i.test(n)) return false;
+
+          // Rechazar puntuación
+          if (/^[.\-!?,;:'"…]+$/.test(n)) return false;
+
+          return true;
+        };
+
+        // Función para normalizar nombre
+        const normalize = (name: string): string => {
+          return name.toUpperCase().replace(/[^A-Z\s]/g, '').trim();
+        };
+
+        // Alias conocidos
+        const ALIASES: Record<string, string> = {
+          'JOKER': 'Arthur Fleck',
+          'MOM': 'Penny Fleck',
+          'MOTHER': 'Penny Fleck',
+          'BURKE': 'Det. Burke',
+          'GARRITY': 'Det. Garrity',
+        };
+
+        // Set para tracking de duplicados
+        const seen = new Set<string>();
+
+        // Función para procesar una lista
+        const processList = (list: any[]): any[] => {
+          if (!Array.isArray(list)) return [];
+
+          return list
+            .filter(item => {
+              const name = typeof item === 'string' ? item : item?.name;
+              if (!name) return false;
+
+              // Validar
+              if (!isValid(name)) {
+                console.log('Filtered invalid:', name);
+                return false;
+              }
+
+              // Resolver alias
+              const normalized = normalize(name);
+              const canonical = ALIASES[normalized] || name;
+              const key = normalize(canonical);
+
+              // Deduplicar
+              if (seen.has(key)) {
+                console.log('Filtered duplicate:', name);
+                return false;
+              }
+
+              seen.add(key);
+              return true;
+            })
+            .map(item => {
+              // Aplicar alias al resultado
+              const name = typeof item === 'string' ? item : item?.name;
+              const normalized = normalize(name);
+              const canonical = ALIASES[normalized] || name;
+
+              if (typeof item === 'string') return canonical;
+              return { ...item, name: canonical };
+            });
+        };
+
+        // Aplicar a todas las categorías
+        if (analysis.characters) {
+          analysis.characters.protagonists = processList(analysis.characters.protagonists || []);
+          analysis.characters.antagonists = processList(analysis.characters.antagonists || []);
+          analysis.characters.secondary = processList(analysis.characters.secondary || []);
+          analysis.characters.minor = processList(analysis.characters.minor || []);
+          analysis.characters.extras = processList(analysis.characters.extras || []);
+        }
+
+        return analysis;
+      }
+
+      // Ejecutar el filtro sobre TODO lo que vamos a persistir (incluye characters_main)
+      const filtered = filterCharacters({
+        characters: {
+          protagonists: Array.isArray((normalizedData as any)?.characters?.cast) ? (normalizedData as any).characters.cast : [],
+          antagonists: Array.isArray((canonicalData as any)?.characters_main) ? (canonicalData as any).characters_main : [],
+          secondary: Array.isArray((normalizedData as any)?.characters?.featured_extras_with_lines)
+            ? (normalizedData as any).characters.featured_extras_with_lines
+            : [],
+          minor: Array.isArray((normalizedData as any)?.characters?.voices_and_functional)
+            ? (normalizedData as any).characters.voices_and_functional
+            : [],
+          extras: [],
+        },
+      });
+
+      (normalizedData as any).characters = (normalizedData as any).characters || {};
+      (normalizedData as any).characters.cast = filtered?.characters?.protagonists || [];
+      (normalizedData as any).characters.featured_extras_with_lines = filtered?.characters?.secondary || [];
+      (normalizedData as any).characters.voices_and_functional = filtered?.characters?.minor || [];
+      (canonicalData as any).characters_main = filtered?.characters?.antagonists || [];
+
+      // Re-sync counts after filtering (so UI numbers match)
+      if ((normalizedData as any).counts && (normalizedData as any).characters) {
+        const castLen = Array.isArray((normalizedData as any).characters.cast) ? (normalizedData as any).characters.cast.length : 0;
+        const featuredLen = Array.isArray((normalizedData as any).characters.featured_extras_with_lines)
+          ? (normalizedData as any).characters.featured_extras_with_lines.length
+          : 0;
+        const voicesLen = Array.isArray((normalizedData as any).characters.voices_and_functional)
+          ? (normalizedData as any).characters.voices_and_functional.length
+          : 0;
+        (normalizedData as any).counts.cast_characters_total = castLen;
+        (normalizedData as any).counts.featured_extras_total = featuredLen;
+        (normalizedData as any).counts.voices_total = voicesLen;
+        (normalizedData as any).counts.characters_total = castLen + featuredLen + voicesLen;
+      }
+
       // Build flattened characters for backward compatibility
       const allCharacters: any[] = [];
       const chars = normalizedData.characters || {};
