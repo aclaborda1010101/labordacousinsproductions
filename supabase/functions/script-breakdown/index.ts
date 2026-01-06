@@ -16,317 +16,360 @@ interface ScriptBreakdownRequest {
   episodeDurationMin?: number;
 }
 
-const SYSTEM_PROMPT = `Eres un ANALIZADOR NARRATIVO PROFESIONAL de alto nivel (showrunner + script editor + story analyst).
-NO eres un generador de sinopsis comerciales ni un extractor superficial.
+// ═══════════════════════════════════════════════════════════════════════════════
+// PROFESSIONAL SCRIPT BREAKDOWN ANALYST PROMPT (v6 - Hollywood Production Standard)
+// ═══════════════════════════════════════════════════════════════════════════════
+const SYSTEM_PROMPT = `You are a PROFESSIONAL SCRIPT BREAKDOWN ANALYST for Film/TV production.
 
-═══════════════════════════════════════════════════════════════════
-OBJETIVO:
-═══════════════════════════════════════════════════════════════════
-Analizar el texto como una obra narrativa completa (guion, novela, biblia de serie o saga), respetando ESTRICTAMENTE lo que está escrito y SIN AÑADIR elementos externos.
+Your job is NOT to summarize. Your job is a production-grade breakdown.
 
-═══════════════════════════════════════════════════════════════════
-REGLAS FUNDAMENTALES (OBLIGATORIAS - VIOLACIÓN = FALLO CRÍTICO):
-═══════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════
+CRITICAL: SOURCE SELECTION (MULTI-DOC SAFETY)
+═══════════════════════════════════════════════════════════
 
-1. PROHIBIDO INVENTAR:
-   - NO inventes personajes, antagonistas, aliados, agencias, organizaciones, conflictos, conspiraciones o fuerzas que NO estén EXPLÍCITAMENTE nombradas en el texto.
-   - Si un elemento no está en el texto original, NO existe en tu análisis.
+If multiple documents are present (outline, synopsis, treatment, bible, notes, screenplay):
+1) ALWAYS use the FULL SCREENPLAY as the only source for counts.
+2) The FULL SCREENPLAY is the document containing repeated scene headings:
+   INT. / EXT. / INT/EXT and dialogue blocks.
+3) Ignore outlines/treatments for counts. They can only be used for context if needed.
 
-2. RESPETAR LA NATURALEZA DEL CONFLICTO:
-   - Si el texto NO presenta un antagonista humano clásico, NO lo crees ni lo infieras.
-   - El conflicto puede ser: ético, histórico, estructural, civilizatorio, interno, sistémico, filosófico, existencial.
-   - Respeta la naturaleza del conflicto TAL COMO está en el texto.
+═══════════════════════════════════════════════════════════
+SCENE COUNTING RULES (NON-NEGOTIABLE)
+═══════════════════════════════════════════════════════════
 
-3. PERSONAJES NARRATIVOS VÁLIDOS:
-   Reconoce como PERSONAJES a cualquier entidad con agencia, decisiones o impacto narrativo:
-   - Individuos humanos
-   - Entidades no humanas conscientes
-   - Colectivos con agencia (consejos, asambleas, grupos)
-   - Civilizaciones como actores narrativos
-   - Linajes que evolucionan generacionalmente
-   - Sistemas conscientes (IAs, redes, entidades abstractas)
+SCENE = each line that begins with any of:
+- "INT."  "EXT."  "INT/EXT"  "EXT/INT"  "INT.-"  "EXT.-"  (case-insensitive)
 
-4. CLASIFICACIÓN ESTRICTA DE PERSONAJES (solo basada en el texto):
-   CATEGORÍAS OBLIGATORIAS - USA TODAS LAS QUE APLIQUEN:
-   - protagonist: Sostiene el arco central de la narrativa (máximo 3-4)
-   - antagonist: SOLO si el texto EXPLÍCITAMENTE presenta una fuerza opositora identificable
-   - supporting: Función narrativa relevante, apoyo al protagonista (personajes con nombre que aparecen en múltiples escenas)
-   - recurring: Aparecen más de una vez pero no tienen arco propio
-   - cameo: Aparición breve pero memorable (figuras históricas, celebridades mencionadas)
-   - extra_with_line: Intervenciones puntuales con diálogo pero rol mínimo
-   - background: Figurantes, grupos de personas sin nombre individual
-   - collective_entity: Civilizaciones, grupos, consejos, organizaciones con agencia colectiva
-   - cosmic_entity: Entidades de escala planetaria/cósmica/dimensional
-   
-   IMPORTANTE: 
-   - EXTRAE TODOS los personajes mencionados, incluso si solo aparecen una vez.
-   - Los grupos (ej: "atlantes estelares", "Consejo de los Diez Reinos") son entidades colectivas válidas.
-   - Figuras históricas mencionadas (ej: "Jesús", "Platón") son cameos si se les referencia.
-   - NO reduzcas el reparto solo a personajes humanos cotidianos.
-   - Prefiere sobredetectar que infradetectar.
+Count EVERY heading as ONE scene.
+Do NOT merge scenes. Do NOT group scenes.
+Output ALL scene headings in order.
 
-5. LOCALIZACIONES AMPLIADAS:
-   Reconoce como LOCALIZACIONES válidas:
-   - Espacios físicos clásicos (INT / EXT)
-   - Lugares históricos (ciudades antiguas, imperios, épocas pasadas)
-   - Espacios simbólicos o abstractos narrativamente relevantes
-   - Entornos planetarios, subterráneos, orbitales
-   - Localizaciones cósmicas o dimensionales
-   
-   NO requieras formato técnico INT./EXT. para localizaciones no convencionales.
+scenes.total MUST equal scenes.list.length MUST equal the number of headings found.
+If headings exist and you output scenes.total=0, that is an error.
 
-6. ANÁLISIS COMPLETO:
-   - NO reduzcas la historia al primer capítulo o bloque inicial.
-   - Asume que TODO el texto proporcionado forma parte de una ÚNICA estructura narrativa coherente.
-   - Analiza desde el principio hasta el final.
+═══════════════════════════════════════════════════════════
+CHARACTER EXTRACTION (HOLLYWOOD-SAFE)
+═══════════════════════════════════════════════════════════
 
-7. NO FORZAR GÉNEROS:
-   NO conviertas automáticamente la obra en:
-   - Thriller
-   - Conspiración
-   - Procedural
-   - Historia de persecución
-   - Acción comercial
-   
-   A MENOS que el texto lo indique EXPLÍCITAMENTE con esos elementos.
+A CHARACTER is:
+- any named speaker in a dialogue block
+- OR a clearly named person in action who affects the plot
 
-8. EXTRAER SEPARADAMENTE:
-   - Sinopsis FIEL (sin clichés añadidos, sin lenguaje promocional)
-   - Personajes (por categorías estrictas)
-   - Localizaciones (todas las escalas)
-   - Props clave (objetos, tecnologías, símbolos relevantes del texto)
-   - Set pieces (eventos narrativos mayores que ESTÁN en el texto)
-   - Subtramas (solo las que EXISTEN en el texto)
-   - Giros narrativos (solo los EXPLÍCITOS)
-   - Escalas temporales si existen
-   - Tipo de conflicto predominante
+IMPORTANT NORMALIZATION (DO BEFORE COUNTING):
+Normalize character names to avoid duplicates:
+- Remove suffixes: "CONT'D", "CONT'D", "CONT'D.", "CONT.", "CONTINUED"
+- Remove parentheticals: "(V.O.)", "(O.S.)", "(O.C.)", "(ON SCREEN)", "(OFF)"
+- Trim extra spaces/punctuation
 
-9. LENGUAJE PROFESIONAL:
-   Tu salida debe ser:
-   - Descriptiva y neutral
-   - Estructural y analítica
-   - Propia de una biblia de serie o análisis de guion profesional
-   
-   PROHIBIDO:
-   - Lenguaje promocional o sensacionalista
-   - Frases como "juego peligroso", "fuerzas ocultas", "nada es lo que parece"
-   - Clichés de marketing cinematográfico
+Examples:
+"OPPENHEIMER CONT'D" -> "OPPENHEIMER"
+"STRAUSS (V.O.)" -> "STRAUSS"
 
-10. HONESTIDAD ANTE LA INCERTIDUMBRE:
-    Si algo NO está claramente definido en el texto:
-    - Indícalo como "no especificado" o "no explícito en el texto"
-    - NO lo infieras ni lo inventes
-    - Es preferible un campo vacío a uno inventado
+CHARACTER CATEGORIES (PRODUCTION ACCURATE):
+Return characters in THREE groups:
 
-═══════════════════════════════════════════════════════════════════
-FORMATO DE SALIDA OBLIGATORIO (JSON):
-═══════════════════════════════════════════════════════════════════
+1) CAST_CHARACTERS (named characters with narrative weight)
+   - protagonists, antagonists, secondary, minor
 
-{
-  "metadata": {
-    "title": "string (título del guión TAL COMO aparece en la portada, ej: 'PLAN DE RODAJE')",
-    "writers": ["array de nombres de guionistas/autores"],
-    "draft": "string (versión del borrador si aparece)",
-    "date": "string (fecha si aparece)"
-  },
-  "synopsis": {
-    "faithful_summary": "string (resumen fiel al contenido, sin clichés)",
-    "conflict_type": "ethical | historical | structural | civilizational | internal | systemic | philosophical | existential | interpersonal | external_threat",
-    "narrative_scope": "personal | generational | civilizational | cosmic",
-    "temporal_span": "string (ej: 'contemporáneo', '10.000 años', 'múltiples eras')",
-    "tone": "string (tono real de la obra, no género forzado)",
-    "themes": ["array de temas principales EXPLÍCITOS en el texto"]
-  },
-  "scenes": [
-    {
-      "scene_number": number,
-      "slugline": "string",
-      "location_name": "string",
-      "location_type": "INT | EXT | INT/EXT | COSMIC | HISTORICAL | DIMENSIONAL | SYMBOLIC",
-      "time_of_day": "DAY | NIGHT | DAWN | DUSK | CONTINUOUS | TIMELESS | NOT_SPECIFIED",
-      "era": "string (opcional, solo si está explícito)",
-      "summary": "string (resumen fiel de 1-2 frases)",
-      "objective": "string (función narrativa de la escena)",
-      "mood": "string (atmósfera)",
-      "page_range": "string",
-      "estimated_duration_sec": number,
-      "characters_present": ["array de nombres TAL COMO aparecen en el texto"],
-      "props_used": ["array de props MENCIONADOS en el texto"],
-      "continuity_notes": "string",
-      "visual_markers": ["array de indicadores visuales explícitos"]
-    }
-  ],
-  "characters": [
-    {
-      "name": "string (TAL COMO aparece en el texto)",
-      "role": "protagonist | antagonist | supporting | recurring | cameo | extra_with_line | background | collective_entity | cosmic_entity",
-      "role_detail": "string (función narrativa específica)",
-      "entity_type": "human | collective | cosmic | abstract | historical",
-      "description": "string (solo EXPLÍCITO en texto)",
-      "priority": "P1 | P2 | P3",
-      "first_appearance": "string (dónde aparece por primera vez)",
-      "scenes_count": number,
-      "dialogue_lines": number
-    }
-  ],
-  "locations": [
-    {
-      "name": "string",
-      "type": "INT | EXT | INT/EXT | COSMIC | HISTORICAL | DIMENSIONAL | SYMBOLIC",
-      "scale": "room | building | city | region | planet | cosmic | abstract",
-      "description": "string (solo EXPLÍCITO)",
-      "scenes_count": number,
-      "priority": "P1 | P2 | P3"
-    }
-  ],
-  "props": [
-    {
-      "name": "string",
-      "description": "string",
-      "narrative_importance": "critical | important | minor",
-      "scenes_used": ["array de números de escena"]
-    }
-  ],
-  "subplots": [
-    {
-      "name": "string",
-      "description": "string (breve)",
-      "characters_involved": ["array"],
-      "status": "introduced | developing | resolved | unresolved"
-    }
-  ],
-  "plot_twists": [
-    {
-      "description": "string",
-      "scene_number": number,
-      "impact": "major | moderate | minor"
-    }
-  ],
-  "summary": {
-    "total_scenes": number,
-    "estimated_runtime_min": number,
-    "production_notes": "string"
-  }
-}`;
+2) FEATURED_EXTRAS_WITH_LINES (role-based speakers without character arcs)
+   - e.g. "SOLDIER", "AIDE", "SECRETARY", "STUDENT", "WEATHERMAN", "RADIO TECH"
 
+3) VOICES_AND_FUNCTIONAL (voices and functional labels)
+   - e.g. "VOICE", "FEMALE VOICE", "RADIO", "ANNOUNCER", "PA SYSTEM"
+
+CLASSIFICATION RULES:
+- PROTAGONIST: drives the main story + has a clear arc
+- CO-PROTAGONIST (if applicable): shares major narrative weight + has own arc
+- ANTAGONIST: primary opposing force
+- SECONDARY: recurring characters impacting plot across multiple scenes
+- MINOR: named but limited plot impact
+- Any generic role without a personal arc goes to FEATURED_EXTRAS_WITH_LINES.
+
+═══════════════════════════════════════════════════════════
+LOCATION EXTRACTION (BIBLE vs PRODUCTION)
+═══════════════════════════════════════════════════════════
+
+Extract locations from scene headings and provide TWO levels:
+
+A) BASE LOCATIONS (for Bible)
+- Normalize variants into a base group:
+  - remove time-of-day suffixes ("DAY", "NIGHT", "MORNING", "LATER", "MOMENTS LATER")
+  - remove style tags ("B&W", "BLACK-AND-WHITE", "COLOUR", "COLOR")
+  - remove "SAME" / "CONTINUOUS" / "ANGLE" / "MOMENTS LATER"
+
+Example variants -> base:
+"Senate Office -- Day (B&W)" -> "Senate Office"
+"Corridor, Berkeley -- Moments Later" -> "Corridor, Berkeley"
+
+B) LOCATION VARIANTS (for Production)
+- Keep original heading-derived variants with int/ext + time + tags.
+
+Output:
+- locations.base.total + locations.base.list (grouped)
+- locations.variants.total + locations.variants.list (detailed)
+Include scenes_count per base location.
+
+═══════════════════════════════════════════════════════════
+PROPS (KEY + INSTITUTIONAL/SYMBOLIC)
+═══════════════════════════════════════════════════════════
+
+Extract KEY PROPS as:
+- plot-critical objects
+- recurring or visually iconic objects
+- institutional/symbolic objects crucial to the story world
+  (documents, classified files, court microphones, scientific devices, uniforms, vehicles, weapons)
+
+Do NOT list trivial background items unless they recur or matter.
+
+═══════════════════════════════════════════════════════════
+SETPIECES (NOT ONLY ACTION)
+═══════════════════════════════════════════════════════════
+
+Extract major setpieces:
+- chases, crashes, fights, escapes
+- trials/hearings/interrogations with high dramatic weight
+- scientific demonstrations/tests
+- musical or montage sequences
+- major confrontations or emotional peaks
+
+═══════════════════════════════════════════════════════════
+PRODUCTION FLAGS
+═══════════════════════════════════════════════════════════
+
+Detect and list:
+- stunts: cars, crashes, falls, fights
+- safety: fire, explosions, weapons, water, heights
+- complexity: VFX, crowds, period, multiple locations, night shoots, large cast`;
+
+// Tool schema matching the new Hollywood output format
 const BREAKDOWN_TOOL = {
   type: 'function' as const,
   function: {
     name: 'return_script_breakdown',
-    description: 'Returns the structured script breakdown analysis',
+    description: 'Returns the structured script breakdown analysis following Hollywood production standards',
     parameters: {
       type: 'object',
       properties: {
-        synopsis: {
+        metadata: {
           type: 'object',
           properties: {
-            faithful_summary: { type: 'string' },
-            conflict_type: { type: 'string' },
-            narrative_scope: { type: 'string' },
-            temporal_span: { type: 'string' },
-            tone: { type: 'string' },
-            themes: { type: 'array', items: { type: 'string' } }
+            title: { type: 'string', description: 'Script title as it appears on the title page' },
+            writers: { type: 'array', items: { type: 'string' } },
+            draft: { type: 'string' },
+            date: { type: 'string' }
           }
         },
         scenes: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              scene_number: { type: 'number' },
-              slugline: { type: 'string' },
-              location_name: { type: 'string' },
-              location_type: { type: 'string' },
-              time_of_day: { type: 'string' },
-              era: { type: 'string' },
-              summary: { type: 'string' },
-              objective: { type: 'string' },
-              mood: { type: 'string' },
-              page_range: { type: 'string' },
-              estimated_duration_sec: { type: 'number' },
-              characters_present: { type: 'array', items: { type: 'string' } },
-              props_used: { type: 'array', items: { type: 'string' } },
-              continuity_notes: { type: 'string' },
-              visual_markers: { type: 'array', items: { type: 'string' } }
+          type: 'object',
+          properties: {
+            total: { type: 'number' },
+            list: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  number: { type: 'number' },
+                  heading: { type: 'string' },
+                  location_raw: { type: 'string' },
+                  location_base: { type: 'string' },
+                  int_ext: { type: 'string' },
+                  time: { type: 'string' },
+                  tags: { type: 'array', items: { type: 'string' } }
+                }
+              }
             }
           }
         },
         characters: {
+          type: 'object',
+          properties: {
+            protagonists: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  arc: { type: 'string' },
+                  scenes_count: { type: 'number' },
+                  dialogue_lines: { type: 'number' }
+                }
+              }
+            },
+            co_protagonists: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  arc: { type: 'string' },
+                  scenes_count: { type: 'number' },
+                  dialogue_lines: { type: 'number' }
+                }
+              }
+            },
+            antagonists: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  arc: { type: 'string' },
+                  scenes_count: { type: 'number' },
+                  dialogue_lines: { type: 'number' }
+                }
+              }
+            },
+            secondary: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  role_detail: { type: 'string' },
+                  scenes_count: { type: 'number' },
+                  dialogue_lines: { type: 'number' }
+                }
+              }
+            },
+            minor: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  scenes_count: { type: 'number' },
+                  dialogue_lines: { type: 'number' }
+                }
+              }
+            },
+            featured_extras_with_lines: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  scenes_count: { type: 'number' },
+                  dialogue_lines: { type: 'number' }
+                }
+              }
+            },
+            voices_and_functional: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  scenes_count: { type: 'number' }
+                }
+              }
+            }
+          }
+        },
+        counts: {
+          type: 'object',
+          properties: {
+            scenes_total: { type: 'number' },
+            cast_characters_total: { type: 'number' },
+            featured_extras_total: { type: 'number' },
+            voices_total: { type: 'number' },
+            locations_base_total: { type: 'number' },
+            locations_variants_total: { type: 'number' },
+            props_total: { type: 'number' },
+            setpieces_total: { type: 'number' }
+          }
+        },
+        locations: {
+          type: 'object',
+          properties: {
+            base: {
+              type: 'object',
+              properties: {
+                total: { type: 'number' },
+                list: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string' },
+                      scenes_count: { type: 'number' },
+                      variants_count: { type: 'number' }
+                    }
+                  }
+                }
+              }
+            },
+            variants: {
+              type: 'object',
+              properties: {
+                total: { type: 'number' },
+                list: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string' },
+                      base: { type: 'string' },
+                      int_ext: { type: 'string' },
+                      time: { type: 'string' },
+                      tags: { type: 'array', items: { type: 'string' } },
+                      scenes: { type: 'array', items: { type: 'number' } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        props_key: {
           type: 'array',
           items: {
             type: 'object',
             properties: {
               name: { type: 'string' },
-              role: { type: 'string' },
-              role_detail: { type: 'string' },
-              entity_type: { type: 'string' },
-              description: { type: 'string' },
-              priority: { type: 'string' },
-              first_appearance: { type: 'string' },
-              scenes_count: { type: 'number' },
-              dialogue_lines: { type: 'number' }
+              importance: { type: 'string', enum: ['critical', 'high', 'medium'] },
+              why: { type: 'string' }
             }
           }
         },
-        locations: {
+        setpieces: {
           type: 'array',
           items: {
             type: 'object',
             properties: {
               name: { type: 'string' },
               type: { type: 'string' },
-              scale: { type: 'string' },
-              description: { type: 'string' },
-              scenes_count: { type: 'number' },
-              priority: { type: 'string' }
+              why: { type: 'string' }
             }
           }
         },
-        props: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              description: { type: 'string' },
-              narrative_importance: { type: 'string' },
-              scenes_used: { type: 'array', items: { type: 'number' } }
-            }
-          }
-        },
-        subplots: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              description: { type: 'string' },
-              characters_involved: { type: 'array', items: { type: 'string' } },
-              status: { type: 'string' }
-            }
-          }
-        },
-        plot_twists: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              description: { type: 'string' },
-              scene_number: { type: 'number' },
-              impact: { type: 'string' }
-            }
-          }
-        },
-        summary: {
+        production: {
           type: 'object',
           properties: {
-            total_scenes: { type: 'number' },
-            estimated_runtime_min: { type: 'number' },
-            production_notes: { type: 'string' }
+            dialogue_density: { type: 'string', enum: ['low', 'medium', 'high'] },
+            cast_size: { type: 'string', enum: ['small', 'medium', 'large'] },
+            complexity: { type: 'string', enum: ['low', 'medium', 'high'] },
+            stunts_safety_flags: { type: 'array', items: { type: 'string' } },
+            notes: { type: 'string' }
+          }
+        },
+        validation: {
+          type: 'object',
+          properties: {
+            scene_headings_found: { type: 'number' },
+            scenes_total_equals_list_length: { type: 'boolean' },
+            used_source: { type: 'string', enum: ['screenplay', 'unknown'] },
+            source_reason: { type: 'string' }
+          }
+        },
+        synopsis: {
+          type: 'object',
+          properties: {
+            logline: { type: 'string' },
+            summary: { type: 'string' }
           }
         }
       },
-      required: ['synopsis', 'scenes', 'characters', 'locations']
+      required: ['metadata', 'scenes', 'characters', 'counts', 'locations']
     }
   }
 };
@@ -343,7 +386,9 @@ function looksLikeCharacterCue(line: string): boolean {
 
 function cleanCharacterCue(raw: string): string {
   let name = raw.trim();
-  name = name.replace(/\(V\.?O\.?\)|\(O\.?S\.?\)|\(CONT['']?D?\)|\(CONT\.\)|\(OFF\)|\(OVER\)/gi, '').trim();
+  // Remove CONT'D, V.O., O.S., etc.
+  name = name.replace(/\s*(CONT['']?D?\.?|CONTINUED|CONT\.)\s*/gi, '').trim();
+  name = name.replace(/\(V\.?O\.?\)|\(O\.?S\.?\)|\(O\.?C\.?\)|\(ON\s?SCREEN\)|\(OFF\)/gi, '').trim();
   name = name.replace(/[()]/g, '').trim();
 
   // Filter out common screenplay transitions / non-character cues
@@ -360,6 +405,14 @@ function cleanCharacterCue(raw: string): string {
     'MONTAGE',
     'END',
     'CONTINUED',
+    'THE END',
+    'CREDITS',
+    'BLACK',
+    'FLASHBACK',
+    'INTERCUT',
+    'BACK TO',
+    'MATCH CUT',
+    'JUMP CUT',
   ]);
   if (banned.has(upper)) return '';
 
@@ -379,15 +432,24 @@ function extractScenesFromScript(text: string): any[] {
     if (match) {
       if (currentScene) scenes.push(currentScene);
       sceneNumber++;
+      const locationRaw = match[2]?.trim() || 'UNKNOWN';
+      const intExt = match[1].toUpperCase().replace('.', '').replace('-', '');
+      const time = match[3]?.toUpperCase() || '';
+      
+      // Normalize base location (remove time suffixes)
+      const locationBase = locationRaw
+        .replace(/\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|LATER|CONTINUOUS|SAME|MOMENTS LATER|B&W|COLOR).*$/i, '')
+        .trim();
+      
       currentScene = {
-        scene_number: sceneNumber,
-        slugline: line,
-        location_name: match[2]?.trim() || 'UNKNOWN',
-        location_type: match[1].toUpperCase().replace('.', ''),
-        time_of_day: match[3]?.toUpperCase() || 'NOT_SPECIFIED',
-        summary: '',
+        number: sceneNumber,
+        heading: line,
+        location_raw: locationRaw,
+        location_base: locationBase,
+        int_ext: intExt,
+        time: time,
+        tags: [],
         characters_present: [],
-        estimated_duration_sec: 60,
       };
     } else if (currentScene && looksLikeCharacterCue(line)) {
       const charName = cleanCharacterCue(line);
@@ -400,10 +462,10 @@ function extractScenesFromScript(text: string): any[] {
   return scenes;
 }
 
+// Normalize breakdown to ensure counts are consistent
 function normalizeBreakdown(data: any, scriptText: string): any {
   const out: any = (data && typeof data === 'object') ? data : {};
-  const isLongScript = (scriptText || '').length > 40000;
-
+  
   const asArray = (v: any) => (Array.isArray(v) ? v : []);
 
   // --- Pre-count expected scenes from script text ---
@@ -419,42 +481,39 @@ function normalizeBreakdown(data: any, scriptText: string): any {
   console.log(`[script-breakdown] Expected scene count from regex: ${expectedSceneCount}`);
 
   // --- Scenes ---
-  const aiScenes = asArray(out.scenes);
-
-  // For long scripts, the model often returns a tiny sample of scenes due to output limits.
-  // If that happens, prefer a deterministic regex scene pass (sluglines + character cues).
+  const aiScenesList = asArray(out.scenes?.list);
   const regexScenes = extractScenesFromScript(scriptText);
 
   // Decide whether to use AI scenes or regex fallback
-  const aiSceneCountTooLow = expectedSceneCount > 0 && aiScenes.length < expectedSceneCount * 0.5;
+  const aiSceneCountTooLow = expectedSceneCount > 0 && aiScenesList.length < expectedSceneCount * 0.5;
 
-  if (aiScenes.length === 0) {
+  if (aiScenesList.length === 0 && regexScenes.length > 0) {
     console.warn('[script-breakdown] No scenes returned by model, falling back to regex extraction');
-    out.scenes = regexScenes;
-  } else if (aiSceneCountTooLow) {
+    out.scenes = { total: regexScenes.length, list: regexScenes };
+  } else if (aiSceneCountTooLow && regexScenes.length >= aiScenesList.length) {
     console.warn('[script-breakdown] AI returned too few scenes, using regex fallback', {
-      aiScenes: aiScenes.length,
+      aiScenes: aiScenesList.length,
       expectedScenes: expectedSceneCount,
       regexScenes: regexScenes.length,
     });
-    // Use regex scenes if they're closer to expected count
-    if (regexScenes.length >= aiScenes.length) {
-      out.scenes = regexScenes;
-    } else {
-      out.scenes = aiScenes;
-    }
-  } else {
-    out.scenes = aiScenes;
+    out.scenes = { total: regexScenes.length, list: regexScenes };
+  } else if (!out.scenes || typeof out.scenes !== 'object') {
+    out.scenes = { total: aiScenesList.length, list: aiScenesList };
   }
 
-  console.log(`[script-breakdown] Final scene count: ${out.scenes.length} (expected: ${expectedSceneCount})`);
+  // Ensure scenes.total matches scenes.list.length
+  if (out.scenes?.list) {
+    out.scenes.total = out.scenes.list.length;
+  }
 
+  console.log(`[script-breakdown] Final scene count: ${out.scenes?.total || 0} (expected: ${expectedSceneCount})`);
 
-  // --- Derive characters/locations from scenes (works for both AI scenes and regex scenes) ---
-  const derivedCharMap = new Map<string, { name: string; scenes_count: number }>();
-  const derivedLocMap = new Map<string, { name: string; type: string; scenes_count: number }>();
+  // --- Derive characters from scenes if AI didn't provide them ---
+  const derivedCharMap = new Map<string, { name: string; scenes_count: number; dialogue_lines: number }>();
+  const derivedLocBaseMap = new Map<string, { name: string; scenes_count: number; variants_count: number }>();
+  const derivedLocVariantMap = new Map<string, any>();
 
-  for (const scene of asArray(out.scenes)) {
+  for (const scene of asArray(out.scenes?.list)) {
     // Characters
     for (const charName of asArray(scene?.characters_present)) {
       if (typeof charName !== 'string') continue;
@@ -462,83 +521,128 @@ function normalizeBreakdown(data: any, scriptText: string): any {
       if (!cleaned) continue;
       const key = cleaned.toLowerCase();
       const existing = derivedCharMap.get(key);
-      if (existing) existing.scenes_count++;
-      else derivedCharMap.set(key, { name: cleaned, scenes_count: 1 });
-    }
-
-    // Locations
-    const locNameRaw = (scene?.location_name || scene?.slugline || '') as string;
-    const locTypeRaw = (scene?.location_type || 'INT') as string;
-    const locName = typeof locNameRaw === 'string' ? locNameRaw.trim() : '';
-    const locType = typeof locTypeRaw === 'string' ? locTypeRaw : 'INT';
-    if (locName) {
-      const key = locName.toLowerCase();
-      const existing = derivedLocMap.get(key);
-      if (existing) existing.scenes_count++;
-      else derivedLocMap.set(key, { name: locName, type: locType, scenes_count: 1 });
-    }
-  }
-
-  const derivedCharacters = Array.from(derivedCharMap.values()).map(c => ({
-    name: c.name,
-    role: c.scenes_count >= 8 ? 'supporting' : c.scenes_count >= 3 ? 'recurring' : 'extra_with_line',
-    scenes_count: c.scenes_count,
-    priority: c.scenes_count >= 8 ? 'P1' : c.scenes_count >= 3 ? 'P2' : 'P3',
-  }));
-
-  const derivedLocations = Array.from(derivedLocMap.values()).map(l => ({
-    name: l.name,
-    type: l.type,
-    scenes_count: l.scenes_count,
-    priority: l.scenes_count >= 8 ? 'P1' : l.scenes_count >= 3 ? 'P2' : 'P3',
-  }));
-
-  // --- Characters ---
-  const existingCharacters = asArray(out.characters);
-  if (existingCharacters.length === 0) {
-    out.characters = derivedCharacters;
-    console.log(`[script-breakdown] Extracted ${out.characters.length} characters from scene data`);
-  } else if (isLongScript && derivedCharacters.length > existingCharacters.length) {
-    const existingNames = new Set(
-      existingCharacters
-        .map((c: any) => (typeof c?.name === 'string' ? c.name.toLowerCase() : ''))
-        .filter(Boolean)
-    );
-
-    const merged = [...existingCharacters];
-    for (const c of derivedCharacters) {
-      if (!existingNames.has(c.name.toLowerCase())) {
-        merged.push(c);
-        existingNames.add(c.name.toLowerCase());
+      if (existing) {
+        existing.scenes_count++;
+        existing.dialogue_lines++;
+      } else {
+        derivedCharMap.set(key, { name: cleaned, scenes_count: 1, dialogue_lines: 1 });
       }
     }
 
-    out.characters = merged;
-    console.log(`[script-breakdown] Augmented characters from scene cues (long script): ${existingCharacters.length} -> ${out.characters.length}`);
-  }
-
-  // --- Locations ---
-  const existingLocations = asArray(out.locations);
-  if (existingLocations.length === 0) {
-    out.locations = derivedLocations;
-    console.log(`[script-breakdown] Extracted ${out.locations.length} locations from scene data`);
-  } else if (isLongScript && derivedLocations.length > existingLocations.length) {
-    const existingNames = new Set(
-      existingLocations
-        .map((l: any) => (typeof l?.name === 'string' ? l.name.toLowerCase() : ''))
-        .filter(Boolean)
-    );
-
-    const merged = [...existingLocations];
-    for (const l of derivedLocations) {
-      if (!existingNames.has(l.name.toLowerCase())) {
-        merged.push(l);
-        existingNames.add(l.name.toLowerCase());
+    // Locations (base and variant)
+    const locBase = (scene?.location_base || scene?.location_raw || '') as string;
+    const locVariant = scene?.heading || '';
+    
+    if (locBase) {
+      const baseKey = locBase.toLowerCase();
+      const existing = derivedLocBaseMap.get(baseKey);
+      if (existing) {
+        existing.scenes_count++;
+      } else {
+        derivedLocBaseMap.set(baseKey, { name: locBase, scenes_count: 1, variants_count: 0 });
+      }
+      
+      // Track variant
+      if (locVariant && !derivedLocVariantMap.has(locVariant)) {
+        derivedLocVariantMap.set(locVariant, {
+          name: locVariant,
+          base: locBase,
+          int_ext: scene?.int_ext || 'INT',
+          time: scene?.time || '',
+          tags: scene?.tags || [],
+          scenes: [scene?.number || 0]
+        });
+        const baseEntry = derivedLocBaseMap.get(baseKey);
+        if (baseEntry) baseEntry.variants_count++;
+      } else if (locVariant) {
+        derivedLocVariantMap.get(locVariant)?.scenes?.push(scene?.number || 0);
       }
     }
+  }
 
-    out.locations = merged;
-    console.log(`[script-breakdown] Augmented locations from sluglines (long script): ${existingLocations.length} -> ${out.locations.length}`);
+  // Build derived characters by role (simple heuristic)
+  const derivedCharacters = Array.from(derivedCharMap.values());
+  derivedCharacters.sort((a, b) => b.scenes_count - a.scenes_count);
+  
+  const protagonists: any[] = [];
+  const secondary: any[] = [];
+  const minor: any[] = [];
+  const featuredExtras: any[] = [];
+  
+  derivedCharacters.forEach((c, idx) => {
+    const charObj = { name: c.name, scenes_count: c.scenes_count, dialogue_lines: c.dialogue_lines };
+    if (idx < 2 && c.scenes_count >= 5) {
+      protagonists.push({ ...charObj, arc: 'Inferred from scene presence' });
+    } else if (c.scenes_count >= 3) {
+      secondary.push({ ...charObj, role_detail: 'Recurring character' });
+    } else if (c.scenes_count >= 2) {
+      minor.push(charObj);
+    } else {
+      featuredExtras.push(charObj);
+    }
+  });
+
+  // --- Ensure characters object exists with proper structure ---
+  if (!out.characters || typeof out.characters !== 'object' || Array.isArray(out.characters)) {
+    out.characters = {
+      protagonists: protagonists,
+      co_protagonists: [],
+      antagonists: [],
+      secondary: secondary,
+      minor: minor,
+      featured_extras_with_lines: featuredExtras,
+      voices_and_functional: []
+    };
+    console.log(`[script-breakdown] Built characters from scene data: ${derivedCharacters.length} total`);
+  }
+
+  // --- Ensure locations object exists with proper structure ---
+  if (!out.locations || typeof out.locations !== 'object') {
+    const baseList = Array.from(derivedLocBaseMap.values());
+    const variantList = Array.from(derivedLocVariantMap.values());
+    
+    out.locations = {
+      base: { total: baseList.length, list: baseList },
+      variants: { total: variantList.length, list: variantList }
+    };
+    console.log(`[script-breakdown] Built locations from scene data: ${baseList.length} base, ${variantList.length} variants`);
+  }
+
+  // --- Ensure counts object exists and is consistent ---
+  const chars = out.characters || {};
+  const locs = out.locations || {};
+  const props = asArray(out.props_key);
+  const setpieces = asArray(out.setpieces);
+  
+  const castCount = 
+    asArray(chars.protagonists).length +
+    asArray(chars.co_protagonists).length +
+    asArray(chars.antagonists).length +
+    asArray(chars.secondary).length +
+    asArray(chars.minor).length;
+  
+  const extrasCount = asArray(chars.featured_extras_with_lines).length;
+  const voicesCount = asArray(chars.voices_and_functional).length;
+
+  out.counts = {
+    scenes_total: out.scenes?.total || out.scenes?.list?.length || 0,
+    cast_characters_total: castCount,
+    featured_extras_total: extrasCount,
+    voices_total: voicesCount,
+    locations_base_total: locs.base?.total || locs.base?.list?.length || 0,
+    locations_variants_total: locs.variants?.total || locs.variants?.list?.length || 0,
+    props_total: props.length,
+    setpieces_total: setpieces.length
+  };
+
+  // --- Ensure validation object ---
+  if (!out.validation) {
+    out.validation = {
+      scene_headings_found: expectedSceneCount,
+      scenes_total_equals_list_length: out.scenes?.total === out.scenes?.list?.length,
+      used_source: expectedSceneCount > 0 ? 'screenplay' : 'unknown',
+      source_reason: expectedSceneCount > 0 ? 'Found INT./EXT. scene headings' : 'No standard screenplay headings found'
+    };
   }
 
   return out;
@@ -624,41 +728,42 @@ SCENE COUNTING RULES (CRITICAL - READ BEFORE ANYTHING ELSE)
 
 I have PRE-SCANNED this script and found EXACTLY ${headingLines.length} scene headings (lines starting with INT./EXT.).
 
-YOUR SCENES ARRAY MUST CONTAIN EXACTLY ${headingLines.length} ENTRIES.
+YOUR scenes.list ARRAY MUST CONTAIN EXACTLY ${headingLines.length} ENTRIES.
+YOUR scenes.total MUST EQUAL ${headingLines.length}.
+YOUR counts.scenes_total MUST EQUAL ${headingLines.length}.
 
 Here are the scene headings I found:
-${headingLines.map((h, i) => `${i + 1}. ${h}`).join('\n')}
+${headingLines.slice(0, 50).map((h, i) => `${i + 1}. ${h}`).join('\n')}${headingLines.length > 50 ? `\n... and ${headingLines.length - 50} more scenes` : ''}
 
 RULES:
 - RULE 1: Same location + different time = DIFFERENT scenes
-  Example: "INT. COBERTIZO – NOCHE" and "INT. COBERTIZO – DÍA" are TWO scenes
 - RULE 2: Same location + INT vs EXT = DIFFERENT scenes
-  Example: "INT. CASA – NOCHE" and "EXT. CASA – NOCHE" are TWO scenes
 - RULE 3: Do NOT merge, group, or summarize scenes. List ALL ${headingLines.length} individually.
 - RULE 4: If your scenes array has fewer than ${headingLines.length} entries, you made an error.
 
 ═══════════════════════════════════════════════════════════════════════════════
-DESGLOSE DE PRODUCCIÓN SOLICITADO
+PRODUCTION BREAKDOWN REQUEST
 ═══════════════════════════════════════════════════════════════════════════════
 
 PROJECT ID: ${projectId}
-IDIOMA DE RESPUESTA: ${language || 'es-ES'}
-${isLongScript ? '\nNOTA: Este es un guion extenso. Analiza todo el contenido disponible de forma exhaustiva.\n' : ''}
-GUION A DESGLOSAR:
+RESPONSE LANGUAGE: ${language || 'es-ES'}
+${isLongScript ? '\nNOTE: This is a long script. Analyze all available content exhaustively.\n' : ''}
+
+SCRIPT TO ANALYZE:
 ---
 ${processedScriptText}
 ---
 
-Realiza un desglose EXHAUSTIVO de este guion. Extrae TODAS las entidades de producción siguiendo el formato JSON especificado.
+Perform an EXHAUSTIVE breakdown of this script. Extract ALL production entities following the JSON format specified.
 
-IMPORTANTE:
-- Sé exhaustivo: no dejes ningún personaje, prop o localización sin detectar
-- CUENTA EXACTAMENTE ${headingLines.length} ESCENAS (una por cada INT./EXT. encontrado)
-- Mantén consistencia en los nombres (mismo personaje = mismo nombre exacto)
-- Detecta variantes de localizaciones y agrúpalas
-- Identifica riesgos de continuidad
-- Asigna prioridades realistas
-- Incluye notas de producción útiles`;
+IMPORTANT:
+- Be exhaustive: don't miss any character, prop, or location
+- COUNT EXACTLY ${headingLines.length} SCENES (one per INT./EXT. found)
+- Normalize character names (remove CONT'D, V.O., O.S., etc.)
+- Separate CAST characters from FEATURED EXTRAS from VOICES
+- Group locations into BASE (for Bible) and VARIANTS (for Production)
+- Assign realistic priorities
+- Include useful production notes`;
 
     console.log('[script-breakdown-bg] Starting Claude Haiku analysis for task:', taskId, 'chars:', processedScriptText.length);
 
@@ -678,7 +783,7 @@ IMPORTANTE:
       },
       body: JSON.stringify({
         model: 'claude-3-5-haiku-20241022',
-        max_tokens: 8192,
+        max_tokens: 16384,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userPrompt }],
         tools: [{
@@ -726,9 +831,12 @@ IMPORTANTE:
     breakdownData = normalizeBreakdown(breakdownData, processedScriptText);
 
     console.log('[script-breakdown-bg] Analysis complete:', {
-      scenes: breakdownData.scenes?.length || 0,
-      characters: breakdownData.characters?.length || 0,
-      locations: breakdownData.locations?.length || 0,
+      scenes: breakdownData.counts?.scenes_total || 0,
+      cast: breakdownData.counts?.cast_characters_total || 0,
+      extras: breakdownData.counts?.featured_extras_total || 0,
+      voices: breakdownData.counts?.voices_total || 0,
+      locationsBase: breakdownData.counts?.locations_base_total || 0,
+      props: breakdownData.counts?.props_total || 0,
     });
 
     await supabase.from('background_tasks').update({
@@ -759,8 +867,9 @@ IMPORTANTE:
         effectiveFormat === 'series' ? 45 : 100
       );
 
-      const scenes = Array.isArray(breakdownData.scenes) ? breakdownData.scenes : [];
-      const synopsisText = breakdownData.synopsis?.faithful_summary || '';
+      // Convert new scene format to flat array for episodes
+      const scenesList = Array.isArray(breakdownData.scenes?.list) ? breakdownData.scenes.list : [];
+      const synopsisText = breakdownData.synopsis?.summary || breakdownData.synopsis?.logline || '';
 
       const buildEpisodesFromScenes = (): any[] => {
         if (desiredEpisodesCount <= 1) {
@@ -768,41 +877,16 @@ IMPORTANTE:
             episode_number: 1,
             title: effectiveFormat === 'film' ? 'Película' : 'Episodio 1',
             synopsis: synopsisText,
-            scenes,
-            duration_min: safeInt(breakdownData.summary?.estimated_runtime_min, desiredEpisodeDurationMin),
+            scenes: scenesList,
+            duration_min: desiredEpisodeDurationMin,
           }];
         }
 
-        const defaultSceneSec = 60;
-        const getSceneSec = (s: any) => {
-          const n = Number(s?.estimated_duration_sec);
-          return Number.isFinite(n) && n > 0 ? n : defaultSceneSec;
-        };
-
-        const targetEpisodeSec = desiredEpisodeDurationMin * 60;
-        const totalSec = scenes.reduce((acc: number, s: any) => acc + getSceneSec(s), 0);
-
+        // Simple even distribution for series
+        const chunkSize = Math.max(1, Math.ceil(scenesList.length / desiredEpisodesCount));
         const groups: any[][] = [];
-        if (totalSec > 0 && targetEpisodeSec > 0) {
-          let bucket: any[] = [];
-          let bucketSec = 0;
-
-          for (const s of scenes) {
-            bucket.push(s);
-            bucketSec += getSceneSec(s);
-
-            if (bucketSec >= targetEpisodeSec && groups.length < desiredEpisodesCount - 1) {
-              groups.push(bucket);
-              bucket = [];
-              bucketSec = 0;
-            }
-          }
-          groups.push(bucket);
-        } else {
-          const chunkSize = Math.max(1, Math.ceil(scenes.length / desiredEpisodesCount));
-          for (let i = 0; i < scenes.length; i += chunkSize) {
-            groups.push(scenes.slice(i, i + chunkSize));
-          }
+        for (let i = 0; i < scenesList.length; i += chunkSize) {
+          groups.push(scenesList.slice(i, i + chunkSize));
         }
 
         while (groups.length < desiredEpisodesCount) groups.push([]);
@@ -822,39 +906,84 @@ IMPORTANTE:
 
       const parsedEpisodes = buildEpisodesFromScenes();
 
-      // Extract title from multiple possible sources in the AI response
-      const extractedTitle = 
-        breakdownData.metadata?.title ||
-        breakdownData.synopsis?.title ||
-        breakdownData.title ||
-        null;
+      // Extract title from metadata
+      const extractedTitle = breakdownData.metadata?.title || null;
+      const extractedWriters = breakdownData.metadata?.writers || [];
+
+      // Flatten characters for backward compatibility
+      const allCharacters: any[] = [];
+      const chars = breakdownData.characters || {};
       
-      // Extract writers
-      const extractedWriters = 
-        breakdownData.metadata?.writers ||
-        breakdownData.writers ||
-        [];
+      for (const c of (chars.protagonists || [])) {
+        allCharacters.push({ ...c, role: 'protagonist', priority: 'P1' });
+      }
+      for (const c of (chars.co_protagonists || [])) {
+        allCharacters.push({ ...c, role: 'co_protagonist', priority: 'P1' });
+      }
+      for (const c of (chars.antagonists || [])) {
+        allCharacters.push({ ...c, role: 'antagonist', priority: 'P1' });
+      }
+      for (const c of (chars.secondary || [])) {
+        allCharacters.push({ ...c, role: 'secondary', priority: 'P2' });
+      }
+      for (const c of (chars.minor || [])) {
+        allCharacters.push({ ...c, role: 'minor', priority: 'P3' });
+      }
+      for (const c of (chars.featured_extras_with_lines || [])) {
+        allCharacters.push({ ...c, role: 'featured_extra', priority: 'P3' });
+      }
+      for (const c of (chars.voices_and_functional || [])) {
+        allCharacters.push({ ...c, role: 'voice', priority: 'P3' });
+      }
+
+      // Flatten locations for backward compatibility
+      const allLocations: any[] = [];
+      const locs = breakdownData.locations || {};
+      for (const loc of (locs.base?.list || [])) {
+        allLocations.push({ ...loc, type: 'base' });
+      }
 
       const parsedJson = {
+        // Schema version for future migrations
+        schema_version: 'v6-hollywood',
+        breakdown_version: 1,
+        
+        // Core metadata
         title: extractedTitle || 'Guion Analizado',
         writers: extractedWriters,
         metadata: breakdownData.metadata || null,
         synopsis: synopsisText,
+        logline: breakdownData.synopsis?.logline || '',
+        
+        // Production counts (new v6 format)
+        counts: breakdownData.counts,
+        
+        // Scenes in new format
+        scenes: breakdownData.scenes,
+        
+        // Characters in new categorized format + flat array for compatibility
+        characters_categorized: breakdownData.characters,
+        characters: allCharacters,
+        
+        // Locations in new format + flat array for compatibility
+        locations_structured: breakdownData.locations,
+        locations: allLocations,
+        
+        // Props and setpieces
+        props_key: breakdownData.props_key || [],
+        props: breakdownData.props_key || [],
+        setpieces: breakdownData.setpieces || [],
+        
+        // Production info
+        production: breakdownData.production || {},
+        validation: breakdownData.validation || {},
+        
+        // Episodes for series format
         episodes: parsedEpisodes,
-        characters: breakdownData.characters || [],
-        locations: breakdownData.locations || [],
-        scenes,
-        props: breakdownData.props || [],
-        subplots: breakdownData.subplots || [],
-        plot_twists: breakdownData.plot_twists || [],
-        teasers: breakdownData.teasers,
-        counts: {
-          total_scenes: scenes.length || 0,
-          total_dialogue_lines: 0,
-        },
       };
 
       console.log('[script-breakdown-bg] Extracted title:', extractedTitle, 'writers:', extractedWriters);
+      console.log('[script-breakdown-bg] Counts:', breakdownData.counts);
 
       const { error: updateError } = await supabase
         .from('scripts')
@@ -957,7 +1086,7 @@ serve(async (req) => {
         taskId,
         message: 'Análisis iniciado en segundo plano',
         polling: true,
-        estimatedTimeMin: Math.ceil(estimatedChars / 5000), // ~5000 chars/min with Haiku
+        estimatedTimeMin: Math.ceil(estimatedChars / 5000),
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
