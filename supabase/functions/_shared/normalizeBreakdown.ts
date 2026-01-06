@@ -70,8 +70,32 @@ const NOISE_PATTERNS = /^(THE |A |AN )?(SOUND OF|SOUNDS OF|NOISE|FX:|SFX:|VFX:|I
 // Verbs that look like character cues but are actions
 const VERB_ACTION_BLACKLIST = /^(ROLLS|WALKS|RUNS|SITS|STANDS|LOOKS|TURNS|OPENS|CLOSES|PICKS|PUTS|TAKES|GIVES|HOLDS|DROPS|THROWS|CATCHES|PUSHES|PULLS|HITS|KICKS|PUNCHES|GRABS|REACHES|TOUCHES|POINTS|WAVES|NODS|SHAKES|SMILES|FROWNS|LAUGHS|CRIES|SCREAMS|SHOUTS|WHISPERS|SPEAKS|TALKS|SAYS|ASKS|ANSWERS|REPLIES|RESPONDS|CONTINUES|BEGINS|STARTS|STOPS|ENDS|FINISHES|ENTERS|EXITS|LEAVES|ARRIVES|APPROACHES|RETREATS|ADVANCES|MOVES|STEPS|JUMPS|LEAPS|FALLS|RISES|CLIMBS|DESCENDS|ASCENDS)(\s|$)/i;
 
+// 🛡️ Scene heading detector (numbered or not) - prevents "32 INT. GOTHAM..." from being a character
+function isSceneHeading(text: string): boolean {
+  const t = text.toUpperCase().trim();
+  // Standard: INT. / EXT. / INT/EXT
+  if (/^(INT[\./]|EXT[\./]|INT\/EXT|I\/E)/i.test(t)) return true;
+  // Numbered: "32 INT." or "32. INT."
+  if (/^\d+\s*\.?\s*(INT[\./]|EXT[\./]|INT\/EXT|I\/E)/i.test(t)) return true;
+  // Contains INT./EXT. anywhere (malformed)
+  if (/\bINT\.\s|EXT\.\s/i.test(t)) return true;
+  // Contains time of day at end (scene heading fragment)
+  if (/\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|MORNING|EVENING|CONTINUOUS|LATER|SAME)\s*$/i.test(t)) return true;
+  return false;
+}
+
 function isActionOrInsert(name: string): boolean {
   const u = name.toUpperCase().trim();
+  
+  // 🛡️ Scene headings are NEVER characters
+  if (isSceneHeading(u)) return true;
+  
+  // Starts with number followed by words (likely scene number + heading)
+  if (/^\d+\s+[A-Z]/.test(u) && u.length > 15) return true;
+  
+  // Too long to be a character name
+  if (u.length > 40) return true;
+  
   if (ACTION_INSERT_BLACKLIST.test(u)) return true;
   if (NOISE_PATTERNS.test(u)) return true;
   if (VERB_ACTION_BLACKLIST.test(u)) return true;
