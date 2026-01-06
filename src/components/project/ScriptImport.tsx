@@ -554,8 +554,36 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         if (script.raw_text) setScriptText(script.raw_text);
         if (script.parsed_json && typeof script.parsed_json === 'object') {
           const parsed = script.parsed_json as Record<string, unknown>;
-          if (parsed.episodes || parsed.screenplay || parsed.title) {
-            setGeneratedScript(parsed);
+          if (parsed.episodes || parsed.screenplay || parsed.title || parsed.characters) {
+            // Recalculate counts from data if missing or incomplete
+            const chars = (parsed.main_characters || parsed.characters || []) as any[];
+            const locs = (parsed.locations || []) as any[];
+            const propsArr = (parsed.props || []) as any[];
+            const scenes = (parsed.scenes || []) as any[];
+            const episodesArr = (parsed.episodes || []) as any[];
+            
+            const existingCounts = parsed.counts as Record<string, number> | undefined;
+            const protagonists = existingCounts?.protagonists || chars.filter((c: any) => c.role === 'protagonist' || c.priority === 'P0').length;
+            const supporting = existingCounts?.supporting || chars.filter((c: any) => c.role === 'supporting' || c.priority === 'P1').length;
+            const heroProps = existingCounts?.hero_props || propsArr.filter((p: any) => p.importance === 'hero' || p.priority === 'P0').length;
+            const totalScenes = existingCounts?.total_scenes || scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0;
+            
+            const hydratedScript = {
+              ...parsed,
+              main_characters: chars,
+              characters: chars,
+              counts: {
+                protagonists,
+                supporting,
+                locations: locs.length,
+                total_scenes: totalScenes,
+                hero_props: heroProps,
+                props: propsArr.length,
+                ...(existingCounts || {})
+              }
+            };
+            
+            setGeneratedScript(hydratedScript);
             // Load teasers from parsed_json if they exist
             if (parsed.teasers) {
               setGeneratedTeasers(parsed.teasers);
@@ -716,6 +744,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       // 3. Transform breakdown into generatedScript format for display
       const breakdown = breakdownData?.breakdown || breakdownData;
       
+      // Extract characters from multiple possible sources
+      const chars = breakdown?.characters || [];
+      const locs = breakdown?.locations || [];
+      const propsArr = breakdown?.props || [];
+      const scenes = breakdown?.scenes || [];
+      
+      // Count scenes from episodes if no root-level scenes
+      const episodesArr = breakdown?.episodes || (scenes.length > 0 ? [{ 
+        episode_number: 1, 
+        title: breakdown?.title || 'Película',
+        synopsis: breakdown?.synopsis,
+        scenes: scenes 
+      }] : []);
+      
+      const totalScenes = scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0;
+      
+      // Count by role
+      const protagonists = chars.filter((c: any) => c.role === 'protagonist' || c.priority === 'P0').length;
+      const supporting = chars.filter((c: any) => c.role === 'supporting' || c.priority === 'P1').length;
+      const heroProps = propsArr.filter((p: any) => p.importance === 'hero' || p.priority === 'P0').length;
+      
       const scriptData = {
         title: breakdown?.title || 'Guion Importado',
         logline: breakdown?.logline || breakdown?.synopsis?.slice(0, 150) || '',
@@ -723,22 +772,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         genre: breakdown?.genre || genre,
         tone: breakdown?.tone || tone,
         themes: breakdown?.themes || [],
-        main_characters: breakdown?.characters || [],
-        locations: breakdown?.locations || [],
-        props: breakdown?.props || [],
+        main_characters: chars,
+        characters: chars, // Keep both fields for compatibility
+        locations: locs,
+        props: propsArr,
         subplots: breakdown?.subplots || [],
         plot_twists: breakdown?.plot_twists || breakdown?.plotTwists || [],
-        episodes: breakdown?.episodes || (breakdown?.scenes ? [{ 
-          episode_number: 1, 
-          title: breakdown?.title || 'Película',
-          synopsis: breakdown?.synopsis,
-          scenes: breakdown?.scenes 
-        }] : []),
+        episodes: episodesArr,
         counts: {
-          protagonists: breakdown?.characters?.filter((c: any) => c.role === 'protagonist')?.length || 0,
-          supporting: breakdown?.characters?.filter((c: any) => c.role === 'supporting')?.length || 0,
-          locations: breakdown?.locations?.length || 0,
-          total_scenes: breakdown?.scenes?.length || breakdown?.episodes?.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0,
+          protagonists,
+          supporting,
+          locations: locs.length,
+          total_scenes: totalScenes,
+          hero_props: heroProps,
+          props: propsArr.length
         }
       };
 
