@@ -731,20 +731,47 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
   const prevCharacters = out.characters as AnyObj | undefined;
   out.characters = out.characters ?? {};
 
+  // Classify ALL character_candidates into 3 categories (not just cast)
+  const classifiedFromCandidates = {
+    cast: [] as NormalizedCharacter[],
+    featured: [] as NormalizedCharacter[],
+    voices: [] as NormalizedCharacter[],
+  };
+  
+  for (const name of candidatesForPromotion) {
+    const cleanName = normalizeCharacterName(name);
+    if (!cleanName || cleanName.length < 2) continue;
+    
+    if (isVoiceOrFunctional(cleanName)) {
+      classifiedFromCandidates.voices.push({ name: cleanName, scenes_count: 0 });
+    } else if (isFeaturedExtraRole(cleanName)) {
+      classifiedFromCandidates.featured.push({ name: cleanName, scenes_count: 0 });
+    } else {
+      classifiedFromCandidates.cast.push({ name: cleanName, role: 'supporting', priority: 'P3', scenes_count: 0 });
+    }
+  }
+  
+  // Use LLM results if available, otherwise fallback to classified candidates
   (out.characters as AnyObj).cast =
     safeArray(prevCharacters?.cast).length > 0
       ? safeArray(prevCharacters?.cast)
-      : uniqueBy(cast, (c) => c.name.toUpperCase());
+      : cast.length > 0 
+        ? uniqueBy(cast, (c) => c.name.toUpperCase())
+        : uniqueBy(classifiedFromCandidates.cast, (c) => c.name.toUpperCase());
 
   (out.characters as AnyObj).featured_extras_with_lines =
     safeArray(prevCharacters?.featured_extras_with_lines).length > 0
       ? safeArray(prevCharacters?.featured_extras_with_lines)
-      : uniqueBy(featured, (c) => c.name.toUpperCase());
+      : featured.length > 0
+        ? uniqueBy(featured, (c) => c.name.toUpperCase())
+        : uniqueBy(classifiedFromCandidates.featured, (c) => c.name.toUpperCase());
 
   (out.characters as AnyObj).voices_and_functional =
     safeArray(prevCharacters?.voices_and_functional).length > 0
       ? safeArray(prevCharacters?.voices_and_functional)
-      : uniqueBy(voices, (c) => c.name.toUpperCase());
+      : voices.length > 0
+        ? uniqueBy(voices, (c) => c.name.toUpperCase())
+        : uniqueBy(classifiedFromCandidates.voices, (c) => c.name.toUpperCase());
 
   // ═══════════════════════════════════════════════════════════════════════════
   // HARD FALLBACK: Scaled tolerance based on scene count
