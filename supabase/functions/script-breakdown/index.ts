@@ -412,21 +412,154 @@ const BREAKDOWN_TOOL = {
 
 const normalizeBreakdown = (input: any) => {
   const obj = (input && typeof input === 'object') ? input : {};
+  const scenes = Array.isArray(obj.scenes) ? obj.scenes : [];
+  
+  // Extract characters from the model response, or infer from scenes if empty
+  let characters = Array.isArray(obj.characters) ? obj.characters : [];
+  if (characters.length === 0 && scenes.length > 0) {
+    console.log('[normalizeBreakdown] No characters array from model, extracting from scenes...');
+    const charMap = new Map<string, { name: string; scenes: number[]; scenes_count: number; dialogue_lines: number }>();
+    
+    for (const scene of scenes) {
+      const sceneNum = scene.scene_number ?? 0;
+      const charsInScene = Array.isArray(scene.characters_present) ? scene.characters_present : [];
+      
+      for (const charName of charsInScene) {
+        const normalized = String(charName).trim();
+        if (!normalized) continue;
+        
+        if (charMap.has(normalized)) {
+          const existing = charMap.get(normalized)!;
+          if (!existing.scenes.includes(sceneNum)) {
+            existing.scenes.push(sceneNum);
+            existing.scenes_count++;
+          }
+        } else {
+          charMap.set(normalized, {
+            name: normalized,
+            scenes: [sceneNum],
+            scenes_count: 1,
+            dialogue_lines: 0,
+          });
+        }
+      }
+    }
+    
+    // Convert to array and assign roles based on appearance frequency
+    characters = Array.from(charMap.values())
+      .sort((a, b) => b.scenes_count - a.scenes_count)
+      .map((c, idx) => ({
+        ...c,
+        entity_type: 'individual',
+        role: idx < 3 ? 'protagonist' : (c.scenes_count >= 5 ? 'supporting' : (c.scenes_count >= 2 ? 'recurring' : 'cameo')),
+        priority: idx < 3 ? 'P0' : (c.scenes_count >= 5 ? 'P1' : 'P2'),
+        description: '',
+        arc: '',
+        explicitly_described: false,
+      }));
+    
+    console.log(`[normalizeBreakdown] Extracted ${characters.length} characters from scenes`);
+  }
+  
+  // Extract locations from the model response, or infer from scenes if empty
+  let locations = Array.isArray(obj.locations) ? obj.locations : [];
+  if (locations.length === 0 && scenes.length > 0) {
+    console.log('[normalizeBreakdown] No locations array from model, extracting from scenes...');
+    const locMap = new Map<string, { name: string; type: string; scenes: number[]; scenes_count: number }>();
+    
+    for (const scene of scenes) {
+      const sceneNum = scene.scene_number ?? 0;
+      const locName = String(scene.location_name ?? scene.slugline ?? '').trim();
+      const locType = String(scene.location_type ?? 'INT').trim();
+      
+      if (!locName) continue;
+      
+      if (locMap.has(locName)) {
+        const existing = locMap.get(locName)!;
+        if (!existing.scenes.includes(sceneNum)) {
+          existing.scenes.push(sceneNum);
+          existing.scenes_count++;
+        }
+      } else {
+        locMap.set(locName, {
+          name: locName,
+          type: locType,
+          scenes: [sceneNum],
+          scenes_count: 1,
+        });
+      }
+    }
+    
+    // Convert to array
+    locations = Array.from(locMap.values())
+      .sort((a, b) => b.scenes_count - a.scenes_count)
+      .map((l, idx) => ({
+        ...l,
+        scale: 'building',
+        priority: idx < 5 ? 'P0' : (l.scenes_count >= 3 ? 'P1' : 'P2'),
+        description: '',
+        explicitly_described: false,
+      }));
+    
+    console.log(`[normalizeBreakdown] Extracted ${locations.length} locations from scenes`);
+  }
+  
+  // Extract props from scenes if not provided
+  let props = Array.isArray(obj.props) ? obj.props : [];
+  if (props.length === 0 && scenes.length > 0) {
+    const propMap = new Map<string, { name: string; scenes: number[]; scenes_count: number }>();
+    
+    for (const scene of scenes) {
+      const sceneNum = scene.scene_number ?? 0;
+      const propsInScene = Array.isArray(scene.props_used) ? scene.props_used : [];
+      
+      for (const propName of propsInScene) {
+        const normalized = String(propName).trim();
+        if (!normalized) continue;
+        
+        if (propMap.has(normalized)) {
+          const existing = propMap.get(normalized)!;
+          if (!existing.scenes.includes(sceneNum)) {
+            existing.scenes.push(sceneNum);
+            existing.scenes_count++;
+          }
+        } else {
+          propMap.set(normalized, {
+            name: normalized,
+            scenes: [sceneNum],
+            scenes_count: 1,
+          });
+        }
+      }
+    }
+    
+    props = Array.from(propMap.values())
+      .sort((a, b) => b.scenes_count - a.scenes_count)
+      .map(p => ({
+        ...p,
+        type: 'object',
+        importance: p.scenes_count >= 3 ? 'key' : (p.scenes_count >= 2 ? 'recurring' : 'background'),
+        priority: p.scenes_count >= 3 ? 'P0' : 'P1',
+        description: '',
+        explicitly_mentioned: true,
+      }));
+  }
+  
   return {
     synopsis: obj.synopsis ?? { faithful_summary: '' },
-    scenes: Array.isArray(obj.scenes) ? obj.scenes : [],
-    characters: Array.isArray(obj.characters) ? obj.characters : [],
-    locations: Array.isArray(obj.locations) ? obj.locations : [],
-    props: Array.isArray(obj.props) ? obj.props : [],
+    scenes,
+    characters,
+    locations,
+    props,
     set_pieces: Array.isArray(obj.set_pieces) ? obj.set_pieces : [],
     subplots: Array.isArray(obj.subplots) ? obj.subplots : [],
     plot_twists: Array.isArray(obj.plot_twists) ? obj.plot_twists : [],
     continuity_anchors: Array.isArray(obj.continuity_anchors) ? obj.continuity_anchors : [],
     summary: obj.summary ?? {
-      total_scenes: Array.isArray(obj.scenes) ? obj.scenes.length : 0,
-      total_characters: Array.isArray(obj.characters) ? obj.characters.length : 0,
-      total_locations: Array.isArray(obj.locations) ? obj.locations.length : 0,
-      total_props: Array.isArray(obj.props) ? obj.props.length : 0,
+      total_scenes: scenes.length,
+      total_characters: characters.length,
+      total_locations: locations.length,
+      total_props: props.length,
       production_notes: '',
     },
   };
