@@ -327,6 +327,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [projectFormat, setProjectFormat] = useState<'film' | 'series' | 'short' | string>('series');
   const [episodesCount, setEpisodesCount] = useState<number>(1);
   const [episodeDurationMin, setEpisodeDurationMin] = useState<number>(30);
+  const [masterLanguage, setMasterLanguage] = useState<string>('es');
   
   // Refresh trigger for re-fetching script
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -343,7 +344,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       // Get project settings
       const { data: projectData, error: projectError } = await supabase
         .from('projects')
-        .select('format, episodes_count, target_duration_min')
+        .select('format, episodes_count, target_duration_min, master_language')
         .eq('id', projectId)
         .maybeSingle();
       
@@ -359,6 +360,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       }
       if (typeof projectData?.target_duration_min === 'number') {
         setEpisodeDurationMin(projectData.target_duration_min || 30);
+      }
+      if (projectData?.master_language) {
+        setMasterLanguage(projectData.master_language);
+        console.log('[ScriptWorkspace] Master language:', projectData.master_language);
       }
 
       const { data, error } = await supabase
@@ -817,7 +822,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           idea: ideaText,
           format: projectFormat === 'film' ? 'film' : 'series',
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
-          language: 'es-ES',
+          language: masterLanguage === 'es' ? 'es-ES' : masterLanguage, // Use project language
           qualityTier, // V3.0: Pass quality tier
           disableDensity, // V3.0: Skip density constraints if true
         }
@@ -853,7 +858,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           format: projectFormat === 'film' ? 'film' : 'series',
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           episodeDurationMin,
-          language: 'es-ES',
+          language: masterLanguage === 'es' ? 'es-ES' : masterLanguage, // Use project language
           stream: true,
           outline: outlineData?.outline,
         }),
@@ -1356,7 +1361,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           projectId,
           scriptText: scriptTextNormalized,
           scriptId: savedScript.id,
-          language: 'es-ES',
+          language: masterLanguage === 'es' ? 'es-ES' : masterLanguage, // Use project language
           format: projectFormat === 'film' ? 'film' : 'series',
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           episodeDurationMin,
