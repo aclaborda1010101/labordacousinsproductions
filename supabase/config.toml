@@ -40,6 +40,9 @@ verify_jwt = false
 [functions.script-breakdown]
 verify_jwt = false
 
+[functions.script-breakdown-pro]
+verify_jwt = false
+
 [functions.script-doctor]
 verify_jwt = true
 

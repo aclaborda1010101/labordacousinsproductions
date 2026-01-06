@@ -231,6 +231,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Imported script parsing state
   const [parsingImportedScript, setParsingImportedScript] = useState(false);
   
+  // Professional Breakdown state (two-step analysis)
+  const [breakdownPro, setBreakdownPro] = useState<any>(null);
+  const [generatingBreakdownPro, setGeneratingBreakdownPro] = useState(false);
+  const [breakdownProSteps, setBreakdownProSteps] = useState<string[]>([]);
+  
   // Dynamic batch configuration
   const [batchConfig, setBatchConfig] = useState<BatchConfig | null>(null);
 
@@ -816,7 +821,70 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
-  // Helper function to generate teaser scenes
+  // Professional Breakdown: Two-step analysis with detailed production data
+  const generateBreakdownPro = async () => {
+    if (!scriptText.trim() || scriptText.length < 200) {
+      toast.error('El guion debe tener al menos 200 caracteres');
+      return;
+    }
+
+    setGeneratingBreakdownPro(true);
+    setBreakdownProSteps(['Detectando formato de guion']);
+    
+    try {
+      // Simulate progress steps for UX
+      const progressInterval = setInterval(() => {
+        setBreakdownProSteps(prev => {
+          if (prev.length >= 5) return prev;
+          const steps = [
+            'Detectando formato de guion',
+            'Contando escenas (INT./EXT.)',
+            'Extrayendo personajes',
+            'Identificando setpieces',
+            'Evaluando complejidad de producción',
+          ];
+          return steps.slice(0, Math.min(prev.length + 1, 5));
+        });
+      }, 2000);
+
+      const { data, error } = await invokeWithTimeout<any>(
+        'script-breakdown-pro',
+        {
+          projectId,
+          scriptText: scriptText.trim(),
+          scriptId: currentScriptId,
+          language,
+        },
+        { timeoutMs: 180000 }
+      );
+
+      clearInterval(progressInterval);
+      setBreakdownProSteps([
+        'Detectando formato de guion',
+        'Contando escenas (INT./EXT.)',
+        'Extrayendo personajes',
+        'Identificando setpieces',
+        'Evaluando complejidad de producción',
+        '✓ Análisis completado',
+      ]);
+
+      if (error) {
+        console.error('Error generating breakdown pro:', error);
+        toast.error('Error al generar el breakdown profesional');
+        return;
+      }
+
+      if (data?.breakdown) {
+        setBreakdownPro(data.breakdown);
+        toast.success('¡Breakdown profesional completado!');
+      }
+    } catch (err: any) {
+      console.error('Error generating breakdown pro:', err);
+      toast.error(err.message || 'Error al generar el breakdown profesional');
+    } finally {
+      setGeneratingBreakdownPro(false);
+    }
+  };
   const generateTeaserScenes = async (teaserData: any) => {
     if (!teaserData) return;
     
@@ -3124,6 +3192,176 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       )}
                     </div>
                   )}
+
+                  {/* BREAKDOWN COMPLETO (PRO) */}
+                  <div className="pt-4 border-t">
+                    {!breakdownPro && !generatingBreakdownPro ? (
+                      <div className="space-y-3">
+                        <Button 
+                          onClick={generateBreakdownPro} 
+                          variant="outline" 
+                          className="w-full justify-start gap-3 h-auto py-4"
+                          disabled={!scriptText || scriptText.length < 200}
+                        >
+                          <div className="p-2 bg-primary/10 rounded-lg">
+                            <Layers className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1 text-left">
+                            <div className="font-medium">Generar Breakdown Completo</div>
+                            <div className="text-xs text-muted-foreground">
+                              Análisis profesional del guion para producción
+                            </div>
+                          </div>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="p-1 hover:bg-muted rounded">
+                                <AlertTriangle className="w-4 h-4 text-muted-foreground" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-xs">
+                              <p className="font-medium mb-1">¿Qué incluye el Breakdown Completo?</p>
+                              <ul className="text-xs space-y-1">
+                                <li>• Conteo real de escenas (INT./EXT.)</li>
+                                <li>• Personajes por peso narrativo</li>
+                                <li>• Localizaciones detalladas</li>
+                                <li>• Props clave y setpieces</li>
+                                <li>• Complejidad de producción y riesgos</li>
+                                <li>• Datos listos para biblia y planificación</li>
+                              </ul>
+                            </TooltipContent>
+                          </Tooltip>
+                        </Button>
+                      </div>
+                    ) : generatingBreakdownPro ? (
+                      <div className="space-y-3 p-4 bg-muted/30 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                          <span className="font-medium">Analizando el guion...</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Leyendo escenas, personajes y estructura narrativa
+                        </p>
+                        <div className="space-y-1">
+                          {breakdownProSteps.map((step, i) => (
+                            <div key={i} className="flex items-center gap-2 text-xs">
+                              {step.startsWith('✓') ? (
+                                <CheckCircle className="w-3 h-3 text-green-500" />
+                              ) : i === breakdownProSteps.length - 1 ? (
+                                <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                              ) : (
+                                <CheckCircle className="w-3 h-3 text-green-500" />
+                              )}
+                              <span className={step.startsWith('✓') ? 'text-green-600' : ''}>
+                                {step.replace('✓ ', '')}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : breakdownPro ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="w-5 h-5 text-green-500" />
+                            <span className="font-medium">Breakdown Completo del Guion</span>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            {breakdownPro.source?.type || 'screenplay'} • {breakdownPro.source?.confidence || 'high'}
+                          </Badge>
+                        </div>
+                        
+                        {/* Counts Grid */}
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="p-3 bg-primary/5 rounded-lg text-center">
+                            <div className="text-2xl font-bold text-primary">{breakdownPro.counts?.scenes || 0}</div>
+                            <div className="text-xs text-muted-foreground">Escenas</div>
+                          </div>
+                          <div className="p-3 bg-primary/5 rounded-lg text-center">
+                            <div className="text-2xl font-bold text-primary">{breakdownPro.counts?.characters || 0}</div>
+                            <div className="text-xs text-muted-foreground">Personajes</div>
+                          </div>
+                          <div className="p-3 bg-primary/5 rounded-lg text-center">
+                            <div className="text-2xl font-bold text-primary">{breakdownPro.counts?.locations || 0}</div>
+                            <div className="text-xs text-muted-foreground">Localizaciones</div>
+                          </div>
+                        </div>
+
+                        {/* Characters by role */}
+                        {breakdownPro.characters && (
+                          <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground uppercase">Personajes por Rol</Label>
+                            <div className="space-y-1">
+                              {breakdownPro.characters.protagonists?.length > 0 && (
+                                <div className="flex items-center gap-2 text-sm">
+                                  <Badge variant="default" className="text-xs">Protagonistas</Badge>
+                                  <span>{breakdownPro.characters.protagonists.map((c: any) => c.name).join(', ')}</span>
+                                </div>
+                              )}
+                              {breakdownPro.characters.co_protagonists?.length > 0 && (
+                                <div className="flex items-center gap-2 text-sm">
+                                  <Badge variant="secondary" className="text-xs">Co-protagonistas</Badge>
+                                  <span>{breakdownPro.characters.co_protagonists.map((c: any) => c.name).join(', ')}</span>
+                                </div>
+                              )}
+                              {breakdownPro.characters.secondary?.length > 0 && (
+                                <div className="flex items-center gap-2 text-sm">
+                                  <Badge variant="outline" className="text-xs">Secundarios</Badge>
+                                  <span className="text-muted-foreground">{breakdownPro.characters.secondary.map((c: any) => c.name).join(', ')}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Production Signals */}
+                        {breakdownPro.production && (
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="p-2 bg-muted/50 rounded text-center">
+                              <div className="text-xs text-muted-foreground">Diálogos</div>
+                              <div className="text-sm font-medium capitalize">{breakdownPro.production.dialogue_density || 'medium'}</div>
+                            </div>
+                            <div className="p-2 bg-muted/50 rounded text-center">
+                              <div className="text-xs text-muted-foreground">Reparto</div>
+                              <div className="text-sm font-medium capitalize">{breakdownPro.production.cast_size || 'medium'}</div>
+                            </div>
+                            <div className="p-2 bg-muted/50 rounded text-center">
+                              <div className="text-xs text-muted-foreground">Complejidad</div>
+                              <div className="text-sm font-medium capitalize">{breakdownPro.production.complexity || 'medium'}</div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Safety Flags */}
+                        {breakdownPro.production?.safety_flags?.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {breakdownPro.production.safety_flags.map((flag: string, i: number) => (
+                              <Badge key={i} variant="destructive" className="text-xs">
+                                ⚠️ {flag}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Setpieces */}
+                        {breakdownPro.setpieces?.length > 0 && (
+                          <div className="space-y-1">
+                            <Label className="text-xs text-muted-foreground uppercase">Setpieces</Label>
+                            <div className="flex flex-wrap gap-1">
+                              {breakdownPro.setpieces.map((sp: any, i: number) => (
+                                <Badge key={i} variant="outline" className="text-xs">
+                                  {sp.name} ({sp.type})
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <p className="text-xs text-muted-foreground italic pt-2 border-t">
+                          El análisis se basa exclusivamente en el texto del guion. Outlines y documentos auxiliares no afectan al conteo de escenas.
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
                 </CardContent>
               </Card>
 
