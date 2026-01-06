@@ -141,7 +141,7 @@ Detect and list:
 - safety: fire, explosions, weapons, water, heights
 - complexity: VFX, crowds, period, multiple locations, night shoots, large cast`;
 
-// Tool schema matching the new Hollywood output format
+// Simplified tool schema to avoid Anthropic 400 errors
 const BREAKDOWN_TOOL = {
   type: 'function' as const,
   function: {
@@ -152,221 +152,43 @@ const BREAKDOWN_TOOL = {
       properties: {
         metadata: {
           type: 'object',
-          properties: {
-            title: { type: 'string', description: 'Script title as it appears on the title page' },
-            writers: { type: 'array', items: { type: 'string' } },
-            draft: { type: 'string' },
-            date: { type: 'string' }
-          }
+          description: 'Script metadata: title, writers array, draft, date'
         },
         scenes: {
           type: 'object',
-          properties: {
-            total: { type: 'number' },
-            list: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  number: { type: 'number' },
-                  heading: { type: 'string' },
-                  location_raw: { type: 'string' },
-                  location_base: { type: 'string' },
-                  int_ext: { type: 'string' },
-                  time: { type: 'string' },
-                  tags: { type: 'array', items: { type: 'string' } }
-                }
-              }
-            }
-          }
+          description: 'Object with total (integer) and list (array of scene objects with number, heading, location_raw, location_base, int_ext, time, tags)'
         },
         characters: {
           type: 'object',
-          properties: {
-            protagonists: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  arc: { type: 'string' },
-                  scenes_count: { type: 'number' },
-                  dialogue_lines: { type: 'number' }
-                }
-              }
-            },
-            co_protagonists: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  arc: { type: 'string' },
-                  scenes_count: { type: 'number' },
-                  dialogue_lines: { type: 'number' }
-                }
-              }
-            },
-            antagonists: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  arc: { type: 'string' },
-                  scenes_count: { type: 'number' },
-                  dialogue_lines: { type: 'number' }
-                }
-              }
-            },
-            secondary: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  role_detail: { type: 'string' },
-                  scenes_count: { type: 'number' },
-                  dialogue_lines: { type: 'number' }
-                }
-              }
-            },
-            minor: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  scenes_count: { type: 'number' },
-                  dialogue_lines: { type: 'number' }
-                }
-              }
-            },
-            featured_extras_with_lines: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  scenes_count: { type: 'number' },
-                  dialogue_lines: { type: 'number' }
-                }
-              }
-            },
-            voices_and_functional: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  scenes_count: { type: 'number' }
-                }
-              }
-            }
-          }
+          description: 'Object with arrays: protagonists, co_protagonists, antagonists, secondary, minor, featured_extras_with_lines, voices_and_functional. Each character has name, scenes_count, dialogue_lines'
         },
         counts: {
           type: 'object',
-          properties: {
-            scenes_total: { type: 'number' },
-            cast_characters_total: { type: 'number' },
-            featured_extras_total: { type: 'number' },
-            voices_total: { type: 'number' },
-            locations_base_total: { type: 'number' },
-            locations_variants_total: { type: 'number' },
-            props_total: { type: 'number' },
-            setpieces_total: { type: 'number' }
-          }
+          description: 'Object with integer counts: scenes_total, cast_characters_total, featured_extras_total, voices_total, locations_base_total, locations_variants_total, props_total, setpieces_total'
         },
         locations: {
           type: 'object',
-          properties: {
-            base: {
-              type: 'object',
-              properties: {
-                total: { type: 'number' },
-                list: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      name: { type: 'string' },
-                      scenes_count: { type: 'number' },
-                      variants_count: { type: 'number' }
-                    }
-                  }
-                }
-              }
-            },
-            variants: {
-              type: 'object',
-              properties: {
-                total: { type: 'number' },
-                list: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      name: { type: 'string' },
-                      base: { type: 'string' },
-                      int_ext: { type: 'string' },
-                      time: { type: 'string' },
-                      tags: { type: 'array', items: { type: 'string' } },
-                      scenes: { type: 'array', items: { type: 'number' } }
-                    }
-                  }
-                }
-              }
-            }
-          }
+          description: 'Object with base (total + list of name, scenes_count, variants_count) and variants (total + list of name, base, int_ext, time, tags, scenes array)'
         },
         props_key: {
           type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              importance: { type: 'string', enum: ['critical', 'high', 'medium'] },
-              why: { type: 'string' }
-            }
-          }
+          description: 'Array of key props with name, importance (critical/high/medium), why'
         },
         setpieces: {
           type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              type: { type: 'string' },
-              why: { type: 'string' }
-            }
-          }
+          description: 'Array of setpieces with name, type, why'
         },
         production: {
           type: 'object',
-          properties: {
-            dialogue_density: { type: 'string', enum: ['low', 'medium', 'high'] },
-            cast_size: { type: 'string', enum: ['small', 'medium', 'large'] },
-            complexity: { type: 'string', enum: ['low', 'medium', 'high'] },
-            stunts_safety_flags: { type: 'array', items: { type: 'string' } },
-            notes: { type: 'string' }
-          }
+          description: 'Object with dialogue_density, cast_size, complexity (low/medium/high), stunts_safety_flags array, notes'
         },
         validation: {
           type: 'object',
-          properties: {
-            scene_headings_found: { type: 'number' },
-            scenes_total_equals_list_length: { type: 'boolean' },
-            used_source: { type: 'string', enum: ['screenplay', 'unknown'] },
-            source_reason: { type: 'string' }
-          }
+          description: 'Object with scene_headings_found (integer), scenes_total_equals_list_length (boolean), used_source, source_reason'
         },
         synopsis: {
           type: 'object',
-          properties: {
-            logline: { type: 'string' },
-            summary: { type: 'string' }
-          }
+          description: 'Object with logline and summary strings'
         }
       },
       required: ['metadata', 'scenes', 'characters', 'counts', 'locations']
