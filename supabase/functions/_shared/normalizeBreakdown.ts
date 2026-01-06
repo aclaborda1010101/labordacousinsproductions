@@ -800,39 +800,64 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
   // ═══════════════════════════════════════════════════════════════════════════
   // SCALED TOLERANCE: min cast expected based on scene count
   // ═══════════════════════════════════════════════════════════════════════════
-  const currentCastLen = safeArray((out.characters as AnyObj).cast).length;
+  const currentCast = safeArray((out.characters as AnyObj).cast) as AnyObj[];
+  const currentCastNamesUpper = currentCast
+    .map((c) => String((c as AnyObj)?.name || "").toUpperCase())
+    .filter(Boolean);
+  const currentCastLen = currentCastNamesUpper.length;
+
   const minCastExpected =
     scenesTotal >= 200 ? 120 :
     scenesTotal >= 100 ? 80 :
     scenesTotal >= 50 ? 40 :
     20;
 
-  const shouldInjectCandidates = promotableCandidates.length > currentCastLen && currentCastLen < minCastExpected;
+  // We never REPLACE the model's cast (it may contain richer names/roles).
+  // We only AUGMENT it with missing deterministic candidates when the cast is suspiciously small.
+  const shouldInjectCandidates = currentCastLen < minCastExpected && promotableCandidates.length > 0;
+
+  const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   if (shouldInjectCandidates) {
-    console.log(
-      `[normalizeBreakdown] SCALED FALLBACK: scenes=${scenesTotal}, minExpected=${minCastExpected}, current=${currentCastLen}, candidates=${promotableCandidates.length}`,
-    );
-    (out.characters as AnyObj).cast = promotableCandidates.map((c) => ({
-      name: c.name,
-      priority: "P2",
-      role: "supporting",
-      scenes_count: c.scenes_count ?? 0,
-      source: 'character_candidates',
-    }));
-    (out as AnyObj)._cast_promoted_from_candidates = true;
-    warnings.push({
-      code: "CAST_INJECTED_FROM_CANDIDATES",
-      message: `LLM returned ${currentCastLen} cast (min expected ${minCastExpected} for ${scenesTotal} scenes). Injected ${promotableCandidates.length} from character_candidates.`,
+    const missing = promotableCandidates.filter((c) => {
+      const cand = c.name.toUpperCase();
+      // Avoid duplicates like "OPPENHEIMER" when cast already contains "J. ROBERT OPPENHEIMER"
+      const rx = new RegExp(`\\b${escapeRegExp(cand)}\\b`, "i");
+      return !currentCastNamesUpper.some((n) => rx.test(n));
     });
+
+    if (missing.length > 0) {
+      console.log(
+        `[normalizeBreakdown] SCALED AUGMENT: scenes=${scenesTotal}, minExpected=${minCastExpected}, current=${currentCastLen}, add=${missing.length}, candidates=${promotableCandidates.length}`,
+      );
+
+      const injected = missing.map((c) => ({
+        name: c.name,
+        priority: "P3",
+        role: "minor",
+        scenes_count: c.scenes_count ?? 0,
+        source: "character_candidates",
+      }));
+
+      (out.characters as AnyObj).cast = uniqueBy(
+        [...currentCast, ...injected] as AnyObj[],
+        (x) => String((x as AnyObj)?.name || "").toUpperCase(),
+      );
+
+      (out as AnyObj)._cast_augmented_from_candidates = true;
+      warnings.push({
+        code: "CAST_AUGMENTED_FROM_CANDIDATES",
+        message: `LLM cast (${currentCastLen}) below minimum expected (${minCastExpected}) for ${scenesTotal} scenes. Added ${missing.length} extra cast names from deterministic extraction.`,
+      });
+    }
   } else if (currentCastLen === 0 && promotableCandidates.length > 0) {
-    // Original fallback for completely empty cast
+    // Legacy fallback for completely empty cast
     (out.characters as AnyObj).cast = promotableCandidates.map((c) => ({
       name: c.name,
       priority: "P2",
       role: "supporting",
       scenes_count: c.scenes_count ?? 0,
-      source: 'character_candidates',
+      source: "character_candidates",
     }));
     (out as AnyObj)._cast_promoted_from_candidates = true;
   }
