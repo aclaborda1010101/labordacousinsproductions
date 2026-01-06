@@ -182,14 +182,25 @@ export function ScriptSummaryPanelAssisted({
       if (script?.parsed_json) {
         const parsed = script.parsed_json as any;
         
-        // Hydrate characters - handle both nested (characters.cast) and flat formats
+        // Hydrate characters - handle nested (characters.cast + featured_extras + voices) and flat formats
+        // Also combine all character categories for total count (CAMBIO 4 - no cap)
         let characters: any[] = [];
+        let allCharacterCategories: any[] = [];
+        
         if (Array.isArray(parsed.characters)) {
           characters = parsed.characters;
-        } else if (parsed.characters?.cast && Array.isArray(parsed.characters.cast)) {
-          characters = parsed.characters.cast;
+          allCharacterCategories = parsed.characters;
+        } else if (parsed.characters && typeof parsed.characters === 'object') {
+          // Nested format: combine all categories
+          const cast = Array.isArray(parsed.characters.cast) ? parsed.characters.cast : [];
+          const featured = Array.isArray(parsed.characters.featured_extras_with_lines) ? parsed.characters.featured_extras_with_lines : [];
+          const voices = Array.isArray(parsed.characters.voices_and_functional) ? parsed.characters.voices_and_functional : [];
+          
+          characters = cast; // UI shows cast as main list
+          allCharacterCategories = [...cast, ...featured, ...voices];
         } else if (Array.isArray(parsed.main_characters)) {
           characters = parsed.main_characters;
+          allCharacterCategories = parsed.main_characters;
         }
         
         // Hydrate locations - handle both nested (locations.base) and flat formats
@@ -210,10 +221,20 @@ export function ScriptSummaryPanelAssisted({
           props = parsed.props.items;
         }
         
+        // Use counts from parsed_json if available, otherwise compute
+        const counts = parsed.counts || {
+          cast_characters_total: characters.length,
+          featured_extras_total: parsed.characters?.featured_extras_with_lines?.length || 0,
+          voices_total: parsed.characters?.voices_and_functional?.length || 0,
+          locations_base_total: locations.length,
+        };
+        
         console.log('[ScriptSummary] Hydrated counts:', { 
-          characters: characters.length, 
+          characters: characters.length,
+          allCategories: allCharacterCategories.length,
           locations: locations.length, 
-          props: props.length 
+          props: props.length,
+          counts,
         });
         
         setScriptData({
@@ -222,12 +243,12 @@ export function ScriptSummaryPanelAssisted({
           synopsis: parsed.synopsis || parsed.logline,
           episodes: parsed.episodes || [],
           teasers: parsed.teasers,
-          characters,
+          characters, // Show cast in main list
           locations,
           props,
           subplots: parsed.subplots || [],
           plot_twists: parsed.plot_twists || [],
-          counts: parsed.counts,
+          counts, // Use the full counts object
         });
       }
 

@@ -228,6 +228,80 @@ function extractScenesFromScript(text: string): any[] {
   return scenes;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// DETERMINISTIC CHARACTER EXTRACTION (P0) - Full script scan
+// ═══════════════════════════════════════════════════════════════════════════════
+const CHARACTER_CUE_BANNED = new Set([
+  'CUT TO', 'SMASH CUT', 'DISSOLVE TO', 'FADE IN', 'FADE OUT', 'FADE TO BLACK',
+  'TITLE', 'SUPER', 'MONTAGE', 'END', 'CONTINUED', 'THE END', 'CREDITS', 'BLACK',
+  'FLASHBACK', 'INTERCUT', 'BACK TO', 'MATCH CUT', 'JUMP CUT', 'WIPE TO',
+  'ANGLE ON', 'CLOSE ON', 'INSERT', 'POV', 'WIDE', 'TIGHT', 'OVER', 
+  'MORE', 'CONTINUOUS', 'LATER', 'SAME', 'DAY', 'NIGHT', 'MORNING', 
+  'EVENING', 'DAWN', 'DUSK', 'SUNSET', 'SUNRISE',
+]);
+
+function extractCharacterCandidatesFull(scriptText: string): { candidates: string[]; stats: { total: number; top10: string[] } } {
+  const lines = scriptText.split(/\r?\n/);
+  const candidateCounts = new Map<string, number>();
+  
+  for (let i = 0; i < lines.length - 1; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    const nextLine = lines[i + 1]?.trim() || '';
+    
+    // Skip empty lines
+    if (!trimmed) continue;
+    
+    // Character cue detection criteria:
+    // a) ALL CAPS (2-40 chars)
+    // b) Followed by dialogue (non-caps line) or parenthetical
+    // c) Not a scene heading or transition
+    
+    if (
+      trimmed === trimmed.toUpperCase() &&
+      trimmed.length >= 2 &&
+      trimmed.length <= 40 &&
+      !/^(INT\.|EXT\.|INT\/EXT|I\/E)/i.test(trimmed) &&
+      !/^(FADE|CUT|DISSOLVE|SMASH|WIPE|IRIS)/i.test(trimmed) &&
+      !/^\([^)]+\)$/.test(trimmed) && // Not a parenthetical-only line
+      nextLine && // Must have content after
+      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextLine) // Next line not a heading/transition
+    ) {
+      // Normalize: remove parentheticals (V.O.), (O.S.), (CONT'D), etc.
+      let charName = trimmed
+        .replace(/\s*\([^)]*\)\s*$/g, '')
+        .replace(/\bCONT['']?D\.?\b/gi, '')
+        .replace(/\bCONT\.?\b/gi, '')
+        .replace(/\bCONTINUED\b/gi, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      // De-duplicate by canonical key
+      const canonicalKey = charName.toUpperCase();
+      
+      // Filter out non-characters
+      if (!charName || charName.length < 2 || charName.length > 35) continue;
+      if (CHARACTER_CUE_BANNED.has(canonicalKey)) continue;
+      if (/^(INT\.|EXT\.)/.test(charName)) continue;
+      
+      candidateCounts.set(canonicalKey, (candidateCounts.get(canonicalKey) || 0) + 1);
+    }
+  }
+  
+  // Sort by frequency (most dialogue lines first)
+  const sorted = Array.from(candidateCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([name]) => name);
+  
+  return {
+    candidates: sorted,
+    stats: {
+      total: sorted.length,
+      top10: sorted.slice(0, 10),
+    },
+  };
+}
+
 function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   const out: any = (data && typeof data === 'object') ? data : {};
   const asArray = (v: any) => (Array.isArray(v) ? v : []);
@@ -235,50 +309,23 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   const expectedHeadings: string[] = [];
   const scriptLines = scriptText.split(/\r?\n/);
   
-  // ═══════════════════════════════════════════════════════════════════════════
-  // EXTRACT scene headings AND character candidates in one pass
-  // ═══════════════════════════════════════════════════════════════════════════
-  const characterCandidates = new Set<string>();
-  
-  for (let i = 0; i < scriptLines.length; i++) {
-    const line = scriptLines[i];
+  // Extract scene headings
+  for (const line of scriptLines) {
     const trimmed = line.trim();
-    
-    // Scene headings
     if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
       expectedHeadings.push(trimmed);
-      continue;
-    }
-    
-    // Character cue detection (ALL CAPS, not too long, followed by content)
-    const nextLine = scriptLines[i + 1]?.trim() || '';
-    if (
-      trimmed &&
-      trimmed === trimmed.toUpperCase() &&
-      trimmed.length >= 2 &&
-      trimmed.length <= 40 &&
-      nextLine &&
-      !/^(INT\.|EXT\.|FADE|CUT|DISSOLVE|SMASH|WIPE)/i.test(trimmed) &&
-      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextLine) &&
-      !/^\([^)]+\)$/.test(trimmed)
-    ) {
-      // Clean character name
-      let charName = trimmed
-        .replace(/\s*\([^)]*\)\s*$/, '')  // Remove parentheticals (V.O.), (O.S.)
-        .replace(/\bCONT['']?D\.?\b/gi, '')
-        .replace(/\bCONT\.?\b/gi, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-      
-      if (charName && charName.length >= 2 && charName.length <= 35) {
-        characterCandidates.add(charName);
-      }
     }
   }
   
   const expectedSceneCount = expectedHeadings.length;
   console.log(`[script-breakdown] Expected scene count from regex: ${expectedSceneCount}`);
-  console.log(`[script-breakdown] Character candidates extracted: ${characterCandidates.size}`);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DETERMINISTIC CHARACTER EXTRACTION - Full script scan (not truncated)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const { candidates: characterCandidates, stats: candidateStats } = extractCharacterCandidatesFull(scriptText);
+  console.log(`[script-breakdown] Character candidates extracted (deterministic): ${characterCandidates.length}`);
+  console.log(`[script-breakdown] Top 10 speakers:`, candidateStats.top10);
 
   const aiScenesList = asArray(out.scenes?.list);
   const regexScenes = extractScenesFromScript(scriptText);
@@ -312,9 +359,10 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   };
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PERSIST character_candidates and raw_text for normalizer fallback
+  // PERSIST character_candidates_full for normalizer fallback (P0)
   // ═══════════════════════════════════════════════════════════════════════════
-  out.character_candidates = Array.from(characterCandidates);
+  out.character_candidates = characterCandidates;
+  out.character_candidates_stats = candidateStats;
   out.scene_headings_raw = expectedHeadings;
   // Keep enough raw_text for title extraction (first 10KB)
   out.raw_text = scriptText.slice(0, 10000);
