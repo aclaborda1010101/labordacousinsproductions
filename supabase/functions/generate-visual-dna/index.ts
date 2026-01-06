@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import { v3RequireAuth, v3RequireProjectAccess } from "../_shared/v3-enterprise.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,35 +23,19 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-
-    // Validate auth (gateway JWT verification is disabled for this function)
-    const authHeader = req.headers.get('authorization') ?? req.headers.get('Authorization') ?? '';
-    if (!supabaseAnonKey) {
-      throw new Error('SUPABASE_ANON_KEY not configured');
+    const authResult = await v3RequireAuth(req);
+    if (authResult instanceof Response) {
+      return authResult;
     }
-
-    const supabaseAuthed = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: authHeader ? { Authorization: authHeader } : {},
-      },
-    });
-
-    const { data: authData, error: authError } = await supabaseAuthed.auth.getUser();
-    if (authError || !authData?.user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid JWT' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    const auth = authResult;
 
     const { characterId, characterName } = await req.json();
 
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-    // Fetch character data
     const { data: character } = await supabaseAdmin
       .from('characters')
       .select('*')
@@ -59,6 +44,11 @@ serve(async (req) => {
 
     if (!character) {
       throw new Error('Character not found');
+    }
+
+    const accessResult = await v3RequireProjectAccess(auth, character.project_id);
+    if (accessResult instanceof Response) {
+      return accessResult;
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -121,7 +111,7 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
 
     console.log('Calling Lovable AI Gateway for Visual DNA generation...', {
       characterId,
-      userId: authData.user.id,
+      userId: auth.userId,
     });
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
