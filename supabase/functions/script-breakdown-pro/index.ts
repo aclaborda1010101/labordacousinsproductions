@@ -460,6 +460,30 @@ serve(async (req) => {
 
     console.log(`[breakdown-pro] Starting analysis for project ${projectId}, script length: ${scriptText.length}`);
 
+    // ══════════════════════════════════════════════════════════════════════
+    // PRE-COUNT SCENE HEADINGS (for debugging and prompt anchoring)
+    // ══════════════════════════════════════════════════════════════════════
+    const intMatches = scriptText.match(/\bINT[\./]/gi) || [];
+    const extMatches = scriptText.match(/\bEXT[\./]/gi) || [];
+    const intExtMatches = scriptText.match(/\b(INT\/EXT|I\/E)[\./]?/gi) || [];
+    const headingCount = intMatches.length + extMatches.length + intExtMatches.length;
+    
+    console.log(`[breakdown-pro] PRE-COUNT HEADINGS: INT=${intMatches.length}, EXT=${extMatches.length}, INT/EXT=${intExtMatches.length}, TOTAL=${headingCount}`);
+    
+    // Extract actual heading lines for reference
+    const headingLines: string[] = [];
+    const lines = scriptText.split(/\r?\n/);
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
+        headingLines.push(trimmed);
+      }
+    }
+    console.log(`[breakdown-pro] Extracted ${headingLines.length} scene heading lines`);
+    if (headingLines.length > 0) {
+      console.log(`[breakdown-pro] First 5 headings:`, headingLines.slice(0, 5));
+    }
+
     // Use Claude for professional analysis
     const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
     if (!ANTHROPIC_API_KEY) {
@@ -470,19 +494,28 @@ serve(async (req) => {
 
 LANGUAGE: Respond in ${language === 'es' ? 'Spanish' : 'English'} for synopsis and descriptions.
 
+CRITICAL: I have pre-scanned this script and found EXACTLY ${headingLines.length} scene headings (INT./EXT. lines).
+Your scene_list MUST contain exactly ${headingLines.length} entries.
+If you return fewer or more, your analysis is WRONG.
+
+HERE ARE THE FIRST 10 HEADINGS I FOUND (for verification):
+${headingLines.slice(0, 10).map((h, i) => `${i + 1}. ${h}`).join('\n')}
+
 SCRIPT TEXT:
 ---
 ${scriptText.slice(0, 100000)}
 ---
 
 Remember:
-1. Count EVERY scene heading (INT./EXT.) individually
-2. Extract ALL characters, classify by narrative weight
-3. List ALL unique locations
-4. Identify key props and setpieces
-5. Assess production complexity and safety requirements
+1. COUNT EVERY scene heading (INT./EXT.) individually - there are ${headingLines.length} of them
+2. EACH unique heading is ONE scene, even if the location repeats with different time of day
+3. "INT. COBERTIZO - NOCHE" and "INT. COBERTIZO - DÍA" are TWO separate scenes
+4. Extract ALL characters, classify by narrative weight
+5. List ALL unique locations
+6. Identify key props and setpieces
+7. Assess production complexity and safety requirements
 
-Return ONLY the JSON breakdown.`;
+Return ONLY the JSON breakdown. counts.scenes MUST equal ${headingLines.length}.`;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
