@@ -229,104 +229,206 @@ function extractScenesFromScript(text: string): any[] {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// DETERMINISTIC CHARACTER EXTRACTION (P0) - Full script scan
+// CHARACTER CLASSIFICATION HEURISTICS - Bucket-based system
+// Works for aviation scripts, courtroom, drama, etc.
 // ═══════════════════════════════════════════════════════════════════════════════
+
+export type CharBuckets = {
+  cast: string[];
+  featured_extras_with_lines: string[];
+  voices_and_functional: string[];
+  discarded: string[];
+  debug?: Record<string, any>;
+};
+
+// ---------- Regex helpers ----------
+const RE_PARENS = /\s*\([^)]*\)\s*/g; // remove (V.O.), (O.S.), (CONT'D), etc.
+const RE_MULTI_SPACE = /\s+/g;
+const RE_QUOTES = /^["""']+|["""']+$/g;
+const RE_CONTD = /\bCONT'?D\b/gi;
+
+// Stage / technical / comms patterns commonly misdetected as characters
+const RE_TO_SELF = /\bTO\s+SELF\b/i;
+const RE_TO_HIMSELF = /\bTO\s+HIMSELF\b/i;
+const RE_TO_HERSELF = /\bTO\s+HERSELF\b/i;
+const RE_BREAKING = /\bBREAK(ING|S)?\b/i;
+const RE_EJECT = /\bEJECT(ED|S)?\b/i;
+const RE_IMPACT = /\bIMPACT\b/i;
+const RE_ROUTE = /\b(ROUTE|ALT|ALTS|LEVEL FLIGHT|SURFACES|TONE|ALARM|END ALTS)\b/i;
+const RE_ALL_CAPS = /^[A-Z0-9\s.'-]+$/;
+const RE_HAS_SENTENCE_PUNCT = /[.!?…]+$/; // ends with punctuation → likely dialogue fragment/state
+const RE_ID_CODE = /^[A-Z]{1,3}\d{1,4}$/; // AA17, E299, AG279
+const RE_NUMERIC_HEAVY = /\d{2,}/;
+const RE_VOICE_WORD = /\b(VOICE|RADIO|LOUDSPEAKER|ANNOUNCER|COMMS|MISSION CONTROL|CONTROL|TOWER|INTERCOM)\b/i;
+const RE_ROLE_GENERIC = /\b(OFFICER|SOLDIER|DOCTOR|NURSE|DETECTIVE|COP|POLICE|AGENT|AIDE|CHAIRMAN|COUNSEL|BARTENDER|PILOT|CAPTAIN|GENERAL|SENATOR|RECEPTIONIST|DIRECTOR|PRODUCER|TECH|TECHNICIAN|SCIENTIST|GUARD|SECURITY|CLERK)\b/i;
+const RE_SCREENPLAY_TOKEN = /\b(INSERT CUT|MONTAGE|SUPER TITLE|TITLE CARD|CUT TO|FADE (IN|OUT)|DISSOLVE|INTERCUT|ESTABLISHING)\b/i;
+
+// ---------- Normalization ----------
+function normalizeCharacterLabel(inputRaw: string): string {
+  if (!inputRaw) return "";
+  let s = inputRaw.trim();
+  s = s.replace(RE_QUOTES, "");
+  s = s.replace(RE_PARENS, " ");
+  s = s.replace(RE_CONTD, " ");
+  s = s.replace(/[,:;]+$/g, "");
+  s = s.replace(RE_MULTI_SPACE, " ").trim();
+  return s;
+}
+
+// ---------- Detection: discard vs classify ----------
+function isLikelyDialogueFragmentOrState(name: string): boolean {
+  if (RE_HAS_SENTENCE_PUNCT.test(name)) return true;
+  const words = name.split(" ").filter(Boolean);
+  if (words.length >= 4 && /[.!?]/.test(name)) return true;
+  return false;
+}
+
+function isRadioCallOrAction(name: string): boolean {
+  if (RE_TO_SELF.test(name) || RE_TO_HIMSELF.test(name) || RE_TO_HERSELF.test(name)) return true;
+  if (RE_BREAKING.test(name) || RE_EJECT.test(name) || RE_IMPACT.test(name)) return true;
+  if (RE_ROUTE.test(name)) return true;
+  return false;
+}
+
+function isScreenplayToken(name: string): boolean {
+  return RE_SCREENPLAY_TOKEN.test(name);
+}
+
+function isVoiceFunctional(name: string): boolean {
+  return RE_VOICE_WORD.test(name);
+}
+
+function isGenericRole(name: string): boolean {
+  return RE_ROLE_GENERIC.test(name);
+}
+
+function isLikelyCodeOrCallsign(name: string): boolean {
+  if (RE_ID_CODE.test(name)) return true;
+  if (RE_NUMERIC_HEAVY.test(name) && name.length <= 8) return true;
+  return false;
+}
+
+function isProperNameLike(name: string): boolean {
+  const hasLower = /[a-záéíóúñü]/.test(name);
+  if (hasLower) return true;
+  if (/\b[A-Z]\.\s*[A-Z]/.test(name)) return true;
+  const tokens = name.split(" ").filter(Boolean);
+  if (tokens.length === 2 && RE_ALL_CAPS.test(name) && !isGenericRole(name) && !isVoiceFunctional(name)) {
+    return true;
+  }
+  return false;
+}
+
+function addUnique(arr: string[], seen: Set<string>, value: string) {
+  const key = value.toUpperCase();
+  if (seen.has(key)) return;
+  seen.add(key);
+  arr.push(value);
+}
+
+// ---------- Main classification ----------
+function classifyCharacters(rawCandidates: string[]): CharBuckets {
+  console.log('=== CLASSIFY CHARACTERS EXECUTING ===');
+  console.log('[classifyCharacters] Input count:', rawCandidates?.length || 0);
+  
+  const buckets: CharBuckets = {
+    cast: [],
+    featured_extras_with_lines: [],
+    voices_and_functional: [],
+    discarded: [],
+    debug: { input: rawCandidates?.length || 0 }
+  };
+
+  const seen = new Set<string>();
+
+  for (const raw of rawCandidates || []) {
+    const name0 = normalizeCharacterLabel(raw);
+    if (!name0 || name0.length < 2) {
+      buckets.discarded.push(raw || '(empty)');
+      continue;
+    }
+
+    // hard discard: screenplay tokens / obvious fragments
+    if (isScreenplayToken(name0)) {
+      console.log('[classify] Discarded screenplay token:', name0);
+      buckets.discarded.push(name0);
+      continue;
+    }
+
+    // discard phrases/states (Top Gun problem)
+    if (isLikelyDialogueFragmentOrState(name0)) {
+      console.log('[classify] Discarded dialogue fragment:', name0);
+      buckets.discarded.push(name0);
+      continue;
+    }
+
+    // discard pure action/radio-call lines (Top Gun problem)
+    if (isRadioCallOrAction(name0)) {
+      if (isVoiceFunctional(name0)) {
+        addUnique(buckets.voices_and_functional, seen, name0);
+      } else {
+        console.log('[classify] Discarded radio/action:', name0);
+        buckets.discarded.push(name0);
+      }
+      continue;
+    }
+
+    // Voice/functional bucket
+    if (isVoiceFunctional(name0)) {
+      addUnique(buckets.voices_and_functional, seen, name0);
+      continue;
+    }
+
+    // Codes/callsigns: treat as featured extras (they speak, but not principal cast)
+    if (isLikelyCodeOrCallsign(name0)) {
+      addUnique(buckets.featured_extras_with_lines, seen, name0);
+      continue;
+    }
+
+    // Generic roles → featured extras with lines
+    if (isGenericRole(name0)) {
+      addUnique(buckets.featured_extras_with_lines, seen, name0);
+      continue;
+    }
+
+    // Proper names / stable aliases → cast
+    if (isProperNameLike(name0)) {
+      addUnique(buckets.cast, seen, name0);
+      continue;
+    }
+
+    // default fallback: if it's short and all caps, it's often a minor speaking role
+    if (RE_ALL_CAPS.test(name0) && name0.length <= 18) {
+      addUnique(buckets.featured_extras_with_lines, seen, name0);
+      continue;
+    }
+
+    // If we can't tell: keep as featured extra
+    addUnique(buckets.featured_extras_with_lines, seen, name0);
+  }
+
+  buckets.debug!.out = {
+    cast: buckets.cast.length,
+    featured: buckets.featured_extras_with_lines.length,
+    voices: buckets.voices_and_functional.length,
+    discarded: buckets.discarded.length
+  };
+
+  console.log('[classifyCharacters] Output:', buckets.debug!.out);
+  console.log('[classifyCharacters] Discarded samples:', buckets.discarded.slice(0, 10));
+
+  return buckets;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
-// EXPANDED CHARACTER BLACKLIST (~200+ terms from script-analysis-utils)
+// LEGACY CHARACTER BANNED SET (for backward compatibility)
 // ═══════════════════════════════════════════════════════════════════════════════
 const CHARACTER_CUE_BANNED = new Set([
-  // === EFECTOS DE SONIDO ===
-  'BLAM', 'BLAMMMMMMM', 'CRASH', 'BANG', 'WHOOSH', 'THUD', 'CLANG',
-  'WHAM', 'BOOM', 'RING', 'BEEP', 'DING', 'HONK', 'SCREECH', 'BAM',
-  'CRAAAASSSHHHHHH', 'BLAMMMMMM', 'SLAM', 'CLICK', 'POP', 'SPLASH',
-  'CRACK', 'SNAP', 'THUMP', 'CLUNK', 'BUZZ', 'HISS', 'ROAR', 'RUMBLE',
-  'WHIR', 'CREAK', 'SQUEAK', 'RATTLE', 'CLATTER', 'THWACK', 'SMACK',
-  'WHACK', 'PLOP', 'DRIP', 'SWOOSH', 'ZOOM', 'VROOM', 'SCREEEECH',
-  'CRUNCH', 'SIZZLE', 'GROWL', 'SHRIEK', 'YELL', 'SCREAM', 'GASP',
-  'SIGH', 'GROAN', 'MOAN', 'WAIL', 'HOWL', 'BARK', 'MEOW', 'CHIRP',
-  'TWEET', 'SQUAWK', 'KAPOW', 'ZAP', 'SMASH',
-  
-  // === INSTRUCCIONES DE CÁMARA/EDICIÓN ===
-  'QUICK CUTS', 'JUMP CUT', 'MATCH CUT', 'SMASH CUT', 'TIME CUT',
-  'CUT TO', 'FADE IN', 'FADE OUT', 'DISSOLVE', 'FLASH', 'IRIS OUT',
-  'PUSH IN', 'PULL BACK', 'TRACKING', 'HANDHELD', 'POV',
-  'CLOSE ON', 'ANGLE ON', 'WE SEE', 'FROM BEHIND', 'WIDER ANGLE',
-  'STAY ON', 'HOLD', 'BEAT', 'SUPER', 'TITLE', 'INSERT', 'MONTAGE',
-  'EXTREME CLOSE', 'WIDE SHOT', 'MEDIUM SHOT', 'TWO SHOT',
-  'ESTABLISHING', 'AERIAL', 'UNDERWATER', 'CRANE SHOT', 'DOLLY',
-  'STEADICAM', 'FREEZE FRAME', 'SLOW MOTION', 'SPLIT SCREEN',
-  'REVERSE ANGLE', 'OVER SHOULDER', 'CLOSE UP', 'MEDIUM CLOSE',
-  'FULL SHOT', 'LONG SHOT', 'EXTREME LONG', 'INSERT SHOT',
-  'CUTAWAY', 'REACTION SHOT', 'MASTER SHOT', 'COVERAGE',
-  'RACK FOCUS', 'PULL FOCUS', 'FOCUS ON', 'REVEAL',
-  'WIPE TO', 'IRIS IN', 'FADE TO BLACK', 'FADE TO WHITE',
-  'PRELAP', 'PRE-LAP', 'SERIES OF SHOTS', 'QUICK CUT',
-  'DISSOLVE TO', 'BEGIN TITLES', 'END TITLES', 'MAIN TITLES',
-  'OPENING CREDITS', 'CLOSING CREDITS', 'MORE',
-  
-  // === INDICADORES DE TIEMPO ===
-  'MORNING', 'AFTERNOON', 'EVENING', 'NIGHT', 'DAWN', 'DUSK', 'DAY',
-  'MAGIC HOUR', 'CONTINUOUS', 'LATER', 'MOMENTS LATER', 'SAME',
-  'NEXT', 'NEXT DAY', 'NEXT AFTERNOON', 'FLASHBACK', 'PRESENT DAY',
-  'EARLY MORNING', 'LATE NIGHT', 'SUNSET', 'SUNRISE', 'MIDDAY',
-  'MIDNIGHT', 'GOLDEN HOUR', 'BLUE HOUR', 'PRE-DAWN', 'TWILIGHT',
-  'HOURS LATER', 'DAYS LATER', 'WEEKS LATER', 'MONTHS LATER',
-  'YEARS LATER', 'THE NEXT DAY', 'THE FOLLOWING', 'SOMETIME LATER',
-  'A MOMENT LATER', 'SECONDS LATER', 'MINUTES LATER',
-  'NEXT MORNING', 'THE NEXT', 'THAT NIGHT', 'THAT DAY', 'THAT EVENING',
-  
-  // === TEXTO DE PANTALLA/TÉCNICO ===
-  'PLEASE STAND BY', 'BLACK', 'WHITE', 'COLOUR', 'COLOR', 'B&W',
-  'WIDE', 'CLOSE', 'MEDIUM', 'TIGHT', 'OVER BLACK', 'THE END',
-  'TITLE CARD', 'END CREDITS', 'SUPER TITLE', 'CHYRON',
-  'LOWER THIRD', 'GRAPHIC', 'TEXT ON SCREEN',
-  'STAND BY', 'WE INTERRUPT', 'BREAKING NEWS',
-  
-  // === LÍNEAS DE ACCIÓN ===
-  'HEAR LAUGHTER', 'WE HEAR', 'SUDDENLY', 'MEANWHILE', 'SILENCE',
-  'SOUND OF', 'SOUNDS OF', 'THE SOUND', 'A SOUND', 'NOISE OF',
-  'WE FOLLOW', 'WE MOVE', 'WE TRACK', 'WE PAN', 'WE TILT',
-  'WE DOLLY', 'WE CRANE', 'WE PUSH', 'WE PULL', 'WE ZOOM',
-  'CAMERA MOVES', 'CAMERA FOLLOWS', 'CAMERA TRACKS', 'CAMERA PANS',
-  'WE SEE', 'HEAR',
-  
-  // === ONOMATOPEYAS Y EXCLAMACIONES ===
-  'WHAT', 'YES', 'NO', 'OKAY', 'OH', 'AH', 'HEY', 'STOP', 'GO',
-  'WAIT', 'LOOK', 'LISTEN', 'HELP', 'RUN', 'COME', 'HERE',
-  'UGH', 'OOH', 'AAH', 'EEK', 'OW', 'OUCH', 'YIKES', 'WHOA',
-  'WOW', 'GEE', 'GOSH', 'DAMN', 'DAMMIT', 'SHIT', 'FUCK',
-  'HMM', 'HUH', 'EH', 'UM', 'UH', 'ER',
-  
-  // === TÉRMINOS TÉCNICOS SOLOS ===
-  'VOICE', 'SCREEN', 'MONITOR', 'TV', 'TELEVISION', 'RADIO',
-  'PHONE', 'INTERCOM', 'CAMERA', 'MUSIC', 'SOUND', 'NOISE',
-  'LOUDSPEAKER', 'SPEAKER', 'RECORDER', 'MICROPHONE', 'MIC',
-  'EARPIECE', 'HEADSET', 'WALKIE', 'TALKIE', 'COMM', 'COMMS',
-  
-  // === OTROS INVÁLIDOS ===
-  'APPLAUSE', 'LAUGHTER', 'PAUSE', 'BLACKOUT', 'DARKNESS',
-  'LIGHT', 'SHADOW', 'QUIET', 'STILLNESS',
-  'END OF ACT', 'ACT ONE', 'ACT TWO', 'ACT THREE', 'SCENE',
-  'OPENING', 'CLOSING', 'TEASER', 'TAG', 'COLD OPEN',
-  'PREVIOUSLY', 'RECAP', 'FLASHFORWARD', 'DREAM SEQUENCE',
-  'FANTASY', 'IMAGINATION', 'MEMORY', 'VISION',
-  'END', 'CONTINUED', 'CREDITS', 'INTERCUT', 'BACK TO',
-  
-  // === GENÉRICOS (solo si están solos) ===
-  'MAN', 'WOMAN', 'PERSON', 'FIGURE', 'SILHOUETTE', 'SHAPE',
-  'SOMEONE', 'SOMEBODY', 'ANYONE', 'ANYBODY', 'EVERYONE', 'EVERYBODY',
-  'PEOPLE', 'CROWD', 'GROUP', 'THEY', 'THEM', 'IT',
-  'GUY', 'GIRL', 'BOY', 'KID', 'CHILD', 'MALE', 'FEMALE', 'BODY',
-  
-  // === COMBINACIONES INVÁLIDAS ===
-  'JOKER RANDALL', 'JOKER D', 'MOM V0', 'CLERK D', 'JOKER ON TV',
-  'GOOD NIGHT', 'THAT NOISE', 'DID YOU HEAR', 'WHAT THE',
-  'ON TV', 'ON SCREEN', 'ON PHONE', 'ON RADIO', 'ON MONITOR',
-  'AND ALWAYS REMEMBER', 'ALWAYS REMEMBER', 'REMEMBER THAT',
-  'TO BE CONTINUED', 'HEAR A', 'HEAR THE',
-  'WIDE ON', 'PUSH IN ON', 'PULL BACK TO',
-  'RETURN TO', 'MEANWHILE IN', 'ELSEWHERE',
-  'QUICK CUTS OF', 'SERIES OF', 'MONTAGE OF', 'FLASH OF',
+  'BLAM', 'CRASH', 'BANG', 'BOOM', 'SLAM', 'BAM', 'THUD', 'CLICK', 'POP', 'CRUNCH',
+  'QUICK CUTS', 'CUT TO', 'FADE IN', 'FADE OUT', 'DISSOLVE', 'MONTAGE', 'INSERT',
+  'MORNING', 'AFTERNOON', 'EVENING', 'NIGHT', 'DAWN', 'DUSK', 'DAY', 'CONTINUOUS', 'LATER',
+  'BLACK', 'WHITE', 'THE END', 'END', 'CONTINUED', 'CREDITS', 'INTERCUT',
+  'HEAR', 'WE SEE', 'WE HEAR', 'SOUND OF', 'MUSIC', 'SILENCE',
 ]);
 
 // === CHARACTER ALIASES (for deduplication) ===
@@ -1247,126 +1349,54 @@ OUTPUT LANGUAGE: ${lang}`;
       const parsedEpisodes = buildEpisodesFromScenes();
 
       // ============================================
-      // FILTRO OBLIGATORIO - PEGAR DESPUÉS DEL PARSE
+      // FILTRO OBLIGATORIO - Usando classifyCharacters bucket system
       // ============================================
-      function filterCharacters(analysis: any): any {
-        console.log('=== FILTER EXECUTING ===');
-
-        // Función para validar UN nombre
-        const isValid = (name: string): boolean => {
-          if (!name || name.length < 2) return false;
-          const n = name.toUpperCase().trim();
-
-          // Rechazar letras repetidas 3+
-          if (/(.)\1{2,}/.test(n)) return false;
-
-          // Rechazar sufijos basura
-          if (/\s+(D|V0|VO|OS)$/i.test(n)) return false;
-
-          // Rechazar efectos de sonido
-          if (/^(BAM|BLAM|CRASH|BANG|BOOM|SLAM|THUD)\.?$/i.test(n)) return false;
-
-          // Rechazar técnicos
-          if (/^(QUICK CUTS|FADE|CUT TO|CLOSE ON|ANGLE|POV|MONTAGE)$/i.test(n)) return false;
-
-          // Rechazar tiempo
-          if (/^(MORNING|NIGHT|DAY|LATER|CONTINUOUS)$/i.test(n)) return false;
-
-          // Rechazar puntuación
-          if (/^[.\-!?,;:'"…]+$/.test(n)) return false;
-
-          return true;
-        };
-
-        // Función para normalizar nombre
-        const normalize = (name: string): string => {
-          return name.toUpperCase().replace(/[^A-Z\s]/g, '').trim();
-        };
-
-        // Alias conocidos
-        const ALIASES: Record<string, string> = {
-          'JOKER': 'Arthur Fleck',
-          'MOM': 'Penny Fleck',
-          'MOTHER': 'Penny Fleck',
-          'BURKE': 'Det. Burke',
-          'GARRITY': 'Det. Garrity',
-        };
-
-        // Set para tracking de duplicados
-        const seen = new Set<string>();
-
-        // Función para procesar una lista
-        const processList = (list: any[]): any[] => {
-          if (!Array.isArray(list)) return [];
-
-          return list
-            .filter(item => {
-              const name = typeof item === 'string' ? item : item?.name;
-              if (!name) return false;
-
-              // Validar
-              if (!isValid(name)) {
-                console.log('Filtered invalid:', name);
-                return false;
-              }
-
-              // Resolver alias
-              const normalized = normalize(name);
-              const canonical = ALIASES[normalized] || name;
-              const key = normalize(canonical);
-
-              // Deduplicar
-              if (seen.has(key)) {
-                console.log('Filtered duplicate:', name);
-                return false;
-              }
-
-              seen.add(key);
-              return true;
-            })
-            .map(item => {
-              // Aplicar alias al resultado
-              const name = typeof item === 'string' ? item : item?.name;
-              const normalized = normalize(name);
-              const canonical = ALIASES[normalized] || name;
-
-              if (typeof item === 'string') return canonical;
-              return { ...item, name: canonical };
-            });
-        };
-
-        // Aplicar a todas las categorías
-        if (analysis.characters) {
-          analysis.characters.protagonists = processList(analysis.characters.protagonists || []);
-          analysis.characters.antagonists = processList(analysis.characters.antagonists || []);
-          analysis.characters.secondary = processList(analysis.characters.secondary || []);
-          analysis.characters.minor = processList(analysis.characters.minor || []);
-          analysis.characters.extras = processList(analysis.characters.extras || []);
-        }
-
-        return analysis;
-      }
-
-      // Ejecutar el filtro sobre TODO lo que vamos a persistir (incluye characters_main)
-      const filtered = filterCharacters({
-        characters: {
-          protagonists: Array.isArray((normalizedData as any)?.characters?.cast) ? (normalizedData as any).characters.cast : [],
-          antagonists: Array.isArray((canonicalData as any)?.characters_main) ? (canonicalData as any).characters_main : [],
-          secondary: Array.isArray((normalizedData as any)?.characters?.featured_extras_with_lines)
-            ? (normalizedData as any).characters.featured_extras_with_lines
-            : [],
-          minor: Array.isArray((normalizedData as any)?.characters?.voices_and_functional)
-            ? (normalizedData as any).characters.voices_and_functional
-            : [],
-          extras: [],
-        },
-      });
-
+      console.log('=== APPLYING CHARACTER CLASSIFICATION FILTER ===');
+      
+      // Extract all raw character names from all sources
+      const extractNames = (arr: any[]): string[] => {
+        if (!Array.isArray(arr)) return [];
+        return arr.map(item => {
+          if (typeof item === 'string') return item;
+          return item?.name || '';
+        }).filter(Boolean);
+      };
+      
+      const allRawNames: string[] = [
+        ...extractNames((normalizedData as any)?.characters?.cast || []),
+        ...extractNames((normalizedData as any)?.characters?.featured_extras_with_lines || []),
+        ...extractNames((normalizedData as any)?.characters?.voices_and_functional || []),
+        ...extractNames((canonicalData as any)?.characters_main || []),
+      ];
+      
+      console.log('[filter] Raw character names collected:', allRawNames.length);
+      console.log('[filter] Sample raw names:', allRawNames.slice(0, 20));
+      
+      // Run the bucket classifier
+      const buckets = classifyCharacters(allRawNames);
+      
+      // Convert bucket results back to the expected format (objects with name property)
+      const toCharObjects = (names: string[], defaultRole: string) => 
+        names.map(name => ({ name, role: defaultRole, scenes_count: 0, why: 'Classified by bucket system' }));
+      
+      // Apply classified results
       (normalizedData as any).characters = (normalizedData as any).characters || {};
-      (normalizedData as any).characters.cast = filtered?.characters?.protagonists || [];
-      (normalizedData as any).characters.featured_extras_with_lines = filtered?.characters?.secondary || [];
-      (normalizedData as any).characters.voices_and_functional = filtered?.characters?.minor || [];
-      (canonicalData as any).characters_main = filtered?.characters?.antagonists || [];
+      (normalizedData as any).characters.cast = toCharObjects(buckets.cast, 'supporting');
+      (normalizedData as any).characters.featured_extras_with_lines = toCharObjects(buckets.featured_extras_with_lines, 'featured_extra');
+      (normalizedData as any).characters.voices_and_functional = toCharObjects(buckets.voices_and_functional, 'voice');
+      
+      // Also filter characters_main using the same system
+      const mainNames = extractNames((canonicalData as any)?.characters_main || []);
+      const mainBuckets = classifyCharacters(mainNames);
+      (canonicalData as any).characters_main = toCharObjects(mainBuckets.cast, 'main');
+      
+      console.log('[filter] Classification complete:', {
+        cast: buckets.cast.length,
+        featured: buckets.featured_extras_with_lines.length,
+        voices: buckets.voices_and_functional.length,
+        discarded: buckets.discarded.length,
+        discardedSamples: buckets.discarded.slice(0, 15),
+      });
 
       // Re-sync counts after filtering (so UI numbers match)
       if ((normalizedData as any).counts && (normalizedData as any).characters) {
