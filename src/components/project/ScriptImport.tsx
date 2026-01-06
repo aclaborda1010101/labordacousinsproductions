@@ -2800,6 +2800,44 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         {/* IMPORT TAB */}
         <TabsContent value="import" className="space-y-4">
+          {/* Script Analysis Progress Indicator */}
+          {parsingImportedScript && (
+            <Card className="border-2 border-primary/50 bg-primary/5">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="relative mx-auto w-20 h-20 mb-4">
+                    <Sparkles className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto animate-pulse" />
+                    <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
+                    <div className="absolute inset-0 border-4 border-t-primary border-r-transparent border-b-primary/30 border-l-transparent rounded-full animate-spin" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-primary">Analizando Guion</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Extracción profesional de personajes, localizaciones y escenas
+                    </p>
+                  </div>
+                  <div className="max-w-md mx-auto space-y-2">
+                    <Progress value={undefined} className="h-2 animate-pulse" />
+                    <div className="flex flex-col gap-1">
+                      <p className="text-xs text-muted-foreground animate-pulse">
+                        🎬 Identificando escenas INT./EXT.
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        👤 Clasificando personajes por rol narrativo
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        📍 Mapeando localizaciones únicas
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground/70 pt-2 border-t">
+                    No cierres esta página • Puede tardar hasta 2 minutos
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
@@ -2823,7 +2861,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     value={scriptText}
                     onChange={(e) => setScriptText(e.target.value)}
                     className="min-h-[300px] font-mono text-sm"
-                    disabled={scriptLocked}
+                    disabled={scriptLocked || parsingImportedScript}
                   />
                 </TabsContent>
 
@@ -2850,8 +2888,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </div>
                   ) : (
                     <div 
-                      className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
-                      onClick={() => fileInputRef.current?.click()}
+                      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                        parsingImportedScript 
+                          ? 'opacity-50 cursor-not-allowed' 
+                          : 'cursor-pointer hover:border-primary'
+                      }`}
+                      onClick={() => !parsingImportedScript && fileInputRef.current?.click()}
                     >
                       <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
                       <p className="font-medium">
@@ -2866,6 +2908,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         accept=".txt,.pdf,text/plain,application/pdf"
                         onChange={handleFileUpload}
                         className="hidden"
+                        disabled={parsingImportedScript}
                       />
                     </div>
                   )}
@@ -2886,7 +2929,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       <><Sparkles className="w-4 h-4 mr-2" />Analizar Guion</>
                     )}
                   </Button>
-                  <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || scriptText.length < 200}>
+                  <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || parsingImportedScript || scriptText.length < 200}>
                     {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
                     Script Doctor
                   </Button>
