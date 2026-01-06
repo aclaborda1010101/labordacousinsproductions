@@ -644,22 +644,56 @@ export function normalizeBreakdown(input: AnyObj, filename?: string): Normalized
       ? safeArray(prevCharacters?.voices_and_functional)
       : uniqueBy(voices, (c) => c.name.toUpperCase());
 
-  // If cast is still empty but we do have candidates, promote them (avoid a permanent "0")
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HARD FALLBACK: If cast < 20 and we have many candidates, inject them
+  // ═══════════════════════════════════════════════════════════════════════════
+  const bannedNames = /^(CUT TO|DISSOLVE TO|FADE|INT\.|EXT\.|TITLE|SUPER|MONTAGE|CONTINUOUS|LATER|SAME|DAY|NIGHT|MORNING|EVENING|DAWN|DUSK|INTERCUT|FLASHBACK|BACK TO|END OF|THE END|CONTINUED|MORE)$/i;
+  
+  const cleanCharNameForPromotion = (s: string): string => {
+    if (!s) return "";
+    let n = normalizeCharacterName(s);
+    // Extra cleaning
+    n = n.replace(/[^\p{L}\p{N}\s\-'.]/gu, '').replace(/\s+/g, ' ').trim();
+    return n;
+  };
+
   const promotableCandidates = uniqueBy(
     candidatesForPromotion
-      .map((n) => normalizeCharacterName(n))
-      .filter((n): n is string => !!n)
+      .map((n) => cleanCharNameForPromotion(String(n)))
+      .filter((n): n is string => !!n && n.length >= 2 && n.length <= 35)
+      .filter((n) => !bannedNames.test(n))
       .filter((n) => !isVoiceOrFunctional(n) && !isFeaturedExtraRole(n))
-      .map((name) => ({ name, scenes_count: 0 } as NormalizedCharacter)),
+      .map((name) => ({ name, scenes_count: 0, source: 'character_candidates' } as NormalizedCharacter & { source: string })),
     (c) => c.name.toUpperCase(),
   );
 
-  if (safeArray((out.characters as AnyObj).cast).length === 0 && promotableCandidates.length > 0) {
+  const currentCastLen = safeArray((out.characters as AnyObj).cast).length;
+  const shouldInjectCandidates = currentCastLen < 20 && promotableCandidates.length >= 20;
+
+  if (shouldInjectCandidates) {
+    console.log(
+      `[normalizeBreakdown] HARD FALLBACK: Injecting ${promotableCandidates.length} candidates into cast (was ${currentCastLen})`,
+    );
     (out.characters as AnyObj).cast = promotableCandidates.map((c) => ({
       name: c.name,
       priority: "P2",
       role: "supporting",
       scenes_count: c.scenes_count ?? 0,
+      source: 'character_candidates',
+    }));
+    (out as AnyObj)._cast_promoted_from_candidates = true;
+    warnings.push({
+      code: "CAST_INJECTED_FROM_CANDIDATES",
+      message: `LLM returned only ${currentCastLen} cast. Injected ${promotableCandidates.length} from character_candidates.`,
+    });
+  } else if (currentCastLen === 0 && promotableCandidates.length > 0) {
+    // Original fallback for completely empty cast
+    (out.characters as AnyObj).cast = promotableCandidates.map((c) => ({
+      name: c.name,
+      priority: "P2",
+      role: "supporting",
+      scenes_count: c.scenes_count ?? 0,
+      source: 'character_candidates',
     }));
     (out as AnyObj)._cast_promoted_from_candidates = true;
   }
