@@ -775,94 +775,151 @@ export function normalizeBreakdown(input: AnyObj, filename?: string, projectTitl
 
   // ═══════════════════════════════════════════════════════════════════════════
   // HARD FALLBACK: Scaled tolerance based on scene count
-  // For Oppenheimer-sized scripts (279 scenes), we expect 120+ characters
+  // For large scripts (e.g. 200+ scenes), we expect 120+ speaking entities overall
+  // (cast + featured extras + voices).
   // ═══════════════════════════════════════════════════════════════════════════
   const bannedNames = /^(CUT TO|DISSOLVE TO|FADE|INT\.|EXT\.|TITLE|SUPER|MONTAGE|CONTINUOUS|LATER|SAME|DAY|NIGHT|MORNING|EVENING|DAWN|DUSK|INTERCUT|FLASHBACK|BACK TO|END OF|THE END|CONTINUED|MORE|BLACK|ANGLE ON|CLOSE ON|INSERT|POV|WIDE|TIGHT|OVER|MATCH CUT|JUMP CUT|SMASH CUT)$/i;
-  
+
   const cleanCharNameForPromotion = (s: string): string => {
     if (!s) return "";
     let n = normalizeCharacterName(s);
     // Extra cleaning
-    n = n.replace(/[^\p{L}\p{N}\s\-'.]/gu, '').replace(/\s+/g, ' ').trim();
+    n = n.replace(/[^\p{L}\p{N}\s\-'.]/gu, "").replace(/\s+/g, " ").trim();
     return n;
   };
 
-  const promotableCandidates = uniqueBy(
+  const promotableAll = uniqueBy(
     candidatesForPromotion
       .map((n) => cleanCharNameForPromotion(String(n)))
-      .filter((n): n is string => !!n && n.length >= 2 && n.length <= 35)
-      .filter((n) => !bannedNames.test(n))
+      .filter((n): n is string => !!n && n.length >= 2 && n.length <= 50)
+      .filter((n) => !bannedNames.test(n)),
+    (n) => n.toUpperCase(),
+  );
+
+  const promotableCast = uniqueBy(
+    promotableAll
       .filter((n) => !isVoiceOrFunctional(n) && !isFeaturedExtraRole(n))
-      .map((name) => ({ name, scenes_count: 0, source: 'character_candidates' } as NormalizedCharacter & { source: string })),
+      .map((name) => ({
+        name,
+        scenes_count: 0,
+        source: "character_candidates",
+      }) as NormalizedCharacter & { source: string }),
     (c) => c.name.toUpperCase(),
   );
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SCALED TOLERANCE: min cast expected based on scene count
-  // ═══════════════════════════════════════════════════════════════════════════
-  const currentCast = safeArray((out.characters as AnyObj).cast) as AnyObj[];
-  const currentCastNamesUpper = currentCast
-    .map((c) => String((c as AnyObj)?.name || "").toUpperCase())
-    .filter(Boolean);
-  const currentCastLen = currentCastNamesUpper.length;
+  const promotableFeatured = uniqueBy(
+    promotableAll
+      .filter((n) => isFeaturedExtraRole(n))
+      .map((name) => ({ name, scenes_count: 0, source: "character_candidates" }) as any),
+    (c) => String((c as AnyObj)?.name || "").toUpperCase(),
+  );
 
-  const minCastExpected =
+  const promotableVoices = uniqueBy(
+    promotableAll
+      .filter((n) => isVoiceOrFunctional(n))
+      .map((name) => ({ name, scenes_count: 0, source: "character_candidates" }) as any),
+    (c) => String((c as AnyObj)?.name || "").toUpperCase(),
+  );
+
+  const minCharactersExpected =
     scenesTotal >= 200 ? 120 :
     scenesTotal >= 100 ? 80 :
     scenesTotal >= 50 ? 40 :
     20;
 
-  // We never REPLACE the model's cast (it may contain richer names/roles).
-  // We only AUGMENT it with missing deterministic candidates when the cast is suspiciously small.
-  const shouldInjectCandidates = currentCastLen < minCastExpected && promotableCandidates.length > 0;
+  const currentCast = safeArray((out.characters as AnyObj).cast) as AnyObj[];
+  const currentFeatured = safeArray((out.characters as AnyObj).featured_extras_with_lines) as AnyObj[];
+  const currentVoices = safeArray((out.characters as AnyObj).voices_and_functional) as AnyObj[];
+
+  const currentNamesUpper = [
+    ...currentCast.map((c) => String((c as AnyObj)?.name || "").toUpperCase()),
+    ...currentFeatured.map((c) => String((c as AnyObj)?.name || "").toUpperCase()),
+    ...currentVoices.map((c) => String((c as AnyObj)?.name || "").toUpperCase()),
+  ].filter(Boolean);
 
   const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const hasDigitsOrHash = (s: string) => /[0-9#]/.test(s);
 
-  if (shouldInjectCandidates) {
-    const missing = promotableCandidates.filter((c) => {
-      const cand = c.name.toUpperCase();
-      // Avoid duplicates like "OPPENHEIMER" when cast already contains "J. ROBERT OPPENHEIMER"
-      const rx = new RegExp(`\\b${escapeRegExp(cand)}\\b`, "i");
-      return !currentCastNamesUpper.some((n) => rx.test(n));
-    });
+  const isCovered = (candUpper: string) => {
+    if (currentNamesUpper.includes(candUpper)) return true;
+    // Don't aggressively collapse numbered roles (GUARD #1 vs GUARD #2)
+    if (hasDigitsOrHash(candUpper)) return false;
+    const rx = new RegExp(`\\b${escapeRegExp(candUpper)}\\b`, "i");
+    return currentNamesUpper.some((n) => rx.test(n));
+  };
 
-    if (missing.length > 0) {
-      console.log(
-        `[normalizeBreakdown] SCALED AUGMENT: scenes=${scenesTotal}, minExpected=${minCastExpected}, current=${currentCastLen}, add=${missing.length}, candidates=${promotableCandidates.length}`,
-      );
+  const currentTotal = currentNamesUpper.length;
 
-      const injected = missing.map((c) => ({
-        name: c.name,
-        priority: "P3",
-        role: "minor",
-        scenes_count: c.scenes_count ?? 0,
-        source: "character_candidates",
-      }));
+  // If the overall character set is suspiciously small for the number of scenes,
+  // augment ALL categories from deterministic extraction.
+  if (currentTotal < minCharactersExpected && promotableAll.length > 0) {
+    const missingCast = promotableCast.filter((c) => !isCovered(c.name.toUpperCase()));
+    const missingFeatured = promotableFeatured.filter((c: AnyObj) => !isCovered(String(c.name || "").toUpperCase()));
+    const missingVoices = promotableVoices.filter((c: AnyObj) => !isCovered(String(c.name || "").toUpperCase()));
 
-      (out.characters as AnyObj).cast = uniqueBy(
-        [...currentCast, ...injected] as AnyObj[],
-        (x) => String((x as AnyObj)?.name || "").toUpperCase(),
-      );
-
-      (out as AnyObj)._cast_augmented_from_candidates = true;
-      warnings.push({
-        code: "CAST_AUGMENTED_FROM_CANDIDATES",
-        message: `LLM cast (${currentCastLen}) below minimum expected (${minCastExpected}) for ${scenesTotal} scenes. Added ${missing.length} extra cast names from deterministic extraction.`,
-      });
-    }
-  } else if (currentCastLen === 0 && promotableCandidates.length > 0) {
-    // Legacy fallback for completely empty cast
-    (out.characters as AnyObj).cast = promotableCandidates.map((c) => ({
+    const injectedCast = missingCast.map((c) => ({
       name: c.name,
-      priority: "P2",
-      role: "supporting",
+      priority: "P3",
+      role: "minor",
       scenes_count: c.scenes_count ?? 0,
       source: "character_candidates",
     }));
-    (out as AnyObj)._cast_promoted_from_candidates = true;
+
+    const injectedFeatured = missingFeatured.map((c: AnyObj) => ({
+      name: String(c.name || ""),
+      scenes_count: 0,
+      source: "character_candidates",
+    }));
+
+    const injectedVoices = missingVoices.map((c: AnyObj) => ({
+      name: String(c.name || ""),
+      scenes_count: 0,
+      source: "character_candidates",
+    }));
+
+    const before = {
+      cast: currentCast.length,
+      featured: currentFeatured.length,
+      voices: currentVoices.length,
+      total: currentTotal,
+    };
+
+    if (injectedCast.length > 0) {
+      (out.characters as AnyObj).cast = uniqueBy(
+        [...currentCast, ...injectedCast] as AnyObj[],
+        (x) => String((x as AnyObj)?.name || "").toUpperCase(),
+      );
+    }
+
+    if (injectedFeatured.length > 0) {
+      (out.characters as AnyObj).featured_extras_with_lines = uniqueBy(
+        [...currentFeatured, ...injectedFeatured] as AnyObj[],
+        (x) => String((x as AnyObj)?.name || "").toUpperCase(),
+      );
+    }
+
+    if (injectedVoices.length > 0) {
+      (out.characters as AnyObj).voices_and_functional = uniqueBy(
+        [...currentVoices, ...injectedVoices] as AnyObj[],
+        (x) => String((x as AnyObj)?.name || "").toUpperCase(),
+      );
+    }
+
+    const afterTotal =
+      safeArray((out.characters as AnyObj).cast).length +
+      safeArray((out.characters as AnyObj).featured_extras_with_lines).length +
+      safeArray((out.characters as AnyObj).voices_and_functional).length;
+
+    console.log(
+      `[normalizeBreakdown] SCALED AUGMENT (ALL): scenes=${scenesTotal}, minExpected=${minCharactersExpected}, before=${before.total}, after=${afterTotal}, addCast=${injectedCast.length}, addFeatured=${injectedFeatured.length}, addVoices=${injectedVoices.length}, candidates=${promotableAll.length}`,
+    );
+
+    (out as AnyObj)._characters_augmented_from_candidates = true;
+    warnings.push({
+      code: "CHARACTERS_AUGMENTED_FROM_CANDIDATES",
+      message: `Characters total (${before.total}) below minimum expected (${minCharactersExpected}) for ${scenesTotal} scenes. Added cast(+${injectedCast.length}), featured(+${injectedFeatured.length}), voices(+${injectedVoices.length}) from deterministic extraction.`,
+    });
   }
-
-
   // Props: prefer input.props; fallback props_key
   const propsInput = safeArray(input.props).length ? safeArray(input.props) : safeArray(input.props_key);
   out.props = propsInput;
