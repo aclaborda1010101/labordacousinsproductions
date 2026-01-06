@@ -240,6 +240,47 @@ const CHARACTER_CUE_BANNED = new Set([
   'EVENING', 'DAWN', 'DUSK', 'SUNSET', 'SUNRISE',
 ]);
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// HARD FILTERS: Things that are NEVER character names
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Scene heading detector (numbered or not)
+function isSceneHeading(text: string): boolean {
+  const t = text.toUpperCase().trim();
+  // Standard: INT. / EXT. / INT/EXT
+  if (/^(INT[\./]|EXT[\./]|INT\/EXT|I\/E)/i.test(t)) return true;
+  // Numbered: "32 INT." or "32. INT."
+  if (/^\d+\s*\.?\s*(INT[\./]|EXT[\./]|INT\/EXT|I\/E)/i.test(t)) return true;
+  // Contains INT./EXT. anywhere (malformed)
+  if (/\bINT\.\s|EXT\.\s/i.test(t)) return true;
+  return false;
+}
+
+// Action lines and technical cues
+function isActionOrTechnicalLine(text: string): boolean {
+  const t = text.toUpperCase().trim();
+  
+  // Scene heading (anywhere in the string)
+  if (isSceneHeading(t)) return true;
+  
+  // Starts with number followed by words (likely scene number + heading)
+  if (/^\d+\s+[A-Z]/.test(t) && t.length > 15) return true;
+  
+  // Technical shot terms
+  if (/^(ANGLE|CLOSE|WIDE|MEDIUM|EXTREME|SHOT|INSERT|POV|REVERSE|OVER|ON:)/i.test(t)) return true;
+  
+  // Contains time of day indicators (scene heading fragments)
+  if (/\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|MORNING|EVENING|CONTINUOUS|LATER|SAME)\s*$/i.test(t)) return true;
+  
+  // Too long to be a character name (scene descriptions)
+  if (t.length > 40) return true;
+  
+  // Contains forward slash typical of INT/EXT or location separator
+  if (/\bINT\/|EXT\//.test(t)) return true;
+  
+  return false;
+}
+
 function extractCharacterCandidatesFull(
   scriptText: string,
 ): { candidates: string[]; stats: { total: number; top10: string[] } } {
@@ -254,8 +295,12 @@ function extractCharacterCandidatesFull(
     // Skip empty lines
     if (!trimmed) continue;
 
+    // 🛡️ HARD FILTER: Skip if this looks like a scene heading or action
+    if (isSceneHeading(trimmed)) continue;
+    if (isActionOrTechnicalLine(trimmed)) continue;
+
     // Character cue detection criteria:
-    // a) ALL CAPS (2-50 chars)
+    // a) ALL CAPS (2-40 chars) - reduced from 50
     // b) Followed by something that is NOT a heading/transition (lookahead allows blank line)
     // c) Not a scene heading, transition, or parenthetical-only line
 
@@ -272,12 +317,12 @@ function extractCharacterCandidatesFull(
     if (
       trimmed === trimmed.toUpperCase() &&
       trimmed.length >= 2 &&
-      trimmed.length <= 50 &&
-      !/^(INT\.|EXT\.|INT\/EXT|I\/E)/i.test(trimmed) &&
+      trimmed.length <= 40 &&
       !/^(FADE|CUT|DISSOLVE|SMASH|WIPE|IRIS)/i.test(trimmed) &&
       !/^\([^)]+\)$/.test(trimmed) && // Not a parenthetical-only line
       nextContent &&
-      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextContent)
+      !/^(INT\.|EXT\.|FADE|CUT)/i.test(nextContent) &&
+      !isSceneHeading(nextContent)
     ) {
       // Normalize: remove parentheticals (V.O.), (O.S.), (CONT'D), etc.
       let charName = trimmed
@@ -290,10 +335,11 @@ function extractCharacterCandidatesFull(
 
       const canonicalKey = charName.toUpperCase();
 
-      // Filter out non-characters
-      if (!charName || charName.length < 2 || charName.length > 50) continue;
+      // Filter out non-characters (additional checks)
+      if (!charName || charName.length < 2 || charName.length > 40) continue;
       if (CHARACTER_CUE_BANNED.has(canonicalKey)) continue;
-      if (/^(INT\.|EXT\.)/.test(charName)) continue;
+      if (isSceneHeading(charName)) continue;
+      if (isActionOrTechnicalLine(charName)) continue;
 
       candidateCounts.set(canonicalKey, (candidateCounts.get(canonicalKey) || 0) + 1);
     }
@@ -311,6 +357,10 @@ function extractCharacterCandidatesFull(
       for (const rawName of present) {
         const cleaned = cleanCharacterCue(String(rawName));
         if (!cleaned) continue;
+        
+        // 🛡️ HARD FILTER
+        if (isSceneHeading(cleaned)) continue;
+        if (isActionOrTechnicalLine(cleaned)) continue;
 
         const charName = cleaned
           .replace(/\s*\([^)]*\)\s*$/g, "")
@@ -322,9 +372,10 @@ function extractCharacterCandidatesFull(
 
         const canonicalKey = charName.toUpperCase();
 
-        if (!charName || charName.length < 2 || charName.length > 50) continue;
+        if (!charName || charName.length < 2 || charName.length > 40) continue;
         if (CHARACTER_CUE_BANNED.has(canonicalKey)) continue;
-        if (/^(INT\.|EXT\.)/.test(charName)) continue;
+        if (isSceneHeading(charName)) continue;
+        if (isActionOrTechnicalLine(charName)) continue;
 
         candidateCounts.set(canonicalKey, (candidateCounts.get(canonicalKey) || 0) + 1);
       }
