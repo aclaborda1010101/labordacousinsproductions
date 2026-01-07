@@ -1,77 +1,59 @@
+/**
+ * CharacterPackBuilder - PRO Mode
+ * 12 Essential Model Pack with Guided Phases
+ * Phase 1: Upload References (1 required, 1 optional)
+ * Phase 2: Auto-generate Turnarounds (4 slots)
+ * Phase 3: Auto-generate Expressions (6 slots)
+ */
+
 import { useState, useEffect, useCallback, useRef, DragEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
-  Loader2, Upload, Sparkles, CheckCircle2, XCircle, AlertTriangle, 
-  User, Camera, Shirt, Palette, RefreshCw, Lock, Play, ImagePlus, FolderUp, Trash2, Anchor, Grid
+  Loader2, Upload, Sparkles, CheckCircle2, XCircle, 
+  User, Camera, Palette, RefreshCw, Lock, Play, Trash2,
+  Image, ChevronRight
 } from 'lucide-react';
-import { ReferenceAnchorManager } from './ReferenceAnchorManager';
-import { LikenessComparisonView } from './LikenessComparisonView';
 
 // ============================================
-// SLOT REQUIREMENTS - NEW UPLOAD-FIRST FLOW
+// 12 ESSENTIAL MODEL PACK
 // ============================================
-// OBLIGATORIO: 1 foto frontal primer plano neutral (upload)
-// OPCIONAL: perfil, cuerpo entero frontal, cuerpo entero perfil (upload)
-// AUTO-GENERADOS: el resto del pack basado en las fotos subidas
 
-// Slots that require user upload (identity anchors)
-const UPLOAD_SLOTS = {
-  required: [
-    { type: 'anchor_closeup', label: 'Primer Plano Frontal (OBLIGATORIO)', viewAngle: 'front' }
-  ],
-  optional: [
-    { type: 'anchor_profile', label: 'Perfil', viewAngle: 'side' },
-    { type: 'anchor_fullbody_front', label: 'Cuerpo Entero Frontal', viewAngle: 'fullbody_front' },
-    { type: 'anchor_fullbody_profile', label: 'Cuerpo Entero Perfil', viewAngle: 'fullbody_side' },
-  ]
-};
+// Phase 1: User uploads (references)
+const UPLOAD_SLOTS = [
+  { type: 'ref_closeup_front', label: 'Primer Plano Frontal', required: true, viewAngle: 'front' },
+  { type: 'ref_profile', label: 'Perfil Lateral', required: false, viewAngle: 'side' },
+];
 
-// Turnaround views: front/back are required, intermediate angles (1/3, 2/3, 3/4) are optional
-const TURNAROUND_VIEWS = {
-  required: ['front', 'back'],
-  optional: ['1/3', '2/3', '3/4'],
-};
+// Phase 2: Auto-generated turnarounds
+const TURNAROUND_SLOTS = [
+  { type: 'turn_front_34', label: 'Frontal 3/4', viewAngle: 'front_34' },
+  { type: 'turn_side', label: 'Lateral', viewAngle: 'side' },
+  { type: 'turn_back', label: 'Espalda', viewAngle: 'back' },
+  { type: 'turn_back_34', label: 'Espalda 3/4', viewAngle: 'back_34' },
+];
 
-const ROLE_REQUIREMENTS = {
-  protagonist: {
-    turnaround: { 
-      requiredViews: ['front', 'back'], 
-      optionalViews: ['1/3', '2/3', '3/4'],
-    },
-    expression: { count: 8, names: ['neutral', 'happy', 'sad', 'angry', 'surprised', 'fearful', 'disgusted', 'contempt'] },
-    closeup: { count: 2 },
-    outfit: { requiredCount: 5, optionalCount: 3, viewsPerOutfit: 2 },
-  },
-  recurring: {
-    turnaround: { 
-      requiredViews: ['front', 'back'], 
-      optionalViews: ['3/4'],
-    },
-    expression: { count: 5, names: ['neutral', 'happy', 'sad', 'angry', 'surprised'] },
-    closeup: { count: 1 },
-    outfit: { requiredCount: 3, optionalCount: 3, viewsPerOutfit: 2 },
-  },
-  episodic: {
-    turnaround: { 
-      requiredViews: ['front', 'back'], 
-      optionalViews: [],
-    },
-    expression: { count: 3, names: ['neutral', 'happy', 'angry'] },
-    closeup: { count: 1 },
-    outfit: { requiredCount: 2, optionalCount: 3, viewsPerOutfit: 1 },
-  },
-  extra: {
-    base_look: { count: 1 },
-  },
-};
+// Phase 3: Auto-generated expressions
+const EXPRESSION_SLOTS = [
+  { type: 'expr_neutral', label: 'Neutral', expression: 'neutral' },
+  { type: 'expr_happy', label: 'Alegre', expression: 'happy' },
+  { type: 'expr_sad', label: 'Triste', expression: 'sad' },
+  { type: 'expr_angry', label: 'Enojado', expression: 'angry' },
+  { type: 'expr_surprised', label: 'Sorprendido', expression: 'surprised' },
+  { type: 'expr_fear', label: 'Miedo', expression: 'fear' },
+];
+
+// All slot types for the 12-model pack
+const ALL_SLOT_TYPES = [
+  ...UPLOAD_SLOTS.map(s => s.type),
+  ...TURNAROUND_SLOTS.map(s => s.type),
+  ...EXPRESSION_SLOTS.map(s => s.type),
+];
 
 interface PackSlot {
   id: string;
@@ -79,12 +61,9 @@ interface PackSlot {
   slot_index: number;
   view_angle: string | null;
   expression_name: string | null;
-  outfit_id: string | null;
   image_url: string | null;
   status: string;
   qc_score: number | null;
-  qc_issues: string[];
-  fix_notes: string | null;
   required: boolean;
 }
 
@@ -109,17 +88,13 @@ export function CharacterPackBuilder({
 }: CharacterPackBuilderProps) {
   const [slots, setSlots] = useState<PackSlot[]>([]);
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState<string | null>(null);
+  const [generatingPhase, setGeneratingPhase] = useState<string | null>(null);
+  const [generatingSlot, setGeneratingSlot] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
-  const [showOptionalSlots, setShowOptionalSlots] = useState(true);
-  const [batchGenerating, setBatchGenerating] = useState(false);
-  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [batchUploading, setBatchUploading] = useState(false);
-  const [batchUploadProgress, setBatchUploadProgress] = useState({ current: 0, total: 0 });
+  const [activePhase, setActivePhase] = useState<string>('phase1');
+  const [phaseProgress, setPhaseProgress] = useState({ current: 0, total: 0 });
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  const globalFileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Fetch or initialize slots
   const fetchSlots = useCallback(async () => {
@@ -127,11 +102,12 @@ export function CharacterPackBuilder({
       .from('character_pack_slots')
       .select('*')
       .eq('character_id', characterId)
-      .order('slot_type')
-      .order('slot_index');
+      .in('slot_type', ALL_SLOT_TYPES)
+      .order('slot_type');
 
     if (error) {
       console.error('Error fetching slots:', error);
+      setLoading(false);
       return;
     }
 
@@ -144,173 +120,52 @@ export function CharacterPackBuilder({
     setLoading(false);
   }, [characterId]);
 
-  // Initialize slots based on role
+  // Initialize 12 essential slots
   const initializeSlots = async () => {
-    const requirements = ROLE_REQUIREMENTS[characterRole];
-    if (!requirements) return;
-
     const newSlots: Omit<PackSlot, 'id'>[] = [];
 
-    // ===== UPLOAD SLOTS FIRST (NEW FLOW) =====
-    // Required upload: anchor_closeup (frontal primer plano)
-    UPLOAD_SLOTS.required.forEach((uploadSlot, i) => {
+    // Phase 1: Upload slots
+    UPLOAD_SLOTS.forEach((slot, i) => {
       newSlots.push({
-        slot_type: uploadSlot.type,
+        slot_type: slot.type,
         slot_index: i,
-        view_angle: uploadSlot.viewAngle,
+        view_angle: slot.viewAngle,
         expression_name: null,
-        outfit_id: null,
         image_url: null,
         status: 'empty',
         qc_score: null,
-        qc_issues: [],
-        fix_notes: null,
-        required: true, // OBLIGATORIO
+        required: slot.required,
       });
     });
 
-    // Optional uploads: profile, fullbody front, fullbody profile
-    UPLOAD_SLOTS.optional.forEach((uploadSlot, i) => {
+    // Phase 2: Turnaround slots
+    TURNAROUND_SLOTS.forEach((slot, i) => {
       newSlots.push({
-        slot_type: uploadSlot.type,
-        slot_index: UPLOAD_SLOTS.required.length + i,
-        view_angle: uploadSlot.viewAngle,
+        slot_type: slot.type,
+        slot_index: i,
+        view_angle: slot.viewAngle,
         expression_name: null,
-        outfit_id: null,
         image_url: null,
         status: 'empty',
         qc_score: null,
-        qc_issues: [],
-        fix_notes: null,
-        required: false, // OPCIONAL
-      });
-    });
-
-    // ===== AUTO-GENERATED SLOTS =====
-    // Closeups (additional, for AI generation)
-    if ('closeup' in requirements) {
-      for (let i = 0; i < requirements.closeup.count; i++) {
-        newSlots.push({
-          slot_type: 'closeup',
-          slot_index: i,
-          view_angle: null,
-          expression_name: null,
-          outfit_id: null,
-          image_url: null,
-          status: 'empty',
-          qc_score: null,
-          qc_issues: [],
-          fix_notes: null,
-          required: false, // Generated slots are optional
-        });
-      }
-    }
-
-    // Turnarounds (identity anchors) - required views first, then optional
-    if ('turnaround' in requirements) {
-      const turnaroundConfig = requirements.turnaround;
-      let slotIndex = 0;
-      
-      // Required views (front, back)
-      turnaroundConfig.requiredViews.forEach((view) => {
-        newSlots.push({
-          slot_type: 'turnaround',
-          slot_index: slotIndex++,
-          view_angle: view,
-          expression_name: null,
-          outfit_id: null,
-          image_url: null,
-          status: 'empty',
-          qc_score: null,
-          qc_issues: [],
-          fix_notes: null,
-          required: true,
-        });
-      });
-      
-      // Optional views (1/3, 2/3, 3/4)
-      turnaroundConfig.optionalViews.forEach((view) => {
-        newSlots.push({
-          slot_type: 'turnaround',
-          slot_index: slotIndex++,
-          view_angle: view,
-          expression_name: null,
-          outfit_id: null,
-          image_url: null,
-          status: 'empty',
-          qc_score: null,
-          qc_issues: [],
-          fix_notes: null,
-          required: false, // Optional slots
-        });
-      });
-    }
-
-    // Expressions
-    if ('expression' in requirements) {
-      requirements.expression.names.forEach((name, i) => {
-        newSlots.push({
-          slot_type: 'expression',
-          slot_index: i,
-          view_angle: null,
-          expression_name: name,
-          outfit_id: null,
-          image_url: null,
-          status: 'empty',
-          qc_score: null,
-          qc_issues: [],
-          fix_notes: null,
-          required: true,
-        });
-      });
-    }
-
-    // Outfits (will be linked later) - required + optional
-    if ('outfit' in requirements) {
-      const outfitConfig = requirements.outfit;
-      const totalOutfits = outfitConfig.requiredCount + outfitConfig.optionalCount;
-      let slotIndex = 0;
-      
-      for (let i = 0; i < totalOutfits; i++) {
-        const isRequired = i < outfitConfig.requiredCount;
-        const viewsPerOutfit = outfitConfig.viewsPerOutfit;
-        const views = viewsPerOutfit === 2 ? ['front', '3/4'] : ['3/4'];
-        views.forEach((view) => {
-          newSlots.push({
-            slot_type: 'outfit',
-            slot_index: slotIndex++,
-            view_angle: view,
-            expression_name: null,
-            outfit_id: null,
-            image_url: null,
-            status: 'empty',
-            qc_score: null,
-            qc_issues: [],
-            fix_notes: null,
-            required: isRequired,
-          });
-        });
-      }
-    }
-
-    // Base look for extras
-    if ('base_look' in requirements) {
-      newSlots.push({
-        slot_type: 'base_look',
-        slot_index: 0,
-        view_angle: '3/4',
-        expression_name: null,
-        outfit_id: null,
-        image_url: null,
-        status: 'empty',
-        qc_score: null,
-        qc_issues: [],
-        fix_notes: null,
         required: true,
       });
-    }
+    });
 
-    // Insert all slots
+    // Phase 3: Expression slots
+    EXPRESSION_SLOTS.forEach((slot, i) => {
+      newSlots.push({
+        slot_type: slot.type,
+        slot_index: i,
+        view_angle: 'front',
+        expression_name: slot.expression,
+        image_url: null,
+        status: 'empty',
+        qc_score: null,
+        required: true,
+      });
+    });
+
     const { data, error } = await supabase
       .from('character_pack_slots')
       .insert(newSlots.map(s => ({ ...s, character_id: characterId })))
@@ -323,378 +178,81 @@ export function CharacterPackBuilder({
     }
 
     setSlots(data as PackSlot[]);
+    calculateCompleteness(data as PackSlot[]);
   };
 
   const calculateCompleteness = (slotData: PackSlot[]) => {
-    const required = slotData.filter(s => s.required);
-    const approved = required.filter(s => s.status === 'approved' || s.status === 'waiver');
-    const score = required.length > 0 ? Math.round((approved.length / required.length) * 100) : 0;
-    setCompletenessScore(score);
+    const total = slotData.length;
+    const completed = slotData.filter(s => s.status === 'approved' || s.status === 'generated' || s.status === 'uploaded').length;
+    setCompletenessScore(total > 0 ? Math.round((completed / total) * 100) : 0);
   };
 
   useEffect(() => {
     fetchSlots();
   }, [fetchSlots]);
 
-  // Check if the OBLIGATORY anchor_closeup has been uploaded
-  const hasRequiredAnchor = () => {
-    const anchorCloseup = slots.find(s => s.slot_type === 'anchor_closeup');
-    return anchorCloseup && anchorCloseup.image_url && 
-           (anchorCloseup.status === 'approved' || anchorCloseup.status === 'pending' || anchorCloseup.status === 'uploaded');
+  // Get slot by type
+  const getSlot = (type: string): PackSlot | undefined => slots.find(s => s.slot_type === type);
+
+  // Phase completion checks
+  const phase1Complete = () => {
+    const refSlot = getSlot('ref_closeup_front');
+    return refSlot && refSlot.image_url && (refSlot.status === 'approved' || refSlot.status === 'uploaded');
   };
 
-  // Check if identity anchors are complete (anchor_closeup + optional anchors with images)
-  const anchorsComplete = () => {
-    // The anchor_closeup is REQUIRED
-    if (!hasRequiredAnchor()) return false;
-    
-    // Additional anchors with images count as completed
-    const anchors = slots.filter(s => 
-      s.slot_type.startsWith('anchor_') || 
-      s.slot_type === 'closeup' || 
-      (s.slot_type === 'turnaround' && s.required)
-    );
-    return anchors.filter(s => s.image_url).length >= 1;
+  const phase2Complete = () => {
+    const turnaroundSlots = TURNAROUND_SLOTS.map(s => getSlot(s.type));
+    return turnaroundSlots.every(s => s && s.image_url && (s.status === 'approved' || s.status === 'generated'));
   };
 
-  // Check if required turnarounds (front/back) are complete
-  const requiredTurnaroundsComplete = () => {
-    // With the new flow, if we have anchor_closeup, we can generate turnarounds
-    if (hasRequiredAnchor()) return true;
-    
-    const requiredTurnarounds = slots.filter(s => 
-      s.slot_type === 'turnaround' && s.required
-    );
-    return requiredTurnarounds.length > 0 && requiredTurnarounds.every(s => 
-      s.status === 'approved' || s.status === 'waiver'
-    );
+  const phase3Complete = () => {
+    const expressionSlots = EXPRESSION_SLOTS.map(s => getSlot(s.type));
+    return expressionSlots.every(s => s && s.image_url && (s.status === 'approved' || s.status === 'generated'));
   };
 
-  // Generate single slot
-  const generateSlot = async (slot: PackSlot) => {
-    // Block expression/outfit generation if required turnarounds not complete
-    if ((slot.slot_type === 'expression' || slot.slot_type === 'outfit') && !requiredTurnaroundsComplete()) {
-      toast.error('Completa primero los turnarounds obligatorios (frontal y trasero)');
-      return;
-    }
-    
-    // Block outfit generation if anchors not complete
-    if (slot.slot_type === 'outfit' && !anchorsComplete()) {
-      toast.error('Completa primero los Identity Anchors (close-ups y turnarounds obligatorios)');
-      return;
-    }
+  // Phase counts
+  const phase1Count = () => UPLOAD_SLOTS.filter(s => {
+    const slot = getSlot(s.type);
+    return slot && slot.image_url;
+  }).length;
 
-    setGenerating(slot.id);
+  const phase2Count = () => TURNAROUND_SLOTS.filter(s => {
+    const slot = getSlot(s.type);
+    return slot && slot.image_url;
+  }).length;
 
-    try {
-      const response = await supabase.functions.invoke('generate-character', {
-        body: {
-          slotId: slot.id,
-          characterId,
-          characterName,
-          characterBio,
-          slotType: slot.slot_type,
-          viewAngle: slot.view_angle,
-          expressionName: slot.expression_name,
-          outfitDescription: slot.outfit_id ? 'default outfit' : undefined,
-          styleToken,
-        },
-      });
+  const phase3Count = () => EXPRESSION_SLOTS.filter(s => {
+    const slot = getSlot(s.type);
+    return slot && slot.image_url;
+  }).length;
 
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
-
-      const result = response.data;
-      if (result.success) {
-        // Auto-regenerate required turnarounds if QC score < 85%
-        const isRequiredTurnaround = slot.slot_type === 'turnaround' && slot.required;
-        const qcScore = result.qc?.score ?? 0;
-        
-        if (isRequiredTurnaround && qcScore < 85 && qcScore > 0) {
-          toast.warning(`Turnaround obligatorio con QC ${qcScore}% - regenerando automáticamente...`);
-          // Retry once with adjusted parameters
-          const retryResponse = await supabase.functions.invoke('generate-character', {
-            body: {
-              slotId: slot.id,
-              characterId,
-              characterName,
-              characterBio,
-              slotType: slot.slot_type,
-              viewAngle: slot.view_angle,
-              styleToken,
-              retryAttempt: true, // Signal to edge function for stronger constraints
-            },
-          });
-          
-          if (retryResponse.data?.success && retryResponse.data?.qc?.score >= 85) {
-            toast.success(`Turnaround regenerado con QC ${retryResponse.data.qc.score}%`);
-          } else {
-            toast.warning(`Turnaround aún por debajo de 85% - revisa manualmente`);
-          }
-          await fetchSlots();
-        } else if (result.qc.passed) {
-          toast.success(`${slot.slot_type} generado y aprobado`);
-          await fetchSlots();
-        } else {
-          toast.warning(`${slot.slot_type} generado pero QC falló - revisa las Fix Notes`);
-          await fetchSlots();
-        }
-      } else {
-        toast.error(`Error: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Generate error:', error);
-      toast.error('Error al generar imagen');
-    } finally {
-      setGenerating(null);
-    }
-  };
-
-  // Batch generate entire pack
-  const generateFullPack = async () => {
-    const emptySlots = slots.filter(s => s.status === 'empty' || s.status === 'failed');
-    if (emptySlots.length === 0) {
-      toast.info('Todos los slots ya están completos');
-      return;
-    }
-
-    setBatchGenerating(true);
-    
-    // Phase 1: Identity Anchors (closeups + turnarounds)
-    const anchors = emptySlots.filter(s => s.slot_type === 'closeup' || s.slot_type === 'turnaround');
-    setBatchProgress({ current: 0, total: emptySlots.length, phase: 'Identity Anchors' });
-
-    for (let i = 0; i < anchors.length; i++) {
-      const slot = anchors[i];
-      setBatchProgress({ current: i + 1, total: emptySlots.length, phase: 'Identity Anchors' });
-      
-      try {
-        const response = await supabase.functions.invoke('generate-character', {
-          body: {
-            slotId: slot.id,
-            characterId,
-            characterName,
-            characterBio,
-            slotType: slot.slot_type,
-            viewAngle: slot.view_angle,
-            styleToken,
-          },
-        });
-
-        if (!response.data?.qc?.passed) {
-          toast.error(`QC falló en ${slot.slot_type} - deteniendo batch para no quemar presupuesto`);
-          await fetchSlots();
-          setBatchGenerating(false);
-          return;
-        }
-      } catch (e) {
-        toast.error(`Error en anchor - deteniendo batch`);
-        await fetchSlots();
-        setBatchGenerating(false);
-        return;
-      }
-    }
-
-    // Phase 2: Expressions
-    const expressions = emptySlots.filter(s => s.slot_type === 'expression');
-    setBatchProgress({ current: anchors.length, total: emptySlots.length, phase: 'Expresiones' });
-
-    for (let i = 0; i < expressions.length; i++) {
-      const slot = expressions[i];
-      setBatchProgress({ current: anchors.length + i + 1, total: emptySlots.length, phase: 'Expresiones' });
-      
-      try {
-        const response = await supabase.functions.invoke('generate-character', {
-          body: {
-            slotId: slot.id,
-            characterId,
-            characterName,
-            characterBio,
-            slotType: slot.slot_type,
-            expressionName: slot.expression_name,
-            styleToken,
-          },
-        });
-
-        if (!response.data?.qc?.passed) {
-          toast.warning(`QC falló en expresión "${slot.expression_name}" - continuando con siguiente`);
-        }
-      } catch (e) {
-        console.error('Expression error:', e);
-      }
-    }
-
-    // Phase 3: Outfits
-    const outfits = emptySlots.filter(s => s.slot_type === 'outfit');
-    setBatchProgress({ current: anchors.length + expressions.length, total: emptySlots.length, phase: 'Outfits' });
-
-    for (let i = 0; i < outfits.length; i++) {
-      const slot = outfits[i];
-      setBatchProgress({ current: anchors.length + expressions.length + i + 1, total: emptySlots.length, phase: 'Outfits' });
-      
-      try {
-        await supabase.functions.invoke('generate-character', {
-          body: {
-            slotId: slot.id,
-            characterId,
-            characterName,
-            characterBio,
-            slotType: slot.slot_type,
-            viewAngle: slot.view_angle,
-            styleToken,
-          },
-        });
-      } catch (e) {
-        console.error('Outfit error:', e);
-      }
-    }
-
-    await fetchSlots();
-    setBatchGenerating(false);
-    toast.success('Pack completo generado');
-    
-    if (onPackComplete) {
-      onPackComplete();
-    }
-  };
-
-  // Grant waiver for failed slot
-  const grantWaiver = async (slotId: string) => {
-    await supabase.from('character_pack_slots').update({ status: 'waiver' }).eq('id', slotId);
-    await fetchSlots();
-    toast.info('Waiver concedido');
-  };
-
-  // Delete image from slot
-  const deleteSlotImage = async (slot: PackSlot) => {
-    if (!slot.image_url) return;
-
-    try {
-      // Extract file path from URL
-      const urlParts = slot.image_url.split('/character-packs/');
-      if (urlParts.length > 1) {
-        const filePath = urlParts[1];
-        await supabase.storage.from('character-packs').remove([filePath]);
-      }
-
-      // Reset slot to empty
-      await supabase.from('character_pack_slots').update({
-        image_url: null,
-        status: 'empty',
-        qc_score: null,
-        qc_issues: [],
-        fix_notes: null,
-      }).eq('id', slot.id);
-
-      await fetchSlots();
-      toast.success('Imagen eliminada');
-    } catch (error) {
-      console.error('Delete error:', error);
-      toast.error('Error al eliminar imagen');
-    }
-  };
-
-  // Get identity anchor URLs for QC comparison
-  const getAnchorImageUrls = (): string[] => {
-    return slots
-      .filter(s => (s.slot_type === 'closeup' || s.slot_type === 'turnaround') && s.image_url && s.status === 'approved')
-      .map(s => s.image_url!)
-      .slice(0, 4);
-  };
-
-  // Run visual QC on uploaded image
-  const runVisualQC = async (imageUrl: string, slotType: string): Promise<{ passed: boolean; score: number; issues: string[]; fixNotes: string }> => {
-    const anchorUrls = getAnchorImageUrls();
-    
-    // Skip QC for anchors themselves or if no anchors exist
-    if (slotType === 'closeup' || slotType === 'turnaround' || anchorUrls.length === 0) {
-      return { passed: true, score: 100, issues: [], fixNotes: '' };
-    }
-
-    try {
-      const response = await supabase.functions.invoke('qc-visual-identity', {
-        body: {
-          uploadedImageUrl: imageUrl,
-          anchorImageUrls: anchorUrls,
-          characterName,
-          slotType,
-        },
-      });
-
-      if (response.error) {
-        console.error('QC error:', response.error);
-        return { passed: true, score: 100, issues: [], fixNotes: '' };
-      }
-
-      return response.data;
-    } catch (error) {
-      console.error('QC visual error:', error);
-      return { passed: true, score: 100, issues: [], fixNotes: '' };
-    }
-  };
-
-  // Upload image to slot with QC
-  const uploadImageToSlot = async (slot: PackSlot, file: File, runQC: boolean = true) => {
-    // Block outfit upload if anchors not complete
-    if (slot.slot_type === 'outfit' && !anchorsComplete()) {
-      toast.error('Completa primero los Identity Anchors (close-ups y turnarounds)');
-      return;
-    }
+  // Upload image handler
+  const uploadImage = async (slotType: string, file: File) => {
+    const slot = getSlot(slotType);
+    if (!slot) return;
 
     setUploading(slot.id);
 
     try {
-      // Create unique file path
       const fileExt = file.name.split('.').pop();
-      const fileName = `${characterId}/${slot.slot_type}_${slot.slot_index}_${Date.now()}.${fileExt}`;
+      const fileName = `${characterId}/${slotType}_${Date.now()}.${fileExt}`;
 
-      // Upload to storage
       const { error: uploadError } = await supabase.storage
         .from('character-packs')
         .upload(fileName, file, { upsert: true });
 
-      if (uploadError) {
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from('character-packs')
         .getPublicUrl(fileName);
 
-      const imageUrl = urlData.publicUrl;
-
-      // Run QC if enabled and not an anchor slot
-      let status = 'approved';
-      let qcScore = 100;
-      let qcIssues: string[] = [];
-      let fixNotes: string | null = null;
-
-      if (runQC && slot.slot_type !== 'closeup' && slot.slot_type !== 'turnaround') {
-        toast.info('Ejecutando QC visual...');
-        const qcResult = await runVisualQC(imageUrl, slot.slot_type);
-        qcScore = qcResult.score;
-        qcIssues = qcResult.issues || [];
-        fixNotes = qcResult.fixNotes || null;
-        status = qcResult.passed ? 'approved' : 'failed';
-      }
-
-      // Update slot
       await supabase.from('character_pack_slots').update({
-        image_url: imageUrl,
-        status,
-        qc_score: qcScore,
-        fix_notes: fixNotes,
-        qc_issues: qcIssues,
+        image_url: urlData.publicUrl,
+        status: 'uploaded',
       }).eq('id', slot.id);
 
-      if (status === 'approved') {
-        toast.success(`Imagen subida y aprobada (${qcScore}%)`);
-      } else {
-        toast.warning(`QC falló (${qcScore}%) - revisa las notas`);
-      }
-      
+      toast.success(`${UPLOAD_SLOTS.find(s => s.type === slotType)?.label} subido`);
       await fetchSlots();
     } catch (error) {
       console.error('Upload error:', error);
@@ -704,176 +262,260 @@ export function CharacterPackBuilder({
     }
   };
 
-  // Batch upload multiple files to empty slots
-  const handleBatchUpload = async (files: File[]) => {
-    const emptySlots = slots.filter(s => s.status === 'empty' || s.status === 'failed');
-    const filesToUpload = files.filter(f => f.type.startsWith('image/') && f.size <= 10 * 1024 * 1024);
-    
-    if (filesToUpload.length === 0) {
-      toast.error('No se encontraron archivos de imagen válidos');
-      return;
-    }
+  // Delete image from slot
+  const deleteSlotImage = async (slotType: string) => {
+    const slot = getSlot(slotType);
+    if (!slot || !slot.image_url) return;
 
-    const slotsToFill = Math.min(filesToUpload.length, emptySlots.length);
-    if (slotsToFill === 0) {
-      toast.info('No hay slots vacíos disponibles');
-      return;
-    }
-
-    setBatchUploading(true);
-    setBatchUploadProgress({ current: 0, total: slotsToFill });
-
-    // Prioritize anchors first
-    const sortedSlots = [...emptySlots].sort((a, b) => {
-      const priority: Record<string, number> = { closeup: 0, turnaround: 1, expression: 2, outfit: 3, base_look: 4 };
-      return (priority[a.slot_type] ?? 5) - (priority[b.slot_type] ?? 5);
-    });
-
-    for (let i = 0; i < slotsToFill; i++) {
-      const slot = sortedSlots[i];
-      const file = filesToUpload[i];
-      
-      // Skip outfits if anchors not complete
-      if (slot.slot_type === 'outfit' && !anchorsComplete()) {
-        toast.warning(`Saltando outfit - anchors incompletos`);
-        continue;
+    try {
+      const urlParts = slot.image_url.split('/character-packs/');
+      if (urlParts.length > 1) {
+        await supabase.storage.from('character-packs').remove([urlParts[1]]);
       }
 
-      setBatchUploadProgress({ current: i + 1, total: slotsToFill });
-      await uploadImageToSlot(slot, file, true);
-    }
+      await supabase.from('character_pack_slots').update({
+        image_url: null,
+        status: 'empty',
+        qc_score: null,
+      }).eq('id', slot.id);
 
-    setBatchUploading(false);
-    toast.success(`${slotsToFill} imágenes subidas`);
-  };
-
-  // Drag and drop handlers
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      await handleBatchUpload(files);
+      await fetchSlots();
+      toast.success('Imagen eliminada');
+    } catch (error) {
+      toast.error('Error al eliminar');
     }
   };
 
-  // Handle global file input change for batch upload
-  const handleGlobalFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      await handleBatchUpload(files);
+  // Generate single slot
+  const generateSlot = async (slotType: string, viewAngle?: string, expressionName?: string) => {
+    const slot = getSlot(slotType);
+    if (!slot) return;
+
+    setGeneratingSlot(slot.id);
+
+    try {
+      const response = await supabase.functions.invoke('generate-character', {
+        body: {
+          slotId: slot.id,
+          characterId,
+          characterName,
+          characterBio,
+          slotType,
+          viewAngle: viewAngle || slot.view_angle,
+          expressionName: expressionName || slot.expression_name,
+          styleToken,
+          projectId,
+        },
+      });
+
+      if (response.error) throw new Error(response.error.message);
+
+      if (response.data?.success) {
+        toast.success(`${slotType} generado`);
+      } else {
+        toast.warning('Generación completada con advertencias');
+      }
+      
+      await fetchSlots();
+    } catch (error) {
+      console.error('Generate error:', error);
+      toast.error('Error al generar');
+    } finally {
+      setGeneratingSlot(null);
+    }
+  };
+
+  // Generate all turnarounds (Phase 2)
+  const generateAllTurnarounds = async () => {
+    if (!phase1Complete()) {
+      toast.error('Sube primero la foto frontal obligatoria');
+      return;
+    }
+
+    setGeneratingPhase('phase2');
+    const toGenerate = TURNAROUND_SLOTS.filter(s => {
+      const slot = getSlot(s.type);
+      return !slot?.image_url;
+    });
+
+    setPhaseProgress({ current: 0, total: toGenerate.length });
+
+    for (let i = 0; i < toGenerate.length; i++) {
+      const slotDef = toGenerate[i];
+      setPhaseProgress({ current: i + 1, total: toGenerate.length });
+      await generateSlot(slotDef.type, slotDef.viewAngle);
+    }
+
+    setGeneratingPhase(null);
+    toast.success('Turnarounds generados');
+    setActivePhase('phase3');
+  };
+
+  // Generate all expressions (Phase 3)
+  const generateAllExpressions = async () => {
+    if (!phase2Complete()) {
+      toast.error('Genera primero todos los turnarounds');
+      return;
+    }
+
+    setGeneratingPhase('phase3');
+    const toGenerate = EXPRESSION_SLOTS.filter(s => {
+      const slot = getSlot(s.type);
+      return !slot?.image_url;
+    });
+
+    setPhaseProgress({ current: 0, total: toGenerate.length });
+
+    for (let i = 0; i < toGenerate.length; i++) {
+      const slotDef = toGenerate[i];
+      setPhaseProgress({ current: i + 1, total: toGenerate.length });
+      await generateSlot(slotDef.type, 'front', slotDef.expression);
+    }
+
+    setGeneratingPhase(null);
+    toast.success('Expresiones generadas');
+    
+    if (onPackComplete) onPackComplete();
+  };
+
+  // Generate full pack
+  const generateFullPack = async () => {
+    if (!phase1Complete()) {
+      toast.error('Sube primero la foto frontal obligatoria');
+      return;
+    }
+
+    await generateAllTurnarounds();
+    await generateAllExpressions();
+  };
+
+  // File input handler
+  const handleFileChange = (slotType: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Solo se permiten imágenes');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Máximo 10MB');
+        return;
+      }
+      uploadImage(slotType, file);
     }
     e.target.value = '';
   };
 
-  // Handle file input change
-  const handleFileChange = (slot: PackSlot, event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        toast.error('Solo se permiten archivos de imagen');
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
-        toast.error('El archivo es demasiado grande (máximo 10MB)');
-        return;
-      }
-      uploadImageToSlot(slot, file, true);
-    }
-    // Reset input
-    event.target.value = '';
-  };
+  // Render slot card
+  const renderSlotCard = (
+    slotDef: { type: string; label: string; required?: boolean },
+    isUpload: boolean = false
+  ) => {
+    const slot = getSlot(slotDef.type);
+    const isGenerating = generatingSlot === slot?.id;
+    const isUploading = uploading === slot?.id;
+    const hasImage = slot?.image_url;
 
-  // Trigger file input for slot
-  const triggerFileUpload = (slotId: string) => {
-    fileInputRefs.current[slotId]?.click();
-  };
+    return (
+      <div
+        key={slotDef.type}
+        className={`relative aspect-square rounded-lg border-2 overflow-hidden transition-all ${
+          hasImage ? 'border-green-500/50' : 'border-dashed border-muted-foreground/30'
+        }`}
+      >
+        {/* Image or placeholder */}
+        {hasImage ? (
+          <img src={slot.image_url!} alt={slotDef.label} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground p-2">
+            {isUpload ? <Upload className="w-6 h-6 mb-1" /> : <Image className="w-6 h-6 mb-1" />}
+            <span className="text-xs text-center">{slotDef.label}</span>
+          </div>
+        )}
 
-  // Get icon for slot type
-  const getSlotIcon = (type: string) => {
-    switch (type) {
-      case 'turnaround': return <Camera className="w-4 h-4" />;
-      case 'expression': return <Palette className="w-4 h-4" />;
-      case 'closeup': return <User className="w-4 h-4" />;
-      case 'outfit': return <Shirt className="w-4 h-4" />;
-      case 'base_look': return <User className="w-4 h-4" />;
-      case 'anchor_closeup': return <Anchor className="w-4 h-4" />;
-      case 'anchor_profile': return <Anchor className="w-4 h-4" />;
-      case 'anchor_fullbody_front': return <Anchor className="w-4 h-4" />;
-      case 'anchor_fullbody_profile': return <Anchor className="w-4 h-4" />;
-      default: return null;
-    }
-  };
+        {/* Loading overlay */}
+        {(isGenerating || isUploading) && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-white" />
+          </div>
+        )}
 
-  // Get status badge
-  const getStatusBadge = (status: string, qcScore: number | null) => {
-    switch (status) {
-      case 'empty':
-        return <Badge variant="outline">Vacío</Badge>;
-      case 'generating':
-        return <Badge variant="secondary"><Loader2 className="w-3 h-3 mr-1 animate-spin" />Generando</Badge>;
-      case 'approved':
-        return <Badge variant="default" className="bg-green-600"><CheckCircle2 className="w-3 h-3 mr-1" />{qcScore}%</Badge>;
-      case 'failed':
-        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />QC Failed</Badge>;
-      case 'waiver':
-        return <Badge variant="secondary"><AlertTriangle className="w-3 h-3 mr-1" />Waiver</Badge>;
-      case 'pending':
-      case 'uploaded':
-        return <Badge variant="secondary"><Upload className="w-3 h-3 mr-1" />Subido</Badge>;
-      default:
-        return null;
-    }
-  };
+        {/* Status badge */}
+        {hasImage && (
+          <div className="absolute top-1 right-1">
+            <Badge variant="pass" className="text-xs px-1">
+              <CheckCircle2 className="w-3 h-3" />
+            </Badge>
+          </div>
+        )}
 
-  // Group slots by type - prioritize anchor slots first
-  const slotTypePriority: Record<string, number> = {
-    'anchor_closeup': 0,
-    'anchor_profile': 1,
-    'anchor_fullbody_front': 2,
-    'anchor_fullbody_profile': 3,
-    'closeup': 4,
-    'turnaround': 5,
-    'expression': 6,
-    'outfit': 7,
-    'base_look': 8,
-  };
+        {/* Required badge */}
+        {slotDef.required && !hasImage && (
+          <div className="absolute top-1 left-1">
+            <Badge variant="destructive" className="text-[10px] px-1">REQ</Badge>
+          </div>
+        )}
 
-  const groupedSlots = slots.reduce((acc, slot) => {
-    if (!acc[slot.slot_type]) acc[slot.slot_type] = [];
-    acc[slot.slot_type].push(slot);
-    return acc;
-  }, {} as Record<string, PackSlot[]>);
+        {/* Action buttons */}
+        <div className="absolute bottom-1 left-1 right-1 flex gap-1">
+          {isUpload && !hasImage && (
+            <>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="flex-1 h-7 text-xs"
+                onClick={() => fileInputRefs.current[slotDef.type]?.click()}
+                disabled={isUploading}
+              >
+                <Upload className="w-3 h-3 mr-1" />
+                Subir
+              </Button>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={el => fileInputRefs.current[slotDef.type] = el}
+                onChange={(e) => handleFileChange(slotDef.type, e)}
+              />
+            </>
+          )}
+          
+          {!isUpload && !hasImage && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="flex-1 h-7 text-xs"
+              onClick={() => generateSlot(slotDef.type)}
+              disabled={isGenerating || !phase1Complete()}
+            >
+              {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
+              Generar
+            </Button>
+          )}
 
-  // Sort groups by priority
-  const sortedGroupedSlots = Object.entries(groupedSlots).sort(([a], [b]) => {
-    return (slotTypePriority[a] ?? 99) - (slotTypePriority[b] ?? 99);
-  });
-
-  const slotTypeLabels: Record<string, string> = {
-    anchor_closeup: '📸 Foto Frontal (OBLIGATORIO)',
-    anchor_profile: '📸 Perfil (Opcional)',
-    anchor_fullbody_front: '📸 Cuerpo Entero Frontal (Opcional)',
-    anchor_fullbody_profile: '📸 Cuerpo Entero Perfil (Opcional)',
-    closeup: 'Close-ups (Auto)',
-    turnaround: 'Turnarounds (Auto)',
-    expression: 'Expresiones (Auto)',
-    outfit: 'Outfits (Auto)',
-    base_look: 'Base Look',
+          {hasImage && (
+            <>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 p-0"
+                onClick={() => isUpload ? fileInputRefs.current[slotDef.type]?.click() : generateSlot(slotDef.type)}
+              >
+                <RefreshCw className="w-3 h-3" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 p-0 text-destructive"
+                onClick={() => deleteSlotImage(slotDef.type)}
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -891,339 +533,197 @@ export function CharacterPackBuilder({
           <div>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
-              Character Pack Builder
+              Pack de 12 Modelos
             </CardTitle>
             <CardDescription>
-              {characterName} - {characterRole.charAt(0).toUpperCase() + characterRole.slice(1)}
+              {characterName} - {characterRole}
             </CardDescription>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold">{completenessScore}%</div>
-            <div className="text-xs text-muted-foreground">Pack Completeness</div>
-            {completenessScore >= 90 && (
-              <Badge variant="default" className="mt-1 bg-green-600">
+            <div className="text-xs text-muted-foreground">Completado</div>
+            {completenessScore === 100 && (
+              <Badge variant="pass" className="mt-1">
                 <CheckCircle2 className="w-3 h-3 mr-1" />
-                Ready for Scenes
+                Listo
               </Badge>
             )}
           </div>
         </div>
         <Progress value={completenessScore} className="h-2 mt-2" />
       </CardHeader>
-      <CardContent 
-        className="space-y-6"
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        {/* Drag & Drop Overlay */}
-        {isDragOver && (
-          <div className="fixed inset-0 bg-primary/10 border-4 border-dashed border-primary rounded-lg z-50 flex items-center justify-center pointer-events-none">
-            <div className="bg-background/95 p-6 rounded-xl shadow-lg text-center">
-              <FolderUp className="w-12 h-12 mx-auto text-primary mb-3" />
-              <p className="font-medium">Suelta las imágenes aquí</p>
-              <p className="text-sm text-muted-foreground">Se asignarán a los slots vacíos</p>
-            </div>
-          </div>
-        )}
 
-        {/* Action Buttons Row */}
-        <div className="flex flex-col sm:flex-row gap-3">
+      <CardContent className="space-y-4">
+        {/* Quick Generate Button */}
+        {phase1Complete() && completenessScore < 100 && (
           <Button
             variant="gold"
-            className="flex-1"
+            className="w-full"
             onClick={generateFullPack}
-            disabled={batchGenerating || batchUploading || generating !== null || (!hasRequiredAnchor() && characterRole !== 'extra')}
+            disabled={generatingPhase !== null}
           >
-            {batchGenerating ? (
+            {generatingPhase ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {batchProgress.phase} ({batchProgress.current}/{batchProgress.total})
-              </>
-            ) : !hasRequiredAnchor() && characterRole !== 'extra' ? (
-              <>
-                <Lock className="w-4 h-4 mr-2" />
-                Sube Foto Frontal Primero
+                Generando {generatingPhase === 'phase2' ? 'Turnarounds' : 'Expresiones'} ({phaseProgress.current}/{phaseProgress.total})
               </>
             ) : (
               <>
                 <Play className="w-4 h-4 mr-2" />
-                Generar Pack Completo
+                Generar Pack Completo ({12 - Math.round(completenessScore * 12 / 100)} restantes)
               </>
             )}
           </Button>
-          
-          <Button
-            variant="outline"
-            className="flex-1"
-            onClick={() => globalFileInputRef.current?.click()}
-            disabled={batchGenerating || batchUploading || generating !== null}
-          >
-            {batchUploading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Subiendo ({batchUploadProgress.current}/{batchUploadProgress.total})
-              </>
-            ) : (
-              <>
-                <FolderUp className="w-4 h-4 mr-2" />
-                Subir Múltiples
-              </>
-            )}
-          </Button>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            ref={globalFileInputRef}
-            onChange={handleGlobalFileChange}
-          />
-        </div>
-
-        {(batchGenerating || batchUploading) && (
-          <Progress 
-            value={batchGenerating 
-              ? (batchProgress.current / batchProgress.total) * 100
-              : (batchUploadProgress.current / batchUploadProgress.total) * 100
-            } 
-            className="h-2" 
-          />
         )}
 
-        {/* OBLIGATORY ANCHOR UPLOAD WARNING */}
-        {!hasRequiredAnchor() && characterRole !== 'extra' && (
-          <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
-            <Upload className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-            <div className="text-sm">
-              <p className="font-semibold text-destructive">Foto Frontal Obligatoria</p>
-              <p className="text-muted-foreground mt-1">
-                Sube una foto de primer plano frontal del personaje antes de generar el pack.
-                Esta imagen será la referencia principal para mantener la consistencia visual.
-              </p>
-              <p className="text-xs text-muted-foreground mt-2">
-                Opcional: también puedes subir perfil, cuerpo entero frontal y cuerpo entero perfil para mejorar la calidad.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Identity Anchors Progress */}
-        {hasRequiredAnchor() && !anchorsComplete() && characterRole !== 'extra' && (
-          <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start gap-2">
-            <Lock className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-            <div className="text-sm">
-              <p className="font-medium text-amber-600">Listo para generar</p>
-              <p className="text-muted-foreground">
-                Ya puedes generar el pack completo usando la foto de referencia.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Toggle Optional Slots */}
-        <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Mostrar slots opcionales</span>
-            <Badge variant="outline" className="text-xs">
-              {slots.filter(s => !s.required).length} slots
-            </Badge>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowOptionalSlots(!showOptionalSlots)}
-            className="h-8"
-          >
-            {showOptionalSlots ? 'Ocultar' : 'Mostrar'}
-          </Button>
-        </div>
-
-        {/* Reference Anchors Section */}
-        {projectId && (
-          <ReferenceAnchorManager 
-            characterId={characterId} 
-            projectId={projectId} 
-          />
-        )}
-
-        {/* Slot Groups - Sorted by priority (upload slots first) */}
-        {sortedGroupedSlots.map(([type, typeSlots]) => {
-          const requiredSlots = typeSlots.filter(s => s.required);
-          const optionalSlots = typeSlots.filter(s => !s.required);
-          const approvedCount = typeSlots.filter(s => s.status === 'approved' || s.status === 'waiver' || s.status === 'uploaded' || s.status === 'pending').length;
-          const isUploadType = type.startsWith('anchor_');
-          
-          return (
-          <div key={type} className="space-y-3">
-            <h3 className="font-medium flex items-center gap-2">
-              {getSlotIcon(type)}
-              {slotTypeLabels[type] || type}
-              <span className="text-muted-foreground text-sm">
-                ({approvedCount}/{typeSlots.length})
-              </span>
-              {optionalSlots.length > 0 && (
-                <Badge variant="outline" className="text-xs">
-                  {requiredSlots.length} req + {optionalSlots.length} opt
+        {/* Accordion Phases */}
+        <Accordion type="single" value={activePhase} onValueChange={setActivePhase} className="space-y-2">
+          {/* Phase 1: Upload References */}
+          <AccordionItem value="phase1" className="border rounded-lg">
+            <AccordionTrigger className="px-4 hover:no-underline">
+              <div className="flex items-center gap-3 flex-1">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  phase1Complete() ? 'bg-green-500 text-white' : 'bg-muted'
+                }`}>
+                  {phase1Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">Paso 1: Sube tus Referencias</p>
+                  <p className="text-xs text-muted-foreground">1 obligatoria, 1 opcional</p>
+                </div>
+                <Badge variant={phase1Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
+                  {phase1Count()}/2
                 </Badge>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <div className="grid grid-cols-2 gap-3">
+                {UPLOAD_SLOTS.map(slot => renderSlotCard(slot, true))}
+              </div>
+              {phase1Complete() && (
+                <div className="mt-3 flex items-center text-sm text-green-600">
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  ¡Listo! Ahora puedes generar los turnarounds
+                </div>
               )}
-            </h3>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {typeSlots
-                .filter(slot => slot.required || showOptionalSlots)
-                .map((slot) => (
-                <div 
-                  key={slot.id}
-                  className={`group relative aspect-square rounded-lg border-2 overflow-hidden transition-all
-                    ${slot.status === 'approved' ? 'border-green-500/50' : ''}
-                    ${slot.status === 'failed' ? 'border-destructive/50' : ''}
-                    ${slot.status === 'empty' && slot.required ? 'border-dashed border-muted-foreground/30' : ''}
-                    ${slot.status === 'empty' && !slot.required ? 'border-dashed border-muted-foreground/20 opacity-70' : ''}
-                  `}
-                >
-                  {/* Optional badge indicator */}
-                  {!slot.required && (
-                    <div className="absolute top-0 left-0 z-20">
-                      <span className="text-[10px] bg-muted/80 text-muted-foreground px-1.5 py-0.5 rounded-br-md font-medium">
-                        OPT
-                      </span>
-                    </div>
-                  )}
-                  {slot.image_url ? (
-                    <>
-                      {/* Delete button overlay */}
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="absolute top-1 left-1 h-6 w-6 p-0 z-10 opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-100"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteSlotImage(slot);
-                        }}
-                        title="Eliminar imagen"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <img 
-                            src={slot.image_url} 
-                            alt={`${slot.slot_type} ${slot.slot_index}`}
-                            className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                          />
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>
-                              {slot.slot_type} {slot.view_angle || slot.expression_name || ''}
-                            </DialogTitle>
-                          </DialogHeader>
-                          <img src={slot.image_url} alt="" className="w-full rounded-lg" />
-                          {slot.fix_notes && (
-                            <div className="p-3 bg-destructive/10 rounded-lg text-sm">
-                              <p className="font-medium text-destructive">Fix Notes:</p>
-                              <p>{slot.fix_notes}</p>
-                            </div>
-                          )}
-                          {/* Likeness Comparison */}
-                          {slot.status === 'approved' && (
-                            <LikenessComparisonView slotId={slot.id} />
-                          )}
-                          <div className="flex gap-2">
-                            <Button 
-                              variant="outline" 
-                              className="flex-1"
-                              onClick={() => generateSlot(slot)}
-                              disabled={generating !== null}
-                            >
-                              <RefreshCw className="w-4 h-4 mr-2" />
-                              Regenerar
-                            </Button>
-                            <Button 
-                              variant="destructive"
-                              onClick={() => deleteSlotImage(slot)}
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Eliminar
-                            </Button>
-                            {slot.status === 'failed' && (
-                              <Button 
-                                variant="secondary"
-                                onClick={() => grantWaiver(slot.id)}
-                              >
-                                <AlertTriangle className="w-4 h-4 mr-2" />
-                                Waiver
-                              </Button>
-                            )}
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted/30">
-                      {generating === slot.id || uploading === slot.id ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Phase 2: Turnarounds */}
+          <AccordionItem value="phase2" className="border rounded-lg" disabled={!phase1Complete()}>
+            <AccordionTrigger className="px-4 hover:no-underline">
+              <div className="flex items-center gap-3 flex-1">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  phase2Complete() ? 'bg-green-500 text-white' : 
+                  phase1Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
+                }`}>
+                  {phase2Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">Paso 2: Turnarounds</p>
+                  <p className="text-xs text-muted-foreground">4 vistas del personaje</p>
+                </div>
+                <Badge variant={phase2Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
+                  {phase2Count()}/4
+                </Badge>
+                {!phase1Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              {!phase1Complete() ? (
+                <p className="text-sm text-muted-foreground">Completa el Paso 1 primero</p>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                    {TURNAROUND_SLOTS.map(slot => renderSlotCard(slot))}
+                  </div>
+                  {!phase2Complete() && (
+                    <Button
+                      onClick={generateAllTurnarounds}
+                      disabled={generatingPhase === 'phase2'}
+                      className="w-full"
+                    >
+                      {generatingPhase === 'phase2' ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generando ({phaseProgress.current}/{phaseProgress.total})
+                        </>
                       ) : (
                         <>
-                          <div className="text-xs text-muted-foreground text-center px-2">
-                            {slot.view_angle || slot.expression_name || 'Slot'}
-                          </div>
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2"
-                              onClick={() => generateSlot(slot)}
-                              disabled={generating !== null || uploading !== null || batchGenerating || (slot.slot_type === 'outfit' && !anchorsComplete())}
-                              title="Generar con IA"
-                            >
-                              <Sparkles className="w-3 h-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2"
-                              onClick={() => triggerFileUpload(slot.id)}
-                              disabled={generating !== null || uploading !== null || batchGenerating || (slot.slot_type === 'outfit' && !anchorsComplete())}
-                              title="Subir imagen"
-                            >
-                              <ImagePlus className="w-3 h-3" />
-                            </Button>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              ref={(el) => { fileInputRefs.current[slot.id] = el; }}
-                              onChange={(e) => handleFileChange(slot, e)}
-                            />
-                          </div>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Generar 4 Turnarounds
                         </>
                       )}
-                    </div>
+                    </Button>
                   )}
-                  
-                  {/* Status badge overlay */}
-                  <div className="absolute top-1 right-1">
-                    {getStatusBadge(slot.status, slot.qc_score)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-        })}
+                </>
+              )}
+            </AccordionContent>
+          </AccordionItem>
 
-        {/* Pack Completeness Calculation Info */}
-        <div className="p-4 bg-muted/50 rounded-lg text-sm space-y-2">
-          <h4 className="font-medium">Pack Completeness Score</h4>
-          <p className="text-muted-foreground">
-            Score = (Slots Approved + Waivers) / Total Required Slots × 100
-          </p>
-          <p className="text-muted-foreground">
-            Se requiere ≥90% para usar este personaje en escenas.
-          </p>
-        </div>
+          {/* Phase 3: Expressions */}
+          <AccordionItem value="phase3" className="border rounded-lg" disabled={!phase2Complete()}>
+            <AccordionTrigger className="px-4 hover:no-underline">
+              <div className="flex items-center gap-3 flex-1">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  phase3Complete() ? 'bg-green-500 text-white' : 
+                  phase2Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
+                }`}>
+                  {phase3Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Palette className="w-4 h-4" />}
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">Paso 3: Expresiones</p>
+                  <p className="text-xs text-muted-foreground">6 emociones básicas</p>
+                </div>
+                <Badge variant={phase3Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
+                  {phase3Count()}/6
+                </Badge>
+                {!phase2Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              {!phase2Complete() ? (
+                <p className="text-sm text-muted-foreground">Completa el Paso 2 primero</p>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+                    {EXPRESSION_SLOTS.map(slot => renderSlotCard(slot))}
+                  </div>
+                  {!phase3Complete() && (
+                    <Button
+                      onClick={generateAllExpressions}
+                      disabled={generatingPhase === 'phase3'}
+                      className="w-full"
+                    >
+                      {generatingPhase === 'phase3' ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generando ({phaseProgress.current}/{phaseProgress.total})
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Generar 6 Expresiones
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        {/* Completion message */}
+        {completenessScore === 100 && (
+          <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-center">
+            <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+            <p className="font-medium text-green-700 dark:text-green-400">¡Pack Completo!</p>
+            <p className="text-sm text-muted-foreground">
+              12 modelos listos para producción de video
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
