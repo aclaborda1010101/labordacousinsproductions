@@ -20,7 +20,9 @@ import {
   MapPin,
   Palette,
   Box,
-  ChevronDown
+  ChevronDown,
+  Menu,
+  X
 } from 'lucide-react';
 import PropsComponent from '@/components/project/Props';
 import { cn } from '@/lib/utils';
@@ -47,6 +49,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 interface Project {
   id: string;
@@ -127,6 +141,8 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
   const { projectId } = useParams();
   const [showSettings, setShowSettings] = useState(false);
   const [showDirector, setShowDirector] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [bibliaExpanded, setBibliaExpanded] = useState(true);
 
   const currentPath = location.pathname.replace(`/projects/${projectId}`, '') || '';
   const bibleReady = project.bible_completeness_score >= 85;
@@ -135,79 +151,198 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
 
   const handleNavigate = (path: string) => {
     navigate(`/projects/${projectId}${path}`);
+    setMobileMenuOpen(false);
   };
 
   return (
     <>
       <PageHeader title={project.title} description={`${formatLabel} • ${project.episodes_count} episodios`}>
-        {/* Single dropdown menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              <span className="font-medium">
-                {currentSection.sub ? `${currentSection.main} › ${currentSection.sub}` : currentSection.main}
-              </span>
-              <ChevronDown className="w-4 h-4 opacity-60" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56 bg-popover">
-            {MENU_STRUCTURE.map((item) => {
-              const Icon = item.icon;
-              const isLocked = item.requiresBible && !bibleReady;
+        {/* Mobile: Sheet menu */}
+        <div className="sm:hidden">
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Menu className="w-4 h-4" />
+                <span className="max-w-[100px] truncate">
+                  {currentSection.sub ? currentSection.sub : currentSection.main}
+                </span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px] p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle className="text-left">Navegación</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col py-2">
+                {MENU_STRUCTURE.map((item) => {
+                  const Icon = item.icon;
+                  const isLocked = item.requiresBible && !bibleReady;
 
-              if (item.subItems) {
-                // Item with submenu
-                return (
-                  <DropdownMenuSub key={item.id}>
-                    <DropdownMenuSubTrigger className="gap-2">
-                      <Icon className="w-4 h-4" />
-                      <span>{item.label}</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent className="bg-popover">
-                      {item.subItems.map((sub) => {
-                        const SubIcon = sub.icon;
-                        const isActive = currentPath === sub.path || 
-                          (sub.path === '' && (currentPath === '' || currentPath === '/bible'));
-                        return (
-                          <DropdownMenuItem
-                            key={sub.path}
-                            onClick={() => handleNavigate(sub.path)}
-                            className={cn("gap-2", isActive && "bg-accent")}
-                          >
-                            <SubIcon className="w-4 h-4" />
-                            <span>{sub.label}</span>
-                          </DropdownMenuItem>
-                        );
-                      })}
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
-                );
-              }
+                  if (item.subItems) {
+                    // Collapsible section for Biblia
+                    return (
+                      <Collapsible 
+                        key={item.id} 
+                        open={bibliaExpanded} 
+                        onOpenChange={setBibliaExpanded}
+                      >
+                        <CollapsibleTrigger className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-muted/50">
+                          <Icon className="w-5 h-5" />
+                          <span className="flex-1 font-medium">{item.label}</span>
+                          <ChevronRight className={cn(
+                            "w-4 h-4 transition-transform",
+                            bibliaExpanded && "rotate-90"
+                          )} />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="pl-4 border-l-2 border-muted ml-6 space-y-1 py-1">
+                            {item.subItems.map((sub) => {
+                              const SubIcon = sub.icon;
+                              const isActive = currentPath === sub.path || 
+                                (sub.path === '' && (currentPath === '' || currentPath === '/bible'));
+                              return (
+                                <button
+                                  key={sub.path}
+                                  onClick={() => handleNavigate(sub.path)}
+                                  className={cn(
+                                    "flex items-center gap-3 w-full px-4 py-2.5 text-left rounded-r-lg",
+                                    isActive 
+                                      ? "bg-primary/10 text-primary font-medium" 
+                                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                  )}
+                                >
+                                  <SubIcon className="w-4 h-4" />
+                                  <span>{sub.label}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    );
+                  }
 
-              // Regular item
-              const isActive = currentPath === item.path;
-              return (
-                <DropdownMenuItem
-                  key={item.id}
-                  onClick={() => !isLocked && handleNavigate(item.path!)}
-                  disabled={isLocked}
-                  className={cn("gap-2", isActive && "bg-accent")}
+                  // Regular item
+                  const isActive = currentPath === item.path;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => !isLocked && handleNavigate(item.path!)}
+                      disabled={isLocked}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 text-left",
+                        isActive 
+                          ? "bg-primary/10 text-primary font-medium" 
+                          : isLocked
+                            ? "text-muted-foreground opacity-50"
+                            : "text-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="flex-1">{item.label}</span>
+                      {isLocked && <Lock className="w-4 h-4" />}
+                    </button>
+                  );
+                })}
+                
+                <div className="border-t my-2" />
+                
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setShowSettings(true);
+                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 text-left text-foreground hover:bg-muted/50"
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="flex-1">{item.label}</span>
-                  {isLocked && <Lock className="w-3.5 h-3.5 opacity-50" />}
-                </DropdownMenuItem>
-              );
-            })}
-            
-            <DropdownMenuSeparator />
-            
-            <DropdownMenuItem onClick={() => setShowSettings(true)} className="gap-2">
-              <Settings className="w-4 h-4" />
-              <span>Ajustes del proyecto</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                  <Settings className="w-5 h-5" />
+                  <span>Ajustes del proyecto</span>
+                </button>
+              </nav>
+              
+              {!bibleReady && (
+                <div className="mx-4 p-3 rounded-lg bg-warning/10 border border-warning/20">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-warning mt-0.5" />
+                    <div className="text-xs">
+                      <p className="font-medium text-warning">Biblia incompleta</p>
+                      <p className="text-muted-foreground mt-0.5">
+                        Completa la biblia para desbloquear escenas.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        {/* Desktop: Dropdown menu */}
+        <div className="hidden sm:block">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <span className="font-medium">
+                  {currentSection.sub ? `${currentSection.main} › ${currentSection.sub}` : currentSection.main}
+                </span>
+                <ChevronDown className="w-4 h-4 opacity-60" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56 bg-popover">
+              {MENU_STRUCTURE.map((item) => {
+                const Icon = item.icon;
+                const isLocked = item.requiresBible && !bibleReady;
+
+                if (item.subItems) {
+                  return (
+                    <DropdownMenuSub key={item.id}>
+                      <DropdownMenuSubTrigger className="gap-2">
+                        <Icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent className="bg-popover">
+                        {item.subItems.map((sub) => {
+                          const SubIcon = sub.icon;
+                          const isActive = currentPath === sub.path || 
+                            (sub.path === '' && (currentPath === '' || currentPath === '/bible'));
+                          return (
+                            <DropdownMenuItem
+                              key={sub.path}
+                              onClick={() => handleNavigate(sub.path)}
+                              className={cn("gap-2", isActive && "bg-accent")}
+                            >
+                              <SubIcon className="w-4 h-4" />
+                              <span>{sub.label}</span>
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                  );
+                }
+
+                const isActive = currentPath === item.path;
+                return (
+                  <DropdownMenuItem
+                    key={item.id}
+                    onClick={() => !isLocked && handleNavigate(item.path!)}
+                    disabled={isLocked}
+                    className={cn("gap-2", isActive && "bg-accent")}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="flex-1">{item.label}</span>
+                    {isLocked && <Lock className="w-3.5 h-3.5 opacity-50" />}
+                  </DropdownMenuItem>
+                );
+              })}
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem onClick={() => setShowSettings(true)} className="gap-2">
+                <Settings className="w-4 h-4" />
+                <span>Ajustes del proyecto</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <CreativeModeSelector compact showDescription={false} />
         
