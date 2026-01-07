@@ -1164,20 +1164,61 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           const result = taskData.result as any;
           const payload = result?.breakdown ?? result;
 
+          // Support both v10-semantic-postprocessor (nested) and legacy (flat) structures
+          const extractCharacters = (p: any): CharacterData[] => {
+            if (!p?.characters) return [];
+            // New nested structure: characters.cast + characters.featured_extras_with_lines + characters.voices_and_functional
+            if (p.characters.cast && Array.isArray(p.characters.cast)) {
+              const cast = p.characters.cast || [];
+              const extras = p.characters.featured_extras_with_lines || p.characters.extras || [];
+              const voices = p.characters.voices_and_functional || p.characters.voices || [];
+              return [...cast, ...extras, ...voices];
+            }
+            // Legacy flat array
+            if (Array.isArray(p.characters)) return p.characters;
+            return [];
+          };
+
+          const extractLocations = (p: any): LocationData[] => {
+            if (!p?.locations) return [];
+            // New nested structure: locations.base
+            if (p.locations.base && Array.isArray(p.locations.base)) {
+              return p.locations.base;
+            }
+            // Legacy flat array
+            if (Array.isArray(p.locations)) return p.locations;
+            return [];
+          };
+
+          const extractScenes = (p: any): SceneData[] => {
+            if (!p?.scenes) return [];
+            // New nested structure: scenes.list
+            if (p.scenes.list && Array.isArray(p.scenes.list)) {
+              return p.scenes.list;
+            }
+            // Legacy flat array
+            if (Array.isArray(p.scenes)) return p.scenes;
+            return [];
+          };
+
+          const chars = extractCharacters(payload);
+          const locs = extractLocations(payload);
+          const scns = extractScenes(payload);
+
           const looksLikeBreakdown =
             payload &&
             typeof payload === 'object' &&
-            (Array.isArray(payload.characters) || Array.isArray(payload.scenes) || Array.isArray(payload.locations));
+            (chars.length > 0 || scns.length > 0 || locs.length > 0);
 
           if (looksLikeBreakdown) {
             const breakdown: BreakdownResult = {
-              characters: payload.characters || [],
-              locations: payload.locations || [],
-              scenes: payload.scenes || [],
-              props: payload.props || [],
+              characters: chars,
+              locations: locs,
+              scenes: scns,
+              props: Array.isArray(payload.props) ? payload.props : [],
               synopsis: payload.synopsis,
-              subplots: payload.subplots || [],
-              plot_twists: payload.plot_twists || [],
+              subplots: Array.isArray(payload.subplots) ? payload.subplots : [],
+              plot_twists: Array.isArray(payload.plot_twists) ? payload.plot_twists : [],
               summary: payload.summary,
             };
 
@@ -1206,19 +1247,24 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           const pj = (recoveredScript?.parsed_json as any) ?? null;
           const recoveredPayload = pj?.breakdown ?? pj;
 
+          // Reuse same extraction helpers for DB recovery
+          const recoveredChars = extractCharacters(recoveredPayload);
+          const recoveredLocs = extractLocations(recoveredPayload);
+          const recoveredScns = extractScenes(recoveredPayload);
+
           if (
             recoveredPayload &&
             typeof recoveredPayload === 'object' &&
-            (Array.isArray(recoveredPayload.characters) || Array.isArray(recoveredPayload.scenes))
+            (recoveredChars.length > 0 || recoveredScns.length > 0 || recoveredLocs.length > 0)
           ) {
             const breakdown: BreakdownResult = {
-              characters: recoveredPayload.characters || [],
-              locations: recoveredPayload.locations || [],
-              scenes: recoveredPayload.scenes || [],
-              props: recoveredPayload.props || [],
+              characters: recoveredChars,
+              locations: recoveredLocs,
+              scenes: recoveredScns,
+              props: Array.isArray(recoveredPayload.props) ? recoveredPayload.props : [],
               synopsis: recoveredPayload.synopsis,
-              subplots: recoveredPayload.subplots || [],
-              plot_twists: recoveredPayload.plot_twists || [],
+              subplots: Array.isArray(recoveredPayload.subplots) ? recoveredPayload.subplots : [],
+              plot_twists: Array.isArray(recoveredPayload.plot_twists) ? recoveredPayload.plot_twists : [],
               summary: recoveredPayload.summary,
             };
 
