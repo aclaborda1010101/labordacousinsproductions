@@ -1,9 +1,9 @@
 /**
  * CharacterPackBuilder - PRO Mode
- * 12 Essential Model Pack with Guided 4-Phase Flow
+ * 14 Essential Model Pack with Guided 4-Phase Flow
  * Phase 1: Upload References (2 slots)
- * Phase 2: Base Visual - Front/Profile (2 slots)
- * Phase 3: Turnarounds - Back views (2 slots)
+ * Phase 2: Base Visual - Closeups (2 slots: frontal + profile)
+ * Phase 3: Turnarounds - Full body views (4 slots)
  * Phase 4: Expressions (6 slots)
  */
 
@@ -33,14 +33,16 @@ const REFERENCE_SLOTS = [
   { type: 'ref_profile', label: 'Perfil Lateral', required: false, viewAngle: 'side' },
 ];
 
-// Phase 2: Base Visual - Front/Profile generation
+// Phase 2: Base Visual - Closeups (generated)
 const BASE_VISUAL_SLOTS = [
-  { type: 'turn_front_34', label: 'Frontal 3/4', viewAngle: 'front_34' },
-  { type: 'turn_side', label: 'Lateral', viewAngle: 'side' },
+  { type: 'closeup_front', label: 'Primer Plano Frontal', viewAngle: 'front' },
+  { type: 'closeup_profile', label: 'Primer Plano Perfil', viewAngle: 'side' },
 ];
 
-// Phase 3: Turnarounds - Back views
+// Phase 3: Turnarounds - Full body views (4 poses)
 const TURNAROUND_SLOTS = [
+  { type: 'turn_front_34', label: 'Frontal 3/4', viewAngle: 'front_34' },
+  { type: 'turn_side', label: 'Lateral', viewAngle: 'side' },
   { type: 'turn_back', label: 'Espalda', viewAngle: 'back' },
   { type: 'turn_back_34', label: 'Espalda 3/4', viewAngle: 'back_34' },
 ];
