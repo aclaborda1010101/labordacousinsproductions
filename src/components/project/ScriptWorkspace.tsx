@@ -1099,7 +1099,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       const estimatedMinutes = Math.ceil(scriptLength / 5000);
       
       console.log(`[ScriptWorkspace] Starting background analysis for ${scriptLength} chars (~${estimatedMinutes} min estimated)`);
-      toast.info(`Análisis iniciado`, { 
+      toast.info(`Análisis iniciado con Claude Sonnet`, { 
         description: `Procesando ${Math.round(scriptLength / 1000)}k caracteres. Tiempo estimado: ~${estimatedMinutes} min. Puedes navegar a otras pantallas.`,
         duration: 8000 
       });
@@ -1403,7 +1403,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       const scriptLength = scriptTextNormalized.length;
       const estimatedMinutes = Math.ceil(scriptLength / 5000);
 
-      toast.info(`Extrayendo entidades`, { 
+      toast.info(`Extrayendo entidades con Claude Sonnet`, { 
         description: `Tiempo estimado: ~${estimatedMinutes} min`,
         duration: 6000 
       });
