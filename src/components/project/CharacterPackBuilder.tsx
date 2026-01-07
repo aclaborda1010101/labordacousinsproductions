@@ -256,6 +256,18 @@ export function CharacterPackBuilder({
     const slot = getSlot(slotType);
     if (!slot) return;
 
+    // Reject HEIC format - not supported by browsers
+    if (file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic') {
+      toast.error('Formato HEIC no soportado. Por favor convierte la imagen a JPG o PNG.');
+      return;
+    }
+    
+    // Validate image type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Solo se permiten archivos de imagen');
+      return;
+    }
+
     setUploading(slot.id);
 
     try {

@@ -694,6 +694,72 @@ function extractImageFromResponse(data: any): string | null {
 }
 
 // ============================================
+// STORAGE UPLOAD HELPER
+// ============================================
+async function uploadBase64ToStorage(
+  supabase: any,
+  imageData: string,
+  characterId: string,
+  slotType: string
+): Promise<string> {
+  // If it's already a URL (not base64), return as-is
+  if (imageData.startsWith('http') && !imageData.startsWith('data:')) {
+    console.log('[STORAGE] Image is already a URL, skipping upload');
+    return imageData;
+  }
+
+  console.log('[STORAGE] Uploading base64 image to storage...');
+  
+  // Parse base64 data
+  let base64Content: string;
+  let mimeType = 'image/png';
+  
+  if (imageData.startsWith('data:image')) {
+    const matches = imageData.match(/^data:image\/(\w+);base64,(.+)$/);
+    if (!matches) {
+      throw new Error('Invalid base64 image format');
+    }
+    mimeType = `image/${matches[1]}`;
+    base64Content = matches[2];
+  } else {
+    // Assume raw base64
+    base64Content = imageData;
+  }
+
+  // Decode base64 to binary
+  const binaryString = atob(base64Content);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  // Determine file extension
+  const ext = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : mimeType.split('/')[1];
+  const fileName = `${characterId}/${slotType}_${Date.now()}.${ext}`;
+
+  // Upload to storage
+  const { error: uploadError } = await supabase.storage
+    .from('character-packs')
+    .upload(fileName, bytes, {
+      contentType: mimeType,
+      upsert: true
+    });
+
+  if (uploadError) {
+    console.error('[STORAGE] Upload failed:', uploadError);
+    throw new Error(`Storage upload failed: ${uploadError.message}`);
+  }
+
+  // Get public URL
+  const { data: urlData } = supabase.storage
+    .from('character-packs')
+    .getPublicUrl(fileName);
+
+  console.log('[STORAGE] Image uploaded successfully:', urlData.publicUrl.substring(0, 80) + '...');
+  return urlData.publicUrl;
+}
+
+// ============================================
 // QC CHECKS (using Lovable AI for analysis)
 // ============================================
 async function runQC(
@@ -1058,9 +1124,17 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
 
   console.log('Generated prompt:', prompt.substring(0, 200) + '...');
 
+  // Upload to Storage if base64 (to avoid storing large base64 in DB)
+  const finalImageUrl = await uploadBase64ToStorage(
+    supabase,
+    imageUrl,
+    request.characterId,
+    request.slotType
+  );
+
   // Run QC (with reference comparison if available)
   const qcResult = await runQC(
-    imageUrl, 
+    finalImageUrl, 
     request.slotType, 
     request.characterName, 
     hasReference ? primaryAnchor.image_url : undefined
@@ -1073,7 +1147,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   const { error: updateError } = await supabase
     .from('character_pack_slots')
     .update({
-      image_url: imageUrl,
+      image_url: finalImageUrl,
       prompt_text: prompt,
       reference_anchor_id: hasReference ? primaryAnchor.id : createdAnchorId,
       qc_score: qcResult.score,
