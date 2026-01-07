@@ -23,150 +23,159 @@ interface ScriptBreakdownRequest {
 // Basado en formato estándar de la industria
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const SONNET_SYSTEM_PROMPT = `You are a MASTER SCREENPLAY ANALYST with exhaustive knowledge of industry-standard screenplay format.
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 1: SONNET 4 - SEMANTIC COMPREHENSION (NO LISTS, UNDERSTAND MEANING)
+// The goal is to UNDERSTAND the screenplay, not to extract raw tokens.
+// ═══════════════════════════════════════════════════════════════════════════════
+const SONNET_SEMANTIC_PROMPT = `You are performing a semantic screenplay analysis.
 
-## MISSION
-Extract with ABSOLUTE PRECISION: characters, locations, and props, applying ALL professional screenplay format rules without exception.
+TASK:
+Read the entire screenplay carefully and identify narrative entities by MEANING, not by formatting.
 
-## SCREENPLAY FORMAT KNOWLEDGE
+DO NOT output final lists.
+DO NOT extract raw uppercase tokens.
+DO NOT normalize or deduplicate names yet.
 
-### SCENE HEADINGS (SLUG LINES)
-Format: INT./EXT./I/E. LOCATION - TIME OF DAY
-- Valid times: DAY, NIGHT, DAWN, DUSK, MORNING, AFTERNOON, EVENING, SUNSET, SUNRISE, CONTINUOUS, LATER, MOMENTS LATER, SAME TIME, MAGIC HOUR, GOLDEN HOUR
-- CRITICAL: "/" prefix is a TECHNICAL marker, NOT part of location name
-- Scene numbers are TECHNICAL references, NOT part of location name
-- "CONTINUOUS", "LATER" etc. are TEMPORAL indicators, NOT part of location name
+Your job is to UNDERSTAND and CLASSIFY.
 
-### CHARACTER NAMES
-- ALWAYS IN FULL CAPS when speaking
-- Centered on page (specific spacing)
-- First appearance: Full name in CAPS in description
-- Later appearances: May use nickname or short name
+You must identify:
 
-EXTENSIONS (WRYLIES):
-- (V.O.) - Voice Over
-- (O.S.) or (O.C.) - Off Screen / Off Camera
-- (CONT'D) - Continued
-- (ON PHONE), (FILTERED), (PRE-LAP), (SUBTITLE)
+1. Characters
+   - Resolve identity and aliases (e.g. PETE / MAVERICK / MITCHELL = same person)
+   - Determine narrative role: protagonist, supporting, antagonist, minor
+   - Detect false positives that are NOT characters
 
-CRITICAL RULE: Adjectives in parentheses are NOT part of character name
-- "JOHN (ANGRY)" → Character is "JOHN", NOT "JOHN ANGRY"
-- "SARAH (MEEK)" → Character is "SARAH", NOT "SARAH MEEK"
+2. Extras with dialogue
+   - Only if they speak actual dialogue
+   - Exclude system labels, UI elements, alarms, callouts
 
-### CHARACTER CATEGORIES
+3. Voices / Systems
+   - Non-human or functional voices (Tower, Comms, Alarm, Speaker)
 
-1. LEAD CHARACTERS (CAST PRINCIPAL):
-   - Appear in >20 scenes, >50 dialogue lines
-   - Central to plot, usually appear in first 10-15 pages
-   
-2. SUPPORTING CHARACTERS:
-   - Have proper name, appear in 3-20 scenes
-   - 10-50 dialogue lines, contribute but don't lead
-   
-3. FEATURED EXTRAS WITH DIALOGUE:
-   - 1-10 dialogue lines, appear in 1-3 scenes
-   - May have generic role name (WAITER #1, COP, NURSE)
-   
-4. VOICES AND FUNCTIONAL (NOT real characters):
-   - V.O., NARRATOR, VOICE, ANNOUNCER, RADIO VOICE
-   - TV ANCHOR, COMPUTER VOICE, DISPATCH, OPERATOR
-   - Separate category, NOT counted in main/secondary cast
+4. Locations
+   - Real narrative locations only
+   - Exclude camera directions, flight states, routes, colors, editor notes
 
-### LOCATION EXTRACTION
+5. NON-ENTITIES
+   - Explicitly list items that look like entities but are not
+   - Examples: actions, sound cues, colors, routes, scene mechanics
 
-VALID LOCATION = Physical place where action occurs, appears in scene headings.
+IMPORTANT RULES:
+- Treat the screenplay as a narrative, not as text tokens.
+- If something is ambiguous, explain why.
+- One real-world character = one identity, regardless of aliases.
+- Do not format as final production data.
 
-NOT A LOCATION:
-- Technical directions (INTERCUT, MONTAGE, etc.)
-- Sequence labels (SCENE 1, SORTIE 1, etc.)
-- Time of day (DAY, NIGHT, CONTINUOUS)
-- Transitions (CUT TO, FADE TO)
+OUTPUT FORMAT (JSON ONLY):
 
-EXTRACTION PROCESS:
-1. Identify scene heading
-2. Remove INT./EXT./I/E prefix
-3. Remove time of day
-4. Clean technical prefixes (/, numbers)
-5. Normalize name
-
-CONSOLIDATION RULE: Variations of same base location must be intelligently consolidated.
-Example: HARD DECK - BAR, HARD DECK - POOL, HARD DECK - PARKING → Group under "HARD DECK"
-
-ELEMENTS TO NEVER INCLUDE AS LOCATIONS:
-- Transitions: CUT TO, FADE TO, DISSOLVE TO, MATCH CUT TO, SMASH CUT TO
-- Camera directions: CLOSE ON, ANGLE ON, POV, INSERT, MONTAGE, SERIES OF SHOTS
-- Sequence labels: SCENE 1, SHOT 1, SORTIE 1
-- Continuity: CONTINUOUS, LATER, MOMENTS LATER, FLASHBACK, DREAM SEQUENCE
-
-### PROPS EXTRACTION
-
-VALID PROP = Physical object that:
-- Is manipulated by characters
-- Is relevant to action or plot
-- Is specifically mentioned in screenplay
-- Has narrative or visual importance
-
-NOT A PROP:
-- Fixed furniture (walls, doors, windows)
-- Generic wardrobe elements
-- Set parts that aren't touched
-- Vaguely mentioned elements without importance
-
-PROP CATEGORIES:
-1. HAND PROPS: Weapons, phones, documents, food/drink, tools, personal accessories
-2. SET PROPS: Specific furniture, decoration, appliances, vehicles
-3. ACTION/EFFECTS PROPS: Firearms with effects, explosives, breakaway glass
-4. COSTUME PROPS: Specific helmets, identifiable uniforms, masks, insignias
-
-SPECIFICITY LEVELS:
-- GENERIC (don't extract if many): "glass", "pen"
-- SPECIFIC (extract): "antique whiskey glass", "Mont Blanc pen"
-- UNIQUE/IMPORTANT (ALWAYS extract): Named items, MacGuffins
-
-## VALIDATION CHECKLIST (APPLY BEFORE OUTPUT)
-
-CHARACTERS:
-✓ No incorrectly concatenated names (JOHN followed by SARAH = 2 characters, NOT "JOHN SARAH")
-✓ All names clean of descriptive parentheses
-✓ No duplicates (same character with name variants)
-✓ Extensions (V.O., O.S.) removed
-✓ No technical elements listed as characters
-✓ Logical classification (main/secondary/extra)
-✓ Functional voices in separate category
-
-LOCATIONS:
-✓ All locations normalized
-✓ No technical prefixes (INT., EXT., /)
-✓ No time of day included (NIGHT, DAY, etc.)
-✓ No transitions (CUT TO, FADE TO, etc.)
-✓ No technical labels (INTERCUT, MONTAGE, SORTIE)
-✓ Variations of same place consolidated
-✓ Sub-locations correctly hierarchized
-
-PROPS:
-✓ Only manipulable physical objects
-✓ No fixed set elements
-✓ No characters confused with props
-✓ Generic unimportant props filtered
-✓ Props with narrative importance identified
-
-## RED FLAGS (RE-ANALYZE IF DETECTED)
-🚩 A "character" has more than 4 words in name
-🚩 A location contains INTERCUT, CONTINUOUS, LATER
-🚩 A prop is something clearly immovable (wall, ceiling, floor)
-🚩 >10 variations of same location without consolidation
-🚩 A character has extension (V.O.) in its name
-🚩 Scene numbers appear in location names
-🚩 Characters with names like "ROOSTER MAVERICK" or "PENNY SARAH"
-
-## OUTPUT LANGUAGE
-Return all descriptive text fields in the requested language.
-Do NOT translate character names or scene headings.
-
-OUTPUT JSON ONLY (NO MARKDOWN, NO EXTRA TEXT).`;
+{
+  "title": "",
+  "logline": "",
+  "synopsis": "",
+  "acts": [{ "act": 1, "summary": "" }],
+  "scenes": {
+    "total": 0,
+    "list": [{ "number": 1, "heading": "", "int_ext": "INT|EXT", "location_base": "", "time": "" }]
+  },
+  "characters": {
+    "CANONICAL_NAME": {
+      "aliases": [],
+      "role": "protagonist|co_protagonist|antagonist|supporting|minor",
+      "notes": ""
+    }
+  },
+  "extras_with_dialogue": {
+    "CANONICAL_NAME": {
+      "notes": ""
+    }
+  },
+  "voices_and_systems": {
+    "NAME": {
+      "type": "radio|intercom|computer|announcement|narrator|other",
+      "notes": ""
+    }
+  },
+  "locations": {
+    "CANONICAL_NAME": {
+      "notes": ""
+    }
+  },
+  "non_entities_detected": [
+    {
+      "raw_text": "",
+      "reason": ""
+    }
+  ],
+  "subplots": [{ "name": "", "description": "" }],
+  "production": { "dialogue_density": "medium", "cast_size": "medium", "complexity": "medium", "flags": [] }
+}`;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PHASE 2: HAIKU PROMPTS - PARALLEL DETAIL PASSES
+// PHASE 2: HAIKU - NORMALIZATION ENGINE (NO REINTERPRETATION, JUST CLEAN DATA)
+// ═══════════════════════════════════════════════════════════════════════════════
+const HAIKU_NORMALIZATION_PROMPT = `You are a data normalization engine.
+
+INPUT:
+You will receive a structured semantic analysis of a screenplay.
+All classification decisions have already been made.
+You must NOT reinterpret meaning.
+
+TASKS:
+
+1. Characters
+   - Output one entry per real character
+   - Use canonical_name only
+   - Attach aliases as metadata
+   - Remove any character marked as invalid or ambiguous
+
+2. Extras with dialogue
+   - Only include actual speaking extras
+   - Exclude system labels or repeated main characters
+
+3. Voices / Systems
+   - Normalize functional entities (Tower, Comms, Alarm, Speaker)
+
+4. Locations
+   - Normalize to real, reusable locations
+   - Remove scene annotations, routes, flight states, editor notes
+
+RULES:
+- Deduplicate strictly
+- No explanations
+- No reasoning
+- No hallucination
+- Clean production-ready output only
+
+OUTPUT FORMAT (JSON ONLY):
+
+{
+  "cast_principal": [
+    {
+      "name": "",
+      "aliases": [],
+      "role": ""
+    }
+  ],
+  "extras_with_dialogue": [
+    {
+      "name": ""
+    }
+  ],
+  "voices_and_systems": [
+    {
+      "name": "",
+      "type": ""
+    }
+  ],
+  "locations": [
+    {
+      "name": ""
+    }
+  ]
+}`;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 2B: HAIKU DETAIL PASSES - PROPS, SETPIECES (kept as before)
 // ═══════════════════════════════════════════════════════════════════════════════
 const HAIKU_PROPS_PROMPT = `You are a MASTER PRODUCTION PROPS ANALYST with exhaustive knowledge of film production.
 
@@ -229,20 +238,6 @@ PRIORITIZE props that:
 - Have narrative importance
 - Require special handling
 
-## ERRORS TO AVOID
-
-❌ ERROR #1: Confusing characters with props
-"Enter JOHN with his dog" - The dog is an animal character, NOT a prop
-
-❌ ERROR #2: Extracting set elements as props
-"floor", "ceiling", "walls", "door frame" = part of set, NOT props
-
-❌ ERROR #3: Being too generic
-Don't extract "cup" when there are 50 cups in the script
-
-❌ ERROR #4: Including purely descriptive props without importance
-"The room has chairs and a table" - Only if specific or important
-
 OUTPUT LANGUAGE: Return descriptions in the requested language. Do NOT translate prop names if they're brand names.
 
 OUTPUT JSON ONLY:
@@ -253,37 +248,6 @@ OUTPUT JSON ONLY:
   ],
   "props_production": [
     { "name": "", "department": "art|costume|props|special|transport|sound|other", "category": "hand|set|action|costume", "why": "" }
-  ]
-}`;
-
-const HAIKU_CHARACTERS_PROMPT = `You are a MASTER CAST BREAKDOWN ANALYST with exhaustive knowledge of industry-standard screenplay format.
-
-OUTPUT LANGUAGE:
-Return descriptions in the requested language.
-Do NOT translate names.
-
-NORMALIZATION (CRITICAL):
-Before output, normalize any character label:
-- Remove CONT'D / CONT'D / CONT. / CONTINUED
-- Remove (V.O.), (O.S.), (O.C.), (ON SCREEN), (OFF)
-- Trim spaces/punctuation
-
-CATEGORIES:
-1) cast_characters: named characters with narrative weight
-2) featured_extras_with_lines: role-based speakers without character arcs (SOLDIER, AIDE, SECRETARY...)
-3) voices_and_functional: VOICE, RADIO, ANNOUNCER, PA SYSTEM, INTERCOM
-
-OUTPUT JSON ONLY:
-
-{
-  "cast_characters": [
-    { "name": "", "role": "protagonist|co_protagonist|antagonist|supporting|minor", "scenes_count": 0, "why": "" }
-  ],
-  "featured_extras_with_lines": [
-    { "name": "", "scenes_count": 0, "why": "" }
-  ],
-  "voices_and_functional": [
-    { "name": "", "scenes_count": 0, "why": "" }
   ]
 }`;
 
@@ -311,30 +275,6 @@ List practical concerns:
 - **Night shoots**: exterior night, lighting requirements
 - **Locations**: remote locations, permits, weather-dependent
 - **Special equipment**: underwater, aerial, specialized cameras
-
-## GENRE-SPECIFIC CONSIDERATIONS
-
-### Action/Military Scripts:
-- Many characters with code/callsign: MAVERICK, ICEMAN, HANGMAN
-- Specific military equipment: weapons, vehicles, uniforms
-- Technical locations: hangar, ready room, carrier deck
-- Detailed technical props: radios, tactical equipment
-
-### Sci-Fi Scripts:
-- Fictional technology (create, don't omit)
-- Abstract or futuristic locations
-- Props that don't exist in reality
-- Alien species as characters
-
-### Period Scripts:
-- Noble titles: LORD, LADY, SIR, DUKE
-- Specific historical locations
-- Period-specific props
-
-### Animation Scripts:
-- Non-human characters (animals, objects, creatures)
-- Fantastic locations
-- Magical or impossible props
 
 OUTPUT LANGUAGE: Return descriptions in the requested language. Do NOT translate scene headings.
 
@@ -2044,7 +1984,8 @@ async function processScriptBreakdownInBackground(
     const sceneSample = headingLines.slice(0, 40).map((h, i) => `${i + 1}. ${h}`).join('\n');
     
     // ═══════════════════════════════════════════════════════════════════════════
-    // PHASE 1: SONNET - CANONICAL SKELETON
+    // PHASE 1: SONNET - SEMANTIC COMPREHENSION (NEW ARCHITECTURE)
+    // Goal: UNDERSTAND the screenplay semantically, resolve identities, classify
     // ═══════════════════════════════════════════════════════════════════════════
     const sonnetUserPrompt = `
 OUTPUT LANGUAGE: ${lang}
@@ -2059,23 +2000,8 @@ ${headingLines.slice(0, 30).map((h, i) => `${i + 1}. ${h}`).join('\n')}${heading
 RULES:
 - Same location + different time = DIFFERENT scenes
 - Do NOT merge or summarize scenes
-
-OUTPUT JSON STRUCTURE:
-{
-  "title": "",
-  "writers": [],
-  "logline": "",
-  "synopsis": "",
-  "acts": [{ "act": 1, "summary": "" }],
-  "scenes": {
-    "total": ${headingLines.length},
-    "list": [{ "number": 1, "heading": "", "int_ext": "INT|EXT", "location_base": "", "time": "" }]
-  },
-  "characters_main": [{ "name": "", "role": "protagonist|antagonist|supporting", "one_liner": "" }],
-  "locations_base": [{ "name": "", "scenes_count_est": 0 }],
-  "subplots": [{ "name": "", "description": "" }],
-  "production": { "dialogue_density": "medium", "cast_size": "medium", "complexity": "medium", "flags": [] }
-}
+- RESOLVE CHARACTER IDENTITIES: e.g., PETE / MAVERICK / MITCHELL = same person
+- Detect NON-ENTITIES: colors, flight terms, camera directions, sound cues
 
 SCRIPT TO ANALYZE:
 ---
@@ -2092,24 +2018,39 @@ ${processedScriptText}
 
     const canonicalResult = await callAIJson({
       modelKey: 'sonnet',
-      systemPrompt: SONNET_SYSTEM_PROMPT,
+      systemPrompt: SONNET_SEMANTIC_PROMPT,
       userPrompt: sonnetUserPrompt,
       maxTokens: 8000,
-      label: 'script_breakdown_canonical',
+      label: 'script_breakdown_semantic',
     });
     
     const canonicalData = canonicalResult.data;
     const sonnetProviderInfo = canonicalResult.providerInfo;
 
-    console.log('[script-breakdown] Phase 1 complete:', {
+    // Log semantic comprehension results
+    const semanticCharCount = canonicalData.characters ? Object.keys(canonicalData.characters).length : 0;
+    const semanticLocCount = canonicalData.locations ? Object.keys(canonicalData.locations).length : 0;
+    const nonEntitiesCount = canonicalData.non_entities_detected?.length || 0;
+    
+    console.log('[script-breakdown] Phase 1 (Semantic) complete:', {
       provider: sonnetProviderInfo.provider,
       model: sonnetProviderInfo.model,
       fallback_used: sonnetProviderInfo.fallback_used,
       title: canonicalData.title,
       scenes: canonicalData.scenes?.total || canonicalData.scenes?.list?.length || 0,
-      mainChars: canonicalData.characters_main?.length || 0,
-      locations: canonicalData.locations_base?.length || 0,
+      characters_semantic: semanticCharCount,
+      locations_semantic: semanticLocCount,
+      extras: canonicalData.extras_with_dialogue ? Object.keys(canonicalData.extras_with_dialogue).length : 0,
+      voices: canonicalData.voices_and_systems ? Object.keys(canonicalData.voices_and_systems).length : 0,
+      non_entities_filtered: nonEntitiesCount,
     });
+    
+    // Log non-entities for debugging
+    if (canonicalData.non_entities_detected?.length > 0) {
+      console.log('[script-breakdown] Non-entities detected and filtered:', 
+        canonicalData.non_entities_detected.slice(0, 20).map((e: any) => `${e.raw_text} (${e.reason})`).join(', ')
+      );
+    }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // PHASE 2: HAIKU PARALLEL PASSES
@@ -2120,57 +2061,104 @@ ${processedScriptText}
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    const contextForHaiku = `
-CONTEXT FROM CANONICAL BREAKDOWN:
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SEMANTIC VALIDATION LAYER (between Sonnet and Haiku)
+    // Contract enforcement before normalization
+    // ═══════════════════════════════════════════════════════════════════════════
+    const validateSemanticOutput = (data: any): { valid: boolean; issues: string[] } => {
+      const issues: string[] = [];
+      
+      // Check characters have required fields
+      if (data.characters) {
+        for (const [name, char] of Object.entries(data.characters)) {
+          const c = char as any;
+          if (!Array.isArray(c.aliases)) issues.push(`Character ${name} missing aliases array`);
+          if (!c.role) issues.push(`Character ${name} missing role`);
+        }
+      }
+      
+      // Check locations are objects
+      if (data.locations) {
+        for (const [name, loc] of Object.entries(data.locations)) {
+          if (typeof loc !== 'object') issues.push(`Location ${name} is not an object`);
+        }
+      }
+      
+      return { valid: issues.length === 0, issues };
+    };
+    
+    const validation = validateSemanticOutput(canonicalData);
+    if (!validation.valid) {
+      console.warn('[script-breakdown] Semantic validation warnings:', validation.issues.slice(0, 10));
+    }
+
+    // Build context for Haiku normalization pass
+    const semanticContextForHaiku = `
+SEMANTIC ANALYSIS INPUT (from Phase 1):
+${JSON.stringify({
+  title: canonicalData.title,
+  synopsis: canonicalData.synopsis || canonicalData.logline,
+  characters: canonicalData.characters,
+  extras_with_dialogue: canonicalData.extras_with_dialogue,
+  voices_and_systems: canonicalData.voices_and_systems,
+  locations: canonicalData.locations,
+  non_entities_detected: canonicalData.non_entities_detected,
+}, null, 2)}
+
+OUTPUT LANGUAGE: ${lang}`;
+
+    const propsContextForHaiku = `
+CONTEXT FROM SEMANTIC BREAKDOWN:
 - Title: ${canonicalData.title || 'Unknown'}
 - Synopsis: ${canonicalData.synopsis || canonicalData.logline || ''}
 - Scenes total: ${canonicalData.scenes?.total || headingLines.length}
-- Main characters: ${(canonicalData.characters_main || []).map((c: any) => c.name).join(', ')}
-- Base locations: ${(canonicalData.locations_base || []).map((l: any) => l.name).join(', ')}
 
 SAMPLE SCENE HEADINGS:
 ${sceneSample}
 
 OUTPUT LANGUAGE: ${lang}`;
 
-    // Launch all 3 Haiku passes in parallel
-    console.log('[script-breakdown] Phase 2: Starting parallel Haiku passes...');
+    // Launch Haiku passes in parallel:
+    // 1. Normalization pass (characters + locations from semantic data)
+    // 2. Props pass
+    // 3. Setpieces pass
+    console.log('[script-breakdown] Phase 2: Starting Haiku normalization + detail passes...');
 
-    const [propsResult, charactersResult, setpiecesResult] = await Promise.allSettled([
+    const [normalizationResult, propsResult, setpiecesResult] = await Promise.allSettled([
+      // Normalization pass - converts semantic understanding to production data
+      callAIJson({
+        modelKey: 'haiku',
+        systemPrompt: HAIKU_NORMALIZATION_PROMPT,
+        userPrompt: semanticContextForHaiku + `\n\nNormalize this semantic analysis into clean production data.`,
+        maxTokens: 4000,
+        label: 'script_breakdown_normalization',
+      }),
       // Props pass
       callAIJson({
         modelKey: 'haiku',
         systemPrompt: HAIKU_PROPS_PROMPT,
-        userPrompt: contextForHaiku + `\n\nExtract all production props from this screenplay world.`,
+        userPrompt: propsContextForHaiku + `\n\nExtract all production props from this screenplay world.`,
         maxTokens: 3000,
         label: 'script_breakdown_props',
-      }),
-      // Characters pass
-      callAIJson({
-        modelKey: 'haiku',
-        systemPrompt: HAIKU_CHARACTERS_PROMPT,
-        userPrompt: contextForHaiku + `\n\nExtract ALL characters categorized properly. Include minor roles.`,
-        maxTokens: 3000,
-        label: 'script_breakdown_characters',
       }),
       // Setpieces pass
       callAIJson({
         modelKey: 'haiku',
         systemPrompt: HAIKU_SETPIECES_PROMPT,
-        userPrompt: contextForHaiku + `\n\nExtract all setpieces and production flags.`,
+        userPrompt: propsContextForHaiku + `\n\nExtract all setpieces and production flags.`,
         maxTokens: 2000,
         label: 'script_breakdown_setpieces',
       }),
     ]);
 
     console.log('[script-breakdown] Phase 2 complete:', {
+      normalization: normalizationResult.status,
       props: propsResult.status,
-      characters: charactersResult.status,
       setpieces: setpiecesResult.status,
     });
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // MERGE ALL RESULTS
+    // MERGE ALL RESULTS (NEW ARCHITECTURE)
     // ═══════════════════════════════════════════════════════════════════════════
     await supabase.from('background_tasks').update({
       progress: 70,
@@ -2179,13 +2167,91 @@ OUTPUT LANGUAGE: ${lang}`;
     }).eq('id', taskId);
 
     // Extract results (use empty objects for failed passes)
-    // Extract results (use empty objects for failed passes)
+    const normalizationData = normalizationResult.status === 'fulfilled' ? normalizationResult.value.data : {};
     const propsData = propsResult.status === 'fulfilled' ? propsResult.value.data : {};
-    const charactersData = charactersResult.status === 'fulfilled' ? charactersResult.value.data : {};
     const setpiecesData = setpiecesResult.status === 'fulfilled' ? setpiecesResult.value.data : {};
     
     // Collect provider info for telemetry
-    const haikuProviderInfo = propsResult.status === 'fulfilled' ? propsResult.value.providerInfo : null;
+    const haikuProviderInfo = normalizationResult.status === 'fulfilled' ? normalizationResult.value.providerInfo : null;
+
+    // Convert Haiku normalization output to expected format
+    // Haiku returns: cast_principal, extras_with_dialogue, voices_and_systems, locations
+    const castFromHaiku = (normalizationData.cast_principal || []).map((c: any) => ({
+      name: c.name,
+      aliases: c.aliases || [],
+      role: c.role || 'supporting',
+      scenes_count: 0,
+      why: 'Normalized from semantic analysis',
+    }));
+    
+    const extrasFromHaiku = (normalizationData.extras_with_dialogue || []).map((e: any) => ({
+      name: e.name,
+      role: 'featured_extra',
+      scenes_count: 0,
+      why: 'Normalized from semantic analysis',
+    }));
+    
+    const voicesFromHaiku = (normalizationData.voices_and_systems || []).map((v: any) => ({
+      name: v.name,
+      type: v.type || 'other',
+      role: 'voice',
+      scenes_count: 0,
+      why: 'Normalized from semantic analysis',
+    }));
+    
+    const locationsFromHaiku = (normalizationData.locations || []).map((l: any) => ({
+      name: l.name,
+      scenes_count: 0,
+      variants: [],
+    }));
+
+    // Also extract characters from Sonnet semantic format as fallback
+    const extractSemanticCharacters = (charObj: any): any[] => {
+      if (!charObj || typeof charObj !== 'object') return [];
+      return Object.entries(charObj).map(([name, data]: [string, any]) => ({
+        name,
+        aliases: data.aliases || [],
+        role: data.role || 'supporting',
+        notes: data.notes || '',
+      }));
+    };
+    
+    const sonnetCharacters = extractSemanticCharacters(canonicalData.characters);
+    const sonnetExtras = extractSemanticCharacters(canonicalData.extras_with_dialogue);
+    const sonnetVoices = extractSemanticCharacters(canonicalData.voices_and_systems);
+    
+    // Extract locations from Sonnet semantic format
+    const extractSemanticLocations = (locObj: any): any[] => {
+      if (!locObj || typeof locObj !== 'object') return [];
+      return Object.entries(locObj).map(([name, data]: [string, any]) => ({
+        name,
+        notes: data?.notes || '',
+        scenes_count: 0,
+      }));
+    };
+    
+    const sonnetLocations = extractSemanticLocations(canonicalData.locations);
+
+    // Use Haiku data if available, fallback to Sonnet semantic data
+    const finalCast = castFromHaiku.length > 0 ? castFromHaiku : sonnetCharacters;
+    const finalExtras = extrasFromHaiku.length > 0 ? extrasFromHaiku : sonnetExtras;
+    const finalVoices = voicesFromHaiku.length > 0 ? voicesFromHaiku : sonnetVoices;
+    const finalLocations = locationsFromHaiku.length > 0 ? locationsFromHaiku : sonnetLocations;
+    
+    console.log('[script-breakdown] Character/Location merge:', {
+      haiku_cast: castFromHaiku.length,
+      haiku_extras: extrasFromHaiku.length,
+      haiku_voices: voicesFromHaiku.length,
+      haiku_locations: locationsFromHaiku.length,
+      sonnet_chars: sonnetCharacters.length,
+      sonnet_extras: sonnetExtras.length,
+      sonnet_voices: sonnetVoices.length,
+      sonnet_locations: sonnetLocations.length,
+      final_cast: finalCast.length,
+      final_extras: finalExtras.length,
+      final_voices: finalVoices.length,
+      final_locations: finalLocations.length,
+    });
 
     // Merge into unified breakdown
     const mergedBreakdown: any = {
@@ -2197,26 +2263,26 @@ OUTPUT LANGUAGE: ${lang}`;
       ],
       props_key: propsData.props_key || [],
       props_production: propsData.props_production || [],
-      // Characters from Haiku (more complete than Sonnet's characters_main)
+      // Characters from Haiku normalization (or Sonnet semantic fallback)
       characters: {
-        cast: charactersData.cast_characters || [],
-        featured_extras_with_lines: charactersData.featured_extras_with_lines || [],
-        voices_and_functional: charactersData.voices_and_functional || [],
+        cast: finalCast,
+        featured_extras_with_lines: finalExtras,
+        voices_and_functional: finalVoices,
       },
-      // Keep Sonnet's main characters for reference
-      characters_main: canonicalData.characters_main || [],
+      // Keep main characters for reference (derived from cast)
+      characters_main: finalCast.filter((c: any) => 
+        ['protagonist', 'co_protagonist', 'antagonist'].includes(c.role)
+      ),
       // Setpieces from Haiku
       setpieces: setpiecesData.setpieces || [],
       production_flags: setpiecesData.production_flags || [],
-      // Locations from Sonnet
+      // Locations from Haiku normalization (or Sonnet semantic fallback)
       locations: {
-        base: (canonicalData.locations_base || []).map((l: any) => ({
-          name: l.name,
-          scenes_count: l.scenes_count_est || 0,
-          variants: [],
-        })),
+        base: finalLocations,
         variants: [],
       },
+      // Non-entities detected (for debugging/learning)
+      non_entities_detected: canonicalData.non_entities_detected || [],
     };
 
     // Enrich with regex data and normalize
@@ -2385,8 +2451,8 @@ OUTPUT LANGUAGE: ${lang}`;
       }
 
       const parsedJson = {
-        schema_version: 'v8-two-phase',
-        breakdown_version: 3,
+        schema_version: 'v9-semantic-normalization',
+        breakdown_version: 4,
         
         // Canonical root-level fields
         title: normalizedData.title || 'Guion Analizado',
@@ -2426,9 +2492,9 @@ OUTPUT LANGUAGE: ${lang}`;
         validation: enrichedData.validation || {},
         _warnings: normalizedData._warnings || [],
         _phase_status: {
-          sonnet: 'success',
+          sonnet_semantic: 'success',
+          haiku_normalization: normalizationResult.status,
           haiku_props: propsResult.status,
-          haiku_characters: charactersResult.status,
           haiku_setpieces: setpiecesResult.status,
         },
         _provider_info: {
