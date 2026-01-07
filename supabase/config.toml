@@ -16,8 +16,8 @@ project_id = "dzrfbulwiqhzxxbcnzhn"
 verify_jwt = false
 
 [functions.script-generate]
-# THIN ALIAS to generate-script (backwards compatibility)
-verify_jwt = true
+# THIN ALIAS to generate-script - Gateway JWT disabled; forwards auth header
+verify_jwt = false
 
 [functions.parse-script]
 # Gateway JWT disabled; function enforces auth internally via v3RequireAuth
