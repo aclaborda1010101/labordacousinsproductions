@@ -102,6 +102,7 @@ export const buildRobustCounts = (
     ...(existingCounts || {}),
     protagonists,
     supporting,
+    characters_total: existingCounts?.characters_total ?? chars.length,
     locations: locs.length,
     total_scenes: totalScenes,
     hero_props: heroProps,
