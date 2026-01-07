@@ -20,8 +20,9 @@ import {
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { VISUAL_PRESETS, type VisualPreset } from '@/lib/visualPresets';
+import { VISUAL_PRESETS, getPresetsByCategory, type VisualPreset } from '@/lib/visualPresets';
 import NextStepNavigator from './NextStepNavigator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface VisualBibleSetupProps {
   projectId: string;
@@ -271,32 +272,87 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
         </CardContent>
       </Card>
 
-      {/* Preset Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Object.values(VISUAL_PRESETS).map((preset) => (
-          <button
-            key={preset.id}
-            onClick={() => handlePresetSelect(preset.id)}
-            className={cn(
-              "relative p-4 rounded-xl border-2 transition-all text-left",
-              selectedPreset === preset.id
-                ? "border-primary bg-primary/10 ring-2 ring-primary/30"
-                : "border-border hover:border-primary/50 hover:bg-muted/50"
-            )}
-          >
-            <div className="text-2xl mb-2">{preset.icon}</div>
-            <h4 className="font-semibold text-sm">{preset.name}</h4>
-            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-              {preset.description}
-            </p>
-            {selectedPreset === preset.id && (
-              <div className="absolute top-2 right-2">
-                <Check className="w-4 h-4 text-primary" />
-              </div>
-            )}
-          </button>
-        ))}
-      </div>
+      {/* Preset Grid with Tabs */}
+      <Tabs defaultValue="live-action" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsTrigger value="live-action" className="flex items-center gap-2">
+            <Film className="w-4 h-4" />
+            Live-Action
+          </TabsTrigger>
+          <TabsTrigger value="animation" className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            Animación
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="live-action">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {getPresetsByCategory('live-action').map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => handlePresetSelect(preset.id)}
+                className={cn(
+                  "relative p-4 rounded-xl border-2 transition-all text-left group",
+                  selectedPreset === preset.id
+                    ? "border-primary bg-primary/10 ring-2 ring-primary/30"
+                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                )}
+              >
+                <div className="text-2xl mb-2">{preset.icon}</div>
+                <h4 className="font-semibold text-sm">{preset.name}</h4>
+                <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+                  {preset.description}
+                </p>
+                <div className="mt-2 pt-2 border-t border-border/50">
+                  <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                    <span className="opacity-70">📽</span>
+                    {preset.examples.slice(0, 2).join(', ')}
+                  </p>
+                </div>
+                {selectedPreset === preset.id && (
+                  <div className="absolute top-2 right-2">
+                    <Check className="w-4 h-4 text-primary" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="animation">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {getPresetsByCategory('animation').map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => handlePresetSelect(preset.id)}
+                className={cn(
+                  "relative p-4 rounded-xl border-2 transition-all text-left group",
+                  selectedPreset === preset.id
+                    ? "border-primary bg-primary/10 ring-2 ring-primary/30"
+                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                )}
+              >
+                <div className="text-2xl mb-2">{preset.icon}</div>
+                <h4 className="font-semibold text-sm">{preset.name}</h4>
+                <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+                  {preset.description}
+                </p>
+                <div className="mt-2 pt-2 border-t border-border/50">
+                  <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                    <span className="opacity-70">📽</span>
+                    {preset.examples.slice(0, 2).join(', ')}
+                  </p>
+                </div>
+                {selectedPreset === preset.id && (
+                  <div className="absolute top-2 right-2">
+                    <Check className="w-4 h-4 text-primary" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Technical Details Preview */}
       {(selectedPreset || customAnalysis) && (
