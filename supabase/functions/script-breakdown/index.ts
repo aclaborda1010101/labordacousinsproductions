@@ -851,6 +851,126 @@ function classifyNarrativeWeight(characters: NormalizedCharacter[], totalScenes:
   };
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// DIALOGUE-BASED ROLE RECLASSIFICATION (V24)
+// Uses dialogue volume as PRIMARY signal for protagonist/supporting classification
+// ═══════════════════════════════════════════════════════════════════════════════
+
+interface DialogueRankEntry {
+  name: string;
+  lines: number;
+  words: number;
+  rank: number;
+}
+
+function reclassifyByDialogueVolume(
+  cast: any[],
+  dialogueByCharacter: Record<string, { lines: number; words: number }>,
+  totalDialogueLines: number
+): { reclassifiedCast: any[]; dialogueRanking: DialogueRankEntry[] } {
+  if (!dialogueByCharacter || Object.keys(dialogueByCharacter).length === 0) {
+    console.log('[reclassifyByDialogue] No dialogue data available, skipping reclassification');
+    return { reclassifiedCast: cast, dialogueRanking: [] };
+  }
+
+  // Build ranking by dialogue lines
+  const ranking: DialogueRankEntry[] = [];
+  for (const [name, stats] of Object.entries(dialogueByCharacter)) {
+    ranking.push({ name: name.toUpperCase(), lines: stats.lines, words: stats.words, rank: 0 });
+  }
+  ranking.sort((a, b) => b.lines - a.lines);
+  ranking.forEach((entry, idx) => { entry.rank = idx + 1; });
+
+  // Calculate thresholds
+  const top1Lines = ranking[0]?.lines || 0;
+  const top2Lines = ranking[1]?.lines || 0;
+  const protagonistMinLines = Math.max(top1Lines * 0.5, totalDialogueLines * 0.08); // 50% of top OR 8% of total
+  const majorMinLines = Math.max(totalDialogueLines * 0.02, 10); // 2% of total OR 10 lines
+
+  console.log('[reclassifyByDialogue] Thresholds:', {
+    totalLines: totalDialogueLines,
+    top1Lines,
+    top2Lines,
+    protagonistMinLines: protagonistMinLines.toFixed(0),
+    majorMinLines: majorMinLines.toFixed(0),
+    rankingTop5: ranking.slice(0, 5).map(r => `${r.name}:${r.lines}`),
+  });
+
+  // Map canonical names to dialogue stats (case-insensitive)
+  const dialogueMap = new Map<string, DialogueRankEntry>();
+  for (const entry of ranking) {
+    dialogueMap.set(entry.name, entry);
+  }
+
+  // Reclassify cast based on dialogue volume
+  const reclassified = cast.map(char => {
+    const charName = (char.canonical_name || char.name || '').toUpperCase();
+    const dialogueEntry = dialogueMap.get(charName);
+    
+    // Also check aliases
+    let foundEntry = dialogueEntry;
+    if (!foundEntry && char.aliases) {
+      for (const alias of char.aliases) {
+        const aliasEntry = dialogueMap.get(alias.toUpperCase());
+        if (aliasEntry) {
+          foundEntry = aliasEntry;
+          break;
+        }
+      }
+    }
+
+    const lines = foundEntry?.lines || 0;
+    const rank = foundEntry?.rank || 999;
+
+    // Skip voices/functional - they keep their classification
+    if (char.narrative_weight === 'functional' || char.type === 'voice') {
+      return { ...char, dialogue_lines: lines, dialogue_rank: rank };
+    }
+
+    // Reclassify based on dialogue volume
+    let newWeight = char.narrative_weight;
+    let newRole = char.role;
+
+    if (lines >= protagonistMinLines || rank <= 2) {
+      // Top dialogue = protagonist
+      newWeight = 'protagonist';
+      newRole = rank === 1 ? 'protagonist' : 'co-protagonist';
+    } else if (lines >= majorMinLines || rank <= 8) {
+      // Significant dialogue = major supporting
+      newWeight = 'major';
+      newRole = 'major_supporting';
+    } else if (lines > 0) {
+      // Some dialogue = minor speaking
+      newWeight = 'minor';
+      newRole = 'minor_speaking';
+    }
+
+    // Log significant reclassifications
+    if (newWeight !== char.narrative_weight) {
+      console.log(`[reclassifyByDialogue] ${charName}: ${char.narrative_weight} → ${newWeight} (${lines} lines, rank #${rank})`);
+    }
+
+    return {
+      ...char,
+      narrative_weight: newWeight,
+      role: newRole,
+      dialogue_lines: lines,
+      dialogue_rank: rank,
+    };
+  });
+
+  // Re-sort by dialogue rank (protagonist first, then by lines)
+  reclassified.sort((a, b) => {
+    const weightOrder: Record<string, number> = { protagonist: 0, major: 1, minor: 2, functional: 3 };
+    const aWeight = weightOrder[a.narrative_weight] ?? 4;
+    const bWeight = weightOrder[b.narrative_weight] ?? 4;
+    if (aWeight !== bWeight) return aWeight - bWeight;
+    return (b.dialogue_lines || 0) - (a.dialogue_lines || 0);
+  });
+
+  return { reclassifiedCast: reclassified, dialogueRanking: ranking };
+}
+
 // === UNIFIED POST-PROCESSOR ===
 
 interface PostProcessorResult {
@@ -3551,6 +3671,40 @@ OUTPUT LANGUAGE: ${lang}`;
           (normalizedData as any).counts.dialogues = dialogueStats.total_lines || 0;
           (normalizedData as any).counts.dialogue_words = dialogueStats.total_words || 0;
         }
+
+        // ═══════════════════════════════════════════════════════════════════════════
+        // DIALOGUE-BASED RECLASSIFICATION (V24)
+        // Re-rank characters using dialogue volume as primary signal
+        // ═══════════════════════════════════════════════════════════════════════════
+        const dialogueByCharacter = dialogueStats?.by_character || extractionResult.dialogues?.by_character || {};
+        const totalDialogueLines = dialogueStats?.total_lines || extractionResult.dialogues?.total_lines || 0;
+        
+        if (Object.keys(dialogueByCharacter).length > 0) {
+          console.log('[V24] Reclassifying cast by dialogue volume...');
+          
+          const currentCast = (normalizedData as any).characters.cast || [];
+          const { reclassifiedCast, dialogueRanking } = reclassifyByDialogueVolume(
+            currentCast,
+            dialogueByCharacter,
+            totalDialogueLines
+          );
+          
+          // Update cast with reclassified characters
+          (normalizedData as any).characters.cast = reclassifiedCast;
+          
+          // Store dialogue ranking for transparency
+          (normalizedData as any)._dialogue_ranking = dialogueRanking.slice(0, 20);
+          
+          // Update narrative_classification with new protagonist/supporting counts
+          const protagonistCount = reclassifiedCast.filter((c: any) => c.narrative_weight === 'protagonist').length;
+          const majorCount = reclassifiedCast.filter((c: any) => c.narrative_weight === 'major').length;
+          
+          console.log('[V24] Reclassification complete:', {
+            protagonists: protagonistCount,
+            major_supporting: majorCount,
+            top3: dialogueRanking.slice(0, 3).map(r => `${r.name}:${r.lines}`),
+          });
+        }
       }
 
       // Build flattened characters for backward compatibility
@@ -3558,7 +3712,10 @@ OUTPUT LANGUAGE: ${lang}`;
       const chars = normalizedData.characters || {};
       
       for (const c of (chars.cast || [])) {
-        allCharacters.push({ ...c, role: c.role || 'supporting', priority: c.priority || 'P2' });
+        // Use reclassified role if available, otherwise default
+        const role = c.narrative_weight === 'protagonist' ? (c.role || 'protagonist') : (c.role || 'supporting');
+        const priority = c.narrative_weight === 'protagonist' ? 'P1' : 'P2';
+        allCharacters.push({ ...c, role, priority });
       }
       for (const c of (chars.featured_extras_with_lines || [])) {
         allCharacters.push({ ...c, role: 'featured_extra', priority: 'P3' });
