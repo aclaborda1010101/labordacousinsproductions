@@ -175,6 +175,10 @@ export function ScriptSummaryPanelAssisted({
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [runningInBackground, setRunningInBackground] = useState(false);
   
+  // Bible counts (from actual database)
+  const [bibleCharacterCount, setBibleCharacterCount] = useState<number>(0);
+  const [bibleLocationCount, setBibleLocationCount] = useState<number>(0);
+  
   // Inline editing states (DIRECTOR/PRO only)
   const [editingMainTitle, setEditingMainTitle] = useState(false);
   const [editingEpisodeIndex, setEditingEpisodeIndex] = useState<number | null>(null);
@@ -304,6 +308,10 @@ export function ScriptSummaryPanelAssisted({
         supabase.from('characters').select('*', { count: 'exact', head: true }).eq('project_id', projectId),
         supabase.from('locations').select('*', { count: 'exact', head: true }).eq('project_id', projectId),
       ]);
+      
+      // Store actual Bible counts
+      setBibleCharacterCount(charCount || 0);
+      setBibleLocationCount(locCount || 0);
       
       if ((charCount || 0) > 0 || (locCount || 0) > 0) {
         setEntitiesExtracted(true);
@@ -856,18 +864,62 @@ export function ScriptSummaryPanelAssisted({
               <div className="text-[10px] sm:text-xs text-muted-foreground">Escenas</div>
             </div>
             <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
-              <div className="text-lg sm:text-2xl font-bold text-primary">{scriptData.counts?.characters_total || scriptData.characters?.length || 0}</div>
-              <div className="text-[10px] sm:text-xs text-muted-foreground">Personajes</div>
+              <div className="text-lg sm:text-2xl font-bold text-primary">
+                {scriptData.counts?.characters_total || scriptData.characters?.length || 0}
+              </div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Del análisis</div>
+              {bibleCharacterCount > 0 && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-[9px] mt-1 cursor-pointer hover:bg-primary/20"
+                  onClick={() => navigate(`/projects/${projectId}/characters`)}
+                >
+                  Bible: {bibleCharacterCount}
+                </Badge>
+              )}
             </div>
             <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
               <div className="text-lg sm:text-2xl font-bold text-primary">{scriptData.locations?.length || 0}</div>
               <div className="text-[10px] sm:text-xs text-muted-foreground">Locs</div>
+              {bibleLocationCount > 0 && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-[9px] mt-1 cursor-pointer hover:bg-primary/20"
+                  onClick={() => navigate(`/projects/${projectId}/locations`)}
+                >
+                  Bible: {bibleLocationCount}
+                </Badge>
+              )}
             </div>
             <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
               <div className="text-lg sm:text-2xl font-bold text-primary">{scriptData.props?.length || 0}</div>
               <div className="text-[10px] sm:text-xs text-muted-foreground">Props</div>
             </div>
           </div>
+          
+          {/* Quick links to Bible when entities exist */}
+          {(bibleCharacterCount > 0 || bibleLocationCount > 0) && (
+            <div className="flex gap-2 mt-3 flex-wrap">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs h-7 gap-1"
+                onClick={() => navigate(`/projects/${projectId}/characters`)}
+              >
+                <Users className="h-3 w-3" />
+                Ver {bibleCharacterCount} personajes
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs h-7 gap-1"
+                onClick={() => navigate(`/projects/${projectId}/locations`)}
+              >
+                <MapPin className="h-3 w-3" />
+                Ver {bibleLocationCount} localizaciones
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
