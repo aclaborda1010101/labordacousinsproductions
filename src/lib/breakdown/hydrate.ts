@@ -116,7 +116,9 @@ export const buildRobustCounts = (
     dialogues:
       typeof existingCounts?.dialogues === "number"
         ? existingCounts.dialogues
-        : 0,
+        : typeof payload?.dialogue_count === "number"
+          ? payload.dialogue_count
+          : scenes.reduce((sum: number, sc: any) => sum + (sc?.dialogue_blocks?.length || sc?.dialogues?.length || 0), 0),
   };
 };
 

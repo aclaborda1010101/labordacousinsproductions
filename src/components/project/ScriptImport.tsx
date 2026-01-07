@@ -3168,7 +3168,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         />
                         <DensityCompareCard 
                           label="Diálogos" 
-                          achieved={generatedScript.counts?.total_dialogue_lines || 0} 
+                          achieved={breakdownPro?.counts?.dialogues || generatedScript.counts?.dialogues || generatedScript.counts?.total_dialogue_lines || 0} 
                         />
                         {generatedScript.density_targets?.dialogue_action_ratio && (
                           <div className="p-2 bg-muted/30 rounded-lg text-center">
