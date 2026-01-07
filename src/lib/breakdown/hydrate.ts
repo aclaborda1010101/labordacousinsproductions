@@ -1,7 +1,8 @@
 // src/lib/breakdown/hydrate.ts
 // Shared hydration helpers for v10+/v23/Vxx nested + legacy flat structures
 
-type AnyObj = Record<string, any>;
+export type AnyObj = Record<string, any>;
+export type Counts = Record<string, any>;
 
 export const pickArray = <T = any>(...candidates: any[]): T[] => {
   for (const c of candidates) if (Array.isArray(c)) return c as T[];
