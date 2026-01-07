@@ -808,6 +808,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         counts: {
           protagonists,
           supporting,
+          characters_total: chars.length,
           locations: locs.length,
           total_scenes: totalScenes,
           hero_props: heroProps,
@@ -3134,9 +3135,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </Label>
                       <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
                         <DensityCompareCard 
-                          label="Protagonistas" 
-                          achieved={generatedScript.counts?.protagonists || generatedScript.density_achieved?.protagonists || 0} 
-                          target={generatedScript.density_targets?.protagonists_min}
+                          label="Personajes" 
+                          achieved={generatedScript.counts?.characters_total || breakdownPro?.counts?.characters || generatedScript.main_characters?.length || 0} 
+                          target={generatedScript.density_targets?.characters_min}
                         />
                         <DensityCompareCard 
                           label="Secundarios" 
