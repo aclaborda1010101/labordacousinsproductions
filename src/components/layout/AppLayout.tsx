@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LanguageSelector } from '@/components/LanguageSelector';
@@ -26,7 +27,8 @@ import {
   Plus,
   Folder,
   X,
-  Settings
+  Settings,
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -44,6 +46,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
   const { isDeveloperMode } = useDeveloperMode();
+  const { activeTasks, setIsOpen: setTasksOpen } = useBackgroundTasks();
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -381,6 +384,21 @@ export function AppLayout({ children }: AppLayoutProps) {
         "pt-12 pb-16 lg:pt-0 lg:pb-0", // Mobile: header + bottom nav space
         collapsed ? "lg:ml-16" : "lg:ml-72"
       )}>
+        {/* Active Background Tasks Banner */}
+        {activeTasks.length > 0 && (
+          <button
+            onClick={() => setTasksOpen(true)}
+            className="flex items-center justify-center gap-2 bg-primary/10 text-primary px-4 py-2 text-sm hover:bg-primary/15 transition-colors cursor-pointer border-b border-primary/20"
+          >
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <span className="font-medium">
+              {activeTasks.length} proceso{activeTasks.length > 1 ? 's' : ''} en marcha
+            </span>
+            <span className="text-primary/70 hidden sm:inline">
+              — Puedes navegar libremente
+            </span>
+          </button>
+        )}
         {children}
       </main>
 
