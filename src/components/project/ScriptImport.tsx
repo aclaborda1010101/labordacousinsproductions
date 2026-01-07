@@ -73,7 +73,8 @@ import {
   Clapperboard,
   Mic,
   MicOff,
-  Upload
+  Upload,
+  ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -4352,6 +4353,31 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   );
                 })}
               </div>
+
+              {/* NEXT STEP: Navigate to Scenes for shot segmentation */}
+              {segmentedEpisodes.size > 0 && (
+                <Card className="border-primary/30 bg-primary/5">
+                  <CardContent className="pt-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <Video className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">Siguiente paso: Segmentar en Micro-Shots</p>
+                          <p className="text-sm text-muted-foreground">
+                            {segmentedEpisodes.size} episodio{segmentedEpisodes.size !== 1 ? 's' : ''} listo{segmentedEpisodes.size !== 1 ? 's' : ''} para producción
+                          </p>
+                        </div>
+                      </div>
+                      <Button onClick={() => navigate(`/projects/${projectId}/scenes?episode=1`)}>
+                        Ir a Escenas
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* QC Notes if available */}
               {generatedScript.qc_notes?.length > 0 && (
