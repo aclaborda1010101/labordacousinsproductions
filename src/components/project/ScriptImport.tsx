@@ -698,6 +698,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (!savedScript) throw new Error('No se pudo guardar el guion');
 
       // 2. Call script-breakdown to analyze
+      // NOTE: script-breakdown runs as a background task and returns { taskId, polling: true }
       const invokeBreakdown = () =>
         invokeWithTimeout<any>(
           'script-breakdown',
@@ -767,43 +768,166 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         throw breakdownError;
       }
 
-      // 3. Transform breakdown into generatedScript format for display
-      const breakdown = breakdownData?.breakdown || breakdownData;
-      
+      // 3. script-breakdown is async (background task). Poll the task and then load parsed_json.
+      const taskId = (breakdownData as any)?.taskId as string | undefined;
+      const isPolling = Boolean(taskId) && Boolean((breakdownData as any)?.polling);
+
+      if (isPolling && taskId) {
+        const estimatedTimeMin =
+          typeof (breakdownData as any)?.estimatedTimeMin === 'number'
+            ? (breakdownData as any).estimatedTimeMin
+            : 10;
+
+        toast.message('Análisis iniciado', {
+          description: `Se está procesando en segundo plano (~${estimatedTimeMin} min).`,
+          duration: 6000,
+        });
+
+        const pollingInterval = 3000;
+        const maxPollingTime = Math.max(5 * 60 * 1000, estimatedTimeMin * 60 * 1000 * 2);
+        const startTime = Date.now();
+
+        let completed = false;
+        while (!completed && Date.now() - startTime < maxPollingTime) {
+          await new Promise((resolve) => setTimeout(resolve, pollingInterval));
+
+          const { data: taskData, error: taskError } = await supabase
+            .from('background_tasks')
+            .select('status, progress, error, description')
+            .eq('id', taskId)
+            .maybeSingle();
+
+          if (taskError) {
+            console.warn('[ScriptImport] Error polling script analysis task:', taskError);
+            continue;
+          }
+
+          const status = taskData?.status;
+          const progress = typeof taskData?.progress === 'number' ? taskData.progress : null;
+          const description = typeof taskData?.description === 'string' ? taskData.description : '';
+
+          if (typeof progress === 'number') {
+            // Reuse existing state just to show users "something is happening"
+            setPdfProgress(Math.min(99, Math.max(10, progress)));
+          }
+          if (description) {
+            setBreakdownProSteps((prev) => {
+              const next = prev.length ? [...prev] : [];
+              if (!next.includes(description)) next.push(description);
+              return next.slice(-6);
+            });
+          }
+
+          if (status === 'completed') {
+            completed = true;
+            break;
+          }
+
+          if (status === 'failed') {
+            throw new Error(taskData?.error || 'El análisis falló');
+          }
+        }
+
+        if (!completed) {
+          throw new Error('El análisis sigue en proceso. Espera un poco y revisa el resumen de nuevo.');
+        }
+
+        // Load the final parsed_json written by the backend
+        const { data: scriptRow, error: scriptErr } = await supabase
+          .from('scripts')
+          .select('id, status, raw_text, parsed_json')
+          .eq('id', savedScript.id)
+          .maybeSingle();
+
+        if (scriptErr) throw scriptErr;
+
+        const parsed = scriptRow?.parsed_json as Record<string, unknown> | null | undefined;
+        if (!parsed || typeof parsed !== 'object' || Object.keys(parsed).length === 0) {
+          throw new Error('El análisis terminó pero no se encontró el resultado guardado.');
+        }
+
+        // Use shared hydration helpers for v10+ nested structure support
+        const payload = getBreakdownPayload(parsed) ?? parsed;
+        const chars = hydrateCharacters(payload);
+        const locs = hydrateLocations(payload);
+        const propsArr = hydrateProps(payload);
+        const scenes = hydrateScenes(payload);
+        const episodesArr = Array.isArray((payload as any)?.episodes) ? (payload as any).episodes : [];
+
+        // Use shared robust counts builder
+        const counts = buildRobustCounts(payload, chars, locs, scenes, propsArr, episodesArr);
+
+        const hydratedScriptData = {
+          ...parsed,
+          title: extractTitle(payload),
+          writers: extractWriters(payload),
+          main_characters: chars,
+          characters: chars,
+          locations: locs,
+          scenes: scenes,
+          props: propsArr,
+          counts,
+        };
+
+        setGeneratedScript(hydratedScriptData);
+        setCurrentScriptId(savedScript.id);
+        setActiveTab('summary');
+
+        toast.success('¡Guion analizado! Ve a la pestaña "Resumen" para ver el resultado.');
+
+        // Auto-trigger pro breakdown if checkbox is enabled
+        if (autoBreakdownPro && scriptText.trim().length >= 200) {
+          setTimeout(() => {
+            generateBreakdownPro();
+          }, 500);
+        }
+
+        return;
+      }
+
+      // 3B. Legacy synchronous response (fallback)
+      const breakdown = (breakdownData as any)?.breakdown || breakdownData;
+
       // Extract characters from multiple possible sources
-      const chars = breakdown?.characters || [];
-      const locs = breakdown?.locations || [];
-      const propsArr = breakdown?.props || [];
-      const scenes = breakdown?.scenes || [];
-      
+      const chars = (breakdown as any)?.characters || [];
+      const locs = (breakdown as any)?.locations || [];
+      const propsArr = (breakdown as any)?.props || [];
+      const scenes = (breakdown as any)?.scenes || [];
+
       // Count scenes from episodes if no root-level scenes
-      const episodesArr = breakdown?.episodes || (scenes.length > 0 ? [{ 
-        episode_number: 1, 
-        title: breakdown?.title || 'Película',
-        synopsis: breakdown?.synopsis,
-        scenes: scenes 
-      }] : []);
-      
-      const totalScenes = scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0;
-      
+      const episodesArr = (breakdown as any)?.episodes ||
+        (scenes.length > 0
+          ? [
+              {
+                episode_number: 1,
+                title: (breakdown as any)?.title || 'Película',
+                synopsis: (breakdown as any)?.synopsis,
+                scenes: scenes,
+              },
+            ]
+          : []);
+
+      const totalScenes =
+        scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0;
+
       // Count by role
       const protagonists = chars.filter((c: any) => c.role === 'protagonist' || c.priority === 'P0').length;
       const supporting = chars.filter((c: any) => c.role === 'supporting' || c.priority === 'P1').length;
       const heroProps = propsArr.filter((p: any) => p.importance === 'hero' || p.priority === 'P0').length;
-      
+
       const scriptData = {
-        title: breakdown?.title || 'Guion Importado',
-        logline: breakdown?.logline || breakdown?.synopsis?.slice(0, 150) || '',
-        synopsis: breakdown?.synopsis || '',
-        genre: breakdown?.genre || genre,
-        tone: breakdown?.tone || tone,
-        themes: breakdown?.themes || [],
+        title: (breakdown as any)?.title || 'Guion Importado',
+        logline: (breakdown as any)?.logline || (breakdown as any)?.synopsis?.slice(0, 150) || '',
+        synopsis: (breakdown as any)?.synopsis || '',
+        genre: (breakdown as any)?.genre || genre,
+        tone: (breakdown as any)?.tone || tone,
+        themes: (breakdown as any)?.themes || [],
         main_characters: chars,
         characters: chars, // Keep both fields for compatibility
         locations: locs,
         props: propsArr,
-        subplots: breakdown?.subplots || [],
-        plot_twists: breakdown?.plot_twists || breakdown?.plotTwists || [],
+        subplots: (breakdown as any)?.subplots || [],
+        plot_twists: (breakdown as any)?.plot_twists || (breakdown as any)?.plotTwists || [],
         episodes: episodesArr,
         counts: {
           protagonists,
@@ -812,23 +936,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           locations: locs.length,
           total_scenes: totalScenes,
           hero_props: heroProps,
-          props: propsArr.length
-        }
+          props: propsArr.length,
+        },
       };
 
-      // 4. Update parsed_json in DB
-      await supabase
-        .from('scripts')
-        .update({ parsed_json: scriptData })
-        .eq('id', savedScript.id);
+      // 4. Update parsed_json in DB ONLY for legacy sync results
+      await supabase.from('scripts').update({ parsed_json: scriptData }).eq('id', savedScript.id);
 
       // 5. Set local state
       setGeneratedScript(scriptData);
       setCurrentScriptId(savedScript.id);
       setActiveTab('summary');
-      
+
       toast.success('¡Guion analizado! Ve a la pestaña "Resumen" para ver el resultado.');
-      
+
       // 6. Auto-trigger pro breakdown if checkbox is enabled
       if (autoBreakdownPro && scriptText.trim().length >= 200) {
         // Use setTimeout to allow state to settle before triggering
