@@ -557,6 +557,65 @@ function addUnique(arr: string[], seen: Set<string>, value: string) {
   arr.push(value);
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONCATENATED NAME DETECTION - Split "ROOSTER MAVERICK" into two characters
+// ═══════════════════════════════════════════════════════════════════════════════
+const KNOWN_CALLSIGNS = new Set([
+  // Top Gun characters
+  'MAVERICK', 'ROOSTER', 'HANGMAN', 'PHOENIX', 'BOB', 'FANBOY', 'PAYBACK', 'COYOTE',
+  'ICEMAN', 'WARLOCK', 'CYCLONE', 'HONDO', 'PENNY', 'GOOSE', 'SLIDER', 'VIPER',
+  'JESTER', 'WOLFMAN', 'COUGAR', 'MERLIN', 'SUNDOWN', 'HOLLYWOOD', 'CHIPPER',
+  // Common military callsigns
+  'ACE', 'HAWK', 'EAGLE', 'WOLF', 'COBRA', 'VENOM', 'GHOST', 'SHADOW', 'REAPER',
+  'BLADE', 'STORM', 'THUNDER', 'LIGHTNING', 'RAVEN', 'FALCON', 'PANTHER', 'TIGER',
+  'ALPHA', 'BRAVO', 'CHARLIE', 'DELTA', 'ECHO', 'FOXTROT', 'ROMEO', 'TANGO',
+]);
+
+const COMMON_FIRST_NAMES = new Set([
+  'JOHN', 'JAMES', 'ROBERT', 'MICHAEL', 'WILLIAM', 'DAVID', 'RICHARD', 'THOMAS',
+  'MARY', 'PATRICIA', 'JENNIFER', 'ELIZABETH', 'SARAH', 'LINDA', 'SUSAN', 'KAREN',
+  'TOM', 'PETE', 'NICK', 'BRADLEY', 'CAROL', 'PENNY', 'SARAH', 'AMELIA',
+]);
+
+/**
+ * Detects if a string contains two concatenated character names
+ * Returns the split names if detected, null otherwise
+ */
+function detectConcatenatedNames(name: string): string[] | null {
+  const words = name.trim().toUpperCase().split(/\s+/);
+  
+  // Only check 2-word combinations
+  if (words.length !== 2) return null;
+  
+  const [first, second] = words;
+  
+  // Pattern 1: Two callsigns (ROOSTER MAVERICK)
+  if (KNOWN_CALLSIGNS.has(first) && KNOWN_CALLSIGNS.has(second)) {
+    console.log(`[detectConcat] Split callsigns: ${name} -> ${first}, ${second}`);
+    return [first, second];
+  }
+  
+  // Pattern 2: First name + Callsign (BRADLEY ROOSTER - probably wrong)
+  // This is tricky - could be real name. Only split if BOTH are known entities
+  if (COMMON_FIRST_NAMES.has(first) && KNOWN_CALLSIGNS.has(second)) {
+    // Could be "PETE MAVERICK" which might be intentional
+    // Only flag if second word is a known military callsign
+    if (!['MAVERICK', 'ROOSTER', 'PHOENIX', 'HANGMAN', 'CYCLONE', 'WARLOCK'].includes(second)) {
+      return null; // Probably a real compound name
+    }
+    console.log(`[detectConcat] Possible concat: ${name} (not splitting - might be real name)`);
+    return null;
+  }
+  
+  // Pattern 3: Callsign + First name (PHOENIX SARAH - definitely wrong)
+  if (KNOWN_CALLSIGNS.has(first) && COMMON_FIRST_NAMES.has(second)) {
+    console.log(`[detectConcat] Split callsign+name: ${name} -> ${first}, ${second}`);
+    return [first, second];
+  }
+  
+  return null;
+}
+
 // ---------- Main classification ----------
 function classifyCharacters(rawCandidates: string[]): CharBuckets {
   console.log('=== CLASSIFY CHARACTERS EXECUTING ===');
@@ -567,12 +626,26 @@ function classifyCharacters(rawCandidates: string[]): CharBuckets {
     featured_extras_with_lines: [],
     voices_and_functional: [],
     discarded: [],
-    debug: { input: rawCandidates?.length || 0 }
+    debug: { input: rawCandidates?.length || 0, splits: 0 }
   };
 
   const seen = new Set<string>();
-
+  
+  // Pre-process: expand concatenated names
+  const expandedCandidates: string[] = [];
   for (const raw of rawCandidates || []) {
+    const split = detectConcatenatedNames(raw);
+    if (split) {
+      expandedCandidates.push(...split);
+      buckets.debug!.splits = (buckets.debug!.splits || 0) + 1;
+    } else {
+      expandedCandidates.push(raw);
+    }
+  }
+  
+  console.log('[classifyCharacters] After expansion:', expandedCandidates.length, 'candidates');
+
+  for (const raw of expandedCandidates) {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 1: Check ORIGINAL input for technical suffixes BEFORE normalization
     // This catches things like "MAVERICK D", "WARLOCK PRELAP", "ROOSTER WHISPERS"
