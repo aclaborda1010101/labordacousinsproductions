@@ -77,6 +77,7 @@ interface ScriptData {
   props?: any[];
   subplots?: SubplotData[];
   plot_twists?: PlotTwistData[];
+  scenes?: SceneData[];
   counts?: {
     total_scenes?: number;
     total_dialogue_lines?: number;
@@ -86,6 +87,16 @@ interface ScriptData {
     characters_total?: number;
     locations_base_total?: number;
   };
+}
+
+interface SceneData {
+  scene_number?: number;
+  slugline?: string;
+  location?: string;
+  time_of_day?: string;
+  int_ext?: string;
+  summary?: string;
+  characters_present?: string[];
 }
 
 interface EpisodeData {
@@ -250,6 +261,14 @@ export function ScriptSummaryPanelAssisted({
           props: props.length,
         });
         
+        // Hydrate scenes - handle both nested (scenes.list) and flat formats
+        let scenes: any[] = [];
+        if (Array.isArray(parsed.scenes)) {
+          scenes = parsed.scenes;
+        } else if (parsed.scenes?.list && Array.isArray(parsed.scenes.list)) {
+          scenes = parsed.scenes.list;
+        }
+        
         setScriptData({
           id: script.id,
           title: parsed.title || 'Guion',
@@ -263,6 +282,7 @@ export function ScriptSummaryPanelAssisted({
           props,
           subplots: parsed.subplots || [],
           plot_twists: parsed.plot_twists || [],
+          scenes,
           counts,
         });
       }
@@ -997,6 +1017,45 @@ export function ScriptSummaryPanelAssisted({
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* Scenes from Analysis */}
+                {scriptData.scenes && scriptData.scenes.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Film className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">Escenas del Análisis ({scriptData.scenes.length})</span>
+                    </div>
+                    <ScrollArea className="max-h-48">
+                      <div className="space-y-1">
+                        {scriptData.scenes.slice(0, 50).map((scene, i) => (
+                          <div key={i} className="text-xs bg-muted/50 rounded px-2 py-1.5 flex items-start gap-2">
+                            <span className="font-mono text-muted-foreground w-6 flex-shrink-0">
+                              {scene.scene_number || i + 1}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <span className="font-medium">
+                                {scene.slugline || `${scene.int_ext || ''} ${scene.location || 'Escena'} - ${scene.time_of_day || ''}`.trim()}
+                              </span>
+                              {scene.summary && (
+                                <p className="text-muted-foreground line-clamp-1 mt-0.5">{scene.summary}</p>
+                              )}
+                            </div>
+                            {scene.characters_present && scene.characters_present.length > 0 && (
+                              <Badge variant="outline" className="text-[10px] flex-shrink-0">
+                                {scene.characters_present.length} pers.
+                              </Badge>
+                            )}
+                          </div>
+                        ))}
+                        {scriptData.scenes.length > 50 && (
+                          <div className="text-xs text-muted-foreground text-center py-1">
+                            +{scriptData.scenes.length - 50} escenas más...
+                          </div>
+                        )}
+                      </div>
+                    </ScrollArea>
                   </div>
                 )}
 
