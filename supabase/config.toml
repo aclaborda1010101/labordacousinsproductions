@@ -204,10 +204,12 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.forge-stt]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
 
 [functions.forge-tts]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # VISUAL BIBLE (V3.1 - Style Analysis)
