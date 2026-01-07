@@ -738,12 +738,12 @@ export function ScriptSummaryPanelAssisted({
 
       {/* Header Card - Overview (simplified) */}
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <CardHeader className="pb-3 px-3 sm:px-6">
+          <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <CardTitle className="text-xl flex items-center gap-3">
-                <div className="p-2 bg-primary/20 rounded-lg flex-shrink-0">
-                  <Film className="h-5 w-5 text-primary" />
+              <CardTitle className="text-lg sm:text-xl flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-primary/20 rounded-lg flex-shrink-0">
+                  <Film className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 </div>
                 {editingMainTitle && canEditTitles ? (
                   <Input
@@ -760,7 +760,7 @@ export function ScriptSummaryPanelAssisted({
                   />
                 ) : (
                   <span 
-                    className={`truncate ${canEditTitles ? 'cursor-pointer hover:text-primary transition-colors group' : ''}`}
+                    className={`break-words ${canEditTitles ? 'cursor-pointer hover:text-primary transition-colors group' : ''}`}
                     onClick={() => {
                       if (canEditTitles) {
                         setTempTitle(scriptData.title);
@@ -776,7 +776,7 @@ export function ScriptSummaryPanelAssisted({
                 )}
               </CardTitle>
               {scriptData.synopsis && (
-                <CardDescription className="mt-2 line-clamp-2">
+                <CardDescription className="mt-2 line-clamp-2 text-xs sm:text-sm">
                   {scriptData.synopsis}
                 </CardDescription>
               )}
@@ -785,12 +785,12 @@ export function ScriptSummaryPanelAssisted({
             {/* Consolidated Export Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-1 sm:gap-2 flex-shrink-0 px-2 sm:px-3">
                   <FileDown className="h-4 w-4" />
-                  Exportar
+                  <span className="hidden sm:inline">Exportar</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-popover z-50">
                 <DropdownMenuItem onClick={handleExportOutlinePDF}>
                   <Sparkles className="h-4 w-4 mr-2" />
                   Outline Pro (PDF)
@@ -808,30 +808,30 @@ export function ScriptSummaryPanelAssisted({
           </div>
         </CardHeader>
         
-        <CardContent className="pt-0">
-          {/* Quick stats - More compact */}
-          <div className="grid grid-cols-5 gap-2">
-            <div className="p-3 bg-background/50 rounded-lg text-center">
-              <div className="text-2xl font-bold text-primary">{scriptData.episodes.length}</div>
-              <div className="text-xs text-muted-foreground">
+        <CardContent className="pt-0 px-3 sm:px-6">
+          {/* Quick stats - Responsive grid */}
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-lg sm:text-2xl font-bold text-primary">{scriptData.episodes.length}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">
                 {projectFormat === 'film' ? 'Actos' : projectFormat === 'short' ? 'Partes' : 'Eps'}
               </div>
             </div>
-            <div className="p-3 bg-background/50 rounded-lg text-center">
-              <div className="text-2xl font-bold text-primary">{totalScenes}</div>
-              <div className="text-xs text-muted-foreground">Escenas</div>
+            <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-lg sm:text-2xl font-bold text-primary">{totalScenes}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Escenas</div>
             </div>
-            <div className="p-3 bg-background/50 rounded-lg text-center">
-              <div className="text-2xl font-bold text-primary">{scriptData.counts?.characters_total || scriptData.characters?.length || 0}</div>
-              <div className="text-xs text-muted-foreground">Personajes</div>
+            <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-lg sm:text-2xl font-bold text-primary">{scriptData.counts?.characters_total || scriptData.characters?.length || 0}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Personajes</div>
             </div>
-            <div className="p-3 bg-background/50 rounded-lg text-center">
-              <div className="text-2xl font-bold text-primary">{scriptData.locations?.length || 0}</div>
-              <div className="text-xs text-muted-foreground">Locs</div>
+            <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-lg sm:text-2xl font-bold text-primary">{scriptData.locations?.length || 0}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Locs</div>
             </div>
-            <div className="p-3 bg-background/50 rounded-lg text-center">
-              <div className="text-2xl font-bold text-primary">{scriptData.props?.length || 0}</div>
-              <div className="text-xs text-muted-foreground">Props</div>
+            <div className="p-2 sm:p-3 bg-background/50 rounded-lg text-center">
+              <div className="text-lg sm:text-2xl font-bold text-primary">{scriptData.props?.length || 0}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Props</div>
             </div>
           </div>
         </CardContent>
