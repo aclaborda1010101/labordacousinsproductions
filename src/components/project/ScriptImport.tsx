@@ -868,6 +868,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           scenes: scenes,
           props: propsArr,
           counts,
+          parsedJson: parsed, // Keep raw parsed JSON for extended export
         };
 
         setGeneratedScript(hydratedScriptData);

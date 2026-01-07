@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { hydrateCharacters, hydrateLocations, hydrateScenes, getBreakdownPayload } from '@/lib/breakdown/hydrate';
 
 /**
  * Professional Screenplay PDF Export
@@ -101,12 +102,14 @@ interface ScreenplayData {
   characters?: any[];
   locations?: any[];
   props?: any[];
+  parsedJson?: any; // Raw parsed JSON for extended extraction data
 }
 
 // Export mode option
 interface ExportOptions {
   episodeOnly?: number;
   includeProductionDetails?: boolean; // Include shots, camera, lighting info
+  includeCastingReport?: boolean; // Include casting report with dialogue metrics
 }
 
 // Page dimensions (US Letter in pts at 72 DPI)
@@ -129,6 +132,62 @@ const PARENTHETICAL_LEFT = 216; // 3" from left edge
 // Line heights
 const LINE_HEIGHT = 12; // Courier 12pt = 12 line height
 
+// Helper functions for character metrics (from CastingReportTable logic)
+function getDialogueLines(c: any): number {
+  const candidates = [
+    c.dialogue_lines,
+    c.dialogueLineCount,
+    c.dialogue_line_count,
+    c.lines,
+    c.dialogue?.lines,
+    c.dialogue?.count,
+    c.dialogue?.line_count,
+    c.counts?.dialogue_lines,
+    c.counts?.lines,
+    c.dialogue_words ? Math.ceil(c.dialogue_words / 10) : null,
+  ];
+  for (const v of candidates) {
+    const n = typeof v === "string" ? Number(v) : v;
+    if (typeof n === "number" && Number.isFinite(n) && n > 0) return n;
+  }
+  return 0;
+}
+
+function getScenesCount(c: any): number {
+  return c.scenes_count ?? c.scene_count ?? c.scenes?.length ?? c.scene_ids?.length ?? 0;
+}
+
+function getRole(c: any): string {
+  return c.role ?? c.narrative_weight ?? c.classification ?? c.type ?? "unknown";
+}
+
+function getName(c: any): string {
+  return c.name ?? c.character ?? c.id ?? "UNKNOWN";
+}
+
+function getConfidenceLevel(c: any): "high" | "medium" | "low" {
+  const hasDialogue = getDialogueLines(c) > 0;
+  const hasScenes = getScenesCount(c) > 0;
+  const hasSlugline = !!c.detected_in_slugline || !!c.in_slugline;
+  const hasDialogueBlock = !!c.has_dialogue_block || hasDialogue;
+  
+  if (hasDialogueBlock && hasScenes) return "high";
+  if (hasDialogue || hasSlugline) return "medium";
+  return "low";
+}
+
+const ROLE_LABELS: Record<string, string> = {
+  protagonist: "Protagonista",
+  "co-protagonist": "Co-Protagonista",
+  major_supporting: "Secundario Principal",
+  supporting: "Secundario",
+  minor_speaking: "Menor con Diálogo",
+  featured_extra: "Extra Destacado",
+  voice: "Voz",
+  functional: "Funcional",
+  unknown: "Desconocido",
+};
+
 export function exportScreenplayPDF(screenplay: ScreenplayData, options?: ExportOptions) {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -136,7 +195,8 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: Export
     format: 'letter'
   });
 
-  const includeProduction = options?.includeProductionDetails ?? true; // Default to include production details
+  const includeProduction = options?.includeProductionDetails ?? true;
+  const includeCasting = options?.includeCastingReport ?? true;
   let currentY = MARGIN_TOP;
   let pageNumber = 1;
 
@@ -515,6 +575,112 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: Export
     writeTransition('FADE OUT.');
   }
 
+  // ========== CASTING REPORT (Extended Extraction Data) ==========
+  if (includeCasting && screenplay.parsedJson) {
+    const payload = getBreakdownPayload(screenplay.parsedJson) ?? screenplay.parsedJson;
+    const chars = hydrateCharacters(payload);
+    const locs = hydrateLocations(payload);
+    const scenes = hydrateScenes(payload);
+    
+    if (chars.length > 0) {
+      addPage();
+      
+      // Title
+      currentY = MARGIN_TOP + 20;
+      doc.setFont('Courier', 'bold');
+      doc.setFontSize(16);
+      writeCentered('CASTING REPORT', { bold: true, uppercase: true });
+      currentY += LINE_HEIGHT;
+      
+      // Summary stats
+      const totalDialogueLines = chars.reduce((sum: number, c: any) => sum + getDialogueLines(c), 0);
+      doc.setFont('Courier', 'normal');
+      doc.setFontSize(11);
+      writeLine(`Total Personajes: ${chars.length} | Escenas: ${scenes.length} | Localizaciones: ${locs.length} | Líneas de Diálogo: ${totalDialogueLines}`, MARGIN_LEFT, { fontSize: 11 });
+      currentY += LINE_HEIGHT;
+      
+      // Separator
+      doc.setDrawColor(150);
+      doc.line(MARGIN_LEFT, currentY, PAGE_WIDTH - MARGIN_RIGHT, currentY);
+      currentY += LINE_HEIGHT * 1.5;
+      
+      // Table header
+      doc.setFont('Courier', 'bold');
+      doc.setFontSize(10);
+      const colWidths = { rank: 30, name: 120, role: 100, lines: 50, scenes: 50, conf: 80 };
+      let xPos = MARGIN_LEFT;
+      doc.text('#', xPos, currentY);
+      xPos += colWidths.rank;
+      doc.text('PERSONAJE', xPos, currentY);
+      xPos += colWidths.name;
+      doc.text('ROL', xPos, currentY);
+      xPos += colWidths.role;
+      doc.text('LÍNEAS', xPos, currentY);
+      xPos += colWidths.lines;
+      doc.text('ESCENAS', xPos, currentY);
+      xPos += colWidths.scenes;
+      doc.text('CONFIANZA', xPos, currentY);
+      currentY += LINE_HEIGHT;
+      
+      // Separator
+      doc.line(MARGIN_LEFT, currentY - 4, PAGE_WIDTH - MARGIN_RIGHT, currentY - 4);
+      currentY += 4;
+      
+      // Build and sort rows
+      const rows = chars.map((c: any) => ({
+        name: getName(c),
+        role: getRole(c),
+        lines: getDialogueLines(c),
+        scenes: getScenesCount(c),
+        confidence: getConfidenceLevel(c),
+      }));
+      rows.sort((a: any, b: any) => (b.lines - a.lines) || a.name.localeCompare(b.name));
+      
+      // Print rows
+      doc.setFont('Courier', 'normal');
+      rows.forEach((row: any, idx: number) => {
+        checkPageBreak(2);
+        xPos = MARGIN_LEFT;
+        doc.text(String(idx + 1), xPos, currentY);
+        xPos += colWidths.rank;
+        doc.text(row.name.substring(0, 18), xPos, currentY);
+        xPos += colWidths.name;
+        doc.text((ROLE_LABELS[row.role] || row.role).substring(0, 14), xPos, currentY);
+        xPos += colWidths.role;
+        doc.text(String(row.lines), xPos, currentY);
+        xPos += colWidths.lines;
+        doc.text(String(row.scenes), xPos, currentY);
+        xPos += colWidths.scenes;
+        const confLabel = row.confidence === 'high' ? 'ALTA' : row.confidence === 'medium' ? 'MEDIA' : 'BAJA';
+        doc.text(confLabel, xPos, currentY);
+        currentY += LINE_HEIGHT;
+      });
+      
+      // Locations section
+      if (locs.length > 0) {
+        currentY += LINE_HEIGHT;
+        checkPageBreak(4);
+        doc.setFont('Courier', 'bold');
+        doc.setFontSize(14);
+        writeLine('LOCALIZACIONES', MARGIN_LEFT, { bold: true, uppercase: true, fontSize: 14 });
+        currentY += LINE_HEIGHT / 2;
+        
+        doc.setFont('Courier', 'normal');
+        doc.setFontSize(10);
+        locs.forEach((loc: any, idx: number) => {
+          checkPageBreak(2);
+          const locName = loc.name || loc.location || 'UBICACIÓN';
+          const locType = loc.type || loc.int_ext || '';
+          const locDesc = loc.description || loc.traits || '';
+          writeLine(`${idx + 1}. ${locName.toUpperCase()}${locType ? ` (${locType})` : ''}`, MARGIN_LEFT, { fontSize: 10 });
+          if (locDesc) {
+            writeWrapped(locDesc, MARGIN_LEFT + 20, TEXT_WIDTH - 40, { italic: true, fontSize: 9 });
+          }
+        });
+      }
+    }
+  }
+
   // ========== PAGE NUMBERS ==========
   const totalPages = doc.getNumberOfPages();
   for (let i = 2; i <= totalPages; i++) {
@@ -526,7 +692,7 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: Export
 
   // Save
   const filename = isSingleEpisode 
-    ? `${screenplay.title.replace(/\s+/g, '_')}_EP${options.episodeOnly! + 1}.pdf`
+    ? `${screenplay.title.replace(/\s+/g, '_')}_EP${options?.episodeOnly! + 1}.pdf`
     : `${screenplay.title.replace(/\s+/g, '_')}_GUION_COMPLETO.pdf`;
   
   doc.save(filename);

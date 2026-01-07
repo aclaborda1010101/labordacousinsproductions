@@ -97,6 +97,7 @@ interface ScriptData {
     characters_total?: number;
     locations_base_total?: number;
   };
+  parsedJson?: any; // Raw parsed JSON for extended export
 }
 
 interface SceneData {
@@ -294,6 +295,7 @@ export function ScriptSummaryPanelAssisted({
           plot_twists: parsed.plot_twists || [],
           scenes,
           counts,
+          parsedJson: parsed, // Keep raw parsed JSON for extended export
         });
       }
 
@@ -645,7 +647,7 @@ export function ScriptSummaryPanelAssisted({
     }
   };
 
-  // Export script PDF
+  // Export script PDF with extended extraction data
   const handleExportPDF = () => {
     if (!scriptData) return;
     try {
@@ -655,9 +657,11 @@ export function ScriptSummaryPanelAssisted({
         episodes: scriptData.episodes as any[],
         characters: scriptData.characters,
         locations: scriptData.locations,
+        parsedJson: scriptData.parsedJson, // Include raw parsed JSON for casting report
       });
-      toast.success('Guion PDF exportado');
+      toast.success('Guion profesional PDF exportado');
     } catch (err) {
+      console.error('Export PDF error:', err);
       toast.error('Error al exportar PDF');
     }
   };
