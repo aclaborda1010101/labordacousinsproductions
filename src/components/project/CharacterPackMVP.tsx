@@ -1,10 +1,11 @@
 /**
- * CharacterPackMVP - Iceberg Architecture UI
- * Shows 4 MVP slots: hero_front, profile_left, back, expression_neutral
- * Adapts display based on creative mode (ASSISTED/PRO)
+ * CharacterPackMVP - ASSISTED Mode (Expanded to 12 slots)
+ * Simple upload-first flow with automatic generation
+ * Phase 1: User uploads frontal photo (required)
+ * Phase 2: System auto-generates remaining 11 slots
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -21,33 +22,49 @@ import {
   Video,
   ChevronDown,
   ChevronUp,
+  Upload,
+  Sparkles,
+  Camera,
+  Palette,
 } from 'lucide-react';
 
-// MVP slot types in order
-const MVP_SLOTS = ['hero_front', 'profile_left', 'back', 'expression_neutral'] as const;
-type MVPSlotType = typeof MVP_SLOTS[number];
+// ============================================
+// 12 ESSENTIAL MODEL PACK (Same as PRO)
+// ============================================
 
-const SLOT_LABELS: Record<MVPSlotType, string> = {
-  hero_front: 'Frontal (Hero)',
-  profile_left: 'Perfil',
-  back: 'Espalda',
-  expression_neutral: 'Expresión neutral',
-};
+const UPLOAD_SLOTS = [
+  { type: 'ref_closeup_front', label: 'Primer Plano Frontal', required: true },
+];
 
-const SLOT_DESCRIPTIONS: Record<MVPSlotType, string> = {
-  hero_front: 'Imagen principal del personaje',
-  profile_left: 'Vista lateral izquierda',
-  back: 'Vista posterior',
-  expression_neutral: 'Expresión facial neutra',
-};
+const TURNAROUND_SLOTS = [
+  { type: 'turn_front_34', label: 'Frontal 3/4', viewAngle: 'front_34' },
+  { type: 'turn_side', label: 'Lateral', viewAngle: 'side' },
+  { type: 'turn_back', label: 'Espalda', viewAngle: 'back' },
+  { type: 'turn_back_34', label: 'Espalda 3/4', viewAngle: 'back_34' },
+];
+
+const EXPRESSION_SLOTS = [
+  { type: 'expr_neutral', label: 'Neutral', expression: 'neutral' },
+  { type: 'expr_happy', label: 'Alegre', expression: 'happy' },
+  { type: 'expr_sad', label: 'Triste', expression: 'sad' },
+  { type: 'expr_angry', label: 'Enojado', expression: 'angry' },
+  { type: 'expr_surprised', label: 'Sorprendido', expression: 'surprised' },
+  { type: 'expr_fear', label: 'Miedo', expression: 'fear' },
+];
+
+const ALL_SLOT_TYPES = [
+  ...UPLOAD_SLOTS.map(s => s.type),
+  ...TURNAROUND_SLOTS.map(s => s.type),
+  ...EXPRESSION_SLOTS.map(s => s.type),
+];
 
 interface PackSlot {
   id: string;
-  slot_type: MVPSlotType;
-  status: 'empty' | 'generating' | 'generated' | 'accepted';
+  slot_type: string;
+  status: string;
   image_url: string | null;
-  current_run_id: string | null;
-  accepted_run_id: string | null;
+  view_angle?: string | null;
+  expression_name?: string | null;
 }
 
 interface CharacterPackMVPProps {
@@ -71,57 +88,58 @@ export default function CharacterPackMVP({
   
   const [slots, setSlots] = useState<PackSlot[]>([]);
   const [loading, setLoading] = useState(true);
-  const [generatingSlot, setGeneratingSlot] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [autoGenerating, setAutoGenerating] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 11, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
-  const [isReadyForVideo, setIsReadyForVideo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Fetch or initialize slots
   const fetchSlots = useCallback(async () => {
     const { data: existing } = await supabase
       .from('character_pack_slots')
-      .select('id, slot_type, status, image_url, current_run_id, accepted_run_id')
+      .select('id, slot_type, status, image_url, view_angle, expression_name')
       .eq('character_id', characterId)
-      .in('slot_type', MVP_SLOTS);
+      .in('slot_type', ALL_SLOT_TYPES);
 
     // Create missing slots
     const existingTypes = new Set(existing?.map(s => s.slot_type) || []);
-    const missingSlots = MVP_SLOTS.filter(t => !existingTypes.has(t));
+    const missingSlots = ALL_SLOT_TYPES.filter(t => !existingTypes.has(t));
 
     if (missingSlots.length > 0) {
-      const toInsert = missingSlots.map(slot_type => ({
-        character_id: characterId,
-        slot_type,
-        status: 'empty',
-        required: true,
-      }));
+      const toInsert = missingSlots.map(slot_type => {
+        const turnaround = TURNAROUND_SLOTS.find(s => s.type === slot_type);
+        const expression = EXPRESSION_SLOTS.find(s => s.type === slot_type);
+        
+        return {
+          character_id: characterId,
+          slot_type,
+          status: 'empty',
+          required: true,
+          view_angle: turnaround?.viewAngle || (expression ? 'front' : null),
+          expression_name: expression?.expression || null,
+        };
+      });
       
       await supabase.from('character_pack_slots').insert(toInsert);
       
       // Refetch
       const { data: updated } = await supabase
         .from('character_pack_slots')
-        .select('id, slot_type, status, image_url, current_run_id, accepted_run_id')
+        .select('id, slot_type, status, image_url, view_angle, expression_name')
         .eq('character_id', characterId)
-        .in('slot_type', MVP_SLOTS);
+        .in('slot_type', ALL_SLOT_TYPES);
       
       setSlots((updated || []) as PackSlot[]);
     } else {
       setSlots((existing || []) as PackSlot[]);
     }
 
-    // Fetch character pack state
-    const { data: char } = await supabase
-      .from('characters')
-      .select('pack_completeness_score, is_ready_for_video')
-      .eq('id', characterId)
-      .single();
-
-    if (char) {
-      setCompletenessScore(char.pack_completeness_score || 0);
-      setIsReadyForVideo(char.is_ready_for_video || false);
-    }
+    // Calculate completeness
+    const allSlots = existing || [];
+    const completed = allSlots.filter(s => s.image_url).length;
+    setCompletenessScore(Math.round((completed / 12) * 100));
 
     setLoading(false);
   }, [characterId]);
@@ -130,154 +148,112 @@ export default function CharacterPackMVP({
     fetchSlots();
   }, [fetchSlots]);
 
-  // Generate a single slot
-  const generateSlot = async (slotType: MVPSlotType) => {
-    const slot = slots.find(s => s.slot_type === slotType);
+  // Get slot by type
+  const getSlot = (type: string): PackSlot | undefined => slots.find(s => s.slot_type === type);
+
+  // Check if reference is uploaded
+  const hasReference = () => {
+    const ref = getSlot('ref_closeup_front');
+    return ref && ref.image_url;
+  };
+
+  // Upload reference photo
+  const uploadReference = async (file: File) => {
+    const slot = getSlot('ref_closeup_front');
     if (!slot) return;
 
-    setGeneratingSlot(slot.id);
-    
+    setUploading(true);
+
     try {
-      // Update slot to generating
-      await supabase
-        .from('character_pack_slots')
-        .update({ status: 'generating' })
-        .eq('id', slot.id);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${characterId}/ref_closeup_front_${Date.now()}.${fileExt}`;
 
-      // Build prompt
-      const prompt = [characterName, characterBio || ''].filter(Boolean).join('. ');
+      const { error: uploadError } = await supabase.storage
+        .from('character-packs')
+        .upload(fileName, file, { upsert: true });
 
-      const { data, error } = await supabase.functions.invoke('generate-run', {
-        body: {
-          projectId,
-          type: 'character',
-          phase: 'exploration',
-          engine: 'fal-ai/nano-banana-pro',
-          engineSelectedBy: 'auto',
-          prompt,
-          context: `Character: ${characterName}, Slot: ${SLOT_LABELS[slotType]}`,
-          params: {
-            characterId,
-            characterName,
-            slotId: slot.id,
-            slotType,
-            viewAngle: slotType === 'profile_left' ? 'side' : slotType === 'back' ? 'back' : 'front',
-            expressionName: slotType === 'expression_neutral' ? 'neutral' : undefined,
-            allowTextToImage: true,
-          },
-        },
-      });
+      if (uploadError) throw uploadError;
 
-      if (error) throw error;
+      const { data: urlData } = supabase.storage
+        .from('character-packs')
+        .getPublicUrl(fileName);
 
-      // Update slot with result
-      await supabase
-        .from('character_pack_slots')
-        .update({
-          status: 'generated',
-          image_url: data?.outputUrl || null,
-          current_run_id: data?.runId || null,
-        })
-        .eq('id', slot.id);
+      await supabase.from('character_pack_slots').update({
+        image_url: urlData.publicUrl,
+        status: 'uploaded',
+      }).eq('id', slot.id);
 
-      toast.success(`${SLOT_LABELS[slotType]} generado`);
-      fetchSlots();
-    } catch (err) {
-      console.error('Generation error:', err);
-      await supabase
-        .from('character_pack_slots')
-        .update({ status: 'empty' })
-        .eq('id', slot.id);
-      toast.error('Error al generar');
+      toast.success('Foto subida');
+      await fetchSlots();
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Error al subir');
     } finally {
-      setGeneratingSlot(null);
+      setUploading(false);
     }
   };
 
-  // Accept a slot
-  const acceptSlot = async (slotType: MVPSlotType) => {
-    const slot = slots.find(s => s.slot_type === slotType);
-    if (!slot || !slot.current_run_id) return;
-
-    try {
-      await supabase
-        .from('character_pack_slots')
-        .update({
-          status: 'accepted',
-          accepted_run_id: slot.current_run_id,
-        })
-        .eq('id', slot.id);
-
-      await supabase
-        .from('generation_runs')
-        .update({ verdict: 'approved' })
-        .eq('id', slot.current_run_id);
-
-      toast.success(`${SLOT_LABELS[slotType]} aceptado`);
-      
-      // For ASSISTED mode: auto-generate remaining slots after hero_front is accepted
-      if (!isPro && slotType === 'hero_front') {
-        autoGenerateRemainingSlots();
-      }
-      
-      fetchSlots();
-    } catch (err) {
-      toast.error('Error al aceptar');
+  // Auto-generate remaining 11 slots
+  const autoGenerateFullPack = async () => {
+    if (!hasReference()) {
+      toast.error('Sube primero la foto frontal');
+      return;
     }
-  };
 
-  // Auto-generate remaining slots (ASSISTED mode)
-  const autoGenerateRemainingSlots = async () => {
-    const remainingSlots = MVP_SLOTS.filter(t => t !== 'hero_front');
     setAutoGenerating(true);
 
     // Create background task
     const taskId = addTask({
-      title: `Preparando ${characterName} para video`,
-      description: 'Generando vistas adicionales del personaje',
+      title: `Creando pack de ${characterName}`,
+      description: 'Generando 11 imágenes automáticamente',
       type: 'character_generation',
       projectId,
       entityId: characterId,
     });
 
+    const allToGenerate = [
+      ...TURNAROUND_SLOTS,
+      ...EXPRESSION_SLOTS,
+    ];
+
     let completed = 0;
-    const total = remainingSlots.length;
+    const total = allToGenerate.length;
 
     try {
-      for (const slotType of remainingSlots) {
-        updateTask(taskId, { progress: Math.round((completed / total) * 100) });
-        
-        const slot = slots.find(s => s.slot_type === slotType);
-        if (!slot || slot.status === 'accepted') {
+      for (const slotDef of allToGenerate) {
+        const slot = getSlot(slotDef.type);
+        if (!slot || slot.image_url) {
           completed++;
           continue;
         }
 
-        // Generate
-        await generateSlot(slotType);
-        
-        // Refetch to get the updated slot
-        const { data: updatedSlot } = await supabase
-          .from('character_pack_slots')
-          .select('id, current_run_id')
-          .eq('character_id', characterId)
-          .eq('slot_type', slotType)
-          .single();
+        setProgress({ 
+          current: completed + 1, 
+          total, 
+          phase: 'viewAngle' in slotDef ? 'Turnarounds' : 'Expresiones' 
+        });
+        updateTask(taskId, { progress: Math.round((completed / total) * 100) });
 
-        // Auto-accept in ASSISTED mode
-        if (updatedSlot?.current_run_id) {
-          await supabase
-            .from('character_pack_slots')
-            .update({
-              status: 'accepted',
-              accepted_run_id: updatedSlot.current_run_id,
-            })
-            .eq('id', updatedSlot.id);
+        // Generate using edge function
+        try {
+          const response = await supabase.functions.invoke('generate-character', {
+            body: {
+              slotId: slot.id,
+              characterId,
+              characterName,
+              characterBio,
+              slotType: slotDef.type,
+              viewAngle: 'viewAngle' in slotDef ? slotDef.viewAngle : 'front',
+              expressionName: 'expression' in slotDef ? slotDef.expression : null,
+              projectId,
+            },
+          });
 
-          await supabase
-            .from('generation_runs')
-            .update({ verdict: 'approved' })
-            .eq('id', updatedSlot.current_run_id);
+          if (response.error) {
+            console.error('Generation error:', response.error);
+          }
+        } catch (err) {
+          console.error('Slot generation failed:', err);
         }
 
         completed++;
@@ -286,28 +262,44 @@ export default function CharacterPackMVP({
       // Log telemetry
       await supabase.from('editorial_events').insert({
         project_id: projectId,
-        event_type: 'character_pack_autogen_completed',
+        event_type: 'character_pack_full_autogen',
         asset_type: 'character',
         payload: { characterId, characterName, slotsGenerated: completed },
       });
 
       completeTask(taskId, { slotsGenerated: completed });
-      toast.success('Personaje listo para video');
+      toast.success('¡Pack de 12 modelos creado!');
       onPackComplete?.();
     } catch (err) {
       console.error('Auto-generate error:', err);
-      failTask(taskId, 'Error al generar pack automáticamente');
+      failTask(taskId, 'Error al generar pack');
     } finally {
       setAutoGenerating(false);
       fetchSlots();
     }
   };
 
-  // Get slot by type
-  const getSlot = (type: MVPSlotType): PackSlot | undefined => slots.find(s => s.slot_type === type);
+  // Handle file input
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Solo se permiten imágenes');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Máximo 10MB');
+        return;
+      }
+      uploadReference(file);
+    }
+    e.target.value = '';
+  };
 
-  // Get accepted count
-  const acceptedCount = slots.filter(s => s.status === 'accepted').length;
+  // Get counts by phase
+  const turnaroundCount = TURNAROUND_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
+  const expressionCount = EXPRESSION_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
+  const isComplete = completenessScore === 100;
 
   if (loading) {
     return (
@@ -317,100 +309,142 @@ export default function CharacterPackMVP({
     );
   }
 
-  const heroSlot = getSlot('hero_front');
+  const refSlot = getSlot('ref_closeup_front');
 
-  // ASSISTED MODE: Simple progress view
+  // ASSISTED MODE: Simple guided view
   if (!isPro) {
     return (
       <div className="space-y-4">
-        {/* Hero image and action */}
+        {/* Main card with photo and action */}
         <div className="flex gap-4 items-start">
-          <div className="relative w-32 h-32 bg-muted rounded-lg overflow-hidden flex items-center justify-center">
-            {heroSlot?.image_url ? (
-              <img src={heroSlot.image_url} alt={characterName} className="w-full h-full object-cover" />
+          {/* Photo thumbnail */}
+          <div 
+            className={`relative w-28 h-28 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer transition-all ${
+              refSlot?.image_url 
+                ? 'border-2 border-green-500/50' 
+                : 'border-2 border-dashed border-muted-foreground/40 hover:border-primary/60 bg-muted/30'
+            }`}
+            onClick={() => !refSlot?.image_url && fileInputRef.current?.click()}
+          >
+            {refSlot?.image_url ? (
+              <img src={refSlot.image_url} alt={characterName} className="w-full h-full object-cover" />
             ) : (
-              <User className="w-8 h-8 text-muted-foreground" />
+              <div className="text-center p-2">
+                <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-1" />
+                <span className="text-xs text-muted-foreground">Subir foto</span>
+              </div>
             )}
-            {generatingSlot === heroSlot?.id && (
+            {uploading && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-white" />
+                <Loader2 className="w-5 h-5 animate-spin text-white" />
+              </div>
+            )}
+            {refSlot?.image_url && (
+              <div className="absolute top-1 right-1">
+                <Badge variant="pass" className="text-xs px-1">
+                  <Check className="w-3 h-3" />
+                </Badge>
               </div>
             )}
           </div>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
 
-          <div className="flex-1 space-y-2">
-            <h4 className="font-medium">{characterName}</h4>
-            
-            {heroSlot?.status === 'empty' && (
+          {/* Info and action */}
+          <div className="flex-1 space-y-3">
+            <div>
+              <h4 className="font-medium">{characterName}</h4>
+              <p className="text-xs text-muted-foreground">Pack de 12 modelos</p>
+            </div>
+
+            {/* State-based UI */}
+            {!hasReference() && (
               <Button 
-                size="sm" 
-                onClick={() => generateSlot('hero_front')}
-                disabled={!!generatingSlot}
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
               >
-                {generatingSlot ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Image className="w-4 h-4 mr-2" />}
-                Generar imagen
+                {uploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
+                Subir foto frontal
               </Button>
             )}
-            
-            {heroSlot?.status === 'generated' && (
+
+            {hasReference() && !autoGenerating && completenessScore < 100 && (
               <Button 
-                size="sm" 
+                size="sm"
                 variant="gold"
-                onClick={() => acceptSlot('hero_front')}
+                onClick={autoGenerateFullPack}
               >
-                <Check className="w-4 h-4 mr-2" />
-                Aceptar
+                <Sparkles className="w-4 h-4 mr-2" />
+                Crear Pack Completo
               </Button>
             )}
-            
-            {heroSlot?.status === 'accepted' && !autoGenerating && acceptedCount < 4 && (
+
+            {autoGenerating && (
               <Badge variant="secondary" className="animate-pulse">
                 <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                Preparando para video...
+                {progress.phase} ({progress.current}/{progress.total})
+              </Badge>
+            )}
+
+            {isComplete && (
+              <Badge variant="pass">
+                <Video className="w-3 h-3 mr-1" />
+                Listo para video
               </Badge>
             )}
           </div>
         </div>
 
-        {/* Progress bar for pack completion */}
-        {heroSlot?.status === 'accepted' && (
+        {/* Progress section */}
+        {hasReference() && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Preparación del personaje</span>
+              <span className="text-muted-foreground">Pack de personaje</span>
               <span className="font-medium">{completenessScore}%</span>
             </div>
             <Progress value={completenessScore} className="h-2" />
             
-            {isReadyForVideo && (
-              <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                <Video className="w-4 h-4" />
-                <span>Listo para video</span>
+            {/* Mini phase indicators */}
+            <div className="flex gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Camera className="w-3 h-3" />
+                <span>{turnaroundCount}/4</span>
               </div>
-            )}
+              <div className="flex items-center gap-1">
+                <Palette className="w-3 h-3" />
+                <span>{expressionCount}/6</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
     );
   }
 
-  // PRO MODE: Full grid with all slots
+  // PRO MODE: Detailed grid view
   return (
     <div className="space-y-4">
-      {/* Status header */}
+      {/* Header with status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Badge variant={isReadyForVideo ? 'pass' : 'secondary'}>
-            {isReadyForVideo ? (
+          <Badge variant={isComplete ? 'pass' : 'secondary'}>
+            {isComplete ? (
               <>
                 <Video className="w-3 h-3 mr-1" />
-                Listo para video
+                Listo
               </>
             ) : (
-              `Pack: ${completenessScore}%`
+              `${completenessScore}%`
             )}
           </Badge>
           <span className="text-sm text-muted-foreground">
-            {acceptedCount}/4 slots aceptados
+            {slots.filter(s => s.image_url).length}/12 slots
           </span>
         </div>
         <Button
@@ -419,99 +453,116 @@ export default function CharacterPackMVP({
           onClick={() => setShowDetails(!showDetails)}
         >
           {showDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          {showDetails ? 'Ocultar' : 'Ver slots'}
+          {showDetails ? 'Ocultar' : 'Ver todo'}
         </Button>
       </div>
 
-      {/* Slots grid */}
+      {/* Quick action */}
+      {hasReference() && !isComplete && !autoGenerating && (
+        <Button variant="gold" className="w-full" onClick={autoGenerateFullPack}>
+          <Sparkles className="w-4 h-4 mr-2" />
+          Completar Pack ({12 - slots.filter(s => s.image_url).length} restantes)
+        </Button>
+      )}
+
+      {autoGenerating && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span>{progress.phase}</span>
+            <span>{progress.current}/{progress.total}</span>
+          </div>
+          <Progress value={(progress.current / progress.total) * 100} className="h-2" />
+        </div>
+      )}
+
+      {/* Detailed slots grid */}
       {showDetails && (
-        <div className="grid grid-cols-2 gap-3">
-          {MVP_SLOTS.map(slotType => {
-            const slot = getSlot(slotType);
-            const isGenerating = generatingSlot === slot?.id;
-            
-            return (
-              <Card key={slotType} className="overflow-hidden">
-                <CardContent className="p-3 space-y-2">
-                  {/* Thumbnail */}
-                  <div className="relative aspect-square bg-muted rounded overflow-hidden flex items-center justify-center">
+        <div className="space-y-4">
+          {/* Reference */}
+          <div>
+            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+              <Upload className="w-4 h-4" /> Referencia
+            </h4>
+            <div className="grid grid-cols-4 gap-2">
+              {UPLOAD_SLOTS.map(slotDef => {
+                const slot = getSlot(slotDef.type);
+                return (
+                  <div 
+                    key={slotDef.type}
+                    className={`aspect-square rounded-lg border overflow-hidden ${
+                      slot?.image_url ? 'border-green-500/50' : 'border-dashed border-muted'
+                    }`}
+                    onClick={() => !slot?.image_url && fileInputRef.current?.click()}
+                  >
                     {slot?.image_url ? (
-                      <img src={slot.image_url} alt={SLOT_LABELS[slotType]} className="w-full h-full object-cover" />
+                      <img src={slot.image_url} alt={slotDef.label} className="w-full h-full object-cover" />
                     ) : (
-                      <Image className="w-6 h-6 text-muted-foreground" />
-                    )}
-                    {isGenerating && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
-                      </div>
-                    )}
-                    {slot?.status === 'accepted' && (
-                      <div className="absolute top-1 right-1">
-                        <Badge variant="pass" className="text-xs px-1">
-                          <Check className="w-3 h-3" />
-                        </Badge>
+                      <div className="w-full h-full flex items-center justify-center bg-muted/30">
+                        <Upload className="w-4 h-4 text-muted-foreground" />
                       </div>
                     )}
                   </div>
+                );
+              })}
+            </div>
+          </div>
 
-                  {/* Label and status */}
-                  <div>
-                    <p className="text-sm font-medium truncate">{SLOT_LABELS[slotType]}</p>
-                    <p className="text-xs text-muted-foreground truncate">{SLOT_DESCRIPTIONS[slotType]}</p>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    {slot?.status === 'empty' && (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => generateSlot(slotType)}
-                        disabled={!!generatingSlot}
-                      >
-                        Generar
-                      </Button>
-                    )}
-                    
-                    {slot?.status === 'generated' && (
-                      <>
-                        <Button 
-                          size="sm" 
-                          variant="gold"
-                          className="flex-1"
-                          onClick={() => acceptSlot(slotType)}
-                        >
-                          Aceptar
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => generateSlot(slotType)}
-                          disabled={!!generatingSlot}
-                        >
-                          <RefreshCw className="w-3 h-3" />
-                        </Button>
-                      </>
-                    )}
-                    
-                    {slot?.status === 'accepted' && (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => generateSlot(slotType)}
-                        disabled={!!generatingSlot}
-                      >
-                        <RefreshCw className="w-3 h-3 mr-1" />
-                        Regenerar
-                      </Button>
+          {/* Turnarounds */}
+          <div>
+            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+              <Camera className="w-4 h-4" /> Turnarounds ({turnaroundCount}/4)
+            </h4>
+            <div className="grid grid-cols-4 gap-2">
+              {TURNAROUND_SLOTS.map(slotDef => {
+                const slot = getSlot(slotDef.type);
+                return (
+                  <div 
+                    key={slotDef.type}
+                    className={`aspect-square rounded-lg border overflow-hidden ${
+                      slot?.image_url ? 'border-green-500/50' : 'border-dashed border-muted'
+                    }`}
+                  >
+                    {slot?.image_url ? (
+                      <img src={slot.image_url} alt={slotDef.label} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground p-1">
+                        <Image className="w-4 h-4 mb-0.5" />
+                        <span className="text-[10px] text-center">{slotDef.label}</span>
+                      </div>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Expressions */}
+          <div>
+            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+              <Palette className="w-4 h-4" /> Expresiones ({expressionCount}/6)
+            </h4>
+            <div className="grid grid-cols-6 gap-2">
+              {EXPRESSION_SLOTS.map(slotDef => {
+                const slot = getSlot(slotDef.type);
+                return (
+                  <div 
+                    key={slotDef.type}
+                    className={`aspect-square rounded-lg border overflow-hidden ${
+                      slot?.image_url ? 'border-green-500/50' : 'border-dashed border-muted'
+                    }`}
+                  >
+                    {slot?.image_url ? (
+                      <img src={slot.image_url} alt={slotDef.label} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground p-0.5">
+                        <span className="text-[8px] text-center">{slotDef.label}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </div>
