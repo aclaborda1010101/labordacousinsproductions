@@ -185,22 +185,20 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     const episodeParam = searchParams.get('episode');
     const sceneParam = searchParams.get('scene');
     
-    if (episodeParam) {
+    if (episodeParam && scenes.length > 0) {
       const episodeNo = parseInt(episodeParam);
       // Expand the episode
       setExpandedEpisodes(prev => new Set(prev).add(episodeNo));
       setFilterEpisode(episodeParam);
       
-      if (sceneParam && scenes.length > 0) {
+      if (sceneParam) {
         const sceneNo = parseInt(sceneParam);
-        // Find the scene
+        // Find the specific scene
         const scene = scenes.find(s => s.episode_no === episodeNo && s.scene_no === sceneNo);
         if (scene) {
-          // Expand the scene
           setExpandedScenes(prev => new Set(prev).add(scene.id));
           if (!shots[scene.id]) fetchShots(scene.id);
           
-          // Scroll to the scene after a short delay
           setTimeout(() => {
             const sceneElement = document.getElementById(`scene-${scene.id}`);
             if (sceneElement) {
@@ -208,10 +206,27 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             }
           }, 300);
         }
+      } else {
+        // No specific scene - find first scene in episode without shots and expand it
+        const episodeScenes = scenes.filter(s => s.episode_no === episodeNo);
+        const firstSceneWithoutShots = episodeScenes.find(s => !shots[s.id] || shots[s.id].length === 0);
+        const targetScene = firstSceneWithoutShots || episodeScenes[0];
         
-        // Clear the URL params after processing
-        setSearchParams({});
+        if (targetScene) {
+          setExpandedScenes(prev => new Set(prev).add(targetScene.id));
+          if (!shots[targetScene.id]) fetchShots(targetScene.id);
+          
+          setTimeout(() => {
+            const sceneElement = document.getElementById(`scene-${targetScene.id}`);
+            if (sceneElement) {
+              sceneElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 300);
+        }
       }
+      
+      // Clear the URL params after processing
+      setSearchParams({});
     }
   }, [scenes, searchParams]);
 
