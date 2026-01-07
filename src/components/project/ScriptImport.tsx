@@ -3157,9 +3157,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </div>
                       <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
                         <DensityCompareCard 
-                          label="Props Clave" 
-                          achieved={breakdownPro?.props?.length || generatedScript.counts?.hero_props || 0} 
-                          target={generatedScript.density_targets?.hero_props_min}
+                          label="Props" 
+                          achieved={breakdownPro?.props?.length || generatedScript.counts?.props || generatedScript.props?.length || 0} 
+                          target={generatedScript.density_targets?.props_min}
                         />
                         <DensityCompareCard 
                           label="Setpieces" 
