@@ -3254,7 +3254,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         <Settings2 className="w-3 h-3" />
                         Densidad Narrativa
                       </Label>
-                      <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
+                      <div className="grid gap-2 grid-cols-2 md:grid-cols-5">
+                        <DensityCompareCard 
+                          label="Protagonistas" 
+                          achieved={generatedScript.counts?.protagonists || breakdownPro?.counts?.protagonists || 0} 
+                        />
                         <DensityCompareCard 
                           label="Personajes" 
                           achieved={generatedScript.counts?.characters_total || breakdownPro?.counts?.characters || generatedScript.main_characters?.length || 0} 
@@ -3999,7 +4003,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 {(generatedScript.episodes || [{ episode_number: 1, title: generatedScript.title || 'Película', synopsis: generatedScript.synopsis, scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => {
                   const episodeNum = ep.episode_number || epIdx + 1;
                   const viewMode = episodeViewMode[epIdx] || 'summary';
-                  const dialogueCount = ep.scenes?.reduce((sum: number, s: any) => sum + (s.dialogue?.length || 0), 0) || 0;
+                  // Calculate dialogue count from multiple possible sources
+                  const dialogueCount = ep.total_dialogue_lines 
+                    || ep.dialogue_lines 
+                    || ep.scenes?.reduce((sum: number, s: any) => sum + (s.dialogue_lines || s.dialogue?.length || 0), 0) 
+                    || 0;
                   
                   return (
                     <Card key={epIdx} className="overflow-hidden">
