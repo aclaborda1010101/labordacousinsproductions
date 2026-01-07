@@ -324,6 +324,38 @@ export function CharacterPackBuilder({
     }
   };
 
+  // Delete all images from a phase
+  const deletePhaseImages = async (slotTypes: string[]) => {
+    const slotsToDelete = slots.filter(s => 
+      slotTypes.includes(s.slot_type) && s.image_url
+    );
+    
+    if (slotsToDelete.length === 0) {
+      toast.info('No hay imágenes para eliminar');
+      return;
+    }
+    
+    try {
+      for (const slot of slotsToDelete) {
+        const urlParts = slot.image_url!.split('/character-packs/');
+        if (urlParts.length > 1) {
+          await supabase.storage.from('character-packs').remove([urlParts[1]]);
+        }
+        
+        await supabase.from('character_pack_slots').update({
+          image_url: null,
+          status: 'empty',
+          qc_score: null,
+        }).eq('id', slot.id);
+      }
+      
+      await fetchSlots();
+      toast.success(`${slotsToDelete.length} imágenes eliminadas`);
+    } catch (error) {
+      toast.error('Error al eliminar imágenes');
+    }
+  };
+
   // Use shared hook with Background Tasks
   const { generateSlots, generateSingleSlot } = useCharacterPackGeneration({
     characterId,
@@ -856,25 +888,37 @@ export function CharacterPackBuilder({
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       {BASE_VISUAL_SLOTS.map(slot => renderSlotCard(slot))}
                     </div>
-                    {!phase2Complete() && (
-                      <Button
-                        onClick={generateBaseVisual}
-                        disabled={generatingPhase === 'phase2'}
-                        className="w-full"
-                      >
-                        {generatingPhase === 'phase2' ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Generando...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            Generar 2 Vistas Base
-                          </>
-                        )}
-                      </Button>
-                    )}
+                    <div className="flex gap-2">
+                      {!phase2Complete() && (
+                        <Button
+                          onClick={(e) => { e.stopPropagation(); generateBaseVisual(); }}
+                          disabled={generatingPhase === 'phase2'}
+                          className="flex-1"
+                        >
+                          {generatingPhase === 'phase2' ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Generando...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Generar 2 Vistas Base
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      {phase2Count() > 0 && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={(e) => { e.stopPropagation(); deletePhaseImages(BASE_VISUAL_SLOTS.map(s => s.type)); }}
+                          title="Borrar todas las imágenes de esta fase"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
                   </>
                 )}
               </AccordionContent>
@@ -908,25 +952,37 @@ export function CharacterPackBuilder({
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       {TURNAROUND_SLOTS.map(slot => renderSlotCard(slot))}
                     </div>
-                    {!phase3Complete() && (
-                      <Button
-                        onClick={generateTurnarounds}
-                        disabled={generatingPhase === 'phase3'}
-                        className="w-full"
-                      >
-                        {generatingPhase === 'phase3' ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Generando...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            Generar 2 Vistas Traseras
-                          </>
-                        )}
-                      </Button>
-                    )}
+                    <div className="flex gap-2">
+                      {!phase3Complete() && (
+                        <Button
+                          onClick={(e) => { e.stopPropagation(); generateTurnarounds(); }}
+                          disabled={generatingPhase === 'phase3'}
+                          className="flex-1"
+                        >
+                          {generatingPhase === 'phase3' ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Generando...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Generar 4 Turnarounds
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      {phase3Count() > 0 && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={(e) => { e.stopPropagation(); deletePhaseImages(TURNAROUND_SLOTS.map(s => s.type)); }}
+                          title="Borrar todas las imágenes de esta fase"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
                   </>
                 )}
               </AccordionContent>
@@ -960,25 +1016,37 @@ export function CharacterPackBuilder({
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
                       {EXPRESSION_SLOTS.map(slot => renderSlotCard(slot))}
                     </div>
-                    {!phase4Complete() && (
-                      <Button
-                        onClick={generateExpressions}
-                        disabled={generatingPhase === 'phase4'}
-                        className="w-full"
-                      >
-                        {generatingPhase === 'phase4' ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Generando...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            Generar 6 Expresiones
-                          </>
-                        )}
-                      </Button>
-                    )}
+                    <div className="flex gap-2">
+                      {!phase4Complete() && (
+                        <Button
+                          onClick={(e) => { e.stopPropagation(); generateExpressions(); }}
+                          disabled={generatingPhase === 'phase4'}
+                          className="flex-1"
+                        >
+                          {generatingPhase === 'phase4' ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Generando...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Generar 6 Expresiones
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      {phase4Count() > 0 && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={(e) => { e.stopPropagation(); deletePhaseImages(EXPRESSION_SLOTS.map(s => s.type)); }}
+                          title="Borrar todas las imágenes de esta fase"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
                   </>
                 )}
               </AccordionContent>
