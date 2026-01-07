@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Checkbox } from '@/components/ui/checkbox';
 import { EntityCard, getEntityStatus, EntityStatus } from './EntityCard';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import NextStepNavigator from './NextStepNavigator';
 import {
   Plus,
   MapPin,
@@ -675,6 +676,16 @@ export default function LocationsList({ projectId }: LocationsListProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Next Step Navigator - show when there are locations with canon status */}
+      {locations.length > 0 && locations.some(l => l.canon_asset_id || l.accepted_run_id) && (
+        <NextStepNavigator
+          projectId={projectId}
+          currentStep="locations"
+          completionMessage="¡Localizaciones definidas!"
+          stats={`${locations.filter(l => l.canon_asset_id || l.accepted_run_id).length}/${locations.length} listas`}
+        />
+      )}
     </div>
   );
 }

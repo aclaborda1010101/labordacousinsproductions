@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VISUAL_PRESETS, type VisualPreset } from '@/lib/visualPresets';
+import NextStepNavigator from './NextStepNavigator';
 
 interface VisualBibleSetupProps {
   projectId: string;
@@ -379,27 +380,36 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
       )}
 
       {/* Action Button */}
-      <div className="flex justify-center">
-        <Button
-          size="lg"
-          variant="gold"
-          onClick={handleSave}
-          disabled={(!selectedPreset && !customAnalysis) || isSaving}
-          className="min-w-[200px]"
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              Guardando...
-            </>
-          ) : (
-            <>
-              <Check className="w-4 h-4 mr-2" />
-              Confirmar Estilo Visual
-            </>
-          )}
-        </Button>
-      </div>
+      {step !== 'complete' ? (
+        <div className="flex justify-center">
+          <Button
+            size="lg"
+            variant="gold"
+            onClick={handleSave}
+            disabled={(!selectedPreset && !customAnalysis) || isSaving}
+            className="min-w-[200px]"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                Guardando...
+              </>
+            ) : (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Confirmar Estilo Visual
+              </>
+            )}
+          </Button>
+        </div>
+      ) : (
+        <NextStepNavigator
+          projectId={projectId}
+          currentStep="style"
+          completionMessage="¡Estilo visual configurado!"
+          stats={selectedPreset ? VISUAL_PRESETS[selectedPreset]?.name : 'Estilo personalizado'}
+        />
+      )}
     </div>
   );
 }
