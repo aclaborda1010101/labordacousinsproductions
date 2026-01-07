@@ -474,6 +474,7 @@ function isCommonAdjective(word: string): boolean {
 /**
  * Detects if a word is likely a proper name
  * Based on linguistic patterns, not hardcoded lists
+ * CRITICAL: Must FIRST filter out technical terms and stopwords
  */
 function isProbablyProperName(word: string): boolean {
   // Must be in full caps in screenplays
@@ -484,6 +485,25 @@ function isProbablyProperName(word: string): boolean {
   
   // Too long (probably description or error)
   if (word.length > 15) return false;
+  
+  // CRITICAL: Block technical terms FIRST
+  if (isTechnicalTerm(word)) return false;
+  
+  // Block common Spanish/English stopwords
+  const stopwords = new Set([
+    'DE', 'DEL', 'LA', 'LAS', 'LOS', 'EL', 'UN', 'UNA', 'UNOS', 'UNAS',
+    'EN', 'CON', 'POR', 'PARA', 'SIN', 'SOBRE', 'BAJO', 'ENTRE',
+    'THE', 'A', 'AN', 'OF', 'AT', 'BY', 'FOR', 'AS', 'IS', 'ARE', 'WAS', 'WERE',
+    'PRUEBAS', 'PRUEBA', 'TEST', 'TESTING', 'TESTS',
+    'AND', 'OR', 'BUT', 'NOT', 'NO', 'SI', 'YES',
+    'QUE', 'QUIEN', 'CUAL', 'COMO', 'DONDE', 'CUANDO',
+    'MAS', 'MENOS', 'MUCHO', 'POCO', 'TODO', 'NADA',
+    'ESTE', 'ESTA', 'ESTO', 'ESE', 'ESA', 'ESO', 'AQUEL', 'AQUELLA'
+  ]);
+  if (stopwords.has(word)) return false;
+  
+  // Block common adjectives used as character modifiers
+  if (isCommonAdjective(word)) return false;
   
   // Common English name start patterns
   // - Start with consonant followed by vowel: JOHN, MARY, PETER
@@ -609,6 +629,9 @@ const CONJUNCTION_WORDS = ['AND', 'WITH', 'OR', 'PLUS', 'TO', 'FROM'];
 /**
  * Detects concatenated names using ONLY structural patterns
  * Does NOT use script-specific name lists
+ * 
+ * CRITICAL FIX: Two-word names like "PETE MITCHELL" are NORMAL character names.
+ * We should NOT split them unless there's strong evidence of concatenation.
  */
 function detectConcatenatedNames(name: string): string[] | null {
   const words = name.split(/\s+/).filter(w => w.length > 0);
@@ -623,53 +646,84 @@ function detectConcatenatedNames(name: string): string[] | null {
     return [words[0]];
   }
   
-  // Case 3: Two words where second is technical term
+  // Case 3: Two words where first is adjective (malformed)
+  // "JADED JACK" → ["JACK"]
+  if (words.length === 2 && isCommonAdjective(words[0])) {
+    console.log(`[detectConcat] Removing leading adjective: ${name} → ${words[1]}`);
+    return [words[1]];
+  }
+  
+  // Case 4: Two words where second is technical term
   // "MAVERICK CONTD" → ["MAVERICK"]
   if (words.length === 2 && isTechnicalTerm(words[1])) {
     console.log(`[detectConcat] Removing technical: ${name} → ${words[0]}`);
     return [words[0]];
   }
   
-  // Case 4: Three or more valid words → PROBABLY concatenation
-  // "JOHN MARY PETER" → ["JOHN", "MARY", "PETER"]
-  if (words.length >= 3) {
-    const validWords = words.filter(w => 
-      isProbablyProperName(w) && 
-      !isCommonAdjective(w) &&
-      !isTechnicalTerm(w)
-    );
-    
-    if (validWords.length >= 2) {
-      console.log(`[detectConcat] Splitting multi-name: ${name} → [${validWords.join(', ')}]`);
-      return validWords;
+  // Case 5: Two words where first is technical term (malformed)
+  // "CONTD MAVERICK" → ["MAVERICK"]
+  if (words.length === 2 && isTechnicalTerm(words[0])) {
+    console.log(`[detectConcat] Removing leading technical: ${name} → ${words[1]}`);
+    return [words[1]];
+  }
+  
+  // Case 6: Two-word name with title → KEEP AS IS (compound name)
+  // "DR SMITH", "CAPTAIN MILLER" → null (keep "DR SMITH")
+  if (words.length === 2 && isTitle(words[0])) {
+    return null;
+  }
+  
+  // Case 7: Two-word name with conjunction → DISCARD (error)
+  if (words.length === 2) {
+    const [first, second] = words;
+    if (CONJUNCTION_WORDS.includes(first) || CONJUNCTION_WORDS.includes(second)) {
+      console.log(`[detectConcat] Contains conjunction, discarding: ${name}`);
+      return []; // Return empty to discard
     }
   }
   
-  // Case 5: Two words that are both valid proper names
-  // HEURISTIC: If both have name structure and no connectors
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CRITICAL: TWO-WORD NAMES ARE NORMAL!
+  // "PETE MITCHELL", "JOHN SMITH", "MARY JONES" → KEEP AS IS
+  // Only split if 3+ words or clear concatenation pattern
+  // ═══════════════════════════════════════════════════════════════════════════
   if (words.length === 2) {
-    const [first, second] = words;
-    
-    // If there's a conjunction, it's an error
-    if (CONJUNCTION_WORDS.includes(first) || CONJUNCTION_WORDS.includes(second)) {
-      console.log(`[detectConcat] Contains conjunction: ${name}`);
-      return null; // Discard completely
+    // Two proper names = likely a first+last name, NOT concatenation
+    // Examples: PETE MITCHELL, SARAH CONNOR, JOHN WICK
+    return null; // Keep compound name
+  }
+  
+  // Case 8: Three or more words → Check for concatenation
+  // "JOHN MARY PETER" → likely 3 separate characters
+  // "SARAH JANE SMITH" → could be one character with 3 names
+  if (words.length >= 3) {
+    // If first word is title, it's probably one character
+    if (isTitle(words[0])) {
+      // "DR JOHN SMITH" → keep as is
+      return null;
     }
     
-    // If both are probable names
-    if (isProbablyProperName(first) && isProbablyProperName(second)) {
-      // CRITICAL DECISION: Is it a legitimate compound name or concatenation?
-      
-      // Indicators of legitimate compound name:
-      // - Second name very short (initial or nickname): "JOHN D", "MARY LOU"
-      if (second.length <= 3) return null;
-      
-      // - First word is title: "DR SMITH", "CAPTAIN MILLER"
-      if (isTitle(first)) return null;
-      
-      // If we get here, probably concatenation
-      console.log(`[detectConcat] Probable concat (2 names): ${name} → [${first}, ${second}]`);
-      return [first, second];
+    // Filter valid words (not adjectives/technical terms)
+    const validWords = words.filter(w => 
+      !isCommonAdjective(w) &&
+      !isTechnicalTerm(w) &&
+      w.length > 1
+    );
+    
+    // If 3+ valid words remain, it's likely concatenation
+    if (validWords.length >= 3) {
+      console.log(`[detectConcat] Splitting multi-name (3+): ${name} → [${validWords.join(', ')}]`);
+      return validWords;
+    }
+    
+    // If only 2 valid words remain after cleaning, keep as compound
+    if (validWords.length === 2) {
+      return null;
+    }
+    
+    // If 1 valid word, return just that
+    if (validWords.length === 1) {
+      return validWords;
     }
   }
   
