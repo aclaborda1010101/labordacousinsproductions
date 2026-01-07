@@ -64,21 +64,15 @@ import {
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 
 import {
-  hydrateCharacters as hydrateCharsUtil,
-  hydrateLocations as hydrateLocsUtil,
-  hydrateScenes as hydrateScenesUtil,
-  hydrateProps as hydratePropsUtil,
+  hydrateCharacters,
+  hydrateLocations,
+  hydrateScenes,
+  hydrateProps,
   getBreakdownPayload,
   buildRobustCounts,
   extractTitle,
   extractWriters,
 } from '@/lib/breakdown/hydrate';
-
-// Local wrappers with proper types
-const hydrateCharacters = (p: any): CharacterData[] => hydrateCharsUtil(p) as CharacterData[];
-const hydrateLocations = (p: any): LocationData[] => hydrateLocsUtil(p) as LocationData[];
-const hydrateScenes = (p: any): SceneData[] => hydrateScenesUtil(p) as SceneData[];
-const hydrateProps = (p: any): any[] => hydratePropsUtil(p);
 
 interface ScriptWorkspaceProps {
   projectId: string;
