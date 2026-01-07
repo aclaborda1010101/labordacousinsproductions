@@ -467,34 +467,61 @@ function isTechnicalTerm(word: string): boolean {
   const technical = new Set([
     // Screenplay technical terms
     'CONT', 'CONTD', 'CONTINUED', 'VO', 'OS', 'OC', 'OOV',
-    'PRE', 'LAP', 'PRELAP', 'FILTERED', 'RADIO', 'PHONE',
+    'PRE', 'LAP', 'PRELAP', 'POSTLAP', 'FILTERED', 'RADIO', 'PHONE',
     'WHISPER', 'SHOUT', 'YELL', 'TO', 'FROM', 'BEAT',
     'PAUSE', 'THEN', 'SUBTITLE', 'SINGING', 'READING',
-    'D', 'V0', 'ALT', 'ALTS', 'POSTLAP', 'CUT', 'FADE',
+    'D', 'V0', 'ALT', 'ALTS', 'CUT', 'FADE',
     'DISSOLVE', 'INTERCUT', 'MONTAGE', 'FLASHBACK', 'SERIES',
     'END', 'BEGINNING', 'LATER', 'CONTINUOUS', 'SAME', 'DAY', 'NIGHT',
     'MORNING', 'EVENING', 'DAWN', 'DUSK', 'ANGLE', 'POV', 'INSERT',
     'CLOSE', 'WIDE', 'MEDIUM', 'ESTABLISHING', 'TRACKING', 'DOLLY',
     'PAN', 'TILT', 'ZOOM', 'CRANE', 'STEADICAM', 'HANDHELD',
     
-    // Aviation/Military technical terms (Top Gun specific but universal)
+    // Common verbs/actions that slip through as "names"
+    'BREAKING', 'BREAKS', 'BREAK', 'RUNNING', 'RUNS', 'RUN',
+    'WALKING', 'WALKS', 'WALK', 'TURNING', 'TURNS', 'TURN',
+    'LOOKING', 'LOOKS', 'LOOK', 'COMING', 'COMES', 'COME',
+    'GOING', 'GOES', 'GO', 'MOVING', 'MOVES', 'MOVE',
+    'FALLING', 'FALLS', 'FALL', 'JUMPING', 'JUMPS', 'JUMP',
+    'FLYING', 'FLIES', 'FLY', 'DIVING', 'DIVES', 'DIVE',
+    'CLIMBING', 'CLIMBS', 'CLIMB', 'DROPPING', 'DROPS', 'DROP',
+    'PULLING', 'PULLS', 'PULL', 'PUSHING', 'PUSHES', 'PUSH',
+    'STOPPING', 'STOPS', 'STOP', 'STARTING', 'STARTS', 'START',
+    'ENTERING', 'ENTERS', 'ENTER', 'EXITING', 'EXITS', 'EXIT',
+    'OPENING', 'OPENS', 'OPEN', 'CLOSING', 'CLOSES', 'CLOSE',
+    'EJECT', 'EJECTS', 'EJECTING', 'IMPACT', 'IMPACTS',
+    'WHISPERS', 'SHOUTS', 'YELLS', 'SCREAMS', 'SCREAM',
+    
+    // Dialogue fragments / contractions
+    'THEYRE', 'THEYLL', 'THEYVE', 'DONT', 'DOESNT', 'DIDNT',
+    'WONT', 'WOULDNT', 'COULDNT', 'SHOULDNT', 'CANT', 'ISNT',
+    'WASNT', 'WERENT', 'HAVENT', 'HASNT', 'HADNT', 'ARENT',
+    'YOURE', 'YOULL', 'YOUVE', 'YOUD', 'IVE', 'ILL', 'ID',
+    'WEVE', 'WERE', 'WELL', 'WED', 'HERES', 'THERES', 'WHERES',
+    'WHATS', 'WHOS', 'LETS', 'THATS', 'ITS', 'AINT',
+    'GONNA', 'GOTTA', 'WANNA', 'KINDA', 'SORTA',
+    'YEAH', 'YEP', 'NOPE', 'OKAY', 'SHIT', 'DAMN', 'HELL',
+    'HOLY', 'JESUS', 'CHRIST', 'GOD', 'FUCK', 'FUCKING',
+    
+    // Aviation/Military technical terms
     'FLIGHT', 'LEVEL', 'ALTITUDE', 'SPEED', 'MACH', 'KNOTS',
     'FUEL', 'THRUST', 'AFTERBURNER', 'THROTTLE', 'CONTROL',
-    'SURFACES', 'FLAPS', 'GEAR', 'BRAKE', 'CANOPY', 'EJECT',
+    'SURFACES', 'FLAPS', 'GEAR', 'BRAKE', 'CANOPY',
     'MISSILE', 'RADAR', 'LOCK', 'TARGET', 'BOGEY', 'BANDIT',
     'WEAPONS', 'ORDNANCE', 'PAYLOAD', 'SORTIE', 'MISSION',
-    'FORMATION', 'WINGMAN', 'LEAD', 'TRAIL', 'BREAK', 'ENGAGE',
+    'FORMATION', 'WINGMAN', 'LEAD', 'TRAIL', 'ENGAGE',
     'DISENGAGE', 'RTB', 'BINGO', 'WINCHESTER', 'FOX', 'GUNS',
     'SPLASH', 'KILL', 'HIT', 'MISS', 'ABORT', 'WAVE', 'APPROACH',
     'LANDING', 'TAKEOFF', 'TAXI', 'RUNWAY', 'DECK', 'TOWER',
     'CLEARED', 'NEGATIVE', 'AFFIRMATIVE', 'COPY', 'ROGER', 'WILCO',
-    'MAYDAY', 'EMERGENCY', 'EJECT', 'BAILOUT', 'RESCUE', 'SAR',
+    'MAYDAY', 'EMERGENCY', 'BAILOUT', 'RESCUE', 'SAR',
     'LSO', 'CAG', 'AIRBOSS', 'HANDLER', 'CATAPULT', 'WIRE',
     'BALL', 'MEATBALL', 'CENTERLINE', 'GLIDESLOPE', 'AOA',
-    'ALTITUDE', 'HEADING', 'BEARING', 'VECTOR', 'INTERCEPT',
+    'HEADING', 'BEARING', 'VECTOR', 'INTERCEPT',
     'ROUTE', 'WAYPOINT', 'CHECKPOINT', 'IP', 'INGRESS', 'EGRESS',
     'ZONE', 'SECTOR', 'AIRSPACE', 'PATTERN', 'CIRCUIT', 'HOLDING',
-    'STANDBY', 'GO', 'NOGO', 'STATUS', 'READY', 'CLEARED',
+    'STANDBY', 'NOGO', 'STATUS', 'READY', 'PICTURE', 'TONE',
+    'CAPTURED', 'COMANCHE', 'OVERBOARD',
     
     // Colors (often used for teams/codes, not names)
     'RED', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'PURPLE', 'WHITE', 'BLACK',
@@ -524,21 +551,25 @@ function isTechnicalTerm(word: string): boolean {
     'GOOD', 'BAD', 'BEST', 'WORST', 'MORE', 'LESS', 'MOST', 'LEAST',
     'MAIN', 'OTHER', 'ANOTHER', 'SAME', 'DIFFERENT', 'VARIOUS',
     'ONLY', 'JUST', 'EVEN', 'STILL', 'ALSO', 'TOO', 'VERY', 'MUCH',
-    'WELL', 'JUST', 'NOW', 'HERE', 'THERE', 'WHERE', 'WHEN', 'HOW', 'WHY',
+    'NOW', 'HERE', 'THERE', 'WHERE', 'WHEN', 'HOW', 'WHY',
+    'HIMSELF', 'HERSELF', 'ITSELF', 'THEMSELVES', 'MYSELF', 'YOURSELF',
     
     // Script/production terms
     'TITLE', 'CREDIT', 'CREDITS', 'SUPER', 'CHYRON', 'CRAWL',
-    'SCENE', 'ACT', 'SEQUENCE', 'SHOT', 'TAKE', 'SETUP', 'ANGLE',
-    'ACTION', 'REACTION', 'BEAT', 'MOMENT', 'PAUSE', 'SILENCE',
+    'SCENE', 'ACT', 'SEQUENCE', 'SHOT', 'TAKE', 'SETUP',
+    'ACTION', 'REACTION', 'MOMENT', 'SILENCE',
     'TRANSITION', 'EFFECT', 'EFFECTS', 'VFX', 'SFX', 'CGI',
     
     // Time references
-    'TIME', 'HOUR', 'MINUTE', 'SECOND', 'MOMENT', 'INSTANT',
+    'TIME', 'HOUR', 'MINUTE', 'SECOND', 'INSTANT',
     'TODAY', 'TOMORROW', 'YESTERDAY', 'YEAR', 'MONTH', 'WEEK',
     
     // Vehicles/objects (not characters)
     'CAR', 'TRUCK', 'PLANE', 'JET', 'HELICOPTER', 'SHIP', 'BOAT',
     'TRAIN', 'BUS', 'BIKE', 'MOTORCYCLE', 'VEHICLE', 'AIRCRAFT',
+    
+    // Body parts / exclamations often misread
+    'MOM', 'DAD', 'JIBE', 'HO',
   ]);
   
   return technical.has(word.toUpperCase());
@@ -574,10 +605,24 @@ const CONJUNCTION_WORDS = ['AND', 'WITH', 'OR', 'PLUS', 'TO', 'FROM'];
  * We should NOT split them unless there's strong evidence of concatenation.
  */
 function detectConcatenatedNames(name: string): string[] | null {
-  const words = name.split(/\s+/).filter(w => w.length > 0);
+  // First, handle hyphenated technical suffixes before splitting
+  // "MAVERICK PRE-LAP" → "MAVERICK PRELAP" → then filter
+  const cleanedName = name
+    .replace(/\bPRE-LAP\b/gi, 'PRELAP')
+    .replace(/\bTO-SELF\b/gi, 'TOSELF')
+    .replace(/\bV\.O\.\b/gi, 'VO')
+    .replace(/\bO\.S\.\b/gi, 'OS')
+    .trim();
   
-  // Case 1: Single name → OK
-  if (words.length === 1) return null;
+  const words = cleanedName.split(/\s+/).filter(w => w.length > 0);
+  
+  // Case 1: Single name → Check if it's a technical term itself
+  if (words.length === 1) {
+    if (isTechnicalTerm(words[0])) {
+      return []; // Discard pure technical terms
+    }
+    return null;
+  }
   
   // Case 2: Two words where second is adjective
   // "JACK JADED" → ["JACK"]
@@ -595,6 +640,7 @@ function detectConcatenatedNames(name: string): string[] | null {
   
   // Case 4: Two words where second is technical term
   // "MAVERICK CONTD" → ["MAVERICK"]
+  // "ROOSTER PRELAP" → ["ROOSTER"]
   if (words.length === 2 && isTechnicalTerm(words[1])) {
     console.log(`[detectConcat] Removing technical: ${name} → ${words[0]}`);
     return [words[0]];
