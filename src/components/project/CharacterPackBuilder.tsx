@@ -6,7 +6,7 @@
  * Phase 3: Auto-generate Expressions (6 slots)
  */
 
-import { useState, useEffect, useCallback, useRef, DragEvent } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,10 +15,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
-  Loader2, Upload, Sparkles, CheckCircle2, XCircle, 
-  User, Camera, Palette, RefreshCw, Lock, Play, Trash2,
-  Image, ChevronRight
+  Loader2, Upload, Sparkles, CheckCircle2, 
+  Camera, Palette, RefreshCw, Lock, Play, Trash2,
+  Image, Bell
 } from 'lucide-react';
+import { useCharacterPackGeneration, SlotDefinition } from '@/hooks/useCharacterPackGeneration';
 
 // ============================================
 // 12 ESSENTIAL MODEL PACK
@@ -286,7 +287,17 @@ export function CharacterPackBuilder({
     }
   };
 
-  // Generate single slot
+  // Use shared hook with Background Tasks
+  const { generateSlots, generateSingleSlot } = useCharacterPackGeneration({
+    characterId,
+    characterName,
+    characterBio,
+    projectId,
+    onSlotComplete: () => fetchSlots(),
+    onAllComplete: onPackComplete,
+  });
+
+  // Generate single slot (for individual regeneration)
   const generateSlot = async (slotType: string, viewAngle?: string, expressionName?: string) => {
     const slot = getSlot(slotType);
     if (!slot) return;
@@ -294,26 +305,15 @@ export function CharacterPackBuilder({
     setGeneratingSlot(slot.id);
 
     try {
-      const response = await supabase.functions.invoke('generate-character', {
-        body: {
-          slotId: slot.id,
-          characterId,
-          characterName,
-          characterBio,
-          slotType,
-          viewAngle: viewAngle || slot.view_angle,
-          expressionName: expressionName || slot.expression_name,
-          styleToken,
-          projectId,
-        },
+      const result = await generateSingleSlot(slot.id, slotType, {
+        viewAngle: viewAngle || slot.view_angle || undefined,
+        expression: expressionName || slot.expression_name || undefined,
       });
 
-      if (response.error) throw new Error(response.error.message);
-
-      if (response.data?.success) {
+      if (result.success) {
         toast.success(`${slotType} generado`);
       } else {
-        toast.warning('Generación completada con advertencias');
+        toast.error(result.error || 'Error al generar');
       }
       
       await fetchSlots();
@@ -325,68 +325,170 @@ export function CharacterPackBuilder({
     }
   };
 
-  // Generate all turnarounds (Phase 2)
+  // Generate all turnarounds (Phase 2) with Background Tasks
   const generateAllTurnarounds = async () => {
     if (!phase1Complete()) {
       toast.error('Sube primero la foto frontal obligatoria');
       return;
     }
 
-    setGeneratingPhase('phase2');
-    const toGenerate = TURNAROUND_SLOTS.filter(s => {
-      const slot = getSlot(s.type);
-      return !slot?.image_url;
-    });
+    const toGenerate: SlotDefinition[] = TURNAROUND_SLOTS
+      .filter(s => !getSlot(s.type)?.image_url)
+      .map(s => {
+        const slot = getSlot(s.type);
+        return {
+          id: slot?.id || '',
+          type: s.type,
+          label: s.label,
+          viewAngle: s.viewAngle,
+        };
+      })
+      .filter(s => s.id);
 
-    setPhaseProgress({ current: 0, total: toGenerate.length });
-
-    for (let i = 0; i < toGenerate.length; i++) {
-      const slotDef = toGenerate[i];
-      setPhaseProgress({ current: i + 1, total: toGenerate.length });
-      await generateSlot(slotDef.type, slotDef.viewAngle);
+    if (toGenerate.length === 0) {
+      toast.info('Todos los turnarounds ya están generados');
+      setActivePhase('phase3');
+      return;
     }
 
+    setGeneratingPhase('phase2');
+    setPhaseProgress({ current: 0, total: toGenerate.length });
+
+    toast.info(
+      <div className="flex items-center gap-2">
+        <Bell className="w-4 h-4" />
+        <span>Generando en segundo plano. Puedes navegar a otra página.</span>
+      </div>
+    );
+
+    const result = await generateSlots(
+      toGenerate,
+      `Turnarounds: ${characterName}`,
+      `Generando ${toGenerate.length} vistas del personaje`
+    );
+
     setGeneratingPhase(null);
-    toast.success('Turnarounds generados');
-    setActivePhase('phase3');
+    await fetchSlots();
+
+    if (result.success) {
+      toast.success(`Turnarounds generados (${result.completedCount})`);
+      setActivePhase('phase3');
+    }
   };
 
-  // Generate all expressions (Phase 3)
+  // Generate all expressions (Phase 3) with Background Tasks
   const generateAllExpressions = async () => {
     if (!phase2Complete()) {
       toast.error('Genera primero todos los turnarounds');
       return;
     }
 
-    setGeneratingPhase('phase3');
-    const toGenerate = EXPRESSION_SLOTS.filter(s => {
-      const slot = getSlot(s.type);
-      return !slot?.image_url;
-    });
+    const toGenerate: SlotDefinition[] = EXPRESSION_SLOTS
+      .filter(s => !getSlot(s.type)?.image_url)
+      .map(s => {
+        const slot = getSlot(s.type);
+        return {
+          id: slot?.id || '',
+          type: s.type,
+          label: s.label,
+          viewAngle: 'front',
+          expression: s.expression,
+        };
+      })
+      .filter(s => s.id);
 
-    setPhaseProgress({ current: 0, total: toGenerate.length });
-
-    for (let i = 0; i < toGenerate.length; i++) {
-      const slotDef = toGenerate[i];
-      setPhaseProgress({ current: i + 1, total: toGenerate.length });
-      await generateSlot(slotDef.type, 'front', slotDef.expression);
+    if (toGenerate.length === 0) {
+      toast.info('Todas las expresiones ya están generadas');
+      return;
     }
 
+    setGeneratingPhase('phase3');
+    setPhaseProgress({ current: 0, total: toGenerate.length });
+
+    toast.info(
+      <div className="flex items-center gap-2">
+        <Bell className="w-4 h-4" />
+        <span>Generando en segundo plano. Puedes navegar a otra página.</span>
+      </div>
+    );
+
+    const result = await generateSlots(
+      toGenerate,
+      `Expresiones: ${characterName}`,
+      `Generando ${toGenerate.length} expresiones del personaje`
+    );
+
     setGeneratingPhase(null);
-    toast.success('Expresiones generadas');
-    
-    if (onPackComplete) onPackComplete();
+    await fetchSlots();
+
+    if (result.success) {
+      toast.success(`Expresiones generadas (${result.completedCount})`);
+    }
   };
 
-  // Generate full pack
+  // Generate full pack with Background Tasks
   const generateFullPack = async () => {
     if (!phase1Complete()) {
       toast.error('Sube primero la foto frontal obligatoria');
       return;
     }
 
-    await generateAllTurnarounds();
-    await generateAllExpressions();
+    // Build all slots to generate
+    const allToGenerate: SlotDefinition[] = [];
+
+    // Add turnarounds if not complete
+    TURNAROUND_SLOTS.forEach(s => {
+      const slot = getSlot(s.type);
+      if (!slot?.image_url && slot?.id) {
+        allToGenerate.push({
+          id: slot.id,
+          type: s.type,
+          label: s.label,
+          viewAngle: s.viewAngle,
+        });
+      }
+    });
+
+    // Add expressions if not complete
+    EXPRESSION_SLOTS.forEach(s => {
+      const slot = getSlot(s.type);
+      if (!slot?.image_url && slot?.id) {
+        allToGenerate.push({
+          id: slot.id,
+          type: s.type,
+          label: s.label,
+          viewAngle: 'front',
+          expression: s.expression,
+        });
+      }
+    });
+
+    if (allToGenerate.length === 0) {
+      toast.info('El pack ya está completo');
+      return;
+    }
+
+    setGeneratingPhase('phase2');
+
+    toast.info(
+      <div className="flex items-center gap-2">
+        <Bell className="w-4 h-4" />
+        <span>Generando {allToGenerate.length} imágenes en segundo plano.</span>
+      </div>
+    );
+
+    const result = await generateSlots(
+      allToGenerate,
+      `Pack Completo: ${characterName}`,
+      `Generando ${allToGenerate.length} modelos del personaje`
+    );
+
+    setGeneratingPhase(null);
+    await fetchSlots();
+
+    if (result.success) {
+      toast.success(`Pack generado (${result.completedCount} imágenes)`);
+    }
   };
 
   // File input handler

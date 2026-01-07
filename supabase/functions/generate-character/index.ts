@@ -269,9 +269,11 @@ ${parts.join('\n')}
 function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null): string {
   const angleInstructions: Record<string, string> = {
     'front': 'front view, facing camera directly, standing straight, arms at sides',
+    'front_34': '3/4 front view, 45 degrees from front, standing straight, arms at sides',
     'side': 'side profile view, 90 degrees to camera, standing straight, arms at sides',
     'back': 'back view, facing away from camera, standing straight, arms at sides',
-    '3/4': '3/4 view, 45 degrees angle, standing straight, arms at sides'
+    'back_34': '3/4 back view, 45 degrees from behind, standing straight, arms at sides',
+    '3/4': '3/4 front view, 45 degrees from front, standing straight, arms at sides'
   };
 
   const angle = angleInstructions[viewAngle] || angleInstructions.front;
@@ -939,26 +941,58 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     generationMode = 'reference';
     console.log(`Using reference image: ${primaryAnchor.anchor_type} - ${primaryAnchor.image_url.substring(0, 50)}...`);
     
-    // Build prompt based on slot type
-    switch (request.slotType) {
-      case 'turnaround':
-        prompt = buildTurnaroundPrompt(visualDNA, request.viewAngle || 'front', styleConfig);
-        break;
-      case 'expression':
-        prompt = buildExpressionPrompt(visualDNA, request.expressionName || 'neutral', styleConfig);
-        break;
-      case 'outfit':
-        prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
-        break;
-      case 'closeup':
-      case 'anchor_closeup':
-        prompt = buildCloseupPrompt(visualDNA, styleConfig);
-        break;
-      case 'base_look':
-        prompt = buildBaseLookPrompt(visualDNA, styleConfig);
-        break;
-      default:
-        prompt = buildCloseupPrompt(visualDNA, styleConfig);
+    // Build prompt based on slot type - detect by prefix for extended slot types
+    const isTurnaround = request.slotType.startsWith('turn_') || request.slotType === 'turnaround';
+    const isExpression = request.slotType.startsWith('expr_') || request.slotType === 'expression';
+    const isOutfit = request.slotType.startsWith('outfit_') || request.slotType === 'outfit';
+    const isReference = request.slotType.startsWith('ref_');
+
+    // Extract view angle from slot type if not provided
+    const extractViewAngle = (slotType: string): string => {
+      const angleMap: Record<string, string> = {
+        'turn_front_34': 'front_34',
+        'turn_side': 'side',
+        'turn_back': 'back',
+        'turn_back_34': 'back_34',
+      };
+      return angleMap[slotType] || 'front';
+    };
+
+    // Extract expression from slot type if not provided
+    const extractExpression = (slotType: string): string => {
+      const exprMap: Record<string, string> = {
+        'expr_neutral': 'neutral',
+        'expr_happy': 'happy',
+        'expr_sad': 'sad',
+        'expr_angry': 'angry',
+        'expr_surprised': 'surprised',
+        'expr_fear': 'worried', // Map fear to worried which exists in instructions
+        'expr_focused': 'focused',
+        'expr_worried': 'worried',
+        'expr_laughing': 'laughing',
+        'expr_serious': 'serious',
+      };
+      return exprMap[slotType] || 'neutral';
+    };
+
+    if (isTurnaround) {
+      const angle = request.viewAngle || extractViewAngle(request.slotType);
+      console.log(`[TURNAROUND] Slot: ${request.slotType} -> Angle: ${angle}`);
+      prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig);
+    } else if (isExpression) {
+      const expression = request.expressionName || extractExpression(request.slotType);
+      console.log(`[EXPRESSION] Slot: ${request.slotType} -> Expression: ${expression}`);
+      prompt = buildExpressionPrompt(visualDNA, expression, styleConfig);
+    } else if (isOutfit) {
+      prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
+    } else if (isReference || request.slotType === 'closeup' || request.slotType === 'anchor_closeup') {
+      prompt = buildCloseupPrompt(visualDNA, styleConfig);
+    } else if (request.slotType === 'base_look') {
+      prompt = buildBaseLookPrompt(visualDNA, styleConfig);
+    } else {
+      // Default fallback
+      console.log(`[FALLBACK] Unknown slot type: ${request.slotType}, using closeup`);
+      prompt = buildCloseupPrompt(visualDNA, styleConfig);
     }
     
     const result = await generateWithReference(primaryAnchor.image_url, prompt);
