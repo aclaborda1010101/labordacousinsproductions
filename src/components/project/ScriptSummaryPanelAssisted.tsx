@@ -279,14 +279,15 @@ export function ScriptSummaryPanelAssisted({
           props = parsed.props.items;
         }
         
-        // Compute total characters across ALL categories (cast + featured + voices)
+        // Compute total characters from HYDRATED arrays (not from parsed_json counts)
         const castLen = characters.length;
         const featuredLen = featured_extras.length;
         const voicesLen = voices.length;
         const totalCharacters = castLen + featuredLen + voicesLen;
         
-        // Use counts from parsed_json if available, otherwise compute
-        const counts = parsed.counts || {
+        // Use counts from parsed_json as base, but OVERRIDE character counts with hydrated values
+        const counts = {
+          ...(parsed.counts || {}),
           cast_characters_total: castLen,
           featured_extras_total: featuredLen,
           voices_total: voicesLen,
@@ -294,14 +295,11 @@ export function ScriptSummaryPanelAssisted({
           locations_base_total: locations.length,
         };
         
-        // Ensure characters_total is always the sum
-        counts.characters_total = (counts.cast_characters_total || 0) + (counts.featured_extras_total || 0) + (counts.voices_total || 0);
-        
-        console.log('[ScriptSummary] Hydrated counts:', { 
+        console.log('[ScriptSummary] Hydrated counts from narrative_classification:', { 
           cast: castLen,
           featured: featuredLen,
           voices: voicesLen,
-          total: counts.characters_total,
+          total: totalCharacters,
           locations: locations.length, 
           props: props.length,
         });
