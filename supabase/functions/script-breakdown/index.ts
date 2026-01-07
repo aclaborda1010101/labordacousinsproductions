@@ -502,15 +502,86 @@ function isProbablyProperName(word: string): boolean {
  * Detects if a word is a screenplay technical term
  */
 function isTechnicalTerm(word: string): boolean {
-  const technical = [
+  // Comprehensive list of technical terms, common words, and aviation/military terms
+  // that should NEVER be treated as character names
+  const technical = new Set([
+    // Screenplay technical terms
     'CONT', 'CONTD', 'CONTINUED', 'VO', 'OS', 'OC', 'OOV',
     'PRE', 'LAP', 'PRELAP', 'FILTERED', 'RADIO', 'PHONE',
     'WHISPER', 'SHOUT', 'YELL', 'TO', 'FROM', 'BEAT',
     'PAUSE', 'THEN', 'SUBTITLE', 'SINGING', 'READING',
-    'D', 'V0', 'ALT', 'ALTS', 'POSTLAP'
-  ];
+    'D', 'V0', 'ALT', 'ALTS', 'POSTLAP', 'CUT', 'FADE',
+    'DISSOLVE', 'INTERCUT', 'MONTAGE', 'FLASHBACK', 'SERIES',
+    'END', 'BEGINNING', 'LATER', 'CONTINUOUS', 'SAME', 'DAY', 'NIGHT',
+    'MORNING', 'EVENING', 'DAWN', 'DUSK', 'ANGLE', 'POV', 'INSERT',
+    'CLOSE', 'WIDE', 'MEDIUM', 'ESTABLISHING', 'TRACKING', 'DOLLY',
+    'PAN', 'TILT', 'ZOOM', 'CRANE', 'STEADICAM', 'HANDHELD',
+    
+    // Aviation/Military technical terms (Top Gun specific but universal)
+    'FLIGHT', 'LEVEL', 'ALTITUDE', 'SPEED', 'MACH', 'KNOTS',
+    'FUEL', 'THRUST', 'AFTERBURNER', 'THROTTLE', 'CONTROL',
+    'SURFACES', 'FLAPS', 'GEAR', 'BRAKE', 'CANOPY', 'EJECT',
+    'MISSILE', 'RADAR', 'LOCK', 'TARGET', 'BOGEY', 'BANDIT',
+    'WEAPONS', 'ORDNANCE', 'PAYLOAD', 'SORTIE', 'MISSION',
+    'FORMATION', 'WINGMAN', 'LEAD', 'TRAIL', 'BREAK', 'ENGAGE',
+    'DISENGAGE', 'RTB', 'BINGO', 'WINCHESTER', 'FOX', 'GUNS',
+    'SPLASH', 'KILL', 'HIT', 'MISS', 'ABORT', 'WAVE', 'APPROACH',
+    'LANDING', 'TAKEOFF', 'TAXI', 'RUNWAY', 'DECK', 'TOWER',
+    'CLEARED', 'NEGATIVE', 'AFFIRMATIVE', 'COPY', 'ROGER', 'WILCO',
+    'MAYDAY', 'EMERGENCY', 'EJECT', 'BAILOUT', 'RESCUE', 'SAR',
+    'LSO', 'CAG', 'AIRBOSS', 'HANDLER', 'CATAPULT', 'WIRE',
+    'BALL', 'MEATBALL', 'CENTERLINE', 'GLIDESLOPE', 'AOA',
+    'ALTITUDE', 'HEADING', 'BEARING', 'VECTOR', 'INTERCEPT',
+    'ROUTE', 'WAYPOINT', 'CHECKPOINT', 'IP', 'INGRESS', 'EGRESS',
+    'ZONE', 'SECTOR', 'AIRSPACE', 'PATTERN', 'CIRCUIT', 'HOLDING',
+    'STANDBY', 'GO', 'NOGO', 'STATUS', 'READY', 'CLEARED',
+    
+    // Colors (often used for teams/codes, not names)
+    'RED', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'PURPLE', 'WHITE', 'BLACK',
+    'GOLD', 'SILVER', 'BROWN', 'PINK', 'GREY', 'GRAY',
+    
+    // Numbers and codes
+    'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN',
+    'ALPHA', 'BRAVO', 'CHARLIE', 'DELTA', 'ECHO', 'FOXTROT', 'GOLF', 'HOTEL',
+    'INDIA', 'JULIET', 'KILO', 'LIMA', 'MIKE', 'NOVEMBER', 'OSCAR', 'PAPA',
+    'QUEBEC', 'ROMEO', 'SIERRA', 'TANGO', 'UNIFORM', 'VICTOR', 'WHISKEY',
+    'XRAY', 'YANKEE', 'ZULU',
+    
+    // Common words that might appear but aren't names
+    'ALL', 'TEAM', 'GROUP', 'UNIT', 'SQUAD', 'CLASS', 'CREW', 'STAFF',
+    'EVERYONE', 'SOMEBODY', 'SOMEONE', 'NOBODY', 'ANYONE', 'EVERYBODY',
+    'CROWD', 'AUDIENCE', 'PEOPLE', 'OTHERS', 'GUESTS', 'VISITORS',
+    'SELF', 'BOTH', 'THEM', 'THEY', 'WE', 'US', 'YOU', 'HE', 'SHE', 'IT',
+    'ALARM', 'ALERT', 'WARNING', 'SIREN', 'BELL', 'BUZZER', 'HORN',
+    'SYSTEM', 'COMPUTER', 'SCREEN', 'DISPLAY', 'MONITOR', 'PANEL',
+    'DOOR', 'WINDOW', 'WALL', 'FLOOR', 'CEILING', 'ROOM', 'HALL',
+    'LIGHT', 'DARK', 'SHADOW', 'SOUND', 'NOISE', 'SILENCE', 'MUSIC',
+    'VOICE', 'VOICES', 'SPEECH', 'TALK', 'SPEAK', 'SAY', 'SAID',
+    'TOP', 'BOTTOM', 'LEFT', 'RIGHT', 'FRONT', 'BACK', 'SIDE',
+    'UP', 'DOWN', 'IN', 'OUT', 'ON', 'OFF', 'OVER', 'UNDER',
+    'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH', 'LAST', 'NEXT',
+    'NEW', 'OLD', 'BIG', 'SMALL', 'LONG', 'SHORT', 'HIGH', 'LOW',
+    'GOOD', 'BAD', 'BEST', 'WORST', 'MORE', 'LESS', 'MOST', 'LEAST',
+    'MAIN', 'OTHER', 'ANOTHER', 'SAME', 'DIFFERENT', 'VARIOUS',
+    'ONLY', 'JUST', 'EVEN', 'STILL', 'ALSO', 'TOO', 'VERY', 'MUCH',
+    'WELL', 'JUST', 'NOW', 'HERE', 'THERE', 'WHERE', 'WHEN', 'HOW', 'WHY',
+    
+    // Script/production terms
+    'TITLE', 'CREDIT', 'CREDITS', 'SUPER', 'CHYRON', 'CRAWL',
+    'SCENE', 'ACT', 'SEQUENCE', 'SHOT', 'TAKE', 'SETUP', 'ANGLE',
+    'ACTION', 'REACTION', 'BEAT', 'MOMENT', 'PAUSE', 'SILENCE',
+    'TRANSITION', 'EFFECT', 'EFFECTS', 'VFX', 'SFX', 'CGI',
+    
+    // Time references
+    'TIME', 'HOUR', 'MINUTE', 'SECOND', 'MOMENT', 'INSTANT',
+    'TODAY', 'TOMORROW', 'YESTERDAY', 'YEAR', 'MONTH', 'WEEK',
+    
+    // Vehicles/objects (not characters)
+    'CAR', 'TRUCK', 'PLANE', 'JET', 'HELICOPTER', 'SHIP', 'BOAT',
+    'TRAIN', 'BUS', 'BIKE', 'MOTORCYCLE', 'VEHICLE', 'AIRCRAFT',
+  ]);
   
-  return technical.includes(word.toUpperCase());
+  return technical.has(word.toUpperCase());
 }
 
 /**
