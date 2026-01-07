@@ -1096,10 +1096,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       // Calculate estimated time for user feedback
       const scriptLength = textToAnalyze.length;
-      const estimatedMinutes = Math.ceil(scriptLength / 5000); // ~5000 chars/min with Haiku
+      const estimatedMinutes = Math.ceil(scriptLength / 5000);
       
       console.log(`[ScriptWorkspace] Starting background analysis for ${scriptLength} chars (~${estimatedMinutes} min estimated)`);
-      toast.info(`Análisis iniciado con Claude Haiku 3.5`, { 
+      toast.info(`Análisis iniciado`, { 
         description: `Procesando ${Math.round(scriptLength / 1000)}k caracteres. Tiempo estimado: ~${estimatedMinutes} min. Puedes navegar a otras pantallas.`,
         duration: 8000 
       });
@@ -1403,7 +1403,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       const scriptLength = scriptTextNormalized.length;
       const estimatedMinutes = Math.ceil(scriptLength / 5000);
 
-      toast.info(`Extrayendo entidades con Claude Haiku 3.5`, { 
+      toast.info(`Extrayendo entidades`, { 
         description: `Tiempo estimado: ~${estimatedMinutes} min`,
         duration: 6000 
       });

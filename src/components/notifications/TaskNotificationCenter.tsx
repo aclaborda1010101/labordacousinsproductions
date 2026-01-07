@@ -25,7 +25,7 @@ const taskTypeLabels: Record<TaskType, string> = {
   pdf_export: 'Exportación PDF',
   batch_generation: 'Generación por Lotes',
   script_breakdown: 'Desglose de Guion',
-  script_analysis: 'Análisis con Claude Haiku',
+  script_analysis: 'Análisis de Guion',
   outfit_generation: 'Generación de Outfit',
   visual_dna: 'Visual DNA',
   other: 'Proceso',
