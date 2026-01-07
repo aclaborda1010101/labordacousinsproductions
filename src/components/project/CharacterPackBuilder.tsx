@@ -1,9 +1,10 @@
 /**
  * CharacterPackBuilder - PRO Mode
- * 12 Essential Model Pack with Guided Phases
- * Phase 1: Upload References (1 required, 1 optional)
- * Phase 2: Auto-generate Turnarounds (4 slots)
- * Phase 3: Auto-generate Expressions (6 slots)
+ * 12 Essential Model Pack with Guided 4-Phase Flow
+ * Phase 1: Upload References (2 slots)
+ * Phase 2: Base Visual - Front/Profile (2 slots)
+ * Phase 3: Turnarounds - Back views (2 slots)
+ * Phase 4: Expressions (6 slots)
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -12,34 +13,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, 
   Camera, Palette, RefreshCw, Lock, Play, Trash2,
-  Image, Bell
+  Image, Bell, Eye, RotateCcw
 } from 'lucide-react';
 import { useCharacterPackGeneration, SlotDefinition } from '@/hooks/useCharacterPackGeneration';
 
 // ============================================
-// 12 ESSENTIAL MODEL PACK
+// 12 ESSENTIAL MODEL PACK - 4 PHASES
 // ============================================
 
 // Phase 1: User uploads (references)
-const UPLOAD_SLOTS = [
+const REFERENCE_SLOTS = [
   { type: 'ref_closeup_front', label: 'Primer Plano Frontal', required: true, viewAngle: 'front' },
   { type: 'ref_profile', label: 'Perfil Lateral', required: false, viewAngle: 'side' },
 ];
 
-// Phase 2: Auto-generated turnarounds
-const TURNAROUND_SLOTS = [
+// Phase 2: Base Visual - Front/Profile generation
+const BASE_VISUAL_SLOTS = [
   { type: 'turn_front_34', label: 'Frontal 3/4', viewAngle: 'front_34' },
   { type: 'turn_side', label: 'Lateral', viewAngle: 'side' },
+];
+
+// Phase 3: Turnarounds - Back views
+const TURNAROUND_SLOTS = [
   { type: 'turn_back', label: 'Espalda', viewAngle: 'back' },
   { type: 'turn_back_34', label: 'Espalda 3/4', viewAngle: 'back_34' },
 ];
 
-// Phase 3: Auto-generated expressions
+// Phase 4: Expressions
 const EXPRESSION_SLOTS = [
   { type: 'expr_neutral', label: 'Neutral', expression: 'neutral' },
   { type: 'expr_happy', label: 'Alegre', expression: 'happy' },
@@ -51,7 +57,8 @@ const EXPRESSION_SLOTS = [
 
 // All slot types for the 12-model pack
 const ALL_SLOT_TYPES = [
-  ...UPLOAD_SLOTS.map(s => s.type),
+  ...REFERENCE_SLOTS.map(s => s.type),
+  ...BASE_VISUAL_SLOTS.map(s => s.type),
   ...TURNAROUND_SLOTS.map(s => s.type),
   ...EXPRESSION_SLOTS.map(s => s.type),
 ];
@@ -78,6 +85,9 @@ interface CharacterPackBuilderProps {
   onPackComplete?: () => void;
 }
 
+// Valid statuses that count as "complete" for phase progression
+const COMPLETE_STATUSES = ['approved', 'generated', 'needs_review', 'uploaded'];
+
 export function CharacterPackBuilder({
   characterId,
   characterName,
@@ -95,6 +105,7 @@ export function CharacterPackBuilder({
   const [completenessScore, setCompletenessScore] = useState(0);
   const [activePhase, setActivePhase] = useState<string>('phase1');
   const [phaseProgress, setPhaseProgress] = useState({ current: 0, total: 0 });
+  const [previewImage, setPreviewImage] = useState<{ url: string; label: string; slotType: string } | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // Fetch or initialize slots
@@ -125,8 +136,8 @@ export function CharacterPackBuilder({
   const initializeSlots = async () => {
     const newSlots: Omit<PackSlot, 'id'>[] = [];
 
-    // Phase 1: Upload slots
-    UPLOAD_SLOTS.forEach((slot, i) => {
+    // Phase 1: Reference slots
+    REFERENCE_SLOTS.forEach((slot, i) => {
       newSlots.push({
         slot_type: slot.type,
         slot_index: i,
@@ -139,7 +150,21 @@ export function CharacterPackBuilder({
       });
     });
 
-    // Phase 2: Turnaround slots
+    // Phase 2: Base Visual slots
+    BASE_VISUAL_SLOTS.forEach((slot, i) => {
+      newSlots.push({
+        slot_type: slot.type,
+        slot_index: i,
+        view_angle: slot.viewAngle,
+        expression_name: null,
+        image_url: null,
+        status: 'empty',
+        qc_score: null,
+        required: true,
+      });
+    });
+
+    // Phase 3: Turnaround slots
     TURNAROUND_SLOTS.forEach((slot, i) => {
       newSlots.push({
         slot_type: slot.type,
@@ -153,7 +178,7 @@ export function CharacterPackBuilder({
       });
     });
 
-    // Phase 3: Expression slots
+    // Phase 4: Expression slots
     EXPRESSION_SLOTS.forEach((slot, i) => {
       newSlots.push({
         slot_type: slot.type,
@@ -184,7 +209,7 @@ export function CharacterPackBuilder({
 
   const calculateCompleteness = (slotData: PackSlot[]) => {
     const total = slotData.length;
-    const completed = slotData.filter(s => s.status === 'approved' || s.status === 'generated' || s.status === 'uploaded').length;
+    const completed = slotData.filter(s => COMPLETE_STATUSES.includes(s.status)).length;
     setCompletenessScore(total > 0 ? Math.round((completed / total) * 100) : 0);
   };
 
@@ -195,37 +220,34 @@ export function CharacterPackBuilder({
   // Get slot by type
   const getSlot = (type: string): PackSlot | undefined => slots.find(s => s.slot_type === type);
 
-  // Phase completion checks
+  // Helper: check if slot is complete
+  const isSlotComplete = (slot: PackSlot | undefined) => {
+    return slot && slot.image_url && COMPLETE_STATUSES.includes(slot.status);
+  };
+
+  // Phase completion checks - NOW using isSlotComplete helper
   const phase1Complete = () => {
     const refSlot = getSlot('ref_closeup_front');
-    return refSlot && refSlot.image_url && (refSlot.status === 'approved' || refSlot.status === 'uploaded');
+    return isSlotComplete(refSlot);
   };
 
   const phase2Complete = () => {
-    const turnaroundSlots = TURNAROUND_SLOTS.map(s => getSlot(s.type));
-    return turnaroundSlots.every(s => s && s.image_url && (s.status === 'approved' || s.status === 'generated'));
+    return BASE_VISUAL_SLOTS.every(s => isSlotComplete(getSlot(s.type)));
   };
 
   const phase3Complete = () => {
-    const expressionSlots = EXPRESSION_SLOTS.map(s => getSlot(s.type));
-    return expressionSlots.every(s => s && s.image_url && (s.status === 'approved' || s.status === 'generated'));
+    return TURNAROUND_SLOTS.every(s => isSlotComplete(getSlot(s.type)));
+  };
+
+  const phase4Complete = () => {
+    return EXPRESSION_SLOTS.every(s => isSlotComplete(getSlot(s.type)));
   };
 
   // Phase counts
-  const phase1Count = () => UPLOAD_SLOTS.filter(s => {
-    const slot = getSlot(s.type);
-    return slot && slot.image_url;
-  }).length;
-
-  const phase2Count = () => TURNAROUND_SLOTS.filter(s => {
-    const slot = getSlot(s.type);
-    return slot && slot.image_url;
-  }).length;
-
-  const phase3Count = () => EXPRESSION_SLOTS.filter(s => {
-    const slot = getSlot(s.type);
-    return slot && slot.image_url;
-  }).length;
+  const phase1Count = () => REFERENCE_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
+  const phase2Count = () => BASE_VISUAL_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
+  const phase3Count = () => TURNAROUND_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
+  const phase4Count = () => EXPRESSION_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
 
   // Upload image handler
   const uploadImage = async (slotType: string, file: File) => {
@@ -253,7 +275,7 @@ export function CharacterPackBuilder({
         status: 'uploaded',
       }).eq('id', slot.id);
 
-      toast.success(`${UPLOAD_SLOTS.find(s => s.type === slotType)?.label} subido`);
+      toast.success(`${REFERENCE_SLOTS.find(s => s.type === slotType)?.label} subido`);
       await fetchSlots();
     } catch (error) {
       console.error('Upload error:', error);
@@ -281,6 +303,7 @@ export function CharacterPackBuilder({
       }).eq('id', slot.id);
 
       await fetchSlots();
+      setPreviewImage(null);
       toast.success('Imagen eliminada');
     } catch (error) {
       toast.error('Error al eliminar');
@@ -303,6 +326,7 @@ export function CharacterPackBuilder({
     if (!slot) return;
 
     setGeneratingSlot(slot.id);
+    setPreviewImage(null);
 
     try {
       const result = await generateSingleSlot(slot.id, slotType, {
@@ -325,10 +349,61 @@ export function CharacterPackBuilder({
     }
   };
 
-  // Generate all turnarounds (Phase 2) with Background Tasks
-  const generateAllTurnarounds = async () => {
+  // Generate Base Visual (Phase 2) with Background Tasks
+  const generateBaseVisual = async () => {
     if (!phase1Complete()) {
       toast.error('Sube primero la foto frontal obligatoria');
+      return;
+    }
+
+    const toGenerate: SlotDefinition[] = BASE_VISUAL_SLOTS
+      .filter(s => !getSlot(s.type)?.image_url)
+      .map(s => {
+        const slot = getSlot(s.type);
+        return {
+          id: slot?.id || '',
+          type: s.type,
+          label: s.label,
+          viewAngle: s.viewAngle,
+        };
+      })
+      .filter(s => s.id);
+
+    if (toGenerate.length === 0) {
+      toast.info('Base visual ya generada');
+      setActivePhase('phase3');
+      return;
+    }
+
+    setGeneratingPhase('phase2');
+    setPhaseProgress({ current: 0, total: toGenerate.length });
+
+    toast.info(
+      <div className="flex items-center gap-2">
+        <Bell className="w-4 h-4" />
+        <span>Generando en segundo plano. Puedes navegar a otra página.</span>
+      </div>
+    );
+
+    const result = await generateSlots(
+      toGenerate,
+      `Base Visual: ${characterName}`,
+      `Generando ${toGenerate.length} vistas frontales`
+    );
+
+    setGeneratingPhase(null);
+    await fetchSlots();
+
+    if (result.success) {
+      toast.success(`Base visual generada (${result.completedCount})`);
+      setActivePhase('phase3');
+    }
+  };
+
+  // Generate Turnarounds (Phase 3) with Background Tasks
+  const generateTurnarounds = async () => {
+    if (!phase2Complete()) {
+      toast.error('Genera primero la base visual');
       return;
     }
 
@@ -346,12 +421,12 @@ export function CharacterPackBuilder({
       .filter(s => s.id);
 
     if (toGenerate.length === 0) {
-      toast.info('Todos los turnarounds ya están generados');
-      setActivePhase('phase3');
+      toast.info('Turnarounds ya generados');
+      setActivePhase('phase4');
       return;
     }
 
-    setGeneratingPhase('phase2');
+    setGeneratingPhase('phase3');
     setPhaseProgress({ current: 0, total: toGenerate.length });
 
     toast.info(
@@ -364,7 +439,7 @@ export function CharacterPackBuilder({
     const result = await generateSlots(
       toGenerate,
       `Turnarounds: ${characterName}`,
-      `Generando ${toGenerate.length} vistas del personaje`
+      `Generando ${toGenerate.length} vistas traseras`
     );
 
     setGeneratingPhase(null);
@@ -372,14 +447,14 @@ export function CharacterPackBuilder({
 
     if (result.success) {
       toast.success(`Turnarounds generados (${result.completedCount})`);
-      setActivePhase('phase3');
+      setActivePhase('phase4');
     }
   };
 
-  // Generate all expressions (Phase 3) with Background Tasks
-  const generateAllExpressions = async () => {
-    if (!phase2Complete()) {
-      toast.error('Genera primero todos los turnarounds');
+  // Generate Expressions (Phase 4) with Background Tasks
+  const generateExpressions = async () => {
+    if (!phase3Complete()) {
+      toast.error('Genera primero los turnarounds');
       return;
     }
 
@@ -402,7 +477,7 @@ export function CharacterPackBuilder({
       return;
     }
 
-    setGeneratingPhase('phase3');
+    setGeneratingPhase('phase4');
     setPhaseProgress({ current: 0, total: toGenerate.length });
 
     toast.info(
@@ -435,6 +510,19 @@ export function CharacterPackBuilder({
 
     // Build all slots to generate
     const allToGenerate: SlotDefinition[] = [];
+
+    // Add base visual if not complete
+    BASE_VISUAL_SLOTS.forEach(s => {
+      const slot = getSlot(s.type);
+      if (!slot?.image_url && slot?.id) {
+        allToGenerate.push({
+          id: slot.id,
+          type: s.type,
+          label: s.label,
+          viewAngle: s.viewAngle,
+        });
+      }
+    });
 
     // Add turnarounds if not complete
     TURNAROUND_SLOTS.forEach(s => {
@@ -510,7 +598,7 @@ export function CharacterPackBuilder({
 
   // Render slot card
   const renderSlotCard = (
-    slotDef: { type: string; label: string; required?: boolean },
+    slotDef: { type: string; label: string; required?: boolean; viewAngle?: string; expression?: string },
     isUpload: boolean = false
   ) => {
     const slot = getSlot(slotDef.type);
@@ -527,7 +615,12 @@ export function CharacterPackBuilder({
       >
         {/* Image or placeholder */}
         {hasImage ? (
-          <img src={slot.image_url!} alt={slotDef.label} className="w-full h-full object-cover" />
+          <img 
+            src={slot.image_url!} 
+            alt={slotDef.label} 
+            className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={() => setPreviewImage({ url: slot.image_url!, label: slotDef.label, slotType: slotDef.type })}
+          />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground p-2">
             {isUpload ? <Upload className="w-6 h-6 mb-1" /> : <Image className="w-6 h-6 mb-1" />}
@@ -555,6 +648,15 @@ export function CharacterPackBuilder({
         {slotDef.required && !hasImage && (
           <div className="absolute top-1 left-1">
             <Badge variant="destructive" className="text-[10px] px-1">REQ</Badge>
+          </div>
+        )}
+
+        {/* Click to view hint */}
+        {hasImage && (
+          <div className="absolute top-1 left-1">
+            <Badge variant="secondary" className="text-[10px] px-1 bg-black/50 border-0">
+              <Eye className="w-2 h-2" />
+            </Badge>
           </div>
         )}
 
@@ -587,7 +689,7 @@ export function CharacterPackBuilder({
               size="sm"
               variant="secondary"
               className="flex-1 h-7 text-xs"
-              onClick={() => generateSlot(slotDef.type)}
+              onClick={() => generateSlot(slotDef.type, slotDef.viewAngle, slotDef.expression)}
               disabled={isGenerating || !phase1Complete()}
             >
               {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
@@ -601,7 +703,7 @@ export function CharacterPackBuilder({
                 size="sm"
                 variant="ghost"
                 className="h-7 w-7 p-0"
-                onClick={() => isUpload ? fileInputRefs.current[slotDef.type]?.click() : generateSlot(slotDef.type)}
+                onClick={() => isUpload ? fileInputRefs.current[slotDef.type]?.click() : generateSlot(slotDef.type, slotDef.viewAngle, slotDef.expression)}
               >
                 <RefreshCw className="w-3 h-3" />
               </Button>
@@ -629,204 +731,304 @@ export function CharacterPackBuilder({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" />
-              Pack de 12 Modelos
-            </CardTitle>
-            <CardDescription>
-              {characterName} - {characterRole}
-            </CardDescription>
-          </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold">{completenessScore}%</div>
-            <div className="text-xs text-muted-foreground">Completado</div>
-            {completenessScore === 100 && (
-              <Badge variant="pass" className="mt-1">
-                <CheckCircle2 className="w-3 h-3 mr-1" />
-                Listo
-              </Badge>
-            )}
-          </div>
-        </div>
-        <Progress value={completenessScore} className="h-2 mt-2" />
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        {/* Quick Generate Button */}
-        {phase1Complete() && completenessScore < 100 && (
-          <Button
-            variant="gold"
-            className="w-full"
-            onClick={generateFullPack}
-            disabled={generatingPhase !== null}
-          >
-            {generatingPhase ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Generando {generatingPhase === 'phase2' ? 'Turnarounds' : 'Expresiones'} ({phaseProgress.current}/{phaseProgress.total})
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 mr-2" />
-                Generar Pack Completo ({12 - Math.round(completenessScore * 12 / 100)} restantes)
-              </>
-            )}
-          </Button>
-        )}
-
-        {/* Accordion Phases */}
-        <Accordion type="single" value={activePhase} onValueChange={setActivePhase} className="space-y-2">
-          {/* Phase 1: Upload References */}
-          <AccordionItem value="phase1" className="border rounded-lg">
-            <AccordionTrigger className="px-4 hover:no-underline">
-              <div className="flex items-center gap-3 flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  phase1Complete() ? 'bg-green-500 text-white' : 'bg-muted'
-                }`}>
-                  {phase1Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
-                </div>
-                <div className="text-left">
-                  <p className="font-medium">Paso 1: Sube tus Referencias</p>
-                  <p className="text-xs text-muted-foreground">1 obligatoria, 1 opcional</p>
-                </div>
-                <Badge variant={phase1Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
-                  {phase1Count()}/2
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                Pack de 12 Modelos
+              </CardTitle>
+              <CardDescription>
+                {characterName} - {characterRole}
+              </CardDescription>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold">{completenessScore}%</div>
+              <div className="text-xs text-muted-foreground">Completado</div>
+              {completenessScore === 100 && (
+                <Badge variant="pass" className="mt-1">
+                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                  Listo
                 </Badge>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="grid grid-cols-2 gap-3">
-                {UPLOAD_SLOTS.map(slot => renderSlotCard(slot, true))}
-              </div>
-              {phase1Complete() && (
-                <div className="mt-3 flex items-center text-sm text-green-600">
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  ¡Listo! Ahora puedes generar los turnarounds
-                </div>
               )}
-            </AccordionContent>
-          </AccordionItem>
+            </div>
+          </div>
+          <Progress value={completenessScore} className="h-2 mt-2" />
+        </CardHeader>
 
-          {/* Phase 2: Turnarounds */}
-          <AccordionItem value="phase2" className="border rounded-lg" disabled={!phase1Complete()}>
-            <AccordionTrigger className="px-4 hover:no-underline">
-              <div className="flex items-center gap-3 flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  phase2Complete() ? 'bg-green-500 text-white' : 
-                  phase1Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
-                }`}>
-                  {phase2Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
-                </div>
-                <div className="text-left">
-                  <p className="font-medium">Paso 2: Turnarounds</p>
-                  <p className="text-xs text-muted-foreground">4 vistas del personaje</p>
-                </div>
-                <Badge variant={phase2Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
-                  {phase2Count()}/4
-                </Badge>
-                {!phase1Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              {!phase1Complete() ? (
-                <p className="text-sm text-muted-foreground">Completa el Paso 1 primero</p>
+        <CardContent className="space-y-4">
+          {/* Quick Generate Button */}
+          {phase1Complete() && completenessScore < 100 && (
+            <Button
+              variant="gold"
+              className="w-full"
+              onClick={generateFullPack}
+              disabled={generatingPhase !== null}
+            >
+              {generatingPhase ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generando...
+                </>
               ) : (
                 <>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-                    {TURNAROUND_SLOTS.map(slot => renderSlotCard(slot))}
-                  </div>
-                  {!phase2Complete() && (
-                    <Button
-                      onClick={generateAllTurnarounds}
-                      disabled={generatingPhase === 'phase2'}
-                      className="w-full"
-                    >
-                      {generatingPhase === 'phase2' ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Generando ({phaseProgress.current}/{phaseProgress.total})
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Generar 4 Turnarounds
-                        </>
-                      )}
-                    </Button>
-                  )}
+                  <Play className="w-4 h-4 mr-2" />
+                  Generar Pack Completo ({12 - Math.round(completenessScore * 12 / 100)} restantes)
                 </>
               )}
-            </AccordionContent>
-          </AccordionItem>
+            </Button>
+          )}
 
-          {/* Phase 3: Expressions */}
-          <AccordionItem value="phase3" className="border rounded-lg" disabled={!phase2Complete()}>
-            <AccordionTrigger className="px-4 hover:no-underline">
-              <div className="flex items-center gap-3 flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  phase3Complete() ? 'bg-green-500 text-white' : 
-                  phase2Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
-                }`}>
-                  {phase3Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Palette className="w-4 h-4" />}
-                </div>
-                <div className="text-left">
-                  <p className="font-medium">Paso 3: Expresiones</p>
-                  <p className="text-xs text-muted-foreground">6 emociones básicas</p>
-                </div>
-                <Badge variant={phase3Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
-                  {phase3Count()}/6
-                </Badge>
-                {!phase2Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              {!phase2Complete() ? (
-                <p className="text-sm text-muted-foreground">Completa el Paso 2 primero</p>
-              ) : (
-                <>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
-                    {EXPRESSION_SLOTS.map(slot => renderSlotCard(slot))}
+          {/* Accordion Phases */}
+          <Accordion type="single" value={activePhase} onValueChange={setActivePhase} className="space-y-2">
+            {/* Phase 1: Upload References */}
+            <AccordionItem value="phase1" className="border rounded-lg">
+              <AccordionTrigger className="px-4 hover:no-underline">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    phase1Complete() ? 'bg-green-500 text-white' : 'bg-muted'
+                  }`}>
+                    {phase1Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
                   </div>
-                  {!phase3Complete() && (
-                    <Button
-                      onClick={generateAllExpressions}
-                      disabled={generatingPhase === 'phase3'}
-                      className="w-full"
-                    >
-                      {generatingPhase === 'phase3' ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Generando ({phaseProgress.current}/{phaseProgress.total})
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Generar 6 Expresiones
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+                  <div className="text-left">
+                    <p className="font-medium">Paso 1: Referencias</p>
+                    <p className="text-xs text-muted-foreground">Sube tus fotos de referencia</p>
+                  </div>
+                  <Badge variant={phase1Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
+                    {phase1Count()}/2
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <div className="grid grid-cols-2 gap-3">
+                  {REFERENCE_SLOTS.map(slot => renderSlotCard(slot, true))}
+                </div>
+                {phase1Complete() && (
+                  <div className="mt-3 flex items-center text-sm text-green-600">
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    ¡Listo! Ahora puedes generar la base visual
+                  </div>
+                )}
+              </AccordionContent>
+            </AccordionItem>
 
-        {/* Completion message */}
-        {completenessScore === 100 && (
-          <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-center">
-            <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
-            <p className="font-medium text-green-700 dark:text-green-400">¡Pack Completo!</p>
-            <p className="text-sm text-muted-foreground">
-              12 modelos listos para producción de video
-            </p>
+            {/* Phase 2: Base Visual (Front/Profile) */}
+            <AccordionItem value="phase2" className="border rounded-lg" disabled={!phase1Complete()}>
+              <AccordionTrigger className="px-4 hover:no-underline">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    phase2Complete() ? 'bg-green-500 text-white' : 
+                    phase1Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
+                  }`}>
+                    {phase2Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Paso 2: Base Visual</p>
+                    <p className="text-xs text-muted-foreground">Frente 3/4 y lateral</p>
+                  </div>
+                  <Badge variant={phase2Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
+                    {phase2Count()}/2
+                  </Badge>
+                  {!phase1Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                {!phase1Complete() ? (
+                  <p className="text-sm text-muted-foreground">Completa el Paso 1 primero</p>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      {BASE_VISUAL_SLOTS.map(slot => renderSlotCard(slot))}
+                    </div>
+                    {!phase2Complete() && (
+                      <Button
+                        onClick={generateBaseVisual}
+                        disabled={generatingPhase === 'phase2'}
+                        className="w-full"
+                      >
+                        {generatingPhase === 'phase2' ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Generando...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Generar 2 Vistas Base
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Phase 3: Turnarounds (Back views) */}
+            <AccordionItem value="phase3" className="border rounded-lg" disabled={!phase2Complete()}>
+              <AccordionTrigger className="px-4 hover:no-underline">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    phase3Complete() ? 'bg-green-500 text-white' : 
+                    phase2Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
+                  }`}>
+                    {phase3Complete() ? <CheckCircle2 className="w-4 h-4" /> : <RotateCcw className="w-4 h-4" />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Paso 3: Turnarounds</p>
+                    <p className="text-xs text-muted-foreground">Vistas traseras</p>
+                  </div>
+                  <Badge variant={phase3Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
+                    {phase3Count()}/2
+                  </Badge>
+                  {!phase2Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                {!phase2Complete() ? (
+                  <p className="text-sm text-muted-foreground">Completa el Paso 2 primero</p>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      {TURNAROUND_SLOTS.map(slot => renderSlotCard(slot))}
+                    </div>
+                    {!phase3Complete() && (
+                      <Button
+                        onClick={generateTurnarounds}
+                        disabled={generatingPhase === 'phase3'}
+                        className="w-full"
+                      >
+                        {generatingPhase === 'phase3' ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Generando...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Generar 2 Vistas Traseras
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Phase 4: Expressions */}
+            <AccordionItem value="phase4" className="border rounded-lg" disabled={!phase3Complete()}>
+              <AccordionTrigger className="px-4 hover:no-underline">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    phase4Complete() ? 'bg-green-500 text-white' : 
+                    phase3Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
+                  }`}>
+                    {phase4Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Palette className="w-4 h-4" />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Paso 4: Expresiones</p>
+                    <p className="text-xs text-muted-foreground">6 emociones básicas</p>
+                  </div>
+                  <Badge variant={phase4Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
+                    {phase4Count()}/6
+                  </Badge>
+                  {!phase3Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                {!phase3Complete() ? (
+                  <p className="text-sm text-muted-foreground">Completa el Paso 3 primero</p>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+                      {EXPRESSION_SLOTS.map(slot => renderSlotCard(slot))}
+                    </div>
+                    {!phase4Complete() && (
+                      <Button
+                        onClick={generateExpressions}
+                        disabled={generatingPhase === 'phase4'}
+                        className="w-full"
+                      >
+                        {generatingPhase === 'phase4' ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Generando...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Generar 6 Expresiones
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* Completion message */}
+          {completenessScore === 100 && (
+            <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-center">
+              <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+              <p className="font-medium text-green-700 dark:text-green-400">¡Pack Completo!</p>
+              <p className="text-sm text-muted-foreground">
+                12 modelos listos para producción de video
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Preview Modal */}
+      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{previewImage?.label}</DialogTitle>
+          </DialogHeader>
+          <div className="relative">
+            <img 
+              src={previewImage?.url} 
+              alt={previewImage?.label}
+              className="w-full h-auto rounded-lg max-h-[70vh] object-contain"
+            />
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <div className="flex gap-2 justify-end">
+            <Button variant="outline" onClick={() => setPreviewImage(null)}>
+              Cerrar
+            </Button>
+            <Button 
+              variant="secondary" 
+              onClick={() => {
+                if (previewImage) {
+                  const slot = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
+                    .find(s => s.type === previewImage.slotType);
+                  if (slot) {
+                    const viewAngle = 'viewAngle' in slot ? slot.viewAngle : undefined;
+                    const expression = 'expression' in slot ? slot.expression : undefined;
+                    generateSlot(slot.type, viewAngle, expression);
+                  }
+                }
+              }}
+              disabled={generatingSlot !== null}
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Regenerar
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => previewImage && deleteSlotImage(previewImage.slotType)}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Eliminar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
