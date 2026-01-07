@@ -107,7 +107,8 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.generate-run]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally (validates Authorization header)
+verify_jwt = false
 
 [functions.batch-generate]
 verify_jwt = true
