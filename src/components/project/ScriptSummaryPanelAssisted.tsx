@@ -1059,12 +1059,12 @@ export function ScriptSummaryPanelAssisted({
                         <div className="space-y-1">
                           {normalizedScenes.map((scene, i) => {
                             const slugline = getSceneSlugline(scene);
-                            const valid = isValidSlugline(slugline);
+                            const isValidScene = isValidSlugline(slugline);
                             return (
                               <div 
                                 key={i} 
                                 className={`text-xs rounded px-2 py-1.5 flex items-start gap-2 ${
-                                  valid ? 'bg-muted/50' : 'bg-amber-500/10 border border-amber-500/20'
+                                  isValidScene ? 'bg-muted/50' : 'bg-amber-500/10 border border-amber-500/20'
                                 }`}
                               >
                                 <span className="font-mono text-muted-foreground w-6 flex-shrink-0">

@@ -46,30 +46,40 @@ function normalizeTimeOfDay(time: any): string {
 }
 
 /**
- * Normalize a single scene object
+ * Normalize a single scene object (handles string inputs from JSON serialization)
  */
 export function normalizeScene(scene: any): any {
   if (!scene) return null;
   
-  const slugline = getSceneSlugline(scene);
+  // Handle stringified JSON
+  let parsed = scene;
+  if (typeof scene === "string") {
+    try {
+      parsed = JSON.parse(scene);
+    } catch {
+      return null;
+    }
+  }
+  
+  const slugline = getSceneSlugline(parsed);
   
   return {
-    ...scene,
+    ...parsed,
     // Ensure slugline is always present
     slugline,
     // Keep heading as alias for compatibility
-    heading: scene?.heading ?? slugline,
+    heading: parsed?.heading ?? slugline,
     // Normalize time
-    time_of_day: normalizeTimeOfDay(scene?.time ?? scene?.time_of_day),
-    time: normalizeTimeOfDay(scene?.time ?? scene?.time_of_day),
+    time_of_day: normalizeTimeOfDay(parsed?.time ?? parsed?.time_of_day),
+    time: normalizeTimeOfDay(parsed?.time ?? parsed?.time_of_day),
     // Clean characters
-    characters_present: cleanCharacters(scene?.characters_present),
+    characters_present: cleanCharacters(parsed?.characters_present),
     // Ensure scene number
-    scene_number: scene?.scene_number ?? scene?.number ?? 0,
-    number: scene?.number ?? scene?.scene_number ?? 0,
+    scene_number: parsed?.scene_number ?? parsed?.number ?? 0,
+    number: parsed?.number ?? parsed?.scene_number ?? 0,
     // Location info
-    location: scene?.location ?? scene?.location_base ?? "",
-    int_ext: scene?.int_ext ?? (slugline.startsWith("INT") ? "INT" : slugline.startsWith("EXT") ? "EXT" : ""),
+    location: parsed?.location ?? parsed?.location_base ?? "",
+    int_ext: parsed?.int_ext ?? (slugline.startsWith("INT") ? "INT" : slugline.startsWith("EXT") ? "EXT" : ""),
   };
 }
 
