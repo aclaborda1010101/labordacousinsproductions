@@ -110,7 +110,7 @@ export function CharacterPackBuilder({
   const [previewImage, setPreviewImage] = useState<{ url: string; label: string; slotType: string } | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  // Fetch or initialize slots
+  // Fetch or initialize slots - with automatic backfill for missing slots
   const fetchSlots = useCallback(async () => {
     const { data, error } = await supabase
       .from('character_pack_slots')
@@ -126,6 +126,55 @@ export function CharacterPackBuilder({
     }
 
     if (data && data.length > 0) {
+      // Check for missing slots and backfill
+      const existingTypes = new Set(data.map(s => s.slot_type));
+      const missingTypes = ALL_SLOT_TYPES.filter(t => !existingTypes.has(t));
+      
+      if (missingTypes.length > 0) {
+        console.log('[CharacterPackBuilder] Backfilling missing slots:', missingTypes);
+        const slotsToInsert = missingTypes.map(type => {
+          const refSlot = REFERENCE_SLOTS.find(s => s.type === type);
+          const baseSlot = BASE_VISUAL_SLOTS.find(s => s.type === type);
+          const turnSlot = TURNAROUND_SLOTS.find(s => s.type === type);
+          const exprSlot = EXPRESSION_SLOTS.find(s => s.type === type);
+          
+          return {
+            character_id: characterId,
+            slot_type: type,
+            slot_index: 0,
+            view_angle: refSlot?.viewAngle || baseSlot?.viewAngle || turnSlot?.viewAngle || 'front',
+            expression_name: exprSlot?.expression || null,
+            image_url: null,
+            status: 'empty',
+            qc_score: null,
+            required: refSlot?.required ?? true,
+          };
+        });
+        
+        const { error: insertError } = await supabase
+          .from('character_pack_slots')
+          .insert(slotsToInsert);
+          
+        if (insertError) {
+          console.error('Error backfilling slots:', insertError);
+        } else {
+          // Re-fetch with new slots
+          const { data: updatedData } = await supabase
+            .from('character_pack_slots')
+            .select('*')
+            .eq('character_id', characterId)
+            .in('slot_type', ALL_SLOT_TYPES)
+            .order('slot_type');
+            
+          if (updatedData) {
+            setSlots(updatedData as PackSlot[]);
+            calculateCompleteness(updatedData as PackSlot[]);
+            setLoading(false);
+            return;
+          }
+        }
+      }
+      
       setSlots(data as PackSlot[]);
       calculateCompleteness(data as PackSlot[]);
     } else {
@@ -402,6 +451,14 @@ export function CharacterPackBuilder({
       return;
     }
 
+    // Check if slots exist - if not, wait for backfill
+    const slotsExist = BASE_VISUAL_SLOTS.every(s => getSlot(s.type));
+    if (!slotsExist) {
+      toast.info('Inicializando slots...');
+      await fetchSlots();
+      return; // User can click again after backfill
+    }
+
     const toGenerate: SlotDefinition[] = BASE_VISUAL_SLOTS
       .filter(s => !getSlot(s.type)?.image_url)
       .map(s => {
@@ -415,9 +472,17 @@ export function CharacterPackBuilder({
       })
       .filter(s => s.id);
 
-    if (toGenerate.length === 0) {
+    // Only say "already generated" if both slots have images
+    const allHaveImages = BASE_VISUAL_SLOTS.every(s => getSlot(s.type)?.image_url);
+    if (toGenerate.length === 0 && allHaveImages) {
       toast.info('Base visual ya generada');
       setActivePhase('phase3');
+      return;
+    }
+    
+    if (toGenerate.length === 0) {
+      toast.error('Error: no se encontraron slots para generar');
+      console.error('[generateBaseVisual] No slots to generate but not all have images');
       return;
     }
 
@@ -453,6 +518,14 @@ export function CharacterPackBuilder({
       return;
     }
 
+    // Check if slots exist
+    const slotsExist = TURNAROUND_SLOTS.every(s => getSlot(s.type));
+    if (!slotsExist) {
+      toast.info('Inicializando slots...');
+      await fetchSlots();
+      return;
+    }
+
     const toGenerate: SlotDefinition[] = TURNAROUND_SLOTS
       .filter(s => !getSlot(s.type)?.image_url)
       .map(s => {
@@ -466,9 +539,15 @@ export function CharacterPackBuilder({
       })
       .filter(s => s.id);
 
-    if (toGenerate.length === 0) {
+    const allHaveImages = TURNAROUND_SLOTS.every(s => getSlot(s.type)?.image_url);
+    if (toGenerate.length === 0 && allHaveImages) {
       toast.info('Turnarounds ya generados');
       setActivePhase('phase4');
+      return;
+    }
+    
+    if (toGenerate.length === 0) {
+      toast.error('Error: no se encontraron slots para generar');
       return;
     }
 
@@ -504,6 +583,14 @@ export function CharacterPackBuilder({
       return;
     }
 
+    // Check if slots exist
+    const slotsExist = EXPRESSION_SLOTS.every(s => getSlot(s.type));
+    if (!slotsExist) {
+      toast.info('Inicializando slots...');
+      await fetchSlots();
+      return;
+    }
+
     const toGenerate: SlotDefinition[] = EXPRESSION_SLOTS
       .filter(s => !getSlot(s.type)?.image_url)
       .map(s => {
@@ -518,8 +605,14 @@ export function CharacterPackBuilder({
       })
       .filter(s => s.id);
 
-    if (toGenerate.length === 0) {
+    const allHaveImages = EXPRESSION_SLOTS.every(s => getSlot(s.type)?.image_url);
+    if (toGenerate.length === 0 && allHaveImages) {
       toast.info('Todas las expresiones ya están generadas');
+      return;
+    }
+    
+    if (toGenerate.length === 0) {
+      toast.error('Error: no se encontraron slots para generar');
       return;
     }
 
