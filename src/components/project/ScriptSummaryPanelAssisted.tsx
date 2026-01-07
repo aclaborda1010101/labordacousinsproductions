@@ -215,15 +215,45 @@ export function ScriptSummaryPanelAssisted({
       if (script?.parsed_json) {
         const parsed = script.parsed_json as any;
         
-        // Hydrate characters - handle nested (characters.cast + featured_extras + voices) and flat formats
+        // Hydrate characters - PRIORITIZE narrative_classification (complete semantic extraction)
         let characters: any[] = [];
         let featured_extras: any[] = [];
         let voices: any[] = [];
         
-        if (Array.isArray(parsed.characters)) {
+        const narrativeClass = parsed.characters?.narrative_classification;
+        
+        if (narrativeClass) {
+          // Use narrative_classification - contains ALL semantically classified characters
+          const protagonists = Array.isArray(narrativeClass.protagonists) 
+            ? narrativeClass.protagonists.map((c: any) => ({ ...c, category: 'protagonist' })) 
+            : [];
+          const majorSupporting = Array.isArray(narrativeClass.major_supporting) 
+            ? narrativeClass.major_supporting.map((c: any) => ({ ...c, category: 'major_supporting' })) 
+            : [];
+          const minorSpeaking = Array.isArray(narrativeClass.minor_speaking) 
+            ? narrativeClass.minor_speaking.map((c: any) => ({ ...c, category: 'minor_speaking' })) 
+            : [];
+          const voicesSystems = Array.isArray(narrativeClass.voices_systems) 
+            ? narrativeClass.voices_systems.map((c: any) => ({ ...c, category: 'voice' })) 
+            : [];
+          
+          // Main cast = protagonists + major supporting
+          characters = [...protagonists, ...majorSupporting];
+          // Featured extras = minor speaking roles
+          featured_extras = minorSpeaking;
+          // Voices = voices and systems
+          voices = voicesSystems;
+          
+          console.log('[ScriptSummary] Using narrative_classification:', {
+            protagonists: protagonists.length,
+            majorSupporting: majorSupporting.length,
+            minorSpeaking: minorSpeaking.length,
+            voices: voicesSystems.length
+          });
+        } else if (Array.isArray(parsed.characters)) {
           characters = parsed.characters;
         } else if (parsed.characters && typeof parsed.characters === 'object') {
-          // Nested format: get all categories
+          // Fallback to nested format: cast + featured_extras + voices
           characters = Array.isArray(parsed.characters.cast) ? parsed.characters.cast : [];
           featured_extras = Array.isArray(parsed.characters.featured_extras_with_lines) ? parsed.characters.featured_extras_with_lines : [];
           voices = Array.isArray(parsed.characters.voices_and_functional) ? parsed.characters.voices_and_functional : [];
@@ -987,15 +1017,55 @@ export function ScriptSummaryPanelAssisted({
           <CollapsibleContent>
             <Card className="mt-3 border-dashed">
               <CardContent className="py-4 space-y-4">
-                {/* Characters - Cast (Main) */}
-                {scriptData.characters && scriptData.characters.length > 0 && (
+                {/* Protagonistas */}
+                {scriptData.characters?.filter((c: any) => c.category === 'protagonist').length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Crown className="h-4 w-4 text-amber-500" />
+                      <span className="font-medium text-sm">
+                        Protagonistas ({scriptData.characters.filter((c: any) => c.category === 'protagonist').length})
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.characters.filter((c: any) => c.category === 'protagonist').map((char: any, i: number) => (
+                        <Badge key={`${char.canonical_name || char.name}-${i}`} variant="default" className="text-xs">
+                          {char.canonical_name || char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Soporte Principal */}
+                {scriptData.characters?.filter((c: any) => c.category === 'major_supporting').length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <Users className="h-4 w-4 text-primary" />
-                      <span className="font-medium text-sm">Cast Principal ({scriptData.characters.length})</span>
+                      <span className="font-medium text-sm">
+                        Soporte Principal ({scriptData.characters.filter((c: any) => c.category === 'major_supporting').length})
+                      </span>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {scriptData.characters.map((char, i) => (
+                      {scriptData.characters.filter((c: any) => c.category === 'major_supporting').map((char: any, i: number) => (
+                        <Badge key={`${char.canonical_name || char.name}-${i}`} variant="outline" className="text-xs">
+                          {char.canonical_name || char.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Fallback for characters without category (legacy data) */}
+                {scriptData.characters?.filter((c: any) => !c.category).length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">
+                        Cast Principal ({scriptData.characters.filter((c: any) => !c.category).length})
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {scriptData.characters.filter((c: any) => !c.category).map((char: any, i: number) => (
                         <Badge key={`${char.name}-${i}`} variant="outline" className="text-xs">
                           {char.name}
                         </Badge>
