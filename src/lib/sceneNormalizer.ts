@@ -10,22 +10,31 @@ const ALLOWED_TIMES = new Set([
 ]);
 
 /**
- * Get the slugline from a scene object, checking multiple possible field names
+ * Get the slugline from a scene object, checking multiple possible field names.
+ * Note: Some sources include `slugline: ""` even when `heading` exists.
+ * We treat empty strings as missing and fall back.
  */
 export function getSceneSlugline(scene: any): string {
-  return (
-    scene?.slugline ??
-    scene?.heading ??
-    scene?.location_raw ??
-    ""
-  ).trim();
+  const candidates = [
+    scene?.slugline,
+    scene?.heading,
+    scene?.location_raw,
+    scene?.locationRaw,
+  ];
+
+  for (const c of candidates) {
+    if (typeof c === "string" && c.trim().length > 0) return c.trim();
+  }
+  return "";
 }
 
 /**
- * Check if a slugline is valid (starts with INT. or EXT.)
+ * Check if a slugline is valid (starts with INT./EXT. etc.)
  */
 export function isValidSlugline(slugline: string): boolean {
-  return /^(INT\.|EXT\.)/i.test(slugline);
+  const s = String(slugline ?? "").trim();
+  if (!s) return false;
+  return /^(INT\.|EXT\.|INT\/EXT\.|I\/E\.)/i.test(s);
 }
 
 /**
