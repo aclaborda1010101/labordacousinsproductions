@@ -81,6 +81,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, QualityTier, QUALITY_TIERS } from '@/lib/autoTargets';
 import { useCreativeModeOptional } from '@/contexts/CreativeModeContext';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
+import { getSceneSlugline } from '@/lib/sceneNormalizer';
 import {
   estimateEpisodeMs,
   estimateBatchMs,
@@ -4246,7 +4247,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                                   <div key={sceneIdx} className="border rounded-lg overflow-hidden">
                                     {/* Scene Header - Slugline */}
                                     <div className="bg-foreground text-background px-4 py-2 font-mono text-sm font-bold flex items-center justify-between">
-                                      <span>{scene.scene_number || sceneIdx + 1}. {scene.slugline || 'SIN SLUGLINE'}</span>
+                                      <span>
+                                        {scene.scene_number || sceneIdx + 1}. {getSceneSlugline(scene) || 'SIN SLUGLINE'}
+                                      </span>
                                       {segmentedEpisodes.has(epIdx + 1) && (
                                         <Button
                                           size="sm"
