@@ -4031,10 +4031,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 {(generatedScript.episodes || [{ episode_number: 1, title: generatedScript.title || 'Película', synopsis: generatedScript.synopsis, scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => {
                   const episodeNum = ep.episode_number || epIdx + 1;
                   const viewMode = episodeViewMode[epIdx] || 'summary';
-                  // Calculate dialogue count from multiple possible sources
+                  // Calculate dialogue count from multiple possible sources (in priority order)
+                  // 1. total_dialogue_lines at episode level
+                  // 2. dialogue_lines at episode level  
+                  // 3. Sum from scenes array (checking multiple field names)
+                  // 4. Sum from script-level counts if available
                   const dialogueCount = ep.total_dialogue_lines 
                     || ep.dialogue_lines 
-                    || ep.scenes?.reduce((sum: number, s: any) => sum + (s.dialogue_lines || s.dialogue?.length || 0), 0) 
+                    || ep.scenes?.reduce((sum: number, s: any) => {
+                      // Check multiple possible field names for dialogue count
+                      return sum + (
+                        s.total_dialogue_lines ||
+                        s.dialogue_lines || 
+                        s.dialogue_count ||
+                        (Array.isArray(s.dialogue) ? s.dialogue.length : 0) ||
+                        (Array.isArray(s.dialogues) ? s.dialogues.length : 0) ||
+                        0
+                      );
+                    }, 0) 
+                    || (generatedScript.counts?.total_dialogue_lines && generatedScript.episodes?.length === 1 
+                        ? generatedScript.counts.total_dialogue_lines 
+                        : 0)
                     || 0;
                   
                   return (

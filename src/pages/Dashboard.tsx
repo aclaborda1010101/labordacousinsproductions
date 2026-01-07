@@ -10,7 +10,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUserProfileOptional } from '@/contexts/UserProfileContext';
 import { ProfileOnboardingModal } from '@/components/onboarding/ProfileOnboardingModal';
-import { UserProfileBadge } from '@/components/onboarding/UserProfileBadge';
 import { 
   Plus, 
   Film, 
@@ -178,7 +177,6 @@ export default function Dashboard() {
       )}
 
       <PageHeader title={t.dashboard.title} description={t.dashboard.subtitle}>
-        <UserProfileBadge />
         <Button variant="gold" size="sm" asChild className="hidden sm:inline-flex">
           <Link to="/projects/new">
             <Plus className="w-4 h-4" />
