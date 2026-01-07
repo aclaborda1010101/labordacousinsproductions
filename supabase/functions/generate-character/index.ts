@@ -65,6 +65,15 @@ interface StyleConfig {
   film_grain?: string;
   contrast?: string;
   prompt_modifier?: string;
+  // Extended fields for Visual Bible presets
+  promptModifiers?: string[];
+  negativeModifiers?: string[];
+  customAnalysis?: {
+    prompt_modifiers?: string[];
+    negative_modifiers?: string[];
+    style?: unknown;
+    camera?: unknown;
+  };
 }
 
 // ============================================
@@ -181,6 +190,27 @@ function buildStyleBlock(styleConfig: StyleConfig | null): string {
   
   const parts: string[] = [];
   
+  // PRIORITY 1: Check for promptModifiers array (Visual Bible presets)
+  // This is the primary style definition from preset selection or image analysis
+  if (styleConfig.promptModifiers && Array.isArray(styleConfig.promptModifiers) && styleConfig.promptModifiers.length > 0) {
+    parts.push(`VISUAL STYLE (MANDATORY): ${styleConfig.promptModifiers.join(', ')}`);
+  }
+  
+  // PRIORITY 2: Check customAnalysis from image analysis
+  if (styleConfig.customAnalysis?.prompt_modifiers && Array.isArray(styleConfig.customAnalysis.prompt_modifiers)) {
+    const modifiers = styleConfig.customAnalysis.prompt_modifiers.filter(
+      (m: string) => !parts.some(p => p.includes(m))
+    );
+    if (modifiers.length > 0) {
+      parts.push(`STYLE MODIFIERS: ${modifiers.join(', ')}`);
+    }
+  }
+  
+  // PRIORITY 3: Legacy single prompt_modifier
+  if (styleConfig.prompt_modifier && !parts.some(p => p.includes(styleConfig.prompt_modifier!))) {
+    parts.push(styleConfig.prompt_modifier);
+  }
+  
   if (styleConfig.mood) {
     parts.push(`VISUAL MOOD: ${styleConfig.mood}`);
   }
@@ -213,14 +243,21 @@ function buildStyleBlock(styleConfig: StyleConfig | null): string {
     parts.push(`CONTRAST: ${styleConfig.contrast}`);
   }
   
-  if (styleConfig.prompt_modifier) {
-    parts.push(styleConfig.prompt_modifier);
+  // NEGATIVE MODIFIERS: Avoid unwanted styles
+  if (styleConfig.negativeModifiers && Array.isArray(styleConfig.negativeModifiers) && styleConfig.negativeModifiers.length > 0) {
+    parts.push(`AVOID THESE STYLES: ${styleConfig.negativeModifiers.join(', ')}`);
+  }
+  if (styleConfig.customAnalysis?.negative_modifiers && Array.isArray(styleConfig.customAnalysis.negative_modifiers)) {
+    const negatives = styleConfig.customAnalysis.negative_modifiers;
+    if (negatives.length > 0 && !parts.some(p => p.includes('AVOID'))) {
+      parts.push(`AVOID: ${negatives.join(', ')}`);
+    }
   }
   
   if (parts.length === 0) return '';
   
   return `
-PROJECT VISUAL STYLE (MANDATORY):
+PROJECT VISUAL STYLE (MANDATORY - DO NOT DEVIATE):
 ${parts.join('\n')}
 `;
 }

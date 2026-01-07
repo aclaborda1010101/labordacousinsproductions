@@ -15,7 +15,25 @@ import {
 import { ReferenceAnchorManager } from './ReferenceAnchorManager';
 import { LikenessComparisonView } from './LikenessComparisonView';
 
-// Role-based slot requirements
+// ============================================
+// SLOT REQUIREMENTS - NEW UPLOAD-FIRST FLOW
+// ============================================
+// OBLIGATORIO: 1 foto frontal primer plano neutral (upload)
+// OPCIONAL: perfil, cuerpo entero frontal, cuerpo entero perfil (upload)
+// AUTO-GENERADOS: el resto del pack basado en las fotos subidas
+
+// Slots that require user upload (identity anchors)
+const UPLOAD_SLOTS = {
+  required: [
+    { type: 'anchor_closeup', label: 'Primer Plano Frontal (OBLIGATORIO)', viewAngle: 'front' }
+  ],
+  optional: [
+    { type: 'anchor_profile', label: 'Perfil', viewAngle: 'side' },
+    { type: 'anchor_fullbody_front', label: 'Cuerpo Entero Frontal', viewAngle: 'fullbody_front' },
+    { type: 'anchor_fullbody_profile', label: 'Cuerpo Entero Perfil', viewAngle: 'fullbody_side' },
+  ]
+};
+
 // Turnaround views: front/back are required, intermediate angles (1/3, 2/3, 3/4) are optional
 const TURNAROUND_VIEWS = {
   required: ['front', 'back'],
@@ -133,7 +151,43 @@ export function CharacterPackBuilder({
 
     const newSlots: Omit<PackSlot, 'id'>[] = [];
 
-    // Closeups first (identity anchors)
+    // ===== UPLOAD SLOTS FIRST (NEW FLOW) =====
+    // Required upload: anchor_closeup (frontal primer plano)
+    UPLOAD_SLOTS.required.forEach((uploadSlot, i) => {
+      newSlots.push({
+        slot_type: uploadSlot.type,
+        slot_index: i,
+        view_angle: uploadSlot.viewAngle,
+        expression_name: null,
+        outfit_id: null,
+        image_url: null,
+        status: 'empty',
+        qc_score: null,
+        qc_issues: [],
+        fix_notes: null,
+        required: true, // OBLIGATORIO
+      });
+    });
+
+    // Optional uploads: profile, fullbody front, fullbody profile
+    UPLOAD_SLOTS.optional.forEach((uploadSlot, i) => {
+      newSlots.push({
+        slot_type: uploadSlot.type,
+        slot_index: UPLOAD_SLOTS.required.length + i,
+        view_angle: uploadSlot.viewAngle,
+        expression_name: null,
+        outfit_id: null,
+        image_url: null,
+        status: 'empty',
+        qc_score: null,
+        qc_issues: [],
+        fix_notes: null,
+        required: false, // OPCIONAL
+      });
+    });
+
+    // ===== AUTO-GENERATED SLOTS =====
+    // Closeups (additional, for AI generation)
     if ('closeup' in requirements) {
       for (let i = 0; i < requirements.closeup.count; i++) {
         newSlots.push({
@@ -147,7 +201,7 @@ export function CharacterPackBuilder({
           qc_score: null,
           qc_issues: [],
           fix_notes: null,
-          required: true,
+          required: false, // Generated slots are optional
         });
       }
     }
@@ -282,17 +336,32 @@ export function CharacterPackBuilder({
     fetchSlots();
   }, [fetchSlots]);
 
-  // Check if identity anchors are complete (only required turnarounds)
+  // Check if the OBLIGATORY anchor_closeup has been uploaded
+  const hasRequiredAnchor = () => {
+    const anchorCloseup = slots.find(s => s.slot_type === 'anchor_closeup');
+    return anchorCloseup && anchorCloseup.image_url && 
+           (anchorCloseup.status === 'approved' || anchorCloseup.status === 'pending' || anchorCloseup.status === 'uploaded');
+  };
+
+  // Check if identity anchors are complete (anchor_closeup + optional anchors with images)
   const anchorsComplete = () => {
+    // The anchor_closeup is REQUIRED
+    if (!hasRequiredAnchor()) return false;
+    
+    // Additional anchors with images count as completed
     const anchors = slots.filter(s => 
+      s.slot_type.startsWith('anchor_') || 
       s.slot_type === 'closeup' || 
       (s.slot_type === 'turnaround' && s.required)
     );
-    return anchors.length > 0 && anchors.every(s => s.status === 'approved' || s.status === 'waiver');
+    return anchors.filter(s => s.image_url).length >= 1;
   };
 
   // Check if required turnarounds (front/back) are complete
   const requiredTurnaroundsComplete = () => {
+    // With the new flow, if we have anchor_closeup, we can generate turnarounds
+    if (hasRequiredAnchor()) return true;
+    
     const requiredTurnarounds = slots.filter(s => 
       s.slot_type === 'turnaround' && s.required
     );
@@ -742,6 +811,10 @@ export function CharacterPackBuilder({
       case 'closeup': return <User className="w-4 h-4" />;
       case 'outfit': return <Shirt className="w-4 h-4" />;
       case 'base_look': return <User className="w-4 h-4" />;
+      case 'anchor_closeup': return <Anchor className="w-4 h-4" />;
+      case 'anchor_profile': return <Anchor className="w-4 h-4" />;
+      case 'anchor_fullbody_front': return <Anchor className="w-4 h-4" />;
+      case 'anchor_fullbody_profile': return <Anchor className="w-4 h-4" />;
       default: return null;
     }
   };
@@ -759,23 +832,47 @@ export function CharacterPackBuilder({
         return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />QC Failed</Badge>;
       case 'waiver':
         return <Badge variant="secondary"><AlertTriangle className="w-3 h-3 mr-1" />Waiver</Badge>;
+      case 'pending':
+      case 'uploaded':
+        return <Badge variant="secondary"><Upload className="w-3 h-3 mr-1" />Subido</Badge>;
       default:
         return null;
     }
   };
 
-  // Group slots by type
+  // Group slots by type - prioritize anchor slots first
+  const slotTypePriority: Record<string, number> = {
+    'anchor_closeup': 0,
+    'anchor_profile': 1,
+    'anchor_fullbody_front': 2,
+    'anchor_fullbody_profile': 3,
+    'closeup': 4,
+    'turnaround': 5,
+    'expression': 6,
+    'outfit': 7,
+    'base_look': 8,
+  };
+
   const groupedSlots = slots.reduce((acc, slot) => {
     if (!acc[slot.slot_type]) acc[slot.slot_type] = [];
     acc[slot.slot_type].push(slot);
     return acc;
   }, {} as Record<string, PackSlot[]>);
 
+  // Sort groups by priority
+  const sortedGroupedSlots = Object.entries(groupedSlots).sort(([a], [b]) => {
+    return (slotTypePriority[a] ?? 99) - (slotTypePriority[b] ?? 99);
+  });
+
   const slotTypeLabels: Record<string, string> = {
-    closeup: 'Identity Close-ups',
-    turnaround: 'Turnarounds',
-    expression: 'Expresiones',
-    outfit: 'Outfits',
+    anchor_closeup: '📸 Foto Frontal (OBLIGATORIO)',
+    anchor_profile: '📸 Perfil (Opcional)',
+    anchor_fullbody_front: '📸 Cuerpo Entero Frontal (Opcional)',
+    anchor_fullbody_profile: '📸 Cuerpo Entero Perfil (Opcional)',
+    closeup: 'Close-ups (Auto)',
+    turnaround: 'Turnarounds (Auto)',
+    expression: 'Expresiones (Auto)',
+    outfit: 'Outfits (Auto)',
     base_look: 'Base Look',
   };
 
@@ -836,12 +933,17 @@ export function CharacterPackBuilder({
             variant="gold"
             className="flex-1"
             onClick={generateFullPack}
-            disabled={batchGenerating || batchUploading || generating !== null}
+            disabled={batchGenerating || batchUploading || generating !== null || (!hasRequiredAnchor() && characterRole !== 'extra')}
           >
             {batchGenerating ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 {batchProgress.phase} ({batchProgress.current}/{batchProgress.total})
+              </>
+            ) : !hasRequiredAnchor() && characterRole !== 'extra' ? (
+              <>
+                <Lock className="w-4 h-4 mr-2" />
+                Sube Foto Frontal Primero
               </>
             ) : (
               <>
@@ -889,14 +991,31 @@ export function CharacterPackBuilder({
           />
         )}
 
-        {/* Identity Anchors Warning */}
-        {!anchorsComplete() && characterRole !== 'extra' && (
+        {/* OBLIGATORY ANCHOR UPLOAD WARNING */}
+        {!hasRequiredAnchor() && characterRole !== 'extra' && (
+          <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
+            <Upload className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+            <div className="text-sm">
+              <p className="font-semibold text-destructive">Foto Frontal Obligatoria</p>
+              <p className="text-muted-foreground mt-1">
+                Sube una foto de primer plano frontal del personaje antes de generar el pack.
+                Esta imagen será la referencia principal para mantener la consistencia visual.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                Opcional: también puedes subir perfil, cuerpo entero frontal y cuerpo entero perfil para mejorar la calidad.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Identity Anchors Progress */}
+        {hasRequiredAnchor() && !anchorsComplete() && characterRole !== 'extra' && (
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start gap-2">
             <Lock className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
             <div className="text-sm">
-              <p className="font-medium text-amber-600">Turnarounds obligatorios requeridos</p>
+              <p className="font-medium text-amber-600">Listo para generar</p>
               <p className="text-muted-foreground">
-                Completa los turnarounds frontal y trasero antes de generar expresiones y outfits.
+                Ya puedes generar el pack completo usando la foto de referencia.
               </p>
             </div>
           </div>
@@ -928,11 +1047,12 @@ export function CharacterPackBuilder({
           />
         )}
 
-        {/* Slot Groups */}
-        {Object.entries(groupedSlots).map(([type, typeSlots]) => {
+        {/* Slot Groups - Sorted by priority (upload slots first) */}
+        {sortedGroupedSlots.map(([type, typeSlots]) => {
           const requiredSlots = typeSlots.filter(s => s.required);
           const optionalSlots = typeSlots.filter(s => !s.required);
-          const approvedCount = typeSlots.filter(s => s.status === 'approved' || s.status === 'waiver').length;
+          const approvedCount = typeSlots.filter(s => s.status === 'approved' || s.status === 'waiver' || s.status === 'uploaded' || s.status === 'pending').length;
+          const isUploadType = type.startsWith('anchor_');
           
           return (
           <div key={type} className="space-y-3">

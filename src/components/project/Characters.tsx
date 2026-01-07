@@ -95,6 +95,9 @@ export default function Characters({ projectId }: CharactersProps) {
     referenceImage: null as string | null,
   });
 
+  // State for pack slot thumbnails (fallback when turnaround_urls is empty)
+  const [packThumbnails, setPackThumbnails] = useState<Map<string, string>>(new Map());
+
   const fetchCharacters = async () => { 
     const { data: charsData } = await supabase
       .from('characters')
@@ -118,6 +121,29 @@ export default function Characters({ projectId }: CharactersProps) {
         };
       }));
       setCharacters(charsWithOutfits);
+
+      // Fetch pack slot thumbnails as fallback for characters without turnaround_urls
+      const charIds = charsWithOutfits.filter(c => !c.turnaround_urls?.front).map(c => c.id);
+      if (charIds.length > 0) {
+        const { data: slots } = await supabase
+          .from('character_pack_slots')
+          .select('character_id, image_url, slot_type')
+          .in('character_id', charIds)
+          .in('slot_type', ['closeup', 'anchor_closeup', 'hero_front', 'turnaround'])
+          .not('image_url', 'is', null)
+          .order('slot_type');
+
+        if (slots && slots.length > 0) {
+          const thumbMap = new Map<string, string>();
+          slots.forEach(slot => {
+            // Only set if not already set (prioritize first match)
+            if (!thumbMap.has(slot.character_id) && slot.image_url) {
+              thumbMap.set(slot.character_id, slot.image_url);
+            }
+          });
+          setPackThumbnails(thumbMap);
+        }
+      }
     }
     setLoading(false); 
   };
@@ -925,9 +951,9 @@ export default function Characters({ projectId }: CharactersProps) {
                     {/* Character Header - Desktop */}
                     <div className="hidden sm:flex p-4 items-start gap-4">
                       <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden shrink-0">
-                        {character.turnaround_urls?.front ? (
+                        {(character.turnaround_urls?.front || packThumbnails.get(character.id)) ? (
                           <img 
-                            src={character.turnaround_urls.front} 
+                            src={character.turnaround_urls?.front || packThumbnails.get(character.id)} 
                             alt={character.name}
                             className="w-full h-full object-cover"
                           />
