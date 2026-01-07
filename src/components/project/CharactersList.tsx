@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { EntityCard, getEntityStatus } from './EntityCard';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import CharacterPackMVP from './CharacterPackMVP';
+import NextStepNavigator from './NextStepNavigator';
 import { resolveImageModel } from '@/config/models';
 import {
   Plus,
@@ -712,6 +713,16 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Next Step Navigator - show when there are characters with canon status */}
+      {characters.length > 0 && characters.some(c => c.canon_asset_id || c.accepted_run_id) && (
+        <NextStepNavigator
+          projectId={projectId}
+          currentStep="characters"
+          completionMessage="¡Personajes definidos!"
+          stats={`${characters.filter(c => c.canon_asset_id || c.accepted_run_id).length}/${characters.length} listos`}
+        />
+      )}
     </div>
   );
 }
