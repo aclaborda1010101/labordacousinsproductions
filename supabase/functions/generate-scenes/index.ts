@@ -14,6 +14,7 @@ interface GenerateScenesRequest {
   sceneCount?: number;
   narrativeMode?: 'SERIE_ADICTIVA' | 'VOZ_AUTOR' | 'GIRO_IMPREVISIBLE';
   generateFullShots?: boolean;
+  microShotDuration?: number;
   isTeaser?: boolean;
   teaserType?: '60s' | '30s';
   teaserData?: {
@@ -383,12 +384,24 @@ serve(async (req) => {
 
     console.log(`Found ${locations?.length || 0} locations`);
 
-    // Fetch style pack for visual consistency
+    // Fetch style pack for visual consistency (REQUIRED - style_config is the source of truth)
     const { data: stylePack } = await supabase
       .from('style_packs')
       .select('*')
       .eq('project_id', projectId)
       .maybeSingle();
+
+    // Parse style_config if exists
+    const styleConfig = stylePack?.style_config as {
+      presetId?: string;
+      camera?: { body: string; lens: string; focalLength: string; aperture: string };
+      style?: { lighting: string; colorPalette: string[]; mood: string; contrast: string; saturation: string; grain: string };
+      promptModifiers?: string[];
+      negativeModifiers?: string[];
+    } | null;
+
+    // Get micro_shot_duration from request or project default (1-3 seconds)
+    const microShotDuration = body.microShotDuration || 2;
 
     // Build context for AI
     const characterList = characters?.map(c => `- ${c.name} (${c.role || 'character'}): ${c.bio || 'No description'}`).join('\n') || 'No characters defined';
@@ -429,10 +442,24 @@ ${characterList}
 LOCALIZACIONES DISPONIBLES:
 ${locationList}
 
-ESTILO VISUAL:
+ESTILO VISUAL (CANON - NO MODIFICAR):
+- Preset: ${styleConfig?.presetId || 'custom'}
+- Camera Body: ${styleConfig?.camera?.body || 'ARRI Alexa Mini'}
+- Lens: ${styleConfig?.camera?.lens || 'Zeiss Supreme Prime'}
+- Focal Length: ${styleConfig?.camera?.focalLength || '35mm'}
+- Aperture: ${styleConfig?.camera?.aperture || 'f/2.8'}
+- Lighting: ${styleConfig?.style?.lighting || 'natural'}
+- Mood: ${styleConfig?.style?.mood || 'dramatic'}
+- Contrast: ${styleConfig?.style?.contrast || 'medium'}
+- Color Palette: ${styleConfig?.style?.colorPalette?.join(', ') || 'natural'}
 - Aspect Ratio: ${stylePack?.aspect_ratio || '16:9'}
-- Lens Style: ${stylePack?.lens_style || 'cinematic'}
-- Visual Tone: ${stylePack?.visual_tone || 'dramatic'}
+- Micro-shot Duration: ${microShotDuration}s
+
+PROMPT MODIFIERS A INCLUIR SIEMPRE:
+${styleConfig?.promptModifiers?.join('\n') || 'cinematic, professional'}
+
+EVITAR SIEMPRE:
+${styleConfig?.negativeModifiers?.join('\n') || 'amateur, low quality'}
 
 REQUISITOS:
 1. Crea UNA escena contenedora tipo "TEASER SEQUENCE"
@@ -462,10 +489,24 @@ ${characterList}
 LOCALIZACIONES DISPONIBLES:
 ${locationList}
 
-ESTILO VISUAL:
+ESTILO VISUAL (CANON - NO MODIFICAR):
+- Preset: ${styleConfig?.presetId || 'custom'}
+- Camera Body: ${styleConfig?.camera?.body || 'ARRI Alexa Mini'}
+- Lens: ${styleConfig?.camera?.lens || 'Zeiss Supreme Prime'}
+- Focal Length: ${styleConfig?.camera?.focalLength || '35mm'}
+- Aperture: ${styleConfig?.camera?.aperture || 'f/2.8'}
+- Lighting: ${styleConfig?.style?.lighting || 'natural'}
+- Mood: ${styleConfig?.style?.mood || 'dramatic'}
+- Contrast: ${styleConfig?.style?.contrast || 'medium'}
+- Color Palette: ${styleConfig?.style?.colorPalette?.join(', ') || 'natural'}
 - Aspect Ratio: ${stylePack?.aspect_ratio || '16:9'}
-- Lens Style: ${stylePack?.lens_style || 'cinematic'}
-- Visual Tone: ${stylePack?.visual_tone || 'dramatic'}
+- Micro-shot Duration: ${microShotDuration}s
+
+PROMPT MODIFIERS A INCLUIR SIEMPRE:
+${styleConfig?.promptModifiers?.join('\n') || 'cinematic, professional'}
+
+EVITAR SIEMPRE:
+${styleConfig?.negativeModifiers?.join('\n') || 'amateur, low quality'}
 
 REQUISITOS CRÍTICOS:
 1. Cada escena tiene 4-8 planos que cubren TODA la acción
