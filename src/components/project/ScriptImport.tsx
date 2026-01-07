@@ -2298,6 +2298,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   setLightOutline(null);
                   setGeneratedEpisodesList([]);
                   clearPipelineState();
+                  setActiveTab('generate');
                   toast.info('Listo para regenerar. Ajusta tu idea y genera un nuevo outline.');
                 }}
                 disabled={pipelineRunning}
