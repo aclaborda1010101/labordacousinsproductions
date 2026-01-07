@@ -444,6 +444,420 @@ export type CharBuckets = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// POST-PROCESSOR SEMÁNTICO V1 - NORMALIZACIÓN ESTRUCTURADA
+// 1. Normalizador de Personajes: Colapsa variantes técnicas
+// 2. Normalizador de Localizaciones: Separa lugar/tiempo/estado/técnica
+// 3. Clasificador Narrativo: Distingue cast principal de extras funcionales
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// === 1. CHARACTER NORMALIZER ===
+// Collapses technical variants: MAVERICK (CONT'D), MAVERICK (V.O.) → MAVERICK
+
+interface NormalizedCharacter {
+  canonical_name: string;
+  aliases: string[];
+  type: 'main' | 'supporting' | 'featured_extra' | 'voice';
+  bio: string;
+  scenes_count: number;
+  confidence: 'high' | 'medium';
+  narrative_weight: 'protagonist' | 'major' | 'minor' | 'functional';
+}
+
+const TECHNICAL_SUFFIXES_REGEX = /\s*\((CONT'?D?\.?|CONTINUED|V\.?O\.?|O\.?S\.?|O\.?C\.?|ON\s*RADIO|ON\s*SCREEN|ON\s*PHONE|OVER\s*RADIO|ALT|PRE-?LAP|INTERCOM|FILTERED|ECHO|WHISPERS?|YELLS?|SHOUTS?|SCREAMS?|QUIETLY|ANGRILY|NERVOUSLY|LAUGHING|CRYING)\)\s*$/gi;
+
+function normalizeCharacterName(rawName: string): string {
+  if (!rawName || typeof rawName !== 'string') return '';
+  
+  let name = rawName.trim().toUpperCase();
+  
+  // Remove technical suffixes repeatedly until clean
+  let prevName = '';
+  while (prevName !== name) {
+    prevName = name;
+    name = name.replace(TECHNICAL_SUFFIXES_REGEX, '').trim();
+  }
+  
+  // Remove trailing parentheticals that are empty or numeric
+  name = name.replace(/\s*\(\s*\)\s*$/, '').trim();
+  name = name.replace(/\s*\(\s*#?\d+\s*\)\s*$/, '').trim();
+  
+  // Clean multiple spaces
+  name = name.replace(/\s+/g, ' ').trim();
+  
+  return name;
+}
+
+function collapseCharacterVariants(characters: any[]): NormalizedCharacter[] {
+  const canonicalMap = new Map<string, NormalizedCharacter>();
+  
+  for (const char of characters) {
+    const rawName = char.canonical_name || char.name || '';
+    const normalized = normalizeCharacterName(rawName);
+    if (!normalized) continue;
+    
+    // Check existing canonical names for this normalized form
+    const existing = canonicalMap.get(normalized);
+    
+    if (existing) {
+      // Merge aliases
+      const rawAliases = char.aliases || [];
+      for (const alias of rawAliases) {
+        const normAlias = normalizeCharacterName(alias);
+        if (normAlias && !existing.aliases.includes(normAlias) && normAlias !== normalized) {
+          existing.aliases.push(normAlias);
+        }
+      }
+      // Keep higher scenes_count
+      existing.scenes_count = Math.max(existing.scenes_count, char.scenes_count || 0);
+      // Keep better type (main > supporting > featured_extra > voice)
+      const typeRank = { main: 4, supporting: 3, featured_extra: 2, voice: 1 };
+      if ((typeRank[char.type as keyof typeof typeRank] || 0) > (typeRank[existing.type] || 0)) {
+        existing.type = char.type;
+      }
+    } else {
+      // New canonical entry
+      const aliases = (char.aliases || [])
+        .map((a: string) => normalizeCharacterName(a))
+        .filter((a: string) => a && a !== normalized);
+      
+      canonicalMap.set(normalized, {
+        canonical_name: normalized,
+        aliases: aliases,
+        type: char.type || 'supporting',
+        bio: char.bio || '',
+        scenes_count: char.scenes_count || 0,
+        confidence: char.confidence || 'high',
+        narrative_weight: 'minor',
+      });
+    }
+  }
+  
+  return Array.from(canonicalMap.values());
+}
+
+// === 2. LOCATION NORMALIZER ===
+// Separates: lugar base, contexto temporal, estado técnico, metadata de guion
+
+interface NormalizedLocation {
+  base_name: string;              // "MAVERICK'S HOUSE"
+  sub_location?: string;          // "KITCHEN", "BEDROOM"
+  time_of_day?: string;           // "DAY", "NIGHT", "DAWN"
+  temporal_context?: string;      // "CONTINUOUS", "LATER", "MOMENTS LATER"
+  technical_state?: string;       // "LEVEL FLIGHT", "POP-UP", "INTERCUT"
+  type: 'interior' | 'exterior' | 'both';
+  scenes_count: number;
+  raw_variants: string[];
+}
+
+const TIME_PATTERNS = /\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|MORNING|AFTERNOON|EVENING|SUNRISE|SUNSET|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MOMENTS?\s*LATER|MÁS\s*TARDE|SAME|MISMO|B&W|COLOR)\s*$/i;
+const SUB_LOCATION_PATTERN = /\s*[-–—]\s*(KITCHEN|BEDROOM|LIVING\s*ROOM|BATHROOM|HALLWAY|OFFICE|LOBBY|COCKPIT|BRIDGE|DECK|INTERIOR|EXTERIOR|BACK\s*SEAT|FRONT\s*SEAT)\s*/i;
+const TECHNICAL_STATE_PATTERN = /\s*\[([^\]]+)\]\s*/g;
+const INTERCUT_PATTERN = /\s*[-–—]?\s*\(?INTERCUT\)?\s*/i;
+const SORTIE_PATTERN = /\s*[-–—]\s*SORTIE\s*#?\d+/i;
+
+function normalizeLocationName(rawLocation: string): NormalizedLocation {
+  if (!rawLocation || typeof rawLocation !== 'string') {
+    return { base_name: 'UNKNOWN', type: 'interior', scenes_count: 0, raw_variants: [] };
+  }
+  
+  let loc = rawLocation.trim().toUpperCase();
+  let timeOfDay: string | undefined;
+  let temporalContext: string | undefined;
+  let technicalState: string | undefined;
+  let subLocation: string | undefined;
+  
+  // Extract time of day
+  const timeMatch = loc.match(TIME_PATTERNS);
+  if (timeMatch) {
+    const extracted = timeMatch[1].toUpperCase();
+    if (['DAY', 'NIGHT', 'DAWN', 'DUSK', 'MORNING', 'AFTERNOON', 'EVENING', 'SUNRISE', 'SUNSET', 'DÍA', 'NOCHE', 'AMANECER', 'ATARDECER'].includes(extracted)) {
+      timeOfDay = extracted;
+    } else {
+      temporalContext = extracted;
+    }
+    loc = loc.replace(TIME_PATTERNS, '').trim();
+  }
+  
+  // Extract technical state [LEVEL FLIGHT], [POP UP], etc.
+  const technicalMatches: string[] = [];
+  loc = loc.replace(TECHNICAL_STATE_PATTERN, (_, state) => {
+    technicalMatches.push(state.trim());
+    return ' ';
+  }).trim();
+  if (technicalMatches.length > 0) {
+    technicalState = technicalMatches.join(', ');
+  }
+  
+  // Extract INTERCUT
+  if (INTERCUT_PATTERN.test(loc)) {
+    technicalState = technicalState ? `${technicalState}, INTERCUT` : 'INTERCUT';
+    loc = loc.replace(INTERCUT_PATTERN, '').trim();
+  }
+  
+  // Extract SORTIE numbers
+  loc = loc.replace(SORTIE_PATTERN, '').trim();
+  
+  // Extract sub-location
+  const subMatch = loc.match(SUB_LOCATION_PATTERN);
+  if (subMatch) {
+    subLocation = subMatch[1].trim();
+    loc = loc.replace(SUB_LOCATION_PATTERN, '').trim();
+  }
+  
+  // Clean trailing dashes
+  loc = loc.replace(/\s*[-–—]\s*$/, '').trim();
+  
+  // Determine type
+  let type: 'interior' | 'exterior' | 'both' = 'interior';
+  if (loc.startsWith('EXT')) type = 'exterior';
+  else if (loc.startsWith('INT/EXT') || loc.startsWith('I/E')) type = 'both';
+  
+  // Remove INT./EXT. prefix from base_name
+  const baseName = loc
+    .replace(/^(INT\.?\/EXT\.?|I\/E\.?|INT\.?|EXT\.?)\s*[-–—.]?\s*/i, '')
+    .replace(/\s+/g, ' ')
+    .trim() || 'UNKNOWN';
+  
+  return {
+    base_name: baseName,
+    sub_location: subLocation,
+    time_of_day: timeOfDay,
+    temporal_context: temporalContext,
+    technical_state: technicalState,
+    type,
+    scenes_count: 0,
+    raw_variants: [rawLocation],
+  };
+}
+
+function collapseLocationVariants(scenes: any[]): NormalizedLocation[] {
+  const locationMap = new Map<string, NormalizedLocation>();
+  
+  for (const scene of scenes) {
+    const rawHeading = scene.heading || scene.location_raw || '';
+    const normalized = normalizeLocationName(rawHeading);
+    
+    const key = normalized.base_name;
+    const existing = locationMap.get(key);
+    
+    if (existing) {
+      existing.scenes_count++;
+      if (!existing.raw_variants.includes(rawHeading)) {
+        existing.raw_variants.push(rawHeading);
+      }
+      // Merge sub-locations
+      if (normalized.sub_location && !existing.sub_location) {
+        existing.sub_location = normalized.sub_location;
+      }
+      // Update type if both found
+      if (normalized.type !== existing.type && normalized.type !== 'both') {
+        existing.type = 'both';
+      }
+    } else {
+      normalized.scenes_count = 1;
+      locationMap.set(key, normalized);
+    }
+  }
+  
+  return Array.from(locationMap.values())
+    .sort((a, b) => b.scenes_count - a.scenes_count);
+}
+
+// === 3. NARRATIVE CLASSIFIER ===
+// Determines narrative weight based on scene appearances and role patterns
+
+interface NarrativeClassification {
+  protagonists: NormalizedCharacter[];        // Main characters, drive the plot
+  major_supporting: NormalizedCharacter[];    // Significant recurring roles
+  minor_speaking: NormalizedCharacter[];      // Featured extras with lines
+  functional_roles: NormalizedCharacter[];    // AIDE, OFFICER, WAITRESS type roles
+  voices_systems: NormalizedCharacter[];      // TOWER, RADIO, COMMS
+}
+
+const FUNCTIONAL_ROLE_PATTERNS = [
+  /\b(AIDE|ASSISTANT|ATTENDANT|GUARD|OFFICER|SOLDIER|PILOT\s*#?\d*|SAILOR|MARINE)\b/i,
+  /\b(WAITRESS|WAITER|BARTENDER|SERVER|HOSTESS|CLERK|RECEPTIONIST)\b/i,
+  /\b(DOCTOR|NURSE|MEDIC|PARAMEDIC|EMT)\b/i,
+  /\b(COP|POLICE|DETECTIVE|AGENT|FBI|CIA)\b/i,
+  /\b(DRIVER|CABBIE|TAXI)\b/i,
+  /\b(TECHNICIAN|OPERATOR|CONTROLLER|ANNOUNCER)\b/i,
+  /\b(MAN|WOMAN|PERSON|KID|CHILD|BOY|GIRL)\s*(#?\d+|IN\s|AT\s|WITH\s)/i,
+  /\b(CROWD|GROUP|TEAM|CREW)\s*MEMBER/i,
+];
+
+const VOICE_SYSTEM_PATTERNS = [
+  /\b(TOWER|CONTROL|RADIO|COMMS?|INTERCOM|SPEAKER|PA|ANNOUNCEMENT)\b/i,
+  /\b(COMPUTER|SYSTEM|AI|VOICE|AUTOMATED)\b/i,
+  /\b(NARRATOR|NEWSCASTER|ANCHOR|REPORTER)\s*\(V\.?O\.?\)/i,
+];
+
+function classifyNarrativeWeight(characters: NormalizedCharacter[], totalScenes: number): NarrativeClassification {
+  const protagonists: NormalizedCharacter[] = [];
+  const majorSupporting: NormalizedCharacter[] = [];
+  const minorSpeaking: NormalizedCharacter[] = [];
+  const functionalRoles: NormalizedCharacter[] = [];
+  const voicesSystems: NormalizedCharacter[] = [];
+  
+  // Calculate thresholds based on total scenes
+  const protagonistThreshold = Math.max(totalScenes * 0.15, 10);  // >15% of scenes or 10+
+  const majorThreshold = Math.max(totalScenes * 0.05, 3);        // >5% of scenes or 3+
+  
+  for (const char of characters) {
+    const name = char.canonical_name;
+    const scenes = char.scenes_count;
+    
+    // Check for voice/system patterns first
+    if (char.type === 'voice' || VOICE_SYSTEM_PATTERNS.some(p => p.test(name))) {
+      char.narrative_weight = 'functional';
+      voicesSystems.push(char);
+      continue;
+    }
+    
+    // Check for functional role patterns
+    if (FUNCTIONAL_ROLE_PATTERNS.some(p => p.test(name))) {
+      char.narrative_weight = 'functional';
+      functionalRoles.push(char);
+      continue;
+    }
+    
+    // Classify by scene count and declared type
+    if (char.type === 'main' || scenes >= protagonistThreshold) {
+      char.narrative_weight = 'protagonist';
+      protagonists.push(char);
+    } else if (char.type === 'supporting' || scenes >= majorThreshold) {
+      char.narrative_weight = 'major';
+      majorSupporting.push(char);
+    } else if (char.type === 'featured_extra' || scenes >= 1) {
+      char.narrative_weight = 'minor';
+      minorSpeaking.push(char);
+    } else {
+      char.narrative_weight = 'functional';
+      functionalRoles.push(char);
+    }
+  }
+  
+  console.log('[classifyNarrativeWeight] Results:', {
+    protagonists: protagonists.length,
+    major: majorSupporting.length,
+    minor: minorSpeaking.length,
+    functional: functionalRoles.length,
+    voices: voicesSystems.length,
+    thresholds: { protagonist: protagonistThreshold, major: majorThreshold },
+  });
+  
+  return {
+    protagonists,
+    major_supporting: majorSupporting,
+    minor_speaking: minorSpeaking,
+    functional_roles: functionalRoles,
+    voices_systems: voicesSystems,
+  };
+}
+
+// === UNIFIED POST-PROCESSOR ===
+
+interface PostProcessorResult {
+  characters: {
+    cast: NormalizedCharacter[];
+    featured_extras_with_lines: NormalizedCharacter[];
+    voices_and_functional: NormalizedCharacter[];
+    narrative_classification: NarrativeClassification;
+    _collapsed_count: number;
+    _original_count: number;
+  };
+  locations: {
+    base: NormalizedLocation[];
+    _collapsed_count: number;
+    _original_count: number;
+  };
+  scenes: any[];
+}
+
+function runSemanticPostProcessor(
+  rawCharacters: any[],
+  rawScenes: any[],
+  rawLocations: any[]
+): PostProcessorResult {
+  console.log('[PostProcessor] Starting semantic normalization...');
+  console.log('[PostProcessor] Input:', {
+    characters: rawCharacters.length,
+    scenes: rawScenes.length,
+    locations: rawLocations.length,
+  });
+  
+  // 1. Normalize and collapse character variants
+  const collapsedCharacters = collapseCharacterVariants(rawCharacters);
+  
+  // 2. Update scene counts from regex scenes
+  const charAppearances = new Map<string, number>();
+  for (const scene of rawScenes) {
+    const chars = scene.characters_present || [];
+    for (const charName of chars) {
+      const normalized = normalizeCharacterName(charName);
+      if (normalized) {
+        charAppearances.set(normalized, (charAppearances.get(normalized) || 0) + 1);
+      }
+    }
+  }
+  
+  // Update scenes_count for each character
+  for (const char of collapsedCharacters) {
+    char.scenes_count = charAppearances.get(char.canonical_name) || 0;
+    // Also check aliases
+    for (const alias of char.aliases) {
+      char.scenes_count += charAppearances.get(alias) || 0;
+    }
+  }
+  
+  // 3. Classify by narrative weight
+  const narrativeClassification = classifyNarrativeWeight(collapsedCharacters, rawScenes.length);
+  
+  // 4. Normalize and collapse locations
+  const collapsedLocations = collapseLocationVariants(rawScenes);
+  
+  // 5. Build final character buckets
+  const cast = [
+    ...narrativeClassification.protagonists,
+    ...narrativeClassification.major_supporting,
+  ].sort((a, b) => b.scenes_count - a.scenes_count);
+  
+  const featuredExtras = narrativeClassification.minor_speaking
+    .filter(c => c.scenes_count >= 1)
+    .sort((a, b) => b.scenes_count - a.scenes_count);
+  
+  const voicesAndFunctional = [
+    ...narrativeClassification.voices_systems,
+    ...narrativeClassification.functional_roles,
+  ];
+  
+  console.log('[PostProcessor] Output:', {
+    cast: cast.length,
+    extras: featuredExtras.length,
+    voices: voicesAndFunctional.length,
+    locations: collapsedLocations.length,
+    collapsedCharacters: rawCharacters.length - collapsedCharacters.length,
+    collapsedLocations: rawLocations.length - collapsedLocations.length,
+  });
+  
+  return {
+    characters: {
+      cast,
+      featured_extras_with_lines: featuredExtras,
+      voices_and_functional: voicesAndFunctional,
+      narrative_classification: narrativeClassification,
+      _collapsed_count: rawCharacters.length - collapsedCharacters.length,
+      _original_count: rawCharacters.length,
+    },
+    locations: {
+      base: collapsedLocations,
+      _collapsed_count: rawLocations.length - collapsedLocations.length,
+      _original_count: rawLocations.length,
+    },
+    scenes: rawScenes,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // SCENE-CHARACTER POPULATION SYSTEM
 // Builds alias→canonical and canonical→id maps, populates scene characters
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -2654,7 +3068,7 @@ OUTPUT LANGUAGE: ${lang}`;
     // MERGE: Use MEGA-PROMPT output directly for characters/scenes/locations
     // ═══════════════════════════════════════════════════════════════════════════
     await supabase.from('background_tasks').update({
-      progress: 70,
+      progress: 65,
       description: 'Fusionando resultados...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
@@ -2663,56 +3077,110 @@ OUTPUT LANGUAGE: ${lang}`;
     const setpiecesData = setpiecesResult.status === 'fulfilled' ? setpiecesResult.value.data : {};
     const haikuProviderInfo = propsResult.status === 'fulfilled' ? propsResult.value.providerInfo : null;
 
-    // Convert MEGA-PROMPT characters to our format
-    const convertCharacter = (c: any) => ({
+    // Convert MEGA-PROMPT characters to unified format for post-processor
+    const rawCharactersForPostProcess = megaCharacters.map((c: any) => ({
+      canonical_name: c.canonical_name || c.name || '',
       name: c.canonical_name || c.name || '',
       id: c.id || '',
       aliases: c.aliases || [],
-      role: c.type || c.role || 'supporting',
+      type: c.type || 'supporting',
       bio: c.bio || '',
       confidence: c.confidence || 'high',
       scenes_count: 0,
-    });
-    
-    // Classify characters by type
-    const finalCast = megaCharacters
-      .filter((c: any) => ['main', 'supporting'].includes(c.type))
-      .map(convertCharacter);
-    
-    const finalExtras = megaCharacters
-      .filter((c: any) => c.type === 'featured_extra')
-      .map(convertCharacter);
-    
-    const finalVoices = [
-      ...megaCharacters.filter((c: any) => c.type === 'voice').map(convertCharacter),
-      ...megaVoices.map((v: any) => ({
-        name: v.name || '',
-        type: v.type || 'other',
-        role: 'voice',
-        scenes_count: 0,
-      })),
-    ];
-    
-    // Convert locations
-    const finalLocations = megaLocations.map((l: any) => ({
-      name: l.name || '',
-      type: l.type || 'interior',
-      scenes_count: l.scenes_count || 0,
-      variants: [],
     }));
     
-    // Convert scenes - already populated with characters_present!
-    const finalScenes = megaScenes.map((s: any) => ({
+    // Also add voices as characters for unified processing
+    const voicesAsCharacters = megaVoices.map((v: any) => ({
+      canonical_name: v.name || '',
+      name: v.name || '',
+      aliases: [],
+      type: 'voice',
+      bio: '',
+      confidence: 'high',
+      scenes_count: 0,
+    }));
+    
+    const allRawCharacters = [...rawCharactersForPostProcess, ...voicesAsCharacters];
+    
+    // Convert scenes for post-processor
+    const rawScenesForPostProcess = megaScenes.map((s: any) => ({
       number: s.number || 0,
       heading: s.heading || '',
       int_ext: s.int_ext || 'INT',
       location_base: s.location_base || '',
+      location_raw: s.heading || '',
       time: s.time || '',
       characters_present: s.characters_present || [],
-      character_ids: [], // Will be populated later if needed
+      character_ids: [],
     }));
     
-    console.log('[script-breakdown] V22 Character classification:', {
+    // Convert locations for post-processor
+    const rawLocationsForPostProcess = megaLocations.map((l: any) => ({
+      name: l.name || '',
+      type: l.type || 'interior',
+      scenes_count: l.scenes_count || 0,
+    }));
+    
+    console.log('[script-breakdown] Pre-PostProcessor counts:', {
+      characters: allRawCharacters.length,
+      scenes: rawScenesForPostProcess.length,
+      locations: rawLocationsForPostProcess.length,
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PHASE 3: SEMANTIC POST-PROCESSOR
+    // Normalizes variants, collapses duplicates, classifies narrative weight
+    // ═══════════════════════════════════════════════════════════════════════════
+    await supabase.from('background_tasks').update({
+      progress: 75,
+      description: 'Post-procesado semántico (normalización + clasificación)...',
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
+
+    const postProcessed = runSemanticPostProcessor(
+      allRawCharacters,
+      rawScenesForPostProcess,
+      rawLocationsForPostProcess
+    );
+    
+    console.log('[script-breakdown] PostProcessor results:', {
+      cast: postProcessed.characters.cast.length,
+      extras: postProcessed.characters.featured_extras_with_lines.length,
+      voices: postProcessed.characters.voices_and_functional.length,
+      locations: postProcessed.locations.base.length,
+      collapsed_chars: postProcessed.characters._collapsed_count,
+      collapsed_locs: postProcessed.locations._collapsed_count,
+    });
+
+    // Convert post-processed characters to standard format for downstream
+    const toStandardChar = (c: NormalizedCharacter) => ({
+      name: c.canonical_name,
+      aliases: c.aliases,
+      role: c.type,
+      bio: c.bio,
+      scenes_count: c.scenes_count,
+      confidence: c.confidence,
+      narrative_weight: c.narrative_weight,
+    });
+    
+    const finalCast = postProcessed.characters.cast.map(toStandardChar);
+    const finalExtras = postProcessed.characters.featured_extras_with_lines.map(toStandardChar);
+    const finalVoices = postProcessed.characters.voices_and_functional.map(toStandardChar);
+    
+    // Convert post-processed locations to standard format
+    const finalLocations = postProcessed.locations.base.map((l: NormalizedLocation) => ({
+      name: l.base_name,
+      sub_location: l.sub_location,
+      type: l.type,
+      scenes_count: l.scenes_count,
+      time_of_day: l.time_of_day,
+      variants: l.raw_variants,
+    }));
+    
+    // Use post-processed scenes (same as input but may be enriched later)
+    const finalScenes = postProcessed.scenes;
+    
+    console.log('[script-breakdown] V23 Post-Processed classification:', {
       cast: finalCast.length,
       extras: finalExtras.length,
       voices: finalVoices.length,
@@ -2731,18 +3199,27 @@ OUTPUT LANGUAGE: ${lang}`;
         total: finalScenes.length,
         list: finalScenes,
       },
-      // Characters from MEGA-PROMPT (already classified!)
+      // Characters from POST-PROCESSOR (normalized and classified!)
       characters: {
         cast: finalCast,
         featured_extras_with_lines: finalExtras,
         voices_and_functional: finalVoices,
+        narrative_classification: postProcessed.characters.narrative_classification,
+        _post_processor_stats: {
+          original_count: postProcessed.characters._original_count,
+          collapsed_count: postProcessed.characters._collapsed_count,
+        },
       },
-      // Main characters = cast with main role
-      characters_main: finalCast.filter((c: any) => c.role === 'main'),
-      // Locations from MEGA-PROMPT
+      // Main characters = protagonists from narrative classification
+      characters_main: postProcessed.characters.narrative_classification.protagonists.map(toStandardChar),
+      // Locations from POST-PROCESSOR (normalized!)
       locations: {
         base: finalLocations,
         variants: [],
+        _post_processor_stats: {
+          original_count: postProcessed.locations._original_count,
+          collapsed_count: postProcessed.locations._collapsed_count,
+        },
       },
       // Props from Haiku
       props: [
@@ -2762,7 +3239,7 @@ OUTPUT LANGUAGE: ${lang}`;
     const enrichedData = enrichBreakdownWithScriptData(mergedBreakdown, processedScriptText);
     const normalizedData = normalizeBreakdown(enrichedData);
 
-    console.log('[script-breakdown] Normalization complete:', {
+    console.log('[script-breakdown] Final normalization complete:', {
       scenes: normalizedData.counts?.scenes_total || 0,
       cast: normalizedData.counts?.cast_characters_total || 0,
       extras: normalizedData.counts?.featured_extras_total || 0,
@@ -2987,8 +3464,8 @@ OUTPUT LANGUAGE: ${lang}`;
       }
 
       const parsedJson = {
-        schema_version: 'v9-semantic-normalization',
-        breakdown_version: 4,
+        schema_version: 'v10-semantic-postprocessor',
+        breakdown_version: 5,
         
         // Canonical root-level fields
         title: normalizedData.title || 'Guion Analizado',
@@ -3006,12 +3483,15 @@ OUTPUT LANGUAGE: ${lang}`;
         // Scenes in canonical format
         scenes: normalizedData.scenes,
         
-        // Characters (Haiku-enriched)
+        // Characters (POST-PROCESSED with narrative classification)
         characters: normalizedData.characters,
-        characters_main: canonicalData.characters_main || [],
+        characters_main: mergedBreakdown.characters_main || [],
         characters_flat: allCharacters,
         
-        // Locations
+        // Narrative classification (new in V23)
+        narrative_classification: mergedBreakdown.characters?.narrative_classification || null,
+        
+        // Locations (POST-PROCESSED with normalized base names)
         locations: normalizedData.locations,
         locations_flat: allLocations,
         
@@ -3029,13 +3509,21 @@ OUTPUT LANGUAGE: ${lang}`;
         _warnings: normalizedData._warnings || [],
         _phase_status: {
           mega_semantic_v22: 'success',
+          semantic_post_processor_v1: 'success',
           haiku_props: propsResult.status,
           haiku_setpieces: setpiecesResult.status,
+        },
+        _post_processor_stats: {
+          characters_collapsed: postProcessed.characters._collapsed_count,
+          locations_collapsed: postProcessed.locations._collapsed_count,
         },
         _provider_info: {
           sonnet: sonnetProviderInfo,
           haiku: haikuProviderInfo,
         },
+        
+        // Non-entities rejected (for debugging)
+        non_entities_rejected: megaRejected,
         
         // Episodes
         episodes: parsedEpisodes,
