@@ -1051,6 +1051,14 @@ function classifyCharacters(rawCandidates: string[]): CharBuckets {
       continue;
     }
     
+    // PATCH v21: Role suffix detection (e.g., "CAIN'S AIDE", "ADMIRAL'S PILOT")
+    // These are extras, not cast members
+    if (isRoleSuffix(name)) {
+      console.log(`[extra] ${name}: role suffix detected`);
+      addUnique(buckets.featured_extras_with_lines, seen, name);
+      continue;
+    }
+    
     // Proper names → cast
     const words = name.split(/\s+/);
     const hasProperName = words.some(w => isProbablyProperName(w));
