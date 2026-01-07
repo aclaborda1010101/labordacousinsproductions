@@ -4033,28 +4033,38 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 {(generatedScript.episodes || [{ episode_number: 1, title: generatedScript.title || 'Película', synopsis: generatedScript.synopsis, scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => {
                   const episodeNum = ep.episode_number || epIdx + 1;
                   const viewMode = episodeViewMode[epIdx] || 'summary';
-                  // Calculate dialogue count from multiple possible sources (in priority order)
-                  // 1. total_dialogue_lines at episode level
-                  // 2. dialogue_lines at episode level  
-                  // 3. Sum from scenes array (checking multiple field names)
-                  // 4. Sum from script-level counts if available
-                  const dialogueCount = ep.total_dialogue_lines 
-                    || ep.dialogue_lines 
-                    || ep.scenes?.reduce((sum: number, s: any) => {
-                      // Check multiple possible field names for dialogue count
-                      return sum + (
-                        s.total_dialogue_lines ||
-                        s.dialogue_lines || 
-                        s.dialogue_count ||
-                        (Array.isArray(s.dialogue) ? s.dialogue.length : 0) ||
-                        (Array.isArray(s.dialogues) ? s.dialogues.length : 0) ||
-                        0
-                      );
-                    }, 0) 
-                    || (generatedScript.counts?.total_dialogue_lines && generatedScript.episodes?.length === 1 
-                        ? generatedScript.counts.total_dialogue_lines 
-                        : 0)
-                    || 0;
+                  const toNum = (v: any) => {
+                    const n = typeof v === "string" ? Number(v) : v;
+                    return typeof n === "number" && Number.isFinite(n) ? n : 0;
+                  };
+
+                  const dialogueCount =
+                    toNum(ep.total_dialogue_lines) ||
+                    toNum(ep.dialogue_lines) ||
+                    toNum(ep.counts?.total_dialogue_lines) ||
+                    toNum(ep.counts?.dialogues) ||
+                    toNum(ep.dialogues?.total_lines) ||
+                    toNum(ep.dialogue_count) ||
+                    toNum(
+                      ep.scenes?.reduce((sum: number, s: any) => {
+                        return (
+                          sum +
+                          toNum(s.total_dialogue_lines) +
+                          toNum(s.dialogue_lines) +
+                          toNum(s.dialogue_count) +
+                          (Array.isArray(s.dialogue) ? s.dialogue.length : 0) +
+                          (Array.isArray(s.dialogues) ? s.dialogues.length : 0)
+                        );
+                      }, 0)
+                    ) ||
+                    ((generatedScript.episodes?.length ?? 0) <= 1
+                      ? toNum(generatedScript.counts?.total_dialogue_lines) ||
+                        toNum(generatedScript.counts?.dialogues) ||
+                        toNum(generatedScript.dialogues?.total_lines) ||
+                        toNum(breakdownPro?.counts?.dialogues) ||
+                        toNum(generatedScript.dialogue_count)
+                      : 0) ||
+                    0;
                   
                   return (
                     <Card key={epIdx} className="overflow-hidden">
