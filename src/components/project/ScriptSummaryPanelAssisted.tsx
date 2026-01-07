@@ -1027,9 +1027,9 @@ export function ScriptSummaryPanelAssisted({
                       <Film className="h-4 w-4 text-primary" />
                       <span className="font-medium text-sm">Escenas del Análisis ({scriptData.scenes.length})</span>
                     </div>
-                    <ScrollArea className="max-h-96">
+                    <ScrollArea className="h-80 pr-2">
                       <div className="space-y-1">
-                        {scriptData.scenes.slice(0, 50).map((scene, i) => (
+                        {scriptData.scenes.map((scene, i) => (
                           <div key={i} className="text-xs bg-muted/50 rounded px-2 py-1.5 flex items-start gap-2">
                             <span className="font-mono text-muted-foreground w-6 flex-shrink-0">
                               {scene.scene_number || i + 1}
@@ -1049,11 +1049,6 @@ export function ScriptSummaryPanelAssisted({
                             )}
                           </div>
                         ))}
-                        {scriptData.scenes.length > 50 && (
-                          <div className="text-xs text-muted-foreground text-center py-1">
-                            +{scriptData.scenes.length - 50} escenas más...
-                          </div>
-                        )}
                       </div>
                     </ScrollArea>
                   </div>
