@@ -63,85 +63,22 @@ import {
 } from 'lucide-react';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 
-// ---- V10/V23/Vxx hydration helpers (nested + legacy) ----
-type AnyObj = Record<string, any>;
+import {
+  hydrateCharacters as hydrateCharsUtil,
+  hydrateLocations as hydrateLocsUtil,
+  hydrateScenes as hydrateScenesUtil,
+  hydrateProps as hydratePropsUtil,
+  getBreakdownPayload,
+  buildRobustCounts,
+  extractTitle,
+  extractWriters,
+} from '@/lib/breakdown/hydrate';
 
-const pickArray = <T = any>(...candidates: any[]): T[] => {
-  for (const c of candidates) if (Array.isArray(c)) return c as T[];
-  return [];
-};
-
-// Accepts either:
-// - payload.breakdown (new task wrapper)
-// - payload (already the breakdown)
-// - recoveredScript.parsed_json.breakdown (DB)
-const getBreakdownPayload = (raw: any): AnyObj | null => {
-  const r = raw ?? null;
-  if (!r || typeof r !== 'object') return null;
-  return (r.breakdown ?? r) as AnyObj;
-};
-
-const hydrateCharacters = (p: any): CharacterData[] => {
-  if (!p || typeof p !== 'object') return [];
-  const ch = p.characters;
-
-  // New nested structure
-  if (ch && typeof ch === 'object' && !Array.isArray(ch)) {
-    const cast = pickArray(ch.cast);
-    const extras = pickArray(
-      ch.featured_extras_with_lines, // ✅ real key in DB
-      ch.extras                       // fallback
-    );
-    const voices = pickArray(
-      ch.voices_and_functional,       // ✅ real key in DB  
-      ch.voices                       // fallback
-    );
-
-    // Some versions may keep a flat "all" array too
-    const flat = pickArray(ch.all, ch.items);
-
-    const merged = [...cast, ...extras, ...voices];
-    return merged.length ? merged : flat;
-  }
-
-  // Legacy flat array
-  return pickArray(p.characters);
-};
-
-const hydrateLocations = (p: any): LocationData[] => {
-  if (!p || typeof p !== 'object') return [];
-  const loc = p.locations;
-
-  if (loc && typeof loc === 'object' && !Array.isArray(loc)) {
-    // New nested structure
-    const base = pickArray(loc.base, loc.items, loc.list);
-    if (base.length) return base;
-  }
-
-  // Legacy flat array
-  return pickArray(p.locations);
-};
-
-const hydrateScenes = (p: any): SceneData[] => {
-  if (!p || typeof p !== 'object') return [];
-  const sc = p.scenes;
-
-  if (sc && typeof sc === 'object' && !Array.isArray(sc)) {
-    // New nested structure
-    const list = pickArray(sc.list, sc.items);
-    if (list.length) return list;
-  }
-
-  // Legacy flat array
-  return pickArray(p.scenes);
-};
-
-const hydrateProps = (p: any): any[] => {
-  if (!p || typeof p !== 'object') return [];
-  return pickArray(p.props, p.breakdown?.props);
-};
-
-// ---- End hydration helpers ----
+// Local wrappers with proper types
+const hydrateCharacters = (p: any): CharacterData[] => hydrateCharsUtil(p) as CharacterData[];
+const hydrateLocations = (p: any): LocationData[] => hydrateLocsUtil(p) as LocationData[];
+const hydrateScenes = (p: any): SceneData[] => hydrateScenesUtil(p) as SceneData[];
+const hydrateProps = (p: any): any[] => hydratePropsUtil(p);
 
 interface ScriptWorkspaceProps {
   projectId: string;

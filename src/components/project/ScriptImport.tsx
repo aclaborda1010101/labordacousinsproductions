@@ -91,63 +91,16 @@ import {
 } from '@/lib/scriptTimingModel';
 import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
 import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
-
-// ---- V10/V23/Vxx hydration helpers (nested + legacy) ----
-type AnyObj = Record<string, any>;
-
-const pickArray = <T = any>(...candidates: any[]): T[] => {
-  for (const c of candidates) if (Array.isArray(c)) return c as T[];
-  return [];
-};
-
-const hydrateCharacters = (p: any): any[] => {
-  if (!p || typeof p !== 'object') return [];
-  const ch = p.characters;
-
-  // New nested structure (v10+)
-  if (ch && typeof ch === 'object' && !Array.isArray(ch)) {
-    const cast = pickArray(ch.cast);
-    const extras = pickArray(ch.featured_extras_with_lines, ch.extras);
-    const voices = pickArray(ch.voices_and_functional, ch.voices);
-    const flat = pickArray(ch.all, ch.items);
-
-    const merged = [...cast, ...extras, ...voices];
-    return merged.length ? merged : flat;
-  }
-
-  // Legacy flat array or main_characters fallback
-  return pickArray(p.main_characters, p.characters);
-};
-
-const hydrateLocations = (p: any): any[] => {
-  if (!p || typeof p !== 'object') return [];
-  const loc = p.locations;
-
-  if (loc && typeof loc === 'object' && !Array.isArray(loc)) {
-    const base = pickArray(loc.base, loc.items, loc.list);
-    if (base.length) return base;
-  }
-
-  return pickArray(p.locations);
-};
-
-const hydrateScenes = (p: any): any[] => {
-  if (!p || typeof p !== 'object') return [];
-  const sc = p.scenes;
-
-  if (sc && typeof sc === 'object' && !Array.isArray(sc)) {
-    const list = pickArray(sc.list, sc.items);
-    if (list.length) return list;
-  }
-
-  return pickArray(p.scenes);
-};
-
-const hydrateProps = (p: any): any[] => {
-  if (!p || typeof p !== 'object') return [];
-  return pickArray(p.props, p.breakdown?.props);
-};
-// ---- End hydration helpers ----
+import {
+  hydrateCharacters,
+  hydrateLocations,
+  hydrateScenes,
+  hydrateProps,
+  getBreakdownPayload,
+  buildRobustCounts,
+  extractTitle,
+  extractWriters,
+} from '@/lib/breakdown/hydrate';
 
 interface ScriptImportProps {
   projectId: string;
@@ -626,58 +579,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         if (script.parsed_json && typeof script.parsed_json === 'object') {
           const parsed = script.parsed_json as Record<string, unknown>;
           if (parsed.episodes || parsed.screenplay || parsed.title || parsed.characters) {
-            // Use hydration helpers for v10+ nested structure support
-            const chars = hydrateCharacters(parsed);
-            const locs = hydrateLocations(parsed);
-            const propsArr = hydrateProps(parsed);
-            const scenes = hydrateScenes(parsed);
-            const episodesArr = (parsed.episodes || []) as any[];
+            // Use shared hydration helpers for v10+ nested structure support
+            const payload = getBreakdownPayload(parsed) ?? parsed;
+            const chars = hydrateCharacters(payload);
+            const locs = hydrateLocations(payload);
+            const propsArr = hydrateProps(payload);
+            const scenes = hydrateScenes(payload);
+            const episodesArr = Array.isArray(payload?.episodes) ? payload.episodes : [];
             
-            const existingCounts = parsed.counts as Record<string, any> | undefined;
-            const protagonists = existingCounts?.protagonists || chars.filter((c: any) => c.role === 'protagonist' || c.priority === 'P0').length;
-            const supporting = existingCounts?.supporting || chars.filter((c: any) => c.role === 'supporting' || c.priority === 'P1').length;
-            const heroProps = existingCounts?.hero_props || propsArr.filter((p: any) => p.importance === 'hero' || p.priority === 'P0').length;
-            const totalScenes = existingCounts?.total_scenes || scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep.scenes?.length || 0), 0) || 0;
-
-            // Extract title from multiple possible locations
-            const extractedTitle = 
-              (parsed as any).title || 
-              (parsed as any).metadata?.title ||
-              (parsed as any).synopsis?.title ||
-              (parsed as any).breakdown_pro?.metadata?.title ||
-              null;
-
-            // Extract writers from metadata
-            const extractedWriters = 
-              (parsed as any).writers ||
-              (parsed as any).metadata?.writers ||
-              (parsed as any).breakdown_pro?.metadata?.writers ||
-              [];
+            // Use shared robust counts builder
+            const counts = buildRobustCounts(payload, chars, locs, scenes, propsArr, episodesArr);
 
             const hydratedScriptData = {
               ...parsed,
-              title: extractedTitle,
-              writers: extractedWriters,
+              title: extractTitle(payload),
+              writers: extractWriters(payload),
               main_characters: chars,
               characters: chars,
               locations: locs,
               scenes: scenes,
               props: propsArr,
-              counts: {
-                ...(existingCounts || {}),
-                protagonists,
-                supporting,
-                locations: locs.length,
-                total_scenes: totalScenes,
-                hero_props: heroProps,
-                props: propsArr.length,
-                setpieces:
-                  typeof (existingCounts as any)?.setpieces === 'number'
-                    ? (existingCounts as any).setpieces
-                    : Array.isArray((parsed as any).setpieces)
-                      ? (parsed as any).setpieces.length
-                      : 0,
-              },
+              counts,
             };
 
             setGeneratedScript(hydratedScriptData);
