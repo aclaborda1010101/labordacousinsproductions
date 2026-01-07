@@ -69,6 +69,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const isPro = userLevel === 'pro';
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
@@ -78,6 +79,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const [saving, setSaving] = useState(false);
   const [importingFromScript, setImportingFromScript] = useState(false);
   const [scriptCharacters, setScriptCharacters] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -87,7 +89,8 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   });
 
   const fetchCharacters = async () => {
-    const { data } = await supabase
+    setLoadError(null);
+    const { data, error } = await supabase
       .from('characters')
       .select(`
         id, name, role, character_role, bio, arc, turnaround_urls, 
@@ -96,6 +99,13 @@ export default function CharactersList({ projectId }: CharactersListProps) {
       `)
       .eq('project_id', projectId)
       .order('created_at');
+
+    if (error) {
+      console.error('Error fetching characters:', error);
+      setLoadError(`Error al cargar personajes: ${error.message}`);
+      setLoading(false);
+      return;
+    }
 
     if (data) {
       // Fetch hero_front slots for each character
@@ -152,6 +162,13 @@ export default function CharactersList({ projectId }: CharactersListProps) {
       })));
     }
     setLoading(false);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchCharacters();
+    setRefreshing(false);
+    toast.success('Lista actualizada');
   };
 
   // Load characters and check for script characters
@@ -494,19 +511,38 @@ export default function CharactersList({ projectId }: CharactersListProps) {
 
   if (loading) {
     return (
-      <div className="p-6 flex justify-center">
+      <div className="p-6 flex flex-col items-center justify-center gap-2">
         <Loader2 className="w-6 h-6 animate-spin" />
+        <span className="text-sm text-muted-foreground">Cargando personajes...</span>
       </div>
     );
   }
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-4 sm:space-y-6">
+      {/* Error banner */}
+      {loadError && (
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-3">
+          <div className="flex-1">
+            <p className="text-sm text-destructive font-medium">Error de carga</p>
+            <p className="text-xs text-muted-foreground">{loadError}</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
+            {refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            <span className="ml-2">Reintentar</span>
+          </Button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold">Personajes</h2>
-          <p className="text-sm text-muted-foreground">Define los personajes de tu producción</p>
+          <p className="text-sm text-muted-foreground">
+            {characters.length > 0 
+              ? `${characters.length} personajes cargados` 
+              : 'Define los personajes de tu producción'}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {scriptCharacters.length > 0 && (
@@ -516,8 +552,14 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               <span className="ml-2 sm:hidden">Importar ({scriptCharacters.length})</span>
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={() => fetchCharacters()} title="Refrescar lista">
-            <RefreshCw className="w-4 h-4" />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleRefresh} 
+            disabled={refreshing}
+            title="Refrescar lista"
+          >
+            {refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
           </Button>
           {characters.length > 0 && (
             <Button variant="outline" size="sm" onClick={handleGenerateAll} disabled={generatingAll}>
