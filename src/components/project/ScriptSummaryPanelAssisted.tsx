@@ -56,6 +56,13 @@ import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import { exportBibleSummaryPDF } from '@/lib/exportBibleSummaryPDF';
 import { exportOutlinePDF } from '@/lib/exportOutlinePDF';
 import { useCreativeModeOptional } from '@/contexts/CreativeModeContext';
+import { 
+  getSceneSlugline, 
+  isValidSlugline, 
+  normalizeScenes, 
+  countValidSluglines,
+  getBreakdownReliability 
+} from '@/lib/sceneNormalizer';
 
 interface ScriptSummaryPanelAssistedProps {
   projectId: string;
@@ -1024,85 +1031,82 @@ export function ScriptSummaryPanelAssisted({
                 )}
 
                 {/* Scenes from Analysis with Scene Cards Enhancement */}
-                {scriptData.scenes && scriptData.scenes.length > 0 && (
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Film className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm">Escenas del Análisis ({scriptData.scenes.length})</span>
-                        {/* Completeness indicator */}
-                        {(() => {
-                          const validSluglines = scriptData.scenes.filter(s => 
-                            s.slugline?.match(/^(INT\.|EXT\.)/i)
-                          ).length;
-                          const ratio = validSluglines / scriptData.scenes.length;
-                          if (ratio >= 0.8) {
-                            return (
-                              <Badge variant="default" className="bg-green-600 text-xs">
-                                ✓ Breakdown fiable
-                              </Badge>
-                            );
-                          } else {
-                            return (
-                              <Badge variant="secondary" className="bg-amber-500/20 text-amber-600 text-xs">
-                                ⚠️ Estimación (outline)
-                              </Badge>
-                            );
-                          }
-                        })()}
+                {scriptData.scenes && scriptData.scenes.length > 0 && (() => {
+                  // Normalize scenes once for consistent data
+                  const normalizedScenes = normalizeScenes(scriptData.scenes);
+                  const { valid, total, ratio } = countValidSluglines(normalizedScenes);
+                  const reliability = getBreakdownReliability(normalizedScenes);
+                  
+                  return (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Film className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Escenas del Análisis ({total})</span>
+                          {/* Completeness indicator */}
+                          {reliability === 'reliable' ? (
+                            <Badge variant="default" className="bg-green-600 text-xs">
+                              ✓ Breakdown fiable ({valid}/{total})
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary" className="bg-amber-500/20 text-amber-600 text-xs">
+                              ⚠️ Estimación ({valid}/{total})
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <ScrollArea className="h-80 pr-2">
-                      <div className="space-y-1">
-                        {scriptData.scenes.map((scene, i) => {
-                          const slugline = scene.slugline || `${scene.int_ext || ''} ${scene.location || 'Escena'} - ${scene.time_of_day || ''}`.trim();
-                          const isValidSlugline = slugline.match(/^(INT\.|EXT\.)/i);
-                          return (
-                            <div 
-                              key={i} 
-                              className={`text-xs rounded px-2 py-1.5 flex items-start gap-2 ${
-                                isValidSlugline ? 'bg-muted/50' : 'bg-amber-500/10 border border-amber-500/20'
-                              }`}
-                            >
-                              <span className="font-mono text-muted-foreground w-6 flex-shrink-0">
-                                {scene.scene_number || i + 1}
-                              </span>
-                              <div className="flex-1 min-w-0">
-                                <span className={`font-medium ${!isValidSlugline ? 'text-amber-600' : ''}`}>
-                                  {slugline || 'SIN SLUGLINE'}
+                      <ScrollArea className="h-80 pr-2">
+                        <div className="space-y-1">
+                          {normalizedScenes.map((scene, i) => {
+                            const slugline = getSceneSlugline(scene);
+                            const valid = isValidSlugline(slugline);
+                            return (
+                              <div 
+                                key={i} 
+                                className={`text-xs rounded px-2 py-1.5 flex items-start gap-2 ${
+                                  valid ? 'bg-muted/50' : 'bg-amber-500/10 border border-amber-500/20'
+                                }`}
+                              >
+                                <span className="font-mono text-muted-foreground w-6 flex-shrink-0">
+                                  {scene.scene_number || i + 1}
                                 </span>
-                                {scene.summary && (
-                                  <p className="text-muted-foreground line-clamp-1 mt-0.5">{scene.summary}</p>
-                                )}
-                                {/* Show beat_goal if available */}
-                                {(scene as any).beat_goal && (
-                                  <div className="flex items-center gap-1 mt-1 text-muted-foreground">
-                                    <Target className="h-3 w-3" />
-                                    <span className="line-clamp-1">{(scene as any).beat_goal}</span>
-                                  </div>
-                                )}
+                                <div className="flex-1 min-w-0">
+                                  <span className={`font-medium ${!valid ? 'text-amber-600' : ''}`}>
+                                    {slugline || 'SIN SLUGLINE'}
+                                  </span>
+                                  {scene.summary && (
+                                    <p className="text-muted-foreground line-clamp-1 mt-0.5">{scene.summary}</p>
+                                  )}
+                                  {/* Show beat_goal if available */}
+                                  {scene.beat_goal && (
+                                    <div className="flex items-center gap-1 mt-1 text-muted-foreground">
+                                      <Target className="h-3 w-3" />
+                                      <span className="line-clamp-1">{scene.beat_goal}</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  {scene.characters_present && scene.characters_present.length > 0 && (
+                                    <Badge variant="outline" className="text-[10px]">
+                                      <Users className="h-2.5 w-2.5 mr-0.5" />
+                                      {scene.characters_present.length}
+                                    </Badge>
+                                  )}
+                                  {scene.props_used && scene.props_used.length > 0 && (
+                                    <Badge variant="outline" className="text-[10px]">
+                                      <Package className="h-2.5 w-2.5 mr-0.5" />
+                                      {scene.props_used.length}
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1 flex-shrink-0">
-                                {scene.characters_present && scene.characters_present.length > 0 && (
-                                  <Badge variant="outline" className="text-[10px]">
-                                    <Users className="h-2.5 w-2.5 mr-0.5" />
-                                    {scene.characters_present.length}
-                                  </Badge>
-                                )}
-                                {(scene as any).props_used && (scene as any).props_used.length > 0 && (
-                                  <Badge variant="outline" className="text-[10px]">
-                                    <Package className="h-2.5 w-2.5 mr-0.5" />
-                                    {(scene as any).props_used.length}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </ScrollArea>
-                  </div>
-                )}
+                            );
+                          })}
+                        </div>
+                      </ScrollArea>
+                    </div>
+                  );
+                })()}
 
                 {/* Plot Twists */}
                 {scriptData.plot_twists && scriptData.plot_twists.length > 0 && (
