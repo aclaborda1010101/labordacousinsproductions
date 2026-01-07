@@ -892,48 +892,76 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         throw new Error(errorText || `Error ${response.status}`);
       }
 
-      // Process streaming response (Anthropic SSE format)
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error('No stream available');
-      
-      const decoder = new TextDecoder();
+      const contentType = response.headers.get('Content-Type') || '';
       let fullText = '';
-      let buffer = '';
-      
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+
+      if (contentType.includes('text/event-stream')) {
+        // Process streaming response (Anthropic SSE format)
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('No stream available');
         
-        buffer += decoder.decode(value, { stream: true });
+        const decoder = new TextDecoder();
+        let buffer = '';
         
-        // Process SSE events line by line
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // Keep incomplete line in buffer
-        
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          const jsonStr = line.slice(6).trim();
-          if (!jsonStr || jsonStr === '[DONE]') continue;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
           
-          try {
-            const event = JSON.parse(jsonStr);
+          buffer += decoder.decode(value, { stream: true });
+          
+          // Process SSE events line by line
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const jsonStr = line.slice(6).trim();
+            if (!jsonStr || jsonStr === '[DONE]') continue;
             
-            // Anthropic streaming format: content_block_delta with text
-            if (event.type === 'content_block_delta' && event.delta?.text) {
-              fullText += event.delta.text;
-              setStreamingContent(fullText);
+            try {
+              const event = JSON.parse(jsonStr);
               
-              // Update progress based on text length (rough estimate)
-              const estimatedProgress = Math.min(30 + (fullText.length / 50), 85);
-              if (!runInBackground) setProgress(estimatedProgress);
+              // Anthropic streaming format: content_block_delta with text
+              if (event.type === 'content_block_delta' && event.delta?.text) {
+                fullText += event.delta.text;
+                setStreamingContent(fullText);
+                
+                // Update progress based on text length (rough estimate)
+                const estimatedProgress = Math.min(30 + (fullText.length / 50), 85);
+                if (!runInBackground) setProgress(estimatedProgress);
+              }
+            } catch (e) {
+              // Skip invalid JSON lines (keep-alive, etc.)
             }
-          } catch (e) {
-            // Skip invalid JSON lines (keep-alive, etc.)
           }
         }
+      } else {
+        // JSON direct response from generate-script
+        const jsonData = await response.json();
+        
+        // Extract raw_content from scenes array
+        if (jsonData.scenes && Array.isArray(jsonData.scenes)) {
+          fullText = jsonData.scenes
+            .map((s: { slugline?: string; raw_content?: string }) => {
+              const parts: string[] = [];
+              if (s.slugline) parts.push(s.slugline);
+              if (s.raw_content) parts.push(s.raw_content);
+              return parts.join('\n\n');
+            })
+            .filter(Boolean)
+            .join('\n\n---\n\n');
+        } else if (jsonData.script_content) {
+          // Fallback: direct script_content field
+          fullText = jsonData.script_content;
+        } else if (typeof jsonData === 'string') {
+          fullText = jsonData;
+        }
+        
+        setStreamingContent(fullText);
+        if (!runInBackground) setProgress(85);
       }
       
-      // Streaming complete
+      // Generation complete
       setIsStreaming(false);
       if (!runInBackground) setProgress(90);
       updateTask(taskId, { progress: 90, description: 'Guardando...' });
