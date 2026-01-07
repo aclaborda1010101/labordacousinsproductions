@@ -63,6 +63,86 @@ import {
 } from 'lucide-react';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 
+// ---- V10/V23/Vxx hydration helpers (nested + legacy) ----
+type AnyObj = Record<string, any>;
+
+const pickArray = <T = any>(...candidates: any[]): T[] => {
+  for (const c of candidates) if (Array.isArray(c)) return c as T[];
+  return [];
+};
+
+// Accepts either:
+// - payload.breakdown (new task wrapper)
+// - payload (already the breakdown)
+// - recoveredScript.parsed_json.breakdown (DB)
+const getBreakdownPayload = (raw: any): AnyObj | null => {
+  const r = raw ?? null;
+  if (!r || typeof r !== 'object') return null;
+  return (r.breakdown ?? r) as AnyObj;
+};
+
+const hydrateCharacters = (p: any): CharacterData[] => {
+  if (!p || typeof p !== 'object') return [];
+  const ch = p.characters;
+
+  // New nested structure
+  if (ch && typeof ch === 'object' && !Array.isArray(ch)) {
+    const cast = pickArray(ch.cast);
+    const extras = pickArray(
+      ch.featured_extras_with_lines, // ✅ real key in DB
+      ch.extras                       // fallback
+    );
+    const voices = pickArray(
+      ch.voices_and_functional,       // ✅ real key in DB  
+      ch.voices                       // fallback
+    );
+
+    // Some versions may keep a flat "all" array too
+    const flat = pickArray(ch.all, ch.items);
+
+    const merged = [...cast, ...extras, ...voices];
+    return merged.length ? merged : flat;
+  }
+
+  // Legacy flat array
+  return pickArray(p.characters);
+};
+
+const hydrateLocations = (p: any): LocationData[] => {
+  if (!p || typeof p !== 'object') return [];
+  const loc = p.locations;
+
+  if (loc && typeof loc === 'object' && !Array.isArray(loc)) {
+    // New nested structure
+    const base = pickArray(loc.base, loc.items, loc.list);
+    if (base.length) return base;
+  }
+
+  // Legacy flat array
+  return pickArray(p.locations);
+};
+
+const hydrateScenes = (p: any): SceneData[] => {
+  if (!p || typeof p !== 'object') return [];
+  const sc = p.scenes;
+
+  if (sc && typeof sc === 'object' && !Array.isArray(sc)) {
+    // New nested structure
+    const list = pickArray(sc.list, sc.items);
+    if (list.length) return list;
+  }
+
+  // Legacy flat array
+  return pickArray(p.scenes);
+};
+
+const hydrateProps = (p: any): any[] => {
+  if (!p || typeof p !== 'object') return [];
+  return pickArray(p.props, p.breakdown?.props);
+};
+
+// ---- End hydration helpers ----
+
 interface ScriptWorkspaceProps {
   projectId: string;
   onEntitiesExtracted?: () => void;
@@ -1162,48 +1242,22 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           console.log('[ScriptWorkspace] Background task completed successfully');
 
           const result = taskData.result as any;
-          const payload = result?.breakdown ?? result;
+          const payload = getBreakdownPayload(result);
 
-          // Support both v10-semantic-postprocessor (nested) and legacy (flat) structures
-          const extractCharacters = (p: any): CharacterData[] => {
-            if (!p?.characters) return [];
-            // New nested structure: characters.cast + characters.featured_extras_with_lines + characters.voices_and_functional
-            if (p.characters.cast && Array.isArray(p.characters.cast)) {
-              const cast = p.characters.cast || [];
-              const extras = p.characters.featured_extras_with_lines || p.characters.extras || [];
-              const voices = p.characters.voices_and_functional || p.characters.voices || [];
-              return [...cast, ...extras, ...voices];
-            }
-            // Legacy flat array
-            if (Array.isArray(p.characters)) return p.characters;
-            return [];
-          };
+          // Debug log for hydration
+          console.log('[hydrate] keys:', {
+            hasBreakdown: !!result?.breakdown,
+            charactersKeys: payload?.characters ? Object.keys(payload.characters) : null,
+            locationsKeys: payload?.locations ? Object.keys(payload.locations) : null,
+            scenesKeys: payload?.scenes ? Object.keys(payload.scenes) : null,
+          });
 
-          const extractLocations = (p: any): LocationData[] => {
-            if (!p?.locations) return [];
-            // New nested structure: locations.base
-            if (p.locations.base && Array.isArray(p.locations.base)) {
-              return p.locations.base;
-            }
-            // Legacy flat array
-            if (Array.isArray(p.locations)) return p.locations;
-            return [];
-          };
+          const chars = hydrateCharacters(payload);
+          const locs = hydrateLocations(payload);
+          const scns = hydrateScenes(payload);
+          const props = hydrateProps(payload);
 
-          const extractScenes = (p: any): SceneData[] => {
-            if (!p?.scenes) return [];
-            // New nested structure: scenes.list
-            if (p.scenes.list && Array.isArray(p.scenes.list)) {
-              return p.scenes.list;
-            }
-            // Legacy flat array
-            if (Array.isArray(p.scenes)) return p.scenes;
-            return [];
-          };
-
-          const chars = extractCharacters(payload);
-          const locs = extractLocations(payload);
-          const scns = extractScenes(payload);
+          console.log('[hydrate] counts:', { chars: chars.length, locs: locs.length, scns: scns.length, props: props.length });
 
           const looksLikeBreakdown =
             payload &&
@@ -1215,7 +1269,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               characters: chars,
               locations: locs,
               scenes: scns,
-              props: Array.isArray(payload.props) ? payload.props : [],
+              props,
               synopsis: payload.synopsis,
               subplots: Array.isArray(payload.subplots) ? payload.subplots : [],
               plot_twists: Array.isArray(payload.plot_twists) ? payload.plot_twists : [],
@@ -1223,8 +1277,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             };
 
             setBreakdownResult(breakdown);
-            const diagnosis = evaluateQuality(breakdown);
-            setQualityDiagnosis(diagnosis);
+            setQualityDiagnosis(evaluateQuality(breakdown));
             setHasExistingScript(true);
             setExistingScriptText(textToAnalyze);
             setProgress(100);
@@ -1245,23 +1298,31 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             .maybeSingle();
 
           const pj = (recoveredScript?.parsed_json as any) ?? null;
-          const recoveredPayload = pj?.breakdown ?? pj;
+          const recoveredPayload = getBreakdownPayload(pj);
 
-          // Reuse same extraction helpers for DB recovery
-          const recoveredChars = extractCharacters(recoveredPayload);
-          const recoveredLocs = extractLocations(recoveredPayload);
-          const recoveredScns = extractScenes(recoveredPayload);
+          const recoveredChars = hydrateCharacters(recoveredPayload);
+          const recoveredLocs = hydrateLocations(recoveredPayload);
+          const recoveredScns = hydrateScenes(recoveredPayload);
+          const recoveredProps = hydrateProps(recoveredPayload);
 
-          if (
+          console.log('[hydrate-recovery] counts:', { 
+            chars: recoveredChars.length, 
+            locs: recoveredLocs.length, 
+            scns: recoveredScns.length, 
+            props: recoveredProps.length 
+          });
+
+          const recoveredLooksOk =
             recoveredPayload &&
             typeof recoveredPayload === 'object' &&
-            (recoveredChars.length > 0 || recoveredScns.length > 0 || recoveredLocs.length > 0)
-          ) {
+            (recoveredChars.length > 0 || recoveredScns.length > 0 || recoveredLocs.length > 0);
+
+          if (recoveredLooksOk) {
             const breakdown: BreakdownResult = {
               characters: recoveredChars,
               locations: recoveredLocs,
               scenes: recoveredScns,
-              props: Array.isArray(recoveredPayload.props) ? recoveredPayload.props : [],
+              props: recoveredProps,
               synopsis: recoveredPayload.synopsis,
               subplots: Array.isArray(recoveredPayload.subplots) ? recoveredPayload.subplots : [],
               plot_twists: Array.isArray(recoveredPayload.plot_twists) ? recoveredPayload.plot_twists : [],
@@ -1269,8 +1330,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             };
 
             setBreakdownResult(breakdown);
-            const diagnosis = evaluateQuality(breakdown);
-            setQualityDiagnosis(diagnosis);
+            setQualityDiagnosis(evaluateQuality(breakdown));
             setHasExistingScript(true);
             setExistingScriptText(textToAnalyze);
             setProgress(100);
@@ -1312,28 +1372,33 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           .maybeSingle();
 
         const pj = recoveredScript?.parsed_json as any;
-        const recoveredPayload = pj?.breakdown ?? pj;
+        const recoveredPayload = getBreakdownPayload(pj);
+
+        const timeoutChars = hydrateCharacters(recoveredPayload);
+        const timeoutLocs = hydrateLocations(recoveredPayload);
+        const timeoutScns = hydrateScenes(recoveredPayload);
+        const timeoutProps = hydrateProps(recoveredPayload);
+
         if (
           recoveredPayload &&
           typeof recoveredPayload === 'object' &&
-          (recoveredPayload.characters?.length > 0 || recoveredPayload.scenes?.length > 0)
+          (timeoutChars.length > 0 || timeoutScns.length > 0 || timeoutLocs.length > 0)
         ) {
-          console.log('[ScriptWorkspace] Recovered breakdown from DB');
+          console.log('[ScriptWorkspace] Recovered breakdown from DB (timeout path)');
 
           const breakdown: BreakdownResult = {
-            characters: recoveredPayload.characters || [],
-            locations: recoveredPayload.locations || [],
-            scenes: recoveredPayload.scenes || [],
-            props: recoveredPayload.props || [],
+            characters: timeoutChars,
+            locations: timeoutLocs,
+            scenes: timeoutScns,
+            props: timeoutProps,
             synopsis: recoveredPayload.synopsis,
-            subplots: recoveredPayload.subplots || [],
-            plot_twists: recoveredPayload.plot_twists || [],
+            subplots: Array.isArray(recoveredPayload.subplots) ? recoveredPayload.subplots : [],
+            plot_twists: Array.isArray(recoveredPayload.plot_twists) ? recoveredPayload.plot_twists : [],
             summary: recoveredPayload.summary,
           };
 
           setBreakdownResult(breakdown);
-          const diagnosis = evaluateQuality(breakdown);
-          setQualityDiagnosis(diagnosis);
+          setQualityDiagnosis(evaluateQuality(breakdown));
           setHasExistingScript(true);
           setExistingScriptText(textToAnalyze);
           setProgress(100);
