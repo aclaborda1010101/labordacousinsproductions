@@ -1,13 +1,14 @@
 import React, { useMemo, useState } from "react";
-import { hydrateCharacters, getBreakdownPayload } from "@/lib/breakdown/hydrate";
+import { hydrateCharacters, hydrateScenes, getBreakdownPayload } from "@/lib/breakdown/hydrate";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, Users, Info } from "lucide-react";
+import { Download, Users, Info, AlertTriangle, FileText, Film } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type AnyObj = Record<string, any>;
 
@@ -21,6 +22,8 @@ type Row = {
   reason: string;
 };
 
+type ScriptCompleteness = "full_screenplay" | "outline" | "empty";
+
 function getDialogueLines(c: AnyObj): number {
   const candidates = [
     c.dialogue_lines,
@@ -32,7 +35,7 @@ function getDialogueLines(c: AnyObj): number {
     c.dialogue?.line_count,
     c.counts?.dialogue_lines,
     c.counts?.lines,
-    c.dialogue_words ? Math.ceil(c.dialogue_words / 10) : null, // fallback: ~10 words per line
+    c.dialogue_words ? Math.ceil(c.dialogue_words / 10) : null,
   ];
   for (const v of candidates) {
     const n = typeof v === "string" ? Number(v) : v;
@@ -66,6 +69,49 @@ function getConfidence(c: AnyObj): { level: "high" | "medium" | "low"; reason: s
     return { level: "medium", reason: hasDialogue ? "Detectado en diálogo" : "Detectado en acción" };
   }
   return { level: "low", reason: "Inferido del outline" };
+}
+
+// Determine script completeness based on content quality
+function analyzeScriptCompleteness(payload: AnyObj): { level: ScriptCompleteness; details: string } {
+  const scenes = hydrateScenes(payload);
+  const chars = hydrateCharacters(payload);
+  
+  if (scenes.length === 0) {
+    return { level: "empty", details: "Sin escenas detectadas" };
+  }
+  
+  // Check for real sluglines (not placeholders)
+  const realSluglines = scenes.filter((sc: any) => {
+    const slugline = sc.slugline || "";
+    const isPlaceholder = 
+      slugline === "INT Escena -" || 
+      slugline === "EXT Escena -" ||
+      slugline.match(/^(INT|EXT)\s+Escena\s*-?\s*$/i) ||
+      slugline.match(/^(INT|EXT)\.\s+UBICACIÓN/i) ||
+      !slugline.includes(" - ") ||
+      slugline.length < 10;
+    return !isPlaceholder;
+  });
+  
+  // Check for dialogue data
+  const charsWithDialogue = chars.filter((c: any) => getDialogueLines(c) > 0);
+  const totalDialogueLines = chars.reduce((sum: number, c: any) => sum + getDialogueLines(c), 0);
+  
+  // Full screenplay: most sluglines are real AND has significant dialogue
+  const sluglineRatio = scenes.length > 0 ? realSluglines.length / scenes.length : 0;
+  const hasSignificantDialogue = totalDialogueLines > 50;
+  
+  if (sluglineRatio > 0.7 && hasSignificantDialogue) {
+    return { 
+      level: "full_screenplay", 
+      details: `${realSluglines.length}/${scenes.length} sluglines completos, ${totalDialogueLines} líneas de diálogo` 
+    };
+  }
+  
+  return { 
+    level: "outline", 
+    details: `${realSluglines.length}/${scenes.length} sluglines completos, ${charsWithDialogue.length} personajes con diálogo` 
+  };
 }
 
 const ROLE_COLORS: Record<string, string> = {
@@ -164,9 +210,45 @@ export function CastingReportTable({ scriptParsedJson }: CastingReportTableProps
     URL.revokeObjectURL(url);
   };
 
+  // Analyze script completeness
+  const completeness = useMemo(() => {
+    const payload = getBreakdownPayload(scriptParsedJson) ?? scriptParsedJson;
+    return analyzeScriptCompleteness(payload);
+  }, [scriptParsedJson]);
+
   return (
     <TooltipProvider>
       <div className="space-y-4">
+        {/* Script Completeness Alert */}
+        {completeness.level === "outline" && (
+          <Alert variant="default" className="bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertTitle className="text-amber-800 dark:text-amber-200 flex items-center gap-2">
+              Análisis basado en Outline
+              <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900 dark:text-amber-300">
+                <FileText className="w-3 h-3 mr-1" />
+                Outline
+              </Badge>
+            </AlertTitle>
+            <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
+              Los datos de personajes son estimados. Para un casting report preciso, genera el guion completo con diálogos.
+              <span className="block text-xs mt-1 text-amber-600/70 dark:text-amber-400/70">
+                {completeness.details}
+              </span>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {completeness.level === "full_screenplay" && (
+          <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+            <Film className="w-4 h-4" />
+            <span>Guion completo detectado</span>
+            <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300 dark:bg-green-900 dark:text-green-300">
+              Screenplay
+            </Badge>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
