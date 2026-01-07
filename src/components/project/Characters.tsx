@@ -122,7 +122,30 @@ export default function Characters({ projectId }: CharactersProps) {
     setLoading(false); 
   };
 
-  useEffect(() => { fetchCharacters(); }, [projectId]);
+  useEffect(() => {
+    fetchCharacters();
+    
+    // Realtime subscription for character changes
+    const channel = supabase
+      .channel(`characters-pro-${projectId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'characters',
+          filter: `project_id=eq.${projectId}`,
+        },
+        () => {
+          fetchCharacters();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [projectId]);
 
   const resetForm = () => {
     setFormData({ name: '', role: '', character_role: '', bio: '', arc: '' });

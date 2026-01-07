@@ -1065,6 +1065,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         if (importedNames.length > 0) {
           toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
             description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+            action: {
+              label: 'Ver personajes',
+              onClick: () => navigate(`/projects/${projectId}/characters`),
+            },
           });
           onEntitiesExtracted?.();
         }
@@ -1270,6 +1274,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               if (importedNames.length > 0) {
                 toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
                   description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+                  action: {
+                    label: 'Ver personajes',
+                    onClick: () => navigate(`/projects/${projectId}/characters`),
+                  },
                 });
                 onEntitiesExtracted?.();
               }
@@ -1337,6 +1345,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               if (importedNames.length > 0) {
                 toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
                   description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+                  action: {
+                    label: 'Ver personajes',
+                    onClick: () => navigate(`/projects/${projectId}/characters`),
+                  },
                 });
                 onEntitiesExtracted?.();
               }
@@ -1419,6 +1431,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             if (importedNames.length > 0) {
               toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
                 description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+                action: {
+                  label: 'Ver personajes',
+                  onClick: () => navigate(`/projects/${projectId}/characters`),
+                },
               });
               onEntitiesExtracted?.();
             }
