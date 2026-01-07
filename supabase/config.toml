@@ -215,3 +215,13 @@ verify_jwt = true
 
 [functions.analyze-style-reference]
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SCENE CARDS PIPELINE (V3.2 - Canon-First Generation)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.generate-scene-cards]
+verify_jwt = true
+
+[functions.expand-scene-card]
+verify_jwt = true
