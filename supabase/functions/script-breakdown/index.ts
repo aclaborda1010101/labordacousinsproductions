@@ -458,8 +458,37 @@ function isProbablyProperName(word: string): boolean {
   return hasVowels && hasConsonants;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// PATCH v21: SURGICAL SUFFIX STRIPPING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Strips technical suffixes from names BEFORE any other processing
+ * Handles: PRE-LAP, PRE LAP, PRELAP, CONT'D, CONTD, VO, OS, etc.
+ */
+function stripTechnicalSuffixes(name: string): string {
+  let s = name.trim();
+
+  // Normalize spaces and dashes
+  s = s.replace(/\s+/g, " ");
+  s = s.replace(/[–—]/g, "-"); // Long dashes to hyphen
+
+  // Remove quotes that might wrap the name
+  s = s.replace(/^'+|'+$/g, "").trim();
+
+  // Technical suffixes at end of name
+  // Supports: PRE-LAP, PRELAP, PRE LAP, CONT'D, CONTD, CONT, V.O., O.S., O.C.
+  const suffixRegex =
+    /\s+(PRE[-\s]*LAP|POST[-\s]*LAP|CONT['']?\s*D|CONTD|CONT|V\.?O\.?|O\.?S\.?|O\.?C\.?)\s*$/i;
+
+  s = s.replace(suffixRegex, "").trim();
+
+  return s;
+}
+
 /**
  * Detects if a word is a screenplay technical term
+ * Now also checks normalized (no space/hyphen) version
  */
 function isTechnicalTerm(word: string): boolean {
   // Comprehensive list of technical terms, common words, and aviation/military terms
@@ -572,7 +601,10 @@ function isTechnicalTerm(word: string): boolean {
     'MOM', 'DAD', 'JIBE', 'HO',
   ]);
   
-  return technical.has(word.toUpperCase());
+  const upper = word.toUpperCase();
+  // Check direct match AND normalized version (without spaces/hyphens)
+  const normalized = upper.replace(/[\s\-]/g, "");
+  return technical.has(upper) || technical.has(normalized);
 }
 
 /**
@@ -605,16 +637,10 @@ const CONJUNCTION_WORDS = ['AND', 'WITH', 'OR', 'PLUS', 'TO', 'FROM'];
  * We should NOT split them unless there's strong evidence of concatenation.
  */
 function detectConcatenatedNames(name: string): string[] | null {
-  // First, handle hyphenated technical suffixes before splitting
-  // "MAVERICK PRE-LAP" → "MAVERICK PRELAP" → then filter
-  const cleanedName = name
-    .replace(/\bPRE-LAP\b/gi, 'PRELAP')
-    .replace(/\bTO-SELF\b/gi, 'TOSELF')
-    .replace(/\bV\.O\.\b/gi, 'VO')
-    .replace(/\bO\.S\.\b/gi, 'OS')
-    .trim();
+  // PATCH v21: First strip technical suffixes universally
+  const strippedName = stripTechnicalSuffixes(name);
   
-  const words = cleanedName.split(/\s+/).filter(w => w.length > 0);
+  const words = strippedName.split(/\s+/).filter(w => w.length > 0);
   
   // Case 1: Single name → Check if it's a technical term itself
   if (words.length === 1) {
@@ -638,12 +664,26 @@ function detectConcatenatedNames(name: string): string[] | null {
     return [words[1]];
   }
   
-  // Case 4: Two words where second is technical term
+  // Case 4a: Two words where second is technical term
   // "MAVERICK CONTD" → ["MAVERICK"]
-  // "ROOSTER PRELAP" → ["ROOSTER"]
   if (words.length === 2 && isTechnicalTerm(words[1])) {
     console.log(`[detectConcat] Removing technical: ${name} → ${words[0]}`);
     return [words[0]];
+  }
+  
+  // Case 4b: Three words where last two form a technical suffix (e.g., PRE LAP)
+  if (words.length === 3 && isTechnicalTerm(words[1] + words[2])) {
+    console.log(`[detectConcat] Removing technical (2-word suffix): ${name} → ${words[0]}`);
+    return [words[0]];
+  }
+  
+  // Case 4c: Two words where second has a hyphen but matches a technical suffix once normalized
+  if (words.length === 2) {
+    const norm2 = words[1].toUpperCase().replace(/[\s\-]/g, "");
+    if (isTechnicalTerm(norm2)) {
+      console.log(`[detectConcat] Removing technical (normalized): ${name} → ${words[0]}`);
+      return [words[0]];
+    }
   }
   
   // Case 5: Two words where first is technical term (malformed)
@@ -843,6 +883,13 @@ function isVoiceFunctional(name: string): boolean {
 }
 
 function isGenericRole(name: string): boolean {
+  const upper = name.toUpperCase();
+  
+  // PATCH v21: Keyword-based detection (catches AIR CONTROL OFFICER, etc.)
+  if (/\bOFFICER\b/i.test(upper) || /\bCOMMAND\b/i.test(upper) || /\bCONTROL\b/i.test(upper)) {
+    return true;
+  }
+  
   const roles = [
     /^WAITER/,
     /^WAITRESS/,
@@ -880,7 +927,26 @@ function isGenericRole(name: string): boolean {
     /^SECURITY/,
   ];
   
-  return roles.some(r => r.test(name.toUpperCase()));
+  return roles.some(r => r.test(upper));
+}
+
+/**
+ * PATCH v21: Detects role suffixes like "CAIN'S AIDE", "ADMIRAL'S AIDE"
+ * These should be classified as extras, not cast
+ */
+function isRoleSuffix(name: string): boolean {
+  const suffixes = [
+    /\bAIDE$/i,
+    /\bOFFICER$/i,
+    /\bPILOT$/i,
+    /\bTECH(NICIAN)?$/i,
+    /\bCREW$/i,
+    /\bCONTROLLER$/i,
+    /\bOPERATOR$/i,
+    /\bASSISTANT$/i,
+    /\bSECRETARY$/i,
+  ];
+  return suffixes.some(r => r.test(name.trim()));
 }
 
 function isSceneCode(name: string): boolean {
@@ -2221,29 +2287,82 @@ OUTPUT LANGUAGE: ${lang}`;
     const haikuProviderInfo = normalizationResult.status === 'fulfilled' ? normalizationResult.value.providerInfo : null;
 
     // Convert Haiku normalization output to expected format
-    // Haiku returns: cast_principal, extras_with_dialogue, voices_and_systems, locations
-    const castFromHaiku = (normalizationData.cast_principal || []).map((c: any) => ({
-      name: c.name,
-      aliases: c.aliases || [],
-      role: c.role || 'supporting',
-      scenes_count: 0,
-      why: 'Normalized from semantic analysis',
-    }));
+    // PATCH v21: Apply stripTechnicalSuffixes + isRoleSuffix filtering
+    const castFromHaiku = (normalizationData.cast_principal || [])
+      .map((c: any) => {
+        const cleaned = stripTechnicalSuffixes(c.name || '').replace(/^'+|'+$/g, '').trim();
+        const upper = cleaned.toUpperCase();
+        
+        // Skip if technical term or empty
+        if (!cleaned || isTechnicalTerm(upper)) return null;
+        
+        // Move to extras if it's a role suffix (CAIN'S AIDE → extras)
+        if (isRoleSuffix(cleaned)) {
+          return { __moveToExtras: true, name: cleaned };
+        }
+        
+        // Move to extras if it's a generic role (AIR CONTROL OFFICER → extras)
+        if (isGenericRole(cleaned)) {
+          return { __moveToExtras: true, name: cleaned };
+        }
+        
+        return {
+          name: cleaned,
+          aliases: c.aliases || [],
+          role: c.role || 'supporting',
+          scenes_count: 0,
+          why: 'Normalized from semantic analysis',
+        };
+      })
+      .filter((c: any) => c && !c.__moveToExtras);
     
-    const extrasFromHaiku = (normalizationData.extras_with_dialogue || []).map((e: any) => ({
-      name: e.name,
-      role: 'featured_extra',
-      scenes_count: 0,
-      why: 'Normalized from semantic analysis',
-    }));
+    // Collect extras that were moved from cast
+    const movedToExtras = (normalizationData.cast_principal || [])
+      .map((c: any) => {
+        const cleaned = stripTechnicalSuffixes(c.name || '').replace(/^'+|'+$/g, '').trim();
+        if (!cleaned) return null;
+        if (isRoleSuffix(cleaned) || isGenericRole(cleaned)) {
+          return { name: cleaned };
+        }
+        return null;
+      })
+      .filter(Boolean);
     
-    const voicesFromHaiku = (normalizationData.voices_and_systems || []).map((v: any) => ({
-      name: v.name,
-      type: v.type || 'other',
-      role: 'voice',
-      scenes_count: 0,
-      why: 'Normalized from semantic analysis',
-    }));
+    const extrasFromHaiku = [
+      ...(normalizationData.extras_with_dialogue || []).map((e: any) => {
+        const cleaned = stripTechnicalSuffixes(e.name || '').replace(/^'+|'+$/g, '').trim();
+        const upper = cleaned.toUpperCase();
+        
+        // Drop if technical term
+        if (!cleaned || isTechnicalTerm(upper)) return null;
+        
+        return {
+          name: cleaned,
+          role: 'featured_extra',
+          scenes_count: 0,
+          why: 'Normalized from semantic analysis',
+        };
+      }),
+      ...movedToExtras.map((e: any) => ({
+        name: e.name,
+        role: 'featured_extra',
+        scenes_count: 0,
+        why: 'Moved from cast (role suffix)',
+      })),
+    ].filter(Boolean);
+    
+    const voicesFromHaiku = (normalizationData.voices_and_systems || []).map((v: any) => {
+      const cleaned = stripTechnicalSuffixes(v.name || '').replace(/^'+|'+$/g, '').trim();
+      if (!cleaned) return null;
+      
+      return {
+        name: cleaned,
+        type: v.type || 'other',
+        role: 'voice',
+        scenes_count: 0,
+        why: 'Normalized from semantic analysis',
+      };
+    }).filter(Boolean);
     
     const locationsFromHaiku = (normalizationData.locations || []).map((l: any) => ({
       name: l.name,
