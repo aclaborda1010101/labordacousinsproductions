@@ -92,6 +92,63 @@ import {
 import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
 import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
 
+// ---- V10/V23/Vxx hydration helpers (nested + legacy) ----
+type AnyObj = Record<string, any>;
+
+const pickArray = <T = any>(...candidates: any[]): T[] => {
+  for (const c of candidates) if (Array.isArray(c)) return c as T[];
+  return [];
+};
+
+const hydrateCharacters = (p: any): any[] => {
+  if (!p || typeof p !== 'object') return [];
+  const ch = p.characters;
+
+  // New nested structure (v10+)
+  if (ch && typeof ch === 'object' && !Array.isArray(ch)) {
+    const cast = pickArray(ch.cast);
+    const extras = pickArray(ch.featured_extras_with_lines, ch.extras);
+    const voices = pickArray(ch.voices_and_functional, ch.voices);
+    const flat = pickArray(ch.all, ch.items);
+
+    const merged = [...cast, ...extras, ...voices];
+    return merged.length ? merged : flat;
+  }
+
+  // Legacy flat array or main_characters fallback
+  return pickArray(p.main_characters, p.characters);
+};
+
+const hydrateLocations = (p: any): any[] => {
+  if (!p || typeof p !== 'object') return [];
+  const loc = p.locations;
+
+  if (loc && typeof loc === 'object' && !Array.isArray(loc)) {
+    const base = pickArray(loc.base, loc.items, loc.list);
+    if (base.length) return base;
+  }
+
+  return pickArray(p.locations);
+};
+
+const hydrateScenes = (p: any): any[] => {
+  if (!p || typeof p !== 'object') return [];
+  const sc = p.scenes;
+
+  if (sc && typeof sc === 'object' && !Array.isArray(sc)) {
+    const list = pickArray(sc.list, sc.items);
+    if (list.length) return list;
+  }
+
+  return pickArray(p.scenes);
+};
+
+const hydrateProps = (p: any): any[] => {
+  if (!p || typeof p !== 'object') return [];
+  return pickArray(p.props, p.breakdown?.props);
+};
+// ---- End hydration helpers ----
+
 interface ScriptImportProps {
   projectId: string;
   onScenesCreated?: () => void;
@@ -569,11 +626,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         if (script.parsed_json && typeof script.parsed_json === 'object') {
           const parsed = script.parsed_json as Record<string, unknown>;
           if (parsed.episodes || parsed.screenplay || parsed.title || parsed.characters) {
-            // Recalculate counts from data if missing or incomplete
-            const chars = (parsed.main_characters || parsed.characters || []) as any[];
-            const locs = (parsed.locations || []) as any[];
-            const propsArr = (parsed.props || []) as any[];
-            const scenes = (parsed.scenes || []) as any[];
+            // Use hydration helpers for v10+ nested structure support
+            const chars = hydrateCharacters(parsed);
+            const locs = hydrateLocations(parsed);
+            const propsArr = hydrateProps(parsed);
+            const scenes = hydrateScenes(parsed);
             const episodesArr = (parsed.episodes || []) as any[];
             
             const existingCounts = parsed.counts as Record<string, any> | undefined;
@@ -597,12 +654,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               (parsed as any).breakdown_pro?.metadata?.writers ||
               [];
 
-            const hydratedScript = {
+            const hydratedScriptData = {
               ...parsed,
               title: extractedTitle,
               writers: extractedWriters,
               main_characters: chars,
               characters: chars,
+              locations: locs,
+              scenes: scenes,
+              props: propsArr,
               counts: {
                 ...(existingCounts || {}),
                 protagonists,
@@ -620,7 +680,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               },
             };
 
-            setGeneratedScript(hydratedScript);
+            setGeneratedScript(hydratedScriptData);
 
             // Rehydrate Pro breakdown (if it exists in DB)
             const storedBreakdownPro = (parsed as any).breakdown_pro;
