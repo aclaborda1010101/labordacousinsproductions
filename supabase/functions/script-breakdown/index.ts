@@ -418,8 +418,9 @@ function extractScenesFromScript(text: string): any[] {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// CHARACTER CLASSIFICATION HEURISTICS - Bucket-based system
-// Works for aviation scripts, courtroom, drama, etc.
+// GENERIC CHARACTER CLASSIFIER - UNIVERSAL VERSION
+// Works for ANY screenplay without hardcoded name lists
+// Applies universal screenplay format rules
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export type CharBuckets = {
@@ -430,123 +431,352 @@ export type CharBuckets = {
   debug?: Record<string, any>;
 };
 
-// ---------- Regex helpers ----------
-const RE_PARENS = /\s*\([^)]*\)\s*/g; // remove (V.O.), (O.S.), (CONT'D), etc.
-const RE_MULTI_SPACE = /\s+/g;
-const RE_QUOTES = /^["""']+|["""']+$/g;
-const RE_CONTD = /\bCONT'?D\b/gi;
+// ═══════════════════════════════════════════════════════════════════════════════
+// PART 1: UNIVERSAL LINGUISTIC PATTERN DETECTION
+// ═══════════════════════════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// AGGRESSIVE TECHNICAL SUFFIX PATTERNS (Top Gun / aviation script problems)
-// ═══════════════════════════════════════════════════════════════════════════════
-const RE_TO_SELF = /\bTO\s+SELF\b/i;
-const RE_TO_HIMSELF = /\bTO\s+HIMSELF\b/i;
-const RE_TO_HERSELF = /\bTO\s+HERSELF\b/i;
-const RE_BREAKING = /\bBREAK(ING|S)?\s*(RIGHT|LEFT)?\.?$/i;
-const RE_EJECT = /\bEJECT(ED|S)?\.?$/i;
-const RE_IMPACT = /\bIMPACT\.?$/i;
-const RE_ROUTE = /\b(ROUTE|ALT|ALTS|LEVEL FLIGHT|SURFACES|TONE|ALARM|END ALTS)\b/i;
-const RE_ALL_CAPS = /^[A-Z0-9\s.'-]+$/;
-const RE_HAS_SENTENCE_PUNCT = /[.!?…]+$/; // ends with punctuation → likely dialogue fragment/state
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// SCRIPT CODES & ID PATTERNS (scene markers, continuity codes)
-// ═══════════════════════════════════════════════════════════════════════════════
-const RE_ID_CODE = /^[A-Z]{1,3}\d{1,4}$/; // AA17, E299, AG279
-const RE_SCENE_CODE = /^[A-Z]+\d+[A-Z]?$/i; // A127, B56, EE313, E299
-const RE_NUMERIC_HEAVY = /\d{2,}/;
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// TECHNICAL SUFFIX PATTERNS (MUST BE FILTERED)
-// These appear after character names and contaminate the cast list
-// ═══════════════════════════════════════════════════════════════════════════════
-const RE_TECH_SUFFIX = /\s+(D|V0|VO|OS|ALT|ALTS|PRE-?LAP|POST-?LAP|INTO RADIO|OVER RADIO|ON RADIO|TO RADIO|WHISPERS?|SCREAMS?|YELLS?|SHOUTS?|CRYING|LAUGHING|SINGING|MUTTERS?|MUMBLES?)\s*$/i;
-const RE_TECH_SUFFIX_ONLY = /^(D|V0|VO|OS|ALT|ALTS|PRE-?LAP|POST-?LAP)$/i;
-
-// Voice/functional patterns
-const RE_VOICE_WORD = /\b(VOICE|RADIO|LOUDSPEAKER|ANNOUNCER|COMMS|MISSION CONTROL|CONTROL|TOWER|INTERCOM|PA\s*SYSTEM|SPEAKER|FLIGHT\s*DECK)\b/i;
-const RE_ROLE_GENERIC = /\b(OFFICER|SOLDIER|DOCTOR|NURSE|DETECTIVE|COP|POLICE|AGENT|AIDE|CHAIRMAN|COUNSEL|BARTENDER|PILOT|CAPTAIN|GENERAL|SENATOR|RECEPTIONIST|DIRECTOR|PRODUCER|TECH|TECHNICIAN|SCIENTIST|GUARD|SECURITY|CLERK)\b/i;
-const RE_SCREENPLAY_TOKEN = /\b(INSERT CUT|MONTAGE|SUPER TITLE|TITLE CARD|CUT TO|FADE (IN|OUT)|DISSOLVE|INTERCUT|ESTABLISHING|QUICK CUTS?)\b/i;
-
-// ---------- Normalization (aggressive cleaning) ----------
-function normalizeCharacterLabel(inputRaw: string): string {
-  if (!inputRaw) return "";
-  let s = inputRaw.trim();
-  s = s.replace(RE_QUOTES, "");
-  s = s.replace(RE_PARENS, " ");
-  s = s.replace(RE_CONTD, " ");
-  // Remove technical suffixes BEFORE other processing
-  s = s.replace(RE_TECH_SUFFIX, "");
-  s = s.replace(/[,:;]+$/g, "");
-  s = s.replace(RE_MULTI_SPACE, " ").trim();
-  return s;
+/**
+ * Detects if a word is a common descriptive adjective in English
+ * These are NOT character names - they're parenthetical directions
+ */
+function isCommonAdjective(word: string): boolean {
+  const word_lower = word.toLowerCase();
+  
+  // Emotions and states
+  const emotions = [
+    'angry', 'happy', 'sad', 'nervous', 'calm', 'anxious', 'excited',
+    'tired', 'drunk', 'crying', 'laughing', 'screaming', 'whispering',
+    'shouting', 'yelling', 'scared', 'terrified', 'annoyed', 'frustrated',
+    'confused', 'surprised', 'shocked', 'worried', 'relieved', 'grateful'
+  ];
+  
+  // Characteristics
+  const characteristics = [
+    'young', 'old', 'tall', 'short', 'thin', 'heavy', 'strong', 'weak',
+    'quiet', 'loud', 'smart', 'dumb', 'wise', 'foolish', 'brave', 'coward'
+  ];
+  
+  // Descriptive states
+  const states = [
+    'jaded', 'meek', 'bold', 'shy', 'proud', 'humble', 'eager', 'reluctant',
+    'determined', 'hesitant', 'confident', 'insecure', 'bitter', 'sweet'
+  ];
+  
+  // Genealogical suffixes (not adjectives but similar problem)
+  const suffixes = ['senior', 'junior', 'jr', 'sr', 'iii', 'iv', 'ii'];
+  
+  return emotions.includes(word_lower) || 
+         characteristics.includes(word_lower) || 
+         states.includes(word_lower) ||
+         suffixes.includes(word_lower);
 }
 
-// ---------- Detection: HARD DISCARD RULES ----------
-
-// Check for technical suffix (D, V0, ALT, PRELAP, INTO RADIO, etc.)
-function hasTechnicalSuffix(name: string): boolean {
-  return RE_TECH_SUFFIX.test(name) || RE_TECH_SUFFIX_ONLY.test(name.trim());
+/**
+ * Detects if a word is likely a proper name
+ * Based on linguistic patterns, not hardcoded lists
+ */
+function isProbablyProperName(word: string): boolean {
+  // Must be in full caps in screenplays
+  if (!/^[A-Z]+$/.test(word)) return false;
+  
+  // Too short (codes or initials)
+  if (word.length < 2) return false;
+  
+  // Too long (probably description or error)
+  if (word.length > 15) return false;
+  
+  // Common English name start patterns
+  // - Start with consonant followed by vowel: JOHN, MARY, PETER
+  // - Or common patterns: TH-, CH-, SH-, BR-, TR-
+  const commonStarts = /^(TH|CH|SH|BR|TR|CR|DR|FR|GR|PR|ST|SC|SL|SM|SN|SP|SW|PH|WH)/;
+  if (commonStarts.test(word)) return true;
+  
+  // Has name structure (alternating consonant-vowel roughly)
+  const hasVowels = /[AEIOUY]/.test(word);
+  const hasConsonants = /[BCDFGHJKLMNPQRSTVWXZ]/.test(word);
+  
+  return hasVowels && hasConsonants;
 }
 
-// Check for scene/continuity codes (A127, E299, EE313)
-function isSceneCode(name: string): boolean {
-  const t = name.trim();
-  if (RE_SCENE_CODE.test(t)) return true;
-  if (RE_ID_CODE.test(t)) return true;
-  return false;
+/**
+ * Detects if a word is a screenplay technical term
+ */
+function isTechnicalTerm(word: string): boolean {
+  const technical = [
+    'CONT', 'CONTD', 'CONTINUED', 'VO', 'OS', 'OC', 'OOV',
+    'PRE', 'LAP', 'PRELAP', 'FILTERED', 'RADIO', 'PHONE',
+    'WHISPER', 'SHOUT', 'YELL', 'TO', 'FROM', 'BEAT',
+    'PAUSE', 'THEN', 'SUBTITLE', 'SINGING', 'READING',
+    'D', 'V0', 'ALT', 'ALTS', 'POSTLAP'
+  ];
+  
+  return technical.includes(word.toUpperCase());
 }
 
-function isLikelyDialogueFragmentOrState(name: string): boolean {
-  // Ends with punctuation (HOLY SHIT., CAPTURED., EJECT.)
-  if (RE_HAS_SENTENCE_PUNCT.test(name)) return true;
-  // Multi-word phrases with punctuation
-  const words = name.split(" ").filter(Boolean);
-  if (words.length >= 3 && /[.!?]/.test(name)) return true;
-  // Contains verbs in present tense (likely action description)
-  if (/\b(BREAKS?|EJECTS?|IMPACTS?|SCREAMS?|YELLS?|SHOUTS?|WHISPERS?)\b/i.test(name)) return true;
-  return false;
+/**
+ * Detects if a word is a title (Dr, Captain, etc)
+ */
+function isTitle(word: string): boolean {
+  const titles = [
+    'DR', 'DOCTOR', 'MR', 'MRS', 'MS', 'MISS',
+    'CAPTAIN', 'LIEUTENANT', 'SERGEANT', 'COLONEL', 'GENERAL',
+    'PRIVATE', 'MAJOR', 'ADMIRAL', 'COMMANDER',
+    'PROFESSOR', 'PROF', 'REV', 'REVEREND', 'FATHER', 'SISTER',
+    'LORD', 'LADY', 'SIR', 'DUKE', 'BARON', 'COUNT',
+    'KING', 'QUEEN', 'PRINCE', 'PRINCESS'
+  ];
+  
+  return titles.includes(word.toUpperCase());
 }
 
-function isRadioCallOrAction(name: string): boolean {
-  // TO SELF, TO HIMSELF, TO HERSELF
-  if (RE_TO_SELF.test(name) || RE_TO_HIMSELF.test(name) || RE_TO_HERSELF.test(name)) return true;
-  // BREAKING RIGHT, EJECT, IMPACT
-  if (RE_BREAKING.test(name) || RE_EJECT.test(name) || RE_IMPACT.test(name)) return true;
-  // ROUTE, ALT, SURFACES, ALARM
-  if (RE_ROUTE.test(name)) return true;
-  // INTO RADIO, OVER RADIO, ON RADIO
-  if (/\b(INTO|OVER|ON|TO)\s+RADIO\b/i.test(name)) return true;
-  return false;
+const CONJUNCTION_WORDS = ['AND', 'WITH', 'OR', 'PLUS', 'TO', 'FROM'];
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PART 2: UNIVERSAL CONCATENATION DETECTION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Detects concatenated names using ONLY structural patterns
+ * Does NOT use script-specific name lists
+ */
+function detectConcatenatedNames(name: string): string[] | null {
+  const words = name.split(/\s+/).filter(w => w.length > 0);
+  
+  // Case 1: Single name → OK
+  if (words.length === 1) return null;
+  
+  // Case 2: Two words where second is adjective
+  // "JACK JADED" → ["JACK"]
+  if (words.length === 2 && isCommonAdjective(words[1])) {
+    console.log(`[detectConcat] Removing adjective: ${name} → ${words[0]}`);
+    return [words[0]];
+  }
+  
+  // Case 3: Two words where second is technical term
+  // "MAVERICK CONTD" → ["MAVERICK"]
+  if (words.length === 2 && isTechnicalTerm(words[1])) {
+    console.log(`[detectConcat] Removing technical: ${name} → ${words[0]}`);
+    return [words[0]];
+  }
+  
+  // Case 4: Three or more valid words → PROBABLY concatenation
+  // "JOHN MARY PETER" → ["JOHN", "MARY", "PETER"]
+  if (words.length >= 3) {
+    const validWords = words.filter(w => 
+      isProbablyProperName(w) && 
+      !isCommonAdjective(w) &&
+      !isTechnicalTerm(w)
+    );
+    
+    if (validWords.length >= 2) {
+      console.log(`[detectConcat] Splitting multi-name: ${name} → [${validWords.join(', ')}]`);
+      return validWords;
+    }
+  }
+  
+  // Case 5: Two words that are both valid proper names
+  // HEURISTIC: If both have name structure and no connectors
+  if (words.length === 2) {
+    const [first, second] = words;
+    
+    // If there's a conjunction, it's an error
+    if (CONJUNCTION_WORDS.includes(first) || CONJUNCTION_WORDS.includes(second)) {
+      console.log(`[detectConcat] Contains conjunction: ${name}`);
+      return null; // Discard completely
+    }
+    
+    // If both are probable names
+    if (isProbablyProperName(first) && isProbablyProperName(second)) {
+      // CRITICAL DECISION: Is it a legitimate compound name or concatenation?
+      
+      // Indicators of legitimate compound name:
+      // - Second name very short (initial or nickname): "JOHN D", "MARY LOU"
+      if (second.length <= 3) return null;
+      
+      // - First word is title: "DR SMITH", "CAPTAIN MILLER"
+      if (isTitle(first)) return null;
+      
+      // If we get here, probably concatenation
+      console.log(`[detectConcat] Probable concat (2 names): ${name} → [${first}, ${second}]`);
+      return [first, second];
+    }
+  }
+  
+  return null;
 }
 
-function isScreenplayToken(name: string): boolean {
-  return RE_SCREENPLAY_TOKEN.test(name);
+// ═══════════════════════════════════════════════════════════════════════════════
+// PART 3: STRUCTURAL VALIDATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Validates that a name complies with standard screenplay format
+ */
+function isValidCharacterFormat(name: string): {
+  valid: boolean;
+  reason?: string;
+} {
+  // Length
+  if (name.length < 2) {
+    return { valid: false, reason: 'Too short' };
+  }
+  
+  if (name.length > 50) {
+    return { valid: false, reason: 'Too long (probably concatenation)' };
+  }
+  
+  // Should not contain special characters (except apostrophe, hyphen, space)
+  if (!/^[A-Z\s'\-]+$/.test(name)) {
+    return { valid: false, reason: 'Invalid characters' };
+  }
+  
+  // Should not have more than 4 words (extremely rare names)
+  const wordCount = name.split(/\s+/).length;
+  if (wordCount > 4) {
+    return { valid: false, reason: 'Too many words (>4)' };
+  }
+  
+  // Should not contain conjunctions (indicates concatenation)
+  const hasConjunction = CONJUNCTION_WORDS.some(conj => 
+    name.includes(` ${conj} `)
+  );
+  if (hasConjunction) {
+    return { valid: false, reason: 'Contains conjunction (AND/OR/WITH)' };
+  }
+  
+  // Should not be only numbers/codes
+  if (/^[A-Z]?\d+[A-Z]?$/.test(name)) {
+    return { valid: false, reason: 'Scene/shot code' };
+  }
+  
+  return { valid: true };
 }
+
+/**
+ * Detects dialogue/action patterns that are NOT characters
+ */
+function isDialogueOrActionPattern(name: string): boolean {
+  // Patterns like "MAVERICK TO TOWER", "RADIO CHATTER", "CROWD MURMURS"
+  const actionPatterns = [
+    /TO\s+/,           // "TO TOWER", "TO SELF"
+    /FROM\s+/,         // "FROM BASE"
+    /OVER\s+/,         // "OVER RADIO"
+    /\s+VOICE$/,       // "MAN VOICE", "WOMAN VOICE"
+    /^ALL\s+/,         // "ALL UNITS"
+    /\s+CHATTER$/,     // "CROWD CHATTER"
+    /\s+MURMURS?$/,    // "CROWD MURMURS"
+    /\s+SCREAMS?$/,    // "CROWD SCREAMS"
+    /\s+CHEERS?$/,     // "CROWD CHEERS"
+  ];
+  
+  return actionPatterns.some(pattern => pattern.test(name));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PART 4: CLEANING AND NORMALIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Cleans a name according to master prompt rules
+ */
+function cleanCharacterName(raw: string): string | null {
+  if (!raw) return null;
+  
+  let cleaned = raw.trim().toUpperCase();
+  
+  // 1. Remove descriptive parentheses: "JOHN (ANGRY)" → "JOHN"
+  cleaned = cleaned.replace(/\s*\([^)]*\)/g, '');
+  
+  // 2. Remove technical extensions: "JOHN (V.O.)" → "JOHN"
+  cleaned = cleaned.replace(/\s*\((V\.?O\.?|O\.?S\.?|O\.?C\.?|CONT'?D|CONTINUED)\)/gi, '');
+  
+  // 3. Remove location technical prefixes badly parsed
+  cleaned = cleaned.replace(/^\/?(INT\.|EXT\.|I\/E\.)\s*/i, '');
+  
+  // 4. Remove loose technical suffixes
+  const technicalSuffixes = /\s+(CONT'?D|VO|OS|OC|PRELAP|FILTERED|D|V0|ALT|ALTS)\s*$/i;
+  cleaned = cleaned.replace(technicalSuffixes, '');
+  
+  // 5. Clean multiple spaces
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+  
+  return cleaned.length > 0 ? cleaned : null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PART 5: AUXILIARY FUNCTIONS (voice/functional, generic roles)
+// ═══════════════════════════════════════════════════════════════════════════════
 
 function isVoiceFunctional(name: string): boolean {
-  return RE_VOICE_WORD.test(name);
+  const patterns = [
+    /VOICE$/,
+    /^NARRATOR/,
+    /^ANNOUNCER/,
+    /^RADIO/,
+    /^TV/,
+    /^COMPUTER/,
+    /^DISPATCH/,
+    /^OPERATOR/,
+    /^TOWER$/,
+    /^CONTROL$/,
+    /SPEAKER$/,
+    /\bCOMMS\b/,
+    /\bINTERCOM\b/,
+    /\bLOUDSPEAKER\b/,
+    /\bMISSION CONTROL\b/,
+    /\bFLIGHT\s*DECK\b/,
+    /\bPA\s*SYSTEM\b/,
+  ];
+  
+  return patterns.some(p => p.test(name.toUpperCase()));
 }
 
 function isGenericRole(name: string): boolean {
-  return RE_ROLE_GENERIC.test(name);
+  const roles = [
+    /^WAITER/,
+    /^WAITRESS/,
+    /^BARTENDER/,
+    /^GUARD/,
+    /^COP/,
+    /^OFFICER/,
+    /^NURSE/,
+    /^DOCTOR/,
+    /^PILOT/,
+    /^SOLDIER/,
+    /^AGENT/,
+    /^DRIVER/,
+    /^CLERK/,
+    /^RECEPTIONIST/,
+    /^CUSTOMER/,
+    /^PASSENGER/,
+    /^MAN\s*#?\d*/,
+    /^WOMAN\s*#?\d*/,
+    /^KID\s*#?\d*/,
+    /^CHILD\s*#?\d*/,
+    /^DETECTIVE/,
+    /^POLICE/,
+    /^AIDE/,
+    /^CHAIRMAN/,
+    /^COUNSEL/,
+    /^CAPTAIN/,
+    /^GENERAL/,
+    /^SENATOR/,
+    /^DIRECTOR/,
+    /^PRODUCER/,
+    /^TECH/,
+    /^TECHNICIAN/,
+    /^SCIENTIST/,
+    /^SECURITY/,
+  ];
+  
+  return roles.some(r => r.test(name.toUpperCase()));
 }
 
-function isLikelyCodeOrCallsign(name: string): boolean {
-  if (RE_ID_CODE.test(name)) return true;
-  if (RE_SCENE_CODE.test(name)) return true;
-  if (RE_NUMERIC_HEAVY.test(name) && name.length <= 8) return true;
-  return false;
-}
-
-function isProperNameLike(name: string): boolean {
-  const hasLower = /[a-záéíóúñü]/.test(name);
-  if (hasLower) return true;
-  if (/\b[A-Z]\.\s*[A-Z]/.test(name)) return true;
-  const tokens = name.split(" ").filter(Boolean);
-  if (tokens.length === 2 && RE_ALL_CAPS.test(name) && !isGenericRole(name) && !isVoiceFunctional(name)) {
-    return true;
-  }
+function isSceneCode(name: string): boolean {
+  const t = name.trim();
+  // Patterns: A127, EE313, B56, etc.
+  if (/^[A-Z]{1,3}\d{1,4}$/.test(t)) return true;
+  if (/^[A-Z]+\d+[A-Z]?$/i.test(t)) return true;
   return false;
 }
 
@@ -558,200 +788,462 @@ function addUnique(arr: string[], seen: Set<string>, value: string) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// CONCATENATED NAME DETECTION - Split "ROOSTER MAVERICK" into two characters
+// PART 6: MAIN CLASSIFICATION (GENERIC VERSION)
 // ═══════════════════════════════════════════════════════════════════════════════
-const KNOWN_CALLSIGNS = new Set([
-  // Top Gun characters
-  'MAVERICK', 'ROOSTER', 'HANGMAN', 'PHOENIX', 'BOB', 'FANBOY', 'PAYBACK', 'COYOTE',
-  'ICEMAN', 'WARLOCK', 'CYCLONE', 'HONDO', 'PENNY', 'GOOSE', 'SLIDER', 'VIPER',
-  'JESTER', 'WOLFMAN', 'COUGAR', 'MERLIN', 'SUNDOWN', 'HOLLYWOOD', 'CHIPPER',
-  // Common military callsigns
-  'ACE', 'HAWK', 'EAGLE', 'WOLF', 'COBRA', 'VENOM', 'GHOST', 'SHADOW', 'REAPER',
-  'BLADE', 'STORM', 'THUNDER', 'LIGHTNING', 'RAVEN', 'FALCON', 'PANTHER', 'TIGER',
-  'ALPHA', 'BRAVO', 'CHARLIE', 'DELTA', 'ECHO', 'FOXTROT', 'ROMEO', 'TANGO',
-]);
 
-const COMMON_FIRST_NAMES = new Set([
-  'JOHN', 'JAMES', 'ROBERT', 'MICHAEL', 'WILLIAM', 'DAVID', 'RICHARD', 'THOMAS',
-  'MARY', 'PATRICIA', 'JENNIFER', 'ELIZABETH', 'SARAH', 'LINDA', 'SUSAN', 'KAREN',
-  'TOM', 'PETE', 'NICK', 'BRADLEY', 'CAROL', 'PENNY', 'SARAH', 'AMELIA',
-]);
-
-/**
- * Detects if a string contains two concatenated character names
- * Returns the split names if detected, null otherwise
- */
-function detectConcatenatedNames(name: string): string[] | null {
-  const words = name.trim().toUpperCase().split(/\s+/);
-  
-  // Only check 2-word combinations
-  if (words.length !== 2) return null;
-  
-  const [first, second] = words;
-  
-  // Pattern 1: Two callsigns (ROOSTER MAVERICK)
-  if (KNOWN_CALLSIGNS.has(first) && KNOWN_CALLSIGNS.has(second)) {
-    console.log(`[detectConcat] Split callsigns: ${name} -> ${first}, ${second}`);
-    return [first, second];
-  }
-  
-  // Pattern 2: First name + Callsign (BRADLEY ROOSTER - probably wrong)
-  // This is tricky - could be real name. Only split if BOTH are known entities
-  if (COMMON_FIRST_NAMES.has(first) && KNOWN_CALLSIGNS.has(second)) {
-    // Could be "PETE MAVERICK" which might be intentional
-    // Only flag if second word is a known military callsign
-    if (!['MAVERICK', 'ROOSTER', 'PHOENIX', 'HANGMAN', 'CYCLONE', 'WARLOCK'].includes(second)) {
-      return null; // Probably a real compound name
-    }
-    console.log(`[detectConcat] Possible concat: ${name} (not splitting - might be real name)`);
-    return null;
-  }
-  
-  // Pattern 3: Callsign + First name (PHOENIX SARAH - definitely wrong)
-  if (KNOWN_CALLSIGNS.has(first) && COMMON_FIRST_NAMES.has(second)) {
-    console.log(`[detectConcat] Split callsign+name: ${name} -> ${first}, ${second}`);
-    return [first, second];
-  }
-  
-  return null;
-}
-
-// ---------- Main classification ----------
 function classifyCharacters(rawCandidates: string[]): CharBuckets {
-  console.log('=== CLASSIFY CHARACTERS EXECUTING ===');
-  console.log('[classifyCharacters] Input count:', rawCandidates?.length || 0);
+  console.log('=== CLASSIFY CHARACTERS (GENERIC UNIVERSAL) ===');
+  console.log('Input count:', rawCandidates?.length || 0);
   
   const buckets: CharBuckets = {
     cast: [],
     featured_extras_with_lines: [],
     voices_and_functional: [],
     discarded: [],
-    debug: { input: rawCandidates?.length || 0, splits: 0 }
+    debug: {
+      input: rawCandidates?.length || 0,
+      cleaned: 0,
+      expanded: 0,
+      validated: 0
+    }
   };
-
+  
   const seen = new Set<string>();
   
-  // Pre-process: expand concatenated names
-  const expandedCandidates: string[] = [];
+  // PHASE 1: Clean and expand
+  const processedNames: string[] = [];
+  
   for (const raw of rawCandidates || []) {
-    const split = detectConcatenatedNames(raw);
+    // Clean
+    const cleaned = cleanCharacterName(raw);
+    if (!cleaned) {
+      buckets.discarded.push(raw);
+      continue;
+    }
+    buckets.debug!.cleaned = (buckets.debug!.cleaned || 0) + 1;
+    
+    // Detect concatenation
+    const split = detectConcatenatedNames(cleaned);
     if (split) {
-      expandedCandidates.push(...split);
-      buckets.debug!.splits = (buckets.debug!.splits || 0) + 1;
+      processedNames.push(...split);
+      buckets.debug!.expanded = (buckets.debug!.expanded || 0) + split.length - 1;
     } else {
-      expandedCandidates.push(raw);
+      processedNames.push(cleaned);
     }
   }
   
-  console.log('[classifyCharacters] After expansion:', expandedCandidates.length, 'candidates');
-
-  for (const raw of expandedCandidates) {
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 1: Check ORIGINAL input for technical suffixes BEFORE normalization
-    // This catches things like "MAVERICK D", "WARLOCK PRELAP", "ROOSTER WHISPERS"
-    // ═══════════════════════════════════════════════════════════════════════════
-    if (hasTechnicalSuffix(raw)) {
-      console.log('[classify] Discarded tech suffix (raw):', raw);
-      buckets.discarded.push(raw);
+  console.log('After cleaning/expansion:', processedNames.length);
+  
+  // PHASE 2: Validate and classify
+  for (const name of processedNames) {
+    // Structural validation
+    const validation = isValidCharacterFormat(name);
+    if (!validation.valid) {
+      console.log(`[discard] ${name}: ${validation.reason}`);
+      buckets.discarded.push(name);
+      continue;
+    }
+    buckets.debug!.validated = (buckets.debug!.validated || 0) + 1;
+    
+    // Avoid duplicates
+    if (seen.has(name.toUpperCase())) continue;
+    
+    // Scene codes
+    if (isSceneCode(name)) {
+      console.log(`[discard] ${name}: scene code`);
+      buckets.discarded.push(name);
       continue;
     }
     
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 2: Check for scene/continuity codes (A127, E299, EE313, B56)
-    // ═══════════════════════════════════════════════════════════════════════════
-    if (isSceneCode(raw)) {
-      console.log('[classify] Discarded scene code:', raw);
-      buckets.discarded.push(raw);
+    // Dialogue/action patterns
+    if (isDialogueOrActionPattern(name)) {
+      console.log(`[discard] ${name}: dialogue/action pattern`);
+      buckets.discarded.push(name);
       continue;
     }
     
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 3: Normalize (removes parentheticals, CONT'D, tech suffixes)
-    // ═══════════════════════════════════════════════════════════════════════════
-    const name0 = normalizeCharacterLabel(raw);
-    if (!name0 || name0.length < 2) {
-      buckets.discarded.push(raw || '(empty)');
+    // Functional voices
+    if (isVoiceFunctional(name)) {
+      addUnique(buckets.voices_and_functional, seen, name);
       continue;
     }
-
-    // Double-check normalized result doesn't have tech suffix or is a code
-    if (hasTechnicalSuffix(name0) || isSceneCode(name0)) {
-      console.log('[classify] Discarded after normalization:', name0);
-      buckets.discarded.push(name0);
+    
+    // Generic roles
+    if (isGenericRole(name)) {
+      addUnique(buckets.featured_extras_with_lines, seen, name);
       continue;
     }
-
-    // hard discard: screenplay tokens / obvious fragments
-    if (isScreenplayToken(name0)) {
-      console.log('[classify] Discarded screenplay token:', name0);
-      buckets.discarded.push(name0);
-      continue;
+    
+    // Proper names → cast
+    const words = name.split(/\s+/);
+    const hasProperName = words.some(w => isProbablyProperName(w));
+    
+    if (hasProperName) {
+      addUnique(buckets.cast, seen, name);
+    } else {
+      addUnique(buckets.featured_extras_with_lines, seen, name);
     }
-
-    // discard phrases/states (Top Gun problem: PHOENIX EJECT., HOLY SHIT.)
-    if (isLikelyDialogueFragmentOrState(name0)) {
-      console.log('[classify] Discarded dialogue fragment:', name0);
-      buckets.discarded.push(name0);
-      continue;
-    }
-
-    // discard pure action/radio-call lines (MAVERICK TO SELF, BLUE ROUTE)
-    if (isRadioCallOrAction(name0)) {
-      if (isVoiceFunctional(name0)) {
-        addUnique(buckets.voices_and_functional, seen, name0);
-      } else {
-        console.log('[classify] Discarded radio/action:', name0);
-        buckets.discarded.push(name0);
-      }
-      continue;
-    }
-
-    // Voice/functional bucket (RADIO, TOWER, INTERCOM, FLIGHT DECK SPEAKER)
-    if (isVoiceFunctional(name0)) {
-      addUnique(buckets.voices_and_functional, seen, name0);
-      continue;
-    }
-
-    // Codes/callsigns that slipped through: treat as discarded (not even extras)
-    if (isLikelyCodeOrCallsign(name0)) {
-      console.log('[classify] Discarded code/callsign:', name0);
-      buckets.discarded.push(name0);
-      continue;
-    }
-
-    // Generic roles → featured extras with lines
-    if (isGenericRole(name0)) {
-      addUnique(buckets.featured_extras_with_lines, seen, name0);
-      continue;
-    }
-
-    // Proper names / stable aliases → cast
-    if (isProperNameLike(name0)) {
-      addUnique(buckets.cast, seen, name0);
-      continue;
-    }
-
-    // default fallback: if it's short and all caps, it's often a minor speaking role
-    if (RE_ALL_CAPS.test(name0) && name0.length <= 18) {
-      addUnique(buckets.featured_extras_with_lines, seen, name0);
-      continue;
-    }
-
-    // If we can't tell: keep as featured extra
-    addUnique(buckets.featured_extras_with_lines, seen, name0);
   }
-
-  buckets.debug!.out = {
+  
+  buckets.debug!.output = {
     cast: buckets.cast.length,
     featured: buckets.featured_extras_with_lines.length,
     voices: buckets.voices_and_functional.length,
     discarded: buckets.discarded.length
   };
-
-  console.log('[classifyCharacters] Output:', buckets.debug!.out);
-  console.log('[classifyCharacters] Discarded samples:', buckets.discarded.slice(0, 10));
-
+  
+  console.log('Output:', buckets.debug!.output);
+  console.log('Sample discarded:', buckets.discarded.slice(0, 10));
+  
   return buckets;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GENERIC LOCATION NORMALIZER - UNIVERSAL
+// Works for ANY screenplay applying universal format rules
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const TECHNICAL_KEYWORDS = [
+  'INTERCUT', 'MONTAGE', 'SERIES OF SHOTS', 'STOCK FOOTAGE',
+  'CONTINUED', 'CONTINUOUS', 'LATER', 'MOMENTS LATER', 'SAME TIME',
+  'CUT TO', 'FADE TO', 'DISSOLVE TO', 'MATCH CUT', 'SMASH CUT',
+  'FLASHBACK', 'FLASH FORWARD', 'DREAM SEQUENCE', 'FANTASY',
+  'TITLE SEQUENCE', 'END CREDITS', 'OPENING CREDITS',
+  'POV', 'INSERT', 'ANGLE ON', 'CLOSE ON', 'WIDE SHOT',
+  'ESTABLISHING', 'AERIAL', 'UNDERWATER', 'SPLIT SCREEN'
+];
+
+const TIME_OF_DAY_MARKERS = [
+  'DAY', 'NIGHT', 'DAWN', 'DUSK', 'MORNING', 'AFTERNOON', 'EVENING',
+  'SUNSET', 'SUNRISE', 'NOON', 'MIDNIGHT', 'TWILIGHT',
+  'MAGIC HOUR', 'GOLDEN HOUR', 'BLUE HOUR'
+];
+
+const CONTINUITY_MARKERS = [
+  'CONTINUOUS', 'LATER', 'MOMENTS LATER', 'SAME TIME', 'MEANWHILE',
+  'EARLIER', 'SECONDS LATER', 'MINUTES LATER', 'HOURS LATER',
+  'DAYS LATER', 'WEEKS LATER', 'MONTHS LATER', 'YEARS LATER',
+  'SAME'
+];
+
+const LOCATION_PREFIXES = ['INT.', 'EXT.', 'INT./EXT.', 'I/E.', 'I/E'];
+
+/**
+ * Detects if a line is a technical direction, not a location
+ */
+function isTechnicalDirection(line: string): boolean {
+  const upper = line.toUpperCase();
+  
+  return TECHNICAL_KEYWORDS.some(keyword => {
+    const pattern = new RegExp(`\\b${keyword}\\b|^${keyword}`);
+    return pattern.test(upper);
+  });
+}
+
+/**
+ * Detects if it's a transition, not a location
+ */
+function isTransition(line: string): boolean {
+  const upper = line.toUpperCase().trim();
+  
+  const transitions = [
+    /^CUT TO:?\s*$/,
+    /^FADE (TO|IN|OUT):?\s*$/,
+    /^DISSOLVE TO:?\s*$/,
+    /^SMASH CUT:?\s*$/,
+    /^MATCH CUT:?\s*$/,
+    /^FADE TO BLACK\.?$/,
+    /^FADE IN:?\s*$/
+  ];
+  
+  return transitions.some(pattern => pattern.test(upper));
+}
+
+/**
+ * Detects sequence/scene labels that are not locations
+ */
+function isSequenceLabel(line: string): boolean {
+  const upper = line.toUpperCase();
+  
+  const patterns = [
+    /SORTIE\s+\d+/,           // SORTIE 1, SORTIE 2
+    /SCENE\s+\d+/,            // SCENE 1, SCENE 2  
+    /SEQUENCE\s+[A-Z0-9]/,    // SEQUENCE A, SEQUENCE 1
+    /SHOT\s+\d+/,             // SHOT 1, SHOT 2
+    /TAKE\s+\d+/,             // TAKE 1, TAKE 2
+    /ACT\s+(ONE|TWO|THREE|I+|[0-9])/,  // ACT ONE, ACT I, ACT 1
+    /TEASER$/,                // TEASER
+    /TAG$/,                   // TAG
+    /COLD OPEN/,              // COLD OPEN
+    /\bMONT\w*\s*\w*$/        // MONTAGE, MONT AG7E9 (codes)
+  ];
+  
+  return patterns.some(pattern => pattern.test(upper));
+}
+
+/**
+ * Detects vehicle references with owners (specific shots, not locations)
+ * E.g.: "MAVERICK'S F-18", "ROOSTER'S CAR" → NOT real locations
+ */
+function isVehicleWithOwner(line: string): boolean {
+  return /^[A-Z]+('S|\/[A-Z]+)\s+(F-?\d+|CAR|TRUCK|PLANE|JET|HELICOPTER|BOAT|SHIP)/i.test(line);
+}
+
+/**
+ * Cleans a raw location according to universal rules
+ */
+function cleanLocation(raw: string): string | null {
+  if (!raw) return null;
+  
+  let cleaned = raw.trim();
+  
+  // 1. Remove technical prefixes with slash: "/INT. ROOM" → "INT. ROOM"
+  cleaned = cleaned.replace(/^\/+/, '');
+  
+  // 2. Remove INT./EXT. prefixes
+  const prefixPattern = new RegExp(`^(${LOCATION_PREFIXES.join('|')})\\s*`, 'i');
+  cleaned = cleaned.replace(prefixPattern, '');
+  
+  // 3. Remove scene numbers at start/end
+  cleaned = cleaned.replace(/^\d+[A-Z]?\s+/, '');  // At start: "12 HOUSE"
+  cleaned = cleaned.replace(/\s+\d+[A-Z]?$/, '');  // At end: "HOUSE 12"
+  
+  // 4. Remove time of day and everything after
+  const timePattern = new RegExp(
+    `\\s*-\\s*(${TIME_OF_DAY_MARKERS.join('|')})(\\s|$).*`,
+    'i'
+  );
+  cleaned = cleaned.replace(timePattern, '');
+  
+  // 5. Remove continuity markers
+  const continuityPattern = new RegExp(
+    `\\s*-\\s*(${CONTINUITY_MARKERS.join('|')}).*`,
+    'i'
+  );
+  cleaned = cleaned.replace(continuityPattern, '');
+  
+  // 6. Remove sequence labels
+  cleaned = cleaned.replace(/\s*-\s*SORTIE\s+\d+/i, '');
+  cleaned = cleaned.replace(/\s*-\s*SCENE\s+\d+/i, '');
+  cleaned = cleaned.replace(/\s*-\s*SHOT\s+\d+/i, '');
+  
+  // 7. Remove annotations in parentheses at end
+  cleaned = cleaned.replace(/\s*\([^)]*\)\s*$/, '');
+  
+  // 8. Remove annotations in brackets
+  cleaned = cleaned.replace(/\s*\[[^\]]*\]\s*$/, '');
+  
+  // 9. Clean multiple spaces and trailing dashes
+  cleaned = cleaned.replace(/\s+/g, ' ');
+  cleaned = cleaned.replace(/\s*-\s*$/, ''); // Trailing dash
+  cleaned = cleaned.trim();
+  
+  return cleaned.length > 0 ? cleaned : null;
+}
+
+/**
+ * Validates that a location is structurally valid
+ */
+function isValidLocation(location: string): {
+  valid: boolean;
+  reason?: string;
+} {
+  // Too short
+  if (location.length < 2) {
+    return { valid: false, reason: 'Too short' };
+  }
+  
+  // Too long (probably includes extra description)
+  if (location.length > 100) {
+    return { valid: false, reason: 'Too long' };
+  }
+  
+  // Is scene code
+  if (isSceneCode(location)) {
+    return { valid: false, reason: 'Scene code' };
+  }
+  
+  // Is technical direction
+  if (isTechnicalDirection(location)) {
+    return { valid: false, reason: 'Technical direction' };
+  }
+  
+  // Is transition
+  if (isTransition(location)) {
+    return { valid: false, reason: 'Transition' };
+  }
+  
+  // Is sequence label
+  if (isSequenceLabel(location)) {
+    return { valid: false, reason: 'Sequence label' };
+  }
+  
+  // Is vehicle with owner (specific shot)
+  if (isVehicleWithOwner(location)) {
+    return { valid: false, reason: 'Vehicle shot (not location)' };
+  }
+  
+  return { valid: true };
+}
+
+/**
+ * Extracts base location from a complete location
+ * E.g.: "HOUSE - KITCHEN" → "HOUSE"
+ */
+function extractBaseLocation(location: string): string {
+  const dashIndex = location.indexOf(' - ');
+  if (dashIndex > 0) {
+    return location.substring(0, dashIndex).trim();
+  }
+  return location;
+}
+
+/**
+ * Extracts sub-location if exists
+ * E.g.: "HOUSE - KITCHEN - DAY" → "KITCHEN"
+ */
+function extractSubLocation(location: string): string | null {
+  const parts = location.split(' - ');
+  if (parts.length >= 2) {
+    return parts[1].trim();
+  }
+  return null;
+}
+
+interface LocationData {
+  name: string;
+  baseLocation: string;
+  subLocations: string[];
+  sceneCount: number;
+  types: Set<string>; // INT, EXT, both
+}
+
+/**
+ * Consolidates variations of the same location
+ */
+function consolidateLocations(locations: Array<{
+  raw: string;
+  type?: string; // INT/EXT
+}>): Map<string, LocationData> {
+  
+  const consolidated = new Map<string, LocationData>();
+  
+  for (const loc of locations) {
+    // Clean
+    const cleaned = cleanLocation(loc.raw);
+    if (!cleaned) continue;
+    
+    // Validate
+    const validation = isValidLocation(cleaned);
+    if (!validation.valid) {
+      console.log(`[location] Discard: ${cleaned} (${validation.reason})`);
+      continue;
+    }
+    
+    // Extract base and sub
+    const base = extractBaseLocation(cleaned);
+    const sub = extractSubLocation(cleaned);
+    
+    // Create or update entry
+    if (!consolidated.has(base)) {
+      consolidated.set(base, {
+        name: base,
+        baseLocation: base,
+        subLocations: [],
+        sceneCount: 0,
+        types: new Set()
+      });
+    }
+    
+    const entry = consolidated.get(base)!;
+    entry.sceneCount++;
+    
+    if (loc.type) {
+      entry.types.add(loc.type);
+    }
+    
+    if (sub && !entry.subLocations.includes(sub)) {
+      entry.subLocations.push(sub);
+    }
+  }
+  
+  return consolidated;
+}
+
+interface LocationResult {
+  primary: Array<{
+    name: string;
+    sceneCount: number;
+    subLocations: string[];
+    intExt: string;
+  }>;
+  secondary: Array<{
+    name: string;
+    sceneCount: number;
+  }>;
+  brief: Array<{
+    name: string;
+    sceneCount: number;
+  }>;
+  discarded: string[];
+}
+
+function normalizeLocationsGeneric(rawLocations: Array<{
+  text: string;
+  type?: string;
+}>): LocationResult {
+  
+  console.log('=== NORMALIZE LOCATIONS (GENERIC) ===');
+  console.log('Input count:', rawLocations.length);
+  
+  // Consolidate
+  const consolidated = consolidateLocations(
+    rawLocations.map(l => ({ raw: l.text, type: l.type }))
+  );
+  
+  console.log('After consolidation:', consolidated.size);
+  
+  // Classify by importance
+  const locations = Array.from(consolidated.values());
+  
+  const primary = locations
+    .filter(l => l.sceneCount >= 5)
+    .sort((a, b) => b.sceneCount - a.sceneCount);
+  
+  const secondary = locations
+    .filter(l => l.sceneCount >= 2 && l.sceneCount < 5)
+    .sort((a, b) => b.sceneCount - a.sceneCount);
+  
+  const brief = locations
+    .filter(l => l.sceneCount === 1)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  
+  // Format output
+  const result: LocationResult = {
+    primary: primary.map(l => ({
+      name: l.name,
+      sceneCount: l.sceneCount,
+      subLocations: l.subLocations,
+      intExt: Array.from(l.types).join('/')
+    })),
+    secondary: secondary.map(l => ({
+      name: l.name,
+      sceneCount: l.sceneCount
+    })),
+    brief: brief.map(l => ({
+      name: l.name,
+      sceneCount: l.sceneCount
+    })),
+    discarded: []
+  };
+  
+  console.log('Output:', {
+    primary: result.primary.length,
+    secondary: result.secondary.length,
+    brief: result.brief.length
+  });
+  
+  return result;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
