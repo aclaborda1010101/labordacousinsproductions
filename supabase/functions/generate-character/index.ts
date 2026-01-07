@@ -571,13 +571,21 @@ async function generateWithoutReference(
     })
   });
 
+  const responseText = await response.text();
+  
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[TEXT-TO-IMAGE] Error:', response.status, errorText);
-    throw new Error(`Image generation failed: ${response.status} - ${errorText}`);
+    console.error('[TEXT-TO-IMAGE] Error:', response.status, responseText.substring(0, 500));
+    throw new Error(`Image generation failed: ${response.status} - ${responseText.substring(0, 200)}`);
   }
 
-  const data = await response.json();
+  // Safe JSON parse - handle HTML error pages
+  let data: any;
+  try {
+    data = JSON.parse(responseText);
+  } catch (parseErr) {
+    console.error('[TEXT-TO-IMAGE] Response is not JSON:', responseText.substring(0, 500));
+    throw new Error(`API returned non-JSON response (possibly HTML error page). Status: ${response.status}`);
+  }
   console.log('[TEXT-TO-IMAGE] Response received');
 
   const imageUrl = extractImageFromResponse(data);
@@ -636,13 +644,21 @@ async function generateWithReference(
     })
   });
 
+  const responseText = await response.text();
+  
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[REFERENCE-GEN] Error:', response.status, errorText);
-    throw new Error(`Image generation failed: ${response.status} - ${errorText}`);
+    console.error('[REFERENCE-GEN] Error:', response.status, responseText.substring(0, 500));
+    throw new Error(`Image generation failed: ${response.status} - ${responseText.substring(0, 200)}`);
   }
 
-  const data = await response.json();
+  // Safe JSON parse - handle HTML error pages
+  let data: any;
+  try {
+    data = JSON.parse(responseText);
+  } catch (parseErr) {
+    console.error('[REFERENCE-GEN] Response is not JSON:', responseText.substring(0, 500));
+    throw new Error(`API returned non-JSON response (possibly HTML error page). Status: ${response.status}`);
+  }
   console.log('[REFERENCE-GEN] Response received');
 
   const imageUrl = extractImageFromResponse(data);
