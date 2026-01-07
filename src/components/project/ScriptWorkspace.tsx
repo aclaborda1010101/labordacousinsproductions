@@ -74,6 +74,7 @@ import {
   extractTitle,
   extractWriters,
 } from '@/lib/breakdown/hydrate';
+import { importCharactersFromScript } from '@/lib/importCharactersFromScript';
 
 interface ScriptWorkspaceProps {
   projectId: string;
@@ -1058,6 +1059,19 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       setExistingScriptText(rawScriptText);
       setEntryMode(null);
 
+      // Auto-import characters from generated script breakdown
+      try {
+        const importedNames = await importCharactersFromScript(projectId, parsedJson);
+        if (importedNames.length > 0) {
+          toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
+            description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+          });
+          onEntitiesExtracted?.();
+        }
+      } catch (importErr) {
+        console.warn('[ScriptWorkspace] Character import failed:', importErr);
+      }
+
       completeTask(taskId, { title: parsedJson.title });
       if (!runInBackground) {
         setStatus('success');
@@ -1249,6 +1263,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             setStatus('success');
             setEntryMode(null);
             setRefreshTrigger((prev) => prev + 1);
+            
+            // Auto-import characters from breakdown
+            try {
+              const importedNames = await importCharactersFromScript(projectId, payload);
+              if (importedNames.length > 0) {
+                toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
+                  description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+                });
+                onEntitiesExtracted?.();
+              }
+            } catch (importErr) {
+              console.warn('[ScriptWorkspace] Character import failed:', importErr);
+            }
+            
             toast.success('¡Análisis completado!');
             return;
           }
@@ -1302,6 +1330,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             setStatus('success');
             setEntryMode(null);
             setRefreshTrigger((prev) => prev + 1);
+            
+            // Auto-import characters from recovered breakdown
+            try {
+              const importedNames = await importCharactersFromScript(projectId, recoveredPayload);
+              if (importedNames.length > 0) {
+                toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
+                  description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+                });
+                onEntitiesExtracted?.();
+              }
+            } catch (importErr) {
+              console.warn('[ScriptWorkspace] Character import failed:', importErr);
+            }
+            
             toast.success('¡Análisis completado!');
             return;
           }
@@ -1370,6 +1412,20 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           setStatus('success');
           setEntryMode(null);
           setRefreshTrigger((prev) => prev + 1);
+          
+          // Auto-import characters from timeout recovery
+          try {
+            const importedNames = await importCharactersFromScript(projectId, recoveredPayload);
+            if (importedNames.length > 0) {
+              toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
+                description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+              });
+              onEntitiesExtracted?.();
+            }
+          } catch (importErr) {
+            console.warn('[ScriptWorkspace] Character import failed:', importErr);
+          }
+          
           toast.success('¡Análisis recuperado exitosamente!');
           return;
         }
