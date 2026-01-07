@@ -29,6 +29,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { toast } from 'sonner';
 import ReferenceScriptLibrary from './ReferenceScriptLibrary';
 import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
+import { CastingReportTable } from './CastingReportTable';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { 
   FileText, 
@@ -3898,6 +3899,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Casting Report Table */}
+              {(generatedScript.characters?.length > 0 || breakdownPro?.characters) && (
+                <Card>
+                  <CardContent className="pt-6">
+                    <CastingReportTable scriptParsedJson={breakdownPro || generatedScript} />
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Narrative Depth (Subplots + Plot Twists) */}
               {(() => {
