@@ -86,14 +86,34 @@ export function useCharacterPackGeneration({
 
           if (response.error) {
             console.error(`Error generating ${slot.type}:`, response.error);
-            errors.push(`${slot.label}: ${response.error.message}`);
+            const errorDetail = response.error.message || 'Error de generación';
+            errors.push(`${slot.label}: ${errorDetail}`);
+            // Show toast for each failed slot with specific reason
+            toast.error(`Error en ${slot.label}`, {
+              description: errorDetail.length > 100 ? errorDetail.substring(0, 100) + '...' : errorDetail,
+              duration: 5000,
+            });
+          } else if (response.data?.error) {
+            // Handle error returned in response body
+            const errorDetail = response.data.error;
+            console.error(`Error in response for ${slot.type}:`, errorDetail);
+            errors.push(`${slot.label}: ${errorDetail}`);
+            toast.error(`Error en ${slot.label}`, {
+              description: errorDetail.length > 100 ? errorDetail.substring(0, 100) + '...' : errorDetail,
+              duration: 5000,
+            });
           } else {
             completedCount++;
             onSlotComplete?.(slot.type);
           }
         } catch (err) {
           console.error(`Failed to generate ${slot.type}:`, err);
-          errors.push(`${slot.label}: ${err instanceof Error ? err.message : 'Error desconocido'}`);
+          const errorMsg = err instanceof Error ? err.message : 'Error desconocido';
+          errors.push(`${slot.label}: ${errorMsg}`);
+          toast.error(`Error en ${slot.label}`, {
+            description: errorMsg.length > 100 ? errorMsg.substring(0, 100) + '...' : errorMsg,
+            duration: 5000,
+          });
         }
       }
 
