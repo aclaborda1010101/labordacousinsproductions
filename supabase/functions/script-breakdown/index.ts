@@ -372,6 +372,242 @@ export type CharBuckets = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// SCENE-CHARACTER POPULATION SYSTEM
+// Builds alias→canonical and canonical→id maps, populates scene characters
+// ═══════════════════════════════════════════════════════════════════════════════
+
+interface CharacterMapping {
+  aliasToCanonical: Map<string, string>;  // "PETE" → "MAVERICK"
+  canonicalToId: Map<string, string>;     // "MAVERICK" → "uuid"
+  allCanonicals: Set<string>;
+}
+
+interface SceneWithCharacters {
+  number: number;
+  heading: string;
+  characters_present: string[];
+  character_ids: string[];
+  [key: string]: any;
+}
+
+/**
+ * Builds mappings from alias→canonical and canonical→id
+ * Uses Sonnet semantic analysis for alias resolution
+ */
+function buildCharacterMappings(
+  semanticCharacters: Record<string, { aliases?: string[]; role?: string }> | null,
+  castList: Array<{ name: string; aliases?: string[]; id?: string }>,
+  extrasList: Array<{ name: string; id?: string }>,
+  voicesList: Array<{ name: string; id?: string }>
+): CharacterMapping {
+  const aliasToCanonical = new Map<string, string>();
+  const canonicalToId = new Map<string, string>();
+  const allCanonicals = new Set<string>();
+  
+  // 1) From Sonnet semantic analysis (best source for aliases)
+  if (semanticCharacters && typeof semanticCharacters === 'object') {
+    for (const [canonical, data] of Object.entries(semanticCharacters)) {
+      const canonUpper = canonical.toUpperCase().trim();
+      if (!canonUpper) continue;
+      
+      allCanonicals.add(canonUpper);
+      aliasToCanonical.set(canonUpper, canonUpper);
+      
+      // Map aliases
+      const aliases = data.aliases || [];
+      for (const alias of aliases) {
+        const aliasUpper = String(alias).toUpperCase().trim();
+        if (aliasUpper && aliasUpper !== canonUpper) {
+          aliasToCanonical.set(aliasUpper, canonUpper);
+        }
+      }
+    }
+  }
+  
+  // 2) From cast list (may have IDs)
+  for (const char of castList) {
+    const canonUpper = char.name.toUpperCase().trim();
+    if (!canonUpper) continue;
+    
+    allCanonicals.add(canonUpper);
+    aliasToCanonical.set(canonUpper, canonUpper);
+    
+    if (char.id) {
+      canonicalToId.set(canonUpper, char.id);
+    }
+    
+    // Handle aliases from Haiku
+    const aliases = char.aliases || [];
+    for (const alias of aliases) {
+      const aliasUpper = String(alias).toUpperCase().trim();
+      if (aliasUpper && aliasUpper !== canonUpper) {
+        aliasToCanonical.set(aliasUpper, canonUpper);
+      }
+    }
+  }
+  
+  // 3) From extras and voices (also valid character entities)
+  for (const char of extrasList) {
+    const canonUpper = char.name.toUpperCase().trim();
+    if (canonUpper) {
+      allCanonicals.add(canonUpper);
+      aliasToCanonical.set(canonUpper, canonUpper);
+      if (char.id) canonicalToId.set(canonUpper, char.id);
+    }
+  }
+  
+  for (const char of voicesList) {
+    const canonUpper = char.name.toUpperCase().trim();
+    if (canonUpper) {
+      allCanonicals.add(canonUpper);
+      aliasToCanonical.set(canonUpper, canonUpper);
+      if (char.id) canonicalToId.set(canonUpper, char.id);
+    }
+  }
+  
+  console.log('[buildCharacterMappings] Built mappings:', {
+    aliasCount: aliasToCanonical.size,
+    canonicalCount: allCanonicals.size,
+    withIds: canonicalToId.size,
+  });
+  
+  return { aliasToCanonical, canonicalToId, allCanonicals };
+}
+
+/**
+ * Resolves a raw speaker name to its canonical form
+ */
+function resolveToCanonical(rawName: string, mapping: CharacterMapping): string | null {
+  const upper = stripTechnicalSuffixes(rawName).toUpperCase().trim();
+  if (!upper) return null;
+  
+  // Direct match
+  if (mapping.aliasToCanonical.has(upper)) {
+    return mapping.aliasToCanonical.get(upper)!;
+  }
+  
+  // Try without possessive/suffix
+  const cleaned = upper.replace(/'S$/, '').replace(/S$/, '').trim();
+  if (cleaned !== upper && mapping.aliasToCanonical.has(cleaned)) {
+    return mapping.aliasToCanonical.get(cleaned)!;
+  }
+  
+  // Fuzzy: check if any word matches a canonical
+  const words = upper.split(/\s+/);
+  for (const word of words) {
+    if (mapping.allCanonicals.has(word)) {
+      return word;
+    }
+    if (mapping.aliasToCanonical.has(word)) {
+      return mapping.aliasToCanonical.get(word)!;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Populates characters_present and character_ids for each scene
+ * Uses regex scenes extracted from script text
+ */
+function populateSceneCharacters(
+  regexScenes: Array<{ number: number; heading: string; characters_present: string[]; [key: string]: any }>,
+  mapping: CharacterMapping
+): SceneWithCharacters[] {
+  console.log('[populateSceneCharacters] Processing', regexScenes.length, 'scenes');
+  
+  const result: SceneWithCharacters[] = [];
+  
+  for (const scene of regexScenes) {
+    const rawChars = scene.characters_present || [];
+    const resolvedCanonicals = new Set<string>();
+    const resolvedIds: string[] = [];
+    
+    for (const rawChar of rawChars) {
+      const canonical = resolveToCanonical(rawChar, mapping);
+      if (canonical && !resolvedCanonicals.has(canonical)) {
+        resolvedCanonicals.add(canonical);
+        
+        // Get ID if available
+        const charId = mapping.canonicalToId.get(canonical);
+        if (charId) {
+          resolvedIds.push(charId);
+        }
+      }
+    }
+    
+    result.push({
+      ...scene,
+      characters_present: Array.from(resolvedCanonicals),
+      character_ids: resolvedIds,
+    });
+  }
+  
+  console.log('[populateSceneCharacters] Sample scene characters:', 
+    result.slice(0, 3).map(s => ({ scene: s.number, chars: s.characters_present.slice(0, 5) }))
+  );
+  
+  return result;
+}
+
+/**
+ * Counts character appearances across all scenes
+ * Returns map of canonical_name → appearance_count
+ */
+function countCharacterAppearances(scenes: SceneWithCharacters[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  
+  for (const scene of scenes) {
+    for (const char of scene.characters_present) {
+      counts.set(char, (counts.get(char) || 0) + 1);
+    }
+  }
+  
+  return counts;
+}
+
+/**
+ * Prunes cast to only characters appearing in ≥ minAppearances scenes
+ * Moves "ghosts" (appearing in <2 scenes) to discarded or extras
+ */
+function pruneGhostCharacters(
+  castList: Array<{ name: string; [key: string]: any }>,
+  appearanceCounts: Map<string, number>,
+  minAppearances: number = 2
+): {
+  kept: Array<{ name: string; scenes_count: number; [key: string]: any }>;
+  pruned: Array<{ name: string; scenes_count: number; reason: string }>;
+} {
+  const kept: Array<{ name: string; scenes_count: number; [key: string]: any }> = [];
+  const pruned: Array<{ name: string; scenes_count: number; reason: string }> = [];
+  
+  for (const char of castList) {
+    const upper = char.name.toUpperCase().trim();
+    const count = appearanceCounts.get(upper) || 0;
+    
+    if (count >= minAppearances) {
+      kept.push({ ...char, scenes_count: count });
+    } else {
+      pruned.push({ 
+        name: char.name, 
+        scenes_count: count,
+        reason: count === 0 
+          ? 'No scene appearances detected' 
+          : `Only ${count} scene appearance${count > 1 ? 's' : ''} (min: ${minAppearances})`
+      });
+    }
+  }
+  
+  console.log('[pruneGhostCharacters] Results:', {
+    kept: kept.length,
+    pruned: pruned.length,
+    prunedSamples: pruned.slice(0, 10).map(p => `${p.name} (${p.scenes_count})`),
+  });
+  
+  return { kept, pruned };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // PART 1: UNIVERSAL LINGUISTIC PATTERN DETECTION
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -2673,6 +2909,14 @@ OUTPUT LANGUAGE: ${lang}`;
         }).filter(Boolean);
       };
       
+      const extractWithAliases = (arr: any[]): Array<{ name: string; aliases?: string[]; id?: string }> => {
+        if (!Array.isArray(arr)) return [];
+        return arr.map(item => {
+          if (typeof item === 'string') return { name: item };
+          return { name: item?.name || '', aliases: item?.aliases, id: item?.id };
+        }).filter(x => x.name);
+      };
+      
       const allRawNames: string[] = [
         ...extractNames((normalizedData as any)?.characters?.cast || []),
         ...extractNames((normalizedData as any)?.characters?.featured_extras_with_lines || []),
@@ -2708,8 +2952,63 @@ OUTPUT LANGUAGE: ${lang}`;
         discarded: buckets.discarded.length,
         discardedSamples: buckets.discarded.slice(0, 15),
       });
+      
+      // ============================================
+      // SCENE-CHARACTER POPULATION + GHOST PRUNING
+      // ============================================
+      console.log('=== POPULATING SCENE CHARACTERS ===');
+      
+      // Build character mappings (alias→canonical, canonical→id)
+      const semanticChars = (canonicalData as any)?.characters || null;
+      const castWithAliases = extractWithAliases((normalizedData as any)?.characters?.cast || []);
+      const extrasWithAliases = extractWithAliases((normalizedData as any)?.characters?.featured_extras_with_lines || []);
+      const voicesWithAliases = extractWithAliases((normalizedData as any)?.characters?.voices_and_functional || []);
+      
+      const charMapping = buildCharacterMappings(
+        semanticChars,
+        castWithAliases,
+        extrasWithAliases,
+        voicesWithAliases
+      );
+      
+      // Get regex-extracted scenes (these have raw characters_present from speaker cues)
+      const regexScenes = extractScenesFromScript(processedScriptText);
+      console.log('[sceneChars] Regex extracted scenes:', regexScenes.length);
+      
+      // Populate characters_present and character_ids for each scene
+      const scenesWithChars = populateSceneCharacters(regexScenes, charMapping);
+      
+      // Count character appearances
+      const appearanceCounts = countCharacterAppearances(scenesWithChars);
+      console.log('[sceneChars] Character appearances computed:', appearanceCounts.size);
+      
+      // Prune ghost characters (appearing in <2 scenes)
+      const castBeforePrune = (normalizedData as any).characters.cast || [];
+      const pruneResult = pruneGhostCharacters(castBeforePrune, appearanceCounts, 2);
+      
+      // Update cast with pruned + enriched scene counts
+      (normalizedData as any).characters.cast = pruneResult.kept;
+      
+      // Log pruned ghosts for debugging
+      if (pruneResult.pruned.length > 0) {
+        console.log('[sceneChars] Pruned ghost characters:', pruneResult.pruned.length);
+        (normalizedData as any)._ghost_characters = pruneResult.pruned;
+      }
+      
+      // Update scenes in normalizedData with populated characters
+      if ((normalizedData as any).scenes?.list) {
+        // Merge populated data into existing scenes
+        const existingScenes = (normalizedData as any).scenes.list as any[];
+        for (const popScene of scenesWithChars) {
+          const existing = existingScenes.find((s: any) => s.number === popScene.number);
+          if (existing) {
+            existing.characters_present = popScene.characters_present;
+            existing.character_ids = popScene.character_ids;
+          }
+        }
+      }
 
-      // Re-sync counts after filtering (so UI numbers match)
+      // Re-sync counts after filtering and pruning (so UI numbers match)
       if ((normalizedData as any).counts && (normalizedData as any).characters) {
         const castLen = Array.isArray((normalizedData as any).characters.cast) ? (normalizedData as any).characters.cast.length : 0;
         const featuredLen = Array.isArray((normalizedData as any).characters.featured_extras_with_lines)
