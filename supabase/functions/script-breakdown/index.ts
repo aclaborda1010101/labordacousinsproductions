@@ -387,17 +387,52 @@ function cleanCharacterCue(raw: string): string {
   return name;
 }
 
-function extractScenesFromScript(text: string): any[] {
+interface DialogueStats {
+  total_lines: number;
+  total_words: number;
+  by_character: Record<string, { lines: number; words: number }>;
+}
+
+interface SceneWithDialogue {
+  number: number;
+  heading: string;
+  location_raw: string;
+  location_base: string;
+  int_ext: string;
+  time: string;
+  tags: string[];
+  characters_present: string[];
+  dialogue_lines: number;
+  dialogue_words: number;
+}
+
+interface ExtractionResult {
+  scenes: SceneWithDialogue[];
+  dialogues: DialogueStats;
+}
+
+function extractScenesFromScript(text: string): ExtractionResult {
   const lines = text.split('\n');
-  const scenes: any[] = [];
-  let currentScene: any = null;
+  const scenes: SceneWithDialogue[] = [];
+  let currentScene: SceneWithDialogue | null = null;
   let sceneNumber = 0;
+  
+  // Dialogue tracking
+  const dialogueByCharacter: Record<string, { lines: number; words: number }> = {};
+  let totalDialogueLines = 0;
+  let totalDialogueWords = 0;
+  
+  // State for dialogue detection
+  let currentSpeaker: string | null = null;
+  let inDialogue = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
+    const rawLine = lines[i];
     const match = SLUGLINE_RE.exec(line);
 
     if (match) {
+      // New scene - save current and reset
       if (currentScene) scenes.push(currentScene);
       sceneNumber++;
       const locationRaw = match[2]?.trim() || 'UNKNOWN';
@@ -417,16 +452,78 @@ function extractScenesFromScript(text: string): any[] {
         time: time,
         tags: [],
         characters_present: [],
+        dialogue_lines: 0,
+        dialogue_words: 0,
       };
+      currentSpeaker = null;
+      inDialogue = false;
     } else if (currentScene && looksLikeCharacterCue(line)) {
+      // Character cue - start of dialogue
       const charName = cleanCharacterCue(line);
-      if (charName && !currentScene.characters_present.includes(charName)) {
-        currentScene.characters_present.push(charName);
+      if (charName) {
+        if (!currentScene.characters_present.includes(charName)) {
+          currentScene.characters_present.push(charName);
+        }
+        currentSpeaker = charName;
+        inDialogue = true;
+        // Initialize character dialogue stats
+        if (!dialogueByCharacter[charName]) {
+          dialogueByCharacter[charName] = { lines: 0, words: 0 };
+        }
       }
+    } else if (currentScene && currentSpeaker && inDialogue && line.length > 0) {
+      // Check if this looks like dialogue text (indented or follows character cue)
+      // Dialogue is typically indented or lowercase/mixed case (not all caps action)
+      const isLikelyDialogue = 
+        rawLine.startsWith('  ') || // Indented
+        rawLine.startsWith('\t') || // Tab indented
+        (!/^[A-Z\s]+$/.test(line) && !SLUGLINE_RE.test(line)); // Not all caps and not a slugline
+      
+      // Exclude parentheticals (stage directions)
+      const isParenthetical = /^\(.*\)$/.test(line);
+      
+      if (isLikelyDialogue && !isParenthetical) {
+        const wordCount = line.split(/\s+/).filter(w => w.length > 0).length;
+        
+        // Update scene stats
+        currentScene.dialogue_lines++;
+        currentScene.dialogue_words += wordCount;
+        
+        // Update character stats
+        dialogueByCharacter[currentSpeaker].lines++;
+        dialogueByCharacter[currentSpeaker].words += wordCount;
+        
+        // Update totals
+        totalDialogueLines++;
+        totalDialogueWords += wordCount;
+      }
+      
+      // Empty line or action line ends dialogue block
+      if (line.length === 0 || /^[A-Z][A-Z\s]+[a-z]/.test(line)) {
+        inDialogue = false;
+      }
+    } else if (line.length === 0) {
+      // Empty line - reset dialogue state
+      inDialogue = false;
     }
   }
+  
   if (currentScene) scenes.push(currentScene);
-  return scenes;
+  
+  console.log('[extractScenesFromScript] Dialogue stats:', {
+    total_lines: totalDialogueLines,
+    total_words: totalDialogueWords,
+    characters_with_dialogue: Object.keys(dialogueByCharacter).length,
+  });
+  
+  return {
+    scenes,
+    dialogues: {
+      total_lines: totalDialogueLines,
+      total_words: totalDialogueWords,
+      by_character: dialogueByCharacter,
+    },
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -2553,8 +2650,8 @@ function extractCharacterCandidatesFull(
   // PASS B: in-scene cue scan (captures cues that fail lookahead due to PDF/text extraction quirks)
   // This intentionally shares the same banned list, so it stays reasonably clean.
   try {
-    const regexScenes = extractScenesFromScript(scriptText);
-    for (const scene of regexScenes) {
+    const extractionResult = extractScenesFromScript(scriptText);
+    for (const scene of extractionResult.scenes) {
       const present = Array.isArray((scene as any)?.characters_present)
         ? ((scene as any).characters_present as unknown[])
         : [];
@@ -2631,7 +2728,9 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   console.log(`[script-breakdown] Top 10 speakers:`, candidateStats.top10);
 
   const aiScenesList = asArray(out.scenes?.list);
-  const regexScenes = extractScenesFromScript(scriptText);
+  const extractionResult = extractScenesFromScript(scriptText);
+  const regexScenes = extractionResult.scenes;
+  const dialogueStats = extractionResult.dialogues;
   const aiSceneCountTooLow = expectedSceneCount > 0 && aiScenesList.length < expectedSceneCount * 0.5;
 
   if (aiScenesList.length === 0 && regexScenes.length > 0) {
@@ -2647,6 +2746,9 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   } else if (!out.scenes || typeof out.scenes !== 'object') {
     out.scenes = { total: aiScenesList.length, list: aiScenesList };
   }
+  
+  // Add dialogue statistics
+  out.dialogues = dialogueStats;
 
   if (out.scenes?.list) {
     out.scenes.total = out.scenes.list.length;
@@ -3392,7 +3494,8 @@ OUTPUT LANGUAGE: ${lang}`;
       );
       
       // Get regex-extracted scenes (these have raw characters_present from speaker cues)
-      const regexScenes = extractScenesFromScript(processedScriptText);
+      const extractionResult = extractScenesFromScript(processedScriptText);
+      const regexScenes = extractionResult.scenes;
       console.log('[sceneChars] Regex extracted scenes:', regexScenes.length);
       
       // Populate characters_present and character_ids for each scene
@@ -3441,6 +3544,13 @@ OUTPUT LANGUAGE: ${lang}`;
         (normalizedData as any).counts.featured_extras_total = featuredLen;
         (normalizedData as any).counts.voices_total = voicesLen;
         (normalizedData as any).counts.characters_total = castLen + featuredLen + voicesLen;
+        
+        // Add dialogue counts from enriched data
+        const dialogueStats = (enrichedData as any)?.dialogues;
+        if (dialogueStats) {
+          (normalizedData as any).counts.dialogues = dialogueStats.total_lines || 0;
+          (normalizedData as any).counts.dialogue_words = dialogueStats.total_words || 0;
+        }
       }
 
       // Build flattened characters for backward compatibility
@@ -3503,6 +3613,9 @@ OUTPUT LANGUAGE: ${lang}`;
         // Setpieces (Haiku-enriched)
         setpieces: normalizedData.setpieces || [],
         production_flags: mergedBreakdown.production_flags || [],
+        
+        // Dialogue statistics (new in V24)
+        dialogues: (enrichedData as any)?.dialogues || { total_lines: 0, total_words: 0, by_character: {} },
         
         // Validation
         validation: enrichedData.validation || {},
