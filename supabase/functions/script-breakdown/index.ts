@@ -2934,9 +2934,10 @@ const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // Model mapping: Anthropic -> Gateway equivalent
 // Updated 2025-01: claude-3-5-sonnet-20241022 deprecated, use claude-sonnet-4-20250514
+// Fallback: GPT-4o for best quality when Anthropic unavailable
 const MODEL_MAP: Record<string, { anthropic: string; gateway: string }> = {
-  sonnet: { anthropic: 'claude-sonnet-4-20250514', gateway: 'google/gemini-2.5-pro' },
-  haiku: { anthropic: 'claude-3-5-haiku-20241022', gateway: 'google/gemini-2.5-flash' },
+  sonnet: { anthropic: 'claude-sonnet-4-20250514', gateway: 'openai/gpt-4o' },
+  haiku: { anthropic: 'claude-3-5-haiku-20241022', gateway: 'openai/gpt-4o-mini' },
 };
 
 type CallAIJsonArgs = {
@@ -3713,8 +3714,9 @@ OUTPUT LANGUAGE: ${lang}`;
       
       for (const c of (chars.cast || [])) {
         // Use reclassified role if available, otherwise default
-        const role = c.narrative_weight === 'protagonist' ? (c.role || 'protagonist') : (c.role || 'supporting');
-        const priority = c.narrative_weight === 'protagonist' ? 'P1' : 'P2';
+        const cAny = c as any;
+        const role = cAny.narrative_weight === 'protagonist' ? (c.role || 'protagonist') : (c.role || 'supporting');
+        const priority = cAny.narrative_weight === 'protagonist' ? 'P1' : 'P2';
         allCharacters.push({ ...c, role, priority });
       }
       for (const c of (chars.featured_extras_with_lines || [])) {
