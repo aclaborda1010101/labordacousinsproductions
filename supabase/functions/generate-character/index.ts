@@ -37,6 +37,46 @@ interface SlotGenerateRequest {
 // Character generation uses gemini-3-pro-image-preview (nano-banana-pro)
 const IMAGE_ENGINE = 'google/gemini-3-pro-image-preview'; // nano-banana-pro
 
+// Retry configuration
+const MAX_RETRIES = 2;
+const INITIAL_BACKOFF_MS = 1000;
+const TRANSIENT_ERROR_PATTERNS = ['timeout', 'rate limit', 'rate_limit', '500', '502', '503', '504', 'network', 'ETIMEDOUT', 'ECONNRESET', 'temporarily unavailable', 'service unavailable'];
+
+function isTransientError(error: string): boolean {
+  const lowerError = error.toLowerCase();
+  return TRANSIENT_ERROR_PATTERNS.some(pattern => lowerError.includes(pattern.toLowerCase()));
+}
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  label: string
+): Promise<T> {
+  let lastError: Error | null = null;
+  
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      const errorMsg = lastError.message;
+      
+      if (attempt < MAX_RETRIES && isTransientError(errorMsg)) {
+        const backoffMs = INITIAL_BACKOFF_MS * Math.pow(2, attempt);
+        console.log(`[${label}] Transient error, retrying in ${backoffMs}ms (attempt ${attempt + 1}/${MAX_RETRIES}): ${errorMsg}`);
+        await sleep(backoffMs);
+      } else {
+        throw lastError;
+      }
+    }
+  }
+  
+  throw lastError;
+}
+
 // ============================================
 // STYLE CONFIG TYPES (from Visual Bible)
 // ============================================
@@ -1092,7 +1132,10 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       prompt = buildCloseupPrompt(visualDNA, styleConfig, 'front');
     }
     
-    const result = await generateWithReference(primaryAnchor.image_url, prompt);
+    const result = await withRetry(
+      () => generateWithReference(primaryAnchor.image_url, prompt),
+      'REFERENCE-GEN'
+    );
     imageUrl = result.imageUrl;
     
   } else {
@@ -1103,7 +1146,10 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     // Build standalone prompt (includes character bio/description)
     prompt = buildStandaloneCharacterPrompt(request.characterName, request.characterBio, visualDNA, styleConfig);
     
-    const result = await generateWithoutReference(prompt);
+    const result = await withRetry(
+      () => generateWithoutReference(prompt),
+      'TEXT-TO-IMAGE'
+    );
     imageUrl = result.imageUrl;
     
     // Create the generated image as primary reference anchor for future generations
