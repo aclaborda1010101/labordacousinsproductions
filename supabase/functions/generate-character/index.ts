@@ -417,13 +417,19 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null): string {
+function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, viewAngle: string = 'front'): string {
   const physical = visualDNA.physical_identity;
   const face = visualDNA.face;
   const hair = visualDNA.hair?.head_hair;
   const styleBlock = buildStyleBlock(styleConfig);
 
-  return `This same person, professional identity closeup.
+  const angleInstructions: Record<string, string> = {
+    'front': 'front view, facing camera directly',
+    'side': 'side profile view, 90 degrees to camera',
+  };
+  const angle = angleInstructions[viewAngle] || angleInstructions.front;
+
+  return `This same person, professional portrait closeup, ${angle}.
 ${styleBlock}
 PHYSICAL CONTEXT:
 - Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
@@ -433,7 +439,7 @@ PHYSICAL CONTEXT:
 
 SHOT REQUIREMENTS:
 - Tight headshot (face fills frame)
-- Direct eye contact with camera
+- ${viewAngle === 'side' ? 'Profile view showing side of face' : 'Direct eye contact with camera'}
 - 85mm lens, f/2.8
 - Sharp focus on eyes
 - Soft focus on background
@@ -453,6 +459,8 @@ CONSISTENCY REQUIREMENTS (CRITICAL):
 - Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
 - Keep EXACT same distinctive features (wrinkles, lines as shown in reference)
 
+Only change: camera angle to ${viewAngle} view
+
 EXPRESSION:
 - Neutral, professional
 - Slight warmth in eyes
@@ -468,7 +476,7 @@ TECHNICAL SPECS:
 }
 
 function buildBaseLookPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null): string {
-  return buildCloseupPrompt(visualDNA, styleConfig);
+  return buildCloseupPrompt(visualDNA, styleConfig, 'front');
 }
 
 // Build a standalone prompt for text-to-image (no reference)
@@ -946,6 +954,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     const isExpression = request.slotType.startsWith('expr_') || request.slotType === 'expression';
     const isOutfit = request.slotType.startsWith('outfit_') || request.slotType === 'outfit';
     const isReference = request.slotType.startsWith('ref_');
+    const isCloseup = request.slotType.startsWith('closeup_');
 
     // Extract view angle from slot type if not provided
     const extractViewAngle = (slotType: string): string => {
@@ -954,6 +963,8 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
         'turn_side': 'side',
         'turn_back': 'back',
         'turn_back_34': 'back_34',
+        'closeup_front': 'front',
+        'closeup_profile': 'side',
       };
       return angleMap[slotType] || 'front';
     };
@@ -975,7 +986,11 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       return exprMap[slotType] || 'neutral';
     };
 
-    if (isTurnaround) {
+    if (isCloseup) {
+      const angle = request.viewAngle || extractViewAngle(request.slotType);
+      console.log(`[CLOSEUP] Slot: ${request.slotType} -> Angle: ${angle}`);
+      prompt = buildCloseupPrompt(visualDNA, styleConfig, angle);
+    } else if (isTurnaround) {
       const angle = request.viewAngle || extractViewAngle(request.slotType);
       console.log(`[TURNAROUND] Slot: ${request.slotType} -> Angle: ${angle}`);
       prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig);
@@ -986,13 +1001,13 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     } else if (isOutfit) {
       prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
     } else if (isReference || request.slotType === 'closeup' || request.slotType === 'anchor_closeup') {
-      prompt = buildCloseupPrompt(visualDNA, styleConfig);
+      prompt = buildCloseupPrompt(visualDNA, styleConfig, 'front');
     } else if (request.slotType === 'base_look') {
       prompt = buildBaseLookPrompt(visualDNA, styleConfig);
     } else {
       // Default fallback
       console.log(`[FALLBACK] Unknown slot type: ${request.slotType}, using closeup`);
-      prompt = buildCloseupPrompt(visualDNA, styleConfig);
+      prompt = buildCloseupPrompt(visualDNA, styleConfig, 'front');
     }
     
     const result = await generateWithReference(primaryAnchor.image_url, prompt);
