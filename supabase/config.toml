@@ -208,3 +208,10 @@ verify_jwt = true
 
 [functions.forge-tts]
 verify_jwt = true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VISUAL BIBLE (V3.1 - Style Analysis)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.analyze-style-reference]
+verify_jwt = false

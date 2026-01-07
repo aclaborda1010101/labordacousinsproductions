@@ -4096,6 +4096,7 @@ export type Database = {
           location_id: string | null
           max_attempts_override: number | null
           metadata: Json | null
+          micro_shot_duration: number | null
           mood: Json | null
           objective: string | null
           override_mode: string | null
@@ -4139,6 +4140,7 @@ export type Database = {
           location_id?: string | null
           max_attempts_override?: number | null
           metadata?: Json | null
+          micro_shot_duration?: number | null
           mood?: Json | null
           objective?: string | null
           override_mode?: string | null
@@ -4182,6 +4184,7 @@ export type Database = {
           location_id?: string | null
           max_attempts_override?: number | null
           metadata?: Json | null
+          micro_shot_duration?: number | null
           mood?: Json | null
           objective?: string | null
           override_mode?: string | null
@@ -4652,9 +4655,11 @@ export type Database = {
           project_id: string
           realism_level: string | null
           reference_urls: Json | null
+          style_config: Json | null
           token: string | null
           tone: string | null
           updated_at: string
+          visual_preset: string | null
         }
         Insert: {
           aspect_ratio?: string | null
@@ -4672,9 +4677,11 @@ export type Database = {
           project_id: string
           realism_level?: string | null
           reference_urls?: Json | null
+          style_config?: Json | null
           token?: string | null
           tone?: string | null
           updated_at?: string
+          visual_preset?: string | null
         }
         Update: {
           aspect_ratio?: string | null
@@ -4692,9 +4699,11 @@ export type Database = {
           project_id?: string
           realism_level?: string | null
           reference_urls?: Json | null
+          style_config?: Json | null
           token?: string | null
           tone?: string | null
           updated_at?: string
+          visual_preset?: string | null
         }
         Relationships: [
           {
