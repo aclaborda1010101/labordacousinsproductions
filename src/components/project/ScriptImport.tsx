@@ -2287,6 +2287,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           
           {generatedScript && (
             <>
+              {/* Regenerate Script Button */}
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  // Reset states to allow regeneration
+                  setGeneratedScript(null);
+                  setOutlineApproved(false);
+                  setLightOutline(null);
+                  setGeneratedEpisodesList([]);
+                  clearPipelineState();
+                  toast.info('Listo para regenerar. Ajusta tu idea y genera un nuevo outline.');
+                }}
+                disabled={pipelineRunning}
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span className="ml-2 hidden sm:inline">Regenerar Guion</span>
+              </Button>
               <Button 
                 variant={scriptLocked ? "default" : "outline"} 
                 size="sm"
