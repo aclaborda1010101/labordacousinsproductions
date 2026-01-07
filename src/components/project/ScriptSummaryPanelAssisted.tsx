@@ -128,6 +128,8 @@ interface TeaserData {
 
 interface CharacterData {
   name: string;
+  canonical_name?: string;
+  category?: string;
   role?: string;
   role_detail?: string;
   entity_type?: string;
@@ -224,17 +226,23 @@ export function ScriptSummaryPanelAssisted({
         
         if (narrativeClass) {
           // Use narrative_classification - contains ALL semantically classified characters
+          // Normalize name: ensure every character has a usable 'name' field
+          const normalizeName = (c: any) => ({
+            ...c,
+            name: c.name ?? c.canonical_name ?? c.label ?? c.id ?? 'SIN_NOMBRE'
+          });
+          
           const protagonists = Array.isArray(narrativeClass.protagonists) 
-            ? narrativeClass.protagonists.map((c: any) => ({ ...c, category: 'protagonist' })) 
+            ? narrativeClass.protagonists.map((c: any) => ({ ...normalizeName(c), category: 'protagonist' })) 
             : [];
           const majorSupporting = Array.isArray(narrativeClass.major_supporting) 
-            ? narrativeClass.major_supporting.map((c: any) => ({ ...c, category: 'major_supporting' })) 
+            ? narrativeClass.major_supporting.map((c: any) => ({ ...normalizeName(c), category: 'major_supporting' })) 
             : [];
           const minorSpeaking = Array.isArray(narrativeClass.minor_speaking) 
-            ? narrativeClass.minor_speaking.map((c: any) => ({ ...c, category: 'minor_speaking' })) 
+            ? narrativeClass.minor_speaking.map((c: any) => ({ ...normalizeName(c), category: 'minor_speaking' })) 
             : [];
           const voicesSystems = Array.isArray(narrativeClass.voices_systems) 
-            ? narrativeClass.voices_systems.map((c: any) => ({ ...c, category: 'voice' })) 
+            ? narrativeClass.voices_systems.map((c: any) => ({ ...normalizeName(c), category: 'voice' })) 
             : [];
           
           // Main cast = protagonists + major supporting
@@ -1081,8 +1089,8 @@ export function ScriptSummaryPanelAssisted({
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {scriptData.featured_extras.map((char, i) => (
-                        <Badge key={`${char.name}-${i}`} variant="secondary" className="text-xs">
-                          {char.name}
+                        <Badge key={`${char.canonical_name || char.name || i}`} variant="secondary" className="text-xs">
+                          {char.canonical_name || char.name || '(Sin nombre)'}
                         </Badge>
                       ))}
                     </div>
@@ -1097,9 +1105,9 @@ export function ScriptSummaryPanelAssisted({
                       <span className="font-medium text-sm">Voces y Funcionales ({scriptData.voices.length})</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {scriptData.voices.map((char, i) => (
-                        <Badge key={`${char.name}-${i}`} variant="outline" className="text-xs">
-                          {char.name}
+                      {scriptData.voices.map((char: any, i: number) => (
+                        <Badge key={`${char.canonical_name || char.name || i}`} variant="secondary" className="text-xs">
+                          {char.canonical_name || char.name || '(Sin nombre)'}
                         </Badge>
                       ))}
                     </div>
