@@ -38,6 +38,36 @@ interface SlotGenerateRequest {
 const IMAGE_ENGINE = 'google/gemini-3-pro-image-preview'; // nano-banana-pro
 
 // ============================================
+// STYLE CONFIG TYPES (from Visual Bible)
+// ============================================
+
+interface StyleConfig {
+  mood?: string;
+  camera?: {
+    movement?: string;
+    angle?: string;
+    framing?: string;
+  };
+  lens?: {
+    focal_length?: string;
+    aperture?: string;
+  };
+  lighting?: {
+    style?: string;
+    quality?: string;
+    direction?: string;
+  };
+  color_palette?: {
+    primary?: string[];
+    secondary?: string[];
+    mood_tone?: string;
+  };
+  film_grain?: string;
+  contrast?: string;
+  prompt_modifier?: string;
+}
+
+// ============================================
 // VISUAL DNA TYPES
 // ============================================
 
@@ -143,10 +173,63 @@ interface VisualDNA {
 }
 
 // ============================================
+// STYLE CONFIG INJECTION HELPER
+// ============================================
+
+function buildStyleBlock(styleConfig: StyleConfig | null): string {
+  if (!styleConfig) return '';
+  
+  const parts: string[] = [];
+  
+  if (styleConfig.mood) {
+    parts.push(`VISUAL MOOD: ${styleConfig.mood}`);
+  }
+  
+  if (styleConfig.lighting) {
+    const lighting = styleConfig.lighting;
+    const lightingParts = [
+      lighting.style && `${lighting.style} lighting`,
+      lighting.quality && `${lighting.quality} quality`,
+      lighting.direction && `from ${lighting.direction}`
+    ].filter(Boolean).join(', ');
+    if (lightingParts) parts.push(`LIGHTING STYLE: ${lightingParts}`);
+  }
+  
+  if (styleConfig.color_palette) {
+    const palette = styleConfig.color_palette;
+    if (palette.mood_tone) {
+      parts.push(`COLOR TONE: ${palette.mood_tone}`);
+    }
+    if (palette.primary?.length) {
+      parts.push(`COLOR PALETTE: ${palette.primary.slice(0, 3).join(', ')}`);
+    }
+  }
+  
+  if (styleConfig.film_grain) {
+    parts.push(`FILM GRAIN: ${styleConfig.film_grain}`);
+  }
+  
+  if (styleConfig.contrast) {
+    parts.push(`CONTRAST: ${styleConfig.contrast}`);
+  }
+  
+  if (styleConfig.prompt_modifier) {
+    parts.push(styleConfig.prompt_modifier);
+  }
+  
+  if (parts.length === 0) return '';
+  
+  return `
+PROJECT VISUAL STYLE (MANDATORY):
+${parts.join('\n')}
+`;
+}
+
+// ============================================
 // REFERENCE-BASED PROMPT BUILDERS
 // ============================================
 
-function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string): string {
+function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null): string {
   const angleInstructions: Record<string, string> = {
     'front': 'front view, facing camera directly, standing straight, arms at sides',
     'side': 'side profile view, 90 degrees to camera, standing straight, arms at sides',
@@ -158,9 +241,10 @@ function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string): string 
   const physical = visualDNA.physical_identity;
   const hair = visualDNA.hair?.head_hair;
   const face = visualDNA.face;
+  const styleBlock = buildStyleBlock(styleConfig);
 
   return `This same person, ${angle}.
-
+${styleBlock}
 PHYSICAL CONTEXT:
 - Height: ${physical?.height?.cm || 'average'} cm
 - Build: ${physical?.body_type?.somatotype || 'average'}
@@ -196,7 +280,7 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string): string {
+function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null): string {
   const expressionInstructions: Record<string, string> = {
     'neutral': 'neutral, calm expression, relaxed face',
     'happy': 'smiling, happy expression, genuine joy, natural smile',
@@ -213,9 +297,10 @@ function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string): st
   const physical = visualDNA.physical_identity;
   const face = visualDNA.face;
   const hair = visualDNA.hair?.head_hair;
+  const styleBlock = buildStyleBlock(styleConfig);
 
   return `This same person, ${expression}.
-
+${styleBlock}
 PHYSICAL CONTEXT:
 - Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
 - Face shape: ${face?.shape || 'as shown'}
@@ -247,13 +332,14 @@ TECHNICAL SPECS:
 - 8K quality`;
 }
 
-function buildOutfitPrompt(visualDNA: VisualDNA, outfitDescription: string): string {
+function buildOutfitPrompt(visualDNA: VisualDNA, outfitDescription: string, styleConfig: StyleConfig | null): string {
   const physical = visualDNA.physical_identity;
   const hair = visualDNA.hair?.head_hair;
   const face = visualDNA.face;
+  const styleBlock = buildStyleBlock(styleConfig);
 
   return `This same person, wearing: ${outfitDescription}.
-
+${styleBlock}
 PHYSICAL CONTEXT:
 - Height: ${physical?.height?.cm || 'average'} cm
 - Build: ${physical?.body_type?.somatotype || 'average'}
@@ -292,13 +378,14 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildCloseupPrompt(visualDNA: VisualDNA): string {
+function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null): string {
   const physical = visualDNA.physical_identity;
   const face = visualDNA.face;
   const hair = visualDNA.hair?.head_hair;
+  const styleBlock = buildStyleBlock(styleConfig);
 
   return `This same person, professional identity closeup.
-
+${styleBlock}
 PHYSICAL CONTEXT:
 - Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
 - Face shape: ${face?.shape || 'as shown'}
@@ -341,16 +428,17 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildBaseLookPrompt(visualDNA: VisualDNA): string {
-  return buildCloseupPrompt(visualDNA);
+function buildBaseLookPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null): string {
+  return buildCloseupPrompt(visualDNA, styleConfig);
 }
 
 // Build a standalone prompt for text-to-image (no reference)
-function buildStandaloneCharacterPrompt(characterName: string, characterBio: string, visualDNA: VisualDNA): string {
+function buildStandaloneCharacterPrompt(characterName: string, characterBio: string, visualDNA: VisualDNA, styleConfig: StyleConfig | null): string {
   const physical = visualDNA.physical_identity;
   const face = visualDNA.face;
   const hair = visualDNA.hair?.head_hair;
   const skin = visualDNA.skin;
+  const styleBlock = buildStyleBlock(styleConfig);
   
   const ageStr = physical?.age_exact_for_prompt ? `${physical.age_exact_for_prompt} years old` : '';
   const genderStr = physical?.gender_presentation || '';
@@ -364,7 +452,7 @@ function buildStandaloneCharacterPrompt(characterName: string, characterBio: str
   const bodyType = physical?.body_type?.somatotype || '';
   
   return `Professional portrait photograph of a fictional character for film production.
-
+${styleBlock}
 CHARACTER: ${characterName}
 DESCRIPTION: ${characterBio}
 
@@ -749,6 +837,20 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   const activeVisualDNA = character.character_visual_dna?.find((v: any) => v.is_active);
   const visualDNA: VisualDNA = activeVisualDNA?.visual_dna || {};
 
+  // Get project's style_config from Visual Bible
+  const { data: stylePack, error: styleError } = await supabase
+    .from('style_packs')
+    .select('style_config')
+    .eq('project_id', character.project_id)
+    .maybeSingle();
+  
+  if (styleError) {
+    console.error('Style pack fetch error:', styleError);
+  }
+  
+  const styleConfig: StyleConfig | null = stylePack?.style_config || null;
+  console.log(`Style config loaded: ${styleConfig ? 'YES' : 'NO (will use defaults)'}`);
+
   // Get reference anchors (user-uploaded photos)
   const { data: referenceAnchors, error: refError } = await supabase
     .from('reference_anchors')
@@ -803,23 +905,23 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     // Build prompt based on slot type
     switch (request.slotType) {
       case 'turnaround':
-        prompt = buildTurnaroundPrompt(visualDNA, request.viewAngle || 'front');
+        prompt = buildTurnaroundPrompt(visualDNA, request.viewAngle || 'front', styleConfig);
         break;
       case 'expression':
-        prompt = buildExpressionPrompt(visualDNA, request.expressionName || 'neutral');
+        prompt = buildExpressionPrompt(visualDNA, request.expressionName || 'neutral', styleConfig);
         break;
       case 'outfit':
-        prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit');
+        prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
         break;
       case 'closeup':
       case 'anchor_closeup':
-        prompt = buildCloseupPrompt(visualDNA);
+        prompt = buildCloseupPrompt(visualDNA, styleConfig);
         break;
       case 'base_look':
-        prompt = buildBaseLookPrompt(visualDNA);
+        prompt = buildBaseLookPrompt(visualDNA, styleConfig);
         break;
       default:
-        prompt = buildCloseupPrompt(visualDNA);
+        prompt = buildCloseupPrompt(visualDNA, styleConfig);
     }
     
     const result = await generateWithReference(primaryAnchor.image_url, prompt);
@@ -831,7 +933,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     console.log(`No reference found. Generating identity with text-to-image for: ${request.characterName}`);
     
     // Build standalone prompt (includes character bio/description)
-    prompt = buildStandaloneCharacterPrompt(request.characterName, request.characterBio, visualDNA);
+    prompt = buildStandaloneCharacterPrompt(request.characterName, request.characterBio, visualDNA, styleConfig);
     
     const result = await generateWithoutReference(prompt);
     imageUrl = result.imageUrl;
