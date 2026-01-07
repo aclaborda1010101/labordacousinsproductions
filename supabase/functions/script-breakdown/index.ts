@@ -945,8 +945,78 @@ function isRoleSuffix(name: string): boolean {
     /\bOPERATOR$/i,
     /\bASSISTANT$/i,
     /\bSECRETARY$/i,
+    /\bCOMMAND$/i,
+    /\bREMAINING$/i,
   ];
   return suffixes.some(r => r.test(name.trim()));
+}
+
+/**
+ * PATCH v21: Detects merged/concatenated names that are noise
+ * E.g.: "MAVERICK SARAH", "ROOSTER PAYBACK", "PENNY D MAVERICK"
+ */
+function looksLikeMergedNames(name: string): boolean {
+  const n = name.toUpperCase().trim();
+  const parts = n.split(/\s+/);
+  
+  // Known callsigns for Top Gun (expandable for other scripts)
+  const knownCallsigns = new Set([
+    'MAVERICK', 'ROOSTER', 'HANGMAN', 'PHOENIX', 'BOB', 'COYOTE',
+    'ICEMAN', 'WARLOCK', 'CYCLONE', 'HONDO', 'PAYBACK', 'FANBOY',
+    'GOOSE', 'SLIDER', 'HOLLYWOOD', 'WOLFMAN', 'VIPER', 'JESTER',
+    'MERLIN', 'COUGAR', 'SUNDOWN', 'CHIPPER'
+  ]);
+  
+  // Bad connectors that indicate merge: "PENNY D MAVERICK"
+  const badConnectors = new Set(['D', 'TO', 'WITH', 'AND', 'VS', 'Y']);
+  if (parts.some(p => badConnectors.has(p))) {
+    console.log(`[looksLikeMergedNames] Bad connector detected: ${name}`);
+    return true;
+  }
+  
+  // If 2+ parts are known callsigns, it's a merge: "ROOSTER MAVERICK"
+  if (parts.length >= 2) {
+    const hits = parts.filter(p => knownCallsigns.has(p)).length;
+    if (hits >= 2) {
+      console.log(`[looksLikeMergedNames] Multiple callsigns: ${name}`);
+      return true;
+    }
+  }
+  
+  // If exactly 2 parts and one is a callsign + the other is a first name
+  // "MAVERICK SARAH", "PENNY MAVERICK"
+  if (parts.length === 2) {
+    const [a, b] = parts;
+    const commonFirstNames = new Set([
+      'SARAH', 'PENNY', 'PETE', 'TOM', 'NICK', 'BRADLEY', 'JAKE', 
+      'NATASHA', 'ROBERT', 'REUBEN', 'MICKEY', 'JAVY', 'AMELIA'
+    ]);
+    
+    // Callsign + first name = merge
+    if ((knownCallsigns.has(a) && commonFirstNames.has(b)) ||
+        (knownCallsigns.has(b) && commonFirstNames.has(a))) {
+      console.log(`[looksLikeMergedNames] Callsign + first name: ${name}`);
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+/**
+ * PATCH v21: Combined role-ish detector for keywords anywhere in the name
+ */
+function isRoleish(name: string): boolean {
+  const u = name.toUpperCase();
+  return (
+    /\bAIDE\b/.test(u) ||
+    /\bOFFICER\b/.test(u) ||
+    /\bPILOT\b/.test(u) ||
+    /\bCONTROL\b/.test(u) ||
+    /\bCOMMAND\b/.test(u) ||
+    /\bREMAINING\b/.test(u) ||
+    /\bAIRROL\b/.test(u) // typo variant
+  );
 }
 
 function isSceneCode(name: string): boolean {
@@ -969,7 +1039,7 @@ function addUnique(arr: string[], seen: Set<string>, value: string) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function classifyCharacters(rawCandidates: string[]): CharBuckets {
-  console.log('=== CLASSIFY CHARACTERS (GENERIC UNIVERSAL) ===');
+  console.log('=== CLASSIFY CHARACTERS (GENERIC UNIVERSAL v21) ===');
   console.log('Input count:', rawCandidates?.length || 0);
   
   const buckets: CharBuckets = {
@@ -991,19 +1061,46 @@ function classifyCharacters(rawCandidates: string[]): CharBuckets {
   const processedNames: string[] = [];
   
   for (const raw of rawCandidates || []) {
+    // PATCH v21: Strip technical suffixes FIRST (before any other processing)
+    let name = stripTechnicalSuffixes(raw);
+    
+    // Remove quotes
+    name = name.replace(/^'+|'+$/g, "").trim();
+    
+    if (!name) {
+      buckets.discarded.push(raw);
+      continue;
+    }
+    
     // Clean
-    const cleaned = cleanCharacterName(raw);
+    const cleaned = cleanCharacterName(name);
     if (!cleaned) {
       buckets.discarded.push(raw);
       continue;
     }
     buckets.debug!.cleaned = (buckets.debug!.cleaned || 0) + 1;
     
+    // PATCH v21: Check for technical terms EARLY
+    if (isTechnicalTerm(cleaned)) {
+      console.log(`[discard] ${cleaned}: technical term (early)`);
+      buckets.discarded.push(raw);
+      continue;
+    }
+    
+    // PATCH v21: Check for merged names EARLY
+    if (looksLikeMergedNames(cleaned)) {
+      console.log(`[discard] ${cleaned}: merged names detected`);
+      buckets.discarded.push(raw);
+      continue;
+    }
+    
     // Detect concatenation
     const split = detectConcatenatedNames(cleaned);
     if (split) {
-      processedNames.push(...split);
-      buckets.debug!.expanded = (buckets.debug!.expanded || 0) + split.length - 1;
+      // Filter out empty results from split
+      const validSplits = split.filter(s => s && s.trim().length > 0);
+      processedNames.push(...validSplits);
+      buckets.debug!.expanded = (buckets.debug!.expanded || 0) + validSplits.length - 1;
     } else {
       processedNames.push(cleaned);
     }
@@ -1011,62 +1108,86 @@ function classifyCharacters(rawCandidates: string[]): CharBuckets {
   
   console.log('After cleaning/expansion:', processedNames.length);
   
-  // PHASE 2: Validate and classify
+  // PHASE 2: Validate and classify (with CORRECT order)
   for (const name of processedNames) {
+    // PATCH v21: Apply stripTechnicalSuffixes again for safety
+    const cleanedName = stripTechnicalSuffixes(name).replace(/^'+|'+$/g, "").trim();
+    if (!cleanedName) continue;
+    
+    // PATCH v21: Technical term check
+    if (isTechnicalTerm(cleanedName)) {
+      console.log(`[discard] ${cleanedName}: technical term`);
+      buckets.discarded.push(cleanedName);
+      continue;
+    }
+    
+    // PATCH v21: Merged names check
+    if (looksLikeMergedNames(cleanedName)) {
+      console.log(`[discard] ${cleanedName}: merged names`);
+      buckets.discarded.push(cleanedName);
+      continue;
+    }
+    
     // Structural validation
-    const validation = isValidCharacterFormat(name);
+    const validation = isValidCharacterFormat(cleanedName);
     if (!validation.valid) {
-      console.log(`[discard] ${name}: ${validation.reason}`);
-      buckets.discarded.push(name);
+      console.log(`[discard] ${cleanedName}: ${validation.reason}`);
+      buckets.discarded.push(cleanedName);
       continue;
     }
     buckets.debug!.validated = (buckets.debug!.validated || 0) + 1;
     
     // Avoid duplicates
-    if (seen.has(name.toUpperCase())) continue;
+    if (seen.has(cleanedName.toUpperCase())) continue;
     
     // Scene codes
-    if (isSceneCode(name)) {
-      console.log(`[discard] ${name}: scene code`);
-      buckets.discarded.push(name);
+    if (isSceneCode(cleanedName)) {
+      console.log(`[discard] ${cleanedName}: scene code`);
+      buckets.discarded.push(cleanedName);
       continue;
     }
     
     // Dialogue/action patterns
-    if (isDialogueOrActionPattern(name)) {
-      console.log(`[discard] ${name}: dialogue/action pattern`);
-      buckets.discarded.push(name);
+    if (isDialogueOrActionPattern(cleanedName)) {
+      console.log(`[discard] ${cleanedName}: dialogue/action pattern`);
+      buckets.discarded.push(cleanedName);
       continue;
     }
     
-    // Functional voices
-    if (isVoiceFunctional(name)) {
-      addUnique(buckets.voices_and_functional, seen, name);
+    // PATCH v21: Voice/functional detection
+    if (isVoiceFunctional(cleanedName)) {
+      addUnique(buckets.voices_and_functional, seen, cleanedName);
+      continue;
+    }
+    
+    // PATCH v21: Role-ish detection (AIR CONTROL OFFICER, COMMAND, etc.)
+    if (isRoleish(cleanedName)) {
+      console.log(`[extra] ${cleanedName}: role-ish keyword detected`);
+      addUnique(buckets.featured_extras_with_lines, seen, cleanedName);
       continue;
     }
     
     // Generic roles
-    if (isGenericRole(name)) {
-      addUnique(buckets.featured_extras_with_lines, seen, name);
+    if (isGenericRole(cleanedName)) {
+      addUnique(buckets.featured_extras_with_lines, seen, cleanedName);
       continue;
     }
     
-    // PATCH v21: Role suffix detection (e.g., "CAIN'S AIDE", "ADMIRAL'S PILOT")
-    // These are extras, not cast members
-    if (isRoleSuffix(name)) {
-      console.log(`[extra] ${name}: role suffix detected`);
-      addUnique(buckets.featured_extras_with_lines, seen, name);
+    // Role suffix detection (e.g., "CAIN'S AIDE", "ADMIRAL'S PILOT")
+    if (isRoleSuffix(cleanedName)) {
+      console.log(`[extra] ${cleanedName}: role suffix detected`);
+      addUnique(buckets.featured_extras_with_lines, seen, cleanedName);
       continue;
     }
     
     // Proper names → cast
-    const words = name.split(/\s+/);
+    const words = cleanedName.split(/\s+/);
     const hasProperName = words.some(w => isProbablyProperName(w));
     
     if (hasProperName) {
-      addUnique(buckets.cast, seen, name);
+      addUnique(buckets.cast, seen, cleanedName);
     } else {
-      addUnique(buckets.featured_extras_with_lines, seen, name);
+      addUnique(buckets.featured_extras_with_lines, seen, cleanedName);
     }
   }
   
