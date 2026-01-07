@@ -116,9 +116,11 @@ export const buildRobustCounts = (
     dialogues:
       typeof existingCounts?.dialogues === "number"
         ? existingCounts.dialogues
-        : typeof payload?.dialogue_count === "number"
-          ? payload.dialogue_count
-          : scenes.reduce((sum: number, sc: any) => sum + (sc?.dialogue_blocks?.length || sc?.dialogues?.length || 0), 0),
+        : typeof payload?.dialogues?.total_lines === "number"
+          ? payload.dialogues.total_lines
+          : typeof payload?.dialogue_count === "number"
+            ? payload.dialogue_count
+            : scenes.reduce((sum: number, sc: any) => sum + (sc?.dialogue_lines || sc?.dialogue_blocks?.length || 0), 0),
   };
 };
 
