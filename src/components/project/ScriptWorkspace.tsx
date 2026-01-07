@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { ScriptSummaryPanelAssisted } from './ScriptSummaryPanelAssisted';
+import { ScriptGenerationProgress } from './ScriptGenerationProgress';
 import { exportOutlinePDF } from '@/lib/exportOutlinePDF';
 import { GenerationActionBar } from '@/components/generation/GenerationActionBar';
 import {
@@ -253,6 +254,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [streamingContent, setStreamingContent] = useState<string>('');
   const [isStreaming, setIsStreaming] = useState(false);
   const streamAbortRef = useRef<AbortController | null>(null);
+  
+  // Generation timing for estimated time calculation
+  const [generationStartTime, setGenerationStartTime] = useState<Date | null>(null);
 
   // V3.0: Quality tier control (replaces legacy model selection)
   const [qualityTier, setQualityTier] = useState<'DRAFT' | 'PRODUCTION'>('PRODUCTION');
@@ -829,6 +833,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       setProgress(10);
       setStreamingContent('');
       setIsStreaming(true);
+      setGenerationStartTime(new Date());
     }
 
     // Abort controller for cancellation
@@ -2388,13 +2393,12 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 </Accordion>
               )}
 
-              {status === 'generating' && (
-                <div className="space-y-2">
-                  <Progress value={progress} />
-                  <p className="text-xs text-muted-foreground text-center">
-                    {progressMessage || 'Generando guion...'}
-                  </p>
-                </div>
+              {status === 'generating' && !isStreaming && (
+                <ScriptGenerationProgress
+                  progress={progress}
+                  isActive={true}
+                  startTime={generationStartTime || undefined}
+                />
               )}
 
               {generatedScript && (status === 'success' || status === 'extracting') && !breakdownResult && (() => {
@@ -2448,19 +2452,32 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               )}
 
               {/* STREAMING PREVIEW - Show script as it's being written */}
-              {isStreaming && streamingContent && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-primary">
-                    <Edit3 className="h-4 w-4 animate-pulse" />
-                    <span className="font-medium">Escribiendo guion en tiempo real...</span>
-                    <span className="text-muted-foreground">({streamingContent.length} caracteres)</span>
-                  </div>
-                  <ScrollArea className="h-[400px] rounded-lg border bg-muted/30 p-4">
-                    <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed">
-                      {streamingContent}
-                      <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-0.5" />
-                    </pre>
-                  </ScrollArea>
+              {isStreaming && (
+                <div className="space-y-4">
+                  {/* Progress indicator with phases */}
+                  <ScriptGenerationProgress
+                    progress={progress}
+                    isActive={true}
+                    startTime={generationStartTime || undefined}
+                  />
+                  
+                  {/* Live script content */}
+                  {streamingContent && (
+                    <>
+                      <div className="flex items-center gap-2 text-sm text-primary">
+                        <Edit3 className="h-4 w-4 animate-pulse" />
+                        <span className="font-medium">Escribiendo guion en tiempo real...</span>
+                        <span className="text-muted-foreground">({streamingContent.length} caracteres)</span>
+                      </div>
+                      <ScrollArea className="h-[300px] rounded-lg border bg-muted/30 p-4">
+                        <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed">
+                          {streamingContent}
+                          <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-0.5" />
+                        </pre>
+                      </ScrollArea>
+                    </>
+                  )}
+                  
                   <Button
                     variant="outline"
                     size="sm"
@@ -2468,6 +2485,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                       streamAbortRef.current?.abort();
                       setIsStreaming(false);
                       setStatus('idle');
+                      setGenerationStartTime(null);
                       toast.info('Generación cancelada');
                     }}
                   >
