@@ -158,6 +158,27 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   useEffect(() => {
     fetchCharacters();
     fetchScriptCharacters();
+    
+    // Realtime subscription for character changes
+    const channel = supabase
+      .channel(`characters-${projectId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'characters',
+          filter: `project_id=eq.${projectId}`,
+        },
+        () => {
+          fetchCharacters();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [projectId]);
 
   const fetchScriptCharacters = async () => {
@@ -495,6 +516,9 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               <span className="ml-2 sm:hidden">Importar ({scriptCharacters.length})</span>
             </Button>
           )}
+          <Button variant="outline" size="sm" onClick={() => fetchCharacters()} title="Refrescar lista">
+            <RefreshCw className="w-4 h-4" />
+          </Button>
           {characters.length > 0 && (
             <Button variant="outline" size="sm" onClick={handleGenerateAll} disabled={generatingAll}>
               {generatingAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}

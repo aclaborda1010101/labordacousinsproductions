@@ -106,6 +106,14 @@ export async function importCharactersFromScript(
   if (parsedJson.characters?.featured_extras) {
     scriptCharacters.push(...parsedJson.characters.featured_extras);
   }
+  // Featured extras with lines
+  if (parsedJson.characters?.featured_extras_with_lines) {
+    scriptCharacters.push(...parsedJson.characters.featured_extras_with_lines);
+  }
+  // Voices and functional characters
+  if (parsedJson.characters?.voices_and_functional) {
+    scriptCharacters.push(...parsedJson.characters.voices_and_functional);
+  }
 
   if (scriptCharacters.length === 0) {
     console.log('[importCharacters] No characters found in parsed_json');

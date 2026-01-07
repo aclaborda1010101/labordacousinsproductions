@@ -907,6 +907,15 @@ export function ScriptSummaryPanelAssisted({
         <div className="flex items-center gap-2 text-sm text-green-600 px-1">
           <Check className="h-4 w-4" />
           <span>Elementos exportados a la Biblia</span>
+          <Button
+            variant="link"
+            size="sm"
+            className="h-auto p-0 text-primary"
+            onClick={() => navigate(`/projects/${projectId}/characters`)}
+          >
+            <Users className="h-3 w-3 mr-1" />
+            Abrir Personajes
+          </Button>
         </div>
       )}
 
