@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -93,6 +93,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
   const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
+  const [hasStyleConfig, setHasStyleConfig] = useState<boolean | null>(null);
 
   // Editorial Knowledge Base context
   const { formatProfile, visualStyle, userLevel } = useEditorialKnowledgeBase({
@@ -156,6 +157,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         setProjectTitle(data.title);
         setPreferredEngine(data.preferred_engine);
       }
+    });
+    // Check if style_config exists (REQUIRED for generation)
+    supabase.from('style_packs').select('style_config').eq('project_id', projectId).maybeSingle().then(({ data }) => {
+      setHasStyleConfig(!!data?.style_config);
     });
     // Get characters and locations with tokens
     supabase.from('characters').select('id, name, token, turnaround_urls').eq('project_id', projectId).then(({ data }) => {
@@ -401,7 +406,29 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     );
   }
 
-  if (loading) return <div className="p-6 flex justify-center"><Loader2 className="w-6 h-6 animate-spin" /></div>;
+  // Style config gating - Visual Bible must be configured before generation
+  if (hasStyleConfig === false) {
+    return (
+      <div className="p-8 flex-1 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center mx-auto mb-4">
+            <Palette className="w-8 h-8 text-warning" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Estilo Visual Requerido</h3>
+          <p className="text-muted-foreground mb-4">
+            Antes de generar escenas, configura el estilo visual de tu proyecto. 
+            Este paso es obligatorio para garantizar coherencia cinematográfica.
+          </p>
+          <Button variant="gold" onClick={() => window.location.href = window.location.pathname.replace('/scenes', '/style')}>
+            <Palette className="w-4 h-4 mr-2" />
+            Configurar Estilo Visual
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading || hasStyleConfig === null) return <div className="p-6 flex justify-center"><Loader2 className="w-6 h-6 animate-spin" /></div>;
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">

@@ -22,7 +22,7 @@ import {
 import PropsComponent from '@/components/project/Props';
 import { cn } from '@/lib/utils';
 import BibleOverview from '@/components/project/BibleOverview';
-import StylePack from '@/components/project/StylePack';
+import VisualBibleSetup from '@/components/project/VisualBibleSetup';
 import { ProjectSettings } from '@/components/project/ProjectSettings';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import CharactersView from '@/components/project/CharactersView';
@@ -250,7 +250,7 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
           <Routes>
             <Route path="/" element={<BibleOverview project={project} setProject={setProject} />} />
             <Route path="/bible" element={<BibleOverview project={project} setProject={setProject} />} />
-            <Route path="/style" element={<StylePack projectId={project.id} />} />
+            <Route path="/style" element={<VisualBibleSetup projectId={project.id} />} />
             <Route path="/characters" element={<CharactersView projectId={project.id} />} />
             <Route path="/locations" element={<LocationsView projectId={project.id} />} />
             <Route path="/props" element={<PropsComponent projectId={project.id} />} />

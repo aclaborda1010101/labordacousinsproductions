@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import PropsComponent from '@/components/project/Props';
 import BibleOverview from '@/components/project/BibleOverview';
-import StylePack from '@/components/project/StylePack';
+import VisualBibleSetup from '@/components/project/VisualBibleSetup';
 import { ProjectSettings } from '@/components/project/ProjectSettings';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import Characters from '@/components/project/Characters';
@@ -156,7 +156,7 @@ export default function ProjectDetailPro({ project, setProject }: ProjectDetailP
               <BibleOverview project={project} setProject={setProject} />
             </TabsContent>
             <TabsContent value="style" className="h-full m-0">
-              <StylePack projectId={project.id} />
+              <VisualBibleSetup projectId={project.id} />
             </TabsContent>
             <TabsContent value="characters" className="h-full m-0">
               <Characters projectId={project.id} />
