@@ -1127,7 +1127,7 @@ export default function Characters({ projectId }: CharactersProps) {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="h-9 border-purple-500/50 text-purple-600 hover:bg-purple-50"
+                              className="h-9 border-purple-500/50 text-purple-400 hover:bg-purple-500/20 hover:text-purple-300 hover:border-purple-400"
                               onClick={() => setShowPackBuilder(character.id)}
                               title="Mejorar coherencia visual del personaje"
                             >
@@ -1218,43 +1218,6 @@ export default function Characters({ projectId }: CharactersProps) {
                         </div>
                       </div>
 
-                      {/* Row 2: Badges - aligned bottom row */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-border/30">
-                        {character.character_role && (
-                          <Badge variant="outline" className={`min-w-[80px] justify-center ${getCharacterRoleBadgeColor(character.character_role)}`}>
-                            {getCharacterRoleLabel(character.character_role)}
-                          </Badge>
-                        )}
-                        {character.role && (
-                          <Badge variant="secondary" className="min-w-[70px] justify-center">
-                            {getRoleLabel(character.role)}
-                          </Badge>
-                        )}
-                        {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
-                          <Badge 
-                            variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
-                            className={`min-w-[75px] justify-center ${character.pack_completeness_score >= 90 ? "bg-green-600" : ""}`}
-                          >
-                            <Package className="w-3 h-3 mr-1" />
-                            Pack {character.pack_completeness_score}%
-                          </Badge>
-                        )}
-                        <EntityQCBadge
-                          entityType="character"
-                          hasProfile={!!character.profile_json}
-                          packScore={character.pack_completeness_score || 0}
-                          hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
-                        />
-                        <CharacterWorkflowGuide 
-                          currentStep={getWorkflowStep({
-                            hasBio: !!character.bio,
-                            hasImage: !!(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front),
-                            isAccepted: !!character.accepted_run_id,
-                            isCanon: !!character.canon_asset_id,
-                          })} 
-                          compact 
-                        />
-                      </div>
                     </div>
 
                     {/* Character Card - Mobile */}
