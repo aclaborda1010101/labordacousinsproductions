@@ -25,6 +25,8 @@ import { CharacterQuickStart } from './CharacterQuickStart';
 import { CharacterCreationWizard } from './CharacterCreationWizard';
 import { ProductionModePanel } from './ProductionModePanel';
 import { CharacterGenerationPanel } from './CharacterGenerationPanel';
+import { fetchCharacterImages, CharacterImageData } from '@/lib/resolveCharacterImage';
+import { CharacterWorkflowGuide, getWorkflowStep } from './CharacterWorkflowGuide';
 
 interface CharactersProps { projectId: string; }
 
@@ -97,6 +99,9 @@ export default function Characters({ projectId }: CharactersProps) {
 
   // State for pack slot thumbnails (fallback when turnaround_urls is empty)
   const [packThumbnails, setPackThumbnails] = useState<Map<string, string>>(new Map());
+  
+  // Unified image resolution
+  const [characterImages, setCharacterImages] = useState<Map<string, CharacterImageData>>(new Map());
 
   const fetchCharacters = async () => { 
     const { data: charsData } = await supabase
@@ -122,7 +127,17 @@ export default function Characters({ projectId }: CharactersProps) {
       }));
       setCharacters(charsWithOutfits);
 
-      // Fetch pack slot thumbnails as fallback for characters without turnaround_urls
+      // Unified image resolution for consistent display
+      const imageMap = await fetchCharacterImages(charsWithOutfits.map(c => ({
+        id: c.id,
+        current_run_id: c.current_run_id,
+        accepted_run_id: c.accepted_run_id,
+        canon_asset_id: c.canon_asset_id,
+        turnaround_urls: c.turnaround_urls,
+      })));
+      setCharacterImages(imageMap);
+
+      // Keep legacy packThumbnails for fallback
       const charIds = charsWithOutfits.filter(c => !c.turnaround_urls?.front).map(c => c.id);
       if (charIds.length > 0) {
         const { data: slots } = await supabase
@@ -136,7 +151,6 @@ export default function Characters({ projectId }: CharactersProps) {
         if (slots && slots.length > 0) {
           const thumbMap = new Map<string, string>();
           slots.forEach(slot => {
-            // Only set if not already set (prioritize first match)
             if (!thumbMap.has(slot.character_id) && slot.image_url) {
               thumbMap.set(slot.character_id, slot.image_url);
             }
@@ -951,9 +965,9 @@ export default function Characters({ projectId }: CharactersProps) {
                     {/* Character Header - Desktop */}
                     <div className="hidden sm:flex p-4 items-start gap-4">
                       <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden shrink-0">
-                        {(character.turnaround_urls?.front || packThumbnails.get(character.id)) ? (
+                        {(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)) ? (
                           <img 
-                            src={character.turnaround_urls?.front || packThumbnails.get(character.id)} 
+                            src={characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)} 
                             alt={character.name}
                             className="w-full h-full object-cover"
                           />
@@ -983,6 +997,16 @@ export default function Characters({ projectId }: CharactersProps) {
                             hasProfile={!!character.profile_json}
                             packScore={character.pack_completeness_score || 0}
                             hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                          />
+                          {/* Workflow progress badge */}
+                          <CharacterWorkflowGuide 
+                            currentStep={getWorkflowStep({
+                              hasBio: !!character.bio,
+                              hasImage: !!(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front),
+                              isAccepted: !!character.accepted_run_id,
+                              isCanon: !!character.canon_asset_id,
+                            })} 
+                            compact 
                           />
                           {character.role && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">

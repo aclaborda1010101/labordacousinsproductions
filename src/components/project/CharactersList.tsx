@@ -1,7 +1,7 @@
 /**
  * CharactersList - MVP Clean UX for Characters
  * Single action per state, adapted by user level (Normal/Pro)
- * Now with Iceberg Architecture: unified pack backend, adaptive UX
+ * Unified image resolution and workflow guide for both modes
  */
 
 import { useState, useEffect } from 'react';
@@ -20,6 +20,8 @@ import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import CharacterPackMVP from './CharacterPackMVP';
 import NextStepNavigator from './NextStepNavigator';
 import { resolveImageModel } from '@/config/models';
+import { fetchCharacterImages, CharacterImageData } from '@/lib/resolveCharacterImage';
+import { CharacterWorkflowGuide, getWorkflowStep } from './CharacterWorkflowGuide';
 import {
   Plus,
   Users,
@@ -49,12 +51,6 @@ interface Character {
   pack_completeness_score?: number | null;
   pack_status?: string | null;
   is_ready_for_video?: boolean | null;
-  // Generated image URLs from generation_runs
-  current_run_image?: string | null;
-  accepted_run_image?: string | null;
-  canon_image?: string | null;
-  // Hero slot image (primary display)
-  hero_image?: string | null;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -88,6 +84,9 @@ export default function CharactersList({ projectId }: CharactersListProps) {
     bio: '',
   });
 
+  // Map to store resolved images for each character
+  const [characterImages, setCharacterImages] = useState<Map<string, CharacterImageData>>(new Map());
+
   const fetchCharacters = async () => {
     setLoadError(null);
     const { data, error } = await supabase
@@ -108,57 +107,19 @@ export default function CharactersList({ projectId }: CharactersListProps) {
     }
 
     if (data) {
-      // Fetch hero_front slots for each character
-      const charIds = data.map(c => c.id);
-      let heroImages: Record<string, string> = {};
+      // Use unified image resolver
+      const imageMap = await fetchCharacterImages(data.map(c => ({
+        id: c.id,
+        current_run_id: c.current_run_id,
+        accepted_run_id: c.accepted_run_id,
+        canon_asset_id: c.canon_asset_id,
+        turnaround_urls: c.turnaround_urls as Record<string, string> | null,
+      })));
       
-      if (charIds.length > 0) {
-        const { data: heroSlots } = await supabase
-          .from('character_pack_slots')
-          .select('character_id, image_url')
-          .in('character_id', charIds)
-          .eq('slot_type', 'hero_front')
-          .not('image_url', 'is', null);
-        
-        if (heroSlots) {
-          heroImages = Object.fromEntries(heroSlots.map(s => [s.character_id, s.image_url!]));
-        }
-      }
-
-      // Fetch generated images from runs (fallback)
-      const runIds = data.flatMap(c => [c.current_run_id, c.accepted_run_id].filter(Boolean)) as string[];
-      const canonIds = data.map(c => c.canon_asset_id).filter(Boolean) as string[];
-      
-      let runImages: Record<string, string> = {};
-      let canonImages: Record<string, string> = {};
-
-      if (runIds.length > 0) {
-        const { data: runs } = await supabase
-          .from('generation_runs')
-          .select('id, output_url')
-          .in('id', runIds);
-        if (runs) {
-          runImages = Object.fromEntries(runs.filter(r => r.output_url).map(r => [r.id, r.output_url!]));
-        }
-      }
-
-      if (canonIds.length > 0) {
-        const { data: canons } = await supabase
-          .from('canon_assets')
-          .select('id, image_url')
-          .in('id', canonIds);
-        if (canons) {
-          canonImages = Object.fromEntries(canons.filter(c => c.image_url).map(c => [c.id, c.image_url]));
-        }
-      }
-
+      setCharacterImages(imageMap);
       setCharacters(data.map(c => ({
         ...c,
         turnaround_urls: c.turnaround_urls as Record<string, string> | null,
-        current_run_image: c.current_run_id ? runImages[c.current_run_id] : null,
-        accepted_run_image: c.accepted_run_id ? runImages[c.accepted_run_id] : null,
-        canon_image: c.canon_asset_id ? canonImages[c.canon_asset_id] : null,
-        hero_image: heroImages[c.id] || null,
       })));
     }
     setLoading(false);
@@ -627,8 +588,18 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           </Card>
         ) : (
           filteredCharacters.map(character => {
-            // Get best available image: hero > canon > accepted > current > turnaround
-            const displayImage = character.hero_image || character.canon_image || character.accepted_run_image || character.current_run_image || character.turnaround_urls?.front;
+            // Use unified image resolver
+            const imageData = characterImages.get(character.id);
+            const displayImage = imageData?.imageUrl || null;
+            const hasImage = !!displayImage;
+            
+            // Calculate workflow step
+            const workflowStep = getWorkflowStep({
+              hasBio: !!character.bio,
+              hasImage,
+              isAccepted: !!character.accepted_run_id,
+              isCanon: !!character.canon_asset_id,
+            });
             
             return (
             <EntityCard
@@ -657,10 +628,15 @@ export default function CharactersList({ projectId }: CharactersListProps) {
                       Video
                     </Badge>
                   )}
+                  {/* Compact workflow progress */}
+                  <CharacterWorkflowGuide currentStep={workflowStep} compact className="ml-1" />
                 </>
               }
               expandedContent={
                 <div className="space-y-4">
+                  {/* Workflow Guide - full view when expanded */}
+                  <CharacterWorkflowGuide currentStep={workflowStep} isPro={isPro} />
+                  
                   {/* Character Pack MVP - Iceberg Architecture */}
                   <CharacterPackMVP
                     characterId={character.id}
@@ -700,6 +676,12 @@ export default function CharactersList({ projectId }: CharactersListProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">ID</span>
                       <code className="text-xs bg-muted px-2 py-1 rounded">{character.id.slice(0, 8)}...</code>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Fuente imagen</span>
+                      <Badge variant="outline" className="text-xs">
+                        {imageData?.source || 'none'}
+                      </Badge>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Pack status</span>
