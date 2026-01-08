@@ -23,6 +23,7 @@ import { CharacterNarrativeEditor } from './CharacterNarrativeEditor';
 import { TechnicalPromptGenerator } from './TechnicalPromptGenerator';
 import { CharacterQuickStart } from './CharacterQuickStart';
 import { CharacterCreationWizard } from './CharacterCreationWizard';
+import { CharacterCreationWizardPro } from './CharacterCreationWizardPro';
 import { ProductionModePanel } from './ProductionModePanel';
 import { CharacterGenerationPanel } from './CharacterGenerationPanel';
 import { fetchCharacterImages, CharacterImageData } from '@/lib/resolveCharacterImage';
@@ -1733,20 +1734,16 @@ export default function Characters({ projectId }: CharactersProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Character Creation Wizard - Step-by-step guided flow */}
-      <Dialog open={showCreationWizard} onOpenChange={setShowCreationWizard}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
-          <CharacterCreationWizard
-            projectId={projectId}
-            onComplete={(characterId) => {
-              fetchCharacters();
-              setShowCreationWizard(false);
-              toast.success('¡Personaje creado correctamente!');
-            }}
-            onCancel={() => setShowCreationWizard(false)}
-          />
-        </DialogContent>
-      </Dialog>
+      {/* Character Creation Wizard PRO - Step-by-step guided flow with optional steps */}
+      <CharacterCreationWizardPro
+        projectId={projectId}
+        open={showCreationWizard}
+        onOpenChange={setShowCreationWizard}
+        onCharacterCreated={(characterId) => {
+          fetchCharacters();
+          toast.success('¡Personaje creado! Ahora puedes generar su pack visual.');
+        }}
+      />
 
       {/* Character Edit Dialog */}
       <CharacterEditDialog
