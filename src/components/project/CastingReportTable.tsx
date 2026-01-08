@@ -230,11 +230,31 @@ export function CastingReportTable({ scriptParsedJson }: CastingReportTableProps
                 Outline
               </Badge>
             </AlertTitle>
-            <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
-              Los datos de personajes son estimados. Para un casting report preciso, genera el guion completo con diálogos.
-              <span className="block text-xs mt-1 text-amber-600/70 dark:text-amber-400/70">
-                {completeness.details}
-              </span>
+            <AlertDescription className="text-amber-700 dark:text-amber-300 space-y-3">
+              <p className="text-sm">
+                <strong>¿Por qué ves estimaciones?</strong> Tu guion actual contiene descripciones generales 
+                de escenas (outline), pero no tiene los diálogos escritos línea por línea.
+              </p>
+              <div>
+                <p className="text-sm font-medium mb-1">¿Qué significan los datos?</p>
+                <ul className="list-disc list-inside text-xs space-y-0.5 ml-1 text-amber-600 dark:text-amber-400">
+                  <li><strong>Líneas = 0:</strong> El personaje aparece pero no tiene diálogos escritos</li>
+                  <li><strong>% = 0%:</strong> Sin diálogos, no hay peso calculable</li>
+                  <li><strong>Escenas:</strong> Este dato SÍ es preciso (detectado del outline)</li>
+                  <li><strong>Rol:</strong> Estimado por frecuencia, puede cambiar con diálogos reales</li>
+                </ul>
+              </div>
+              <div>
+                <p className="text-sm font-medium mb-1">Para obtener datos precisos:</p>
+                <ol className="list-decimal list-inside text-xs space-y-0.5 ml-1 text-amber-600 dark:text-amber-400">
+                  <li>Ve a la pestaña <strong>"Guion"</strong> de tu proyecto</li>
+                  <li>Pulsa <strong>"Generar Screenplay"</strong> para crear los diálogos completos</li>
+                  <li>Vuelve aquí para ver el Casting Report actualizado</li>
+                </ol>
+              </div>
+              <div className="text-xs pt-2 border-t border-amber-300/50 text-amber-600/70 dark:text-amber-400/70">
+                Detección: {completeness.details}
+              </div>
             </AlertDescription>
           </Alert>
         )}
