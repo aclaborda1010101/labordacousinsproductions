@@ -160,6 +160,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Pipeline V2 state - with localStorage persistence
   const PIPELINE_STORAGE_KEY = `script_pipeline_${projectId}`;
   
+  // PRO mode draft persistence (idea + config)
+  const DRAFT_STORAGE_KEY = `script_import_draft_${projectId}`;
+  
   const loadPipelineState = () => {
     try {
       const stored = localStorage.getItem(PIPELINE_STORAGE_KEY);
@@ -476,13 +479,66 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       // No pipeline running - check for saved outline draft (pre-approval state)
       const outlineDraft = loadDraft<any>('outline', projectId);
       if (outlineDraft?.data && !lightOutline) {
-        setLightOutline(outlineDraft.data);
+        setLightOutline(outlineDraft.data.outline || outlineDraft.data);
+        // Also restore idea if saved with outline
+        if (outlineDraft.data.idea) {
+          setIdeaText(outlineDraft.data.idea);
+        }
         updatePipelineStep('outline', 'success');
         updatePipelineStep('approval', 'running', 'Esperando aprobación...');
         toast.info('Outline recuperado. Revísalo y apruébalo.');
       }
+      
+      // Restore form draft (ideaText + config) for PRO mode regeneration
+      try {
+        const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (savedDraft) {
+          const draft = JSON.parse(savedDraft);
+          if (draft.ideaText && !ideaText) setIdeaText(draft.ideaText);
+          if (draft.format) setFormat(draft.format);
+          if (draft.genre) setGenre(draft.genre);
+          if (draft.tone) setTone(draft.tone);
+          if (draft.references) setReferences(draft.references);
+          if (draft.narrativeMode) setNarrativeMode(draft.narrativeMode);
+          if (draft.qualityTier) setQualityTier(draft.qualityTier);
+          if (typeof draft.episodesCount === 'number') setEpisodesCount(draft.episodesCount);
+          if (typeof draft.episodeDurationMin === 'number') setEpisodeDurationMin(draft.episodeDurationMin);
+          if (typeof draft.filmDurationMin === 'number') setFilmDurationMin(draft.filmDurationMin);
+          if (draft.complexity) setComplexity(draft.complexity);
+          if (typeof draft.disableDensity === 'boolean') setDisableDensity(draft.disableDensity);
+        }
+      } catch (e) {
+        console.warn('[ScriptImport] Error loading draft:', e);
+      }
     }
   }, [projectId, episodesCount]);
+
+  // Auto-save form draft for PRO mode (debounced)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      try {
+        const draft = {
+          ideaText,
+          format,
+          genre,
+          tone,
+          references,
+          narrativeMode,
+          qualityTier,
+          episodesCount,
+          episodeDurationMin,
+          filmDurationMin,
+          complexity,
+          disableDensity,
+        };
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+      } catch (e) {
+        console.warn('[ScriptImport] Error saving draft:', e);
+      }
+    }, 1000); // 1s debounce
+    
+    return () => clearTimeout(timeoutId);
+  }, [ideaText, format, genre, tone, references, narrativeMode, qualityTier, episodesCount, episodeDurationMin, filmDurationMin, complexity, disableDensity, DRAFT_STORAGE_KEY]);
 
   // Poll for script updates when background generation is active
   useEffect(() => {
@@ -1142,8 +1198,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       });
 
       setLightOutline(data.outline);
-      // Persist outline to localStorage immediately so it survives re-renders/navigation
-      saveDraft('outline', projectId, data.outline);
+      // Persist outline + idea to localStorage immediately so it survives re-renders/navigation
+      saveDraft('outline', projectId, { outline: data.outline, idea: ideaText.trim() });
       updatePipelineStep('outline', 'success');
       updatePipelineStep('approval', 'running', 'Esperando aprobación...');
       toast.success('Outline generado. Revísalo y apruébalo para continuar.');
