@@ -616,6 +616,44 @@ export type Database = {
           },
         ]
       }
+      character_reference_anchors: {
+        Row: {
+          anchor_type: string
+          character_id: string
+          created_at: string | null
+          id: string
+          image_url: string
+          influence_weight: number | null
+          is_primary: boolean | null
+        }
+        Insert: {
+          anchor_type: string
+          character_id: string
+          created_at?: string | null
+          id?: string
+          image_url: string
+          influence_weight?: number | null
+          is_primary?: boolean | null
+        }
+        Update: {
+          anchor_type?: string
+          character_id?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          influence_weight?: number | null
+          is_primary?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_reference_anchors_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       character_visual_dna: {
         Row: {
           approved: boolean | null
@@ -690,6 +728,7 @@ export type Database = {
           confidence: number | null
           created_at: string
           current_run_id: string | null
+          entity_subtype: string | null
           expressions: Json | null
           id: string
           is_ready_for_video: boolean | null
@@ -726,6 +765,7 @@ export type Database = {
           confidence?: number | null
           created_at?: string
           current_run_id?: string | null
+          entity_subtype?: string | null
           expressions?: Json | null
           id?: string
           is_ready_for_video?: boolean | null
@@ -762,6 +802,7 @@ export type Database = {
           confidence?: number | null
           created_at?: string
           current_run_id?: string | null
+          entity_subtype?: string | null
           expressions?: Json | null
           id?: string
           is_ready_for_video?: boolean | null
