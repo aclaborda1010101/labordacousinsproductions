@@ -41,19 +41,28 @@ export async function exportCharacterPackZip(
   
   const outfitMap = new Map((outfits || []).map(o => [o.id, o.name]));
   
-  // Create folders and download images
-  const anchorsFolder = zip.folder('01_Anchors');
-  const turnaroundsFolder = zip.folder('02_Turnarounds');
+  // Create folders matching the 14-slot system
+  const closeupFolder = zip.folder('01_Closeups');
+  const fullbodyFolder = zip.folder('02_Fullbody');
   const expressionsFolder = zip.folder('03_Expressions');
   const outfitsFolder = zip.folder('04_Outfits');
   
   const downloadImage = async (url: string): Promise<ArrayBuffer> => {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to fetch image: ${url}`);
-    return await response.arrayBuffer();
+    try {
+      const response = await fetch(url, { mode: 'cors' });
+      if (!response.ok) {
+        console.warn(`HTTP ${response.status} fetching: ${url}`);
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
+      return await response.arrayBuffer();
+    } catch (error) {
+      console.error(`Error downloading ${url}:`, error);
+      throw error;
+    }
   };
   
   const processedSlots = (slots as PackSlot[]) || [];
+  let successCount = 0;
   
   for (const slot of processedSlots) {
     if (!slot.image_url) continue;
@@ -62,25 +71,47 @@ export async function exportCharacterPackZip(
       const imageData = await downloadImage(slot.image_url);
       const extension = slot.image_url.split('.').pop()?.split('?')[0] || 'png';
       
-      switch (slot.slot_type) {
-        case 'anchor_closeup':
-        case 'anchor_fullbody':
-          anchorsFolder?.file(`${slot.slot_type}_${slot.slot_index}.${extension}`, imageData);
-          break;
-        case 'turnaround':
-          turnaroundsFolder?.file(`${slot.view_angle || slot.slot_index}.${extension}`, imageData);
-          break;
-        case 'expression':
-          expressionsFolder?.file(`${slot.expression_name || slot.slot_index}.${extension}`, imageData);
-          break;
-        case 'outfit':
-          const outfitName = slot.outfit_id ? outfitMap.get(slot.outfit_id) || 'outfit' : 'outfit';
-          const safeOutfitName = outfitName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-          outfitsFolder?.file(`${safeOutfitName}_${slot.slot_index}.${extension}`, imageData);
-          break;
+      // Determine folder and filename based on slot_type prefix
+      let folder: JSZip | null = null;
+      let fileName: string;
+      
+      if (slot.slot_type.startsWith('closeup_')) {
+        folder = closeupFolder;
+        const angle = slot.slot_type.replace('closeup_', '');
+        fileName = `closeup_${angle}_${slot.slot_index}`;
+      } else if (slot.slot_type.startsWith('fullbody_')) {
+        folder = fullbodyFolder;
+        const angle = slot.slot_type.replace('fullbody_', '');
+        fileName = `fullbody_${angle}_${slot.slot_index}`;
+      } else if (slot.slot_type.startsWith('expression_')) {
+        folder = expressionsFolder;
+        fileName = slot.expression_name || `expression_${slot.slot_index}`;
+      } else if (slot.slot_type.startsWith('outfit_')) {
+        folder = outfitsFolder;
+        const outfitName = slot.outfit_id ? outfitMap.get(slot.outfit_id) || 'outfit' : 'outfit';
+        const safeOutfitName = outfitName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        fileName = `${safeOutfitName}_${slot.slot_index}`;
+      } else if (slot.slot_type.startsWith('turn_')) {
+        // Legacy turnaround support
+        folder = fullbodyFolder;
+        const angle = slot.view_angle || slot.slot_type.replace('turn_', '');
+        fileName = `turnaround_${angle}_${slot.slot_index}`;
+      } else if (slot.slot_type.startsWith('anchor_')) {
+        // Legacy anchor support
+        folder = closeupFolder;
+        fileName = `anchor_${slot.slot_type.replace('anchor_', '')}_${slot.slot_index}`;
+      } else {
+        // Fallback for any other types
+        folder = closeupFolder;
+        fileName = `${slot.slot_type}_${slot.slot_index}`;
+      }
+      
+      if (folder) {
+        folder.file(`${fileName}.${extension}`, imageData);
+        successCount++;
       }
     } catch (e) {
-      console.error(`Failed to process slot ${slot.id}:`, e);
+      console.error(`Failed to process slot ${slot.id} (${slot.slot_type}):`, e);
     }
   }
   
@@ -88,12 +119,12 @@ export async function exportCharacterPackZip(
   const manifest = {
     character: characterName,
     exportedAt: new Date().toISOString(),
-    totalImages: processedSlots.length,
+    totalImages: successCount,
     breakdown: {
-      anchors: processedSlots.filter(s => s.slot_type.startsWith('anchor')).length,
-      turnarounds: processedSlots.filter(s => s.slot_type === 'turnaround').length,
-      expressions: processedSlots.filter(s => s.slot_type === 'expression').length,
-      outfits: processedSlots.filter(s => s.slot_type === 'outfit').length,
+      closeups: processedSlots.filter(s => s.slot_type.startsWith('closeup_') || s.slot_type.startsWith('anchor_')).length,
+      fullbody: processedSlots.filter(s => s.slot_type.startsWith('fullbody_') || s.slot_type.startsWith('turn_')).length,
+      expressions: processedSlots.filter(s => s.slot_type.startsWith('expression_')).length,
+      outfits: processedSlots.filter(s => s.slot_type.startsWith('outfit_')).length,
     }
   };
   
