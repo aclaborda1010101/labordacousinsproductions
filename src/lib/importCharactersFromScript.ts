@@ -48,14 +48,21 @@ function normalizeCharacterName(rawName: string): string {
   return name;
 }
 
+// Common titles to strip for comparison
+const TITLE_PATTERNS = /\b(DR\.?|DON|DOÑA|SR\.?|SRA\.?|SRTA\.?|DOCTOR|DOCTORA|PADRE|MADRE|TÍO|TÍA|ABUELO|ABUELA|PROFESOR|PROFESORA|PROF\.?|CAPTAIN|CAPTAIN|MR\.?|MRS\.?|MS\.?|MISS)\b/gi;
+
 /**
- * Get normalized name for comparison (uppercase, no accents)
+ * Get normalized name for comparison (uppercase, no accents, no titles)
+ * "Dr. García" and "García" will both become "GARCIA"
  */
 function getComparisonName(name: string): string {
   return name
     .toUpperCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')  // Remove accents
+    .replace(TITLE_PATTERNS, '')       // Remove common titles
+    .replace(/\s*\([^)]*\)\s*/g, '')   // Remove parenthetical info
+    .replace(/[^A-Z0-9\s]/g, '')       // Remove punctuation
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -78,17 +85,22 @@ function mapToCharacterRole(role?: string, narrativeWeight?: string): CharacterR
   return 'episodic';
 }
 
+export interface ImportCharactersResult {
+  imported: string[];
+  skipped: string[];
+}
+
 /**
  * Import characters from script's parsed_json into the characters table
- * Returns the list of imported character names
+ * Returns object with imported names and skipped duplicates
  */
 export async function importCharactersFromScript(
   projectId: string,
   parsedJson: ParsedJson | null
-): Promise<string[]> {
+): Promise<ImportCharactersResult> {
   if (!parsedJson) {
     console.log('[importCharacters] No parsed_json provided');
-    return [];
+    return { imported: [], skipped: [] };
   }
 
   // Extract characters from various formats
@@ -279,7 +291,7 @@ export async function importCharactersFromScript(
 
   if (deduplicatedCharacters.length === 0) {
     console.log('[importCharacters] No characters found in parsed_json');
-    return [];
+    return { imported: [], skipped: [] };
   }
 
   console.log(`[importCharacters] Found ${deduplicatedCharacters.length} characters in script (after dedup from ${scriptCharacters.length})`)
@@ -294,7 +306,7 @@ export async function importCharactersFromScript(
 
   if (fetchError) {
     console.error('[importCharacters] Error fetching existing characters:', fetchError);
-    return [];
+    return { imported: [], skipped: [] };
   }
 
   // Create comparison map of existing names
@@ -304,6 +316,7 @@ export async function importCharactersFromScript(
   }
 
   const importedNames: string[] = [];
+  const skippedNames: string[] = [];
   const toInsert: Array<{
     project_id: string;
     name: string;
@@ -321,6 +334,7 @@ export async function importCharactersFromScript(
     // Skip if already exists in DB
     if (existingNamesMap.has(comparisonName)) {
       console.log(`[importCharacters] Skipping existing: ${displayName}`);
+      skippedNames.push(displayName);
       continue;
     }
 
@@ -346,8 +360,8 @@ export async function importCharactersFromScript(
   }
 
   if (toInsert.length === 0) {
-    console.log('[importCharacters] No new characters to import');
-    return [];
+    console.log(`[importCharacters] No new characters to import (${skippedNames.length} skipped as duplicates)`);
+    return { imported: [], skipped: skippedNames };
   }
 
   // Batch insert
@@ -357,9 +371,9 @@ export async function importCharactersFromScript(
 
   if (insertError) {
     console.error('[importCharacters] Error inserting characters:', insertError);
-    return [];
+    return { imported: [], skipped: skippedNames };
   }
 
-  console.log(`[importCharacters] Successfully imported ${importedNames.length} characters:`, importedNames);
-  return importedNames;
+  console.log(`[importCharacters] Successfully imported ${importedNames.length} characters (${skippedNames.length} skipped):`, importedNames);
+  return { imported: importedNames, skipped: skippedNames };
 }

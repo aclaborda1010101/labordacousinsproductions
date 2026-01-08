@@ -1071,16 +1071,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       // Auto-import characters from generated script breakdown
       try {
-        const importedNames = await importCharactersFromScript(projectId, parsedJson);
-        if (importedNames.length > 0) {
-          toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
-            description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+        const result = await importCharactersFromScript(projectId, parsedJson);
+        if (result.imported.length > 0) {
+          const skippedInfo = result.skipped.length > 0 ? ` (${result.skipped.length} ya existían)` : '';
+          toast.success(`${result.imported.length} personajes añadidos a tu Bible${skippedInfo}`, {
+            description: result.imported.slice(0, 3).join(', ') + (result.imported.length > 3 ? '...' : ''),
             action: {
               label: 'Ver personajes',
               onClick: () => navigate(`/projects/${projectId}/characters`),
             },
           });
           onEntitiesExtracted?.();
+        } else if (result.skipped.length > 0) {
+          toast.info(`Todos los personajes ya existían`, {
+            description: `${result.skipped.length} personajes omitidos por duplicados`,
+          });
         }
       } catch (importErr) {
         console.warn('[ScriptWorkspace] Character import failed:', importErr);
@@ -1280,16 +1285,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             
             // Auto-import characters from breakdown
             try {
-              const importedNames = await importCharactersFromScript(projectId, payload);
-              if (importedNames.length > 0) {
-                toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
-                  description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+              const result = await importCharactersFromScript(projectId, payload);
+              if (result.imported.length > 0) {
+                const skippedInfo = result.skipped.length > 0 ? ` (${result.skipped.length} ya existían)` : '';
+                toast.success(`${result.imported.length} personajes añadidos a tu Bible${skippedInfo}`, {
+                  description: result.imported.slice(0, 3).join(', ') + (result.imported.length > 3 ? '...' : ''),
                   action: {
                     label: 'Ver personajes',
                     onClick: () => navigate(`/projects/${projectId}/characters`),
                   },
                 });
                 onEntitiesExtracted?.();
+              } else if (result.skipped.length > 0) {
+                toast.info(`Todos los personajes ya existían`, {
+                  description: `${result.skipped.length} personajes omitidos por duplicados`,
+                });
               }
             } catch (importErr) {
               console.warn('[ScriptWorkspace] Character import failed:', importErr);
@@ -1351,16 +1361,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             
             // Auto-import characters from recovered breakdown
             try {
-              const importedNames = await importCharactersFromScript(projectId, recoveredPayload);
-              if (importedNames.length > 0) {
-                toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
-                  description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+              const result = await importCharactersFromScript(projectId, recoveredPayload);
+              if (result.imported.length > 0) {
+                const skippedInfo = result.skipped.length > 0 ? ` (${result.skipped.length} ya existían)` : '';
+                toast.success(`${result.imported.length} personajes añadidos a tu Bible${skippedInfo}`, {
+                  description: result.imported.slice(0, 3).join(', ') + (result.imported.length > 3 ? '...' : ''),
                   action: {
                     label: 'Ver personajes',
                     onClick: () => navigate(`/projects/${projectId}/characters`),
                   },
                 });
                 onEntitiesExtracted?.();
+              } else if (result.skipped.length > 0) {
+                toast.info(`Todos los personajes ya existían`, {
+                  description: `${result.skipped.length} personajes omitidos por duplicados`,
+                });
               }
             } catch (importErr) {
               console.warn('[ScriptWorkspace] Character import failed:', importErr);
@@ -1437,16 +1452,21 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           
           // Auto-import characters from timeout recovery
           try {
-            const importedNames = await importCharactersFromScript(projectId, recoveredPayload);
-            if (importedNames.length > 0) {
-              toast.success(`${importedNames.length} personajes añadidos a tu Bible`, {
-                description: importedNames.slice(0, 3).join(', ') + (importedNames.length > 3 ? '...' : ''),
+            const result = await importCharactersFromScript(projectId, recoveredPayload);
+            if (result.imported.length > 0) {
+              const skippedInfo = result.skipped.length > 0 ? ` (${result.skipped.length} ya existían)` : '';
+              toast.success(`${result.imported.length} personajes añadidos a tu Bible${skippedInfo}`, {
+                description: result.imported.slice(0, 3).join(', ') + (result.imported.length > 3 ? '...' : ''),
                 action: {
                   label: 'Ver personajes',
                   onClick: () => navigate(`/projects/${projectId}/characters`),
                 },
               });
               onEntitiesExtracted?.();
+            } else if (result.skipped.length > 0) {
+              toast.info(`Todos los personajes ya existían`, {
+                description: `${result.skipped.length} personajes omitidos por duplicados`,
+              });
             }
           } catch (importErr) {
             console.warn('[ScriptWorkspace] Character import failed:', importErr);
