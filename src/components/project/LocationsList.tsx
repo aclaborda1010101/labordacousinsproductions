@@ -534,7 +534,7 @@ export default function LocationsList({ projectId }: LocationsListProps) {
                           className="max-w-[350px] rounded-lg border shadow-sm"
                         />
                         <Badge variant={location.canon_image ? 'pass' : location.accepted_run_image ? 'secondary' : 'outline'} className="text-xs">
-                          {location.canon_image ? '⭐ Canon' : location.accepted_run_image ? '✓ Aceptada' : location.current_run_image ? 'Pendiente de revisión' : 'Referencia'}
+                          {location.canon_image ? '⭐ Aprobado' : location.accepted_run_image ? '✓ Aceptada' : location.current_run_image ? 'Pendiente de revisión' : 'Referencia'}
                         </Badge>
                       </div>
                     )}

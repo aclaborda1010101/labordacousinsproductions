@@ -86,7 +86,7 @@ export default function SetCanonModal({
         .update({ is_canon: true })
         .eq('id', runId);
 
-      toast.success(`${assetType} "${name}" establecido como canon ⭐`);
+      toast.success(`${assetType} "${name}" establecido como aprobado ⭐`);
       onOpenChange(false);
       onSuccess?.();
       onSaved?.(insertedCanon.id);
@@ -97,7 +97,7 @@ export default function SetCanonModal({
       setAssetType(defaultAssetType || 'character');
     } catch (error) {
       console.error('Error setting canon:', error);
-      toast.error('Error al establecer como canon');
+      toast.error('Error al establecer como aprobado');
     } finally {
       setSaving(false);
     }
@@ -109,7 +109,7 @@ export default function SetCanonModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Star className="w-5 h-5 text-yellow-500" />
-            Establecer como Canon
+            Establecer como Aprobado
           </DialogTitle>
           <DialogDescription>
             Este asset se usará como referencia oficial en futuras generaciones.
@@ -184,7 +184,7 @@ export default function SetCanonModal({
             ) : (
               <Star className="w-4 h-4 mr-2" />
             )}
-            Establecer Canon
+            Establecer Aprobado
           </Button>
         </DialogFooter>
       </DialogContent>

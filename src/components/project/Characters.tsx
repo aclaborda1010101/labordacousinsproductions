@@ -1099,7 +1099,7 @@ export default function Characters({ projectId }: CharactersProps) {
                         {character.canon_asset_id && (
                           <Badge className="bg-amber-500 min-w-[65px] justify-center gap-1">
                             <Star className="w-3 h-3" />
-                            Canon
+                            Aprobado
                           </Badge>
                         )}
                         {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
@@ -1174,7 +1174,7 @@ export default function Characters({ projectId }: CharactersProps) {
                         {character.canon_asset_id && (
                           <Badge className="bg-amber-500 gap-1 text-xs shrink-0 min-w-[55px] justify-center">
                             <Star className="w-3 h-3" />
-                            Canon
+                            Aprobado
                           </Badge>
                         )}
                         {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
