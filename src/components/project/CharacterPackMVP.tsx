@@ -157,10 +157,12 @@ export default function CharacterPackMVP({
   const [slots, setSlots] = useState<PackSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const [autoGenerating, setAutoGenerating] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 11, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
+  const [hasVisualDNA, setHasVisualDNA] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
   const [showPhotos, setShowPhotos] = useState(false);
@@ -211,6 +213,15 @@ export default function CharacterPackMVP({
     const completed = allSlots.filter(s => s.image_url).length;
     setCompletenessScore(Math.round((completed / 12) * 100));
 
+    // Check if Visual DNA exists
+    const { data: dnaData } = await supabase
+      .from('character_visual_dna')
+      .select('id')
+      .eq('character_id', characterId)
+      .eq('is_active', true)
+      .limit(1);
+    setHasVisualDNA((dnaData?.length || 0) > 0);
+
     setLoading(false);
   }, [characterId]);
 
@@ -227,7 +238,7 @@ export default function CharacterPackMVP({
     return ref && ref.image_url;
   };
 
-  // Upload reference photo
+  // Upload reference photo and analyze for Visual DNA
   const uploadReference = async (file: File) => {
     const slot = getSlot('ref_closeup_front');
     if (!slot) return;
@@ -253,13 +264,34 @@ export default function CharacterPackMVP({
         status: 'uploaded',
       }).eq('id', slot.id);
 
-      toast.success('Foto subida');
+      toast.success('Foto subida, analizando rasgos...');
+      setUploading(false);
+      setAnalyzing(true);
+
+      // Call analyze-single-reference to create Visual DNA + reference anchor
+      const { error: analyzeError } = await supabase.functions.invoke('analyze-single-reference', {
+        body: {
+          characterId,
+          imageUrl: urlData.publicUrl,
+          characterName,
+        },
+      });
+
+      if (analyzeError) {
+        console.error('Analysis error:', analyzeError);
+        toast.error('Error al analizar rasgos. Puedes continuar pero el parecido puede variar.');
+      } else {
+        toast.success('Rasgos faciales analizados ✓');
+        setHasVisualDNA(true);
+      }
+
       await fetchSlots();
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Error al subir');
     } finally {
       setUploading(false);
+      setAnalyzing(false);
     }
   };
 
@@ -404,15 +436,18 @@ export default function CharacterPackMVP({
                 <span className="text-xs text-muted-foreground">Subir foto</span>
               </div>
             )}
-            {uploading && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            {(uploading || analyzing) && (
+              <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1">
                 <Loader2 className="w-5 h-5 animate-spin text-white" />
+                <span className="text-[10px] text-white/80">
+                  {uploading ? 'Subiendo...' : 'Analizando...'}
+                </span>
               </div>
             )}
-            {refSlot?.image_url && (
+            {refSlot?.image_url && !analyzing && (
               <div className="absolute top-1 right-1">
-                <Badge variant="pass" className="text-xs px-1">
-                  <Check className="w-3 h-3" />
+                <Badge variant={hasVisualDNA ? 'pass' : 'pending'} className="text-xs px-1">
+                  {hasVisualDNA ? <Check className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
                 </Badge>
               </div>
             )}
@@ -431,6 +466,21 @@ export default function CharacterPackMVP({
               <h4 className="font-medium">{characterName}</h4>
               <p className="text-xs text-muted-foreground">Pack de 12 modelos</p>
             </div>
+
+            {/* Visual DNA indicator */}
+            {hasReference() && !analyzing && (
+              <div className="flex items-center gap-1 text-xs">
+                {hasVisualDNA ? (
+                  <span className="text-green-600 dark:text-green-400 flex items-center gap-1">
+                    <Check className="w-3 h-3" /> Rasgos analizados
+                  </span>
+                ) : (
+                  <span className="text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" /> Sin análisis facial
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* State-based UI */}
             {!hasReference() && (
@@ -590,11 +640,16 @@ export default function CharacterPackMVP({
         <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
           <DialogContent className="max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
             <DialogHeader className="flex-shrink-0">
-              <DialogTitle className="flex items-center gap-2">
+              <DialogTitle className="flex items-center gap-2 flex-wrap">
                 {previewImage?.label}
                 {previewImage?.qcScore != null && (
                   <Badge variant={previewImage.qcScore >= 80 ? 'pass' : 'pending'} className="ml-2">
-                    Coherencia: {previewImage.qcScore}%
+                    {hasVisualDNA ? 'Coherencia' : 'Calidad'}: {previewImage.qcScore}%
+                  </Badge>
+                )}
+                {!hasVisualDNA && (
+                  <Badge variant="outline" className="text-xs text-yellow-600 border-yellow-500/50">
+                    Sin referencia
                   </Badge>
                 )}
               </DialogTitle>
@@ -602,6 +657,20 @@ export default function CharacterPackMVP({
             
             {previewImage && (
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 min-h-0">
+                {/* Warning if no Visual DNA */}
+                {!hasVisualDNA && (
+                  <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 space-y-1">
+                    <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-medium text-sm">
+                      <AlertTriangle className="w-4 h-4" />
+                      Generada sin referencia facial
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Esta imagen fue generada por texto, no se comparó con tu foto. 
+                      Sube una nueva foto frontal para que el sistema analice los rasgos y mejore el parecido.
+                    </p>
+                  </div>
+                )}
+
                 {/* QC Issues Panel */}
                 {previewImage.qcIssues && previewImage.qcIssues.length > 0 && (
                   <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 space-y-2">
