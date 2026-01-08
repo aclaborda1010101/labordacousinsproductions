@@ -13,15 +13,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, 
   Camera, Palette, RefreshCw, Lock, Play, Trash2,
-  Image, Bell, Eye, RotateCcw, Wand2, AlertTriangle
+  Image, Bell, Eye, RotateCcw, Wand2, AlertTriangle, RefreshCcw
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useCharacterPackGeneration, SlotDefinition } from '@/hooks/useCharacterPackGeneration';
 
 // ============================================
@@ -121,6 +123,8 @@ export function CharacterPackBuilder({
     slotId?: string;
   } | null>(null);
   const [improvingQC, setImprovingQC] = useState(false);
+  const [improveCoherenceMode, setImproveCoherenceMode] = useState(false);
+  const [rebuildingFromBase, setRebuildingFromBase] = useState(false);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // Fetch or initialize slots - with automatic backfill for missing slots
@@ -743,18 +747,19 @@ export function CharacterPackBuilder({
     }
   };
 
-  // Improve QC - regenerate with enhanced prompt
-  const improveQC = async (slotType: string, slotId: string, qcIssues: string[], fixNotes: string) => {
+  // Improve QC - regenerate with enhanced prompt (identity-focused)
+  const regenerateWithCoherence = async (slotType: string, slotId: string, qcIssues?: string[], fixNotes?: string) => {
     setImprovingQC(true);
     try {
-      // First get enhanced prompt
+      // Get enhanced prompt with identity checklist
       const { data: enhanceData, error: enhanceError } = await supabase.functions.invoke('improve-character-qc', {
         body: {
           slotId,
           characterId,
           projectId,
-          currentIssues: qcIssues,
-          fixNotes: fixNotes || ''
+          currentIssues: qcIssues || [],
+          fixNotes: fixNotes || '',
+          mode: 'coherence' // Request identity-focused improvements
         }
       });
 
@@ -765,17 +770,16 @@ export function CharacterPackBuilder({
         return;
       }
 
-      toast.success(
+      toast.info(
         <div className="space-y-1">
-          <p className="font-medium">Prompt mejorado</p>
+          <p className="font-medium">🔒 Modo Coherencia Activado</p>
           <p className="text-sm text-muted-foreground">
-            Correcciones: {enhanceData.corrections?.join(', ') || 'general'}
+            Checklist: pelo, rasgos, edad, proporciones, vestuario
           </p>
-          <p className="text-sm">Regenerando imagen...</p>
         </div>
       );
 
-      // Now regenerate with the enhanced prompt
+      // Regenerate with the enhanced prompt
       const slotDef = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
         .find(s => s.type === slotType);
       
@@ -787,12 +791,70 @@ export function CharacterPackBuilder({
 
       setPreviewImage(null);
       await fetchSlots();
-      toast.success('Imagen regenerada con correcciones QC');
+      toast.success('Imagen regenerada con refuerzo de identidad');
     } catch (error) {
-      console.error('Error improving QC:', error);
-      toast.error('Error al mejorar QC');
+      console.error('Error improving coherence:', error);
+      toast.error('Error al mejorar coherencia');
     } finally {
       setImprovingQC(false);
+    }
+  };
+
+  // Rebuild entire pack from base visual (nuclear option)
+  const rebuildFromBase = async () => {
+    if (!phase1Complete()) {
+      toast.error('Necesitas las referencias primero');
+      return;
+    }
+
+    setRebuildingFromBase(true);
+    
+    try {
+      // 1. Delete all generated images (keep references)
+      const generatedSlotTypes = [
+        ...BASE_VISUAL_SLOTS.map(s => s.type),
+        ...TURNAROUND_SLOTS.map(s => s.type),
+        ...EXPRESSION_SLOTS.map(s => s.type),
+      ];
+      
+      const slotsToReset = slots.filter(s => 
+        generatedSlotTypes.includes(s.slot_type) && s.image_url
+      );
+
+      toast.info(`Reiniciando ${slotsToReset.length} imágenes...`);
+
+      for (const slot of slotsToReset) {
+        if (slot.image_url) {
+          const urlParts = slot.image_url.split('/character-packs/');
+          if (urlParts.length > 1) {
+            await supabase.storage.from('character-packs').remove([urlParts[1]]);
+          }
+        }
+        
+        await supabase.from('character_pack_slots').update({
+          image_url: null,
+          status: 'empty',
+          qc_score: null,
+          qc_issues: null,
+          fix_notes: null,
+        }).eq('id', slot.id);
+      }
+
+      await fetchSlots();
+      
+      // 2. Auto-start new base visual generation with coherence mode
+      toast.success('Pack reiniciado. Generando nueva base visual...');
+      
+      // Wait a moment then trigger base visual
+      setTimeout(() => {
+        generateBaseVisual();
+      }, 500);
+      
+    } catch (error) {
+      console.error('Error rebuilding from base:', error);
+      toast.error('Error al reiniciar pack');
+    } finally {
+      setRebuildingFromBase(false);
     }
   };
 
@@ -1009,27 +1071,59 @@ export function CharacterPackBuilder({
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Quick Generate Button */}
-          {phase1Complete() && completenessScore < 100 && (
-            <Button
-              variant="gold"
-              className="w-full"
-              onClick={generateFullPack}
-              disabled={generatingPhase !== null}
-            >
-              {generatingPhase ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generando...
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4 mr-2" />
-                  Generar Pack Completo ({12 - Math.round(completenessScore * 12 / 100)} restantes)
-                </>
-              )}
-            </Button>
-          )}
+          {/* Quick Actions Row */}
+          <div className="flex gap-2">
+            {/* Generate Full Pack */}
+            {phase1Complete() && completenessScore < 100 && (
+              <Button
+                variant="gold"
+                className="flex-1"
+                onClick={generateFullPack}
+                disabled={generatingPhase !== null || rebuildingFromBase}
+              >
+                {generatingPhase ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generando...
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4 mr-2" />
+                    Generar Pack ({12 - Math.round(completenessScore * 12 / 100)} restantes)
+                  </>
+                )}
+              </Button>
+            )}
+            
+            {/* Rebuild from Base - Nuclear Option */}
+            {phase2Count() > 0 && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={rebuildFromBase}
+                      disabled={generatingPhase !== null || rebuildingFromBase}
+                      className="border-orange-500/50 text-orange-500 hover:bg-orange-500/10 hover:text-orange-400"
+                    >
+                      {rebuildingFromBase ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RefreshCcw className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="font-medium">Rehacer desde Base</p>
+                    <p className="text-xs text-muted-foreground">
+                      Borra todo el pack generado y empieza de nuevo
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
 
           {/* Accordion Phases */}
           <Accordion type="single" value={activePhase} onValueChange={setActivePhase} className="space-y-2">
@@ -1270,8 +1364,13 @@ export function CharacterPackBuilder({
         </CardContent>
       </Card>
 
-      {/* Preview Modal */}
-      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+      {/* Preview Modal with Coherence Toggle */}
+      <Dialog open={!!previewImage} onOpenChange={(open) => {
+        if (!open) {
+          setPreviewImage(null);
+          setImproveCoherenceMode(false);
+        }
+      }}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -1282,6 +1381,9 @@ export function CharacterPackBuilder({
                 </Badge>
               )}
             </DialogTitle>
+            <DialogDescription className="text-xs">
+              Regenerar: pose/fondo/encuadre • Mejorar coherencia: identidad facial/pelo/edad
+            </DialogDescription>
           </DialogHeader>
           
           {/* QC Issues Panel */}
@@ -1317,65 +1419,85 @@ export function CharacterPackBuilder({
             />
           </div>
           
-          <div className="flex gap-2 justify-between">
-            {/* Left: Improve coherence button */}
-            <div>
-              {previewImage?.slotId && (
-                <Button 
-                  onClick={() => improveQC(
-                    previewImage.slotType, 
-                    previewImage.slotId!, 
-                    previewImage.qcIssues!, 
-                    previewImage.fixNotes || ''
-                  )}
-                  disabled={improvingQC || generatingSlot !== null}
-                  className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-                >
-                  {improvingQC ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Mejorando...
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="w-4 h-4 mr-2" />
-                      Mejorar Coherencia
-                    </>
-                  )}
-                </Button>
-              )}
+          {/* Coherence Toggle + Actions */}
+          <div className="space-y-3">
+            {/* Toggle */}
+            <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border">
+              <div className="flex items-center gap-2">
+                <Wand2 className={`w-4 h-4 ${improveCoherenceMode ? 'text-purple-500' : 'text-muted-foreground'}`} />
+                <div>
+                  <Label htmlFor="coherence-mode" className="text-sm font-medium cursor-pointer">
+                    Mejorar coherencia
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Refuerza identidad: pelo, rasgos, edad, proporciones
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="coherence-mode"
+                checked={improveCoherenceMode}
+                onCheckedChange={setImproveCoherenceMode}
+              />
             </div>
             
-            {/* Right: Standard actions */}
-            <div className="flex gap-2">
+            {/* Action Buttons */}
+            <div className="flex gap-2 justify-between">
               <Button variant="outline" onClick={() => setPreviewImage(null)}>
                 Cerrar
               </Button>
-              <Button 
-                variant="secondary" 
-                onClick={() => {
-                  if (previewImage) {
-                    const slot = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
-                      .find(s => s.type === previewImage.slotType);
-                    if (slot) {
-                      const viewAngle = 'viewAngle' in slot ? slot.viewAngle : undefined;
-                      const expression = 'expression' in slot ? slot.expression : undefined;
-                      generateSlot(slot.type, viewAngle, expression);
+              
+              <div className="flex gap-2">
+                <Button 
+                  variant={improveCoherenceMode ? "default" : "secondary"}
+                  className={improveCoherenceMode ? "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600" : ""}
+                  onClick={() => {
+                    if (!previewImage) return;
+                    
+                    if (improveCoherenceMode && previewImage.slotId) {
+                      regenerateWithCoherence(
+                        previewImage.slotType, 
+                        previewImage.slotId, 
+                        previewImage.qcIssues || undefined, 
+                        previewImage.fixNotes || undefined
+                      );
+                    } else {
+                      const slot = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
+                        .find(s => s.type === previewImage.slotType);
+                      if (slot) {
+                        const viewAngle = 'viewAngle' in slot ? slot.viewAngle : undefined;
+                        const expression = 'expression' in slot ? slot.expression : undefined;
+                        generateSlot(slot.type, viewAngle, expression);
+                      }
                     }
-                  }
-                }}
-                disabled={generatingSlot !== null}
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Regenerar
-              </Button>
-              <Button 
-                variant="destructive" 
-                onClick={() => previewImage && deleteSlotImage(previewImage.slotType)}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Eliminar
-              </Button>
+                  }}
+                  disabled={generatingSlot !== null || improvingQC}
+                >
+                  {improvingQC || generatingSlot ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {improvingQC ? 'Mejorando...' : 'Regenerando...'}
+                    </>
+                  ) : improveCoherenceMode ? (
+                    <>
+                      <Wand2 className="w-4 h-4 mr-2" />
+                      Regenerar con Coherencia
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Regenerar
+                    </>
+                  )}
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={() => previewImage && deleteSlotImage(previewImage.slotType)}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Eliminar
+                </Button>
+              </div>
             </div>
           </div>
         </DialogContent>
