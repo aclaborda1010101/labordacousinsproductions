@@ -159,7 +159,8 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.shot-suggest]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
 
 [functions.audio-design]
 verify_jwt = true
