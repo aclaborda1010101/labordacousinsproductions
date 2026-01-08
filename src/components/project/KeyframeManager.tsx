@@ -708,7 +708,7 @@ export default function KeyframeManager({
                       size="icon"
                       variant="secondary"
                       className="h-7 w-7 bg-yellow-500/90 hover:bg-yellow-500 text-black"
-                      title="Establecer como Canon ⭐"
+                      title="Establecer como Aprobado ⭐"
                       onClick={(e) => {
                         e.stopPropagation();
                         setCanonModal({ open: true, keyframe });
@@ -912,7 +912,7 @@ export default function KeyframeManager({
           imageUrl={canonModal.keyframe.image_url!}
           projectId={projectId}
           onSuccess={() => {
-            toast.success('Asset añadido al canon del proyecto');
+            toast.success('Asset establecido como versión aprobada');
           }}
         />
       )}
