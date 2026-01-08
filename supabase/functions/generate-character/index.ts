@@ -628,6 +628,13 @@ async function generateWithoutReference(
   }
   console.log('[TEXT-TO-IMAGE] Response received');
 
+  // Check for content policy block
+  const finishReason = data.choices?.[0]?.native_finish_reason || data.choices?.[0]?.finish_reason;
+  if (finishReason === 'IMAGE_PROHIBITED_CONTENT') {
+    console.warn('[TEXT-TO-IMAGE] Content blocked by safety filter');
+    throw new Error('CONTENT_BLOCKED: Image generation blocked by safety filter. Try a different prompt.');
+  }
+
   const imageUrl = extractImageFromResponse(data);
   
   if (!imageUrl) {
@@ -758,6 +765,13 @@ async function generateWithReference(
     throw new Error(`API returned non-JSON response (possibly HTML error page). Status: ${response.status}`);
   }
   console.log('[REFERENCE-GEN] Response received');
+
+  // Check for content policy block
+  const finishReason = data.choices?.[0]?.native_finish_reason || data.choices?.[0]?.finish_reason;
+  if (finishReason === 'IMAGE_PROHIBITED_CONTENT') {
+    console.warn('[REFERENCE-GEN] Content blocked by safety filter');
+    throw new Error('CONTENT_BLOCKED: Image generation blocked by safety filter. Try a different expression or pose.');
+  }
 
   const imageUrl = extractImageFromResponse(data);
   
