@@ -26,7 +26,15 @@ import {
   Sparkles,
   Camera,
   Palette,
+  Eye,
+  X,
 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 // ============================================
 // 12 ESSENTIAL MODEL PACK (Same as PRO)
@@ -67,6 +75,13 @@ interface PackSlot {
   expression_name?: string | null;
 }
 
+interface PreviewImage {
+  url: string;
+  slotType: string;
+  slotId: string;
+  label: string;
+}
+
 interface CharacterPackMVPProps {
   characterId: string;
   characterName: string;
@@ -94,6 +109,8 @@ export default function CharacterPackMVP({
   const [progress, setProgress] = useState({ current: 0, total: 11, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
+  const [showPhotos, setShowPhotos] = useState(false);
 
   // Fetch or initialize slots
   const fetchSlots = useCallback(async () => {
@@ -421,8 +438,119 @@ export default function CharacterPackMVP({
                 <span>{expressionCount}/6</span>
               </div>
             </div>
+
+            {/* Ver fotos button */}
+            {completenessScore > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full"
+                onClick={() => setShowPhotos(!showPhotos)}
+              >
+                {showPhotos ? <ChevronUp className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+                {showPhotos ? 'Ocultar fotos' : 'Ver fotos del pack'}
+              </Button>
+            )}
+
+            {/* Expandable photo gallery */}
+            {showPhotos && (
+              <div className="space-y-3 pt-2 border-t border-border">
+                {/* Turnarounds - Grid 4 columnas */}
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                    <Camera className="w-3 h-3" /> Turnarounds
+                  </p>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {TURNAROUND_SLOTS.map(slotDef => {
+                      const slot = getSlot(slotDef.type);
+                      return (
+                        <div 
+                          key={slotDef.type}
+                          className={`aspect-square rounded-md border overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all ${
+                            slot?.image_url ? 'border-green-500/40' : 'border-dashed border-muted'
+                          }`}
+                          onClick={() => slot?.image_url && setPreviewImage({ 
+                            url: slot.image_url, 
+                            slotType: slotDef.type,
+                            slotId: slot.id,
+                            label: slotDef.label
+                          })}
+                        >
+                          {slot?.image_url ? (
+                            <img src={slot.image_url} alt={slotDef.label} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-muted/30">
+                              <Image className="w-3 h-3 text-muted-foreground/50" />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Expresiones - Grid 6 columnas */}
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                    <Palette className="w-3 h-3" /> Expresiones
+                  </p>
+                  <div className="grid grid-cols-6 gap-1.5">
+                    {EXPRESSION_SLOTS.map(slotDef => {
+                      const slot = getSlot(slotDef.type);
+                      return (
+                        <div 
+                          key={slotDef.type}
+                          className={`aspect-square rounded-md border overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all ${
+                            slot?.image_url ? 'border-green-500/40' : 'border-dashed border-muted'
+                          }`}
+                          onClick={() => slot?.image_url && setPreviewImage({ 
+                            url: slot.image_url, 
+                            slotType: slotDef.type,
+                            slotId: slot.id,
+                            label: slotDef.label
+                          })}
+                        >
+                          {slot?.image_url ? (
+                            <img src={slot.image_url} alt={slotDef.label} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-muted/30">
+                              <span className="text-[8px] text-muted-foreground/50">{slotDef.label.slice(0,3)}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
+
+        {/* Image Preview Dialog */}
+        <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>{previewImage?.label}</DialogTitle>
+            </DialogHeader>
+            {previewImage && (
+              <div className="space-y-4">
+                <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+                  <img 
+                    src={previewImage.url} 
+                    alt={previewImage.label} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" size="sm" onClick={() => setPreviewImage(null)}>
+                    Cerrar
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
