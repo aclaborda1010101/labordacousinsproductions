@@ -55,6 +55,18 @@ const QC_ISSUE_CORRECTIONS: Record<string, string[]> = {
     'Generate at highest quality with sharp details',
     'Ensure proper focus on facial features',
     'No blur, noise, or compression artifacts'
+  ],
+  // NEW: Angle and visibility corrections
+  'angle': [
+    'CRITICAL: The face MUST be clearly visible from the FRONT',
+    'Generate a FRONTAL view showing the FULL FACE',
+    'The subject MUST face the camera directly - NO back views',
+    'DO NOT generate images where the subject faces away from camera'
+  ],
+  'visibility': [
+    'The face must be FULLY VISIBLE and unobstructed',
+    'No objects, hands, or hair covering facial features',
+    'Clear, unoccluded view of all facial features required'
   ]
 };
 
@@ -91,7 +103,10 @@ function analyzeIssuesAndGenerateCorrections(issues: string[], fixNotes: string)
       'artifacts': ['artifact', 'hand', 'finger', 'morph', 'distort', 'deform', 'artefacto', 'mano', 'dedo'],
       'likeness': ['likeness', 'same person', 'recognize', 'identity', 'parecido', 'misma persona'],
       'lighting': ['light', 'shadow', 'bright', 'dark', 'luz', 'sombra', 'iluminación'],
-      'quality': ['quality', 'blur', 'sharp', 'focus', 'calidad', 'borroso', 'enfoque']
+      'quality': ['quality', 'blur', 'sharp', 'focus', 'calidad', 'borroso', 'enfoque'],
+      // NEW patterns for angle and visibility
+      'angle': ['espalda', 'espaldas', 'back', 'behind', 'detrás', 'no visible', 'imposibilita', 'no se puede', 'de espaldas', 'mirando hacia otro lado', 'away from camera'],
+      'visibility': ['hidden', 'covered', 'obscured', 'oculto', 'cubierto', 'tapado', 'no se ve', 'not visible', 'blocked']
     };
     
     const patterns = categoryPatterns[category] || [category];
@@ -99,6 +114,20 @@ function analyzeIssuesAndGenerateCorrections(issues: string[], fixNotes: string)
       categories.add(category);
       corrections.push(...categoryCorrections);
     }
+  }
+  
+  // CRITICAL: Force frontal angle if "espalda" or "back" detected
+  const needsFrontalFix = ['espalda', 'espaldas', 'back', 'detrás', 'behind', 'de espaldas'].some(p => allText.includes(p));
+  if (needsFrontalFix) {
+    console.log('[improve-character-qc] DETECTED BACK VIEW ISSUE - forcing frontal corrections');
+    corrections.unshift(
+      '=== MANDATORY: FRONTAL VIEW REQUIRED ===',
+      'The previous image showed the subject from BEHIND - THIS IS WRONG',
+      'Generate a NEW image with the subject FACING THE CAMERA',
+      'The FULL FACE must be clearly visible in a FRONTAL view',
+      '=== END MANDATORY ==='
+    );
+    categories.add('angle');
   }
   
   // If no specific matches, add general likeness correction
