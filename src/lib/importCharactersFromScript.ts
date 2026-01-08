@@ -205,6 +205,67 @@ export async function importCharactersFromScript(
   }
 
   // ═══════════════════════════════════════════════════════════════════
+  // ROOT-level narrative_classification (backup source)
+  // ═══════════════════════════════════════════════════════════════════
+  const rootNarrativeClass = parsedJson.narrative_classification;
+  if (rootNarrativeClass) {
+    if (rootNarrativeClass.protagonists?.length) {
+      scriptCharacters.push(
+        ...rootNarrativeClass.protagonists.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'protagonist',
+          narrative_weight: 'protagonist',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+    if (rootNarrativeClass.major_supporting?.length) {
+      scriptCharacters.push(
+        ...rootNarrativeClass.major_supporting.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'major_supporting',
+          narrative_weight: 'major_supporting',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+    if (rootNarrativeClass.minor_speaking?.length) {
+      scriptCharacters.push(
+        ...rootNarrativeClass.minor_speaking.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'minor',
+          narrative_weight: 'minor',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+    if (rootNarrativeClass.voices_systems?.length) {
+      scriptCharacters.push(
+        ...rootNarrativeClass.voices_systems.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'voice',
+          narrative_weight: 'extra',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // characters_main array (main characters with 'name' field)
+  // ═══════════════════════════════════════════════════════════════════
+  if (parsedJson.characters_main?.length) {
+    scriptCharacters.push(
+      ...parsedJson.characters_main.map((c: ScriptCharacter) => ({
+        ...c,
+        name: c.name,
+        role: c.role || 'protagonist',
+        narrative_weight: c.narrative_weight || 'protagonist'
+      }))
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
   // Deduplicate by normalized name before processing
   // ═══════════════════════════════════════════════════════════════════
   const seenNames = new Set<string>();
