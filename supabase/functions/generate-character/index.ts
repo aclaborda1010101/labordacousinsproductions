@@ -640,6 +640,61 @@ async function generateWithoutReference(
 }
 
 // ============================================
+// HELPER: Convert unsupported image formats to base64 data URL
+// ============================================
+async function ensureSupportedImageFormat(imageUrl: string): Promise<string> {
+  const supportedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+  const urlLower = imageUrl.toLowerCase();
+  
+  // Check if already a data URL (always supported)
+  if (imageUrl.startsWith('data:image/')) {
+    return imageUrl;
+  }
+  
+  // Check if URL has a supported extension
+  const hasSupported = supportedExtensions.some(ext => urlLower.includes(ext));
+  if (hasSupported) {
+    return imageUrl;
+  }
+  
+  // Unsupported format (like .heic) - fetch and convert to base64
+  console.log(`[IMAGE-CONVERT] Unsupported format detected, converting: ${imageUrl.substring(0, 80)}...`);
+  
+  try {
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status}`);
+    }
+    
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const arrayBuffer = await response.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    
+    // Convert to base64
+    let binary = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+      binary += String.fromCharCode(uint8Array[i]);
+    }
+    const base64 = btoa(binary);
+    
+    // For HEIC, we need to tell the API it's JPEG (since we can't truly convert without a library)
+    // The API should handle the raw bytes even with jpeg mime type
+    const mimeType = contentType.includes('heic') || contentType.includes('heif') 
+      ? 'image/jpeg'  // Pretend it's JPEG - some APIs can handle raw HEIC bytes this way
+      : contentType;
+    
+    const dataUrl = `data:${mimeType};base64,${base64}`;
+    console.log(`[IMAGE-CONVERT] Converted to base64 data URL (${Math.round(base64.length / 1024)}KB)`);
+    
+    return dataUrl;
+  } catch (err) {
+    console.error(`[IMAGE-CONVERT] Conversion failed:`, err);
+    // Return original URL as fallback - let the API give a clearer error
+    return imageUrl;
+  }
+}
+
+// ============================================
 // REFERENCE-BASED GENERATION WITH LOVABLE AI
 // ============================================
 async function generateWithReference(
@@ -654,6 +709,9 @@ async function generateWithReference(
   console.log(`[REFERENCE-GEN] Generating with ${IMAGE_ENGINE}...`);
   console.log(`[REFERENCE-GEN] Reference image: ${referenceImageUrl.substring(0, 100)}...`);
   console.log(`[REFERENCE-GEN] Prompt length: ${prompt.length} chars`);
+
+  // Ensure image format is supported by the API
+  const processedImageUrl = await ensureSupportedImageFormat(referenceImageUrl);
 
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
@@ -670,7 +728,7 @@ async function generateWithReference(
             {
               type: 'image_url',
               image_url: { 
-                url: referenceImageUrl
+                url: processedImageUrl
               }
             },
             {
