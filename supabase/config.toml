@@ -234,3 +234,11 @@ verify_jwt = true
 
 [functions.expand-scene-card]
 verify_jwt = true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QC IMPROVEMENT (V3.3 - Intelligent QC)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.improve-character-qc]
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false

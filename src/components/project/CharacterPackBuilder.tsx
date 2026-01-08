@@ -19,8 +19,9 @@ import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, 
   Camera, Palette, RefreshCw, Lock, Play, Trash2,
-  Image, Bell, Eye, RotateCcw
+  Image, Bell, Eye, RotateCcw, Wand2, AlertTriangle
 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCharacterPackGeneration, SlotDefinition } from '@/hooks/useCharacterPackGeneration';
 
 // ============================================
@@ -74,6 +75,9 @@ interface PackSlot {
   image_url: string | null;
   status: string;
   qc_score: number | null;
+  qc_issues: string[] | null;
+  fix_notes: string | null;
+  prompt_text: string | null;
   required: boolean;
 }
 
@@ -107,7 +111,16 @@ export function CharacterPackBuilder({
   const [completenessScore, setCompletenessScore] = useState(0);
   const [activePhase, setActivePhase] = useState<string>('phase1');
   const [phaseProgress, setPhaseProgress] = useState({ current: 0, total: 0 });
-  const [previewImage, setPreviewImage] = useState<{ url: string; label: string; slotType: string } | null>(null);
+  const [previewImage, setPreviewImage] = useState<{ 
+    url: string; 
+    label: string; 
+    slotType: string;
+    qcScore?: number | null;
+    qcIssues?: string[] | null;
+    fixNotes?: string | null;
+    slotId?: string;
+  } | null>(null);
+  const [improvingQC, setImprovingQC] = useState(false);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // Fetch or initialize slots - with automatic backfill for missing slots
@@ -197,6 +210,9 @@ export function CharacterPackBuilder({
         image_url: null,
         status: 'empty',
         qc_score: null,
+        qc_issues: null,
+        fix_notes: null,
+        prompt_text: null,
         required: slot.required,
       });
     });
@@ -211,6 +227,9 @@ export function CharacterPackBuilder({
         image_url: null,
         status: 'empty',
         qc_score: null,
+        qc_issues: null,
+        fix_notes: null,
+        prompt_text: null,
         required: true,
       });
     });
@@ -225,6 +244,9 @@ export function CharacterPackBuilder({
         image_url: null,
         status: 'empty',
         qc_score: null,
+        qc_issues: null,
+        fix_notes: null,
+        prompt_text: null,
         required: true,
       });
     });
@@ -239,6 +261,9 @@ export function CharacterPackBuilder({
         image_url: null,
         status: 'empty',
         qc_score: null,
+        qc_issues: null,
+        fix_notes: null,
+        prompt_text: null,
         required: true,
       });
     });
@@ -718,6 +743,59 @@ export function CharacterPackBuilder({
     }
   };
 
+  // Improve QC - regenerate with enhanced prompt
+  const improveQC = async (slotType: string, slotId: string, qcIssues: string[], fixNotes: string) => {
+    setImprovingQC(true);
+    try {
+      // First get enhanced prompt
+      const { data: enhanceData, error: enhanceError } = await supabase.functions.invoke('improve-character-qc', {
+        body: {
+          slotId,
+          characterId,
+          projectId,
+          currentIssues: qcIssues,
+          fixNotes: fixNotes || ''
+        }
+      });
+
+      if (enhanceError) {
+        console.error('Error getting enhanced prompt:', enhanceError);
+        toast.error('Error al mejorar el prompt');
+        setImprovingQC(false);
+        return;
+      }
+
+      toast.success(
+        <div className="space-y-1">
+          <p className="font-medium">Prompt mejorado</p>
+          <p className="text-sm text-muted-foreground">
+            Correcciones: {enhanceData.corrections?.join(', ') || 'general'}
+          </p>
+          <p className="text-sm">Regenerando imagen...</p>
+        </div>
+      );
+
+      // Now regenerate with the enhanced prompt
+      const slotDef = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
+        .find(s => s.type === slotType);
+      
+      if (slotDef) {
+        const viewAngle = 'viewAngle' in slotDef ? slotDef.viewAngle : undefined;
+        const expression = 'expression' in slotDef ? slotDef.expression : undefined;
+        await generateSlot(slotType, viewAngle, expression);
+      }
+
+      setPreviewImage(null);
+      await fetchSlots();
+      toast.success('Imagen regenerada con correcciones QC');
+    } catch (error) {
+      console.error('Error improving QC:', error);
+      toast.error('Error al mejorar QC');
+    } finally {
+      setImprovingQC(false);
+    }
+  };
+
   // File input handler
   const handleFileChange = (slotType: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -758,7 +836,15 @@ export function CharacterPackBuilder({
             src={slot.image_url!} 
             alt={slotDef.label} 
             className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-            onClick={() => setPreviewImage({ url: slot.image_url!, label: slotDef.label, slotType: slotDef.type })}
+            onClick={() => setPreviewImage({ 
+              url: slot.image_url!, 
+              label: slotDef.label, 
+              slotType: slotDef.type,
+              qcScore: slot.qc_score,
+              qcIssues: slot.qc_issues,
+              fixNotes: slot.fix_notes,
+              slotId: slot.id
+            })}
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground p-2">
@@ -774,13 +860,38 @@ export function CharacterPackBuilder({
           </div>
         )}
 
-        {/* Status badge */}
+        {/* Status badge with QC score */}
         {hasImage && (
-          <div className="absolute top-1 right-1">
-            <Badge variant="pass" className="text-xs px-1">
-              <CheckCircle2 className="w-3 h-3" />
-            </Badge>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="absolute top-1 right-1">
+                  {slot.qc_score !== null && slot.qc_score < 80 ? (
+                    <Badge variant="pending" className="text-xs px-1">
+                      <AlertTriangle className="w-3 h-3 mr-0.5" />
+                      {slot.qc_score}
+                    </Badge>
+                  ) : slot.qc_score !== null ? (
+                    <Badge variant="pass" className="text-xs px-1">
+                      <CheckCircle2 className="w-3 h-3 mr-0.5" />
+                      {slot.qc_score}
+                    </Badge>
+                  ) : (
+                    <Badge variant="pass" className="text-xs px-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                    </Badge>
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                {slot.qc_score !== null ? (
+                  slot.qc_score < 80 
+                    ? `QC: ${slot.qc_score}% - Click para mejorar` 
+                    : `QC: ${slot.qc_score}% - Aprobado`
+                ) : 'Sin evaluación QC'}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
 
         {/* Required badge */}
@@ -1163,44 +1274,109 @@ export function CharacterPackBuilder({
       <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>{previewImage?.label}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              {previewImage?.label}
+              {previewImage?.qcScore !== null && previewImage?.qcScore !== undefined && (
+                <Badge variant={previewImage.qcScore >= 80 ? 'pass' : 'pending'} className="ml-2">
+                  QC: {previewImage.qcScore}%
+                </Badge>
+              )}
+            </DialogTitle>
           </DialogHeader>
+          
+          {/* QC Issues Panel */}
+          {previewImage?.qcIssues && previewImage.qcIssues.length > 0 && (
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 space-y-2">
+              <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-medium">
+                <AlertTriangle className="w-4 h-4" />
+                Problemas detectados
+              </div>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                {previewImage.qcIssues.map((issue, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-yellow-500">•</span>
+                    {issue}
+                  </li>
+                ))}
+              </ul>
+              {previewImage.fixNotes && (
+                <div className="pt-2 border-t border-yellow-500/20">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium">Sugerencia:</span> {previewImage.fixNotes}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="relative">
             <img 
               src={previewImage?.url} 
               alt={previewImage?.label}
-              className="w-full h-auto rounded-lg max-h-[70vh] object-contain"
+              className="w-full h-auto rounded-lg max-h-[60vh] object-contain"
             />
           </div>
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setPreviewImage(null)}>
-              Cerrar
-            </Button>
-            <Button 
-              variant="secondary" 
-              onClick={() => {
-                if (previewImage) {
-                  const slot = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
-                    .find(s => s.type === previewImage.slotType);
-                  if (slot) {
-                    const viewAngle = 'viewAngle' in slot ? slot.viewAngle : undefined;
-                    const expression = 'expression' in slot ? slot.expression : undefined;
-                    generateSlot(slot.type, viewAngle, expression);
+          
+          <div className="flex gap-2 justify-between">
+            {/* Left: Improve QC button (if issues exist) */}
+            <div>
+              {previewImage?.qcIssues && previewImage.qcIssues.length > 0 && previewImage.slotId && (
+                <Button 
+                  onClick={() => improveQC(
+                    previewImage.slotType, 
+                    previewImage.slotId!, 
+                    previewImage.qcIssues!, 
+                    previewImage.fixNotes || ''
+                  )}
+                  disabled={improvingQC || generatingSlot !== null}
+                  className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                >
+                  {improvingQC ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Mejorando...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="w-4 h-4 mr-2" />
+                      Mejorar QC
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+            
+            {/* Right: Standard actions */}
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setPreviewImage(null)}>
+                Cerrar
+              </Button>
+              <Button 
+                variant="secondary" 
+                onClick={() => {
+                  if (previewImage) {
+                    const slot = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
+                      .find(s => s.type === previewImage.slotType);
+                    if (slot) {
+                      const viewAngle = 'viewAngle' in slot ? slot.viewAngle : undefined;
+                      const expression = 'expression' in slot ? slot.expression : undefined;
+                      generateSlot(slot.type, viewAngle, expression);
+                    }
                   }
-                }
-              }}
-              disabled={generatingSlot !== null}
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Regenerar
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={() => previewImage && deleteSlotImage(previewImage.slotType)}
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Eliminar
-            </Button>
+                }}
+                disabled={generatingSlot !== null}
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Regenerar
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={() => previewImage && deleteSlotImage(previewImage.slotType)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Eliminar
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
