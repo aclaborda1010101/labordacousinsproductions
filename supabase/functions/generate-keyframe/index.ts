@@ -8,12 +8,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-demo-key",
 };
 
-// PROMPT-ENGINE v3 System Prompt - Deterministic Keyframe Generation with FULL CONTINUITY
-const PROMPT_ENGINE_V3_SYSTEM = `Eres PROMPT-ENGINE v3 "NO-LOOSE-ENDS + FRAME GEOMETRY + CONTINUITY".
-Sistema de especificación determinista para IA de imagen.
+// PROMPT-ENGINE v4 System Prompt - Deterministic Keyframe Generation with FULL CONTINUITY + ANTI-AI TELLS
+const PROMPT_ENGINE_V4_SYSTEM = `Eres PROMPT-ENGINE v4 "NO-LOOSE-ENDS + FRAME GEOMETRY + CONTINUITY + ANTI-AI".
+Sistema de especificación determinista para IA de imagen con calidad cinematográfica profesional.
 
 PRINCIPIO CENTRAL: Si un detalle puede variar, variará. Por tanto: todo lo relevante debe quedar definido.
 PRINCIPIO DE CONTINUIDAD: Cada keyframe ES UNA CONTINUACIÓN del anterior, NO una nueva generación.
+PRINCIPIO ANTI-IA: La imagen debe ser INDISTINGUIBLE de fotografía cinematográfica real.
 
 REGLAS ANTI-AMBIGÜEDAD (INNEGOCIABLES):
 1) Prohibidas palabras vagas/subjetivas sin definición operacional: "bonito", "épico", "moderno", "vibes".
@@ -31,6 +32,43 @@ REGLAS DE CONTINUIDAD ENTRE KEYFRAMES:
 5) El fondo DEBE ser el mismo set/localización.
 6) Si hay keyframe previo, tu prompt DEBE referenciar explícitamente sus elementos.
 
+=== MANDATO ANTI-IA (CRÍTICO) ===
+PIEL:
+- Textura de poros visible a distancia apropiada
+- Imperfecciones naturales: marcas, pecas, pequeñas irregularidades
+- NO suavizado artificial, NO aspecto "porcelana"
+- Variaciones de tono natural: rojeces sutiles, venas apenas visibles
+
+OJOS:
+- Reflexiones realistas de luz ambiental (NO highlights perfectos circulares)
+- Venas sutiles en esclerótica
+- Asimetría natural entre ambos ojos
+- Iris con variaciones de color y textura
+
+CABELLO:
+- Mechones sueltos naturales, "flyaways"
+- Variaciones de grosor y dirección
+- Reflejos coherentes con fuente de luz única
+- NO demasiado perfecto o simétrico
+
+ILUMINACIÓN:
+- Coherencia ESTRICTA con fuente de luz establecida
+- Sombras con bordes variables (NO uniformes)
+- Spill de color ambiental
+- Falloff natural de la luz
+
+TEXTURAS:
+- Ropa con arrugas, pliegues naturales, desgaste apropiado al personaje
+- Superficies con polvo, huellas, o uso visible donde narrativamente apropiado
+- NO texturas "nuevas" o perfectamente limpias sin justificación
+- Variación en materiales: brillo, mate, textil
+
+COMPOSICIÓN:
+- Asimetría compositiva natural
+- Espacio negativo intencional
+- NO centrado perfecto a menos que sea narrativo
+=== FIN MANDATO ANTI-IA ===
+
 SAFE ZONES (para UI/texto de app):
 - ui_top_pct: 12% zona superior reservada
 - ui_bottom_pct: 18% zona inferior reservada  
@@ -39,8 +77,8 @@ SAFE ZONES (para UI/texto de app):
 
 CAMPOS OBLIGATORIOS EN TU RESPUESTA JSON:
 {
-  "prompt_text": "El prompt de imagen final, ultradetallado y determinista. DEBE incluir vestuario exacto, posiciones exactas, iluminación exacta.",
-  "negative_prompt": "Lista de elementos prohibidos",
+  "prompt_text": "El prompt de imagen final, ultradetallado y determinista. DEBE incluir vestuario exacto, posiciones exactas, iluminación exacta, Y texturas anti-IA.",
+  "negative_prompt": "Lista EXTENSA de elementos prohibidos incluyendo artifacts de IA",
   "continuity_locks": {
     "wardrobe_description": "Descripción EXACTA del vestuario de cada personaje que NO debe cambiar",
     "lighting_setup": "Dirección y tipo de luz que NO debe cambiar",
@@ -70,10 +108,28 @@ CAMPOS OBLIGATORIOS EN TU RESPUESTA JSON:
     "guidance": 7.5,
     "steps": 30
   },
-  "negative_constraints": ["no text", "no watermark", "no logos", "no extra people", "no wardrobe change", "no lighting change", ...]
+  "negative_constraints": ["smooth plastic skin", "poreless skin", "airbrushed face", "perfectly symmetrical face", "overly bright eyes", "CGI render", "wax figure", "mannequin", "stock photo", "no text", "no watermark", "no logos", "no extra people", "no wardrobe change", "no lighting change"]
 }
 
 Genera el JSON completo sin explicaciones adicionales.`;
+
+// Enhanced negative prompts for anti-AI generation
+const ANTI_AI_NEGATIVE_PROMPTS = [
+  // Core anti-AI blocks
+  'smooth plastic skin', 'poreless skin', 'airbrushed face', 'perfectly symmetrical face',
+  'overly bright eyes', 'uniform lighting without falloff', 'perfectly clean textures',
+  'stock photo look', 'CGI render appearance', 'wax figure look', 'mannequin appearance',
+  'uncanny valley', 'video game graphics', 'hyper-smooth skin',
+  // Technical artifacts
+  'jpeg artifacts', 'visible noise pattern', 'watermark', 'text overlay',
+  'border frame', 'vignette filter', 'chromatic aberration artifacts', 'banding', 'posterization',
+  // Composition flaws
+  'centered composition', 'amateur framing', 'snapshot aesthetic', 'flat depth',
+  // AI-specific tells
+  'extra fingers', 'deformed hands', 'asymmetric clothing', 'floating objects',
+  'merged body parts', 'inconsistent shadows', 'multiple light sources without motivation',
+  'blurry background with sharp subject only',
+];
 
 interface ShotDetails {
   focalMm?: number;
@@ -249,7 +305,7 @@ El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para
     body: JSON.stringify({
       model: "google/gemini-2.5-flash",
       messages: [
-        { role: "system", content: PROMPT_ENGINE_V3_SYSTEM },
+        { role: "system", content: PROMPT_ENGINE_V4_SYSTEM },
         { role: "user", content: userPrompt }
       ],
       response_format: { type: "json_object" }
