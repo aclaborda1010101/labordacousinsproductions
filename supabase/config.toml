@@ -153,7 +153,8 @@ verify_jwt = true
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.entity-builder]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
 
 [functions.shot-suggest]
 verify_jwt = true
