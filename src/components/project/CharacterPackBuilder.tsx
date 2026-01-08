@@ -96,6 +96,51 @@ interface CharacterPackBuilderProps {
 // Valid statuses that count as "complete" for phase progression
 const COMPLETE_STATUSES = ['approved', 'generated', 'needs_review', 'uploaded'];
 
+// Helper function to map QC issues to human-readable corrections in Spanish
+const getCorrectionsForIssues = (issues: string[]): string[] => {
+  const corrections: string[] = [];
+  const allText = issues.join(' ').toLowerCase();
+  
+  const correctionMap: Record<string, { patterns: string[], fix: string }> = {
+    hair: { 
+      patterns: ['hair', 'pelo', 'cabello', 'grey', 'gray', 'canas', 'gris', 'plateado'], 
+      fix: 'Preservar color y estilo de pelo exacto (incluyendo canas)' 
+    },
+    age: { 
+      patterns: ['age', 'older', 'younger', 'edad', 'mayor', 'joven', 'niño', 'adulto'], 
+      fix: 'Mantener apariencia de edad exacta del personaje' 
+    },
+    face: { 
+      patterns: ['facial', 'face', 'nose', 'mouth', 'nariz', 'boca', 'cara', 'rostro'], 
+      fix: 'Preservar estructura facial y proporciones' 
+    },
+    skin: { 
+      patterns: ['skin', 'tone', 'piel', 'tono', 'complexion', 'tez'], 
+      fix: 'Mantener tono de piel consistente' 
+    },
+    eyes: { 
+      patterns: ['eyes', 'eye', 'ojos', 'ojo', 'mirada'], 
+      fix: 'Preservar forma y color de ojos' 
+    },
+    texture: { 
+      patterns: ['texture', 'stylized', 'cartoon', 'textura', 'estilizado', 'caricatura'], 
+      fix: 'Generar con calidad fotorrealista, sin estilización' 
+    },
+  };
+  
+  for (const [_, config] of Object.entries(correctionMap)) {
+    if (config.patterns.some(p => allText.includes(p))) {
+      corrections.push(config.fix);
+    }
+  }
+  
+  if (corrections.length === 0) {
+    corrections.push('Reforzar parecido general con la referencia');
+  }
+  
+  return corrections;
+};
+
 export function CharacterPackBuilder({
   characterId,
   characterName,
@@ -1411,6 +1456,27 @@ export function CharacterPackBuilder({
                     </p>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Corrections Panel - shows what will be fixed */}
+            {previewImage?.qcIssues && previewImage.qcIssues.length > 0 && improveCoherenceMode && (
+              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3 space-y-2">
+                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium">
+                  <Wand2 className="w-4 h-4" />
+                  Correcciones que se aplicarán
+                </div>
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  {getCorrectionsForIssues(previewImage.qcIssues).map((correction, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-purple-500">✓</span>
+                      {correction}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-muted-foreground pt-1 border-t border-purple-500/20">
+                  Al pulsar "Regenerar con Coherencia", el sistema reforzará estas áreas en el prompt.
+                </p>
               </div>
             )}
             
