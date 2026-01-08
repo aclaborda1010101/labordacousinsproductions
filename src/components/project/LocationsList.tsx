@@ -245,13 +245,96 @@ export default function LocationsList({ projectId }: LocationsListProps) {
     }
   };
 
+  // Build rich description from entity-builder profile
+  const buildDescriptionFromProfile = (profile: any): string => {
+    if (!profile) return '';
+    
+    const parts: string[] = [];
+    
+    if (profile.location_type) parts.push(profile.location_type.replace(/_/g, ' '));
+    if (profile.arch_style) parts.push(`${profile.arch_style.replace(/_/g, ' ')} architecture`);
+    if (profile.materials?.length) parts.push(`materials: ${profile.materials.slice(0, 5).join(', ')}`);
+    if (profile.set_dressing_fixed?.length) parts.push(`featuring ${profile.set_dressing_fixed.slice(0, 8).join(', ')}`);
+    if (profile.lighting_logic?.motivation) parts.push(`${profile.lighting_logic.motivation.replace(/_/g, ' ')} lighting`);
+    if (profile.color_palette) parts.push(`color palette: ${profile.color_palette}`);
+    
+    return parts.join('. ');
+  };
+
+  // Extract time of day from location name
+  const extractTimeFromName = (name: string): string => {
+    const upper = name.toUpperCase();
+    if (upper.includes('NOCHE') || upper.includes('NIGHT')) return 'night';
+    if (upper.includes('AMANECER') || upper.includes('DAWN')) return 'dawn';
+    if (upper.includes('ATARDECER') || upper.includes('DUSK') || upper.includes('TARDE')) return 'dusk';
+    return 'day';
+  };
+
+  // Determine if location is interior
+  const isInteriorLocation = (name: string): boolean => {
+    const upper = name.toUpperCase();
+    if (upper.includes('INT.') || upper.includes('INT ')) return true;
+    if (upper.includes('EXT.') || upper.includes('EXT ')) return false;
+    // Default interior for common interior words
+    return upper.match(/(HABITACIÓN|OFICINA|COCINA|BAÑO|SALA|COMEDOR|DORMITORIO|APARTAMENTO|CASA|PISO|HOTEL|BAR|RESTAURANTE|HOSPITAL|TIENDA)/i) !== null;
+  };
+
   const handleGenerate = async (location: Location) => {
     setGeneratingId(location.id);
-    toast.info(`Generando ${location.name}...`);
+    toast.info(`Analizando ${location.name}...`);
 
     try {
-      const prompt = (location.description || '').trim() || location.name;
+      let description = (location.description || '').trim();
+      let profileJson = null;
+      
+      // If no description, generate profile with entity-builder first
+      if (!description) {
+        toast.info(`Generando perfil visual para ${location.name}...`);
+        
+        const cleanName = location.name
+          .replace(/[-–]\s*(MAÑANA|TARDE|NOCHE|DÍA|CONTINÚA|CONTINUOUS|DAY|NIGHT|DAWN|DUSK)/gi, '')
+          .replace(/^(INT\.|EXT\.|INT |EXT )/i, '')
+          .trim();
+        
+        const timeOfDay = extractTimeFromName(location.name);
+        const isInterior = isInteriorLocation(location.name);
+        
+        try {
+          const { data: profileData, error: profileError } = await supabase.functions.invoke('entity-builder', {
+            body: {
+              entityType: 'location',
+              name: cleanName,
+              context: {
+                timeOfDay,
+                locationType: isInterior ? 'interior' : 'exterior',
+                projectId,
+              },
+            },
+          });
+          
+          if (!profileError && profileData?.profile) {
+            profileJson = profileData.profile;
+            description = buildDescriptionFromProfile(profileData.profile);
+            
+            // Save generated profile and description to location
+            await supabase.from('locations').update({
+              description,
+              profile_json: profileData,
+            }).eq('id', location.id);
+            
+            toast.success('Perfil visual generado');
+          }
+        } catch (profileErr) {
+          console.warn('Could not generate profile, using name only:', profileErr);
+        }
+      }
+      
+      // Use description or fallback to name
+      const prompt = description || location.name;
+      const timeOfDay = extractTimeFromName(location.name);
 
+      toast.info(`Generando imagen de ${location.name}...`);
+      
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
           projectId,
@@ -264,8 +347,9 @@ export default function LocationsList({ projectId }: LocationsListProps) {
           params: {
             locationName: location.name,
             viewAngle: 'establishing',
-            timeOfDay: 'day',
+            timeOfDay,
             weather: 'clear',
+            profileJson, // Pass profile for richer generation
           },
         },
       });

@@ -15,6 +15,10 @@ interface EntityBuilderRequest {
     characterRole?: string;
     arc?: string;
     characterId?: string;
+    // Location-specific context
+    timeOfDay?: string;
+    locationType?: 'interior' | 'exterior';
+    projectId?: string;
   };
   projectStyle?: {
     genre?: string;
@@ -412,13 +416,37 @@ serve(async (req) => {
 
   try {
     const request: EntityBuilderRequest = await req.json();
-    const { entityType, name, description, context, projectStyle, uploadedImages, language } = request;
+    const { entityType, name, description, context, uploadedImages, language } = request;
+    let { projectStyle } = request;
 
     if (!entityType || !name) {
       return new Response(
         JSON.stringify({ error: 'Se requiere entityType y name' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Fetch project context if projectId provided and no projectStyle
+    if (context?.projectId && !projectStyle) {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      
+      const { data: project } = await supabase
+        .from('projects')
+        .select('title, bible, style_preset')
+        .eq('id', context.projectId)
+        .single();
+      
+      if (project) {
+        const bible = project.bible as any;
+        projectStyle = {
+          genre: bible?.genre || bible?.projectType || 'Drama',
+          tone: bible?.tone || 'Cinematográfico realista',
+          realism_level: project.style_preset || 'cinematic',
+        };
+        console.log('Fetched project context:', projectStyle);
+      }
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -452,7 +480,33 @@ Genera el Visual DNA COMPLETO con TODOS los campos especificados.
 El celebrity_likeness.primary es OBLIGATORIO.
 Todos los hex colors deben estar presentes.
 La edad debe ser un número específico, no un rango.`
-      : `SOLICITUD DE PERFIL DE ENTIDAD:
+      : entityType === 'location'
+        ? `SOLICITUD DE PERFIL DE LOCALIZACIÓN:
+
+NOMBRE: ${name}
+DESCRIPCIÓN: ${description || 'No proporcionada - genera una descripción profesional apropiada basada en el nombre'}
+TIPO: ${context?.locationType === 'interior' ? 'Interior' : context?.locationType === 'exterior' ? 'Exterior' : 'Determina según el nombre'}
+HORA DEL DÍA: ${context?.timeOfDay || 'day'}
+
+${projectStyle ? `STYLE BIBLE DEL PROYECTO:
+- Género: ${projectStyle.genre || 'Drama'}
+- Tono: ${projectStyle.tone || 'Cinematográfico realista'}
+` : ''}
+
+IDIOMA DE RESPUESTA: ${language || 'es'}
+
+IMPORTANTE: Genera un perfil COMPLETO de location siguiendo el formato JSON especificado.
+Incluye:
+- location_type específico
+- arch_style apropiado al contexto narrativo
+- materials (mínimo 5)
+- set_dressing_fixed (mínimo 8 elementos de decoración/props)
+- lighting_logic completo con motivation, key_source, practicals
+- color_palette descriptiva
+- layout_map_text con descripción espacial
+
+Sé MUY ESPECÍFICO y cinematográfico. Piensa como un Production Designer de Hollywood.`
+        : `SOLICITUD DE PERFIL DE ENTIDAD:
 
 TIPO: ${entityType}
 NOMBRE: ${name}
