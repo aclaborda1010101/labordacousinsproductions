@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle, Image } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle, Image, Check } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -76,6 +76,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
   const [generatingProfile, setGeneratingProfile] = useState<string | null>(null);
+  const [approvingCharacter, setApprovingCharacter] = useState<string | null>(null);
   const [autoGenerating, setAutoGenerating] = useState<string | null>(null);
   const [autoGeneratingAll, setAutoGeneratingAll] = useState(false);
   const [autoGenProgress, setAutoGenProgress] = useState<{current: number; total: number; phase: string} | null>(null);
@@ -490,7 +491,7 @@ export default function Characters({ projectId }: CharactersProps) {
   };
 
   // Generate full profile with Entity Builder
-  const generateProfileWithEntityBuilder = async (character: Character) => {
+  const generateProfileWithEntityBuilder = async (character: Character): Promise<boolean> => {
     setGeneratingProfile(character.id);
     toast.info('Generando perfil completo con Entity Builder... Esto puede tardar un momento.');
 
@@ -517,7 +518,7 @@ export default function Characters({ projectId }: CharactersProps) {
         } else {
           throw new Error(response.error.message);
         }
-        return;
+        return false;
       }
 
       const { entity } = response.data;
@@ -533,11 +534,76 @@ export default function Characters({ projectId }: CharactersProps) {
 
       toast.success('Perfil de personaje generado correctamente');
       fetchCharacters();
+      return true;
     } catch (error) {
       console.error('Error generating character profile:', error);
       toast.error('Error al generar perfil. Inténtalo de nuevo.');
+      return false;
     } finally {
       setGeneratingProfile(null);
+    }
+  };
+
+  // Unified approval: generates profile + sets canon asset
+  const approveCharacter = async (character: Character) => {
+    setApprovingCharacter(character.id);
+    
+    try {
+      // 1. Generate profile if it doesn't exist
+      if (!character.profile_json) {
+        toast.info('Generando perfil técnico...');
+        const profileSuccess = await generateProfileWithEntityBuilder(character);
+        if (!profileSuccess) {
+          setApprovingCharacter(null);
+          return;
+        }
+      }
+      
+      // 2. Find main image (closeup_front from pack)
+      const { data: slot } = await supabase
+        .from('character_pack_slots')
+        .select('image_url, run_id')
+        .eq('character_id', character.id)
+        .eq('slot_type', 'closeup_front')
+        .not('image_url', 'is', null)
+        .maybeSingle();
+      
+      if (!slot?.image_url) {
+        toast.warning('Genera primero una imagen principal (closeup frontal) para aprobar');
+        setApprovingCharacter(null);
+        return;
+      }
+      
+      // 3. Create canon asset
+      const { data: canonAsset, error: canonError } = await supabase
+        .from('canon_assets')
+        .insert({
+          project_id: projectId,
+          asset_type: 'character',
+          name: character.name,
+          image_url: slot.image_url,
+          run_id: slot.run_id || crypto.randomUUID(),
+          is_active: true
+        })
+        .select()
+        .single();
+      
+      if (canonError) throw canonError;
+      
+      // 4. Update character with canon_asset_id
+      await supabase
+        .from('characters')
+        .update({ canon_asset_id: canonAsset.id })
+        .eq('id', character.id);
+      
+      toast.success(`${character.name} aprobado para producción ✓`);
+      fetchCharacters();
+      
+    } catch (error) {
+      console.error('Error approving character:', error);
+      toast.error('Error al aprobar personaje');
+    } finally {
+      setApprovingCharacter(null);
     }
   };
 
@@ -1032,20 +1098,28 @@ export default function Characters({ projectId }: CharactersProps) {
                               )}
                             </>
                           )}
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => generateProfileWithEntityBuilder(character)}
-                            disabled={generatingProfile === character.id}
-                            title="Generar Perfil Bible"
-                          >
-                            {generatingProfile === character.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                            ) : (
-                              <BookOpen className="w-4 h-4 mr-1" />
-                            )}
-                            Bible
-                          </Button>
+                          {character.canon_asset_id ? (
+                            <Badge className="bg-amber-500 gap-1">
+                              <Star className="w-3 h-3" />
+                              Aprobado
+                            </Badge>
+                          ) : (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => approveCharacter(character)}
+                              disabled={approvingCharacter === character.id || generatingProfile === character.id}
+                              title="Aprobar personaje para producción (genera perfil + establece imagen oficial)"
+                              className="border-green-500/50 text-green-600 hover:bg-green-50"
+                            >
+                              {approvingCharacter === character.id || generatingProfile === character.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                              ) : (
+                                <Check className="w-4 h-4 mr-1" />
+                              )}
+                              Aprobar
+                            </Button>
+                          )}
                           <Button 
                             variant="ghost" 
                             size="icon" 
@@ -1094,12 +1168,6 @@ export default function Characters({ projectId }: CharactersProps) {
                         {character.role && (
                           <Badge variant="secondary" className="min-w-[70px] justify-center">
                             {getRoleLabel(character.role)}
-                          </Badge>
-                        )}
-                        {character.canon_asset_id && (
-                          <Badge className="bg-amber-500 min-w-[65px] justify-center gap-1">
-                            <Star className="w-3 h-3" />
-                            Aprobado
                           </Badge>
                         )}
                         {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
@@ -1238,18 +1306,21 @@ export default function Characters({ projectId }: CharactersProps) {
                               <Package className="w-4 h-4" />
                             </Button>
                           )}
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => generateProfileWithEntityBuilder(character)}
-                            disabled={generatingProfile === character.id}
-                          >
-                            {generatingProfile === character.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <BookOpen className="w-4 h-4" />
-                            )}
-                          </Button>
+                          {!character.canon_asset_id && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => approveCharacter(character)}
+                              disabled={approvingCharacter === character.id || generatingProfile === character.id}
+                              className="border-green-500/50 text-green-600"
+                            >
+                              {approvingCharacter === character.id || generatingProfile === character.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Check className="w-4 h-4" />
+                              )}
+                            </Button>
+                          )}
                           {(character.pack_completeness_score || 0) >= 90 && (
                             <Button 
                               variant="outline" 
