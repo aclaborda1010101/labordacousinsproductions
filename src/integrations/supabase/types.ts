@@ -2909,6 +2909,7 @@ export type Database = {
       keyframes: {
         Row: {
           approved: boolean | null
+          chain_role: string | null
           created_at: string
           determinism: Json | null
           frame_geometry: Json | null
@@ -2916,6 +2917,7 @@ export type Database = {
           id: string
           image_url: string | null
           locks: Json | null
+          micro_shot_id: string | null
           negative_constraints: Json | null
           prompt_text: string | null
           run_id: string | null
@@ -2927,6 +2929,7 @@ export type Database = {
         }
         Insert: {
           approved?: boolean | null
+          chain_role?: string | null
           created_at?: string
           determinism?: Json | null
           frame_geometry?: Json | null
@@ -2934,6 +2937,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           locks?: Json | null
+          micro_shot_id?: string | null
           negative_constraints?: Json | null
           prompt_text?: string | null
           run_id?: string | null
@@ -2945,6 +2949,7 @@ export type Database = {
         }
         Update: {
           approved?: boolean | null
+          chain_role?: string | null
           created_at?: string
           determinism?: Json | null
           frame_geometry?: Json | null
@@ -2952,6 +2957,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           locks?: Json | null
+          micro_shot_id?: string | null
           negative_constraints?: Json | null
           prompt_text?: string | null
           run_id?: string | null
@@ -2962,6 +2968,13 @@ export type Database = {
           version?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "keyframes_micro_shot_id_fkey"
+            columns: ["micro_shot_id"]
+            isOneToOne: false
+            referencedRelation: "micro_shots"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "keyframes_run_id_fkey"
             columns: ["run_id"]
@@ -3303,6 +3316,108 @@ export type Database = {
             columns: ["character_id"]
             isOneToOne: false
             referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      micro_shots: {
+        Row: {
+          created_at: string
+          duration_sec: number | null
+          end_sec: number
+          generation_run_id: string | null
+          id: string
+          keyframe_final_id: string | null
+          keyframe_initial_id: string | null
+          motion_notes: string | null
+          project_id: string
+          prompt_text: string | null
+          qc_issues: Json | null
+          quality_score: number | null
+          sequence_no: number
+          shot_id: string
+          start_sec: number
+          updated_at: string
+          video_engine: string | null
+          video_status: string | null
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_sec?: number | null
+          end_sec: number
+          generation_run_id?: string | null
+          id?: string
+          keyframe_final_id?: string | null
+          keyframe_initial_id?: string | null
+          motion_notes?: string | null
+          project_id: string
+          prompt_text?: string | null
+          qc_issues?: Json | null
+          quality_score?: number | null
+          sequence_no: number
+          shot_id: string
+          start_sec?: number
+          updated_at?: string
+          video_engine?: string | null
+          video_status?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_sec?: number | null
+          end_sec?: number
+          generation_run_id?: string | null
+          id?: string
+          keyframe_final_id?: string | null
+          keyframe_initial_id?: string | null
+          motion_notes?: string | null
+          project_id?: string
+          prompt_text?: string | null
+          qc_issues?: Json | null
+          quality_score?: number | null
+          sequence_no?: number
+          shot_id?: string
+          start_sec?: number
+          updated_at?: string
+          video_engine?: string | null
+          video_status?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "micro_shots_generation_run_id_fkey"
+            columns: ["generation_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "micro_shots_keyframe_final_id_fkey"
+            columns: ["keyframe_final_id"]
+            isOneToOne: false
+            referencedRelation: "keyframes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "micro_shots_keyframe_initial_id_fkey"
+            columns: ["keyframe_initial_id"]
+            isOneToOne: false
+            referencedRelation: "keyframes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "micro_shots_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "micro_shots_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
             referencedColumns: ["id"]
           },
         ]
@@ -5234,6 +5349,10 @@ export type Database = {
           usage_today: number
         }[]
       }
+      chain_microshot_keyframes: {
+        Args: { p_shot_id: string }
+        Returns: undefined
+      }
       check_rate_limit: {
         Args: {
           p_function_name: string
@@ -5318,6 +5437,36 @@ export type Database = {
           p_visual_dna_hash: string
         }
         Returns: undefined
+      }
+      subdivide_shot_into_microshots: {
+        Args: { p_micro_duration?: number; p_shot_id: string }
+        Returns: {
+          created_at: string
+          duration_sec: number | null
+          end_sec: number
+          generation_run_id: string | null
+          id: string
+          keyframe_final_id: string | null
+          keyframe_initial_id: string | null
+          motion_notes: string | null
+          project_id: string
+          prompt_text: string | null
+          qc_issues: Json | null
+          quality_score: number | null
+          sequence_no: number
+          shot_id: string
+          start_sec: number
+          updated_at: string
+          video_engine: string | null
+          video_status: string | null
+          video_url: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "micro_shots"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       validate_audio_layers: { Args: { layer_id: string }; Returns: boolean }
     }
