@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUserProfileOptional } from '@/contexts/UserProfileContext';
 import { ProfileOnboardingModal } from '@/components/onboarding/ProfileOnboardingModal';
+import { getCachedData, setCachedData, getCacheTimestamp, formatCacheTime } from '@/lib/supabaseRetry';
 import { 
   Plus, 
   Film, 
@@ -28,7 +29,9 @@ import {
   Calendar,
   Play,
   FolderKanban,
-  ChevronRight
+  ChevronRight,
+  RefreshCw,
+  WifiOff
 } from 'lucide-react';
 
 interface Project {
@@ -56,6 +59,8 @@ export default function Dashboard() {
   const profileContext = useUserProfileOptional();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [usingCache, setUsingCache] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
     totalCharacters: 0,
@@ -69,19 +74,28 @@ export default function Dashboard() {
   const completeOnboarding = profileContext?.completeOnboarding;
   const setDeclaredProfile = profileContext?.setDeclaredProfile;
 
-  useEffect(() => {
-    async function fetchDashboardData() {
-      if (!user) return;
-      
+  const fetchDashboardData = useCallback(async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    setError(null);
+    setUsingCache(false);
+    
+    try {
       // Fetch projects
-      const { data: projectsData } = await supabase
+      const { data: projectsData, error: projectsError } = await supabase
         .from('projects')
         .select('*')
         .order('updated_at', { ascending: false })
         .limit(6);
       
+      if (projectsError) {
+        throw projectsError;
+      }
+      
       if (projectsData) {
         setProjects(projectsData);
+        setCachedData('dashboard_projects', projectsData);
       }
 
       // Fetch stats
@@ -91,20 +105,41 @@ export default function Dashboard() {
         supabase.from('shots').select('id', { count: 'exact', head: true }),
       ]);
 
-      setStats({
+      const newStats = {
         totalProjects: projectsData?.length || 0,
         totalCharacters: charactersRes.count || 0,
         totalLocations: locationsRes.count || 0,
         pendingRenders: 0,
         completedShots: shotsRes.count || 0,
         qcIssues: 0,
-      });
+      };
       
+      setStats(newStats);
+      setCachedData('dashboard_stats', newStats);
+    } catch (err) {
+      console.error('Dashboard fetch error:', err);
+      
+      // Try to use cached data
+      const cachedProjects = getCachedData<Project[]>('dashboard_projects');
+      const cachedStats = getCachedData<DashboardStats>('dashboard_stats');
+      
+      if (cachedProjects) {
+        setProjects(cachedProjects);
+        setUsingCache(true);
+        if (cachedStats) {
+          setStats(cachedStats);
+        }
+      } else {
+        setError('No se pudo conectar con el servidor');
+      }
+    } finally {
       setLoading(false);
     }
-    
-    fetchDashboardData();
   }, [user]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const statCards = [
     { 
@@ -236,11 +271,39 @@ export default function Dashboard() {
                 </Button>
               </div>
 
+              {/* Cache indicator */}
+              {usingCache && (
+                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-2 rounded-lg mb-3">
+                  <WifiOff className="w-3.5 h-3.5" />
+                  <span>Mostrando datos en caché — Última actualización: {formatCacheTime(getCacheTimestamp('dashboard_projects'))}</span>
+                  <Button variant="ghost" size="sm" onClick={fetchDashboardData} className="h-6 px-2 ml-auto">
+                    <RefreshCw className="w-3 h-3 mr-1" />
+                    Reintentar
+                  </Button>
+                </div>
+              )}
+
               {loading ? (
                 <div className="grid gap-2 lg:gap-3">
                   {[1, 2, 3].map((i) => (
                     <div key={i} className="h-16 lg:h-20 rounded-xl bg-card/50 shimmer" />
                   ))}
+                </div>
+              ) : error && !usingCache ? (
+                <div className="rounded-xl bg-card border border-destructive/30 p-6 lg:p-10 text-center">
+                  <div className="w-12 lg:w-16 h-12 lg:h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
+                    <WifiOff className="w-6 lg:w-8 h-6 lg:h-8 text-destructive" />
+                  </div>
+                  <h3 className="text-base lg:text-lg font-semibold text-foreground mb-2">
+                    Error de conexión
+                  </h3>
+                  <p className="text-muted-foreground mb-4 lg:mb-6 max-w-md mx-auto text-xs lg:text-sm">
+                    {error}. Verifica tu conexión a internet e intenta nuevamente.
+                  </p>
+                  <Button variant="outline" size="sm" onClick={fetchDashboardData}>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Reintentar
+                  </Button>
                 </div>
               ) : projects.length === 0 ? (
                 <div className="rounded-xl bg-card border border-border/50 p-6 lg:p-10 text-center">

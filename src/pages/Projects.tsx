@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Plus, Search, Film, ArrowRight, Calendar, MoreHorizontal, Settings, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Search, Film, ArrowRight, Calendar, MoreHorizontal, Settings, Trash2, Loader2, RefreshCw, WifiOff } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { getCachedData, setCachedData, getCacheTimestamp, formatCacheTime } from '@/lib/supabaseRetry';
 
 interface Project {
   id: string;
@@ -26,6 +27,8 @@ export default function Projects() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [usingCache, setUsingCache] = useState(false);
   const [search, setSearch] = useState('');
   const [deleteDialog, setDeleteDialog] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -38,28 +41,54 @@ export default function Projects() {
     } else {
       toast.success('Proyecto eliminado');
       setProjects(projects.filter(p => p.id !== projectId));
+      // Update cache
+      setCachedData('projects_list', projects.filter(p => p.id !== projectId));
     }
     setDeleting(false);
     setDeleteDialog(null);
   };
 
-  useEffect(() => {
-    async function fetchProjects() {
-      if (!user) return;
-      
-      const { data, error } = await supabase
+  const fetchProjects = useCallback(async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    setError(null);
+    setUsingCache(false);
+    
+    try {
+      const { data, error: fetchError } = await supabase
         .from('projects')
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (!error && data) {
-        setProjects(data);
+      if (fetchError) {
+        throw fetchError;
       }
+      
+      if (data) {
+        setProjects(data);
+        setCachedData('projects_list', data);
+      }
+    } catch (err) {
+      console.error('Projects fetch error:', err);
+      
+      // Try to use cached data
+      const cachedProjects = getCachedData<Project[]>('projects_list');
+      
+      if (cachedProjects) {
+        setProjects(cachedProjects);
+        setUsingCache(true);
+      } else {
+        setError('No se pudo conectar con el servidor');
+      }
+    } finally {
       setLoading(false);
     }
-    
-    fetchProjects();
   }, [user]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const filteredProjects = projects.filter(p => 
     p.title.toLowerCase().includes(search.toLowerCase())
@@ -98,12 +127,38 @@ export default function Projects() {
             />
           </div>
 
+          {/* Cache indicator */}
+          {usingCache && (
+            <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-2 rounded-lg">
+              <WifiOff className="w-3.5 h-3.5" />
+              <span>Mostrando datos en caché — Última actualización: {formatCacheTime(getCacheTimestamp('projects_list'))}</span>
+              <Button variant="ghost" size="sm" onClick={fetchProjects} className="h-6 px-2 ml-auto">
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Reintentar
+              </Button>
+            </div>
+          )}
+
           {/* Projects grid */}
           {loading ? (
             <div className="grid gap-3">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="panel h-20 lg:h-28 shimmer" />
               ))}
+            </div>
+          ) : error && !usingCache ? (
+            <div className="panel p-8 lg:p-12 text-center border-destructive/30">
+              <WifiOff className="w-10 lg:w-12 h-10 lg:h-12 text-destructive mx-auto mb-3 lg:mb-4" />
+              <h3 className="text-base lg:text-lg font-semibold text-foreground mb-2">
+                Error de conexión
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4 lg:mb-6">
+                {error}. Verifica tu conexión a internet e intenta nuevamente.
+              </p>
+              <Button variant="outline" size="sm" onClick={fetchProjects}>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Reintentar
+              </Button>
             </div>
           ) : filteredProjects.length === 0 ? (
             <div className="panel p-8 lg:p-12 text-center">
