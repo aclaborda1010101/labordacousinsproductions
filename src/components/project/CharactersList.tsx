@@ -22,6 +22,7 @@ import NextStepNavigator from './NextStepNavigator';
 import { resolveImageModel } from '@/config/models';
 import { fetchCharacterImages, CharacterImageData } from '@/lib/resolveCharacterImage';
 import { CharacterWorkflowGuide, getWorkflowStep } from './CharacterWorkflowGuide';
+import CharacterEditDialog from './CharacterEditDialog';
 import {
   Plus,
   Users,
@@ -31,6 +32,7 @@ import {
   Trash2,
   Video,
   RefreshCw,
+  Edit2,
 } from 'lucide-react';
 
 interface CharactersListProps {
@@ -76,6 +78,8 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const [importingFromScript, setImportingFromScript] = useState(false);
   const [scriptCharacters, setScriptCharacters] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -663,6 +667,10 @@ export default function CharactersList({ projectId }: CharactersListProps) {
 
                   {/* Quick actions */}
                   <div className="flex gap-2 flex-wrap">
+                    <Button variant="ghost" size="sm" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }}>
+                      <Edit2 className="w-4 h-4 mr-2" />
+                      Editar
+                    </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleDeleteCharacter(character.id)}>
                       <Trash2 className="w-4 h-4 mr-2" />
                       Eliminar
@@ -771,6 +779,17 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           stats={`${characters.filter(c => c.canon_asset_id || c.accepted_run_id).length}/${characters.length} listos`}
         />
       )}
+
+      {/* Character Edit Dialog */}
+      <CharacterEditDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        character={editingCharacter}
+        onSaved={() => {
+          fetchCharacters();
+          setEditingCharacter(null);
+        }}
+      />
     </div>
   );
 }
