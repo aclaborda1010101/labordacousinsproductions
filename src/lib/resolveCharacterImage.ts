@@ -83,17 +83,26 @@ export async function fetchCharacterImages(
     return result;
   }
 
-  // Batch fetch hero slots
+  // Batch fetch hero slots - prioritize closeup_front (Phase 2: Base Visual)
+  const slotPriority = ['closeup_front', 'ref_closeup_front', 'hero_front', 'anchor_closeup'];
+  
   const { data: heroSlots } = await supabase
     .from('character_pack_slots')
-    .select('character_id, image_url')
+    .select('character_id, image_url, slot_type')
     .in('character_id', charIds)
-    .in('slot_type', ['hero_front', 'closeup_front', 'anchor_closeup'])
+    .in('slot_type', slotPriority)
     .not('image_url', 'is', null);
 
   const heroImages = new Map<string, string>();
   if (heroSlots) {
-    heroSlots.forEach(slot => {
+    // Sort by priority and pick the best one per character
+    const sortedSlots = [...heroSlots].sort((a, b) => {
+      const priorityA = slotPriority.indexOf(a.slot_type);
+      const priorityB = slotPriority.indexOf(b.slot_type);
+      return priorityA - priorityB;
+    });
+    
+    sortedSlots.forEach(slot => {
       if (!heroImages.has(slot.character_id) && slot.image_url) {
         heroImages.set(slot.character_id, slot.image_url);
       }
