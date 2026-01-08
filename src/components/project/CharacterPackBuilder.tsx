@@ -25,6 +25,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useCharacterPackGeneration, SlotDefinition } from '@/hooks/useCharacterPackGeneration';
+import { CoherenceComparisonModal } from './CoherenceComparisonModal';
 
 // ============================================
 // 12 ESSENTIAL MODEL PACK - 4 PHASES
@@ -172,6 +173,17 @@ export function CharacterPackBuilder({
   const [rebuildingFromBase, setRebuildingFromBase] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  
+  // A/B Comparison state for coherence regeneration
+  const [comparisonState, setComparisonState] = useState<{
+    isOpen: boolean;
+    slotType: string;
+    slotId: string;
+    slotLabel: string;
+    previousImage: { url: string; qcScore: number | null; qcIssues: string[] | null };
+    newImage: { url: string; qcScore: number | null; qcIssues: string[] | null } | null;
+    isGenerating: boolean;
+  } | null>(null);
 
   // Fetch or initialize slots - with automatic backfill for missing slots
   const fetchSlots = useCallback(async () => {
@@ -842,56 +854,171 @@ export function CharacterPackBuilder({
     }
   };
 
-  // Improve QC - regenerate with enhanced prompt (identity-focused)
+  // Improve QC - regenerate with enhanced prompt (identity-focused) + A/B Comparison
   const regenerateWithCoherence = async (slotType: string, slotId: string, qcIssues?: string[], fixNotes?: string) => {
-    setImprovingQC(true);
+    const slot = getSlot(slotType);
+    if (!slot || !slot.image_url) return;
+    
+    // Get slot label
+    const slotDef = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
+      .find(s => s.type === slotType);
+    
+    // Save current image and open comparison modal
+    setComparisonState({
+      isOpen: true,
+      slotType,
+      slotId,
+      slotLabel: slotDef?.label || slotType,
+      previousImage: {
+        url: slot.image_url,
+        qcScore: slot.qc_score,
+        qcIssues: slot.qc_issues,
+      },
+      newImage: null,
+      isGenerating: true,
+    });
+    
+    // Close preview modal
+    setPreviewImage(null);
+    setImproveCoherenceMode(false);
+    
     try {
       // Get enhanced prompt with identity checklist
-      const { data: enhanceData, error: enhanceError } = await supabase.functions.invoke('improve-character-qc', {
+      const { error: enhanceError } = await supabase.functions.invoke('improve-character-qc', {
         body: {
           slotId,
           characterId,
           projectId,
           currentIssues: qcIssues || [],
           fixNotes: fixNotes || '',
-          mode: 'coherence' // Request identity-focused improvements
+          mode: 'coherence'
         }
       });
 
       if (enhanceError) {
         console.error('Error getting enhanced prompt:', enhanceError);
         toast.error('Error al mejorar el prompt');
-        setImprovingQC(false);
+        setComparisonState(prev => prev ? { ...prev, isGenerating: false } : null);
         return;
       }
 
-      toast.info(
-        <div className="space-y-1">
-          <p className="font-medium">🔒 Modo Coherencia Activado</p>
-          <p className="text-sm text-muted-foreground">
-            Checklist: pelo, rasgos, edad, proporciones, vestuario
-          </p>
-        </div>
-      );
-
       // Regenerate with the enhanced prompt
-      const slotDef = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
-        .find(s => s.type === slotType);
+      const viewAngle = slotDef && 'viewAngle' in slotDef ? slotDef.viewAngle : undefined;
+      const expression = slotDef && 'expression' in slotDef ? slotDef.expression : undefined;
       
-      if (slotDef) {
-        const viewAngle = 'viewAngle' in slotDef ? slotDef.viewAngle : undefined;
-        const expression = 'expression' in slotDef ? slotDef.expression : undefined;
-        await generateSlot(slotType, viewAngle, expression);
-      }
+      const result = await generateSingleSlot(slotId, slotType, {
+        viewAngle: viewAngle || slot.view_angle || undefined,
+        expression: expression || slot.expression_name || undefined,
+      });
 
-      setPreviewImage(null);
-      await fetchSlots();
-      toast.success('Imagen regenerada con refuerzo de identidad');
+      if (result.success) {
+        // Fetch the updated slot to get new image
+        const { data: updatedSlot } = await supabase
+          .from('character_pack_slots')
+          .select('*')
+          .eq('id', slotId)
+          .single();
+          
+        if (updatedSlot) {
+          setComparisonState(prev => prev ? {
+            ...prev,
+            isGenerating: false,
+            newImage: {
+              url: updatedSlot.image_url || '',
+              qcScore: updatedSlot.qc_score,
+              qcIssues: (updatedSlot.qc_issues as string[]) || null,
+            },
+          } : null);
+        }
+      } else {
+        toast.error(result.error || 'Error al regenerar');
+        setComparisonState(prev => prev ? { ...prev, isGenerating: false } : null);
+      }
     } catch (error) {
       console.error('Error improving coherence:', error);
       toast.error('Error al mejorar coherencia');
-    } finally {
-      setImprovingQC(false);
+      setComparisonState(prev => prev ? { ...prev, isGenerating: false } : null);
+    }
+  };
+  
+  // Comparison modal handlers
+  const handleKeepPrevious = async () => {
+    if (!comparisonState) return;
+    
+    // Restore previous image
+    const { error } = await supabase
+      .from('character_pack_slots')
+      .update({
+        image_url: comparisonState.previousImage.url,
+        qc_score: comparisonState.previousImage.qcScore,
+        qc_issues: comparisonState.previousImage.qcIssues,
+      })
+      .eq('id', comparisonState.slotId);
+      
+    if (error) {
+      toast.error('Error al restaurar imagen anterior');
+    } else {
+      toast.success('Imagen anterior conservada');
+    }
+    
+    setComparisonState(null);
+    await fetchSlots();
+  };
+  
+  const handleAcceptNew = async () => {
+    if (!comparisonState || !comparisonState.newImage) return;
+    
+    // New image is already saved, just close
+    toast.success('Nueva imagen aceptada');
+    setComparisonState(null);
+    await fetchSlots();
+  };
+  
+  const handleRegenerateAgain = async () => {
+    if (!comparisonState) return;
+    
+    // Trigger another regeneration
+    setComparisonState(prev => prev ? { ...prev, isGenerating: true, newImage: null } : null);
+    
+    const slot = getSlot(comparisonState.slotType);
+    const slotDef = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
+      .find(s => s.type === comparisonState.slotType);
+      
+    try {
+      const viewAngle = slotDef && 'viewAngle' in slotDef ? slotDef.viewAngle : undefined;
+      const expression = slotDef && 'expression' in slotDef ? slotDef.expression : undefined;
+      
+      const result = await generateSingleSlot(comparisonState.slotId, comparisonState.slotType, {
+        viewAngle: viewAngle || slot?.view_angle || undefined,
+        expression: expression || slot?.expression_name || undefined,
+      });
+
+      if (result.success) {
+        const { data: updatedSlot } = await supabase
+          .from('character_pack_slots')
+          .select('*')
+          .eq('id', comparisonState.slotId)
+          .single();
+          
+        if (updatedSlot) {
+          setComparisonState(prev => prev ? {
+            ...prev,
+            isGenerating: false,
+            newImage: {
+              url: updatedSlot.image_url || '',
+              qcScore: updatedSlot.qc_score,
+              qcIssues: (updatedSlot.qc_issues as string[]) || null,
+            },
+          } : null);
+        }
+      } else {
+        toast.error(result.error || 'Error al regenerar');
+        setComparisonState(prev => prev ? { ...prev, isGenerating: false } : null);
+      }
+    } catch (error) {
+      console.error('Error regenerating:', error);
+      toast.error('Error al regenerar');
+      setComparisonState(prev => prev ? { ...prev, isGenerating: false } : null);
     }
   };
 
@@ -1626,6 +1753,28 @@ export function CharacterPackBuilder({
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* A/B Comparison Modal for Coherence */}
+      {comparisonState && (
+        <CoherenceComparisonModal
+          open={comparisonState.isOpen}
+          onClose={() => {
+            // If still generating, keep previous and close
+            if (comparisonState.isGenerating) {
+              handleKeepPrevious();
+            } else {
+              setComparisonState(null);
+            }
+          }}
+          slotLabel={comparisonState.slotLabel}
+          previousImage={comparisonState.previousImage}
+          newImage={comparisonState.newImage}
+          isGenerating={comparisonState.isGenerating}
+          onKeepPrevious={handleKeepPrevious}
+          onAcceptNew={handleAcceptNew}
+          onRegenerateAgain={handleRegenerateAgain}
+        />
+      )}
     </>
   );
 }
