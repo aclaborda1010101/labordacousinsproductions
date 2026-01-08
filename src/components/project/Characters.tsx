@@ -27,6 +27,7 @@ import { ProductionModePanel } from './ProductionModePanel';
 import { CharacterGenerationPanel } from './CharacterGenerationPanel';
 import { fetchCharacterImages, CharacterImageData } from '@/lib/resolveCharacterImage';
 import { CharacterWorkflowGuide, getWorkflowStep } from './CharacterWorkflowGuide';
+import CharacterEditDialog from './CharacterEditDialog';
 
 interface CharactersProps { projectId: string; }
 
@@ -77,6 +78,8 @@ export default function Characters({ projectId }: CharactersProps) {
   const [autoGenerating, setAutoGenerating] = useState<string | null>(null);
   const [autoGeneratingAll, setAutoGeneratingAll] = useState(false);
   const [autoGenProgress, setAutoGenProgress] = useState<{current: number; total: number; phase: string} | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -1087,7 +1090,7 @@ export default function Characters({ projectId }: CharactersProps) {
                             <ChevronDown className="w-4 h-4" />
                           )}
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => startEditing(character)} title="Editar">
+                        <Button variant="ghost" size="icon" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }} title="Editar">
                           <Edit2 className="w-4 h-4" />
                         </Button>
                         <Button 
@@ -1232,7 +1235,7 @@ export default function Characters({ projectId }: CharactersProps) {
                           )}
                         </div>
                         <div className="flex gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => startEditing(character)}>
+                          <Button variant="ghost" size="icon" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }}>
                             <Edit2 className="w-4 h-4" />
                           </Button>
                           <Button 
@@ -1745,6 +1748,17 @@ export default function Characters({ projectId }: CharactersProps) {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Character Edit Dialog */}
+      <CharacterEditDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        character={editingCharacter}
+        onSaved={() => {
+          fetchCharacters();
+          setEditingCharacter(null);
+        }}
+      />
     </div>
   );
 }

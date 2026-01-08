@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -20,6 +20,7 @@ import { ShortTemplatePanel } from './ShortTemplatePanel';
 import { useShortTemplate } from '@/hooks/useShortTemplate';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { runTemplateQAChecks, TemplateQAWarning } from '@/lib/shortTemplates';
+import SceneEditDialog from './SceneEditDialog';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -94,6 +95,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
   const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
   const [hasStyleConfig, setHasStyleConfig] = useState<boolean | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingScene, setEditingScene] = useState<Scene | null>(null);
 
   // Editorial Knowledge Base context
   const { formatProfile, visualStyle, userLevel } = useEditorialKnowledgeBase({
@@ -687,6 +690,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                               <button onClick={() => updateSceneMode(scene.id, 'ULTRA')} className={cn("px-3 py-1 rounded text-xs font-semibold transition-all", scene.quality_mode === 'ULTRA' ? "bg-gradient-to-r from-primary/20 to-amber-500/20 text-primary border border-primary/30" : "bg-muted text-muted-foreground hover:bg-muted/80")}>ULTRA</button>
                             </div>
                             <Badge variant={scene.priority === 'P0' ? 'p0' : scene.priority === 'P1' ? 'p1' : 'p2'}>{scene.priority}</Badge>
+                            <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setEditingScene(scene); setShowEditDialog(true); }} title="Editar escena"><Edit2 className="w-4 h-4" /></Button>
                             <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); deleteScene(scene.id); }}><Trash2 className="w-4 h-4" /></Button>
                           </div>
 
@@ -1111,6 +1115,20 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         onRegenerated={() => {
           fetchScenes();
           setExpandedEpisodes(prev => new Set(prev).add(regenerateEpisodeNo));
+        }}
+      />
+
+      {/* Scene Edit Dialog */}
+      <SceneEditDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        scene={editingScene}
+        projectId={projectId}
+        characters={characters}
+        locations={locations}
+        onSaved={() => {
+          fetchScenes();
+          setEditingScene(null);
         }}
       />
     </div>
