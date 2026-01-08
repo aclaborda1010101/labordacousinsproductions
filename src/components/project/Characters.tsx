@@ -967,166 +967,170 @@ export default function Characters({ projectId }: CharactersProps) {
                 ) : (
                   <>
                     {/* Character Header - Desktop */}
-                    <div className="hidden sm:flex p-4 items-start gap-4">
-                      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden shrink-0">
-                        {(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)) ? (
-                          <img 
-                            src={characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)} 
-                            alt={character.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          character.name[0].toUpperCase()
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <h3 className="font-semibold text-foreground text-lg">{character.name}</h3>
-                          {character.character_role && (
-                            <Badge variant="outline" className={getCharacterRoleBadgeColor(character.character_role)}>
-                              {getCharacterRoleLabel(character.character_role)}
-                            </Badge>
-                          )}
-                          {/* Canon badge - same as ASSISTED mode */}
-                          {character.canon_asset_id && (
-                            <Badge className="bg-amber-500 gap-1">
-                              <Star className="w-3 h-3" />
-                              Canon
-                            </Badge>
-                          )}
-                          {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
-                            <Badge 
-                              variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
-                              className={character.pack_completeness_score >= 90 ? "bg-green-600" : ""}
-                            >
-                              <Package className="w-3 h-3 mr-1" />
-                              Pack {character.pack_completeness_score}%
-                            </Badge>
-                          )}
-                          <EntityQCBadge
-                            entityType="character"
-                            hasProfile={!!character.profile_json}
-                            packScore={character.pack_completeness_score || 0}
-                            hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
-                          />
-                          {/* Workflow progress badge */}
-                          <CharacterWorkflowGuide 
-                            currentStep={getWorkflowStep({
-                              hasBio: !!character.bio,
-                              hasImage: !!(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front),
-                              isAccepted: !!character.accepted_run_id,
-                              isCanon: !!character.canon_asset_id,
-                            })} 
-                            compact 
-                          />
-                          {character.role && (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                              {getRoleLabel(character.role)}
-                            </span>
+                    {/* Character Card - Desktop */}
+                    <div className="hidden sm:flex flex-col p-4 gap-3">
+                      {/* Row 1: Avatar + Name + Actions */}
+                      <div className="flex items-start gap-4">
+                        <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden shrink-0">
+                          {(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)) ? (
+                            <img 
+                              src={characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)} 
+                              alt={character.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            character.name[0].toUpperCase()
                           )}
                         </div>
-                        {character.bio && (
-                          <p className="text-sm text-muted-foreground line-clamp-2">{character.bio}</p>
-                        )}
-                      </div>
-                      <div className="flex gap-1 flex-wrap shrink-0">
-                        {character.character_role && (
-                          <>
-                            <Button 
-                              variant="gold" 
-                              size="sm"
-                              onClick={() => autoGenerateCharacterPack(character)}
-                              disabled={autoGenerating === character.id}
-                              title="Generar pack automáticamente con IA"
-                            >
-                              {autoGenerating === character.id ? (
-                                <>
-                                  <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                                  {autoGenProgress?.phase?.slice(0, 15) || 'Generando...'}
-                                </>
-                              ) : (
-                                <>
-                                  <Play className="w-4 h-4 mr-1" />
-                                  Generar
-                                </>
-                              )}
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => setShowPackBuilder(character.id)}
-                            >
-                              <Package className="w-4 h-4 mr-1" />
-                              Pack
-                            </Button>
-                            {(character.pack_completeness_score || 0) >= 90 && (
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-foreground text-lg">{character.name}</h3>
+                          {character.bio && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{character.bio}</p>
+                          )}
+                        </div>
+                        <div className="flex gap-1 flex-wrap shrink-0">
+                          {character.character_role && (
+                            <>
+                              <Button 
+                                variant="gold" 
+                                size="sm"
+                                onClick={() => autoGenerateCharacterPack(character)}
+                                disabled={autoGenerating === character.id}
+                                title="Generar pack automáticamente con IA"
+                              >
+                                {autoGenerating === character.id ? (
+                                  <>
+                                    <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                                    {autoGenProgress?.phase?.slice(0, 15) || 'Generando...'}
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="w-4 h-4 mr-1" />
+                                    Generar
+                                  </>
+                                )}
+                              </Button>
                               <Button 
                                 variant="outline" 
                                 size="sm"
-                                onClick={() => setShowQuickStart(character.id)}
-                                title="Modo Producción: Entrenar LoRA para máxima consistencia"
-                                className="border-amber-500/50 text-amber-600 hover:bg-amber-50"
+                                onClick={() => setShowPackBuilder(character.id)}
                               >
-                                <Zap className="w-4 h-4 mr-1" />
-                                LoRA
+                                <Package className="w-4 h-4 mr-1" />
+                                Pack
                               </Button>
+                              {(character.pack_completeness_score || 0) >= 90 && (
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => setShowQuickStart(character.id)}
+                                  title="Modo Producción: Entrenar LoRA para máxima consistencia"
+                                  className="border-amber-500/50 text-amber-600 hover:bg-amber-50"
+                                >
+                                  <Zap className="w-4 h-4 mr-1" />
+                                  LoRA
+                                </Button>
+                              )}
+                            </>
+                          )}
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => generateProfileWithEntityBuilder(character)}
+                            disabled={generatingProfile === character.id}
+                            title="Generar Perfil Bible"
+                          >
+                            {generatingProfile === character.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                            ) : (
+                              <BookOpen className="w-4 h-4 mr-1" />
                             )}
-                          </>
+                            Bible
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => setExpandedId(expandedId === character.id ? null : character.id)}
+                          >
+                            {expandedId === character.id ? (
+                              <ChevronUp className="w-4 h-4" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }} title="Editar">
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => duplicateCharacter(character)}
+                            disabled={duplicating === character.id}
+                            title="Duplicar"
+                          >
+                            {duplicating === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleExportPack(character)}
+                            disabled={exporting === character.id || !character.pack_completeness_score}
+                            title="Exportar Pack ZIP"
+                          >
+                            {exporting === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)} title="Eliminar">
+                            <Trash2 className="w-4 h-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Row 2: Badges - aligned bottom row */}
+                      <div className="flex items-center gap-2 pt-2 border-t border-border/30">
+                        {character.character_role && (
+                          <Badge variant="outline" className={`min-w-[80px] justify-center ${getCharacterRoleBadgeColor(character.character_role)}`}>
+                            {getCharacterRoleLabel(character.character_role)}
+                          </Badge>
                         )}
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => generateProfileWithEntityBuilder(character)}
-                          disabled={generatingProfile === character.id}
-                          title="Generar Perfil Bible"
-                        >
-                          {generatingProfile === character.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                          ) : (
-                            <BookOpen className="w-4 h-4 mr-1" />
-                          )}
-                          Bible
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => setExpandedId(expandedId === character.id ? null : character.id)}
-                        >
-                          {expandedId === character.id ? (
-                            <ChevronUp className="w-4 h-4" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4" />
-                          )}
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }} title="Editar">
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => duplicateCharacter(character)}
-                          disabled={duplicating === character.id}
-                          title="Duplicar"
-                        >
-                          {duplicating === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleExportPack(character)}
-                          disabled={exporting === character.id || !character.pack_completeness_score}
-                          title="Exportar Pack ZIP"
-                        >
-                          {exporting === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)} title="Eliminar">
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
+                        {character.role && (
+                          <Badge variant="secondary" className="min-w-[70px] justify-center">
+                            {getRoleLabel(character.role)}
+                          </Badge>
+                        )}
+                        {character.canon_asset_id && (
+                          <Badge className="bg-amber-500 min-w-[65px] justify-center gap-1">
+                            <Star className="w-3 h-3" />
+                            Canon
+                          </Badge>
+                        )}
+                        {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
+                          <Badge 
+                            variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
+                            className={`min-w-[75px] justify-center ${character.pack_completeness_score >= 90 ? "bg-green-600" : ""}`}
+                          >
+                            <Package className="w-3 h-3 mr-1" />
+                            Pack {character.pack_completeness_score}%
+                          </Badge>
+                        )}
+                        <EntityQCBadge
+                          entityType="character"
+                          hasProfile={!!character.profile_json}
+                          packScore={character.pack_completeness_score || 0}
+                          hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                        />
+                        <CharacterWorkflowGuide 
+                          currentStep={getWorkflowStep({
+                            hasBio: !!character.bio,
+                            hasImage: !!(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front),
+                            isAccepted: !!character.accepted_run_id,
+                            isCanon: !!character.canon_asset_id,
+                          })} 
+                          compact 
+                        />
                       </div>
                     </div>
 
-                    {/* Character Header - Mobile */}
-                    <div className="flex sm:hidden flex-col p-3 gap-3">
+                    {/* Character Card - Mobile */}
+                    <div className="flex sm:hidden flex-col p-3 gap-2">
                       {/* Row 1: Avatar + Name + Expand */}
                       <div className="flex items-start gap-3">
                         <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xl overflow-hidden shrink-0">
@@ -1142,35 +1146,9 @@ export default function Characters({ projectId }: CharactersProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-foreground text-sm truncate">{character.name}</h3>
-                          <div className="flex items-center gap-1 mt-1 flex-wrap">
-                            {character.character_role && (
-                              <Badge variant="outline" className={`text-xs ${getCharacterRoleBadgeColor(character.character_role)}`}>
-                                {getCharacterRoleLabel(character.character_role)}
-                              </Badge>
-                            )}
-                            {/* Canon badge - mobile */}
-                            {character.canon_asset_id && (
-                              <Badge className="bg-amber-500 gap-1 text-xs">
-                                <Star className="w-3 h-3" />
-                                Canon
-                              </Badge>
-                            )}
-                            {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
-                              <Badge 
-                                variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
-                                className={`text-xs ${character.pack_completeness_score >= 90 ? "bg-green-600" : ""}`}
-                              >
-                                <Package className="w-3 h-3 mr-0.5" />
-                                {character.pack_completeness_score}%
-                              </Badge>
-                            )}
-                            <EntityQCBadge
-                              entityType="character"
-                              hasProfile={!!character.profile_json}
-                              packScore={character.pack_completeness_score || 0}
-                              hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
-                            />
-                          </div>
+                          {character.bio && (
+                            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{character.bio}</p>
+                          )}
                         </div>
                         <Button 
                           variant="ghost" 
@@ -1186,10 +1164,44 @@ export default function Characters({ projectId }: CharactersProps) {
                         </Button>
                       </div>
 
-                      {/* Row 2: Bio (if exists) */}
-                      {character.bio && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">{character.bio}</p>
-                      )}
+                      {/* Row 2: Badges - scrollable */}
+                      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pt-2 border-t border-border/30">
+                        {character.character_role && (
+                          <Badge variant="outline" className={`text-xs shrink-0 min-w-[60px] justify-center ${getCharacterRoleBadgeColor(character.character_role)}`}>
+                            {getCharacterRoleLabel(character.character_role)}
+                          </Badge>
+                        )}
+                        {character.canon_asset_id && (
+                          <Badge className="bg-amber-500 gap-1 text-xs shrink-0 min-w-[55px] justify-center">
+                            <Star className="w-3 h-3" />
+                            Canon
+                          </Badge>
+                        )}
+                        {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
+                          <Badge 
+                            variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
+                            className={`text-xs shrink-0 min-w-[55px] justify-center ${character.pack_completeness_score >= 90 ? "bg-green-600" : ""}`}
+                          >
+                            <Package className="w-3 h-3 mr-0.5" />
+                            {character.pack_completeness_score}%
+                          </Badge>
+                        )}
+                        <EntityQCBadge
+                          entityType="character"
+                          hasProfile={!!character.profile_json}
+                          packScore={character.pack_completeness_score || 0}
+                          hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                        />
+                        <CharacterWorkflowGuide 
+                          currentStep={getWorkflowStep({
+                            hasBio: !!character.bio,
+                            hasImage: !!(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front),
+                            isAccepted: !!character.accepted_run_id,
+                            isCanon: !!character.canon_asset_id,
+                          })} 
+                          compact 
+                        />
+                      </div>
 
                       {/* Row 3: Primary action button */}
                       {character.character_role && (
