@@ -157,6 +157,35 @@ export function BackgroundTasksProvider({ children }: { children: ReactNode }) {
       }
 
       if (data) {
+        // Auto-cleanup zombie tasks (running/pending for > 10 minutes)
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+        const zombieTasks = data.filter(t => 
+          (t.status === 'running' || t.status === 'pending') && 
+          t.updated_at < tenMinutesAgo
+        );
+        
+        if (zombieTasks.length > 0) {
+          const zombieIds = zombieTasks.map(t => t.id);
+          console.log(`Cleaning ${zombieTasks.length} zombie task(s):`, zombieIds);
+          
+          await supabase
+            .from('background_tasks')
+            .update({ 
+              status: 'failed', 
+              error: 'Proceso interrumpido (timeout)',
+              updated_at: new Date().toISOString()
+            })
+            .in('id', zombieIds);
+          
+          // Update local data
+          data.forEach(t => {
+            if (zombieIds.includes(t.id)) {
+              t.status = 'failed';
+              t.error = 'Proceso interrumpido (timeout)';
+            }
+          });
+        }
+        
         setTasks(data.map(dbRowToTask));
         setIsSynced(true);
         initialLoadDone.current = true;
