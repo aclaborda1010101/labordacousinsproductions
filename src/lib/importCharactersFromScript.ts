@@ -94,7 +94,9 @@ export async function importCharactersFromScript(
   // Extract characters from various formats
   const scriptCharacters: ScriptCharacter[] = [];
   
-  // New format: characters.cast
+  // ═══════════════════════════════════════════════════════════════════
+  // ASSISTED format: characters.cast, featured_extras, etc.
+  // ═══════════════════════════════════════════════════════════════════
   if (parsedJson.characters?.cast) {
     scriptCharacters.push(...parsedJson.characters.cast);
   }
@@ -115,10 +117,111 @@ export async function importCharactersFromScript(
     scriptCharacters.push(...parsedJson.characters.voices_and_functional);
   }
 
-  if (scriptCharacters.length === 0) {
+  // ═══════════════════════════════════════════════════════════════════
+  // PRO format: characters.protagonists, co_protagonists, secondary, minor
+  // ═══════════════════════════════════════════════════════════════════
+  if (parsedJson.characters?.protagonists) {
+    scriptCharacters.push(
+      ...parsedJson.characters.protagonists.map((c: ScriptCharacter) => ({
+        ...c,
+        role: 'protagonist',
+        narrative_weight: 'protagonist'
+      }))
+    );
+  }
+  if (parsedJson.characters?.co_protagonists) {
+    scriptCharacters.push(
+      ...parsedJson.characters.co_protagonists.map((c: ScriptCharacter) => ({
+        ...c,
+        role: 'co_protagonist',
+        narrative_weight: 'major_supporting'
+      }))
+    );
+  }
+  if (parsedJson.characters?.secondary) {
+    scriptCharacters.push(
+      ...parsedJson.characters.secondary.map((c: ScriptCharacter) => ({
+        ...c,
+        role: 'secondary',
+        narrative_weight: 'supporting'
+      }))
+    );
+  }
+  if (parsedJson.characters?.minor) {
+    scriptCharacters.push(
+      ...parsedJson.characters.minor.map((c: ScriptCharacter) => ({
+        ...c,
+        role: 'minor',
+        narrative_weight: 'minor'
+      }))
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // ASSISTED v25 format: narrative_classification
+  // ═══════════════════════════════════════════════════════════════════
+  const narrativeClass = parsedJson.characters?.narrative_classification;
+  if (narrativeClass) {
+    if (narrativeClass.protagonists?.length) {
+      scriptCharacters.push(
+        ...narrativeClass.protagonists.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'protagonist',
+          narrative_weight: 'protagonist',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+    if (narrativeClass.major_supporting?.length) {
+      scriptCharacters.push(
+        ...narrativeClass.major_supporting.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'major_supporting',
+          narrative_weight: 'major_supporting',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+    if (narrativeClass.minor_speaking?.length) {
+      scriptCharacters.push(
+        ...narrativeClass.minor_speaking.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'minor',
+          narrative_weight: 'minor',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+    if (narrativeClass.voices_systems?.length) {
+      scriptCharacters.push(
+        ...narrativeClass.voices_systems.map((c: Record<string, unknown>) => ({
+          name: (c.name ?? c.canonical_name ?? c.label) as string,
+          role: 'voice',
+          narrative_weight: 'extra',
+          description: c.description as string | undefined,
+        }))
+      );
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Deduplicate by normalized name before processing
+  // ═══════════════════════════════════════════════════════════════════
+  const seenNames = new Set<string>();
+  const deduplicatedCharacters = scriptCharacters.filter(char => {
+    if (!char.name) return false;
+    const normalized = getComparisonName(char.name);
+    if (seenNames.has(normalized)) return false;
+    seenNames.add(normalized);
+    return true;
+  });
+
+  if (deduplicatedCharacters.length === 0) {
     console.log('[importCharacters] No characters found in parsed_json');
     return [];
   }
+
+  console.log(`[importCharacters] Found ${deduplicatedCharacters.length} characters in script (after dedup from ${scriptCharacters.length})`)
 
   console.log(`[importCharacters] Found ${scriptCharacters.length} characters in script`);
 
@@ -148,13 +251,13 @@ export async function importCharactersFromScript(
     profile_json: Json;
   }> = [];
 
-  for (const scriptChar of scriptCharacters) {
+  for (const scriptChar of deduplicatedCharacters) {
     if (!scriptChar.name) continue;
 
     const displayName = normalizeCharacterName(scriptChar.name);
     const comparisonName = getComparisonName(displayName);
 
-    // Skip if already exists
+    // Skip if already exists in DB
     if (existingNamesMap.has(comparisonName)) {
       console.log(`[importCharacters] Skipping existing: ${displayName}`);
       continue;
