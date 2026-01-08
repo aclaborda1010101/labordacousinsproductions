@@ -886,9 +886,9 @@ export function CharacterPackBuilder({
               <TooltipContent>
                 {slot.qc_score !== null ? (
                   slot.qc_score < 80 
-                    ? `QC: ${slot.qc_score}% - Click para mejorar` 
-                    : `QC: ${slot.qc_score}% - Aprobado`
-                ) : 'Sin evaluación QC'}
+                    ? `Coherencia: ${slot.qc_score}% - Click para mejorar` 
+                    : `Coherencia: ${slot.qc_score}% - Aprobado`
+                ) : 'Sin evaluación de coherencia'}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -1278,7 +1278,7 @@ export function CharacterPackBuilder({
               {previewImage?.label}
               {previewImage?.qcScore !== null && previewImage?.qcScore !== undefined && (
                 <Badge variant={previewImage.qcScore >= 80 ? 'pass' : 'pending'} className="ml-2">
-                  QC: {previewImage.qcScore}%
+                  Coherencia: {previewImage.qcScore}%
                 </Badge>
               )}
             </DialogTitle>
@@ -1318,9 +1318,9 @@ export function CharacterPackBuilder({
           </div>
           
           <div className="flex gap-2 justify-between">
-            {/* Left: Improve QC button (if issues exist) */}
+            {/* Left: Improve coherence button */}
             <div>
-              {previewImage?.qcIssues && previewImage.qcIssues.length > 0 && previewImage.slotId && (
+              {previewImage?.slotId && (
                 <Button 
                   onClick={() => improveQC(
                     previewImage.slotType, 
@@ -1339,7 +1339,7 @@ export function CharacterPackBuilder({
                   ) : (
                     <>
                       <Wand2 className="w-4 h-4 mr-2" />
-                      Mejorar QC
+                      Mejorar Coherencia
                     </>
                   )}
                 </Button>

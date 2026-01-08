@@ -105,7 +105,7 @@ export function QCStatusBadge({
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-xs">
           <div className="space-y-1.5">
-            <div className="text-xs font-medium">QC Checks:</div>
+            <div className="text-xs font-medium">Verificaciones:</div>
             {checks.map((check, i) => (
               <div key={i} className="flex items-center gap-2 text-xs">
                 {check.status === 'ready' && <CheckCircle2 className="w-3 h-3 text-green-500" />}
@@ -194,7 +194,7 @@ export function EntityQCBadge({
       score={overallScore}
       size={size}
       checks={checks}
-      label="QC"
+      label="Coherencia"
     />
   );
 }
@@ -253,7 +253,7 @@ export function ProductionQCBadge({
       score={Math.round(currentScore)}
       size={size}
       checks={checks}
-      label={isHero ? 'HERO QC' : 'QC'}
+      label={isHero ? 'HERO' : 'Coherencia'}
     />
   );
 }
