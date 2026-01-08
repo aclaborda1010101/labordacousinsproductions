@@ -502,6 +502,7 @@ export type Database = {
           fix_notes: string | null
           generation_metadata: Json | null
           id: string
+          identity_score: number | null
           image_url: string | null
           ip_adapter_enabled: boolean | null
           outfit_id: string | null
@@ -528,6 +529,7 @@ export type Database = {
           fix_notes?: string | null
           generation_metadata?: Json | null
           id?: string
+          identity_score?: number | null
           image_url?: string | null
           ip_adapter_enabled?: boolean | null
           outfit_id?: string | null
@@ -554,6 +556,7 @@ export type Database = {
           fix_notes?: string | null
           generation_metadata?: Json | null
           id?: string
+          identity_score?: number | null
           image_url?: string | null
           ip_adapter_enabled?: boolean | null
           outfit_id?: string | null
@@ -731,6 +734,7 @@ export type Database = {
           entity_subtype: string | null
           expressions: Json | null
           id: string
+          identity_lock_score: number | null
           is_ready_for_video: boolean | null
           lora_trained_at: string | null
           lora_training_id: string | null
@@ -751,6 +755,7 @@ export type Database = {
           updated_at: string
           visual_dna: Json | null
           voice_card: Json | null
+          wardrobe_lock_json: Json | null
         }
         Insert: {
           accepted_run_id?: string | null
@@ -768,6 +773,7 @@ export type Database = {
           entity_subtype?: string | null
           expressions?: Json | null
           id?: string
+          identity_lock_score?: number | null
           is_ready_for_video?: boolean | null
           lora_trained_at?: string | null
           lora_training_id?: string | null
@@ -788,6 +794,7 @@ export type Database = {
           updated_at?: string
           visual_dna?: Json | null
           voice_card?: Json | null
+          wardrobe_lock_json?: Json | null
         }
         Update: {
           accepted_run_id?: string | null
@@ -805,6 +812,7 @@ export type Database = {
           entity_subtype?: string | null
           expressions?: Json | null
           id?: string
+          identity_lock_score?: number | null
           is_ready_for_video?: boolean | null
           lora_trained_at?: string | null
           lora_training_id?: string | null
@@ -825,6 +833,7 @@ export type Database = {
           updated_at?: string
           visual_dna?: Json | null
           voice_card?: Json | null
+          wardrobe_lock_json?: Json | null
         }
         Relationships: [
           {
