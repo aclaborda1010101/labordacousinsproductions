@@ -22,9 +22,17 @@ interface CharacterImageParams {
   acceptedRunImage?: string | null;
 }
 
+// Helper: detect if image is a large base64 string (>100KB)
+function isLargeBase64(url: string | null | undefined): boolean {
+  if (!url) return false;
+  if (!url.startsWith('data:')) return false;
+  return url.length > 100_000; // ~100KB
+}
+
 /**
  * Resolves the best available image for a character
  * Uses pre-fetched data when available, otherwise returns based on priority
+ * Filters out large base64 images to avoid rendering issues
  */
 export function resolveCharacterImageSync(params: CharacterImageParams): CharacterImageData {
   const {
@@ -35,23 +43,23 @@ export function resolveCharacterImageSync(params: CharacterImageParams): Charact
     turnaroundUrls,
   } = params;
 
-  // Priority 1: Canon asset
-  if (canonImage) {
+  // Priority 1: Canon asset (skip if too large base64)
+  if (canonImage && !isLargeBase64(canonImage)) {
     return { imageUrl: canonImage, source: 'canon' };
   }
 
-  // Priority 2: Hero slot from pack
-  if (heroImage) {
+  // Priority 2: Hero slot from pack (skip if too large base64)
+  if (heroImage && !isLargeBase64(heroImage)) {
     return { imageUrl: heroImage, source: 'pack_slot' };
   }
 
-  // Priority 3: Accepted run image
-  if (acceptedRunImage) {
+  // Priority 3: Accepted run image (skip if too large base64)
+  if (acceptedRunImage && !isLargeBase64(acceptedRunImage)) {
     return { imageUrl: acceptedRunImage, source: 'generation_run' };
   }
 
-  // Priority 4: Current run image
-  if (currentRunImage) {
+  // Priority 4: Current run image (skip if too large base64)
+  if (currentRunImage && !isLargeBase64(currentRunImage)) {
     return { imageUrl: currentRunImage, source: 'generation_run' };
   }
 
