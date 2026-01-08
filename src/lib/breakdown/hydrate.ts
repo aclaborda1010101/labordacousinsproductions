@@ -21,18 +21,76 @@ export const hydrateCharacters = (raw: any): any[] => {
 
   const ch = p.characters;
 
-  // v10+ nested object
+  // Helper to normalize name from various fields
+  const normalizeName = (c: any): string =>
+    c?.name ?? c?.canonical_name ?? c?.label ?? c?.id ?? 'Unknown';
+
+  // Priority 1: narrative_classification (most complete format from script-breakdown v25+)
+  if (ch && typeof ch === "object" && !Array.isArray(ch) && ch.narrative_classification) {
+    const nc = ch.narrative_classification;
+    const result: any[] = [];
+
+    // Protagonists → cast bucket
+    for (const c of pickArray(nc.protagonists)) {
+      result.push({ ...c, name: normalizeName(c), __bucket: 'cast', role: c.role ?? 'protagonist' });
+    }
+    // Major supporting → cast bucket
+    for (const c of pickArray(nc.major_supporting)) {
+      result.push({ ...c, name: normalizeName(c), __bucket: 'cast', role: c.role ?? 'supporting' });
+    }
+    // Minor speaking → featured bucket
+    for (const c of pickArray(nc.minor_speaking)) {
+      result.push({ ...c, name: normalizeName(c), __bucket: 'featured', role: c.role ?? 'minor' });
+    }
+    // Voices/systems → voice bucket
+    for (const c of pickArray(nc.voices_systems, nc.voices_and_functional)) {
+      result.push({ ...c, name: normalizeName(c), __bucket: 'voice', role: c.role ?? 'voice' });
+    }
+
+    if (result.length) return result;
+  }
+
+  // Priority 2: PRO format (protagonists, co_protagonists, secondary, minor at top level of characters)
   if (ch && typeof ch === "object" && !Array.isArray(ch)) {
+    const hasProFormat = ch.protagonists || ch.co_protagonists || ch.secondary || ch.minor;
+    if (hasProFormat) {
+      const result: any[] = [];
+      for (const c of pickArray(ch.protagonists)) {
+        result.push({ ...c, name: normalizeName(c), __bucket: 'cast', role: 'protagonist' });
+      }
+      for (const c of pickArray(ch.co_protagonists)) {
+        result.push({ ...c, name: normalizeName(c), __bucket: 'cast', role: 'co_protagonist' });
+      }
+      for (const c of pickArray(ch.secondary)) {
+        result.push({ ...c, name: normalizeName(c), __bucket: 'cast', role: 'secondary' });
+      }
+      for (const c of pickArray(ch.minor)) {
+        result.push({ ...c, name: normalizeName(c), __bucket: 'featured', role: 'minor' });
+      }
+      if (result.length) return result;
+    }
+
+    // Priority 3: v10+ nested object (cast, extras, voices)
     const cast = pickArray(ch.cast);
     const extras = pickArray(ch.featured_extras_with_lines, ch.extras);
     const voices = pickArray(ch.voices_and_functional, ch.voices);
     const flat = pickArray(ch.all, ch.items);
-    const merged = [...cast, ...extras, ...voices];
-    return merged.length ? merged : flat;
+
+    // Add bucket markers
+    const taggedCast = cast.map((c: any) => ({ ...c, name: normalizeName(c), __bucket: 'cast' }));
+    const taggedExtras = extras.map((c: any) => ({ ...c, name: normalizeName(c), __bucket: 'featured' }));
+    const taggedVoices = voices.map((c: any) => ({ ...c, name: normalizeName(c), __bucket: 'voice' }));
+
+    const merged = [...taggedCast, ...taggedExtras, ...taggedVoices];
+    if (merged.length) return merged;
+
+    // Flat arrays with bucket markers
+    return flat.map((c: any) => ({ ...c, name: normalizeName(c), __bucket: 'cast' }));
   }
 
-  // legacy arrays
-  return pickArray(p.main_characters, p.characters);
+  // Priority 4: legacy arrays (main_characters, characters as array)
+  const legacy = pickArray(p.main_characters, p.characters);
+  return legacy.map((c: any) => ({ ...c, name: normalizeName(c), __bucket: 'cast' }));
 };
 
 export const hydrateLocations = (raw: any): any[] => {
@@ -80,15 +138,21 @@ export const buildRobustCounts = (
 ): Record<string, any> => {
   const existingCounts = (payload?.counts ?? null) as Record<string, any> | null;
 
+  // Recalculate character counts from hydrated data (with __bucket markers)
+  const castChars = chars.filter((c: any) => c?.__bucket === 'cast');
+  const featuredChars = chars.filter((c: any) => c?.__bucket === 'featured');
+  const voiceChars = chars.filter((c: any) => c?.__bucket === 'voice');
+
+  // Calculate protagonists and supporting from hydrated data
   const protagonists =
-    existingCounts?.protagonists ??
-    (Array.isArray(payload?.characters?.protagonists) ? payload.characters.protagonists.length : null) ??
-    chars.filter((c: any) => c?.role === "protagonist" || c?.priority === "P0").length;
+    chars.filter((c: any) => c?.role === "protagonist" || c?.priority === "P0").length ||
+    existingCounts?.protagonists ||
+    0;
 
   const supporting =
-    existingCounts?.supporting ??
-    (Array.isArray(payload?.characters?.major_supporting) ? payload.characters.major_supporting.length : null) ??
-    chars.filter((c: any) => c?.role === "supporting" || c?.priority === "P1").length;
+    chars.filter((c: any) => c?.role === "supporting" || c?.role === "co_protagonist" || c?.priority === "P1").length ||
+    existingCounts?.supporting ||
+    0;
 
   const heroProps =
     existingCounts?.hero_props ??
@@ -98,11 +162,17 @@ export const buildRobustCounts = (
     existingCounts?.total_scenes ??
     (scenes.length || episodesArr.reduce((sum: number, ep: any) => sum + (ep?.scenes?.length || 0), 0) || 0);
 
+  // ALWAYS recalculate characters_total from hydrated data (don't trust existingCounts)
+  const charactersTotal = chars.length;
+
   return {
     ...(existingCounts || {}),
     protagonists,
     supporting,
-    characters_total: existingCounts?.characters_total ?? chars.length,
+    characters_total: charactersTotal,
+    cast_characters_total: castChars.length,
+    featured_extras_total: featuredChars.length,
+    voices_total: voiceChars.length,
     locations: locs.length,
     total_scenes: totalScenes,
     hero_props: heroProps,
