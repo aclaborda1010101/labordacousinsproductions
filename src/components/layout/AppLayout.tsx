@@ -1,14 +1,16 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { TaskNotificationCenter } from '@/components/notifications/TaskNotificationCenter';
+import { BackendStatusBanner } from './BackendStatusBanner';
 import { MobileNav } from './MobileNav';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -28,7 +30,8 @@ import {
   Folder,
   X,
   Settings,
-  Loader2
+  Loader2,
+  RefreshCw
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -47,31 +50,47 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { t } = useLanguage();
   const { isDeveloperMode } = useDeveloperMode();
   const { activeTasks, setIsOpen: setTasksOpen } = useBackgroundTasks();
+  const { status: backendStatus, lastError, isChecking, retry: retryBackend } = useBackendStatus();
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [projectsExpanded, setProjectsExpanded] = useState(true);
   const [recentProjects, setRecentProjects] = useState<Project[]>([]);
+  const [recentProjectsError, setRecentProjectsError] = useState(false);
+  const lastKnownProjectsRef = useRef<Project[]>([]);
 
-  // Fetch recent projects for sidebar
-  useEffect(() => {
-    async function fetchRecentProjects() {
-      if (!user) return;
-      
-      const { data } = await supabase
+  // Fetch recent projects for sidebar with error handling
+  const fetchRecentProjects = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
         .from('projects')
         .select('id, title, format')
         .order('updated_at', { ascending: false })
         .limit(5);
       
+      if (error) throw error;
+      
       if (data) {
         setRecentProjects(data);
+        lastKnownProjectsRef.current = data;
+        setRecentProjectsError(false);
+      }
+    } catch (err) {
+      console.error('Error fetching recent projects:', err);
+      setRecentProjectsError(true);
+      // Keep showing last known projects
+      if (lastKnownProjectsRef.current.length > 0) {
+        setRecentProjects(lastKnownProjectsRef.current);
       }
     }
-    
-    fetchRecentProjects();
   }, [user]);
+
+  useEffect(() => {
+    fetchRecentProjects();
+  }, [fetchRecentProjects]);
 
   const navItems = [
     { href: '/dashboard', label: t.nav.dashboard, icon: Home },
@@ -198,8 +217,17 @@ export function AppLayout({ children }: AppLayoutProps) {
                     {/* Recent Projects */}
                     {recentProjects.length > 0 && (
                       <>
-                        <div className="px-3 py-2 text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">
-                          Recientes
+                        <div className="px-3 py-2 text-xs font-medium text-muted-foreground/70 uppercase tracking-wider flex items-center justify-between">
+                          <span>Recientes {recentProjectsError && '(offline)'}</span>
+                          {recentProjectsError && (
+                            <button 
+                              onClick={(e) => { e.preventDefault(); fetchRecentProjects(); }}
+                              className="p-1 hover:bg-sidebar-accent/50 rounded"
+                              title="Reintentar"
+                            >
+                              <RefreshCw className="w-3 h-3" />
+                            </button>
+                          )}
                         </div>
                         {recentProjects.map((project) => (
                           <Link
@@ -384,6 +412,14 @@ export function AppLayout({ children }: AppLayoutProps) {
         "pt-12 pb-16 lg:pt-0 lg:pb-0", // Mobile: header + bottom nav space
         collapsed ? "lg:ml-16" : "lg:ml-72"
       )}>
+        {/* Backend Status Banner */}
+        <BackendStatusBanner 
+          status={backendStatus} 
+          lastError={lastError} 
+          isChecking={isChecking} 
+          onRetry={retryBackend} 
+        />
+
         {/* Active Background Tasks Banner */}
         {activeTasks.length > 0 && (
           <button
