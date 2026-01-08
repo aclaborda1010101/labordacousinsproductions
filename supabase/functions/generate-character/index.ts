@@ -255,6 +255,162 @@ function formatWardrobeLock(lock: WardrobeLock): string {
 }
 
 // ============================================
+// PROACTIVE IDENTITY GUARDS - Prevent common AI generation errors
+// ============================================
+
+const PROACTIVE_IDENTITY_GUARDS = [
+  'CRITICAL: Preserve EXACT hair color from reference - DO NOT darken, lighten, or change hue',
+  'CRITICAL: Preserve ALL grey/silver/white hair tones with exact percentage - grey hair must remain grey',
+  'CRITICAL: Maintain EXACT skin tone and undertone - no smoothing, no changing complexion',
+  'CRITICAL: Preserve ALL wrinkles, lines, and age indicators - DO NOT de-age or smooth skin',
+  'CRITICAL: Keep EXACT face shape, proportions, and bone structure',
+  'CRITICAL: Maintain EXACT eye color, shape, and size',
+  'CRITICAL: Keep EXACT nose shape, bridge, and tip',
+  'CRITICAL: Preserve EXACT lip shape and fullness',
+  'AVOID: Smoothing skin texture, removing wrinkles, changing hair color, de-aging, altering facial proportions',
+  'AVOID: Making skin more even, removing age spots, changing eye color, modifying face shape',
+];
+
+// ============================================
+// IDENTITY LOCK BUILDER - Detailed imperatives from Visual DNA
+// ============================================
+
+function buildIdentityLock(visualDNA: VisualDNA, characterName?: string): string {
+  const parts: string[] = ['=== IDENTITY LOCK - ABSOLUTELY NON-NEGOTIABLE ==='];
+  
+  const physical = visualDNA.physical_identity;
+  const face = visualDNA.face;
+  const hair = visualDNA.hair?.head_hair;
+  const skin = visualDNA.skin;
+  
+  // CHARACTER ID
+  if (characterName) {
+    parts.push(`CHARACTER: "${characterName}" - This MUST be the SAME person as reference`);
+  }
+  
+  // AGE - Most critical for preventing de-aging
+  if (physical?.age_exact_for_prompt) {
+    parts.push(`AGE: EXACTLY ${physical.age_exact_for_prompt} years old`);
+    parts.push(`- DO NOT make younger or older`);
+    parts.push(`- Preserve ALL age-appropriate features (wrinkles, lines, skin texture)`);
+  }
+  
+  // HAIR - Extremely detailed to prevent color drift
+  if (hair) {
+    const baseColor = hair.color?.natural_base || 'as shown in reference';
+    const greyPercent = hair.color?.grey_white?.percentage;
+    const greyPattern = hair.color?.grey_white?.pattern;
+    const length = hair.length?.type || 'as shown';
+    const texture = hair.texture?.type || 'as shown';
+    const style = hair.style?.overall_shape || 'as shown';
+    
+    parts.push(`HAIR COLOR: ${baseColor.toUpperCase()}`);
+    if (greyPercent && greyPercent > 0) {
+      parts.push(`- GREY/SILVER: EXACTLY ${greyPercent}% of hair is grey/silver`);
+      if (greyPattern) {
+        parts.push(`- Grey pattern: ${greyPattern}`);
+      }
+      parts.push(`- DO NOT remove or reduce grey hair - it is essential to identity`);
+    }
+    parts.push(`- Hair length: ${length}`);
+    parts.push(`- Hair texture: ${texture}`);
+    parts.push(`- Hair style: ${style}`);
+    parts.push(`- DO NOT darken, lighten, or change hair color in ANY way`);
+  }
+  
+  // SKIN TONE - Prevent complexion changes
+  if (physical?.ethnicity?.skin_tone_description || skin) {
+    const skinTone = physical?.ethnicity?.skin_tone_description || 'as shown in reference';
+    const undertone = skin?.undertone?.type || '';
+    const texture = skin?.texture?.overall || '';
+    
+    parts.push(`SKIN TONE: ${skinTone.toUpperCase()}`);
+    if (undertone) {
+      parts.push(`- Undertone: ${undertone}`);
+    }
+    if (texture) {
+      parts.push(`- Skin texture: ${texture} (PRESERVE exactly)`);
+    }
+    parts.push(`- DO NOT smooth, even out, or change skin complexion`);
+    parts.push(`- PRESERVE all freckles, moles, age spots, pores, and natural texture`);
+  }
+  
+  // FACE STRUCTURE - Detailed bone structure
+  if (face) {
+    if (face.shape) {
+      parts.push(`FACE SHAPE: ${face.shape.toUpperCase()}`);
+    }
+    
+    // Eyes
+    if (face.eyes) {
+      const eyeColor = face.eyes.color_base || 'as shown';
+      const eyeShape = face.eyes.shape || '';
+      parts.push(`EYES: ${eyeColor.toUpperCase()} color, ${eyeShape} shape`);
+      if (face.eyes.eyebrows) {
+        parts.push(`- Eyebrows: ${face.eyes.eyebrows.thickness || ''} ${face.eyes.eyebrows.shape || ''}`);
+      }
+    }
+    
+    // Nose
+    if (face.nose?.bridge) {
+      parts.push(`NOSE: ${face.nose.bridge.shape || 'as shown'} bridge, ${face.nose.tip?.shape || 'natural'} tip`);
+    }
+    
+    // Mouth
+    if (face.mouth?.lips) {
+      const upper = face.mouth.lips.fullness_upper || '';
+      const lower = face.mouth.lips.fullness_lower || '';
+      parts.push(`LIPS: ${upper} upper, ${lower} lower`);
+    }
+    
+    // Jaw
+    if (face.jaw_chin?.jawline) {
+      parts.push(`JAWLINE: ${face.jaw_chin.jawline.shape || 'as shown'}, ${face.jaw_chin.jawline.definition || 'as shown'} definition`);
+    }
+    
+    // Facial hair
+    if (face.facial_hair?.type && face.facial_hair.type !== 'clean_shaven') {
+      const fhColor = face.facial_hair.color?.base || '';
+      const fhGrey = face.facial_hair.color?.grey_percentage || 0;
+      parts.push(`FACIAL HAIR: ${face.facial_hair.type}, ${face.facial_hair.density || 'medium'} density`);
+      if (fhColor) parts.push(`- Facial hair color: ${fhColor}`);
+      if (fhGrey > 0) parts.push(`- Facial hair grey: ${fhGrey}%`);
+    }
+    
+    // Wrinkles and marks - Critical for age preservation
+    if (face.distinctive_marks?.wrinkles_lines) {
+      const wrinkles = face.distinctive_marks.wrinkles_lines;
+      parts.push(`WRINKLES (MUST PRESERVE):`);
+      if (wrinkles.forehead?.horizontal_lines) {
+        parts.push(`- Forehead: ${wrinkles.forehead.horizontal_lines} horizontal lines`);
+      }
+      if (wrinkles.eyes?.crows_feet) {
+        parts.push(`- Eyes: ${wrinkles.eyes.crows_feet} crow's feet`);
+      }
+      if (wrinkles.nose_to_mouth?.nasolabial_folds) {
+        parts.push(`- Nasolabial folds: ${wrinkles.nose_to_mouth.nasolabial_folds}`);
+      }
+    }
+  }
+  
+  // Celebrity likeness hints (if available)
+  if (visualDNA.visual_references?.celebrity_likeness?.primary?.name) {
+    const celeb = visualDNA.visual_references.celebrity_likeness.primary;
+    parts.push(`VISUAL REFERENCE: Resembles ${celeb.name} (${celeb.percentage || 0}%)`);
+    if (celeb.features_borrowed?.length) {
+      parts.push(`- Borrowed features: ${celeb.features_borrowed.join(', ')}`);
+    }
+  }
+  
+  parts.push('=== END IDENTITY LOCK ===');
+  parts.push('');
+  parts.push('GENERATION RULES:');
+  PROACTIVE_IDENTITY_GUARDS.forEach(guard => parts.push(`• ${guard}`));
+  
+  return parts.join('\n');
+}
+
+// ============================================
 // STYLE CONFIG INJECTION HELPER
 // ============================================
 
@@ -339,7 +495,7 @@ ${parts.join('\n')}
 // REFERENCE-BASED PROMPT BUILDERS
 // ============================================
 
-function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null): string {
+function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string): string {
   const angleInstructions: Record<string, string> = {
     'front': 'front view, facing camera directly, standing straight, arms at sides',
     'front_34': '3/4 front view, 45 degrees from front, standing straight, arms at sides',
@@ -351,21 +507,21 @@ function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleCon
 
   const angle = angleInstructions[viewAngle] || angleInstructions.front;
   const physical = visualDNA.physical_identity;
-  const hair = visualDNA.hair?.head_hair;
-  const face = visualDNA.face;
   const styleBlock = buildStyleBlock(styleConfig);
+  
+  // Build detailed identity lock
+  const identityLock = buildIdentityLock(visualDNA, characterName);
   
   // Use wardrobe lock if available, otherwise fall back to default outfit
   const outfitDescription = wardrobeLock 
     ? formatWardrobeLock(wardrobeLock)
     : (visualDNA.default_outfit?.description || 'Casual outfit as shown in reference');
 
-  return `This same person, ${angle}.
+  return `SAME PERSON from reference image, ${angle}.
+
+${identityLock}
+
 ${styleBlock}
-PHYSICAL CONTEXT:
-- Height: ${physical?.height?.cm || 'average'} cm
-- Build: ${physical?.body_type?.somatotype || 'average'}
-- Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
 
 POSE REQUIREMENTS:
 - Full body shot (head to toe in frame)
@@ -373,18 +529,11 @@ POSE REQUIREMENTS:
 - Arms relaxed at sides
 - Weight evenly distributed
 - Natural, confident posture
+- Height: ${physical?.height?.cm || 'average'} cm
+- Build: ${physical?.body_type?.somatotype || 'average'}
 
 OUTFIT (LOCKED - DO NOT CHANGE):
 ${outfitDescription}
-
-CONSISTENCY REQUIREMENTS (CRITICAL):
-- Keep EXACT same face structure and features
-- Keep EXACT same hair color (${hair?.color?.natural_base || 'as shown'}${hair?.color?.grey_white?.percentage ? `, with ${hair.color.grey_white.percentage}% grey` : ''})
-- Keep EXACT same skin tone (${physical?.ethnicity?.skin_tone_description || 'as shown'})
-- Keep EXACT same age appearance (${physical?.age_exact_for_prompt || 'as shown'})
-- Keep EXACT same facial hair (${face?.facial_hair?.type || 'as shown'})
-- Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
-- Keep EXACT same outfit and clothing (DO NOT CHANGE WARDROBE)
 
 Only change: camera angle to ${viewAngle} view
 
@@ -398,7 +547,7 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null): string {
+function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string): string {
   const expressionInstructions: Record<string, string> = {
     'neutral': 'neutral, calm expression, relaxed face',
     'happy': 'smiling, happy expression, genuine joy, natural smile',
@@ -413,38 +562,28 @@ function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, sty
   };
 
   const expression = expressionInstructions[expressionName] || expressionInstructions.neutral;
-  const physical = visualDNA.physical_identity;
-  const face = visualDNA.face;
-  const hair = visualDNA.hair?.head_hair;
   const styleBlock = buildStyleBlock(styleConfig);
+  
+  // Build detailed identity lock
+  const identityLock = buildIdentityLock(visualDNA, characterName);
   
   // Use wardrobe lock for visible clothing in medium close-up
   const outfitHint = wardrobeLock?.top 
     ? `Visible clothing: ${wardrobeLock.top}`
     : '';
 
-  return `This same person, ${expression}.
+  return `SAME PERSON from reference image, showing ${expression}.
+
+${identityLock}
+
 ${styleBlock}
-PHYSICAL CONTEXT:
-- Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
-- Face shape: ${face?.shape || 'as shown'}
-- Eye color: ${face?.eyes?.color_base || 'as shown'}
 
 SHOT REQUIREMENTS:
 - Medium close-up (shoulders up)
-- Direct eye contact with camera
+- Direct eye contact with camera, FACING FORWARD
 - 85mm lens equivalent, f/2.8
 - Shallow depth of field (blurred background)
 ${outfitHint ? `- ${outfitHint}` : ''}
-
-CONSISTENCY REQUIREMENTS (CRITICAL):
-- Keep EXACT same face structure and all facial features
-- Keep EXACT same hair color and style (${hair?.color?.natural_base || 'as shown'}${hair?.color?.grey_white?.percentage ? `, including ${hair.color.grey_white.percentage}% grey/silver tones` : ''})
-- Keep EXACT same skin tone and texture
-- Keep EXACT same age appearance (${physical?.age_exact_for_prompt || 'as shown'})
-- Keep EXACT same facial hair (${face?.facial_hair?.type || 'as shown'}${face?.facial_hair?.color?.base ? `, ${face.facial_hair.color.base} color` : ''})
-- Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
-- Keep ALL distinctive features (wrinkles, lines, marks as shown in reference)
 
 Only change: facial expression to ${expressionName}
 
@@ -503,11 +642,11 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, viewAngle: string = 'front'): string {
-  const physical = visualDNA.physical_identity;
-  const face = visualDNA.face;
-  const hair = visualDNA.hair?.head_hair;
+function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, viewAngle: string = 'front', characterName?: string): string {
   const styleBlock = buildStyleBlock(styleConfig);
+  
+  // Build detailed identity lock
+  const identityLock = buildIdentityLock(visualDNA, characterName);
 
   const angleInstructions: Record<string, string> = {
     'front': 'front view, facing camera directly',
@@ -515,17 +654,15 @@ function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | nul
   };
   const angle = angleInstructions[viewAngle] || angleInstructions.front;
 
-  return `This same person, professional portrait closeup, ${angle}.
+  return `SAME PERSON from reference image, professional portrait closeup, ${angle}.
+
+${identityLock}
+
 ${styleBlock}
-PHYSICAL CONTEXT:
-- Age: ${physical?.age_exact_for_prompt || 'as shown in reference'}
-- Face shape: ${face?.shape || 'as shown'}
-- Eye color: ${face?.eyes?.color_base || 'as shown'}
-- Skin tone: ${physical?.ethnicity?.skin_tone_description || 'as shown'}
 
 SHOT REQUIREMENTS:
 - Tight headshot (face fills frame)
-- ${viewAngle === 'side' ? 'Profile view showing side of face' : 'Direct eye contact with camera'}
+- ${viewAngle === 'side' ? 'Profile view showing side of face' : 'Direct eye contact with camera, FACING FORWARD'}
 - 85mm lens, f/2.8
 - Sharp focus on eyes
 - Soft focus on background
@@ -535,15 +672,6 @@ LIGHTING:
 - Fill light for even skin tones
 - Subtle rim light for separation
 - Natural, flattering light
-
-CONSISTENCY REQUIREMENTS (CRITICAL):
-- Keep EXACT same face structure and all features
-- Keep EXACT same hair color and texture (${hair?.color?.natural_base || 'as shown'}${hair?.color?.grey_white?.percentage ? `, with ${hair.color.grey_white.percentage}% grey/silver` : ''})
-- Keep EXACT same skin tone and texture
-- Keep EXACT same age appearance (${physical?.age_exact_for_prompt || 'as shown'})
-- Keep EXACT same facial hair (${face?.facial_hair?.type || 'as shown'})
-- Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
-- Keep EXACT same distinctive features (wrinkles, lines as shown in reference)
 
 Only change: camera angle to ${viewAngle} view
 
@@ -561,8 +689,8 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildBaseLookPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null): string {
-  return buildCloseupPrompt(visualDNA, styleConfig, 'front');
+function buildBaseLookPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, characterName?: string): string {
+  return buildCloseupPrompt(visualDNA, styleConfig, 'front', characterName);
 }
 
 // ============================================
@@ -1517,31 +1645,31 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     } else if (isCloseup) {
       const angle = request.viewAngle || extractViewAngle(request.slotType);
       console.log(`[CLOSEUP] Slot: ${request.slotType} -> Angle: ${angle}`);
-      prompt = buildCloseupPrompt(visualDNA, styleConfig, angle);
+      prompt = buildCloseupPrompt(visualDNA, styleConfig, angle, request.characterName);
     } else if (isTurnaround) {
       const angle = request.viewAngle || extractViewAngle(request.slotType);
       console.log(`[TURNAROUND] Slot: ${request.slotType} -> Angle: ${angle}`);
-      prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig, wardrobeLock);
+      prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig, wardrobeLock, request.characterName);
     } else if (isExpression) {
       const expression = request.expressionName || extractExpression(request.slotType);
       console.log(`[EXPRESSION] Slot: ${request.slotType} -> Expression: ${expression}`);
-      prompt = buildExpressionPrompt(visualDNA, expression, styleConfig, wardrobeLock);
+      prompt = buildExpressionPrompt(visualDNA, expression, styleConfig, wardrobeLock, request.characterName);
     } else if (isOutfit) {
       prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
     } else if (isReference || request.slotType === 'closeup' || request.slotType === 'anchor_closeup') {
       prompt = isAnimalOrCreature 
         ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', request.slotType, styleConfig)
-        : buildCloseupPrompt(visualDNA, styleConfig, 'front');
+        : buildCloseupPrompt(visualDNA, styleConfig, 'front', request.characterName);
     } else if (request.slotType === 'base_look') {
       prompt = isAnimalOrCreature 
         ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', 'base_look', styleConfig)
-        : buildBaseLookPrompt(visualDNA, styleConfig);
+        : buildBaseLookPrompt(visualDNA, styleConfig, request.characterName);
     } else {
       // Default fallback
       console.log(`[FALLBACK] Unknown slot type: ${request.slotType}, using closeup`);
       prompt = isAnimalOrCreature 
         ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', request.slotType, styleConfig)
-        : buildCloseupPrompt(visualDNA, styleConfig, 'front');
+        : buildCloseupPrompt(visualDNA, styleConfig, 'front', request.characterName);
     }
     
     const result = await withRetry(
@@ -1671,6 +1799,17 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       createdAnchor: createdAnchorId
     }
   });
+
+  // CRITICAL: Recalculate pack completeness after each generation
+  console.log('[PACK RECALC] Triggering pack completeness recalculation...');
+  const { error: recalcError } = await supabase.rpc('recalc_character_pack', {
+    p_character_id: request.characterId
+  });
+  if (recalcError) {
+    console.warn('[PACK RECALC] Failed to recalculate pack:', recalcError.message);
+  } else {
+    console.log('[PACK RECALC] Pack completeness updated successfully');
+  }
 
   return new Response(JSON.stringify({
     success: true,
