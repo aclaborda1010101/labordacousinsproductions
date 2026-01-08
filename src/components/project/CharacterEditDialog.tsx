@@ -16,12 +16,14 @@ import { toast } from 'sonner';
 import { Loader2, User, BookOpen, TrendingUp } from 'lucide-react';
 
 type CharacterRole = 'protagonist' | 'recurring' | 'episodic' | 'extra';
+type EntitySubtype = 'human' | 'animal' | 'creature' | 'robot' | 'other';
 
 interface CharacterData {
   id: string;
   name: string;
   role?: string | null;
   character_role?: CharacterRole | null;
+  entity_subtype?: EntitySubtype | null;
   bio?: string | null;
   arc?: string | null;
 }
@@ -40,6 +42,14 @@ const ROLE_OPTIONS: { value: CharacterRole; label: string; description: string }
   { value: 'extra', label: 'Extra', description: 'Personaje de fondo o secundario' },
 ];
 
+const ENTITY_SUBTYPE_OPTIONS: { value: EntitySubtype; label: string; icon: string }[] = [
+  { value: 'human', label: 'Humano', icon: '👤' },
+  { value: 'animal', label: 'Animal', icon: '🐕' },
+  { value: 'creature', label: 'Criatura fantástica', icon: '🐉' },
+  { value: 'robot', label: 'Robot / IA', icon: '🤖' },
+  { value: 'other', label: 'Otro', icon: '❓' },
+];
+
 export default function CharacterEditDialog({
   open,
   onOpenChange,
@@ -51,6 +61,7 @@ export default function CharacterEditDialog({
     name: '',
     role: '',
     character_role: '' as CharacterRole | '',
+    entity_subtype: 'human' as EntitySubtype,
     bio: '',
     arc: '',
   });
@@ -62,6 +73,7 @@ export default function CharacterEditDialog({
         name: character.name || '',
         role: character.role || '',
         character_role: character.character_role || '',
+        entity_subtype: (character.entity_subtype as EntitySubtype) || 'human',
         bio: character.bio || '',
         arc: character.arc || '',
       });
@@ -82,6 +94,7 @@ export default function CharacterEditDialog({
         role: formData.role || null,
         bio: formData.bio || null,
         arc: formData.arc || null,
+        entity_subtype: formData.entity_subtype || 'human',
       };
 
       // Only update character_role if it's set (don't clear it if empty)
@@ -134,9 +147,35 @@ export default function CharacterEditDialog({
             />
           </div>
 
+          {/* Entity Subtype - IMPORTANT for animals */}
+          <div className="space-y-2">
+            <Label>Tipo de entidad</Label>
+            <Select
+              value={formData.entity_subtype}
+              onValueChange={(v) => setFormData({ ...formData, entity_subtype: v as EntitySubtype })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="¿Humano, animal...?" />
+              </SelectTrigger>
+              <SelectContent>
+                {ENTITY_SUBTYPE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    <span className="flex items-center gap-2">
+                      <span>{opt.icon}</span>
+                      <span>{opt.label}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Los animales y criaturas usan prompts especializados
+            </p>
+          </div>
+
           {/* Character Role */}
           <div className="space-y-2">
-            <Label>Tipo de personaje</Label>
+            <Label>Rol narrativo</Label>
             <Select
               value={formData.character_role}
               onValueChange={(v) => setFormData({ ...formData, character_role: v as CharacterRole })}

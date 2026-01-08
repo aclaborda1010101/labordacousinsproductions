@@ -21,6 +21,7 @@ interface UseCharacterPackGenerationOptions {
   characterName: string;
   characterBio?: string | null;
   projectId?: string;
+  entitySubtype?: 'human' | 'animal' | 'creature' | 'robot' | 'other';
   onSlotComplete?: (slotType: string) => void;
   onAllComplete?: () => void;
 }
@@ -30,6 +31,7 @@ export function useCharacterPackGeneration({
   characterName,
   characterBio,
   projectId,
+  entitySubtype = 'human',
   onSlotComplete,
   onAllComplete,
 }: UseCharacterPackGenerationOptions) {
@@ -81,6 +83,7 @@ export function useCharacterPackGeneration({
               viewAngle: slot.viewAngle || 'front',
               expressionName: slot.expression || null,
               projectId,
+              entitySubtype, // Pass entity subtype for animal/creature handling
             },
           });
 
@@ -155,7 +158,7 @@ export function useCharacterPackGeneration({
       failTask(taskId, err instanceof Error ? err.message : 'Error desconocido');
       return { success: false, completedCount, errors: [err instanceof Error ? err.message : 'Error'] };
     }
-  }, [characterId, characterName, characterBio, projectId, addTask, updateTask, completeTask, failTask, onSlotComplete, onAllComplete]);
+  }, [characterId, characterName, characterBio, projectId, entitySubtype, addTask, updateTask, completeTask, failTask, onSlotComplete, onAllComplete]);
 
   /**
    * Generate a single slot (without background task, for individual regeneration)
@@ -176,6 +179,7 @@ export function useCharacterPackGeneration({
           viewAngle: options?.viewAngle || 'front',
           expressionName: options?.expression || null,
           projectId,
+          entitySubtype, // Pass entity subtype for animal/creature handling
         },
       });
 
@@ -187,7 +191,7 @@ export function useCharacterPackGeneration({
     } catch (err) {
       return { success: false, error: err instanceof Error ? err.message : 'Error desconocido' };
     }
-  }, [characterId, characterName, characterBio, projectId]);
+  }, [characterId, characterName, characterBio, projectId, entitySubtype]);
 
   return {
     generateSlots,

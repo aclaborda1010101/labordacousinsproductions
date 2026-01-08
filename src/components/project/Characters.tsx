@@ -1445,23 +1445,22 @@ export default function Characters({ projectId }: CharactersProps) {
                               profile={character.profile_json as any} 
                               entityType="character" 
                             />
-                            {!character.profile_json && (
-                              <div className="mt-4">
-                                <Button 
-                                  variant="gold" 
-                                  size="sm"
-                                  onClick={() => generateProfileWithEntityBuilder(character)}
-                                  disabled={generatingProfile === character.id}
-                                >
-                                  {generatingProfile === character.id ? (
-                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                                  ) : (
-                                    <BookOpen className="w-4 h-4 mr-2" />
-                                  )}
-                                  Generar Perfil Bible con IA
-                                </Button>
-                              </div>
-                            )}
+                            {/* Always show button - regenerate if exists, generate if not */}
+                            <div className="mt-4">
+                              <Button 
+                                variant="gold" 
+                                size="sm"
+                                onClick={() => generateProfileWithEntityBuilder(character)}
+                                disabled={generatingProfile === character.id}
+                              >
+                                {generatingProfile === character.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                ) : (
+                                  <BookOpen className="w-4 h-4 mr-2" />
+                                )}
+                                {character.profile_json ? 'Regenerar Perfil Bible' : 'Generar Perfil Bible con IA'}
+                              </Button>
+                            </div>
                           </TabsContent>
 
                           <TabsContent value="visual-dna" className="p-4 m-0">

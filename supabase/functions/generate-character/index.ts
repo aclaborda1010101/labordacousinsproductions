@@ -30,6 +30,7 @@ interface SlotGenerateRequest {
   useReferenceAnchoring?: boolean;
   referenceWeight?: number;
   allowTextToImage?: boolean; // Allow generation without reference (creates anchor)
+  entitySubtype?: 'human' | 'animal' | 'creature' | 'robot' | 'other'; // For animals, creatures, etc.
 }
 
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
@@ -519,6 +520,117 @@ function buildBaseLookPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | nu
   return buildCloseupPrompt(visualDNA, styleConfig, 'front');
 }
 
+// ============================================
+// ANIMAL-SPECIFIC PROMPT BUILDERS
+// ============================================
+function buildAnimalPrompt(
+  characterName: string,
+  characterBio: string,
+  viewAngle: string,
+  slotType: string,
+  styleConfig: StyleConfig | null
+): string {
+  const styleBlock = buildStyleBlock(styleConfig);
+  
+  const angleInstructions: Record<string, string> = {
+    'front': 'front view, facing camera directly',
+    'front_34': '3/4 front view, 45 degrees from front',
+    'side': 'side profile view, 90 degrees to camera',
+    'back': 'back view, facing away from camera',
+    'back_34': '3/4 back view, 45 degrees from behind',
+  };
+  
+  const angle = angleInstructions[viewAngle] || angleInstructions.front;
+  const isCloseup = slotType.includes('closeup') || slotType === 'anchor_closeup' || slotType === 'base_look';
+
+  return `Professional photography of a ${characterName} for film production.
+${styleBlock}
+ANIMAL SUBJECT: ${characterName}
+DESCRIPTION: ${characterBio}
+
+POSE/ANGLE:
+- ${angle}
+${isCloseup ? '- Close-up portrait shot, head and upper body' : '- Full body shot showing complete anatomy'}
+
+ANIMAL-SPECIFIC REQUIREMENTS:
+- Capture natural animal posture and stance
+- Show realistic fur/feather/scale texture as described
+- Natural eye reflection and expression appropriate to species
+- Anatomically correct proportions for this species
+- Natural environment lighting
+
+PHOTOGRAPHY SPECS:
+- Professional wildlife/pet photography quality
+- ${isCloseup ? '85mm lens, f/2.8, shallow depth of field' : '50mm lens, f/4, full body in focus'}
+- Natural or studio lighting
+- Clean, neutral background for production use
+- Sharp focus on eyes and face details
+- 8K resolution
+
+CRITICAL - KEEP CONSISTENT:
+- Same animal, same coloring, same markings
+- Same breed/species characteristics
+- Same eye color and expression style
+
+AVOID: Humanoid features, unrealistic proportions, anthropomorphized poses, AI artifacts, blurry details`;
+}
+
+function buildAnimalExpressionPrompt(
+  characterName: string,
+  characterBio: string,
+  expressionName: string,
+  styleConfig: StyleConfig | null
+): string {
+  const styleBlock = buildStyleBlock(styleConfig);
+  
+  // Animal expressions are different from human ones
+  const animalExpressions: Record<string, string> = {
+    'neutral': 'calm, relaxed expression, alert eyes',
+    'happy': 'playful expression, bright eyes, relaxed posture (tail wagging for dogs, purring pose for cats)',
+    'sad': 'subdued expression, lowered ears, downcast eyes',
+    'angry': 'aggressive stance, ears back, teeth showing if appropriate',
+    'surprised': 'alert expression, ears perked up, wide eyes',
+    'focused': 'intense focus, hunter stance, concentrated gaze',
+    'worried': 'anxious expression, ears back slightly, cautious posture',
+    'playful': 'energetic pose, play bow if dog, playful stance, bright expression',
+    'sleeping': 'peaceful sleeping pose, eyes closed, relaxed body',
+  };
+
+  const expression = animalExpressions[expressionName] || animalExpressions.neutral;
+
+  return `Professional close-up photograph of ${characterName} for film production.
+${styleBlock}
+ANIMAL: ${characterName}
+DESCRIPTION: ${characterBio}
+
+EXPRESSION/MOOD:
+${expression}
+
+SHOT REQUIREMENTS:
+- Medium close-up, head and shoulders/upper body
+- Direct focus on face capturing expression
+- 85mm lens, f/2.8
+- Shallow depth of field
+- Natural catch lights in eyes
+
+CONSISTENCY (CRITICAL):
+- Same animal as reference
+- Same coloring and markings
+- Same breed characteristics
+- Same fur/coat texture
+
+Only change: expression/mood to ${expressionName}
+
+TECHNICAL SPECS:
+- Professional pet/wildlife photography
+- Sharp focus on eyes
+- Natural skin and fur tones
+- Clean background
+- 8K resolution
+
+AVOID: Humanized expressions, unnatural poses, AI artifacts`;
+}
+
 // Build a standalone prompt for text-to-image (no reference)
 function buildStandaloneCharacterPrompt(characterName: string, characterBio: string, visualDNA: VisualDNA, styleConfig: StyleConfig | null): string {
   const physical = visualDNA.physical_identity;
@@ -577,6 +689,44 @@ TECHNICAL SPECS:
 - Photorealistic, cinematic quality
 
 AVOID: AI artifacts, unnatural features, morphed faces, extra limbs, blurry details`;
+}
+
+// Build a standalone prompt for animals (no reference)
+function buildStandaloneAnimalPrompt(characterName: string, characterBio: string, styleConfig: StyleConfig | null): string {
+  const styleBlock = buildStyleBlock(styleConfig);
+  
+  return `Professional portrait photograph of ${characterName} for film production.
+${styleBlock}
+ANIMAL: ${characterName}
+DESCRIPTION: ${characterBio}
+
+SHOT REQUIREMENTS:
+- Professional close-up portrait
+- Head and upper body in frame
+- Direct gaze at camera (if species-appropriate)
+- Natural, alert expression
+
+ANIMAL DETAILS TO CAPTURE:
+- Realistic fur/feather/scale texture as described
+- Natural coloring and any distinctive markings
+- Species-appropriate anatomy and proportions
+- Natural eye reflection and color
+
+PHOTOGRAPHY SPECS:
+- Professional pet/wildlife photography
+- 85mm lens equivalent, f/2.8
+- Shallow depth of field
+- Soft, natural lighting
+- Clean, neutral background
+- 8K resolution
+
+LIGHTING:
+- Soft key light at 45 degrees
+- Fill light for even tones
+- Subtle rim light for separation
+- Natural, flattering light that shows texture
+
+AVOID: Anthropomorphized features, cartoon style, AI artifacts, blurry details, unnatural proportions`;
 }
 
 // ============================================
@@ -1049,7 +1199,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // Get character with visual DNA
+  // Get character with visual DNA and entity_subtype
   const { data: character, error: charError } = await supabase
     .from('characters')
     .select(`
@@ -1067,6 +1217,11 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     console.error('Character fetch error:', charError);
     throw new Error(`Character not found: ${request.characterId}`);
   }
+
+  // Determine entity subtype (human, animal, creature, etc.)
+  const entitySubtype = request.entitySubtype || character.entity_subtype || 'human';
+  const isAnimalOrCreature = entitySubtype === 'animal' || entitySubtype === 'creature';
+  console.log(`Entity subtype: ${entitySubtype}, isAnimalOrCreature: ${isAnimalOrCreature}`);
 
   // Enforce project access (security) now that we know the character's project
   const accessResult = await v3RequireProjectAccess(auth, character.project_id);
@@ -1180,7 +1335,18 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       return exprMap[slotType] || 'neutral';
     };
 
-    if (isCloseup) {
+    // USE ANIMAL PROMPTS IF entity_subtype is animal/creature
+    if (isAnimalOrCreature) {
+      if (isExpression) {
+        const expression = request.expressionName || extractExpression(request.slotType);
+        console.log(`[ANIMAL EXPRESSION] Slot: ${request.slotType} -> Expression: ${expression}`);
+        prompt = buildAnimalExpressionPrompt(request.characterName, request.characterBio, expression, styleConfig);
+      } else {
+        const angle = request.viewAngle || extractViewAngle(request.slotType);
+        console.log(`[ANIMAL] Slot: ${request.slotType} -> Angle: ${angle}`);
+        prompt = buildAnimalPrompt(request.characterName, request.characterBio, angle, request.slotType, styleConfig);
+      }
+    } else if (isCloseup) {
       const angle = request.viewAngle || extractViewAngle(request.slotType);
       console.log(`[CLOSEUP] Slot: ${request.slotType} -> Angle: ${angle}`);
       prompt = buildCloseupPrompt(visualDNA, styleConfig, angle);
@@ -1195,13 +1361,19 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     } else if (isOutfit) {
       prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
     } else if (isReference || request.slotType === 'closeup' || request.slotType === 'anchor_closeup') {
-      prompt = buildCloseupPrompt(visualDNA, styleConfig, 'front');
+      prompt = isAnimalOrCreature 
+        ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', request.slotType, styleConfig)
+        : buildCloseupPrompt(visualDNA, styleConfig, 'front');
     } else if (request.slotType === 'base_look') {
-      prompt = buildBaseLookPrompt(visualDNA, styleConfig);
+      prompt = isAnimalOrCreature 
+        ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', 'base_look', styleConfig)
+        : buildBaseLookPrompt(visualDNA, styleConfig);
     } else {
       // Default fallback
       console.log(`[FALLBACK] Unknown slot type: ${request.slotType}, using closeup`);
-      prompt = buildCloseupPrompt(visualDNA, styleConfig, 'front');
+      prompt = isAnimalOrCreature 
+        ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', request.slotType, styleConfig)
+        : buildCloseupPrompt(visualDNA, styleConfig, 'front');
     }
     
     const result = await withRetry(
@@ -1213,10 +1385,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   } else {
     // === TEXT-TO-IMAGE GENERATION (No Reference) ===
     generationMode = 'text-to-image';
-    console.log(`No reference found. Generating identity with text-to-image for: ${request.characterName}`);
+    console.log(`No reference found. Generating identity with text-to-image for: ${request.characterName} (${entitySubtype})`);
     
-    // Build standalone prompt (includes character bio/description)
-    prompt = buildStandaloneCharacterPrompt(request.characterName, request.characterBio, visualDNA, styleConfig);
+    // Build standalone prompt (different for animals vs humans)
+    prompt = isAnimalOrCreature
+      ? buildStandaloneAnimalPrompt(request.characterName, request.characterBio, styleConfig)
+      : buildStandaloneCharacterPrompt(request.characterName, request.characterBio, visualDNA, styleConfig);
     
     const result = await withRetry(
       () => generateWithoutReference(prompt),
