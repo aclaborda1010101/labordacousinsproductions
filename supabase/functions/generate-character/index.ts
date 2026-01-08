@@ -223,6 +223,38 @@ interface VisualDNA {
 }
 
 // ============================================
+// WARDROBE LOCK TYPES & HELPERS
+// ============================================
+
+interface WardrobeLock {
+  primary_outfit?: string;
+  top?: string;
+  bottom?: string;
+  footwear?: string;
+  accessories?: string[];
+  hair_style?: string;
+  makeup_style?: string;
+  color_palette?: string[];
+  fabric_textures?: string[];
+  distinctive_elements?: string[];
+  locked_at?: string;
+  source_image?: string;
+}
+
+function formatWardrobeLock(lock: WardrobeLock): string {
+  const parts: string[] = [];
+  if (lock.primary_outfit) parts.push(lock.primary_outfit);
+  if (lock.top) parts.push(`Top: ${lock.top}`);
+  if (lock.bottom) parts.push(`Bottom: ${lock.bottom}`);
+  if (lock.footwear) parts.push(`Footwear: ${lock.footwear}`);
+  if (lock.accessories?.length) parts.push(`Accessories: ${lock.accessories.join(', ')}`);
+  if (lock.hair_style) parts.push(`Hair: ${lock.hair_style}`);
+  if (lock.color_palette?.length) parts.push(`Colors: ${lock.color_palette.join(', ')}`);
+  if (lock.distinctive_elements?.length) parts.push(`Distinctive: ${lock.distinctive_elements.join(', ')}`);
+  return parts.join('. ') || 'As shown in reference';
+}
+
+// ============================================
 // STYLE CONFIG INJECTION HELPER
 // ============================================
 
@@ -307,7 +339,7 @@ ${parts.join('\n')}
 // REFERENCE-BASED PROMPT BUILDERS
 // ============================================
 
-function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null): string {
+function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null): string {
   const angleInstructions: Record<string, string> = {
     'front': 'front view, facing camera directly, standing straight, arms at sides',
     'front_34': '3/4 front view, 45 degrees from front, standing straight, arms at sides',
@@ -322,6 +354,11 @@ function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleCon
   const hair = visualDNA.hair?.head_hair;
   const face = visualDNA.face;
   const styleBlock = buildStyleBlock(styleConfig);
+  
+  // Use wardrobe lock if available, otherwise fall back to default outfit
+  const outfitDescription = wardrobeLock 
+    ? formatWardrobeLock(wardrobeLock)
+    : (visualDNA.default_outfit?.description || 'Casual outfit as shown in reference');
 
   return `This same person, ${angle}.
 ${styleBlock}
@@ -337,8 +374,8 @@ POSE REQUIREMENTS:
 - Weight evenly distributed
 - Natural, confident posture
 
-OUTFIT:
-${visualDNA.default_outfit?.description || 'Casual outfit as shown in reference'}
+OUTFIT (LOCKED - DO NOT CHANGE):
+${outfitDescription}
 
 CONSISTENCY REQUIREMENTS (CRITICAL):
 - Keep EXACT same face structure and features
@@ -347,6 +384,7 @@ CONSISTENCY REQUIREMENTS (CRITICAL):
 - Keep EXACT same age appearance (${physical?.age_exact_for_prompt || 'as shown'})
 - Keep EXACT same facial hair (${face?.facial_hair?.type || 'as shown'})
 - Keep EXACT same eye color (${face?.eyes?.color_base || 'as shown'})
+- Keep EXACT same outfit and clothing (DO NOT CHANGE WARDROBE)
 
 Only change: camera angle to ${viewAngle} view
 
@@ -360,7 +398,7 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null): string {
+function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null): string {
   const expressionInstructions: Record<string, string> = {
     'neutral': 'neutral, calm expression, relaxed face',
     'happy': 'smiling, happy expression, genuine joy, natural smile',
@@ -370,7 +408,8 @@ function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, sty
     'focused': 'focused, determined expression, slight squint',
     'worried': 'worried, concerned expression, tense face',
     'laughing': 'laughing, open mouth smile, crinkled eyes',
-    'serious': 'serious, stern expression, no smile'
+    'serious': 'serious, stern expression, no smile',
+    'fear': 'fearful, wide eyes, tense expression, subtle worry'
   };
 
   const expression = expressionInstructions[expressionName] || expressionInstructions.neutral;
@@ -378,6 +417,11 @@ function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, sty
   const face = visualDNA.face;
   const hair = visualDNA.hair?.head_hair;
   const styleBlock = buildStyleBlock(styleConfig);
+  
+  // Use wardrobe lock for visible clothing in medium close-up
+  const outfitHint = wardrobeLock?.top 
+    ? `Visible clothing: ${wardrobeLock.top}`
+    : '';
 
   return `This same person, ${expression}.
 ${styleBlock}
@@ -391,6 +435,7 @@ SHOT REQUIREMENTS:
 - Direct eye contact with camera
 - 85mm lens equivalent, f/2.8
 - Shallow depth of field (blurred background)
+${outfitHint ? `- ${outfitHint}` : ''}
 
 CONSISTENCY REQUIREMENTS (CRITICAL):
 - Keep EXACT same face structure and all facial features
@@ -1290,6 +1335,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   // Get active visual DNA
   const activeVisualDNA = character.character_visual_dna?.find((v: any) => v.is_active);
   const visualDNA: VisualDNA = activeVisualDNA?.visual_dna || {};
+  
+  // Get wardrobe lock for consistent outfit across all generations
+  const wardrobeLock: WardrobeLock | null = character.wardrobe_lock_json || null;
+  if (wardrobeLock) {
+    console.log(`[WARDROBE LOCK] Using locked wardrobe: ${wardrobeLock.primary_outfit?.substring(0, 50) || 'defined'}...`);
+  }
 
   // Get project's style_config from Visual Bible
   const { data: stylePack, error: styleError } = await supabase
@@ -1304,6 +1355,8 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   
   const styleConfig: StyleConfig | null = stylePack?.style_config || null;
   console.log(`Style config loaded: ${styleConfig ? 'YES' : 'NO (will use defaults)'}`);
+  console.log(`Wardrobe lock loaded: ${wardrobeLock ? 'YES' : 'NO (will use fallback)'}`);
+
 
   // Get reference anchors (user-uploaded photos)
   const { data: referenceAnchors, error: refError } = await supabase
@@ -1468,11 +1521,11 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     } else if (isTurnaround) {
       const angle = request.viewAngle || extractViewAngle(request.slotType);
       console.log(`[TURNAROUND] Slot: ${request.slotType} -> Angle: ${angle}`);
-      prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig);
+      prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig, wardrobeLock);
     } else if (isExpression) {
       const expression = request.expressionName || extractExpression(request.slotType);
       console.log(`[EXPRESSION] Slot: ${request.slotType} -> Expression: ${expression}`);
-      prompt = buildExpressionPrompt(visualDNA, expression, styleConfig);
+      prompt = buildExpressionPrompt(visualDNA, expression, styleConfig, wardrobeLock);
     } else if (isOutfit) {
       prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
     } else if (isReference || request.slotType === 'closeup' || request.slotType === 'anchor_closeup') {

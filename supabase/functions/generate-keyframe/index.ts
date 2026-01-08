@@ -129,7 +129,31 @@ interface KeyframeRequest {
 // Keyframes: nano-banana-pro via FAL.ai (maximum character consistency for Veo input)
 const FAL_MODEL = 'fal-ai/nano-banana-pro';
 
-async function generateKeyframePrompt(request: KeyframeRequest): Promise<{
+// Wardrobe lock helper - format for injection
+interface WardrobeLock {
+  primary_outfit?: string;
+  top?: string;
+  bottom?: string;
+  footwear?: string;
+  accessories?: string[];
+  hair_style?: string;
+}
+
+function formatWardrobeLock(lock: WardrobeLock): string {
+  const parts: string[] = [];
+  if (lock.primary_outfit) parts.push(lock.primary_outfit);
+  if (lock.top) parts.push(`Top: ${lock.top}`);
+  if (lock.bottom) parts.push(`Bottom: ${lock.bottom}`);
+  if (lock.footwear) parts.push(`Footwear: ${lock.footwear}`);
+  if (lock.accessories?.length) parts.push(`Accessories: ${lock.accessories.join(', ')}`);
+  if (lock.hair_style) parts.push(`Hair: ${lock.hair_style}`);
+  return parts.join('. ') || 'As established in previous keyframes';
+}
+
+async function generateKeyframePrompt(
+  request: KeyframeRequest,
+  characterWardrobes: Map<string, { name: string; wardrobe: string }>
+): Promise<{
   prompt_text: string;
   negative_prompt: string;
   continuity_locks: Record<string, string>;
@@ -146,6 +170,19 @@ async function generateKeyframePrompt(request: KeyframeRequest): Promise<{
   // Build comprehensive prompt with all shot details
   const shotDetails = request.shotDetails || {};
   
+  // Build wardrobe section from locked wardrobes
+  let wardrobeSection = '';
+  if (characterWardrobes.size > 0) {
+    const wardrobeLines: string[] = [];
+    characterWardrobes.forEach((data, charId) => {
+      wardrobeLines.push(`- ${data.name}: ${data.wardrobe}`);
+    });
+    wardrobeSection = `
+VESTUARIO BLOQUEADO POR PERSONAJE (OBLIGATORIO - NO CAMBIAR):
+${wardrobeLines.join('\n')}
+`;
+  }
+  
   // Build continuity section if we have previous keyframe
   let continuitySection = '';
   if (request.previousKeyframeData?.promptText) {
@@ -155,7 +192,7 @@ Prompt anterior: ${request.previousKeyframeData.promptText}
 ${request.previousKeyframeData.stagingSnapshot ? `Posiciones anteriores: ${JSON.stringify(request.previousKeyframeData.stagingSnapshot)}` : ''}
 
 REGLA CRÍTICA: Este keyframe es ${request.timestampSec}s después. Los personajes deben:
-1. Llevar EXACTAMENTE la misma ropa
+1. Llevar EXACTAMENTE la misma ropa (ver VESTUARIO BLOQUEADO arriba)
 2. Estar en el MISMO set/localización
 3. Haber evolucionado sus posiciones de forma natural (no saltos)
 4. Mantener la misma iluminación
@@ -182,7 +219,7 @@ ${shotDetails.aiRisk ? `- Riesgo IA a evitar: ${shotDetails.aiRisk}` : ''}
 
 PERSONAJES EN ESCENA:
 ${request.characters.map(c => `- ${c.name} (ID: ${c.id})${c.token ? ` [Token: ${c.token}]` : ''}`).join('\n')}
-
+${wardrobeSection}
 LOCALIZACIÓN:
 ${request.location ? `- ${request.location.name} (ID: ${request.location.id})${request.location.token ? ` [Token: ${request.location.token}]` : ''}` : 'No especificada'}
 
@@ -195,7 +232,7 @@ ${request.stylePack ? `ESTILO VISUAL:
 ${continuitySection}
 
 ${request.previousKeyframeUrl ? `IMAGEN DE REFERENCIA: Hay un keyframe previo disponible. DEBES mantener:
-- Mismo vestuario exacto para cada personaje
+- Mismo vestuario exacto para cada personaje (ver VESTUARIO BLOQUEADO)
 - Misma iluminación (dirección, color, intensidad)
 - Mismo set/decorado
 - Evolución natural de posiciones` : ''}
@@ -236,10 +273,12 @@ El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para
     return JSON.parse(content);
   } catch {
     console.error("Failed to parse JSON response:", content);
-    // Provide defaults if parsing fails - with continuity info
-    const defaultWardrobe = request.characters.map(c => `${c.name}: professional attire`).join('; ');
+    // Provide defaults if parsing fails - with wardrobe info
+    const defaultWardrobe = Array.from(characterWardrobes.values())
+      .map(d => `${d.name}: ${d.wardrobe}`)
+      .join('; ') || request.characters.map(c => `${c.name}: professional attire`).join('; ');
     return {
-      prompt_text: `Cinematic ${request.shotType} shot, ${request.shotDetails?.focalMm || 35}mm lens, ${request.shotDetails?.cameraHeight || 'eye level'}. ${request.sceneDescription}. ${request.characters.map(c => c.name).join(', ')} in ${request.location?.name || 'the scene'}. ${request.shotDetails?.lightingStyle || 'Natural lighting'}. Professional film quality, 16:9 aspect ratio.`,
+      prompt_text: `Cinematic ${request.shotType} shot, ${request.shotDetails?.focalMm || 35}mm lens, ${request.shotDetails?.cameraHeight || 'eye level'}. ${request.sceneDescription}. ${request.characters.map(c => c.name).join(', ')} in ${request.location?.name || 'the scene'}. Wardrobe: ${defaultWardrobe}. ${request.shotDetails?.lightingStyle || 'Natural lighting'}. Professional film quality, 16:9 aspect ratio.`,
       negative_prompt: "text, watermark, logo, extra people, blurry, low quality, deformed, wardrobe change, lighting inconsistency",
       continuity_locks: {
         wardrobe_description: defaultWardrobe,
@@ -422,9 +461,34 @@ serve(async (req) => {
       await requireProjectAccess(supabase, userId, projectId);
     }
 
+    // Fetch wardrobe locks for all characters in this keyframe
+    const characterIds = request.characters.map(c => c.id);
+    const characterWardrobes = new Map<string, { name: string; wardrobe: string }>();
+    
+    if (characterIds.length > 0) {
+      const { data: charactersData, error: charError } = await supabase
+        .from('characters')
+        .select('id, name, wardrobe_lock_json')
+        .in('id', characterIds);
+      
+      if (charError) {
+        console.error('Error fetching character wardrobes:', charError);
+      } else if (charactersData) {
+        for (const char of charactersData) {
+          if (char.wardrobe_lock_json) {
+            characterWardrobes.set(char.id, {
+              name: char.name,
+              wardrobe: formatWardrobeLock(char.wardrobe_lock_json as WardrobeLock)
+            });
+          }
+        }
+        console.log(`Loaded ${characterWardrobes.size} wardrobe locks for keyframe generation`);
+      }
+    }
+
     // Step 1: Generate deterministic prompt with PROMPT-ENGINE v3
     console.log("Step 1: Generating prompt with PROMPT-ENGINE v3 (with continuity)...");
-    const promptData = await generateKeyframePrompt(request);
+    const promptData = await generateKeyframePrompt(request, characterWardrobes);
     console.log("Prompt generated:", promptData.prompt_text.substring(0, 150) + "...");
     console.log("Continuity locks:", JSON.stringify(promptData.continuity_locks || {}));
 
