@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings, Clock, Upload, CheckCircle2, XCircle, Image as ImageIcon } from 'lucide-react';
 import KeyframeManager from './KeyframeManager';
 import TakesManager from './TakesManager';
+import MicroShotManager from './MicroShotManager';
 
 interface GenerationProgress {
   status: 'idle' | 'starting' | 'generating' | 'uploading' | 'done' | 'error';
@@ -1371,6 +1372,13 @@ export default function ShotEditor({
 
           <TabsContent value="takes" className="space-y-4 mt-4">
             <TakesManager shotId={shot.id} />
+          </TabsContent>
+
+          <TabsContent value="microshots" className="space-y-4 mt-4">
+            <MicroShotManager 
+              shotId={shot.id} 
+              duration={form.duration_target}
+            />
           </TabsContent>
 
           <TabsContent value="generate" className="space-y-4 mt-4">
