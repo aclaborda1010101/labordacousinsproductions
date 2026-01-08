@@ -172,95 +172,122 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
     
     // Handle FAL async queue response
     if (result.request_id) {
-      // Poll for result
+      // Poll for result with exponential backoff
       const requestId = result.request_id;
       console.log('[generate-location] FAL request queued:', requestId);
       
       let attempts = 0;
-      const maxAttempts = 60; // 60 seconds max
+      const maxAttempts = 40; // ~120 seconds max with increasing delays
+      let pollDelay = 2000; // Start with 2 seconds
       
       while (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, pollDelay));
         
-        const statusResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}/status`, {
-          headers: {
-            'Authorization': `Key ${FAL_KEY}`,
-          },
-        });
-        
-        // Safely parse status response
-        const statusText = await statusResponse.text();
-        let status;
-        try {
-          status = JSON.parse(statusText);
-        } catch (parseError) {
-          console.error('[generate-location] Failed to parse status response:', statusText.substring(0, 200));
-          attempts++;
-          continue;
+        // Increase poll delay gradually (max 5 seconds)
+        if (pollDelay < 5000) {
+          pollDelay = Math.min(pollDelay + 500, 5000);
         }
         
-        if (status.status === 'COMPLETED') {
-          // Get result
-          const resultResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}`, {
+        try {
+          const statusResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}/status`, {
             headers: {
               'Authorization': `Key ${FAL_KEY}`,
             },
           });
           
-          // Safely parse final result
-          const finalText = await resultResponse.text();
-          let finalResult;
+          // Safely parse status response
+          const statusText = await statusResponse.text();
+          let status;
           try {
-            finalResult = JSON.parse(finalText);
+            status = JSON.parse(statusText);
           } catch (parseError) {
-            console.error('[generate-location] Failed to parse final result:', finalText.substring(0, 200));
-            throw new Error('FAL returned invalid JSON for completed request');
-          }
-          const imageUrl = finalResult.images?.[0]?.url;
-          
-          if (!imageUrl) {
-            throw new Error('No image URL in FAL response');
+            console.error('[generate-location] Failed to parse status response:', statusText.substring(0, 200));
+            attempts++;
+            continue;
           }
           
-          const generationTimeMs = Date.now() - startTime;
-          console.log(`[generate-location] Complete in ${generationTimeMs}ms`);
+          console.log(`[generate-location] Poll attempt ${attempts + 1}, status: ${status.status}`);
           
-          // Log generation cost
-          const userId = extractUserId(req.headers.get('authorization'));
-          if (userId) {
-            await logGenerationCost({
-              userId,
-              slotType: 'location_image',
-              engine: 'flux-1.1-pro-ultra',
-              durationMs: generationTimeMs,
-              success: true,
-              metadata: { viewAngle, timeOfDay, weather }
+          if (status.status === 'COMPLETED') {
+            // Get result
+            const resultResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}`, {
+              headers: {
+                'Authorization': `Key ${FAL_KEY}`,
+              },
             });
-          }
-          
-          return new Response(JSON.stringify({ 
-            imageUrl,
-            seed: finalResult.seed || Math.floor(Math.random() * 999999),
-            prompt,
-            metadata: {
-              viewAngle,
-              timeOfDay,
-              weather,
-              engine: 'flux-1.1-pro-ultra',
-              generatedAt: new Date().toISOString(),
-              generationTimeMs
+            
+            // Safely parse final result
+            const finalText = await resultResponse.text();
+            let finalResult;
+            try {
+              finalResult = JSON.parse(finalText);
+            } catch (parseError) {
+              console.error('[generate-location] Failed to parse final result:', finalText.substring(0, 200));
+              throw new Error('FAL returned invalid JSON for completed request');
             }
-          }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        } else if (status.status === 'FAILED') {
-          throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
+            const imageUrl = finalResult.images?.[0]?.url;
+            
+            if (!imageUrl) {
+              throw new Error('No image URL in FAL response');
+            }
+            
+            const generationTimeMs = Date.now() - startTime;
+            console.log(`[generate-location] Complete in ${generationTimeMs}ms`);
+            
+            // Log generation cost
+            const userId = extractUserId(req.headers.get('authorization'));
+            if (userId) {
+              await logGenerationCost({
+                userId,
+                slotType: 'location_image',
+                engine: 'flux-1.1-pro-ultra',
+                durationMs: generationTimeMs,
+                success: true,
+                metadata: { viewAngle, timeOfDay, weather }
+              });
+            }
+            
+            return new Response(JSON.stringify({ 
+              imageUrl,
+              seed: finalResult.seed || Math.floor(Math.random() * 999999),
+              prompt,
+              metadata: {
+                viewAngle,
+                timeOfDay,
+                weather,
+                engine: 'flux-1.1-pro-ultra',
+                generatedAt: new Date().toISOString(),
+                generationTimeMs
+              }
+            }), {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          } else if (status.status === 'FAILED') {
+            throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
+          } else if (status.status === 'IN_QUEUE' || status.status === 'IN_PROGRESS') {
+            // Still processing, continue polling
+            attempts++;
+            continue;
+          }
+        } catch (pollError) {
+          console.error(`[generate-location] Poll error on attempt ${attempts + 1}:`, pollError);
+          // Continue polling on network errors
         }
         
         attempts++;
       }
       
-      throw new Error('FAL generation timed out');
+      // Return partial success with retry hint instead of hard error
+      console.error(`[generate-location] Timeout after ${attempts} attempts, requestId: ${requestId}`);
+      return new Response(JSON.stringify({ 
+        error: 'La generación está tomando más tiempo de lo esperado. Por favor, reintenta.',
+        code: 'GENERATION_TIMEOUT',
+        requestId,
+        retryable: true
+      }), {
+        status: 504, // Gateway Timeout instead of 500
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
     
     // Direct response (no queue)
