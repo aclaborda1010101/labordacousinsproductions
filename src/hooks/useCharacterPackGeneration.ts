@@ -87,21 +87,41 @@ export function useCharacterPackGeneration({
           if (response.error) {
             console.error(`Error generating ${slot.type}:`, response.error);
             const errorDetail = response.error.message || 'Error de generación';
-            errors.push(`${slot.label}: ${errorDetail}`);
-            // Show toast for each failed slot with specific reason
-            toast.error(`Error en ${slot.label}`, {
-              description: errorDetail.length > 100 ? errorDetail.substring(0, 100) + '...' : errorDetail,
-              duration: 5000,
-            });
+            const isContentBlocked = errorDetail.includes('CONTENT_BLOCKED') || errorDetail.includes('safety filter');
+            
+            if (isContentBlocked) {
+              // Content blocked by AI safety - skip gracefully
+              errors.push(`${slot.label}: Bloqueado por filtro de seguridad`);
+              toast.warning(`${slot.label} omitido`, {
+                description: 'El filtro de seguridad bloqueó esta expresión. Prueba con otra pose.',
+                duration: 4000,
+              });
+            } else {
+              errors.push(`${slot.label}: ${errorDetail}`);
+              toast.error(`Error en ${slot.label}`, {
+                description: errorDetail.length > 100 ? errorDetail.substring(0, 100) + '...' : errorDetail,
+                duration: 5000,
+              });
+            }
           } else if (response.data?.error) {
             // Handle error returned in response body
             const errorDetail = response.data.error;
             console.error(`Error in response for ${slot.type}:`, errorDetail);
-            errors.push(`${slot.label}: ${errorDetail}`);
-            toast.error(`Error en ${slot.label}`, {
-              description: errorDetail.length > 100 ? errorDetail.substring(0, 100) + '...' : errorDetail,
-              duration: 5000,
-            });
+            const isContentBlocked = errorDetail.includes('CONTENT_BLOCKED') || errorDetail.includes('safety filter');
+            
+            if (isContentBlocked) {
+              errors.push(`${slot.label}: Bloqueado por filtro de seguridad`);
+              toast.warning(`${slot.label} omitido`, {
+                description: 'El filtro de seguridad bloqueó esta expresión. Prueba con otra pose.',
+                duration: 4000,
+              });
+            } else {
+              errors.push(`${slot.label}: ${errorDetail}`);
+              toast.error(`Error en ${slot.label}`, {
+                description: errorDetail.length > 100 ? errorDetail.substring(0, 100) + '...' : errorDetail,
+                duration: 5000,
+              });
+            }
           } else {
             completedCount++;
             onSlotComplete?.(slot.type);
