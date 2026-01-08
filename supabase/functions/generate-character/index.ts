@@ -1295,10 +1295,35 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     console.error('Reference anchors fetch error:', refError);
   }
 
-  // Get the primary reference image (first uploaded photo)
-  const primaryAnchor = referenceAnchors?.find(a => 
+  // Get the primary reference image from reference_anchors
+  let primaryAnchor = referenceAnchors?.find(a => 
     a.anchor_type === 'identity_primary' || a.anchor_type === 'face_front'
   ) || referenceAnchors?.[0];
+
+  // FALLBACK: If no reference_anchors, check character_pack_slots for uploaded refs
+  if (!primaryAnchor?.image_url) {
+    console.log('No reference_anchors found, checking character_pack_slots...');
+    const { data: refSlots, error: refSlotsError } = await supabase
+      .from('character_pack_slots')
+      .select('*')
+      .eq('character_id', request.characterId)
+      .in('slot_type', ['ref_closeup_front', 'ref_profile'])
+      .eq('status', 'uploaded')
+      .order('slot_type', { ascending: true });
+    
+    if (refSlotsError) {
+      console.error('Reference slots fetch error:', refSlotsError);
+    }
+    
+    const refSlot = refSlots?.find(s => s.slot_type === 'ref_closeup_front' && s.image_url) || refSlots?.[0];
+    if (refSlot?.image_url) {
+      console.log(`Found reference in pack slots: ${refSlot.slot_type}`);
+      primaryAnchor = {
+        image_url: refSlot.image_url,
+        anchor_type: refSlot.slot_type === 'ref_closeup_front' ? 'identity_primary' : 'face_side',
+      };
+    }
+  }
 
   const hasReference = !!primaryAnchor?.image_url;
   
