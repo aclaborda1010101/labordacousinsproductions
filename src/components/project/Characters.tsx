@@ -1054,12 +1054,14 @@ export default function Characters({ projectId }: CharactersProps) {
                             <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{character.bio}</p>
                           )}
                         </div>
-                        <div className="flex gap-1 flex-wrap shrink-0">
+                        {/* Top Row: Production Actions */}
+                        <div className="flex gap-2 items-center shrink-0">
                           {character.character_role && (
                             <>
                               <Button 
                                 variant="gold" 
                                 size="sm"
+                                className="h-9"
                                 onClick={() => autoGenerateCharacterPack(character)}
                                 disabled={autoGenerating === character.id}
                                 title="Generar pack automáticamente con IA"
@@ -1079,6 +1081,7 @@ export default function Characters({ projectId }: CharactersProps) {
                               <Button 
                                 variant="outline" 
                                 size="sm"
+                                className="h-9"
                                 onClick={() => setShowPackBuilder(character.id)}
                               >
                                 <Package className="w-4 h-4 mr-1" />
@@ -1088,9 +1091,9 @@ export default function Characters({ projectId }: CharactersProps) {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
+                                  className="h-9 border-amber-500/50 text-amber-600 hover:bg-amber-50"
                                   onClick={() => setShowQuickStart(character.id)}
                                   title="Modo Producción: Entrenar LoRA para máxima consistencia"
-                                  className="border-amber-500/50 text-amber-600 hover:bg-amber-50"
                                 >
                                   <Zap className="w-4 h-4 mr-1" />
                                   LoRA
@@ -1099,7 +1102,7 @@ export default function Characters({ projectId }: CharactersProps) {
                             </>
                           )}
                           {character.canon_asset_id ? (
-                            <Badge className="bg-amber-500 gap-1">
+                            <Badge className="h-9 px-3 flex items-center bg-amber-500 gap-1">
                               <Star className="w-3 h-3" />
                               Aprobado
                             </Badge>
@@ -1107,10 +1110,10 @@ export default function Characters({ projectId }: CharactersProps) {
                             <Button 
                               variant="outline" 
                               size="sm"
+                              className="h-9 border-green-500/50 text-green-600 hover:bg-green-50"
                               onClick={() => approveCharacter(character)}
                               disabled={approvingCharacter === character.id || generatingProfile === character.id}
                               title="Aprobar personaje para producción (genera perfil + establece imagen oficial)"
-                              className="border-green-500/50 text-green-600 hover:bg-green-50"
                             >
                               {approvingCharacter === character.id || generatingProfile === character.id ? (
                                 <Loader2 className="w-4 h-4 animate-spin mr-1" />
@@ -1120,9 +1123,22 @@ export default function Characters({ projectId }: CharactersProps) {
                               Aprobar
                             </Button>
                           )}
+                          {character.pack_completeness_score && character.pack_completeness_score > 0 && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="h-9 border-purple-500/50 text-purple-600 hover:bg-purple-50"
+                              onClick={() => setShowPackBuilder(character.id)}
+                              title="Mejorar coherencia visual del personaje"
+                            >
+                              <Wand2 className="w-4 h-4 mr-1" />
+                              Coherencia
+                            </Button>
+                          )}
                           <Button 
                             variant="ghost" 
-                            size="icon" 
+                            size="icon"
+                            className="h-9 w-9"
                             onClick={() => setExpandedId(expandedId === character.id ? null : character.id)}
                           >
                             {expandedId === character.id ? (
@@ -1131,12 +1147,55 @@ export default function Characters({ projectId }: CharactersProps) {
                               <ChevronDown className="w-4 h-4" />
                             )}
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }} title="Editar">
+                        </div>
+                      </div>
+                      
+                      {/* Bottom Row: Management Actions */}
+                      <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                        <div className="flex items-center gap-2">
+                          {character.character_role && (
+                            <Badge variant="outline" className={`min-w-[80px] justify-center ${getCharacterRoleBadgeColor(character.character_role)}`}>
+                              {getCharacterRoleLabel(character.character_role)}
+                            </Badge>
+                          )}
+                          {character.role && (
+                            <Badge variant="secondary" className="min-w-[70px] justify-center">
+                              {getRoleLabel(character.role)}
+                            </Badge>
+                          )}
+                          {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
+                            <Badge 
+                              variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
+                              className={`min-w-[75px] justify-center ${character.pack_completeness_score >= 90 ? "bg-green-600" : ""}`}
+                            >
+                              <Package className="w-3 h-3 mr-1" />
+                              Pack {character.pack_completeness_score}%
+                            </Badge>
+                          )}
+                          <EntityQCBadge
+                            entityType="character"
+                            hasProfile={!!character.profile_json}
+                            packScore={character.pack_completeness_score || 0}
+                            hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                          />
+                          <CharacterWorkflowGuide 
+                            currentStep={getWorkflowStep({
+                              hasBio: !!character.bio,
+                              hasImage: !!(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front),
+                              isAccepted: !!character.accepted_run_id,
+                              isCanon: !!character.canon_asset_id,
+                            })} 
+                            compact 
+                          />
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }} title="Editar">
                             <Edit2 className="w-4 h-4" />
                           </Button>
                           <Button 
                             variant="ghost" 
-                            size="icon" 
+                            size="icon"
+                            className="h-9 w-9"
                             onClick={() => duplicateCharacter(character)}
                             disabled={duplicating === character.id}
                             title="Duplicar"
@@ -1145,14 +1204,15 @@ export default function Characters({ projectId }: CharactersProps) {
                           </Button>
                           <Button 
                             variant="ghost" 
-                            size="icon" 
+                            size="icon"
+                            className="h-9 w-9"
                             onClick={() => handleExportPack(character)}
                             disabled={exporting === character.id || !character.pack_completeness_score}
                             title="Exportar Pack ZIP"
                           >
                             {exporting === character.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDeleteCharacter(character.id)} title="Eliminar">
+                          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => handleDeleteCharacter(character.id)} title="Eliminar">
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
                         </div>
