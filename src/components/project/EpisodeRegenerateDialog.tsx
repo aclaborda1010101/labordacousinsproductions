@@ -34,8 +34,8 @@ export default function EpisodeRegenerateDialog({
   onRegenerated,
 }: EpisodeRegenerateDialogProps) {
   const { effectiveProfile } = useUserProfile();
-  // PROFESSIONAL or CREATOR get advanced options, EXPLORER gets simplified flow
-  const isPro = effectiveProfile === 'PROFESSIONAL' || effectiveProfile === 'CREATOR';
+  // PRO gets advanced options, ASSISTED gets simplified flow
+  const isPro = effectiveProfile === 'PRO';
   
   const [generating, setGenerating] = useState(false);
   const [synopsis, setSynopsis] = useState('');

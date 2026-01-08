@@ -81,7 +81,7 @@ export function UserProfileBadge({
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Settings2 className="h-4 w-4" />
-            <span>Tu perfil de experiencia</span>
+            <span>Tu modo de trabajo</span>
           </div>
 
           <div className="space-y-1.5">

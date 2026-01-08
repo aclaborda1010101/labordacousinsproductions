@@ -34,7 +34,7 @@ export function ProfileOnboardingModal({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isCompleting, setIsCompleting] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [detectedProfile, setDetectedProfile] = useState<UserProfile>('EXPLORER');
+  const [detectedProfile, setDetectedProfile] = useState<UserProfile>('ASSISTED');
 
   const totalSteps = ONBOARDING_QUESTIONS.length;
   const currentQuestion = ONBOARDING_QUESTIONS[currentStep];
@@ -78,10 +78,9 @@ export function ProfileOnboardingModal({
     try {
       // Create minimal answers that would result in this profile
       const directAnswers: Record<string, string> = {
-        experience: profile === 'EXPLORER' ? 'beginner' : profile === 'CREATOR' ? 'intermediate' : 'professional',
-        objective: profile === 'EXPLORER' ? 'explore' : profile === 'CREATOR' ? 'develop' : 'produce',
-        guidance: profile === 'EXPLORER' ? 'full' : profile === 'CREATOR' ? 'balanced' : 'minimal',
-        complexity: profile === 'EXPLORER' ? 'simple' : profile === 'CREATOR' ? 'balanced' : 'complete',
+        experience: profile === 'ASSISTED' ? 'beginner' : 'professional',
+        guidance: profile === 'ASSISTED' ? 'full' : 'minimal',
+        complexity: profile === 'ASSISTED' ? 'simple' : 'complete',
       };
       await onComplete(directAnswers);
     } finally {
@@ -243,7 +242,7 @@ export function ProfileOnboardingModal({
           </div>
         </div>
 
-        {/* Direct selection option */}
+        {/* Direct selection option - only 2 profiles now */}
         <div className="border-t pt-4 mt-2">
           <p className="text-sm text-muted-foreground text-center mb-3">
             O selecciona directamente tu perfil:
