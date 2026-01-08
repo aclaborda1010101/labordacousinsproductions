@@ -375,6 +375,49 @@ export function CharacterPackBuilder({
   const phase3Count = () => TURNAROUND_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
   const phase4Count = () => EXPRESSION_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
 
+  // Analyze reference image to extract Visual DNA
+  const analyzeReferenceImage = async (imageUrl: string) => {
+    try {
+      toast.info('Analizando rasgos faciales...', { duration: 3000 });
+      
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-single-reference`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            characterId,
+            imageUrl,
+            characterName,
+          }),
+        }
+      );
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Reference analysis failed:', response.status, errorData);
+        // Don't block - just warn
+        toast.warning('No se pudo analizar la referencia automáticamente. El parecido podría variar.');
+        return;
+      }
+      
+      const result = await response.json();
+      console.log('[CharacterPackBuilder] Visual DNA extracted:', result);
+      toast.success('Rasgos faciales analizados ✓', { duration: 2000 });
+      
+    } catch (error) {
+      console.error('Reference analysis error:', error);
+      // Don't block the upload flow
+      toast.warning('Análisis de referencia no disponible');
+    }
+  };
+
   // Upload image handler
   const uploadImage = async (slotType: string, file: File) => {
     const slot = getSlot(slotType);
@@ -414,6 +457,12 @@ export function CharacterPackBuilder({
       }).eq('id', slot.id);
 
       toast.success(`${REFERENCE_SLOTS.find(s => s.type === slotType)?.label} subido`);
+      
+      // AUTO-ANALYZE: If this is the primary reference, extract Visual DNA
+      if (slotType === 'ref_closeup_front') {
+        await analyzeReferenceImage(urlData.publicUrl);
+      }
+      
       await fetchSlots();
     } catch (error) {
       console.error('Upload error:', error);
