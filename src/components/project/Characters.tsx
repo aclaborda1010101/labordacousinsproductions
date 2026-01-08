@@ -987,6 +987,13 @@ export default function Characters({ projectId }: CharactersProps) {
                               {getCharacterRoleLabel(character.character_role)}
                             </Badge>
                           )}
+                          {/* Canon badge - same as ASSISTED mode */}
+                          {character.canon_asset_id && (
+                            <Badge className="bg-amber-500 gap-1">
+                              <Star className="w-3 h-3" />
+                              Canon
+                            </Badge>
+                          )}
                           {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (
                             <Badge 
                               variant={character.pack_completeness_score >= 90 ? "default" : "secondary"}
@@ -1139,6 +1146,13 @@ export default function Characters({ projectId }: CharactersProps) {
                             {character.character_role && (
                               <Badge variant="outline" className={`text-xs ${getCharacterRoleBadgeColor(character.character_role)}`}>
                                 {getCharacterRoleLabel(character.character_role)}
+                              </Badge>
+                            )}
+                            {/* Canon badge - mobile */}
+                            {character.canon_asset_id && (
+                              <Badge className="bg-amber-500 gap-1 text-xs">
+                                <Star className="w-3 h-3" />
+                                Canon
                               </Badge>
                             )}
                             {character.pack_completeness_score !== null && character.pack_completeness_score !== undefined && (

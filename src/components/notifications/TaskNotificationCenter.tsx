@@ -5,10 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { useBackgroundTasks, BackgroundTask, TaskType, TaskStatus } from '@/contexts/BackgroundTasksContext';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
@@ -178,7 +180,7 @@ function TaskItem({ task, onRemove, onCancel }: { task: BackgroundTask; onRemove
 }
 
 export function TaskNotificationCenter() {
-  const [localOpen, setLocalOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const { 
     tasks, 
     activeTasks, 
@@ -191,9 +193,9 @@ export function TaskNotificationCenter() {
     clearCompleted 
   } = useBackgroundTasks();
 
-  const handleOpenChange = (open: boolean) => {
-    setLocalOpen(open);
-    if (open) {
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
       markAllRead();
     }
   };
@@ -209,8 +211,8 @@ export function TaskNotificationCenter() {
   });
 
   return (
-    <Popover open={localOpen} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {activeTasks.length > 0 && (
@@ -222,36 +224,38 @@ export function TaskNotificationCenter() {
             <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-destructive" />
           )}
         </Button>
-      </PopoverTrigger>
+      </SheetTrigger>
       
-      <PopoverContent className="w-96 p-0" align="end">
-        <div className="flex items-center justify-between p-3 border-b bg-muted/30">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold">Procesos</h3>
-            {activeTasks.length > 0 && (
-              <Badge variant="default" className="text-xs">
-                {activeTasks.length} activos
-              </Badge>
+      <SheetContent side="right" className="w-full sm:max-w-md p-0">
+        <SheetHeader className="p-4 border-b bg-muted/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <SheetTitle>Procesos</SheetTitle>
+              {activeTasks.length > 0 && (
+                <Badge variant="default" className="text-xs">
+                  {activeTasks.length} activos
+                </Badge>
+              )}
+            </div>
+            
+            {(completedTasks.length > 0 || failedTasks.length > 0) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearCompleted();
+                }}
+              >
+                <Trash2 className="h-3 w-3 mr-1" />
+                Limpiar
+              </Button>
             )}
           </div>
-          
-          {(completedTasks.length > 0 || failedTasks.length > 0) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={(e) => {
-                e.stopPropagation();
-                clearCompleted();
-              }}
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              Limpiar
-            </Button>
-          )}
-        </div>
+        </SheetHeader>
         
-        <ScrollArea className="max-h-[400px]">
+        <ScrollArea className="h-[calc(100vh-8rem)]">
           {sortedTasks.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -273,13 +277,13 @@ export function TaskNotificationCenter() {
         </ScrollArea>
         
         {activeTasks.length > 0 && (
-          <div className="p-2 border-t bg-muted/30">
+          <div className="p-3 border-t bg-muted/30">
             <p className="text-xs text-center text-muted-foreground">
               Los procesos continúan aunque navegues a otras pantallas
             </p>
           </div>
         )}
-      </PopoverContent>
-    </Popover>
+      </SheetContent>
+    </Sheet>
   );
 }
