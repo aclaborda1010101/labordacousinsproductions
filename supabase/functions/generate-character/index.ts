@@ -1354,8 +1354,40 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   let generationMode: 'reference' | 'text-to-image';
   let createdAnchorId: string | null = null;
 
-  if (hasReference) {
-    // === REFERENCE-BASED GENERATION ===
+  // ============================================
+  // CHECK: COHERENCE MODE - Use enhanced prompt from improve-character-qc
+  // ============================================
+  const isCoherenceMode = slot?.status === 'pending_improvement';
+  const enhancedPromptFromQC = slot?.prompt_text;
+  
+  if (isCoherenceMode && enhancedPromptFromQC) {
+    console.log('[COHERENCE MODE] Using enhanced prompt from improve-character-qc');
+    console.log('[COHERENCE MODE] Enhanced prompt preview:', enhancedPromptFromQC.substring(0, 200));
+    
+    // Use the enhanced prompt directly with reference
+    prompt = enhancedPromptFromQC;
+    
+    if (hasReference) {
+      generationMode = 'reference';
+      console.log(`[COHERENCE MODE] Generating with reference: ${primaryAnchor.image_url.substring(0, 50)}...`);
+      
+      const result = await withRetry(
+        () => generateWithReference(primaryAnchor.image_url, prompt),
+        'COHERENCE-REF-GEN'
+      );
+      imageUrl = result.imageUrl;
+    } else {
+      generationMode = 'text-to-image';
+      console.log('[COHERENCE MODE] No reference found, using text-to-image');
+      
+      const result = await withRetry(
+        () => generateWithoutReference(prompt),
+        'COHERENCE-TEXT-GEN'
+      );
+      imageUrl = result.imageUrl;
+    }
+  } else if (hasReference) {
+    // === REFERENCE-BASED GENERATION (Normal mode) ===
     generationMode = 'reference';
     console.log(`Using reference image: ${primaryAnchor.anchor_type} - ${primaryAnchor.image_url.substring(0, 50)}...`);
     
