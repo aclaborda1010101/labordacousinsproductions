@@ -1,8 +1,8 @@
 // ============= USER EXPERIENCE PROFILE SYSTEM =============
-// Defines user profiles for adaptive UX (parallel to Creative Modes)
-// EXPLORER = needs guidance, CREATOR = has clear goal, PROFESSIONAL = max efficiency
+// Defines user profiles aligned with Creative Modes (ASSISTED / PRO)
+// ASSISTED = guided experience, PRO = full control
 
-export type UserProfile = 'EXPLORER' | 'CREATOR' | 'PROFESSIONAL';
+export type UserProfile = 'ASSISTED' | 'PRO';
 
 export interface UserProfileConfig {
   label: string;
@@ -15,28 +15,19 @@ export interface UserProfileConfig {
 }
 
 export const USER_PROFILE_CONFIG: Record<UserProfile, UserProfileConfig> = {
-  EXPLORER: {
-    label: 'Explorador',
-    shortLabel: 'Explorador',
-    description: 'Busco inspiración y quiero descubrir las posibilidades del sistema',
+  ASSISTED: {
+    label: 'Asistido',
+    shortLabel: 'Asistido',
+    description: 'El sistema te guía paso a paso y protege la coherencia',
     icon: '🧭',
     color: 'text-sky-600 dark:text-sky-400',
     bgColor: 'bg-sky-50 dark:bg-sky-950/30',
     borderColor: 'border-sky-200 dark:border-sky-800',
   },
-  CREATOR: {
-    label: 'Creador',
-    shortLabel: 'Creador',
-    description: 'Tengo un objetivo claro y quiero control con criterio',
-    icon: '✨',
-    color: 'text-violet-600 dark:text-violet-400',
-    bgColor: 'bg-violet-50 dark:bg-violet-950/30',
-    borderColor: 'border-violet-200 dark:border-violet-800',
-  },
-  PROFESSIONAL: {
+  PRO: {
     label: 'Profesional',
     shortLabel: 'Pro',
-    description: 'Conozco narrativa y producción, priorizo eficiencia',
+    description: 'Control total sobre técnica y decisiones creativas',
     icon: '🎬',
     color: 'text-amber-600 dark:text-amber-400',
     bgColor: 'bg-amber-50 dark:bg-amber-950/30',
@@ -47,18 +38,18 @@ export const USER_PROFILE_CONFIG: Record<UserProfile, UserProfileConfig> = {
 // UX behavior configuration per profile
 export interface ProfileUXBehavior {
   // Flow control
-  flowType: 'guided' | 'recommended' | 'direct';
+  flowType: 'guided' | 'direct';
   showStepNumbers: boolean;
   showNextStepSuggestion: boolean;
   allowSkipSteps: boolean;
   
   // Messaging
-  messageVerbosity: 'detailed' | 'balanced' | 'concise';
+  messageVerbosity: 'detailed' | 'concise';
   showEducationalHints: boolean;
   showReassurance: boolean;
   
   // Warnings
-  warningLevel: 'all' | 'important' | 'critical-only';
+  warningLevel: 'all' | 'critical-only';
   blockOnWarnings: boolean;
   
   // Help
@@ -67,7 +58,7 @@ export interface ProfileUXBehavior {
 }
 
 export const PROFILE_UX_BEHAVIOR: Record<UserProfile, ProfileUXBehavior> = {
-  EXPLORER: {
+  ASSISTED: {
     flowType: 'guided',
     showStepNumbers: true,
     showNextStepSuggestion: true,
@@ -80,20 +71,7 @@ export const PROFILE_UX_BEHAVIOR: Record<UserProfile, ProfileUXBehavior> = {
     showContextualHelp: true,
     autoExpandHelp: true,
   },
-  CREATOR: {
-    flowType: 'recommended',
-    showStepNumbers: true,
-    showNextStepSuggestion: true,
-    allowSkipSteps: true,
-    messageVerbosity: 'balanced',
-    showEducationalHints: false,
-    showReassurance: false,
-    warningLevel: 'important',
-    blockOnWarnings: false,
-    showContextualHelp: true,
-    autoExpandHelp: false,
-  },
-  PROFESSIONAL: {
+  PRO: {
     flowType: 'direct',
     showStepNumbers: false,
     showNextStepSuggestion: false,
@@ -121,7 +99,7 @@ export const getMicrocopy = (
   context?: MicrocopyContext
 ): string => {
   const templates: Record<UserProfile, Record<string, string[]>> = {
-    EXPLORER: {
+    ASSISTED: {
       progress: [
         'Estamos construyendo los cimientos de tu historia',
         'Cada paso que das fortalece tu proyecto',
@@ -148,34 +126,7 @@ export const getMicrocopy = (
         'Cuando te sientas cómodo, continuamos',
       ],
     },
-    CREATOR: {
-      progress: [
-        'Fase en progreso',
-        'Avanzando en la estructura narrativa',
-        'Consolidando decisiones creativas',
-      ],
-      warning: [
-        'Este cambio puede afectar a elementos ya definidos',
-        'Recomendamos cerrar esta fase antes de avanzar',
-        'Esta decisión fija el tono global del proyecto',
-      ],
-      success: [
-        'Fase completada',
-        'Estructura validada',
-        'Listo para producción',
-      ],
-      guidance: [
-        'Próximo paso recomendado:',
-        'Considera revisar:',
-        'Opciones disponibles:',
-      ],
-      transition: [
-        'Puedes continuar o ajustar',
-        'Fase estable, siguiente disponible',
-        'Validación completa',
-      ],
-    },
-    PROFESSIONAL: {
+    PRO: {
       progress: [
         'Procesando...',
         'En curso',
@@ -225,40 +176,14 @@ export const ONBOARDING_QUESTIONS: OnboardingQuestion[] = [
     question: '¿Cuál es tu experiencia con narrativa o producción audiovisual?',
     options: [
       {
-        label: 'Soy curioso, quiero explorar',
+        label: 'Soy curioso, quiero aprender',
         value: 'beginner',
-        profileWeight: { EXPLORER: 3, CREATOR: 1, PROFESSIONAL: 0 },
-      },
-      {
-        label: 'He escrito historias o guiones antes',
-        value: 'intermediate',
-        profileWeight: { EXPLORER: 1, CREATOR: 3, PROFESSIONAL: 1 },
+        profileWeight: { ASSISTED: 3, PRO: 0 },
       },
       {
         label: 'Trabajo profesionalmente en cine/TV/streaming',
         value: 'professional',
-        profileWeight: { EXPLORER: 0, CREATOR: 1, PROFESSIONAL: 3 },
-      },
-    ],
-  },
-  {
-    id: 'objective',
-    question: '¿Qué quieres lograr con este proyecto?',
-    options: [
-      {
-        label: 'Experimentar y ver qué surge',
-        value: 'explore',
-        profileWeight: { EXPLORER: 3, CREATOR: 1, PROFESSIONAL: 0 },
-      },
-      {
-        label: 'Desarrollar una idea específica que tengo',
-        value: 'develop',
-        profileWeight: { EXPLORER: 1, CREATOR: 3, PROFESSIONAL: 1 },
-      },
-      {
-        label: 'Producir contenido listo para distribución',
-        value: 'produce',
-        profileWeight: { EXPLORER: 0, CREATOR: 1, PROFESSIONAL: 3 },
+        profileWeight: { ASSISTED: 0, PRO: 3 },
       },
     ],
   },
@@ -269,17 +194,12 @@ export const ONBOARDING_QUESTIONS: OnboardingQuestion[] = [
       {
         label: 'Que me acompañe paso a paso',
         value: 'full',
-        profileWeight: { EXPLORER: 3, CREATOR: 1, PROFESSIONAL: 0 },
-      },
-      {
-        label: 'Sugerencias útiles pero libertad para decidir',
-        value: 'balanced',
-        profileWeight: { EXPLORER: 1, CREATOR: 3, PROFESSIONAL: 1 },
+        profileWeight: { ASSISTED: 3, PRO: 0 },
       },
       {
         label: 'Mínima intervención, máximo control',
         value: 'minimal',
-        profileWeight: { EXPLORER: 0, CREATOR: 1, PROFESSIONAL: 3 },
+        profileWeight: { ASSISTED: 0, PRO: 3 },
       },
     ],
   },
@@ -290,17 +210,12 @@ export const ONBOARDING_QUESTIONS: OnboardingQuestion[] = [
       {
         label: 'Simples y claras, solo lo esencial',
         value: 'simple',
-        profileWeight: { EXPLORER: 3, CREATOR: 2, PROFESSIONAL: 0 },
-      },
-      {
-        label: 'Equilibradas, opciones visibles cuando las necesito',
-        value: 'balanced',
-        profileWeight: { EXPLORER: 1, CREATOR: 3, PROFESSIONAL: 1 },
+        profileWeight: { ASSISTED: 3, PRO: 0 },
       },
       {
         label: 'Completas, acceso inmediato a todo',
         value: 'complete',
-        profileWeight: { EXPLORER: 0, CREATOR: 1, PROFESSIONAL: 3 },
+        profileWeight: { ASSISTED: 0, PRO: 3 },
       },
     ],
   },
@@ -311,9 +226,8 @@ export function calculateProfileFromAnswers(
   answers: Record<string, string>
 ): { profile: UserProfile; confidence: number } {
   const scores: Record<UserProfile, number> = {
-    EXPLORER: 0,
-    CREATOR: 0,
-    PROFESSIONAL: 0,
+    ASSISTED: 0,
+    PRO: 0,
   };
 
   let totalWeight = 0;
@@ -333,7 +247,7 @@ export function calculateProfileFromAnswers(
 
   // Find highest scoring profile
   let maxScore = 0;
-  let detectedProfile: UserProfile = 'EXPLORER';
+  let detectedProfile: UserProfile = 'ASSISTED';
 
   for (const [profile, score] of Object.entries(scores)) {
     if (score > maxScore) {
@@ -345,7 +259,7 @@ export function calculateProfileFromAnswers(
   // Calculate confidence (0-1) based on how clear the preference is
   const sortedScores = Object.values(scores).sort((a, b) => b - a);
   const spread = sortedScores[0] - sortedScores[1];
-  const maxPossibleSpread = totalWeight / 3; // Theoretical max difference
+  const maxPossibleSpread = totalWeight / 2; // Theoretical max difference (now 2 profiles)
   const confidence = Math.min(1, spread / Math.max(1, maxPossibleSpread));
 
   return {

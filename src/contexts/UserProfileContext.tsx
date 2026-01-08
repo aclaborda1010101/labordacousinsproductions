@@ -44,8 +44,8 @@ const INFERENCE_CONFIDENCE_THRESHOLD = 0.6;
 
 export function UserProfileProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const [declaredProfile, setDeclaredProfileState] = useState<UserProfile>('EXPLORER');
-  const [inferredProfile, setInferredProfileState] = useState<UserProfile>('EXPLORER');
+  const [declaredProfile, setDeclaredProfileState] = useState<UserProfile>('ASSISTED');
+  const [inferredProfile, setInferredProfileState] = useState<UserProfile>('ASSISTED');
   const [confidence, setConfidence] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);

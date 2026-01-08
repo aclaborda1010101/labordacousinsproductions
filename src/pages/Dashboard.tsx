@@ -171,7 +171,7 @@ export default function Dashboard() {
         <ProfileOnboardingModal
           open={needsOnboarding}
           onComplete={completeOnboarding}
-          onSkip={() => setDeclaredProfile?.('CREATOR')}
+          onSkip={() => setDeclaredProfile?.('ASSISTED')}
           showSkip={true}
         />
       )}
