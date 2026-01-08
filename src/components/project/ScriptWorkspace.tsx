@@ -945,14 +945,24 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         // JSON direct response from generate-script
         const jsonData = await response.json();
         
-        // Extract raw_content from scenes array
+        // Extract raw_content from scenes array (avoid duplicating sluglines)
         if (jsonData.scenes && Array.isArray(jsonData.scenes)) {
           fullText = jsonData.scenes
             .map((s: { slugline?: string; raw_content?: string }) => {
-              const parts: string[] = [];
-              if (s.slugline) parts.push(s.slugline);
-              if (s.raw_content) parts.push(s.raw_content);
-              return parts.join('\n\n');
+              const slugline = s.slugline?.trim() || '';
+              const rawContent = s.raw_content?.trim() || '';
+              
+              // If raw_content already starts with the slugline, use only raw_content
+              if (rawContent && slugline) {
+                const rawContentStart = rawContent.slice(0, slugline.length + 20).toUpperCase();
+                const sluglineUpper = slugline.toUpperCase();
+                if (rawContentStart.includes(sluglineUpper)) {
+                  return rawContent;
+                }
+                return `${slugline}\n\n${rawContent}`;
+              }
+              
+              return rawContent || slugline || '';
             })
             .filter(Boolean)
             .join('\n\n---\n\n');
