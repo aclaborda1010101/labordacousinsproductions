@@ -1050,6 +1050,8 @@ async function runQC(
   passed: boolean;
   issues: string[];
   fixNotes: string;
+  issuesSeverity?: { critical: string[]; minor: string[] };
+  breakdown?: { estructura: number; rasgos: number; cabelloPiel: number; tecnico: number };
 }> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) {
@@ -1062,17 +1064,14 @@ async function runQC(
         type: 'text', 
         text: `Evalúa esta imagen de tipo ${slotType} para el personaje "${characterName}".
         
-Verifica:
-1. ¿La imagen generada parece la MISMA PERSONA que la referencia?
-2. ¿Los rasgos faciales clave se conservan (forma del rostro, ojos, nariz, boca)?
-3. ¿El color y estilo del cabello se mantienen (incluyendo canas o tonos grises)?
-4. ¿El tono de piel es consistente?
-5. ¿Hay artefactos de IA (manos deformadas, rasgos distorsionados)?
-6. ¿La calidad técnica es profesional?
+Verifica la calidad técnica de la imagen:
+1. ¿Hay artefactos de IA (manos deformadas, rasgos distorsionados)?
+2. ¿La calidad técnica es profesional?
+3. ¿La iluminación y composición son adecuadas?
 
 IMPORTANTE: Escribe todos los "issues" y "fixNotes" en ESPAÑOL.
-Devuelve JSON: {"score": 0-100, "passed": boolean, "issues": ["...en español..."], "fixNotes": "...en español..."}
-Score 80+ = aprobado. Menor = necesita revisión.` 
+Devuelve JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": "...", "issuesSeverity": {"critical": [...], "minor": [...]}}
+Score 70+ = aprobado.` 
       },
       { 
         type: 'image_url', 
@@ -1080,7 +1079,7 @@ Score 80+ = aprobado. Menor = necesita revisión.`
       }
     ];
 
-    // Add reference image if available for comparison
+    // Add reference image if available for comparison - use weighted criteria
     if (referenceImageUrl) {
       content.splice(1, 0, {
         type: 'image_url',
@@ -1089,17 +1088,41 @@ Score 80+ = aprobado. Menor = necesita revisión.`
       content[0] = {
         type: 'text',
         text: `Compara estas dos imágenes. La PRIMERA es la REFERENCIA (la persona real). La SEGUNDA es la imagen GENERADA.
-        
-Evalúa si la imagen generada parece la MISMA PERSONA:
-1. ¿La estructura facial coincide?
-2. ¿Los ojos, nariz y boca son similares?
-3. ¿El color del cabello se conserva (incluyendo canas/plateados)?
-4. ¿El tono de piel es consistente?
-5. ¿Hay artefactos de IA o distorsiones?
 
-IMPORTANTE: Escribe todos los "issues" y "fixNotes" en ESPAÑOL.
-Devuelve JSON: {"score": 0-100, "passed": boolean, "issues": ["...en español..."], "fixNotes": "...en español..."}
-Score 80+ = aprobado. Menor = necesita revisión.`
+CRITERIOS DE EVALUACIÓN CON PESOS:
+1. ESTRUCTURA FACIAL (40% del score): forma del rostro, mandíbula, frente, proporciones
+2. RASGOS CLAVE (30% del score): ojos (forma y color), nariz, boca, orejas
+3. CABELLO Y TONO DE PIEL (20% del score): color del cabello, canas, textura, tono de piel
+4. CALIDAD TÉCNICA (10% del score): artefactos de IA, distorsiones
+
+GUÍA DE SCORING:
+- 85-100: Misma persona, muy reconocible, excelente parecido
+- 70-84: Misma persona con variaciones menores aceptables (expresión, iluminación, ángulo)
+- 50-69: Parecido parcial, estructura facial similar pero rasgos diferentes
+- <50: No parece la misma persona
+
+IMPORTANTE: 
+- Diferencias menores en textura de barba, brillo de piel o iluminación NO deben penalizar mucho
+- El PESO de los criterios es: Estructura 40%, Rasgos 30%, Cabello/piel 20%, Técnico 10%
+- Escribe todos los "issues" y "fixNotes" en ESPAÑOL
+
+Devuelve JSON:
+{
+  "score": 0-100,
+  "passed": boolean,
+  "issues": ["...en español..."],
+  "fixNotes": "...en español...",
+  "issuesSeverity": {
+    "critical": ["problemas de estructura facial o rasgos muy diferentes"],
+    "minor": ["diferencias menores en textura, iluminación, etc."]
+  },
+  "breakdown": {
+    "estructura": 0-100,
+    "rasgos": 0-100,
+    "cabelloPiel": 0-100,
+    "tecnico": 0-100
+  }
+}`
       };
     }
 
@@ -1110,14 +1133,21 @@ Score 80+ = aprobado. Menor = necesita revisión.`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'google/gemini-2.5-pro',
         messages: [
           {
             role: 'system',
             content: `Eres un analista QC experto para imágenes de referencia de personajes.
-Tu trabajo es verificar que las imágenes generadas mantienen el PARECIDO EXACTO con la persona de referencia.
-Sé ESTRICTO con los rasgos faciales, color del cabello (especialmente canas/tonos grises), y apariencia de edad.
-IMPORTANTE: Escribe todos los mensajes de "issues" y "fixNotes" en ESPAÑOL.
+Tu trabajo es verificar que las imágenes generadas mantienen PARECIDO con la persona de referencia.
+
+CALIBRACIÓN IMPORTANTE:
+- Sé JUSTO, no excesivamente estricto
+- Las diferencias MENORES (textura de barba, brillo, iluminación) NO deben bajar mucho el score
+- Las diferencias MAYORES (estructura facial, forma de ojos/nariz) SÍ deben penalizar
+- Si la persona es RECONOCIBLE, el score debe ser 70+
+- Clasifica los issues en "critical" (estructura/rasgos) y "minor" (textura/iluminación)
+
+IMPORTANTE: Escribe todos los mensajes en ESPAÑOL.
 Devuelve ÚNICAMENTE JSON válido.`
           },
           {
@@ -1131,7 +1161,7 @@ Devuelve ÚNICAMENTE JSON válido.`
 
     if (!response.ok) {
       console.error('QC request failed:', response.status);
-      return { score: 70, passed: true, issues: [], fixNotes: '' };
+      return { score: 75, passed: true, issues: [], fixNotes: '' };
     }
 
     const data = await response.json();
@@ -1140,11 +1170,14 @@ Devuelve ÚNICAMENTE JSON válido.`
     if (responseContent) {
       try {
         const result = JSON.parse(responseContent);
+        const score = result.score || 75;
         return {
-          score: result.score || 70,
-          passed: result.passed !== false && (result.score || 70) >= 80,
+          score,
+          passed: result.passed !== false && score >= 70,
           issues: result.issues || [],
-          fixNotes: result.fixNotes || ''
+          fixNotes: result.fixNotes || '',
+          issuesSeverity: result.issuesSeverity,
+          breakdown: result.breakdown
         };
       } catch {
         console.error('Failed to parse QC response');
@@ -1154,7 +1187,7 @@ Devuelve ÚNICAMENTE JSON válido.`
     console.error('QC error:', error);
   }
   
-  return { score: 70, passed: true, issues: [], fixNotes: '' };
+  return { score: 75, passed: true, issues: [], fixNotes: '' };
 }
 
 // ============================================
