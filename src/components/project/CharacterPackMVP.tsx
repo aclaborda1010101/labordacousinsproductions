@@ -28,6 +28,8 @@ import {
   Palette,
   Eye,
   X,
+  Wand2,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   Dialog,
@@ -73,6 +75,9 @@ interface PackSlot {
   image_url: string | null;
   view_angle?: string | null;
   expression_name?: string | null;
+  qc_score?: number | null;
+  qc_issues?: string[] | null;
+  fix_notes?: string | null;
 }
 
 interface PreviewImage {
@@ -80,7 +85,55 @@ interface PreviewImage {
   slotType: string;
   slotId: string;
   label: string;
+  qcScore?: number | null;
+  qcIssues?: string[] | null;
+  fixNotes?: string | null;
 }
+
+// Helper function to map QC issues to human-readable corrections in Spanish
+const getCorrectionsForIssues = (issues: string[]): string[] => {
+  const corrections: string[] = [];
+  const allText = issues.join(' ').toLowerCase();
+  
+  const correctionMap: Record<string, { patterns: string[], fix: string }> = {
+    hair: { 
+      patterns: ['hair', 'pelo', 'cabello', 'grey', 'gray', 'canas', 'gris', 'plateado'], 
+      fix: 'Preservar color y estilo de pelo exacto (incluyendo canas)' 
+    },
+    age: { 
+      patterns: ['age', 'older', 'younger', 'edad', 'mayor', 'joven', 'niño', 'adulto'], 
+      fix: 'Mantener apariencia de edad exacta del personaje' 
+    },
+    face: { 
+      patterns: ['facial', 'face', 'nose', 'mouth', 'nariz', 'boca', 'cara', 'rostro'], 
+      fix: 'Preservar estructura facial y proporciones' 
+    },
+    skin: { 
+      patterns: ['skin', 'tone', 'piel', 'tono', 'complexion', 'tez'], 
+      fix: 'Mantener tono de piel consistente' 
+    },
+    eyes: { 
+      patterns: ['eyes', 'eye', 'ojos', 'ojo', 'mirada'], 
+      fix: 'Preservar forma y color de ojos' 
+    },
+    texture: { 
+      patterns: ['texture', 'stylized', 'cartoon', 'textura', 'estilizado', 'caricatura'], 
+      fix: 'Generar con calidad fotorrealista, sin estilización' 
+    },
+  };
+  
+  for (const [_, config] of Object.entries(correctionMap)) {
+    if (config.patterns.some(p => allText.includes(p))) {
+      corrections.push(config.fix);
+    }
+  }
+  
+  if (corrections.length === 0) {
+    corrections.push('Reforzar parecido general con la referencia');
+  }
+  
+  return corrections;
+};
 
 interface CharacterPackMVPProps {
   characterId: string;
@@ -116,7 +169,7 @@ export default function CharacterPackMVP({
   const fetchSlots = useCallback(async () => {
     const { data: existing } = await supabase
       .from('character_pack_slots')
-      .select('id, slot_type, status, image_url, view_angle, expression_name')
+      .select('id, slot_type, status, image_url, view_angle, expression_name, qc_score, qc_issues, fix_notes')
       .eq('character_id', characterId)
       .in('slot_type', ALL_SLOT_TYPES);
 
@@ -473,7 +526,10 @@ export default function CharacterPackMVP({
                             url: slot.image_url, 
                             slotType: slotDef.type,
                             slotId: slot.id,
-                            label: slotDef.label
+                            label: slotDef.label,
+                            qcScore: slot.qc_score,
+                            qcIssues: slot.qc_issues,
+                            fixNotes: slot.fix_notes,
                           })}
                         >
                           {slot?.image_url ? (
@@ -507,7 +563,10 @@ export default function CharacterPackMVP({
                             url: slot.image_url, 
                             slotType: slotDef.type,
                             slotId: slot.id,
-                            label: slotDef.label
+                            label: slotDef.label,
+                            qcScore: slot.qc_score,
+                            qcIssues: slot.qc_issues,
+                            fixNotes: slot.fix_notes,
                           })}
                         >
                           {slot?.image_url ? (
@@ -527,14 +586,68 @@ export default function CharacterPackMVP({
           </div>
         )}
 
-        {/* Image Preview Dialog */}
+        {/* Image Preview Dialog with QC info */}
         <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>{previewImage?.label}</DialogTitle>
+          <DialogContent className="max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
+            <DialogHeader className="flex-shrink-0">
+              <DialogTitle className="flex items-center gap-2">
+                {previewImage?.label}
+                {previewImage?.qcScore != null && (
+                  <Badge variant={previewImage.qcScore >= 80 ? 'pass' : 'pending'} className="ml-2">
+                    Coherencia: {previewImage.qcScore}%
+                  </Badge>
+                )}
+              </DialogTitle>
             </DialogHeader>
+            
             {previewImage && (
-              <div className="space-y-4">
+              <div className="flex-1 overflow-y-auto space-y-4 pr-1 min-h-0">
+                {/* QC Issues Panel */}
+                {previewImage.qcIssues && previewImage.qcIssues.length > 0 && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 space-y-2">
+                    <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-medium text-sm">
+                      <AlertTriangle className="w-4 h-4" />
+                      Problemas detectados
+                    </div>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
+                      {previewImage.qcIssues.map((issue, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-yellow-500">•</span>
+                          {issue}
+                        </li>
+                      ))}
+                    </ul>
+                    {previewImage.fixNotes && (
+                      <div className="pt-2 border-t border-yellow-500/20">
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-medium">Sugerencia:</span> {previewImage.fixNotes}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Corrections Panel - shows what would be fixed */}
+                {previewImage.qcIssues && previewImage.qcIssues.length > 0 && (
+                  <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3 space-y-2">
+                    <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium text-sm">
+                      <Wand2 className="w-4 h-4" />
+                      Correcciones disponibles
+                    </div>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
+                      {getCorrectionsForIssues(previewImage.qcIssues).map((correction, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-purple-500">✓</span>
+                          {correction}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-xs text-muted-foreground pt-1 border-t border-purple-500/20">
+                      Usa el modo PRO para regenerar con "Mejorar coherencia".
+                    </p>
+                  </div>
+                )}
+
                 <div className="aspect-square rounded-lg overflow-hidden bg-muted">
                   <img 
                     src={previewImage.url} 
@@ -542,13 +655,16 @@ export default function CharacterPackMVP({
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex gap-2 justify-end">
-                  <Button variant="outline" size="sm" onClick={() => setPreviewImage(null)}>
-                    Cerrar
-                  </Button>
-                </div>
               </div>
             )}
+            
+            <div className="flex-shrink-0 pt-3 border-t border-border">
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" size="sm" onClick={() => setPreviewImage(null)}>
+                  Cerrar
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       </div>

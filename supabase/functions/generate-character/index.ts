@@ -1060,18 +1060,19 @@ async function runQC(
     const content: any[] = [
       { 
         type: 'text', 
-        text: `Evaluate this ${slotType} image for character "${characterName}".
+        text: `Evalúa esta imagen de tipo ${slotType} para el personaje "${characterName}".
         
-Check for:
-1. Does the generated image look like the SAME PERSON as the reference?
-2. Are the key facial features preserved (face shape, eyes, nose, mouth)?
-3. Is the hair color and style preserved (including any grey/silver tones)?
-4. Is the skin tone consistent?
-5. Are there any AI artifacts (deformed hands, morphed features)?
-6. Is the technical quality professional?
+Verifica:
+1. ¿La imagen generada parece la MISMA PERSONA que la referencia?
+2. ¿Los rasgos faciales clave se conservan (forma del rostro, ojos, nariz, boca)?
+3. ¿El color y estilo del cabello se mantienen (incluyendo canas o tonos grises)?
+4. ¿El tono de piel es consistente?
+5. ¿Hay artefactos de IA (manos deformadas, rasgos distorsionados)?
+6. ¿La calidad técnica es profesional?
 
-Return JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": "..."}
-Score 80+ = passed. Lower = needs review.` 
+IMPORTANTE: Escribe todos los "issues" y "fixNotes" en ESPAÑOL.
+Devuelve JSON: {"score": 0-100, "passed": boolean, "issues": ["...en español..."], "fixNotes": "...en español..."}
+Score 80+ = aprobado. Menor = necesita revisión.` 
       },
       { 
         type: 'image_url', 
@@ -1087,17 +1088,18 @@ Score 80+ = passed. Lower = needs review.`
       });
       content[0] = {
         type: 'text',
-        text: `Compare these two images. The FIRST image is the REFERENCE (the real person). The SECOND image is the GENERATED image.
+        text: `Compara estas dos imágenes. La PRIMERA es la REFERENCIA (la persona real). La SEGUNDA es la imagen GENERADA.
         
-Evaluate if the generated image looks like the SAME PERSON:
-1. Does the face structure match?
-2. Are the eyes, nose, mouth similar?
-3. Is the hair color preserved (including grey/silver if present)?
-4. Is the skin tone consistent?
-5. Any AI artifacts or distortions?
+Evalúa si la imagen generada parece la MISMA PERSONA:
+1. ¿La estructura facial coincide?
+2. ¿Los ojos, nariz y boca son similares?
+3. ¿El color del cabello se conserva (incluyendo canas/plateados)?
+4. ¿El tono de piel es consistente?
+5. ¿Hay artefactos de IA o distorsiones?
 
-Return JSON: {"score": 0-100, "passed": boolean, "issues": ["..."], "fixNotes": "..."}
-Score 80+ = passed. Lower = needs review.`
+IMPORTANTE: Escribe todos los "issues" y "fixNotes" en ESPAÑOL.
+Devuelve JSON: {"score": 0-100, "passed": boolean, "issues": ["...en español..."], "fixNotes": "...en español..."}
+Score 80+ = aprobado. Menor = necesita revisión.`
       };
     }
 
@@ -1112,10 +1114,11 @@ Score 80+ = passed. Lower = needs review.`
         messages: [
           {
             role: 'system',
-            content: `You are an expert QC analyst for character reference images. 
-Your job is to verify that generated images maintain the EXACT likeness of the reference person.
-Be STRICT about facial features, hair color (especially grey/silver tones), and age appearance.
-Return ONLY valid JSON.`
+            content: `Eres un analista QC experto para imágenes de referencia de personajes.
+Tu trabajo es verificar que las imágenes generadas mantienen el PARECIDO EXACTO con la persona de referencia.
+Sé ESTRICTO con los rasgos faciales, color del cabello (especialmente canas/tonos grises), y apariencia de edad.
+IMPORTANTE: Escribe todos los mensajes de "issues" y "fixNotes" en ESPAÑOL.
+Devuelve ÚNICAMENTE JSON válido.`
           },
           {
             role: 'user',
