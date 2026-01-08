@@ -1126,18 +1126,22 @@ Devuelve JSON:
       };
     }
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
-        messages: [
-          {
-            role: 'system',
-            content: `Eres un analista QC experto para imágenes de referencia de personajes.
+    // Retry logic for QC analysis
+    const maxAttempts = 2;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash', // More stable than Pro for multi-image QC
+            messages: [
+              {
+                role: 'system',
+                content: `Eres un analista QC experto para imágenes de referencia de personajes.
 Tu trabajo es verificar que las imágenes generadas mantienen PARECIDO con la persona de referencia.
 
 CALIBRACIÓN IMPORTANTE:
@@ -1149,42 +1153,60 @@ CALIBRACIÓN IMPORTANTE:
 
 IMPORTANTE: Escribe todos los mensajes en ESPAÑOL.
 Devuelve ÚNICAMENTE JSON válido.`
-          },
-          {
-            role: 'user',
-            content: content
+              },
+              {
+                role: 'user',
+                content: content
+              }
+            ],
+            response_format: { type: 'json_object' }
+          }),
+        });
+
+        if (!response.ok) {
+          const errBody = await response.text();
+          console.error(`QC request failed (attempt ${attempt}/${maxAttempts}): ${response.status} - ${errBody}`);
+          console.error('QC payload size:', JSON.stringify(content).length, 'chars');
+          
+          // If last attempt, return fallback
+          if (attempt === maxAttempts) {
+          return { score: 75, passed: true, issues: [], fixNotes: '' };
           }
-        ],
-        response_format: { type: 'json_object' }
-      }),
-    });
+          // Wait before retry
+          await new Promise(r => setTimeout(r, 500));
+          continue;
+        }
 
-    if (!response.ok) {
-      console.error('QC request failed:', response.status);
-      return { score: 75, passed: true, issues: [], fixNotes: '' };
-    }
-
-    const data = await response.json();
-    const responseContent = data.choices?.[0]?.message?.content;
-    
-    if (responseContent) {
-      try {
-        const result = JSON.parse(responseContent);
-        const score = result.score || 75;
-        return {
-          score,
-          passed: result.passed !== false && score >= 70,
-          issues: result.issues || [],
-          fixNotes: result.fixNotes || '',
-          issuesSeverity: result.issuesSeverity,
-          breakdown: result.breakdown
-        };
-      } catch {
-        console.error('Failed to parse QC response');
+        const data = await response.json();
+        const responseContent = data.choices?.[0]?.message?.content;
+        
+        if (responseContent) {
+          try {
+            const result = JSON.parse(responseContent);
+            const score = result.score || 75;
+            console.log(`QC analysis successful: score=${score}, issues=${result.issues?.length || 0}`);
+            return {
+              score,
+              passed: result.passed !== false && score >= 70,
+              issues: result.issues || [],
+              fixNotes: result.fixNotes || '',
+              issuesSeverity: result.issuesSeverity,
+              breakdown: result.breakdown
+            };
+          } catch {
+            console.error('Failed to parse QC response:', responseContent?.slice(0, 200));
+          }
+        }
+      } catch (error) {
+        console.error(`QC error (attempt ${attempt}/${maxAttempts}):`, error);
+        if (attempt === maxAttempts) {
+          return { score: 75, passed: true, issues: [], fixNotes: '' };
+        }
+        await new Promise(r => setTimeout(r, 500));
       }
     }
   } catch (error) {
-    console.error('QC error:', error);
+    console.error('QC outer error:', error);
   }
   
   return { score: 75, passed: true, issues: [], fixNotes: '' };
