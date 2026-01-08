@@ -109,7 +109,15 @@ export function EntityCard({
                 {/* Image/Placeholder */}
                 <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
                   {imageUrl ? (
-                    <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+                    <img 
+                      src={imageUrl} 
+                      alt={name} 
+                      className="w-full h-full object-cover object-top"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
                   ) : (
                     <div className="text-primary">{placeholderIcon}</div>
                   )}
@@ -159,7 +167,15 @@ export function EntityCard({
                   {/* Image/Placeholder */}
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
                     {imageUrl ? (
-                      <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+                      <img 
+                        src={imageUrl} 
+                        alt={name} 
+                        className="w-full h-full object-cover object-top"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
                     ) : (
                       <div className="text-primary">{placeholderIcon}</div>
                     )}
