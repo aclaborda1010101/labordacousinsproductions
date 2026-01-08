@@ -99,7 +99,8 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-keyframe]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
 
 [functions.generate-visual-dna]
 # Gateway JWT disabled; function validates auth internally to avoid "Invalid JWT" at gateway layer
