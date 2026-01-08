@@ -2358,7 +2358,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   setGeneratedEpisodesList([]);
                   clearPipelineState();
                   setActiveTab('generate');
-                  toast.info('Listo para regenerar. Ajusta tu idea y genera un nuevo outline.');
+                  
+                  // Auto-regenerate if we have an idea saved
+                  if (ideaText.trim()) {
+                    toast.info('Regenerando outline con tu idea original...');
+                    // Use setTimeout to allow state updates before calling generateLightOutline
+                    setTimeout(() => {
+                      generateLightOutline();
+                    }, 100);
+                  } else {
+                    toast.info('Ingresa tu idea y genera un nuevo outline.');
+                  }
                 }}
                 disabled={pipelineRunning}
               >
