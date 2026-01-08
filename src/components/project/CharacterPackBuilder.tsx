@@ -125,6 +125,7 @@ export function CharacterPackBuilder({
   const [improvingQC, setImprovingQC] = useState(false);
   const [improveCoherenceMode, setImproveCoherenceMode] = useState(false);
   const [rebuildingFromBase, setRebuildingFromBase] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // Fetch or initialize slots - with automatic backfill for missing slots
@@ -1454,29 +1455,34 @@ export function CharacterPackBuilder({
                 <Button 
                   variant={improveCoherenceMode ? "default" : "secondary"}
                   className={improveCoherenceMode ? "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600" : ""}
-                  onClick={() => {
-                    if (!previewImage) return;
+                  onClick={async () => {
+                    if (!previewImage || isRegenerating) return;
+                    setIsRegenerating(true);
                     
-                    if (improveCoherenceMode && previewImage.slotId) {
-                      regenerateWithCoherence(
-                        previewImage.slotType, 
-                        previewImage.slotId, 
-                        previewImage.qcIssues || undefined, 
-                        previewImage.fixNotes || undefined
-                      );
-                    } else {
-                      const slot = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
-                        .find(s => s.type === previewImage.slotType);
-                      if (slot) {
-                        const viewAngle = 'viewAngle' in slot ? slot.viewAngle : undefined;
-                        const expression = 'expression' in slot ? slot.expression : undefined;
-                        generateSlot(slot.type, viewAngle, expression);
+                    try {
+                      if (improveCoherenceMode && previewImage.slotId) {
+                        await regenerateWithCoherence(
+                          previewImage.slotType, 
+                          previewImage.slotId, 
+                          previewImage.qcIssues || undefined, 
+                          previewImage.fixNotes || undefined
+                        );
+                      } else {
+                        const slot = [...REFERENCE_SLOTS, ...BASE_VISUAL_SLOTS, ...TURNAROUND_SLOTS, ...EXPRESSION_SLOTS]
+                          .find(s => s.type === previewImage.slotType);
+                        if (slot) {
+                          const viewAngle = 'viewAngle' in slot ? slot.viewAngle : undefined;
+                          const expression = 'expression' in slot ? slot.expression : undefined;
+                          await generateSlot(slot.type, viewAngle, expression);
+                        }
                       }
+                    } finally {
+                      setIsRegenerating(false);
                     }
                   }}
-                  disabled={generatingSlot !== null || improvingQC}
+                  disabled={generatingSlot !== null || improvingQC || isRegenerating}
                 >
-                  {improvingQC || generatingSlot ? (
+                  {improvingQC || generatingSlot || isRegenerating ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       {improvingQC ? 'Mejorando...' : 'Regenerando...'}
