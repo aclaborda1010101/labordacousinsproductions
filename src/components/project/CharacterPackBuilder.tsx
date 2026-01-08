@@ -1371,8 +1371,8 @@ export function CharacterPackBuilder({
           setImproveCoherenceMode(false);
         }
       }}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
+        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="flex items-center gap-2">
               {previewImage?.label}
               {previewImage?.qcScore !== null && previewImage?.qcScore !== undefined && (
@@ -1386,41 +1386,44 @@ export function CharacterPackBuilder({
             </DialogDescription>
           </DialogHeader>
           
-          {/* QC Issues Panel */}
-          {previewImage?.qcIssues && previewImage.qcIssues.length > 0 && (
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 space-y-2">
-              <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                <AlertTriangle className="w-4 h-4" />
-                Problemas detectados
-              </div>
-              <ul className="text-sm space-y-1 text-muted-foreground">
-                {previewImage.qcIssues.map((issue, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-yellow-500">•</span>
-                    {issue}
-                  </li>
-                ))}
-              </ul>
-              {previewImage.fixNotes && (
-                <div className="pt-2 border-t border-yellow-500/20">
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-medium">Sugerencia:</span> {previewImage.fixNotes}
-                  </p>
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2 min-h-0">
+            {/* QC Issues Panel */}
+            {previewImage?.qcIssues && previewImage.qcIssues.length > 0 && (
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 space-y-2">
+                <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-medium">
+                  <AlertTriangle className="w-4 h-4" />
+                  Problemas detectados
                 </div>
-              )}
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  {previewImage.qcIssues.map((issue, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-yellow-500">•</span>
+                      {issue}
+                    </li>
+                  ))}
+                </ul>
+                {previewImage.fixNotes && (
+                  <div className="pt-2 border-t border-yellow-500/20">
+                    <p className="text-xs text-muted-foreground">
+                      <span className="font-medium">Sugerencia:</span> {previewImage.fixNotes}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <div className="relative">
+              <img 
+                src={previewImage?.url} 
+                alt={previewImage?.label}
+                className="w-full h-auto rounded-lg max-h-[50vh] object-contain"
+              />
             </div>
-          )}
-          
-          <div className="relative">
-            <img 
-              src={previewImage?.url} 
-              alt={previewImage?.label}
-              className="w-full h-auto rounded-lg max-h-[60vh] object-contain"
-            />
           </div>
           
-          {/* Coherence Toggle + Actions */}
-          <div className="space-y-3">
+          {/* Fixed footer - always visible */}
+          <div className="flex-shrink-0 space-y-3 pt-3 border-t border-border">
             {/* Toggle */}
             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border">
               <div className="flex items-center gap-2">
