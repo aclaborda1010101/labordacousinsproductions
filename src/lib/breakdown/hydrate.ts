@@ -25,6 +25,34 @@ export const hydrateCharacters = (raw: any): any[] => {
   const normalizeName = (c: any): string =>
     c?.name ?? c?.canonical_name ?? c?.label ?? c?.id ?? 'Unknown';
 
+  // Build dialogue metrics map from characters.cast (contains dialogue_lines, dialogue_rank)
+  const dialogueMap = new Map<string, { dialogue_lines: number; dialogue_rank: number; scenes_count: number }>();
+  if (ch && typeof ch === "object" && !Array.isArray(ch) && Array.isArray(ch.cast)) {
+    for (const c of ch.cast) {
+      const nameKey = normalizeName(c).toUpperCase().trim();
+      dialogueMap.set(nameKey, {
+        dialogue_lines: c.dialogue_lines ?? 0,
+        dialogue_rank: c.dialogue_rank ?? 999,
+        scenes_count: c.scenes_count ?? 0,
+      });
+    }
+  }
+
+  // Helper to enrich character with dialogue metrics from cast
+  const enrichWithDialogue = (c: any): any => {
+    const nameKey = normalizeName(c).toUpperCase().trim();
+    const metrics = dialogueMap.get(nameKey);
+    if (metrics) {
+      return {
+        ...c,
+        dialogue_lines: c.dialogue_lines ?? metrics.dialogue_lines,
+        dialogue_rank: c.dialogue_rank ?? metrics.dialogue_rank,
+        scenes_count: c.scenes_count ?? metrics.scenes_count,
+      };
+    }
+    return c;
+  };
+
   // Priority 1: narrative_classification (most complete format from script-breakdown v25+)
   if (ch && typeof ch === "object" && !Array.isArray(ch) && ch.narrative_classification) {
     const nc = ch.narrative_classification;
@@ -32,19 +60,23 @@ export const hydrateCharacters = (raw: any): any[] => {
 
     // Protagonists → cast bucket
     for (const c of pickArray(nc.protagonists)) {
-      result.push({ ...c, name: normalizeName(c), __bucket: 'cast', role: c.role ?? 'protagonist' });
+      const enriched = enrichWithDialogue(c);
+      result.push({ ...enriched, name: normalizeName(c), __bucket: 'cast', role: c.role ?? 'protagonist' });
     }
     // Major supporting → cast bucket
     for (const c of pickArray(nc.major_supporting)) {
-      result.push({ ...c, name: normalizeName(c), __bucket: 'cast', role: c.role ?? 'supporting' });
+      const enriched = enrichWithDialogue(c);
+      result.push({ ...enriched, name: normalizeName(c), __bucket: 'cast', role: c.role ?? 'supporting' });
     }
     // Minor speaking → featured bucket
     for (const c of pickArray(nc.minor_speaking)) {
-      result.push({ ...c, name: normalizeName(c), __bucket: 'featured', role: c.role ?? 'minor' });
+      const enriched = enrichWithDialogue(c);
+      result.push({ ...enriched, name: normalizeName(c), __bucket: 'featured', role: c.role ?? 'minor' });
     }
     // Voices/systems → voice bucket
     for (const c of pickArray(nc.voices_systems, nc.voices_and_functional)) {
-      result.push({ ...c, name: normalizeName(c), __bucket: 'voice', role: c.role ?? 'voice' });
+      const enriched = enrichWithDialogue(c);
+      result.push({ ...enriched, name: normalizeName(c), __bucket: 'voice', role: c.role ?? 'voice' });
     }
 
     if (result.length) return result;
