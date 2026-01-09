@@ -35,6 +35,7 @@ import {
   Video,
   RefreshCw,
   Edit2,
+  Check,
 } from 'lucide-react';
 
 interface CharactersListProps {
@@ -77,6 +78,7 @@ interface CharacterCardWithProgressProps {
   onEdit: () => void;
   onDelete: () => void;
   onPackComplete: () => void;
+  onImageClick: () => void;
 }
 
 function CharacterCardWithProgress({
@@ -91,6 +93,7 @@ function CharacterCardWithProgress({
   onEdit,
   onDelete,
   onPackComplete,
+  onImageClick,
 }: CharacterCardWithProgressProps) {
   // Use hook to get real-time progress for this character
   const { isGenerating: taskIsGenerating, progress, phase } = useEntityProgress(character.id);
@@ -124,6 +127,7 @@ function CharacterCardWithProgress({
       isPro={isPro}
       onToggleExpand={onToggleExpand}
       onPrimaryAction={onPrimaryAction}
+      onImageClick={onImageClick}
       badges={
         <>
           {character.character_role && (
@@ -245,6 +249,10 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const [refreshing, setRefreshing] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
+  const [previewCharacter, setPreviewCharacter] = useState<{
+    character: Character;
+    imageUrl: string;
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -808,6 +816,12 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               onEdit={() => { setEditingCharacter(character); setShowEditDialog(true); }}
               onDelete={() => handleDeleteCharacter(character.id)}
               onPackComplete={fetchCharacters}
+              onImageClick={() => {
+                const imageData = characterImages.get(character.id);
+                if (imageData?.imageUrl) {
+                  setPreviewCharacter({ character, imageUrl: imageData.imageUrl });
+                }
+              }}
             />
           ))
         )}
@@ -887,6 +901,48 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           setEditingCharacter(null);
         }}
       />
+
+      {/* Character Image Preview Dialog */}
+      <Dialog open={!!previewCharacter} onOpenChange={(open) => !open && setPreviewCharacter(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{previewCharacter?.character.name}</DialogTitle>
+          </DialogHeader>
+          {previewCharacter && (
+            <div className="space-y-4">
+              <img 
+                src={previewCharacter.imageUrl} 
+                alt={previewCharacter.character.name}
+                className="w-full rounded-lg"
+              />
+              <DialogFooter className="flex gap-2 sm:gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    handleRegenerate(previewCharacter.character);
+                    setPreviewCharacter(null);
+                  }}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Regenerar
+                </Button>
+                {!previewCharacter.character.accepted_run_id && previewCharacter.character.current_run_id && (
+                  <Button
+                    variant="gold"
+                    onClick={() => {
+                      handleAccept(previewCharacter.character);
+                      setPreviewCharacter(null);
+                    }}
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Aceptar
+                  </Button>
+                )}
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

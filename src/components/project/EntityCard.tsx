@@ -44,6 +44,8 @@ interface EntityCardProps {
   onPrimaryAction: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  /** Click handler for the image/avatar area */
+  onImageClick?: () => void;
   /** Content shown when expanded */
   expandedContent?: ReactNode;
   /** Advanced options content (Pro mode only) */
@@ -69,6 +71,7 @@ export function EntityCard({
   onPrimaryAction,
   onEdit,
   onDelete,
+  onImageClick,
   expandedContent,
   advancedContent,
   badges,
@@ -114,7 +117,17 @@ export function EntityCard({
               {/* Desktop layout */}
               <div className="hidden sm:flex items-center gap-4">
                 {/* Image/Placeholder */}
-                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+                <div 
+                  className={`w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0 ${
+                    imageUrl && onImageClick ? 'cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all' : ''
+                  }`}
+                  onClick={(e) => {
+                    if (imageUrl && onImageClick) {
+                      e.stopPropagation();
+                      onImageClick();
+                    }
+                  }}
+                >
                   {imageUrl ? (
                     <img 
                       src={imageUrl} 
@@ -173,7 +186,17 @@ export function EntityCard({
               <div className="flex sm:hidden flex-col gap-3">
                 <div className="flex items-start gap-3">
                   {/* Image/Placeholder */}
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+                  <div 
+                    className={`w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden shrink-0 ${
+                      imageUrl && onImageClick ? 'cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all' : ''
+                    }`}
+                    onClick={(e) => {
+                      if (imageUrl && onImageClick) {
+                        e.stopPropagation();
+                        onImageClick();
+                      }
+                    }}
+                  >
                     {imageUrl ? (
                       <img 
                         src={imageUrl} 
