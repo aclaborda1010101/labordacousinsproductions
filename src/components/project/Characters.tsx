@@ -647,7 +647,7 @@ export default function Characters({ projectId }: CharactersProps) {
           asset_type: 'character',
           name: character.name,
           image_url: slot.image_url,
-          run_id: slot.run_id || crypto.randomUUID(),
+          run_id: slot.run_id || null,
           is_active: true
         })
         .select()

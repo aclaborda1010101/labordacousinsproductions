@@ -431,7 +431,7 @@ export default function LocationsList({ projectId }: LocationsListProps) {
           asset_type: 'location',
           name: location.name,
           image_url: run.output_url,
-          run_id: location.accepted_run_id,
+          run_id: location.accepted_run_id || null,
           is_active: true,
         })
         .select()

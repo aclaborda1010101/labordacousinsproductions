@@ -376,7 +376,7 @@ export type Database = {
           name: string
           notes: string | null
           project_id: string
-          run_id: string
+          run_id: string | null
         }
         Insert: {
           asset_type: string
@@ -387,7 +387,7 @@ export type Database = {
           name: string
           notes?: string | null
           project_id: string
-          run_id: string
+          run_id?: string | null
         }
         Update: {
           asset_type?: string
@@ -398,7 +398,7 @@ export type Database = {
           name?: string
           notes?: string | null
           project_id?: string
-          run_id?: string
+          run_id?: string | null
         }
         Relationships: [
           {
