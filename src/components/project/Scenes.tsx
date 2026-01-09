@@ -543,12 +543,34 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             const sceneLocation = locations.find(l => l.id === scene.location_id);
             const sceneCharacters = characters.filter(c => scene.character_ids?.includes(c.id));
             
-            // Build dialogue array for shot-suggest
-            const dialogueArray = sceneContent.dialogues.map(d => ({
-              character: d.character,
-              line: d.text,
-              parenthetical: undefined
-            }));
+            // Get breakdown data for this scene for fallback
+            const parsed = (await supabase.from('scripts').select('parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).single()).data?.parsed_json as any;
+            const breakdown = parsed?.breakdown_pro || parsed?.breakdown;
+            const sceneList = breakdown?.scenes?.list || breakdown?.scene_list || parsed?.scenes?.list || parsed?.scene_list || [];
+            const sceneBreakdown = sceneList.find((s: any) => (s.scene_number || s.number) === scene.scene_no);
+            
+            // FALLBACK: if extractSceneContent returns empty, use breakdown data
+            const dialogueArray = sceneContent.dialogues.length > 0
+              ? sceneContent.dialogues.map(d => ({ character: d.character, line: d.text, parenthetical: undefined }))
+              : (sceneBreakdown?.dialogue || []).map((d: any) => ({
+                  character: d.character || 'PERSONAJE',
+                  line: d.text || d.line || '',
+                  parenthetical: undefined
+                }));
+
+            const actionText = sceneContent.actions.length > 0
+              ? sceneContent.actions.join(' ')
+              : sceneBreakdown?.action || sceneBreakdown?.description || scene.summary || 'Escena sin descripción detallada';
+
+            const moodText = sceneContent.mood || sceneBreakdown?.mood || 'neutral';
+            const summaryText = scene.summary || sceneContent.summary || sceneBreakdown?.summary || sceneBreakdown?.description || '';
+
+            console.log(`[Scenes] Scene ${scene.scene_no} content:`, { 
+              dialoguesCount: dialogueArray.length, 
+              actionLength: actionText.length,
+              mood: moodText,
+              usingFallback: sceneContent.dialogues.length === 0 
+            });
 
             // Call shot-suggest to get production proposal
             const { data, error } = await supabase.functions.invoke('shot-suggest', {
@@ -557,12 +579,12 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                 sceneId: scene.id,
                 scene: {
                   slugline: scene.slugline,
-                  summary: scene.summary || sceneContent.summary || '',
-                  action: sceneContent.actions.join(' '),
+                  summary: summaryText,
+                  action: actionText,
                   dialogue: dialogueArray,
                   quality_mode: scene.quality_mode,
                   time_of_day: scene.time_of_day || 'DAY',
-                  mood: sceneContent.mood,
+                  mood: moodText,
                 },
                 characters: sceneCharacters.map(c => ({
                   id: c.id,
