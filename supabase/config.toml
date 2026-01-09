@@ -96,7 +96,8 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.generate-shot-details]
-verify_jwt = true
+# Gateway JWT disabled; function called in parallel during pipeline generation
+verify_jwt = false
 
 [functions.generate-keyframe]
 # Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
