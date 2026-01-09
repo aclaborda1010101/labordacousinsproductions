@@ -35,6 +35,25 @@ import CharacterEditDialog from './CharacterEditDialog';
 
 interface CharactersProps { projectId: string; }
 
+// All generatable slots for complete pack (excludes ref_* which are upload-only)
+const GENERATABLE_SLOTS = [
+  // Closeups
+  { type: 'closeup_front', label: 'Closeup Frontal' },
+  { type: 'closeup_profile', label: 'Closeup Perfil' },
+  // Turnarounds
+  { type: 'turn_front_34', label: 'Vista Frontal 3/4' },
+  { type: 'turn_side', label: 'Vista Lateral' },
+  { type: 'turn_back', label: 'Vista Trasera' },
+  { type: 'turn_back_34', label: 'Vista Trasera 3/4' },
+  // Expressions
+  { type: 'expr_neutral', label: 'Expresión Neutral' },
+  { type: 'expr_happy', label: 'Expresión Alegre' },
+  { type: 'expr_sad', label: 'Expresión Triste' },
+  { type: 'expr_angry', label: 'Expresión Enojado' },
+  { type: 'expr_surprised', label: 'Expresión Sorprendido' },
+  { type: 'expr_fear', label: 'Expresión Miedo' },
+];
+
 interface CharacterOutfit {
   id: string;
   name: string;
@@ -385,32 +404,35 @@ export default function Characters({ projectId }: CharactersProps) {
           });
       }
       
-      // Phase 2: Generate Identity Closeup (NOT ref_closeup_front - that's for uploads only!)
-      updateTask(taskId, { progress: 15, description: 'Identity Closeup...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'closeup_front', null, null, 0);
+      // Generate all 12 slots sequentially with progress updates
+      const totalSlots = GENERATABLE_SLOTS.length;
       
-      // Phase 3: Generate Front 3/4 View (unified naming)
-      updateTask(taskId, { progress: 30, description: 'Vista Frontal 3/4...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turn_front_34', null, null, 1);
+      for (let i = 0; i < totalSlots; i++) {
+        const slot = GENERATABLE_SLOTS[i];
+        const progressPercent = Math.round(5 + ((i + 1) / totalSlots) * 90); // 5% to 95%
+        
+        updateTask(taskId, { 
+          progress: progressPercent, 
+          description: `${slot.label} (${i + 1}/${totalSlots})...` 
+        });
+        
+        await generateSlotForCharacter(
+          character.id, 
+          character.name, 
+          character.bio || '', 
+          slot.type, 
+          null, 
+          null, 
+          i
+        );
+      }
       
-      // Phase 4: Generate Side View (unified naming)
-      updateTask(taskId, { progress: 50, description: 'Vista Lateral...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turn_side', null, null, 2);
-      
-      // Phase 5: Generate Back View (unified naming)
-      updateTask(taskId, { progress: 65, description: 'Vista Trasera...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turn_back', null, null, 3);
-      
-      // Phase 6: Generate Neutral Expression (unified naming)
-      updateTask(taskId, { progress: 80, description: 'Expresión Neutral...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'expr_neutral', null, null, 4);
-      
-      // Phase 7: Update completeness (backend already calls recalc_character_pack, but refresh anyway)
-      updateTask(taskId, { progress: 95, description: 'Finalizando...' });
+      // Final: Update completeness
+      updateTask(taskId, { progress: 98, description: 'Finalizando...' });
       await supabase.rpc('recalc_character_pack', { p_character_id: character.id });
       
-      completeTask(taskId, { pack: 'complete', slots: 5 });
-      toast.success(`Pack de ${character.name} generado`);
+      completeTask(taskId, { pack: 'complete', slots: totalSlots });
+      toast.success(`Pack completo de ${character.name} generado (${totalSlots} imágenes)`);
       fetchCharacters();
     } catch (error) {
       console.error('Auto-generate error:', error);
