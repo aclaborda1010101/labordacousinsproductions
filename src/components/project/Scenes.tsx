@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2, Zap } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2, Zap, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -22,6 +22,8 @@ import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { runTemplateQAChecks, TemplateQAWarning } from '@/lib/shortTemplates';
 import SceneEditDialog from './SceneEditDialog';
 import { extractSceneContent, suggestShotCount } from '@/lib/sceneNormalizer';
+import { ProductionReviewModal } from './ProductionReviewModal';
+import { ProductionProposal } from '@/types/production';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -102,6 +104,12 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [hasBreakdown, setHasBreakdown] = useState(false);
   const [generatingShotsFor, setGeneratingShotsFor] = useState<string | null>(null);
   const [scriptRawText, setScriptRawText] = useState<string>('');
+  
+  // Production Proposal flow state
+  const [productionProposals, setProductionProposals] = useState<Map<string, ProductionProposal>>(new Map());
+  const [showProductionReview, setShowProductionReview] = useState(false);
+  const [generatingProposals, setGeneratingProposals] = useState(false);
+  const [approvingProposals, setApprovingProposals] = useState(false);
 
   // Editorial Knowledge Base context
   const { formatProfile, visualStyle, userLevel } = useEditorialKnowledgeBase({
@@ -425,9 +433,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     return renders[shotId]?.[0];
   };
 
-  // Sync scenes from script breakdown AND auto-generate shots + micro-shots
+  // Sync scenes from script breakdown AND generate PRODUCTION PROPOSALS (not shots yet)
   const handleSyncFromScript = async () => {
     setSyncing(true);
+    setGeneratingProposals(true);
     try {
       // Get script breakdown
       const { data: script } = await supabase
@@ -518,23 +527,242 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         }
       }
 
-      toast.success(`${updatedCount} escenas sincronizadas. Generando shots...`);
+      toast.success(`${updatedCount} escenas sincronizadas. Generando propuestas de producción...`);
       await fetchScenes();
 
-      // AUTO-GENERATE SHOTS FOR ALL SYNCED SCENES
+      // GENERATE PRODUCTION PROPOSALS using shot-suggest (NOT inserting shots yet)
+      const newProposals = new Map<string, ProductionProposal>();
       const MAX_PARALLEL = 2;
+      
       for (let i = 0; i < scenesToProcess.length; i += MAX_PARALLEL) {
         const batch = scenesToProcess.slice(i, i + MAX_PARALLEL);
-        await Promise.all(batch.map(scene => generateShotsForSceneWithMicroShots(scene)));
+        
+        const results = await Promise.all(batch.map(async (scene) => {
+          try {
+            const sceneContent = extractSceneContent(rawText, scene.scene_no, scene.slugline);
+            const sceneLocation = locations.find(l => l.id === scene.location_id);
+            const sceneCharacters = characters.filter(c => scene.character_ids?.includes(c.id));
+            
+            // Build dialogue array for shot-suggest
+            const dialogueArray = sceneContent.dialogues.map(d => ({
+              character: d.character,
+              line: d.text,
+              parenthetical: undefined
+            }));
+
+            // Call shot-suggest to get production proposal
+            const { data, error } = await supabase.functions.invoke('shot-suggest', {
+              body: {
+                projectId,
+                sceneId: scene.id,
+                scene: {
+                  slugline: scene.slugline,
+                  summary: scene.summary || sceneContent.summary || '',
+                  action: sceneContent.actions.join(' '),
+                  dialogue: dialogueArray,
+                  quality_mode: scene.quality_mode,
+                  time_of_day: scene.time_of_day || 'DAY',
+                  mood: sceneContent.mood,
+                },
+                characters: sceneCharacters.map(c => ({
+                  id: c.id,
+                  name: c.name,
+                  token: c.token,
+                  has_refs: !!c.turnaround_urls,
+                })),
+                location: sceneLocation ? {
+                  id: sceneLocation.id,
+                  name: sceneLocation.name,
+                  token: sceneLocation.token,
+                  has_refs: !!sceneLocation.reference_urls,
+                } : undefined,
+                language: 'es',
+              }
+            });
+
+            if (error) {
+              console.error(`Error generating proposal for scene ${scene.scene_no}:`, error);
+              return null;
+            }
+
+            // Transform response into ProductionProposal
+            const proposal: ProductionProposal = {
+              sceneId: scene.id,
+              scene_analysis: data.scene_analysis || {
+                emotional_arc: 'No analizado',
+                visual_strategy: 'Estándar',
+                coverage_approach: 'Classical',
+                key_moments: [],
+              },
+              scene_setup: data.scene_setup || {
+                camera_package: { body: 'ARRI_Alexa35', codec: 'ProRes4444', fps: 24, shutter_angle: 180, iso_target: 800 },
+                lens_set: { family: 'ARRI_Signature_Prime', look: 'Modern_Clinical', available_focals: [24, 35, 50, 85] },
+                lighting_plan: { key_style: 'Natural', color_temp_base_k: 5600, practicals: [], contrast_ratio: '2:1' },
+                audio_plan: { room_tone: 'Interior silencioso', ambience_layers: [], foley_priorities: [] },
+              },
+              shots: (data.shots || []).map((shot: any, idx: number) => ({
+                shot_id: shot.shot_id || `S${String(idx + 1).padStart(2, '0')}`,
+                shot_no: shot.shot_no || idx + 1,
+                shot_type: shot.shot_type || 'Medium',
+                coverage_type: shot.coverage_type || 'Single',
+                story_purpose: shot.story_purpose || 'dialogue_focus',
+                effective_mode: shot.effective_mode || scene.quality_mode,
+                hero: shot.hero || false,
+                camera_variation: shot.camera_variation || {
+                  focal_mm: 50,
+                  aperture: 'T2.8',
+                  movement: 'Static',
+                  height: 'EyeLevel',
+                  stabilization: 'Tripod',
+                },
+                blocking_min: shot.blocking_min || {
+                  subject_positions: '',
+                  screen_direction: '',
+                  axis_180_compliant: true,
+                  action: shot.blocking_min?.action || '',
+                  dialogue: shot.blocking_min?.dialogue || null,
+                },
+                duration_estimate_sec: shot.duration_estimate_sec || 4,
+                hold_ms: shot.hold_ms,
+                edit_intent: shot.edit_intent,
+                continuity: shot.continuity,
+                characters_in_frame: shot.characters_in_frame,
+                ai_risks: shot.ai_risks || [],
+                risk_mitigation: shot.risk_mitigation,
+                transition_in: shot.transition_in,
+                transition_out: shot.transition_out,
+                sound_cue: shot.sound_cue,
+              })),
+              sequence_summary: data.sequence_summary || {
+                total_duration_sec: 30,
+                shot_count: data.shots?.length || 0,
+                coverage_completeness: 'FULL',
+                edit_rhythm: 'Medium',
+                keyframes_required: (data.shots?.length || 0) * 4,
+                estimated_cost_tier: scene.quality_mode,
+              },
+              qc_gates: data.qc_gates,
+              production_warnings: data.production_warnings || [],
+              generated_at: new Date().toISOString(),
+              status: 'pending',
+            };
+
+            return { sceneId: scene.id, proposal };
+          } catch (err) {
+            console.error(`Error generating proposal for scene ${scene.scene_no}:`, err);
+            return null;
+          }
+        }));
+
+        // Add successful proposals to map
+        results.forEach(result => {
+          if (result) {
+            newProposals.set(result.sceneId, result.proposal);
+          }
+        });
       }
 
-      toast.success(`Pipeline completo: ${scenesToProcess.length} escenas con shots y micro-shots`);
+      setProductionProposals(newProposals);
+      
+      if (newProposals.size > 0) {
+        setShowProductionReview(true);
+        toast.success(`${newProposals.size} propuestas de producción generadas. Revisa y aprueba.`);
+      } else {
+        toast.error('No se pudieron generar propuestas de producción');
+      }
     } catch (error) {
       console.error('Error syncing from script:', error);
       toast.error('Error al sincronizar desde guión');
     } finally {
       setSyncing(false);
+      setGeneratingProposals(false);
     }
+  };
+
+  // Approve production proposals and insert shots + micro-shots
+  const handleApproveProposals = async () => {
+    setApprovingProposals(true);
+    try {
+      let totalShotsInserted = 0;
+      
+      for (const [sceneId, proposal] of productionProposals) {
+        // Delete existing shots for clean insertion
+        await supabase.from('shots').delete().eq('scene_id', sceneId);
+        
+        // Insert shots from the approved proposal
+        for (const shot of proposal.shots) {
+          const { data: insertedShot, error: insertError } = await supabase.from('shots').insert({
+            scene_id: sceneId,
+            shot_no: shot.shot_no,
+            shot_type: shot.shot_type.toLowerCase(),
+            duration_target: shot.duration_estimate_sec,
+            effective_mode: shot.effective_mode,
+            hero: shot.hero,
+            camera: {
+              movement: shot.camera_variation.movement,
+              focal_mm: shot.camera_variation.focal_mm,
+              aperture: shot.camera_variation.aperture,
+              height: shot.camera_variation.height,
+              stabilization: shot.camera_variation.stabilization,
+              lens: proposal.scene_setup.lens_set.family,
+            },
+            blocking: shot.blocking_min.action,
+            dialogue_text: shot.blocking_min.dialogue,
+            lighting: {
+              style: proposal.scene_setup.lighting_plan.key_style,
+              color_temp: proposal.scene_setup.lighting_plan.color_temp_base_k,
+            },
+            sound_plan: {
+              room_tone: proposal.scene_setup.audio_plan.room_tone,
+              ambience: proposal.scene_setup.audio_plan.ambience_layers,
+            },
+            story_purpose: shot.story_purpose,
+            ai_risk: shot.ai_risks,
+            continuity_notes: shot.continuity?.anchors?.join(', '),
+            edit_intent: shot.edit_intent?.rhythm_note,
+            coverage_type: shot.coverage_type,
+          }).select().single();
+
+          if (!insertError && insertedShot) {
+            totalShotsInserted++;
+            
+            // AUTO-CREATE MICRO-SHOTS for this shot
+            await supabase.rpc('subdivide_shot_into_microshots', {
+              p_shot_id: insertedShot.id,
+              p_micro_duration: 2
+            });
+          }
+        }
+        
+        // Update proposal status
+        proposal.status = 'approved';
+      }
+
+      toast.success(`${totalShotsInserted} shots insertados con micro-shots`);
+      setShowProductionReview(false);
+      setProductionProposals(new Map());
+      
+      // Refresh shots for all processed scenes
+      for (const sceneId of productionProposals.keys()) {
+        fetchShots(sceneId);
+      }
+      
+      await fetchScenes();
+    } catch (error) {
+      console.error('Error approving proposals:', error);
+      toast.error('Error al aprobar propuestas');
+    } finally {
+      setApprovingProposals(false);
+    }
+  };
+
+  // Update a specific production proposal
+  const handleUpdateProposal = (sceneId: string, proposal: ProductionProposal) => {
+    setProductionProposals(prev => {
+      const newMap = new Map(prev);
+      newMap.set(sceneId, proposal);
+      return newMap;
+    });
   };
 
   // Generate shots + auto-create micro-shots
@@ -738,10 +966,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             <Button 
               variant="gold" 
               onClick={handleSyncFromScript}
-              disabled={syncing}
+              disabled={syncing || generatingProposals}
             >
-              {syncing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
-              {syncing ? 'Generando pipeline...' : 'Hidratar + Generar Shots'}
+              {syncing || generatingProposals ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+              {syncing ? 'Hidratando...' : generatingProposals ? 'Generando propuestas...' : 'Hidratar + Propuesta de Producción'}
             </Button>
           )}
           <Button variant="gold" onClick={() => setShowAIDialog(true)}>
@@ -1437,6 +1665,17 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           fetchScenes();
           setEditingScene(null);
         }}
+      />
+
+      {/* Production Review Modal */}
+      <ProductionReviewModal
+        open={showProductionReview}
+        onOpenChange={setShowProductionReview}
+        proposals={productionProposals}
+        scenes={scenes.map(s => ({ id: s.id, scene_no: s.scene_no, episode_no: s.episode_no, slugline: s.slugline }))}
+        onUpdateProposal={handleUpdateProposal}
+        onApprove={handleApproveProposals}
+        isApproving={approvingProposals}
       />
     </div>
   );
