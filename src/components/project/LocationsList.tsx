@@ -16,6 +16,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Checkbox } from '@/components/ui/checkbox';
 import { EntityCard, getEntityStatus, EntityStatus } from './EntityCard';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import { useEntityProgress } from '@/hooks/useEntityProgress';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import NextStepNavigator from './NextStepNavigator';
 import {
   Plus,
@@ -53,11 +55,24 @@ interface Location {
 export default function LocationsList({ projectId }: LocationsListProps) {
   const { userLevel } = useEditorialKnowledgeBase({ projectId, assetType: 'location' });
   const isPro = userLevel === 'pro';
+  const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
 
   const [loading, setLoading] = useState(true);
   const [locations, setLocations] = useState<Location[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [generatingIds, setGeneratingIds] = useState<Set<string>>(new Set());
+  
+  // Helpers for parallel generation
+  const startGenerating = (id: string) => {
+    setGeneratingIds(prev => new Set([...prev, id]));
+  };
+  const stopGenerating = (id: string) => {
+    setGeneratingIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
   const [generatingAll, setGeneratingAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -280,16 +295,26 @@ export default function LocationsList({ projectId }: LocationsListProps) {
   };
 
   const handleGenerate = async (location: Location) => {
-    setGeneratingId(location.id);
-    toast.info(`Analizando ${location.name}...`);
+    startGenerating(location.id);
+    
+    // Register task in the global background task system
+    const taskId = addTask({
+      type: 'location_generation',
+      title: `Generando ${location.name}`,
+      projectId,
+      entityId: location.id,
+      entityName: location.name,
+    });
 
     try {
+      updateTask(taskId, { progress: 5, description: 'Analizando ubicación...' });
+      
       let description = (location.description || '').trim();
       let profileJson = null;
       
       // If no description, generate profile with entity-builder first
       if (!description) {
-        toast.info(`Generando perfil visual para ${location.name}...`);
+        updateTask(taskId, { progress: 15, description: 'Generando perfil visual...' });
         
         const cleanName = location.name
           .replace(/[-–]\s*(MAÑANA|TARDE|NOCHE|DÍA|CONTINÚA|CONTINUOUS|DAY|NIGHT|DAWN|DUSK)/gi, '')
@@ -321,8 +346,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
               description,
               profile_json: profileData,
             }).eq('id', location.id);
-            
-            toast.success('Perfil visual generado');
           }
         } catch (profileErr) {
           console.warn('Could not generate profile, using name only:', profileErr);
@@ -333,7 +356,7 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       const prompt = description || location.name;
       const timeOfDay = extractTimeFromName(location.name);
 
-      toast.info(`Generando imagen de ${location.name}...`);
+      updateTask(taskId, { progress: 40, description: 'Generando imagen...' });
       
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
@@ -356,17 +379,21 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
       if (error) throw error;
 
+      updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
+
       if (data?.runId) {
         await supabase.from('locations').update({ current_run_id: data.runId }).eq('id', location.id);
       }
 
-      toast.success('Localización generada');
+      completeTask(taskId, data);
+      toast.success(`${location.name} generada`);
       fetchLocations();
     } catch (err) {
       console.error('Generation error:', err);
-      toast.error('Error al generar');
+      failTask(taskId, err instanceof Error ? err.message : 'Error al generar');
+      toast.error(`Error al generar ${location.name}`);
     } finally {
-      setGeneratingId(null);
+      stopGenerating(location.id);
     }
   };
   const handleAccept = async (location: Location) => {
@@ -424,11 +451,23 @@ export default function LocationsList({ projectId }: LocationsListProps) {
   };
 
   const handleRegenerate = async (location: Location) => {
-    setGeneratingId(location.id);
-    toast.info(`Generando nueva variante de ${location.name}...`);
+    startGenerating(location.id);
+    
+    // Register task in the global background task system
+    const taskId = addTask({
+      type: 'location_generation',
+      title: `Nueva variante: ${location.name}`,
+      projectId,
+      entityId: location.id,
+      entityName: location.name,
+    });
 
     try {
+      updateTask(taskId, { progress: 10, description: 'Preparando regeneración...' });
+      
       const prompt = (location.description || '').trim() || location.name;
+
+      updateTask(taskId, { progress: 30, description: 'Generando nueva variante...' });
 
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
@@ -451,16 +490,20 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
       if (error) throw error;
 
+      updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
+
       if (data?.runId) {
         await supabase.from('locations').update({ current_run_id: data.runId }).eq('id', location.id);
       }
 
-      toast.success('Nueva variante generada');
+      completeTask(taskId, data);
+      toast.success(`Nueva variante de ${location.name} generada`);
       fetchLocations();
     } catch (err) {
-      toast.error('Error al regenerar');
+      failTask(taskId, err instanceof Error ? err.message : 'Error al regenerar');
+      toast.error(`Error al regenerar ${location.name}`);
     } finally {
-      setGeneratingId(null);
+      stopGenerating(location.id);
     }
   };
   const handleGenerateAll = async () => {
@@ -470,14 +513,18 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       return;
     }
 
-    if (!confirm(`¿Generar ${toGenerate.length} localizaciones?`)) return;
+    if (!confirm(`¿Generar ${toGenerate.length} localizaciones en paralelo?`)) return;
 
     setGeneratingAll(true);
-    for (const loc of toGenerate) {
-      await handleGenerate(loc);
-    }
+    toast.info(`Iniciando generación de ${toGenerate.length} localizaciones...`);
+    
+    // Parallel generation with Promise.allSettled
+    await Promise.allSettled(
+      toGenerate.map(loc => handleGenerate(loc))
+    );
+    
     setGeneratingAll(false);
-    toast.success('Generación completada');
+    toast.success('Generación masiva completada');
   };
 
   // Get first image URL from reference_urls
@@ -596,7 +643,7 @@ export default function LocationsList({ projectId }: LocationsListProps) {
               placeholderIcon={<MapPin className="w-6 h-6" />}
               status={getEntityStatus(location.current_run_id, location.accepted_run_id, location.canon_asset_id)}
               isExpanded={expandedId === location.id}
-              isGenerating={generatingId === location.id}
+              isGenerating={generatingIds.has(location.id)}
               isPro={isPro}
               onToggleExpand={() => setExpandedId(expandedId === location.id ? null : location.id)}
               onPrimaryAction={() => handlePrimaryAction(location)}

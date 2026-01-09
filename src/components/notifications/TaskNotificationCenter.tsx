@@ -226,7 +226,7 @@ export function TaskNotificationCenter() {
         </Button>
       </SheetTrigger>
       
-      <SheetContent side="right" className="w-full sm:max-w-md p-0">
+      <SheetContent side="right" className="w-full sm:max-w-md p-0 z-[100]">
         <SheetHeader className="p-4 border-b bg-muted/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
