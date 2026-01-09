@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
+import { fetchCharacterImages, CharacterImageData } from '@/lib/resolveCharacterImage';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import {
   Loader2,
@@ -163,6 +164,7 @@ export default function CharacterPackMVP({
   const [progress, setProgress] = useState({ current: 0, total: 11, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
   const [hasVisualDNA, setHasVisualDNA] = useState(false);
+  const [fallbackImage, setFallbackImage] = useState<CharacterImageData | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
   const [showPhotos, setShowPhotos] = useState(false);
@@ -225,37 +227,37 @@ export default function CharacterPackMVP({
     setLoading(false);
   }, [characterId]);
 
+  const fetchFallbackImage = useCallback(async () => {
+    const { data: char } = await supabase
+      .from('characters')
+      .select('id, current_run_id, accepted_run_id, canon_asset_id, turnaround_urls')
+      .eq('id', characterId)
+      .maybeSingle();
+
+    if (!char) {
+      setFallbackImage(null);
+      return;
+    }
+
+    const map = await fetchCharacterImages([char as any]);
+    setFallbackImage(map.get(characterId) || null);
+  }, [characterId]);
+
   useEffect(() => {
     fetchSlots();
-  }, [fetchSlots]);
+    fetchFallbackImage();
+  }, [fetchSlots, fetchFallbackImage]);
 
   // Get slot by type
   const getSlot = (type: string): PackSlot | undefined => slots.find(s => s.slot_type === type);
 
-  // Check if reference is uploaded OR if character has a generated/accepted image
-  const hasReference = () => {
-    const ref = getSlot('ref_closeup_front');
-    if (ref?.image_url) return true;
-    
-    // Also check for any closeup slot with image
-    const closeup = slots.find(s => 
-      (s.slot_type === 'closeup' || s.slot_type === 'ref_closeup_front') && 
-      s.image_url
-    );
-    return !!closeup?.image_url;
-  };
-
-  // Get the reference image URL (prioritize ref_closeup_front, fallback to any closeup)
+  // Get the reference image URL (prioritize uploaded reference, fallback to best available character image)
   const getReferenceImageUrl = (): string | null => {
     const ref = getSlot('ref_closeup_front');
-    if (ref?.image_url) return ref.image_url;
-    
-    const closeup = slots.find(s => 
-      (s.slot_type === 'closeup' || s.slot_type === 'ref_closeup_front') && 
-      s.image_url
-    );
-    return closeup?.image_url || null;
+    return ref?.image_url || fallbackImage?.imageUrl || null;
   };
+
+  const hasReference = () => !!getReferenceImageUrl();
 
   // Upload reference photo and analyze for Visual DNA
   const uploadReference = async (file: File) => {
@@ -316,9 +318,37 @@ export default function CharacterPackMVP({
 
   // Auto-generate remaining 11 slots
   const autoGenerateFullPack = async () => {
-    if (!hasReference()) {
-      toast.error('Sube primero la foto frontal');
+    const referenceUrl = getReferenceImageUrl();
+    if (!referenceUrl) {
+      toast.error('Primero sube una foto frontal o genera una imagen del personaje');
       return;
+    }
+
+    // Ensure ref slot is populated so generation can use it as anchor
+    const refSlot = getSlot('ref_closeup_front');
+    if (refSlot && !refSlot.image_url) {
+      await supabase
+        .from('character_pack_slots')
+        .update({ image_url: referenceUrl, status: 'generated' })
+        .eq('id', refSlot.id);
+
+      // Best-effort: extract Visual DNA for stronger likeness
+      if (!hasVisualDNA) {
+        try {
+          await supabase.functions.invoke('analyze-single-reference', {
+            body: {
+              characterId,
+              imageUrl: referenceUrl,
+              characterName,
+            },
+          });
+          setHasVisualDNA(true);
+        } catch (err) {
+          // Continue anyway
+        }
+      }
+
+      await fetchSlots();
     }
 
     setAutoGenerating(true);
@@ -514,26 +544,42 @@ export default function CharacterPackMVP({
             )}
 
             {/* State-based UI */}
-            {!hasReference() && (
+            {!hasReference() ? (
               <Button 
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
+                disabled={uploading || analyzing}
               >
-                {uploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
+                {uploading || analyzing ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <Upload className="w-4 h-4 mr-2" />
+                )}
                 Subir foto frontal
               </Button>
-            )}
+            ) : (
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading || analyzing}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Cambiar foto
+                </Button>
 
-            {hasReference() && !autoGenerating && completenessScore < 100 && (
-              <Button 
-                size="sm"
-                variant="gold"
-                onClick={autoGenerateFullPack}
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Crear Pack Completo
-              </Button>
+                {!autoGenerating && completenessScore < 100 && (
+                  <Button 
+                    size="sm"
+                    variant="gold"
+                    onClick={autoGenerateFullPack}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Crear Pack Completo
+                  </Button>
+                )}
+              </div>
             )}
 
             {autoGenerating && (
