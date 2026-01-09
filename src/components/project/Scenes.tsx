@@ -425,14 +425,14 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     return renders[shotId]?.[0];
   };
 
-  // Sync scenes from script breakdown
+  // Sync scenes from script breakdown AND auto-generate shots + micro-shots
   const handleSyncFromScript = async () => {
     setSyncing(true);
     try {
       // Get script breakdown
       const { data: script } = await supabase
         .from('scripts')
-        .select('parsed_json')
+        .select('parsed_json, raw_text')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -446,6 +446,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
       const parsed = script.parsed_json as any;
       const breakdown = parsed.breakdown_pro || parsed.breakdown;
       const sceneList = breakdown?.scenes?.list || breakdown?.scene_list || parsed.scenes?.list || parsed.scene_list || [];
+      const rawText = script.raw_text || scriptRawText;
 
       if (sceneList.length === 0) {
         toast.error('El guión no tiene escenas para sincronizar');
@@ -459,6 +460,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
       const characterMap = new Map(characters.map(c => [c.name.toLowerCase().trim(), c.id]));
 
       let updatedCount = 0;
+      const scenesToProcess: Scene[] = [];
+      
       for (const sceneData of sceneList) {
         const sceneNumber = sceneData.scene_number || sceneData.number;
         const episodeNumber = sceneData.episode_number || 1;
@@ -481,7 +484,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           .map((name: string) => characterMap.get(name.toLowerCase().trim()))
           .filter(Boolean);
 
-        // Update scene
+        // Extract scene content from raw text
+        const sceneContent = extractSceneContent(rawText, sceneNumber, slugline);
+
+        // Update scene with full content
         const { error } = await supabase
           .from('scenes')
           .update({
@@ -489,15 +495,40 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             time_of_day: timeOfDay || dbScene.time_of_day,
             location_id: locationId || dbScene.location_id,
             character_ids: characterIds.length > 0 ? characterIds : dbScene.character_ids,
-            summary: sceneData.summary || sceneData.description || dbScene.summary,
+            summary: sceneContent.summary || sceneData.summary || sceneData.description || dbScene.summary,
+            parsed_json: {
+              dialogues: sceneContent.dialogues,
+              actions: sceneContent.actions,
+              mood: sceneContent.mood,
+              characters_extracted: [...new Set(sceneContent.dialogues.map(d => d.character))],
+            }
           })
           .eq('id', dbScene.id);
 
-        if (!error) updatedCount++;
+        if (!error) {
+          updatedCount++;
+          scenesToProcess.push({
+            ...dbScene,
+            slugline: slugline || dbScene.slugline,
+            time_of_day: timeOfDay || dbScene.time_of_day,
+            location_id: locationId || dbScene.location_id,
+            character_ids: characterIds.length > 0 ? characterIds : dbScene.character_ids,
+            summary: sceneContent.summary || sceneData.summary || dbScene.summary,
+          });
+        }
       }
 
-      toast.success(`${updatedCount} escenas sincronizadas desde el guión`);
-      fetchScenes();
+      toast.success(`${updatedCount} escenas sincronizadas. Generando shots...`);
+      await fetchScenes();
+
+      // AUTO-GENERATE SHOTS FOR ALL SYNCED SCENES
+      const MAX_PARALLEL = 2;
+      for (let i = 0; i < scenesToProcess.length; i += MAX_PARALLEL) {
+        const batch = scenesToProcess.slice(i, i + MAX_PARALLEL);
+        await Promise.all(batch.map(scene => generateShotsForSceneWithMicroShots(scene)));
+      }
+
+      toast.success(`Pipeline completo: ${scenesToProcess.length} escenas con shots y micro-shots`);
     } catch (error) {
       console.error('Error syncing from script:', error);
       toast.error('Error al sincronizar desde guión');
@@ -506,9 +537,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     }
   };
 
-  // Generate detailed shots for a scene using AI
-  const generateShotsForScene = async (scene: Scene) => {
-    setGeneratingShotsFor(scene.id);
+  // Generate shots + auto-create micro-shots
+  const generateShotsForSceneWithMicroShots = async (scene: Scene) => {
     try {
       // Extract scene content from raw text
       const sceneContent = extractSceneContent(scriptRawText, scene.scene_no, scene.slugline);
@@ -604,10 +634,27 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
         if (!insertError && insertedShot) {
           generatedShots.push({ ...insertedShot, fills });
+          
+          // AUTO-CREATE MICRO-SHOTS for this shot
+          await supabase.rpc('subdivide_shot_into_microshots', {
+            p_shot_id: insertedShot.id,
+            p_micro_duration: 2 // 2 second micro-shots
+          });
         }
       }
 
-      toast.success(`${generatedShots.length} shots generados para la escena ${scene.scene_no}`);
+      console.log(`[Scene ${scene.scene_no}] Generated ${generatedShots.length} shots with micro-shots`);
+    } catch (error) {
+      console.error(`Error generating shots for scene ${scene.scene_no}:`, error);
+    }
+  };
+
+  // Generate detailed shots for a scene using AI (with micro-shots)
+  const generateShotsForScene = async (scene: Scene) => {
+    setGeneratingShotsFor(scene.id);
+    try {
+      await generateShotsForSceneWithMicroShots(scene);
+      toast.success(`Shots y micro-shots generados para escena ${scene.scene_no}`);
       fetchShots(scene.id);
     } catch (error) {
       console.error('Error generating shots:', error);
@@ -689,12 +736,12 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
           )}
           {hasBreakdown && scenes.length > 0 && (
             <Button 
-              variant="outline" 
+              variant="gold" 
               onClick={handleSyncFromScript}
               disabled={syncing}
             >
-              {syncing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-              Sincronizar desde Guión
+              {syncing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
+              {syncing ? 'Generando pipeline...' : 'Hidratar + Generar Shots'}
             </Button>
           )}
           <Button variant="gold" onClick={() => setShowAIDialog(true)}>
