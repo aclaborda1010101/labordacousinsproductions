@@ -6,6 +6,9 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle, Image, Check } from 'lucide-react';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
+import { useEntityProgress } from '@/hooks/useEntityProgress';
+import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -60,8 +63,27 @@ interface Character {
   canon_asset_id?: string | null;
 }
 
+/** Inline progress component for PRO character cards */
+function CharacterPackProgress({ characterId }: { characterId: string }) {
+  const { isGenerating, progress, phase } = useEntityProgress(characterId);
+  
+  if (!isGenerating) return null;
+  
+  return (
+    <div className="mt-2 space-y-1 px-2">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <Loader2 className="w-3 h-3 animate-spin" />
+        <span className="flex-1 truncate">{phase || 'Generando...'}</span>
+        <span className="font-mono">{progress}%</span>
+      </div>
+      <Progress value={progress} className="h-1" />
+    </div>
+  );
+}
+
 export default function Characters({ projectId }: CharactersProps) {
   const { t } = useLanguage();
+  const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
   const [loading, setLoading] = useState(true);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -316,13 +338,20 @@ export default function Characters({ projectId }: CharactersProps) {
 
   // Auto-generate full character pack from script data
   const autoGenerateCharacterPack = async (character: Character) => {
+    // Register task in global background task system
+    const taskId = addTask({
+      type: 'character_generation',
+      title: `Pack: ${character.name}`,
+      projectId,
+      entityId: character.id,
+      entityName: character.name,
+    });
+
     setAutoGenerating(character.id);
-    setAutoGenProgress({ current: 0, total: 7, phase: 'Inicializando...' });
     
     try {
       // Phase 1: Generate Visual DNA if not exists
-      setAutoGenProgress({ current: 1, total: 7, phase: 'Generando Visual DNA...' });
-      toast.info('Generando Visual DNA con IA...');
+      updateTask(taskId, { progress: 5, description: 'Generando Visual DNA...' });
       
       const visualDNAResponse = await supabase.functions.invoke('generate-visual-dna', {
         body: {
@@ -356,34 +385,36 @@ export default function Characters({ projectId }: CharactersProps) {
       }
       
       // Phase 2: Generate Identity Closeup
-      setAutoGenProgress({ current: 2, total: 7, phase: 'Generando Identity Closeup...' });
+      updateTask(taskId, { progress: 15, description: 'Identity Closeup...' });
       await generateSlotForCharacter(character.id, character.name, character.bio || '', 'anchor_closeup', null, null, 0);
       
       // Phase 3: Generate Front View
-      setAutoGenProgress({ current: 3, total: 7, phase: 'Generando Vista Frontal...' });
+      updateTask(taskId, { progress: 30, description: 'Vista Frontal...' });
       await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'front', null, 1);
       
       // Phase 4: Generate Side View
-      setAutoGenProgress({ current: 4, total: 7, phase: 'Generando Vista Lateral...' });
+      updateTask(taskId, { progress: 50, description: 'Vista Lateral...' });
       await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'side', null, 2);
       
       // Phase 5: Generate Back View
-      setAutoGenProgress({ current: 5, total: 7, phase: 'Generando Vista Trasera...' });
+      updateTask(taskId, { progress: 65, description: 'Vista Trasera...' });
       await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'back', null, 3);
       
       // Phase 6: Generate Neutral Expression
-      setAutoGenProgress({ current: 6, total: 7, phase: 'Generando Expresión Neutral...' });
+      updateTask(taskId, { progress: 80, description: 'Expresión Neutral...' });
       await generateSlotForCharacter(character.id, character.name, character.bio || '', 'expression', null, 'neutral', 4);
       
       // Phase 7: Update completeness
-      setAutoGenProgress({ current: 7, total: 7, phase: 'Finalizando...' });
+      updateTask(taskId, { progress: 95, description: 'Finalizando...' });
       await supabase.rpc('calculate_pack_completeness', { p_character_id: character.id });
       
-      toast.success(`Pack de ${character.name} generado correctamente`);
+      completeTask(taskId, { pack: 'complete', slots: 5 });
+      toast.success(`Pack de ${character.name} generado`);
       fetchCharacters();
     } catch (error) {
       console.error('Auto-generate error:', error);
-      toast.error('Error en generación automática');
+      failTask(taskId, error instanceof Error ? error.message : 'Error en generación');
+      toast.error(`Error generando pack de ${character.name}`);
     } finally {
       setAutoGenerating(null);
       setAutoGenProgress(null);
@@ -462,7 +493,7 @@ export default function Characters({ projectId }: CharactersProps) {
     return data;
   };
 
-  // Auto-generate ALL characters
+  // Auto-generate ALL characters in parallel with concurrency limit
   const autoGenerateAllCharacters = async () => {
     const charactersToGenerate = characters.filter(c => 
       c.character_role && (!c.pack_completeness_score || c.pack_completeness_score < 50)
@@ -473,20 +504,25 @@ export default function Characters({ projectId }: CharactersProps) {
       return;
     }
 
-    if (!confirm(`¿Generar packs para ${charactersToGenerate.length} personajes? Esto puede tardar varios minutos.`)) {
+    if (!confirm(`¿Generar packs para ${charactersToGenerate.length} personajes en paralelo?`)) {
       return;
     }
 
     setAutoGeneratingAll(true);
+    toast.info(`Iniciando ${charactersToGenerate.length} packs en paralelo...`);
     
-    for (let i = 0; i < charactersToGenerate.length; i++) {
-      const char = charactersToGenerate[i];
-      toast.info(`Generando ${i + 1}/${charactersToGenerate.length}: ${char.name}`);
-      await autoGenerateCharacterPack(char);
+    // Parallel generation with concurrency limit
+    const MAX_PARALLEL = 3;
+    
+    for (let i = 0; i < charactersToGenerate.length; i += MAX_PARALLEL) {
+      const batch = charactersToGenerate.slice(i, i + MAX_PARALLEL);
+      await Promise.allSettled(
+        batch.map(char => autoGenerateCharacterPack(char))
+      );
     }
     
     setAutoGeneratingAll(false);
-    toast.success(`${charactersToGenerate.length} personajes generados`);
+    toast.success('Generación masiva completada');
     fetchCharacters();
   };
 
@@ -1217,6 +1253,9 @@ export default function Characters({ projectId }: CharactersProps) {
                           </Button>
                         </div>
                       </div>
+                      
+                      {/* Inline Progress Bar for Desktop */}
+                      <CharacterPackProgress characterId={character.id} />
 
                     </div>
 
@@ -1380,6 +1419,9 @@ export default function Characters({ projectId }: CharactersProps) {
                           </Button>
                         </div>
                       </div>
+                      
+                      {/* Inline Progress Bar for Mobile */}
+                      <CharacterPackProgress characterId={character.id} />
                     </div>
 
                     {/* Expanded Content */}

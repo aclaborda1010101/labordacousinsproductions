@@ -11,10 +11,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { LocationPackBuilder } from './LocationPackBuilder';
 import BibleProfileViewer from './BibleProfileViewer';
 import { EntityQCBadge } from './QCStatusBadge';
 import { LocationGenerationPanel } from './LocationGenerationPanel';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
+import { useEntityProgress } from '@/hooks/useEntityProgress';
 
 interface LocationsProps { projectId: string; }
 
@@ -32,7 +35,26 @@ interface Location {
   canon_asset_id?: string | null;
 }
 
+/** Inline progress component for location cards */
+function LocationPackProgress({ locationId }: { locationId: string }) {
+  const { isGenerating, progress, phase } = useEntityProgress(locationId);
+  
+  if (!isGenerating) return null;
+  
+  return (
+    <div className="mt-2 space-y-1 px-2">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <Loader2 className="w-3 h-3 animate-spin" />
+        <span className="flex-1 truncate">{phase || 'Generando...'}</span>
+        <span className="font-mono">{progress}%</span>
+      </div>
+      <Progress value={progress} className="h-1" />
+    </div>
+  );
+}
+
 export default function Locations({ projectId }: LocationsProps) {
+  const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
   const [loading, setLoading] = useState(true);
   const [locations, setLocations] = useState<Location[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -245,25 +267,36 @@ export default function Locations({ projectId }: LocationsProps) {
     }
   };
 
-  // Auto-generate location pack
+  // Auto-generate location pack with BackgroundTasks
   const autoGenerateLocationPack = async (location: Location) => {
+    // Register task in global background task system
+    const taskId = addTask({
+      type: 'location_generation',
+      title: `Pack: ${location.name}`,
+      projectId,
+      entityId: location.id,
+      entityName: location.name,
+    });
+
     setAutoGenerating(location.id);
-    toast.info(`Generando pack para ${location.name}...`);
     
     try {
       // First generate Bible profile if not exists
       if (!location.profile_json) {
+        updateTask(taskId, { progress: 5, description: 'Generando perfil...' });
         await generateProfileWithEntityBuilder(location);
       }
       
       // Generate location slots via edge function
       const slots = [
-        { slot_type: 'establishing', view_angle: 'wide', time_of_day: 'day' },
-        { slot_type: 'establishing', view_angle: 'wide', time_of_day: 'night' },
-        { slot_type: 'detail', view_angle: '3/4', time_of_day: 'day' },
+        { slot_type: 'establishing', view_angle: 'wide', time_of_day: 'day', progress: 25 },
+        { slot_type: 'establishing', view_angle: 'wide', time_of_day: 'night', progress: 55 },
+        { slot_type: 'detail', view_angle: '3/4', time_of_day: 'day', progress: 85 },
       ];
       
       for (const slotConfig of slots) {
+        updateTask(taskId, { progress: slotConfig.progress, description: `${slotConfig.slot_type} ${slotConfig.time_of_day}...` });
+        
         // Create or get slot
         const { data: existingSlot, error: existingSlotError } = await supabase
           .from('location_pack_slots')
@@ -347,37 +380,45 @@ export default function Locations({ projectId }: LocationsProps) {
           .eq('id', slotId);
       }
       
+      updateTask(taskId, { progress: 95, description: 'Finalizando...' });
+      completeTask(taskId, { pack: 'complete', slots: 3 });
       toast.success(`Pack de ${location.name} generado`);
       fetchLocations();
     } catch (error) {
       console.error('Auto-generate location error:', error);
-      toast.error('Error en generación de localización');
+      failTask(taskId, error instanceof Error ? error.message : 'Error en generación');
+      toast.error(`Error generando pack de ${location.name}`);
     } finally {
       setAutoGenerating(null);
     }
   };
 
-  // Auto-generate ALL locations
+  // Auto-generate ALL locations in parallel with concurrency limit
   const autoGenerateAllLocations = async () => {
     if (locations.length === 0) {
       toast.info('No hay localizaciones para generar');
       return;
     }
 
-    if (!confirm(`¿Generar packs para ${locations.length} localizaciones? Esto puede tardar varios minutos.`)) {
+    if (!confirm(`¿Generar packs para ${locations.length} localizaciones en paralelo?`)) {
       return;
     }
 
     setAutoGeneratingAll(true);
+    toast.info(`Iniciando ${locations.length} packs en paralelo...`);
     
-    for (let i = 0; i < locations.length; i++) {
-      const loc = locations[i];
-      toast.info(`Generando ${i + 1}/${locations.length}: ${loc.name}`);
-      await autoGenerateLocationPack(loc);
+    // Parallel generation with concurrency limit
+    const MAX_PARALLEL = 3;
+    
+    for (let i = 0; i < locations.length; i += MAX_PARALLEL) {
+      const batch = locations.slice(i, i + MAX_PARALLEL);
+      await Promise.allSettled(
+        batch.map(loc => autoGenerateLocationPack(loc))
+      );
     }
     
     setAutoGeneratingAll(false);
-    toast.success(`${locations.length} localizaciones generadas`);
+    toast.success('Generación masiva completada');
     fetchLocations();
   };
 
@@ -610,6 +651,9 @@ export default function Locations({ projectId }: LocationsProps) {
                           <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
+                      
+                      {/* Inline Progress Bar for Desktop */}
+                      <LocationPackProgress locationId={location.id} />
                     </div>
 
                     {/* Location Card - Mobile */}
@@ -709,6 +753,9 @@ export default function Locations({ projectId }: LocationsProps) {
                           </Button>
                         </div>
                       </div>
+                      
+                      {/* Inline Progress Bar for Mobile */}
+                      <LocationPackProgress locationId={location.id} />
                     </div>
                     <CollapsibleContent className="mt-4">
                       <Tabs defaultValue="pack" className="w-full">
