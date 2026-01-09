@@ -150,6 +150,9 @@ export default function Characters({ projectId }: CharactersProps) {
   // Unified image resolution
   const [characterImages, setCharacterImages] = useState<Map<string, CharacterImageData>>(new Map());
 
+  // Map to store average QC scores for coherence display
+  const [qcScoreMap, setQcScoreMap] = useState<Map<string, number>>(new Map());
+
   const fetchCharacters = async () => { 
     const { data: charsData } = await supabase
       .from('characters')
@@ -184,13 +187,41 @@ export default function Characters({ projectId }: CharactersProps) {
       })));
       setCharacterImages(imageMap);
 
-      // Keep legacy packThumbnails for fallback
-      const charIds = charsWithOutfits.filter(c => !c.turnaround_urls?.front).map(c => c.id);
+      // Fetch real QC scores for coherence display
+      const charIds = charsWithOutfits.map(c => c.id);
       if (charIds.length > 0) {
+        const { data: qcData } = await supabase
+          .from('character_pack_slots')
+          .select('character_id, qc_score')
+          .in('character_id', charIds)
+          .not('qc_score', 'is', null);
+
+        if (qcData && qcData.length > 0) {
+          const scoreAccum: Record<string, { sum: number; count: number }> = {};
+          qcData.forEach(slot => {
+            if (slot.qc_score !== null) {
+              if (!scoreAccum[slot.character_id]) {
+                scoreAccum[slot.character_id] = { sum: 0, count: 0 };
+              }
+              scoreAccum[slot.character_id].sum += slot.qc_score;
+              scoreAccum[slot.character_id].count += 1;
+            }
+          });
+          const avgMap = new Map<string, number>();
+          Object.entries(scoreAccum).forEach(([charId, data]) => {
+            avgMap.set(charId, Math.round(data.sum / data.count));
+          });
+          setQcScoreMap(avgMap);
+        }
+      }
+
+      // Keep legacy packThumbnails for fallback
+      const missingThumbIds = charsWithOutfits.filter(c => !c.turnaround_urls?.front).map(c => c.id);
+      if (missingThumbIds.length > 0) {
         const { data: slots } = await supabase
           .from('character_pack_slots')
           .select('character_id, image_url, slot_type')
-          .in('character_id', charIds)
+          .in('character_id', missingThumbIds)
           .in('slot_type', ['closeup', 'anchor_closeup', 'hero_front', 'turnaround'])
           .not('image_url', 'is', null)
           .order('slot_type');
@@ -1256,6 +1287,7 @@ export default function Characters({ projectId }: CharactersProps) {
                             hasProfile={!!character.profile_json}
                             packScore={character.pack_completeness_score || 0}
                             hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                            coherenceScore={qcScoreMap.get(character.id)}
                           />
                           <CharacterWorkflowGuide 
                             currentStep={getWorkflowStep({
@@ -1377,6 +1409,7 @@ export default function Characters({ projectId }: CharactersProps) {
                           hasProfile={!!character.profile_json}
                           packScore={character.pack_completeness_score || 0}
                           hasContinuityLock={!!(character.profile_json as any)?.continuity_lock}
+                          coherenceScore={qcScoreMap.get(character.id)}
                         />
                         <CharacterWorkflowGuide 
                           currentStep={getWorkflowStep({
