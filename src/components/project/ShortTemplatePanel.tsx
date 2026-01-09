@@ -61,7 +61,7 @@ export function ShortTemplatePanel({
   onClearTemplate,
   onGenerateForStep,
 }: ShortTemplatePanelProps) {
-  const [expanded, setExpanded] = React.useState(true);
+  const [expanded, setExpanded] = React.useState(false); // Collapsed by default
   const [selectedTemplateId, setSelectedTemplateId] = React.useState<string>('');
 
   const isPro = userLevel === 'pro';
