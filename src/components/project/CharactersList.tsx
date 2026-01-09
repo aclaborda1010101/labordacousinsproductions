@@ -70,7 +70,7 @@ interface CharacterCardWithProgressProps {
   isPro: boolean;
   projectId: string;
   expandedId: string | null;
-  generatingId: string | null;
+  generatingIds: Set<string>;
   onToggleExpand: () => void;
   onPrimaryAction: () => void;
   onEdit: () => void;
@@ -84,7 +84,7 @@ function CharacterCardWithProgress({
   isPro,
   projectId,
   expandedId,
-  generatingId,
+  generatingIds,
   onToggleExpand,
   onPrimaryAction,
   onEdit,
@@ -94,8 +94,8 @@ function CharacterCardWithProgress({
   // Use hook to get real-time progress for this character
   const { isGenerating: taskIsGenerating, progress, phase } = useEntityProgress(character.id);
   
-  // Combine local generatingId with task system
-  const isGenerating = generatingId === character.id || taskIsGenerating;
+  // Combine local generatingIds with task system
+  const isGenerating = generatingIds.has(character.id) || taskIsGenerating;
   
   const imageData = characterImages.get(character.id);
   const displayImage = imageData?.imageUrl || null;
@@ -221,7 +221,19 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [generatingIds, setGeneratingIds] = useState<Set<string>>(new Set());
+  
+  // Helpers for parallel generation
+  const startGenerating = (id: string) => {
+    setGeneratingIds(prev => new Set([...prev, id]));
+  };
+  const stopGenerating = (id: string) => {
+    setGeneratingIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
   const [generatingAll, setGeneratingAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -455,7 +467,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   };
 
   const handleGenerate = async (character: Character) => {
-    setGeneratingId(character.id);
+    startGenerating(character.id);
     toast.info(`Generando ${character.name}...`);
 
     try {
@@ -491,13 +503,13 @@ export default function CharactersList({ projectId }: CharactersListProps) {
         await supabase.from('characters').update({ current_run_id: data.runId }).eq('id', character.id);
       }
 
-      toast.success('Personaje generado');
+      toast.success(`${character.name} generado`);
       fetchCharacters();
     } catch (err) {
       console.error('Generation error:', err);
-      toast.error('Error al generar');
+      toast.error(`Error al generar ${character.name}`);
     } finally {
-      setGeneratingId(null);
+      stopGenerating(character.id);
     }
   };
 
@@ -560,7 +572,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
 
   const handleRegenerate = async (character: Character) => {
     // For canon items, regenerate creates a new variant
-    setGeneratingId(character.id);
+    startGenerating(character.id);
     toast.info(`Generando nueva variante de ${character.name}...`);
 
     try {
@@ -595,12 +607,12 @@ export default function CharactersList({ projectId }: CharactersListProps) {
         await supabase.from('characters').update({ current_run_id: data.runId }).eq('id', character.id);
       }
 
-      toast.success('Nueva variante generada');
+      toast.success(`Nueva variante de ${character.name} generada`);
       fetchCharacters();
     } catch (err) {
-      toast.error('Error al regenerar');
+      toast.error(`Error al regenerar ${character.name}`);
     } finally {
-      setGeneratingId(null);
+      stopGenerating(character.id);
     }
   };
 
@@ -611,14 +623,18 @@ export default function CharactersList({ projectId }: CharactersListProps) {
       return;
     }
 
-    if (!confirm(`¿Generar ${toGenerate.length} personajes?`)) return;
+    if (!confirm(`¿Generar ${toGenerate.length} personajes en paralelo?`)) return;
 
     setGeneratingAll(true);
-    for (const char of toGenerate) {
-      await handleGenerate(char);
-    }
+    toast.info(`Iniciando generación de ${toGenerate.length} personajes...`);
+    
+    // Parallel generation with Promise.allSettled
+    await Promise.allSettled(
+      toGenerate.map(char => handleGenerate(char))
+    );
+    
     setGeneratingAll(false);
-    toast.success('Generación completada');
+    toast.success('Generación masiva completada');
   };
 
   const filteredCharacters = characters.filter(c =>
@@ -750,7 +766,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               isPro={isPro}
               projectId={projectId}
               expandedId={expandedId}
-              generatingId={generatingId}
+              generatingIds={generatingIds}
               onToggleExpand={() => setExpandedId(expandedId === character.id ? null : character.id)}
               onPrimaryAction={() => handlePrimaryAction(character)}
               onEdit={() => { setEditingCharacter(character); setShowEditDialog(true); }}
