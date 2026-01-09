@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2 } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,6 +21,7 @@ import { useShortTemplate } from '@/hooks/useShortTemplate';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { runTemplateQAChecks, TemplateQAWarning } from '@/lib/shortTemplates';
 import SceneEditDialog from './SceneEditDialog';
+import { extractSceneContent, suggestShotCount } from '@/lib/sceneNormalizer';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -99,6 +100,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [editingScene, setEditingScene] = useState<Scene | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [hasBreakdown, setHasBreakdown] = useState(false);
+  const [generatingShotsFor, setGeneratingShotsFor] = useState<string | null>(null);
+  const [scriptRawText, setScriptRawText] = useState<string>('');
 
   // Editorial Knowledge Base context
   const { formatProfile, visualStyle, userLevel } = useEditorialKnowledgeBase({
@@ -174,8 +177,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     supabase.from('locations').select('id, name, token, reference_urls').eq('project_id', projectId).then(({ data }) => {
       if (data) setLocations(data);
     });
-    // Load script to get episode synopses and check for breakdown
-    supabase.from('scripts').select('parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).single().then(({ data }) => {
+    // Load script to get episode synopses, check for breakdown, and store raw text
+    supabase.from('scripts').select('parsed_json, raw_text').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).single().then(({ data }) => {
       if (data?.parsed_json) {
         const parsed = data.parsed_json as any;
         if (parsed.episodes) {
@@ -185,6 +188,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         const breakdown = parsed.breakdown_pro || parsed.breakdown;
         const sceneList = breakdown?.scenes?.list || breakdown?.scene_list || parsed.scenes?.list || parsed.scene_list;
         setHasBreakdown(!!sceneList && sceneList.length > 0);
+      }
+      // Store raw text for scene content extraction
+      if (data?.raw_text) {
+        setScriptRawText(data.raw_text);
       }
     });
   }, [projectId]);
@@ -499,6 +506,117 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     }
   };
 
+  // Generate detailed shots for a scene using AI
+  const generateShotsForScene = async (scene: Scene) => {
+    setGeneratingShotsFor(scene.id);
+    try {
+      // Extract scene content from raw text
+      const sceneContent = extractSceneContent(scriptRawText, scene.scene_no, scene.slugline);
+      const suggestedCount = suggestShotCount(sceneContent);
+      
+      // Get location details
+      const sceneLocation = locations.find(l => l.id === scene.location_id);
+      
+      // Get character details for this scene
+      const sceneCharacters = characters.filter(c => 
+        scene.character_ids?.includes(c.id)
+      );
+
+      // If no characters from character_ids, try to extract from content
+      const characterNames = sceneContent.dialogues.length > 0 
+        ? [...new Set(sceneContent.dialogues.map(d => d.character))]
+        : sceneCharacters.map(c => c.name);
+
+      // Delete existing shots for clean regeneration
+      await supabase.from('shots').delete().eq('scene_id', scene.id);
+
+      // Generate shots one by one
+      const shotsToGenerate = suggestedCount;
+      const generatedShots: any[] = [];
+
+      for (let i = 0; i < shotsToGenerate; i++) {
+        const prevShot = generatedShots[i - 1];
+        const dialogueForShot = sceneContent.dialogues[i] || null;
+        
+        const { data, error } = await supabase.functions.invoke('generate-shot-details', {
+          body: {
+            project: {
+              title: projectTitle,
+              visual_style_bible: visualStyle,
+              quality_mode_default: scene.quality_mode,
+            },
+            scene: {
+              slugline: scene.slugline,
+              scene_summary: scene.summary || sceneContent.summary,
+              scene_mood: sceneContent.mood,
+              previous_shot_context: prevShot?.fills?.viewer_notice || null,
+            },
+            shot: {
+              shot_index: i + 1,
+              effective_mode: scene.quality_mode,
+              duration_sec: 3,
+              current_fields: {
+                dialogue: dialogueForShot?.text || '',
+              }
+            },
+            location: sceneLocation ? {
+              name: sceneLocation.name,
+              time_of_day: scene.time_of_day || 'DAY',
+            } : undefined,
+            characters: characterNames.map(name => ({
+              name,
+              reference_images_available: sceneCharacters.some(c => c.name === name && c.turnaround_urls),
+            })),
+          }
+        });
+
+        if (error) {
+          console.error(`Error generating shot ${i + 1}:`, error);
+          continue;
+        }
+
+        const fills = data?.fills || {};
+        
+        // Insert the generated shot
+        const { data: insertedShot, error: insertError } = await supabase.from('shots').insert({
+          scene_id: scene.id,
+          shot_no: i + 1,
+          shot_type: fills.shot_type?.toLowerCase() || 'medium',
+          duration_target: fills.duration_sec || 3,
+          effective_mode: fills.prompt_video?.quality_mode || scene.quality_mode,
+          dialogue_text: dialogueForShot?.text || fills.dialogue || null,
+          hero: i === 0, // First shot is hero by default
+          camera: {
+            movement: fills.camera_movement,
+            details: fills.camera_details,
+            lens: fills.lens,
+            composition: fills.composition,
+          },
+          blocking: fills.blocking_action,
+          lighting: fills.lighting,
+          sound_plan: fills.sound_design,
+          keyframe_hints: fills.keyframes,
+          edit_intent: fills.editing_intent,
+          ai_risk: fills.ai_risk,
+          continuity_notes: fills.continuity,
+          story_purpose: fills.intention,
+        }).select().single();
+
+        if (!insertError && insertedShot) {
+          generatedShots.push({ ...insertedShot, fills });
+        }
+      }
+
+      toast.success(`${generatedShots.length} shots generados para la escena ${scene.scene_no}`);
+      fetchShots(scene.id);
+    } catch (error) {
+      console.error('Error generating shots:', error);
+      toast.error('Error al generar shots');
+    } finally {
+      setGeneratingShotsFor(null);
+    }
+  };
+
   if (!bibleReady) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[400px]">
@@ -793,10 +911,55 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
                           {expandedScenes.has(scene.id) && (
                             <div className="border-t border-border bg-muted/20 p-4 space-y-3">
-                              <div className="flex items-center justify-between">
+                              <div className="flex items-center justify-between gap-2">
                                 <span className="text-sm font-medium text-foreground">{t.scenes.shots}</span>
-                                <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}><Plus className="w-3 h-3 mr-1" />{t.scenes.addShot}</Button>
+                                <div className="flex gap-2">
+                                  <Button 
+                                    size="sm" 
+                                    variant="gold"
+                                    onClick={() => generateShotsForScene(scene)}
+                                    disabled={generatingShotsFor === scene.id}
+                                  >
+                                    {generatingShotsFor === scene.id ? (
+                                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                    ) : (
+                                      <Zap className="w-3 h-3 mr-1" />
+                                    )}
+                                    Generar Shots
+                                  </Button>
+                                  <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}>
+                                    <Plus className="w-3 h-3 mr-1" />{t.scenes.addShot}
+                                  </Button>
+                                </div>
                               </div>
+
+                              {/* Scene content preview */}
+                              {scriptRawText && (
+                                <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
+                                  {(() => {
+                                    const content = extractSceneContent(scriptRawText, scene.scene_no, scene.slugline);
+                                    if (content.dialogues.length > 0 || content.actions.length > 0) {
+                                      return (
+                                        <div className="space-y-1">
+                                          {content.dialogues.length > 0 && (
+                                            <span className="flex gap-2">
+                                              <strong>Diálogos:</strong> 
+                                              {content.dialogues.slice(0, 3).map((d, i) => (
+                                                <span key={i} className="text-foreground">{d.character}</span>
+                                              ))}
+                                              {content.dialogues.length > 3 && <span>+{content.dialogues.length - 3} más</span>}
+                                            </span>
+                                          )}
+                                          {content.mood !== 'neutral' && (
+                                            <span className="text-primary capitalize">Mood: {content.mood}</span>
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                    return <span className="opacity-50">Sin contenido extraído del guión</span>;
+                                  })()}
+                                </div>
+                              )}
 
                               {!shots[scene.id] || shots[scene.id].length === 0 ? (
                                 <p className="text-sm text-muted-foreground text-center py-4">{t.scenes.noShots}</p>
