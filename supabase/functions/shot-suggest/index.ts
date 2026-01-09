@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { parseJsonSafe } from '../_shared/llmJson.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -564,18 +565,19 @@ Responde SOLO con el JSON estructurado según el formato v3.`;
       throw new Error('No content received from AI');
     }
 
-    // Parse JSON from response
-    let shotData;
-    try {
-      shotData = JSON.parse(content);
-    } catch {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        shotData = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
-      }
+    // Parse JSON from response using robust parser
+    const parseResult = parseJsonSafe(content, 'shot-suggest-response');
+
+    if (!parseResult.ok && !parseResult.json) {
+      console.error('[SHOT-SUGGEST v3] JSON parsing completely failed');
+      throw new Error('No valid JSON found in response');
     }
+
+    if (parseResult.degraded) {
+      console.warn('[SHOT-SUGGEST v3] JSON parsed with degradation:', parseResult.warnings);
+    }
+
+    let shotData = parseResult.json;
 
     // Ensure scene_setup exists with defaults
     if (!shotData.scene_setup) {
