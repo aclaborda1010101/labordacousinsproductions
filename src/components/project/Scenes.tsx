@@ -97,6 +97,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [hasStyleConfig, setHasStyleConfig] = useState<boolean | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingScene, setEditingScene] = useState<Scene | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [hasBreakdown, setHasBreakdown] = useState(false);
 
   // Editorial Knowledge Base context
   const { formatProfile, visualStyle, userLevel } = useEditorialKnowledgeBase({
@@ -172,13 +174,17 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     supabase.from('locations').select('id, name, token, reference_urls').eq('project_id', projectId).then(({ data }) => {
       if (data) setLocations(data);
     });
-    // Load script to get episode synopses
+    // Load script to get episode synopses and check for breakdown
     supabase.from('scripts').select('parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).single().then(({ data }) => {
       if (data?.parsed_json) {
         const parsed = data.parsed_json as any;
         if (parsed.episodes) {
           setScriptEpisodes(parsed.episodes);
         }
+        // Check if breakdown exists
+        const breakdown = parsed.breakdown_pro || parsed.breakdown;
+        const sceneList = breakdown?.scenes?.list || breakdown?.scene_list || parsed.scenes?.list || parsed.scene_list;
+        setHasBreakdown(!!sceneList && sceneList.length > 0);
       }
     });
   }, [projectId]);
@@ -412,6 +418,87 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     return renders[shotId]?.[0];
   };
 
+  // Sync scenes from script breakdown
+  const handleSyncFromScript = async () => {
+    setSyncing(true);
+    try {
+      // Get script breakdown
+      const { data: script } = await supabase
+        .from('scripts')
+        .select('parsed_json')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!script?.parsed_json) {
+        toast.error('No se encontró guión con breakdown');
+        return;
+      }
+
+      const parsed = script.parsed_json as any;
+      const breakdown = parsed.breakdown_pro || parsed.breakdown;
+      const sceneList = breakdown?.scenes?.list || breakdown?.scene_list || parsed.scenes?.list || parsed.scene_list || [];
+
+      if (sceneList.length === 0) {
+        toast.error('El guión no tiene escenas para sincronizar');
+        return;
+      }
+
+      // Build location name -> id map
+      const locationMap = new Map(locations.map(l => [l.name.toLowerCase().trim(), l.id]));
+      
+      // Build character name -> id map
+      const characterMap = new Map(characters.map(c => [c.name.toLowerCase().trim(), c.id]));
+
+      let updatedCount = 0;
+      for (const sceneData of sceneList) {
+        const sceneNumber = sceneData.scene_number || sceneData.number;
+        const episodeNumber = sceneData.episode_number || 1;
+        
+        // Find matching scene in DB
+        const dbScene = scenes.find(s => s.scene_no === sceneNumber && s.episode_no === episodeNumber);
+        if (!dbScene) continue;
+
+        // Get slugline from various field names
+        const slugline = sceneData.slugline || sceneData.heading || sceneData.location_raw || '';
+        const timeOfDay = sceneData.time_of_day || sceneData.time || '';
+        
+        // Match location
+        const locationName = sceneData.location?.toLowerCase().trim() || '';
+        const locationId = locationMap.get(locationName) || null;
+
+        // Match characters
+        const presentCharacters = sceneData.characters_present || sceneData.characters || [];
+        const characterIds = presentCharacters
+          .map((name: string) => characterMap.get(name.toLowerCase().trim()))
+          .filter(Boolean);
+
+        // Update scene
+        const { error } = await supabase
+          .from('scenes')
+          .update({
+            slugline: slugline || dbScene.slugline,
+            time_of_day: timeOfDay || dbScene.time_of_day,
+            location_id: locationId || dbScene.location_id,
+            character_ids: characterIds.length > 0 ? characterIds : dbScene.character_ids,
+            summary: sceneData.summary || sceneData.description || dbScene.summary,
+          })
+          .eq('id', dbScene.id);
+
+        if (!error) updatedCount++;
+      }
+
+      toast.success(`${updatedCount} escenas sincronizadas desde el guión`);
+      fetchScenes();
+    } catch (error) {
+      console.error('Error syncing from script:', error);
+      toast.error('Error al sincronizar desde guión');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   if (!bibleReady) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[400px]">
@@ -481,6 +568,16 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                 Exportar Storyboard
               </Button>
             </>
+          )}
+          {hasBreakdown && scenes.length > 0 && (
+            <Button 
+              variant="outline" 
+              onClick={handleSyncFromScript}
+              disabled={syncing}
+            >
+              {syncing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+              Sincronizar desde Guión
+            </Button>
           )}
           <Button variant="gold" onClick={() => setShowAIDialog(true)}>
             <Wand2 className="w-4 h-4 mr-2" />
