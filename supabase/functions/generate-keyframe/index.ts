@@ -206,9 +206,96 @@ function formatWardrobeLock(lock: WardrobeLock): string {
   return parts.join('. ') || 'As established in previous keyframes';
 }
 
+// Visual DNA type for keyframe identity lock
+interface VisualDNAForKeyframe {
+  physical_identity?: {
+    age_exact_for_prompt?: number;
+    ethnicity?: { skin_tone_description?: string };
+  };
+  face?: {
+    shape?: string;
+    eyes?: { color_base?: string; shape?: string };
+    distinctive_marks?: {
+      wrinkles_lines?: {
+        forehead?: { horizontal_lines?: string };
+        eyes?: { crows_feet?: string };
+      };
+    };
+  };
+  hair?: {
+    head_hair?: {
+      color?: { natural_base?: string; grey_white?: { percentage?: number } };
+      length?: { type?: string };
+      style?: { overall_shape?: string };
+    };
+  };
+  skin?: {
+    texture?: { overall?: string };
+  };
+}
+
+// Build identity lock for keyframe generation from Visual DNA
+function buildIdentityLockForKeyframe(visualDNA: VisualDNAForKeyframe, characterName: string): string {
+  const parts: string[] = [];
+  
+  // Age - Critical for consistency
+  if (visualDNA.physical_identity?.age_exact_for_prompt) {
+    parts.push(`Age: EXACTLY ${visualDNA.physical_identity.age_exact_for_prompt} years`);
+  }
+  
+  // Hair - Detailed to prevent drift
+  const hair = visualDNA.hair?.head_hair;
+  if (hair) {
+    const baseColor = hair.color?.natural_base;
+    const greyPercent = hair.color?.grey_white?.percentage;
+    if (baseColor) {
+      parts.push(`Hair: ${baseColor}${greyPercent && greyPercent > 0 ? ` with ${greyPercent}% grey` : ''}`);
+    }
+    if (hair.length?.type) parts.push(`Hair length: ${hair.length.type}`);
+    if (hair.style?.overall_shape) parts.push(`Hair style: ${hair.style.overall_shape}`);
+  }
+  
+  // Skin tone
+  if (visualDNA.physical_identity?.ethnicity?.skin_tone_description) {
+    parts.push(`Skin tone: ${visualDNA.physical_identity.ethnicity.skin_tone_description}`);
+  }
+  if (visualDNA.skin?.texture?.overall) {
+    parts.push(`Skin texture: ${visualDNA.skin.texture.overall}`);
+  }
+  
+  // Face
+  if (visualDNA.face?.shape) {
+    parts.push(`Face shape: ${visualDNA.face.shape}`);
+  }
+  if (visualDNA.face?.eyes) {
+    const eyes = visualDNA.face.eyes;
+    if (eyes.color_base) parts.push(`Eye color: ${eyes.color_base}`);
+  }
+  
+  // Wrinkles for age consistency
+  if (visualDNA.face?.distinctive_marks?.wrinkles_lines) {
+    const wrinkles = visualDNA.face.distinctive_marks.wrinkles_lines;
+    const wrinkleParts = [];
+    if (wrinkles.forehead?.horizontal_lines) wrinkleParts.push(`forehead: ${wrinkles.forehead.horizontal_lines}`);
+    if (wrinkles.eyes?.crows_feet) wrinkleParts.push(`crow's feet: ${wrinkles.eyes.crows_feet}`);
+    if (wrinkleParts.length > 0) {
+      parts.push(`Wrinkles: ${wrinkleParts.join(', ')}`);
+    }
+  }
+  
+  if (parts.length === 0) return '';
+  
+  return `
+=== IDENTITY LOCK: ${characterName} (NON-NEGOTIABLE) ===
+${parts.join('\n')}
+RULES: Preserve EXACT age, hair color, skin tone, facial features. DO NOT de-age or smooth skin.
+=== END IDENTITY LOCK ===`;
+}
+
 async function generateKeyframePrompt(
   request: KeyframeRequest,
-  characterWardrobes: Map<string, { name: string; wardrobe: string }>
+  characterWardrobes: Map<string, { name: string; wardrobe: string }>,
+  characterIdentities: Map<string, { name: string; identityLock: string }>
 ): Promise<{
   prompt_text: string;
   negative_prompt: string;
@@ -276,6 +363,8 @@ ${shotDetails.aiRisk ? `- Riesgo IA a evitar: ${shotDetails.aiRisk}` : ''}
 PERSONAJES EN ESCENA:
 ${request.characters.map(c => `- ${c.name} (ID: ${c.id})${c.token ? ` [Token: ${c.token}]` : ''}`).join('\n')}
 ${wardrobeSection}
+IDENTITY LOCKS (OBLIGATORIO - MANTENER EXACTO):
+${Array.from(characterIdentities.values()).map(c => c.identityLock || `${c.name}: Use consistent appearance from previous keyframes`).join('\n\n')}
 LOCALIZACIÓN:
 ${request.location ? `- ${request.location.name} (ID: ${request.location.id})${request.location.token ? ` [Token: ${request.location.token}]` : ''}` : 'No especificada'}
 
@@ -517,34 +606,52 @@ serve(async (req) => {
       await requireProjectAccess(supabase, userId, projectId);
     }
 
-    // Fetch wardrobe locks for all characters in this keyframe
+    // Fetch wardrobe locks AND visual DNA for all characters in this keyframe
     const characterIds = request.characters.map(c => c.id);
     const characterWardrobes = new Map<string, { name: string; wardrobe: string }>();
+    const characterIdentities = new Map<string, { name: string; identityLock: string }>();
     
     if (characterIds.length > 0) {
+      // Fetch characters with visual DNA
       const { data: charactersData, error: charError } = await supabase
         .from('characters')
-        .select('id, name, wardrobe_lock_json')
+        .select(`
+          id, name, wardrobe_lock_json,
+          character_visual_dna!character_visual_dna_character_id_fkey(
+            visual_dna,
+            is_active
+          )
+        `)
         .in('id', characterIds);
       
       if (charError) {
-        console.error('Error fetching character wardrobes:', charError);
+        console.error('Error fetching character data:', charError);
       } else if (charactersData) {
         for (const char of charactersData) {
+          // Wardrobe lock
           if (char.wardrobe_lock_json) {
             characterWardrobes.set(char.id, {
               name: char.name,
               wardrobe: formatWardrobeLock(char.wardrobe_lock_json as WardrobeLock)
             });
           }
+          
+          // Visual DNA -> Identity Lock
+          const activeDNA = (char.character_visual_dna as any[])?.find((v: any) => v.is_active);
+          if (activeDNA?.visual_dna) {
+            characterIdentities.set(char.id, {
+              name: char.name,
+              identityLock: buildIdentityLockForKeyframe(activeDNA.visual_dna, char.name)
+            });
+          }
         }
-        console.log(`Loaded ${characterWardrobes.size} wardrobe locks for keyframe generation`);
+        console.log(`Loaded ${characterWardrobes.size} wardrobe locks, ${characterIdentities.size} identity locks for keyframe`);
       }
     }
 
-    // Step 1: Generate deterministic prompt with PROMPT-ENGINE v3
-    console.log("Step 1: Generating prompt with PROMPT-ENGINE v3 (with continuity)...");
-    const promptData = await generateKeyframePrompt(request, characterWardrobes);
+    // Step 1: Generate deterministic prompt with PROMPT-ENGINE v4
+    console.log("Step 1: Generating prompt with PROMPT-ENGINE v4 (with identity + continuity)...");
+    const promptData = await generateKeyframePrompt(request, characterWardrobes, characterIdentities);
     console.log("Prompt generated:", promptData.prompt_text.substring(0, 150) + "...");
     console.log("Continuity locks:", JSON.stringify(promptData.continuity_locks || {}));
 
