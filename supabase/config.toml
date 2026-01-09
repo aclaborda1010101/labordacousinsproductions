@@ -126,16 +126,20 @@ verify_jwt = true
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.veo_start]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
 
 [functions.veo_poll]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
 
 [functions.kling_start]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
 
 [functions.kling_poll]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
 
 [functions.engine-shootout]
 verify_jwt = true
