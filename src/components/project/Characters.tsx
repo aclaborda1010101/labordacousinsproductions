@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle, Image, Check } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, Edit2, Save, X, Sparkles, Eye, Shirt, ChevronDown, ChevronUp, Upload, Package, CheckCircle2, Star, ArrowUp, ArrowDown, Copy, Download, Search, Filter, BookOpen, Dna, Book, Wand2, Zap, Play, PlayCircle, Image, Check, RotateCcw } from 'lucide-react';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { useEntityProgress } from '@/hooks/useEntityProgress';
 import { Progress } from '@/components/ui/progress';
@@ -104,6 +104,7 @@ export default function Characters({ projectId }: CharactersProps) {
   const [autoGenProgress, setAutoGenProgress] = useState<{current: number; total: number; phase: string} | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
+  const [previewCharacter, setPreviewCharacter] = useState<{ character: Character; imageUrl: string } | null>(null);
   
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -1079,7 +1080,21 @@ export default function Characters({ projectId }: CharactersProps) {
                     <div className="hidden sm:flex flex-col p-4 gap-3">
                       {/* Row 1: Avatar + Name + Actions */}
                       <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden shrink-0">
+                        <div 
+                          className={`w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden shrink-0 ${
+                            (characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)) 
+                              ? 'cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all' 
+                              : ''
+                          }`}
+                          onClick={() => {
+                            const imageUrl = characterImages.get(character.id)?.imageUrl || 
+                                             character.turnaround_urls?.front || 
+                                             packThumbnails.get(character.id);
+                            if (imageUrl) {
+                              setPreviewCharacter({ character, imageUrl });
+                            }
+                          }}
+                        >
                           {(characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)) ? (
                             <img 
                               src={characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front || packThumbnails.get(character.id)} 
@@ -1269,7 +1284,20 @@ export default function Characters({ projectId }: CharactersProps) {
                     <div className="flex sm:hidden flex-col p-3 gap-2">
                       {/* Row 1: Avatar + Name + Expand */}
                       <div className="flex items-start gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xl overflow-hidden shrink-0">
+                        <div 
+                          className={`w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xl overflow-hidden shrink-0 ${
+                            (characterImages.get(character.id)?.imageUrl || character.turnaround_urls?.front) 
+                              ? 'cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all' 
+                              : ''
+                          }`}
+                          onClick={() => {
+                            const imageUrl = characterImages.get(character.id)?.imageUrl || 
+                                             character.turnaround_urls?.front;
+                            if (imageUrl) {
+                              setPreviewCharacter({ character, imageUrl });
+                            }
+                          }}
+                        >
                           {character.turnaround_urls?.front ? (
                             <img 
                               src={character.turnaround_urls.front} 
@@ -1923,6 +1951,48 @@ export default function Characters({ projectId }: CharactersProps) {
           setEditingCharacter(null);
         }}
       />
+
+      {/* Character Image Preview Dialog */}
+      <Dialog open={!!previewCharacter} onOpenChange={(open) => !open && setPreviewCharacter(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{previewCharacter?.character.name}</DialogTitle>
+          </DialogHeader>
+          {previewCharacter && (
+            <div className="space-y-4">
+              <img 
+                src={previewCharacter.imageUrl} 
+                alt={previewCharacter.character.name}
+                className="w-full rounded-lg"
+              />
+              <DialogFooter className="flex gap-2 sm:gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    autoGenerateCharacterPack(previewCharacter.character);
+                    setPreviewCharacter(null);
+                  }}
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Regenerar
+                </Button>
+                {!previewCharacter.character.canon_asset_id && (
+                  <Button
+                    variant="gold"
+                    onClick={() => {
+                      approveCharacter(previewCharacter.character);
+                      setPreviewCharacter(null);
+                    }}
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Aceptar
+                  </Button>
+                )}
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
