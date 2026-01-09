@@ -1552,6 +1552,26 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     throw new Error(`Slot not found: ${request.slotId}`);
   }
 
+  // ============================================
+  // PROTECTION: Prevent overwriting user-uploaded reference slots
+  // ============================================
+  const isReferenceSlot = request.slotType.startsWith('ref_');
+  const isUploadedReference = slot.status === 'uploaded' && slot.image_url;
+  
+  if (isReferenceSlot && isUploadedReference) {
+    console.log(`[PROTECTED] Reference slot ${request.slotType} has uploaded image - SKIPPING generation`);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'REF_SLOT_PROTECTED',
+      message: 'Los slots de referencia (ref_*) con fotos subidas no pueden ser sobrescritos. Use closeup_front, turn_*, o expr_* para generar.',
+      slotId: request.slotId,
+      existingImageUrl: slot.image_url
+    }), {
+      status: 409,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   let imageUrl: string;
   let prompt: string;
   let generationMode: 'reference' | 'text-to-image';

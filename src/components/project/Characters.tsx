@@ -385,9 +385,9 @@ export default function Characters({ projectId }: CharactersProps) {
           });
       }
       
-      // Phase 2: Generate Identity Closeup (unified naming with CharacterPackMVP)
+      // Phase 2: Generate Identity Closeup (NOT ref_closeup_front - that's for uploads only!)
       updateTask(taskId, { progress: 15, description: 'Identity Closeup...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'ref_closeup_front', null, null, 0);
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'closeup_front', null, null, 0);
       
       // Phase 3: Generate Front 3/4 View (unified naming)
       updateTask(taskId, { progress: 30, description: 'Vista Frontal 3/4...' });
@@ -405,9 +405,9 @@ export default function Characters({ projectId }: CharactersProps) {
       updateTask(taskId, { progress: 80, description: 'Expresión Neutral...' });
       await generateSlotForCharacter(character.id, character.name, character.bio || '', 'expr_neutral', null, null, 4);
       
-      // Phase 7: Update completeness
+      // Phase 7: Update completeness (backend already calls recalc_character_pack, but refresh anyway)
       updateTask(taskId, { progress: 95, description: 'Finalizando...' });
-      await supabase.rpc('calculate_pack_completeness', { p_character_id: character.id });
+      await supabase.rpc('recalc_character_pack', { p_character_id: character.id });
       
       completeTask(taskId, { pack: 'complete', slots: 5 });
       toast.success(`Pack de ${character.name} generado`);
