@@ -578,7 +578,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           asset_type: 'character',
           name: character.name,
           image_url: run.output_url,
-          run_id: character.accepted_run_id,
+          run_id: character.accepted_run_id || null,
           is_active: true,
         })
         .select()
