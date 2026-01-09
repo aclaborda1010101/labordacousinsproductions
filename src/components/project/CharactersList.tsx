@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { EntityCard, getEntityStatus } from './EntityCard';
+import { EntityQCBadge } from './QCStatusBadge';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useEntityProgress } from '@/hooks/useEntityProgress';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
@@ -69,6 +70,7 @@ const ROLE_LABELS: Record<string, string> = {
 interface CharacterCardWithProgressProps {
   character: Character;
   characterImages: Map<string, CharacterImageData>;
+  qcScoreMap: Map<string, number>;
   isPro: boolean;
   projectId: string;
   expandedId: string | null;
@@ -84,6 +86,7 @@ interface CharacterCardWithProgressProps {
 function CharacterCardWithProgress({
   character,
   characterImages,
+  qcScoreMap,
   isPro,
   projectId,
   expandedId,
@@ -141,6 +144,12 @@ function CharacterCardWithProgress({
               Video
             </Badge>
           )}
+          <EntityQCBadge
+            entityType="character"
+            hasProfile={!!character.bio}
+            packScore={character.pack_completeness_score || 0}
+            coherenceScore={qcScoreMap.get(character.id)}
+          />
           <CharacterWorkflowGuide currentStep={workflowStep} compact className="ml-1" />
         </>
       }
@@ -264,6 +273,9 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   // Map to store resolved images for each character
   const [characterImages, setCharacterImages] = useState<Map<string, CharacterImageData>>(new Map());
 
+  // Map to store average QC scores for coherence display
+  const [qcScoreMap, setQcScoreMap] = useState<Map<string, number>>(new Map());
+
   const fetchCharacters = async () => {
     setLoadError(null);
     const { data, error } = await supabase
@@ -298,6 +310,34 @@ export default function CharactersList({ projectId }: CharactersListProps) {
         ...c,
         turnaround_urls: c.turnaround_urls as Record<string, string> | null,
       })));
+
+      // Fetch real QC scores for coherence display
+      const charIds = data.map(c => c.id);
+      if (charIds.length > 0) {
+        const { data: qcData } = await supabase
+          .from('character_pack_slots')
+          .select('character_id, qc_score')
+          .in('character_id', charIds)
+          .not('qc_score', 'is', null);
+
+        if (qcData && qcData.length > 0) {
+          const scoreAccum: Record<string, { sum: number; count: number }> = {};
+          qcData.forEach(slot => {
+            if (slot.qc_score !== null) {
+              if (!scoreAccum[slot.character_id]) {
+                scoreAccum[slot.character_id] = { sum: 0, count: 0 };
+              }
+              scoreAccum[slot.character_id].sum += slot.qc_score;
+              scoreAccum[slot.character_id].count += 1;
+            }
+          });
+          const avgMap = new Map<string, number>();
+          Object.entries(scoreAccum).forEach(([charId, data]) => {
+            avgMap.set(charId, Math.round(data.sum / data.count));
+          });
+          setQcScoreMap(avgMap);
+        }
+      }
     }
     setLoading(false);
   };
@@ -807,6 +847,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
               key={character.id}
               character={character}
               characterImages={characterImages}
+              qcScoreMap={qcScoreMap}
               isPro={isPro}
               projectId={projectId}
               expandedId={expandedId}

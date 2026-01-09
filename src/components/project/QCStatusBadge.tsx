@@ -131,6 +131,7 @@ interface EntityQCBadgeProps {
   hasProfile: boolean;
   packScore?: number;
   hasContinuityLock?: boolean;
+  coherenceScore?: number;  // Real visual QC score (0-100) from qc_score average
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -139,6 +140,7 @@ export function EntityQCBadge({
   hasProfile,
   packScore,
   hasContinuityLock,
+  coherenceScore,
   size = 'sm'
 }: EntityQCBadgeProps) {
   const checks: QCCheck[] = [];
@@ -168,24 +170,32 @@ export function EntityQCBadge({
   }
   
   // Calculate overall status
-  const hasErrors = checks.some(c => c.status === 'error');
-  const hasWarnings = checks.some(c => c.status === 'warning');
-  const hasIncomplete = checks.some(c => c.status === 'incomplete');
-  const allReady = checks.every(c => c.status === 'ready');
-  
   let overallStatus: QCStatus = 'pending';
   let overallScore: number | undefined;
   
-  if (allReady) {
-    overallStatus = 'ready';
-    overallScore = 100;
-  } else if (hasErrors) {
-    overallStatus = 'error';
-    overallScore = 0;
-  } else if (hasWarnings || hasIncomplete) {
-    overallStatus = hasWarnings ? 'warning' : 'incomplete';
-    const readyCount = checks.filter(c => c.status === 'ready').length;
-    overallScore = Math.round((readyCount / checks.length) * 100);
+  // If we have a real coherenceScore from QC analysis, use it
+  if (coherenceScore !== undefined && coherenceScore > 0) {
+    overallScore = coherenceScore;
+    overallStatus = coherenceScore >= 85 ? 'ready' : 
+                    coherenceScore >= 70 ? 'warning' : 'incomplete';
+  } else {
+    // Fallback to checkbox-based calculation
+    const hasErrors = checks.some(c => c.status === 'error');
+    const hasWarnings = checks.some(c => c.status === 'warning');
+    const hasIncomplete = checks.some(c => c.status === 'incomplete');
+    const allReady = checks.every(c => c.status === 'ready');
+    
+    if (allReady) {
+      overallStatus = 'ready';
+      overallScore = 100;
+    } else if (hasErrors) {
+      overallStatus = 'error';
+      overallScore = 0;
+    } else if (hasWarnings || hasIncomplete) {
+      overallStatus = hasWarnings ? 'warning' : 'incomplete';
+      const readyCount = checks.filter(c => c.status === 'ready').length;
+      overallScore = Math.round((readyCount / checks.length) * 100);
+    }
   }
   
   return (
