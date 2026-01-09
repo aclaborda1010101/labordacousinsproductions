@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { EntityCard, getEntityStatus } from './EntityCard';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
+import { useEntityProgress } from '@/hooks/useEntityProgress';
 import CharacterPackMVP from './CharacterPackMVP';
 import NextStepNavigator from './NextStepNavigator';
 import { resolveImageModel } from '@/config/models';
@@ -61,6 +62,156 @@ const ROLE_LABELS: Record<string, string> = {
   episodic: 'Episódico',
   extra: 'Extra',
 };
+
+/** Wrapper component to use hooks for each character */
+interface CharacterCardWithProgressProps {
+  character: Character;
+  characterImages: Map<string, CharacterImageData>;
+  isPro: boolean;
+  projectId: string;
+  expandedId: string | null;
+  generatingId: string | null;
+  onToggleExpand: () => void;
+  onPrimaryAction: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onPackComplete: () => void;
+}
+
+function CharacterCardWithProgress({
+  character,
+  characterImages,
+  isPro,
+  projectId,
+  expandedId,
+  generatingId,
+  onToggleExpand,
+  onPrimaryAction,
+  onEdit,
+  onDelete,
+  onPackComplete,
+}: CharacterCardWithProgressProps) {
+  // Use hook to get real-time progress for this character
+  const { isGenerating: taskIsGenerating, progress, phase } = useEntityProgress(character.id);
+  
+  // Combine local generatingId with task system
+  const isGenerating = generatingId === character.id || taskIsGenerating;
+  
+  const imageData = characterImages.get(character.id);
+  const displayImage = imageData?.imageUrl || null;
+  const hasImage = !!displayImage;
+  
+  const workflowStep = getWorkflowStep({
+    hasBio: !!character.bio,
+    hasImage,
+    isAccepted: !!character.accepted_run_id,
+    isCanon: !!character.canon_asset_id,
+  });
+
+  return (
+    <EntityCard
+      id={character.id}
+      name={character.name}
+      description={character.bio}
+      imageUrl={displayImage}
+      placeholderIcon={<Users className="w-6 h-6" />}
+      status={getEntityStatus(character.current_run_id, character.accepted_run_id, character.canon_asset_id)}
+      isExpanded={expandedId === character.id}
+      isGenerating={isGenerating}
+      generationProgress={progress}
+      generationPhase={phase}
+      isPro={isPro}
+      onToggleExpand={onToggleExpand}
+      onPrimaryAction={onPrimaryAction}
+      badges={
+        <>
+          {character.character_role && (
+            <Badge variant="secondary" className="text-xs">
+              {ROLE_LABELS[character.character_role] || character.character_role}
+            </Badge>
+          )}
+          {character.is_ready_for_video && (
+            <Badge variant="pass" className="text-xs">
+              <Video className="w-3 h-3 mr-1" />
+              Video
+            </Badge>
+          )}
+          <CharacterWorkflowGuide currentStep={workflowStep} compact className="ml-1" />
+        </>
+      }
+      expandedContent={
+        <div className="space-y-4">
+          <CharacterWorkflowGuide currentStep={workflowStep} isPro={isPro} />
+          
+          <CharacterPackMVP
+            characterId={character.id}
+            characterName={character.name}
+            characterBio={character.bio}
+            projectId={projectId}
+            isPro={isPro}
+            onPackComplete={onPackComplete}
+          />
+
+          <div className="grid gap-3 pt-2 border-t">
+            <div>
+              <Label className="text-xs text-muted-foreground">Biografía</Label>
+              <p className="text-sm">{character.bio || 'Sin descripción'}</p>
+            </div>
+            {character.arc && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Arco narrativo</Label>
+                <p className="text-sm">{character.arc}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-2 flex-wrap">
+            <Button variant="ghost" size="sm" onClick={onEdit}>
+              <Edit2 className="w-4 h-4 mr-2" />
+              Editar
+            </Button>
+            <Button variant="ghost" size="sm" onClick={onDelete}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Eliminar
+            </Button>
+          </div>
+        </div>
+      }
+      advancedContent={
+        <div className="space-y-4">
+          <div className="grid gap-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">ID</span>
+              <code className="text-xs bg-muted px-2 py-1 rounded">{character.id.slice(0, 8)}...</code>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Fuente imagen</span>
+              <Badge variant="outline" className="text-xs">
+                {imageData?.source || 'none'}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Pack status</span>
+              <Badge variant={character.pack_status === 'ready' ? 'pass' : 'secondary'}>
+                {character.pack_status || 'hero_only'}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Completeness</span>
+              <span>{character.pack_completeness_score || 0}%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Video ready</span>
+              <Badge variant={character.is_ready_for_video ? 'pass' : 'outline'}>
+                {character.is_ready_for_video ? 'Sí' : 'No'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+      }
+    />
+  );
+}
 
 export default function CharactersList({ projectId }: CharactersListProps) {
   const { userLevel } = useEditorialKnowledgeBase({ projectId, assetType: 'character' });
@@ -591,128 +742,22 @@ export default function CharactersList({ projectId }: CharactersListProps) {
             </CardContent>
           </Card>
         ) : (
-          filteredCharacters.map(character => {
-            // Use unified image resolver
-            const imageData = characterImages.get(character.id);
-            const displayImage = imageData?.imageUrl || null;
-            const hasImage = !!displayImage;
-            
-            // Calculate workflow step
-            const workflowStep = getWorkflowStep({
-              hasBio: !!character.bio,
-              hasImage,
-              isAccepted: !!character.accepted_run_id,
-              isCanon: !!character.canon_asset_id,
-            });
-            
-            return (
-            <EntityCard
+          filteredCharacters.map(character => (
+            <CharacterCardWithProgress
               key={character.id}
-              id={character.id}
-              name={character.name}
-              description={character.bio}
-              imageUrl={displayImage}
-              placeholderIcon={<Users className="w-6 h-6" />}
-              status={getEntityStatus(character.current_run_id, character.accepted_run_id, character.canon_asset_id)}
-              isExpanded={expandedId === character.id}
-              isGenerating={generatingId === character.id}
+              character={character}
+              characterImages={characterImages}
               isPro={isPro}
+              projectId={projectId}
+              expandedId={expandedId}
+              generatingId={generatingId}
               onToggleExpand={() => setExpandedId(expandedId === character.id ? null : character.id)}
               onPrimaryAction={() => handlePrimaryAction(character)}
-              badges={
-                <>
-                  {character.character_role && (
-                    <Badge variant="secondary" className="text-xs">
-                      {ROLE_LABELS[character.character_role] || character.character_role}
-                    </Badge>
-                  )}
-                  {character.is_ready_for_video && (
-                    <Badge variant="pass" className="text-xs">
-                      <Video className="w-3 h-3 mr-1" />
-                      Video
-                    </Badge>
-                  )}
-                  {/* Compact workflow progress */}
-                  <CharacterWorkflowGuide currentStep={workflowStep} compact className="ml-1" />
-                </>
-              }
-              expandedContent={
-                <div className="space-y-4">
-                  {/* Workflow Guide - full view when expanded */}
-                  <CharacterWorkflowGuide currentStep={workflowStep} isPro={isPro} />
-                  
-                  {/* Character Pack MVP - Iceberg Architecture */}
-                  <CharacterPackMVP
-                    characterId={character.id}
-                    characterName={character.name}
-                    characterBio={character.bio}
-                    projectId={projectId}
-                    isPro={isPro}
-                    onPackComplete={() => fetchCharacters()}
-                  />
-
-                  {/* Bio/Arc info */}
-                  <div className="grid gap-3 pt-2 border-t">
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Biografía</Label>
-                      <p className="text-sm">{character.bio || 'Sin descripción'}</p>
-                    </div>
-                    {character.arc && (
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Arco narrativo</Label>
-                        <p className="text-sm">{character.arc}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Quick actions */}
-                  <div className="flex gap-2 flex-wrap">
-                    <Button variant="ghost" size="sm" onClick={() => { setEditingCharacter(character); setShowEditDialog(true); }}>
-                      <Edit2 className="w-4 h-4 mr-2" />
-                      Editar
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteCharacter(character.id)}>
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Eliminar
-                    </Button>
-                  </div>
-                </div>
-              }
-              advancedContent={
-                <div className="space-y-4">
-                  <div className="grid gap-3 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">ID</span>
-                      <code className="text-xs bg-muted px-2 py-1 rounded">{character.id.slice(0, 8)}...</code>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Fuente imagen</span>
-                      <Badge variant="outline" className="text-xs">
-                        {imageData?.source || 'none'}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Pack status</span>
-                      <Badge variant={character.pack_status === 'ready' ? 'pass' : 'secondary'}>
-                        {character.pack_status || 'hero_only'}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Completeness</span>
-                      <span>{character.pack_completeness_score || 0}%</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Video ready</span>
-                      <Badge variant={character.is_ready_for_video ? 'pass' : 'outline'}>
-                        {character.is_ready_for_video ? 'Sí' : 'No'}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              }
+              onEdit={() => { setEditingCharacter(character); setShowEditDialog(true); }}
+              onDelete={() => handleDeleteCharacter(character.id)}
+              onPackComplete={fetchCharacters}
             />
-          );
-          })
+          ))
         )}
       </div>
 

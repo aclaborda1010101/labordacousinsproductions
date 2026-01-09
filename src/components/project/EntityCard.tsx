@@ -9,6 +9,7 @@ import { ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
@@ -34,6 +35,10 @@ interface EntityCardProps {
   status: EntityStatus;
   isExpanded: boolean;
   isGenerating?: boolean;
+  /** Generation progress 0-100 */
+  generationProgress?: number;
+  /** Current generation phase description */
+  generationPhase?: string;
   isPro?: boolean;
   onToggleExpand: () => void;
   onPrimaryAction: () => void;
@@ -57,6 +62,8 @@ export function EntityCard({
   status,
   isExpanded,
   isGenerating = false,
+  generationProgress = 0,
+  generationPhase = '',
   isPro = false,
   onToggleExpand,
   onPrimaryAction,
@@ -135,26 +142,27 @@ export function EntityCard({
                   )}
                 </div>
 
-                {/* Primary action button */}
+                {/* Primary action button and progress */}
                 <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    variant={config.actionVariant}
-                    size="sm"
-                    onClick={onPrimaryAction}
-                    disabled={isGenerating}
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generando...
-                      </>
-                    ) : (
-                      <>
-                        {config.actionIcon}
-                        {config.actionLabel}
-                      </>
-                    )}
-                  </Button>
+                  {isGenerating ? (
+                    <div className="flex flex-col items-end gap-1 min-w-[180px]">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="truncate max-w-[120px]">{generationPhase || 'Generando...'}</span>
+                        <span className="font-medium">{generationProgress}%</span>
+                      </div>
+                      <Progress value={generationProgress} className="h-1.5 w-full" />
+                    </div>
+                  ) : (
+                    <Button
+                      variant={config.actionVariant}
+                      size="sm"
+                      onClick={onPrimaryAction}
+                    >
+                      {config.actionIcon}
+                      {config.actionLabel}
+                    </Button>
+                  )}
                   <div className="text-muted-foreground">
                     {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </div>
@@ -200,26 +208,29 @@ export function EntityCard({
                 </div>
 
                 {/* Action button - full width on mobile */}
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    variant={config.actionVariant}
-                    size="sm"
-                    className="w-full"
-                    onClick={onPrimaryAction}
-                    disabled={isGenerating}
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generando...
-                      </>
-                    ) : (
-                      <>
-                        {config.actionIcon}
-                        {config.actionLabel}
-                      </>
-                    )}
-                  </Button>
+                <div onClick={(e) => e.stopPropagation()} className="w-full">
+                  {isGenerating ? (
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          <span>{generationPhase || 'Generando...'}</span>
+                        </div>
+                        <span className="font-medium">{generationProgress}%</span>
+                      </div>
+                      <Progress value={generationProgress} className="h-1.5" />
+                    </div>
+                  ) : (
+                    <Button
+                      variant={config.actionVariant}
+                      size="sm"
+                      className="w-full"
+                      onClick={onPrimaryAction}
+                    >
+                      {config.actionIcon}
+                      {config.actionLabel}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
