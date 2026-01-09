@@ -232,10 +232,29 @@ export default function CharacterPackMVP({
   // Get slot by type
   const getSlot = (type: string): PackSlot | undefined => slots.find(s => s.slot_type === type);
 
-  // Check if reference is uploaded
+  // Check if reference is uploaded OR if character has a generated/accepted image
   const hasReference = () => {
     const ref = getSlot('ref_closeup_front');
-    return ref && ref.image_url;
+    if (ref?.image_url) return true;
+    
+    // Also check for any closeup slot with image
+    const closeup = slots.find(s => 
+      (s.slot_type === 'closeup' || s.slot_type === 'ref_closeup_front') && 
+      s.image_url
+    );
+    return !!closeup?.image_url;
+  };
+
+  // Get the reference image URL (prioritize ref_closeup_front, fallback to any closeup)
+  const getReferenceImageUrl = (): string | null => {
+    const ref = getSlot('ref_closeup_front');
+    if (ref?.image_url) return ref.image_url;
+    
+    const closeup = slots.find(s => 
+      (s.slot_type === 'closeup' || s.slot_type === 'ref_closeup_front') && 
+      s.image_url
+    );
+    return closeup?.image_url || null;
   };
 
   // Upload reference photo and analyze for Visual DNA
@@ -412,6 +431,7 @@ export default function CharacterPackMVP({
   }
 
   const refSlot = getSlot('ref_closeup_front');
+  const referenceUrl = getReferenceImageUrl();
 
   // ASSISTED MODE: Simple guided view
   if (!isPro) {
@@ -421,15 +441,26 @@ export default function CharacterPackMVP({
         <div className="flex gap-4 items-start">
           {/* Photo thumbnail */}
           <div 
-            className={`relative w-28 h-28 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer transition-all ${
-              refSlot?.image_url 
-                ? 'border-2 border-green-500/50' 
-                : 'border-2 border-dashed border-muted-foreground/40 hover:border-primary/60 bg-muted/30'
+            className={`relative w-28 h-28 rounded-lg overflow-hidden flex items-center justify-center transition-all ${
+              referenceUrl 
+                ? 'border-2 border-green-500/50 cursor-pointer hover:ring-2 hover:ring-primary/50' 
+                : 'border-2 border-dashed border-muted-foreground/40 hover:border-primary/60 bg-muted/30 cursor-pointer'
             }`}
-            onClick={() => !refSlot?.image_url && fileInputRef.current?.click()}
+            onClick={() => {
+              if (referenceUrl) {
+                setPreviewImage({ 
+                  url: referenceUrl, 
+                  slotType: 'ref_closeup_front',
+                  slotId: refSlot?.id || '',
+                  label: 'Referencia Principal',
+                });
+              } else {
+                fileInputRef.current?.click();
+              }
+            }}
           >
-            {refSlot?.image_url ? (
-              <img src={refSlot.image_url} alt={characterName} className="w-full h-full object-cover" />
+            {referenceUrl ? (
+              <img src={referenceUrl} alt={characterName} className="w-full h-full object-cover" />
             ) : (
               <div className="text-center p-2">
                 <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-1" />
@@ -444,7 +475,7 @@ export default function CharacterPackMVP({
                 </span>
               </div>
             )}
-            {refSlot?.image_url && !analyzing && (
+            {referenceUrl && !analyzing && (
               <div className="absolute top-1 right-1">
                 <Badge variant={hasVisualDNA ? 'pass' : 'pending'} className="text-xs px-1">
                   {hasVisualDNA ? <Check className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
