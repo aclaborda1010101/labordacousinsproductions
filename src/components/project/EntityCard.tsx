@@ -156,28 +156,34 @@ export function EntityCard({
                 </div>
 
                 {/* Primary action button and progress */}
-                <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                  {isGenerating ? (
-                    <div className="flex flex-col items-end gap-1 min-w-[180px]">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="truncate max-w-[120px]">{generationPhase || 'Generando...'}</span>
-                        <span className="font-medium">{generationProgress}%</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div onClick={(e) => e.stopPropagation()}>
+                    {isGenerating ? (
+                      <div className="flex flex-col items-end gap-1 min-w-[180px]">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span className="truncate max-w-[120px]">{generationPhase || 'Generando...'}</span>
+                          <span className="font-medium">{generationProgress}%</span>
+                        </div>
+                        <Progress value={generationProgress} className="h-1.5 w-full" />
                       </div>
-                      <Progress value={generationProgress} className="h-1.5 w-full" />
-                    </div>
-                  ) : (
-                    <Button
-                      variant={config.actionVariant}
-                      size="sm"
-                      onClick={onPrimaryAction}
-                    >
-                      {config.actionIcon}
-                      {config.actionLabel}
-                    </Button>
-                  )}
-                  <div className="text-muted-foreground">
-                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    ) : (
+                      <Button
+                        variant={config.actionVariant}
+                        size="sm"
+                        onClick={onPrimaryAction}
+                      >
+                        {config.actionIcon}
+                        {config.actionLabel}
+                      </Button>
+                    )}
+                  </div>
+                  <div 
+                    className="text-muted-foreground p-2 -m-2 cursor-pointer hover:text-foreground transition-colors"
+                    role="button"
+                    aria-label={isExpanded ? "Contraer" : "Expandir"}
+                  >
+                    {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                   </div>
                 </div>
               </div>
