@@ -4,6 +4,7 @@
  */
 
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import {
   UserPlus,
@@ -118,22 +119,33 @@ export function CharacterWorkflowGuide({
   const nextAction = getNextAction(currentStep);
 
   if (compact) {
-    // Compact mode: just show progress badge
+    // Compact mode: just show progress badge with tooltip
     const completedSteps = currentIndex + 1;
     const totalSteps = WORKFLOW_STEPS.length;
     
     return (
       <div className={cn('flex items-center gap-2', className)}>
-        <Badge 
-          variant={currentStep === 'canon' ? 'default' : 'outline'}
-          className={cn(
-            'gap-1 text-xs',
-            currentStep === 'canon' && 'bg-amber-500'
-          )}
-        >
-          {WORKFLOW_STEPS[currentIndex].icon}
-          {completedSteps}/{totalSteps}
-        </Badge>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge 
+              variant={currentStep === 'canon' ? 'default' : 'outline'}
+              className={cn(
+                'gap-1 text-xs cursor-help',
+                currentStep === 'canon' && 'bg-amber-500'
+              )}
+            >
+              {WORKFLOW_STEPS[currentIndex].icon}
+              {completedSteps}/{totalSteps}
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[200px]">
+            <p className="font-medium text-sm">{WORKFLOW_STEPS[currentIndex].label}</p>
+            <p className="text-xs text-muted-foreground">{WORKFLOW_STEPS[currentIndex].description}</p>
+            {currentStep !== 'canon' && (
+              <p className="text-xs text-primary mt-1">→ Siguiente: {nextAction.label}</p>
+            )}
+          </TooltipContent>
+        </Tooltip>
         {currentStep !== 'canon' && (
           <span className="text-xs text-muted-foreground flex items-center gap-1">
             <ArrowRight className="w-3 h-3" />

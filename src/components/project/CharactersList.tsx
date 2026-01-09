@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { EntityCard, getEntityStatus } from './EntityCard';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useEntityProgress } from '@/hooks/useEntityProgress';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import CharacterPackMVP from './CharacterPackMVP';
 import NextStepNavigator from './NextStepNavigator';
 import { resolveImageModel } from '@/config/models';
@@ -216,6 +217,7 @@ function CharacterCardWithProgress({
 export default function CharactersList({ projectId }: CharactersListProps) {
   const { userLevel } = useEditorialKnowledgeBase({ projectId, assetType: 'character' });
   const isPro = userLevel === 'pro';
+  const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -468,9 +470,19 @@ export default function CharactersList({ projectId }: CharactersListProps) {
 
   const handleGenerate = async (character: Character) => {
     startGenerating(character.id);
-    toast.info(`Generando ${character.name}...`);
+    
+    // Register task in the global background task system
+    const taskId = addTask({
+      type: 'character_generation',
+      title: `Generando ${character.name}`,
+      projectId,
+      entityId: character.id,
+      entityName: character.name,
+    });
 
     try {
+      updateTask(taskId, { progress: 5, description: 'Preparando generación...' });
+      
       // Build prompt from character data
       const prompt = [
         character.name,
@@ -478,6 +490,10 @@ export default function CharactersList({ projectId }: CharactersListProps) {
         character.role || '',
       ].filter(Boolean).join('. ');
 
+      updateTask(taskId, { progress: 15, description: 'Analizando referencias...' });
+
+      updateTask(taskId, { progress: 30, description: 'Generando imagen...' });
+      
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
           projectId,
@@ -498,15 +514,19 @@ export default function CharactersList({ projectId }: CharactersListProps) {
 
       if (error) throw error;
 
+      updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
+
       // Update character with run ID
       if (data?.runId) {
         await supabase.from('characters').update({ current_run_id: data.runId }).eq('id', character.id);
       }
 
+      completeTask(taskId, data);
       toast.success(`${character.name} generado`);
       fetchCharacters();
     } catch (err) {
       console.error('Generation error:', err);
+      failTask(taskId, err instanceof Error ? err.message : 'Error al generar');
       toast.error(`Error al generar ${character.name}`);
     } finally {
       stopGenerating(character.id);
@@ -573,14 +593,26 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const handleRegenerate = async (character: Character) => {
     // For canon items, regenerate creates a new variant
     startGenerating(character.id);
-    toast.info(`Generando nueva variante de ${character.name}...`);
+    
+    // Register task in the global background task system
+    const taskId = addTask({
+      type: 'character_generation',
+      title: `Nueva variante: ${character.name}`,
+      projectId,
+      entityId: character.id,
+      entityName: character.name,
+    });
 
     try {
+      updateTask(taskId, { progress: 10, description: 'Preparando regeneración...' });
+      
       const prompt = [
         character.name,
         character.bio || '',
         character.role || '',
       ].filter(Boolean).join('. ');
+
+      updateTask(taskId, { progress: 30, description: 'Generando nueva variante...' });
 
       const { data, error } = await supabase.functions.invoke('generate-run', {
         body: {
@@ -603,13 +635,17 @@ export default function CharactersList({ projectId }: CharactersListProps) {
 
       if (error) throw error;
 
+      updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
+
       if (data?.runId) {
         await supabase.from('characters').update({ current_run_id: data.runId }).eq('id', character.id);
       }
 
+      completeTask(taskId, data);
       toast.success(`Nueva variante de ${character.name} generada`);
       fetchCharacters();
     } catch (err) {
+      failTask(taskId, err instanceof Error ? err.message : 'Error al regenerar');
       toast.error(`Error al regenerar ${character.name}`);
     } finally {
       stopGenerating(character.id);
