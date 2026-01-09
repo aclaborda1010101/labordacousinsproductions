@@ -384,25 +384,25 @@ export default function Characters({ projectId }: CharactersProps) {
           });
       }
       
-      // Phase 2: Generate Identity Closeup
+      // Phase 2: Generate Identity Closeup (unified naming with CharacterPackMVP)
       updateTask(taskId, { progress: 15, description: 'Identity Closeup...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'anchor_closeup', null, null, 0);
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'ref_closeup_front', null, null, 0);
       
-      // Phase 3: Generate Front View
-      updateTask(taskId, { progress: 30, description: 'Vista Frontal...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'front', null, 1);
+      // Phase 3: Generate Front 3/4 View (unified naming)
+      updateTask(taskId, { progress: 30, description: 'Vista Frontal 3/4...' });
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turn_front_34', null, null, 1);
       
-      // Phase 4: Generate Side View
+      // Phase 4: Generate Side View (unified naming)
       updateTask(taskId, { progress: 50, description: 'Vista Lateral...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'side', null, 2);
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turn_side', null, null, 2);
       
-      // Phase 5: Generate Back View
+      // Phase 5: Generate Back View (unified naming)
       updateTask(taskId, { progress: 65, description: 'Vista Trasera...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turnaround', 'back', null, 3);
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'turn_back', null, null, 3);
       
-      // Phase 6: Generate Neutral Expression
+      // Phase 6: Generate Neutral Expression (unified naming)
       updateTask(taskId, { progress: 80, description: 'Expresión Neutral...' });
-      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'expression', null, 'neutral', 4);
+      await generateSlotForCharacter(character.id, character.name, character.bio || '', 'expr_neutral', null, null, 4);
       
       // Phase 7: Update completeness
       updateTask(taskId, { progress: 95, description: 'Finalizando...' });
@@ -430,34 +430,22 @@ export default function Characters({ projectId }: CharactersProps) {
     expressionName: string | null,
     slotIndex: number
   ) => {
-    // Create or get slot - handle null values properly (SQL null = null is false)
-    let query = supabase
+    // Use upsert to avoid duplicate key constraint violations
+    // First try to find existing slot by slot_type only (unified naming eliminates view_angle/expression_name)
+    const { data: existingSlot } = await supabase
       .from('character_pack_slots')
       .select('id')
       .eq('character_id', charId)
-      .eq('slot_type', slotType);
-    
-    // Use .is() for null comparisons instead of .eq()
-    if (viewAngle === null) {
-      query = query.is('view_angle', null);
-    } else {
-      query = query.eq('view_angle', viewAngle);
-    }
-    
-    if (expressionName === null) {
-      query = query.is('expression_name', null);
-    } else {
-      query = query.eq('expression_name', expressionName);
-    }
-
-    const { data: existingSlot } = await query.maybeSingle();
+      .eq('slot_type', slotType)
+      .maybeSingle();
 
     let slotId = existingSlot?.id;
 
     if (!slotId) {
+      // Use upsert to handle race conditions
       const { data: newSlot, error } = await supabase
         .from('character_pack_slots')
-        .insert({
+        .upsert({
           character_id: charId,
           slot_type: slotType,
           slot_index: slotIndex,
@@ -465,12 +453,30 @@ export default function Characters({ projectId }: CharactersProps) {
           expression_name: expressionName,
           status: 'pending',
           required: true
+        }, {
+          onConflict: 'character_id,slot_type,view_angle,expression_name',
+          ignoreDuplicates: false
         })
         .select('id')
         .single();
 
-      if (error) throw error;
-      slotId = newSlot.id;
+      if (error) {
+        // If upsert fails, try to fetch existing
+        const { data: fallbackSlot } = await supabase
+          .from('character_pack_slots')
+          .select('id')
+          .eq('character_id', charId)
+          .eq('slot_type', slotType)
+          .maybeSingle();
+        
+        if (fallbackSlot) {
+          slotId = fallbackSlot.id;
+        } else {
+          throw error;
+        }
+      } else {
+        slotId = newSlot.id;
+      }
     }
 
     // Generate image - allowTextToImage enables generation without pre-uploaded photos
