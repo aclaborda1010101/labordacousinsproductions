@@ -1722,6 +1722,34 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       } else {
         createdAnchorId = newAnchor.id;
         console.log(`[TEXT-TO-IMAGE] Created reference anchor: ${createdAnchorId}`);
+        
+        // AUTO-EXTRACT VISUAL DNA if not already present
+        if (!activeVisualDNA) {
+          console.log('[TEXT-TO-IMAGE] Triggering Visual DNA extraction...');
+          try {
+            const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+            const response = await fetch(`${supabaseUrl}/functions/v1/generate-visual-dna`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
+              },
+              body: JSON.stringify({
+                characterId: request.characterId,
+                imageUrl: imageUrl
+              })
+            });
+            
+            if (response.ok) {
+              console.log('[TEXT-TO-IMAGE] Visual DNA extraction initiated');
+            } else {
+              console.warn('[TEXT-TO-IMAGE] Visual DNA extraction failed:', await response.text());
+            }
+          } catch (dnaError) {
+            console.warn('[TEXT-TO-IMAGE] Visual DNA extraction error:', dnaError);
+            // Non-blocking - continue even if DNA extraction fails
+          }
+        }
       }
     }
   }
