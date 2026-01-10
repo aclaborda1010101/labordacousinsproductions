@@ -141,6 +141,14 @@ verify_jwt = false
 # Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
 verify_jwt = false
 
+[functions.runway_start]
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
+
+[functions.runway_poll]
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
+
 [functions.engine-shootout]
 verify_jwt = true
 

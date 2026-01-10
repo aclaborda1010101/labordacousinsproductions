@@ -779,6 +779,159 @@ export default function ShotEditor({
     return { success: false, error: pollResult.error || 'Video generation failed' };
   };
 
+  // Poll Runway operation until complete
+  const pollRunwayOperation = async (taskId: string): Promise<{ done: boolean; videoUrl?: string; error?: string }> => {
+    const maxAttempts = 60; // 5 minutes max
+    let attempts = 0;
+
+    setGenerationProgress({
+      status: 'generating',
+      elapsedSeconds: 0,
+      estimatedTotalSeconds: 120,
+      message: 'Generando video con Runway Gen-3...',
+      engine: 'veo' // Use veo icon as placeholder
+    });
+
+    while (attempts < maxAttempts) {
+      await new Promise(r => setTimeout(r, 5000)); // Poll every 5 seconds
+      attempts++;
+
+      setGenerationProgress(prev => ({
+        ...prev,
+        message: `Renderizando video con Runway... (intento ${attempts})`
+      }));
+
+      const { data, error } = await supabase.functions.invoke('runway_poll', {
+        body: { taskId }
+      });
+
+      if (error) {
+        console.error('Runway poll error:', error);
+        continue;
+      }
+
+      console.log('Runway poll result:', data);
+
+      if (data?.status === 'completed' && data?.videoUrl) {
+        setGenerationProgress(prev => ({ ...prev, status: 'done', message: '¡Video generado con Runway!' }));
+        return { done: true, videoUrl: data.videoUrl };
+      }
+
+      if (data?.status === 'failed') {
+        setGenerationProgress(prev => ({ ...prev, status: 'error', message: data.error || 'Runway generation failed' }));
+        return { done: true, error: data.error || 'Runway generation failed' };
+      }
+
+      // Still processing
+      if (data?.status === 'pending' || data?.status === 'processing') {
+        continue;
+      }
+    }
+
+    setGenerationProgress(prev => ({ ...prev, status: 'error', message: 'Timeout - generación muy lenta' }));
+    return { done: false, error: 'Timeout waiting for Runway video generation' };
+  };
+
+  const generateWithRunway = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
+    const prompt = buildVideoPrompt();
+    console.log('Starting Runway generation with prompt:', prompt);
+
+    // Reset and start progress
+    setGenerationProgress({
+      status: 'starting',
+      elapsedSeconds: 0,
+      estimatedTotalSeconds: 120,
+      message: 'Iniciando generación con Runway Gen-3...',
+      engine: 'veo' // Use veo icon as placeholder
+    });
+
+    // Runway: fetch both initial and final keyframes for automatic A→B transition
+    let keyframeUrl: string | undefined;
+    let keyframeTailUrl: string | undefined;
+    
+    try {
+      // Fetch ALL keyframes ordered by created_at
+      const { data: keyframes, error: kfErr } = await supabase
+        .from('keyframes')
+        .select('image_url, approved, created_at')
+        .eq('shot_id', shot.id)
+        .not('image_url', 'is', null)
+        .order('created_at', { ascending: true });
+
+      if (kfErr) {
+        console.warn('Error fetching keyframes:', kfErr);
+      }
+
+      if (keyframes && keyframes.length > 0) {
+        // Initial keyframe: first approved, or first available
+        const approvedFirst = keyframes.find(k => k.approved);
+        keyframeUrl = approvedFirst?.image_url ?? keyframes[0]?.image_url ?? undefined;
+
+        // Tail keyframe for A→B: last approved keyframe if different from first
+        if (keyframes.length > 1) {
+          const approvedLast = [...keyframes].reverse().find(k => k.approved);
+          const candidateTail = approvedLast?.image_url ?? keyframes[keyframes.length - 1]?.image_url;
+          
+          // Only use as tail if it's different from initial
+          if (candidateTail && candidateTail !== keyframeUrl) {
+            keyframeTailUrl = candidateTail;
+            console.log('Runway A→B transition enabled: initial + tail keyframes found');
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Keyframe lookup failed:', e);
+    }
+
+    const mode = keyframeTailUrl ? 'A→B transition' : keyframeUrl ? 'image-to-video' : 'text-to-video';
+    console.log(`Runway mode: ${mode}`, {
+      hasInitial: !!keyframeUrl,
+      hasTail: !!keyframeTailUrl
+    });
+
+    setGenerationProgress(prev => ({
+      ...prev,
+      message: keyframeTailUrl 
+        ? 'Iniciando Runway Gen-3 (transición A→B)...' 
+        : keyframeUrl 
+          ? 'Iniciando Runway Gen-3 (image-to-video)...'
+          : 'Iniciando Runway Gen-3 (text-to-video)...'
+    }));
+
+    // Start the operation
+    const { data: startData, error: startError } = await supabase.functions.invoke('runway_start', {
+      body: {
+        prompt,
+        duration: form.duration_target <= 5 ? 5 : 10,
+        keyframeUrl,
+        keyframeTailUrl
+      }
+    });
+
+    if (startError) {
+      console.error('Runway start error:', startError);
+      setGenerationProgress(prev => ({ ...prev, status: 'error', message: startError.message }));
+      return { success: false, error: startError.message };
+    }
+
+    if (!startData?.ok || !startData?.taskId) {
+      console.error('Runway start failed:', startData);
+      setGenerationProgress(prev => ({ ...prev, status: 'error', message: startData?.error || 'Failed to start' }));
+      return { success: false, error: startData?.error || 'Failed to start Runway operation' };
+    }
+
+    console.log('Runway task started:', startData.taskId, 'isTransition:', startData.isTransition);
+
+    // Poll for completion
+    const pollResult = await pollRunwayOperation(startData.taskId);
+
+    if (pollResult.done && pollResult.videoUrl) {
+      return { success: true, videoUrl: pollResult.videoUrl };
+    }
+
+    return { success: false, error: pollResult.error || 'Video generation failed' };
+  };
+
   const generateWithVeo = async (): Promise<{ success: boolean; videoUrl?: string; error?: string }> => {
     const prompt = buildVideoPrompt();
     console.log('Starting Veo generation with prompt:', prompt);
@@ -924,15 +1077,20 @@ export default function ShotEditor({
         }
       }
 
-      // Runway: Manual selection only - no auto integration yet
+      // Runway: Full integration with A→B transition support
       if (selectedEngine === 'runway' && !fallback) {
-        // Runway is not yet integrated with edge functions
-        // For now, show a placeholder message and fall back to Lovable
-        toast.warning('Runway Gen-3 requiere configuración adicional. Generando keyframe...');
-        console.log('Runway selected but not yet integrated, falling back to Lovable AI');
-        fallback = true;
-        engineUsed = 'lovable';
-        metadata = { engine: 'runway', model: 'gen-3-alpha', status: 'pending_integration' };
+        const runwayResult = await generateWithRunway();
+        
+        if (runwayResult.success && runwayResult.videoUrl) {
+          videoUrl = runwayResult.videoUrl;
+          metadata = { engine: 'runway', model: 'gen3a_turbo' };
+        } else {
+          // Fallback to Lovable AI for keyframe
+          console.log('Runway failed, falling back to Lovable AI:', runwayResult.error);
+          toast.warning('Runway no disponible, generando keyframe...');
+          fallback = true;
+          engineUsed = 'lovable';
+        }
       }
 
       // Use generate-shot for lovable only (and as fallback)
