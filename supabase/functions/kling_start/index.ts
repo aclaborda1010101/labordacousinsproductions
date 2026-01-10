@@ -11,6 +11,7 @@ interface KlingStartRequest {
   prompt: string;
   duration: number;
   keyframeUrl?: string;
+  keyframeTailUrl?: string;  // Final keyframe for A→B transition
   qualityMode?: 'CINE' | 'ULTRA';
 }
 
@@ -140,7 +141,7 @@ serve(async (req) => {
     const { userId } = await requireAuthOrDemo(req);
     console.log("[AUTH] Authenticated user:", userId);
 
-    const { prompt, duration, keyframeUrl, qualityMode = 'CINE' }: KlingStartRequest = await req.json();
+    const { prompt, duration, keyframeUrl, keyframeTailUrl, qualityMode = 'CINE' }: KlingStartRequest = await req.json();
 
     const KLING_ACCESS_KEY = Deno.env.get('KLING_ACCESS_KEY');
     const KLING_SECRET_KEY = Deno.env.get('KLING_SECRET_KEY');
@@ -204,9 +205,17 @@ serve(async (req) => {
 
     // For image2video, convert keyframe URL to raw base64 (no prefix)
     if (finalKeyframeUrl) {
-      console.log('Converting keyframe to raw base64 for Kling...');
+      console.log('Converting initial keyframe to raw base64 for Kling...');
       const imageBase64 = await imageUrlToBase64(finalKeyframeUrl);
       requestBody.image = imageBase64;
+    }
+
+    // Add tail keyframe for A→B transition (Start & End Frame feature)
+    if (keyframeTailUrl) {
+      console.log('Converting tail keyframe to raw base64 for transition...');
+      const tailBase64 = await imageUrlToBase64(keyframeTailUrl);
+      requestBody.image_tail = tailBase64;
+      console.log('Tail keyframe added for frame-to-frame transition');
     }
 
     // Determine endpoint
