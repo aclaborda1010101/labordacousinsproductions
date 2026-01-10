@@ -15,6 +15,7 @@ interface GenerateShotRequest {
   characterRefs?: { name: string; token?: string; referenceUrl?: string }[];
   locationRef?: { name: string; token?: string; referenceUrl?: string };
   keyframeUrl?: string;
+  keyframeTailUrl?: string;  // Final keyframe for A→B transition
   dialogueText?: string;
   cameraMovement?: string;
   blocking?: string;
@@ -209,7 +210,13 @@ async function imageUrlToBase64(imageUrl: string): Promise<string> {
 }
 
 // Generate video with Kling (using JWT AK+SK auth and presets)
-async function generateWithKling(prompt: string, duration: number, keyframeUrl?: string, qualityMode: 'CINE' | 'ULTRA' = 'CINE'): Promise<VideoResult> {
+async function generateWithKling(
+  prompt: string, 
+  duration: number, 
+  keyframeUrl?: string, 
+  keyframeTailUrl?: string,  // Final keyframe for A→B transition
+  qualityMode: 'CINE' | 'ULTRA' = 'CINE'
+): Promise<VideoResult> {
   // Get credentials from secrets
   const KLING_ACCESS_KEY = Deno.env.get('KLING_ACCESS_KEY');
   const KLING_SECRET_KEY = Deno.env.get('KLING_SECRET_KEY');
@@ -222,8 +229,12 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
     throw new Error('KLING_ACCESS_KEY and KLING_SECRET_KEY must be configured');
   }
 
-  // Select mode based on quality preset
-  const mode = qualityMode === 'ULTRA' ? KLING_MODE_ULTRA : KLING_MODE_CINE;
+  // Select mode based on quality preset - v2.6 requires 'pro' mode
+  let mode = qualityMode === 'ULTRA' ? KLING_MODE_ULTRA : KLING_MODE_CINE;
+  if (KLING_MODEL_NAME.includes('v2-6') || KLING_MODEL_NAME.includes('V2.6')) {
+    console.log('Model v2.6 detected, forcing mode to "pro"');
+    mode = 'pro';
+  }
 
   console.log(`Generating with Kling (model: ${KLING_MODEL_NAME}, mode: ${mode})...`);
 
@@ -243,8 +254,17 @@ async function generateWithKling(prompt: string, duration: number, keyframeUrl?:
 
   // For image2video, convert keyframe URL to base64 as per Kling API requirements
   if (keyframeUrl) {
+    console.log('Converting initial keyframe to base64...');
     const imageBase64 = await imageUrlToBase64(keyframeUrl);
     requestBody.image = imageBase64;
+  }
+
+  // Add tail keyframe for A→B transition (Start & End Frame feature)
+  if (keyframeTailUrl) {
+    console.log('Converting tail keyframe to base64 for A→B transition...');
+    const tailBase64 = await imageUrlToBase64(keyframeTailUrl);
+    requestBody.image_tail = tailBase64;
+    console.log('Tail keyframe added for frame-to-frame transition');
   }
 
   // For v2.x models, always use image2video endpoint (they don't support text2video)
@@ -362,6 +382,7 @@ serve(async (req) => {
       characterRefs, 
       locationRef, 
       keyframeUrl,
+      keyframeTailUrl,
       dialogueText,
       cameraMovement,
       blocking
@@ -423,7 +444,9 @@ serve(async (req) => {
         if (engine === 'veo') {
           result = await generateWithVeo(prompt, duration, finalKeyframeUrl);
         } else {
-          result = await generateWithKling(prompt, duration, finalKeyframeUrl);
+          // Pass both keyframes for A→B transition
+          console.log(`Kling: initial=${!!finalKeyframeUrl}, tail=${!!keyframeTailUrl}`);
+          result = await generateWithKling(prompt, duration, finalKeyframeUrl, keyframeTailUrl);
         }
 
         // Add keyframe to result
