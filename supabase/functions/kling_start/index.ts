@@ -51,14 +51,19 @@ async function makeKlingJwt(accessKey: string, secretKey: string): Promise<strin
   return `${unsigned}.${signature}`;
 }
 
-// Helper: Convert image URL to base64 WITH data URI prefix (required by Kling API)
-async function imageUrlToBase64WithPrefix(imageUrl: string): Promise<string> {
-  console.log('Converting image URL to base64 with prefix...');
+// Helper: Convert image URL to RAW base64 (NO data URI prefix - Kling API requirement)
+async function imageUrlToBase64(imageUrl: string): Promise<string> {
+  console.log('Converting image URL to raw base64 (no prefix)...');
 
-  // If already a data URL, return as-is (it has the prefix)
+  // If already a data URL, extract just the base64 part
   if (imageUrl.startsWith('data:')) {
-    console.log('Data URL detected, using as-is. Length:', imageUrl.length);
-    return imageUrl;
+    const commaIndex = imageUrl.indexOf(',');
+    if (commaIndex === -1) {
+      throw new Error('Invalid data URL (missing comma)');
+    }
+    const base64 = imageUrl.slice(commaIndex + 1);
+    console.log('Data URL detected, extracted raw base64. Length:', base64.length);
+    return base64;
   }
 
   const response = await fetch(imageUrl);
@@ -66,15 +71,11 @@ async function imageUrlToBase64WithPrefix(imageUrl: string): Promise<string> {
     throw new Error(`Failed to fetch image: ${response.status}`);
   }
 
-  const contentType = response.headers.get('content-type') || 'image/png';
   const uint8Array = new Uint8Array(await response.arrayBuffer());
   const base64 = encode(uint8Array.buffer);
-  
-  // Kling API requires the full data URI with mime type prefix
-  const dataUri = `data:${contentType};base64,${base64}`;
 
-  console.log(`Image converted to base64 with prefix (${contentType}), total length: ${dataUri.length}`);
-  return dataUri;
+  console.log('Image converted to raw base64 successfully. Length:', base64.length);
+  return base64;
 }
 
 // Generate keyframe using Lovable AI - returns null if generation fails
@@ -160,7 +161,15 @@ serve(async (req) => {
     }
 
     // Select mode based on quality preset
-    const mode = qualityMode === 'ULTRA' ? KLING_MODE_ULTRA : KLING_MODE_CINE;
+    let mode = qualityMode === 'ULTRA' ? KLING_MODE_ULTRA : KLING_MODE_CINE;
+    
+    // V2.6 models only support 'pro' mode
+    if (KLING_MODEL_NAME.toLowerCase().includes('v2.6') || 
+        KLING_MODEL_NAME.toLowerCase().includes('v2-6') ||
+        KLING_MODEL_NAME.includes('V2.6')) {
+      console.log('Model v2.6 detected, forcing mode to "pro"');
+      mode = 'pro';
+    }
 
     console.log(`Starting Kling generation (model: ${KLING_MODEL_NAME}, mode: ${mode}, duration: ${duration}s)`);
 
@@ -193,11 +202,11 @@ serve(async (req) => {
       mode
     };
 
-    // For image2video, convert keyframe URL to base64 with data URI prefix
+    // For image2video, convert keyframe URL to raw base64 (no prefix)
     if (finalKeyframeUrl) {
-      console.log('Converting keyframe to base64 for Kling...');
-      const imageDataUri = await imageUrlToBase64WithPrefix(finalKeyframeUrl);
-      requestBody.image = imageDataUri;
+      console.log('Converting keyframe to raw base64 for Kling...');
+      const imageBase64 = await imageUrlToBase64(finalKeyframeUrl);
+      requestBody.image = imageBase64;
     }
 
     // Determine endpoint
