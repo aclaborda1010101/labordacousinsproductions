@@ -54,13 +54,8 @@ export async function runVideoEngine(payload: VideoEnginePayload): Promise<Video
         functionName = 'kling_start';
         break;
       case 'runway':
-        // Runway is placeholder - return pending status
-        return {
-          ok: true,
-          engine: 'runway',
-          status: 'pending',
-          error: 'Runway integration pending'
-        };
+        functionName = 'runway_start';
+        break;
       default:
         return {
           ok: false,
@@ -123,8 +118,8 @@ export function getAvailableVideoEngines(): { id: VideoEngine; label: string; de
     {
       id: 'runway',
       label: 'Runway Gen-3',
-      description: 'Próximamente disponible',
-      status: 'pending'
+      description: 'Transiciones A→B de alta calidad',
+      status: 'active'
     }
   ];
 }
@@ -137,7 +132,19 @@ export async function pollVideoStatus(
   runId: string
 ): Promise<VideoEngineResult> {
   try {
-    const functionName = engine === 'veo' ? 'veo_poll' : 'kling_poll';
+    let functionName: string;
+    switch (engine) {
+      case 'veo':
+        functionName = 'veo_poll';
+        break;
+      case 'runway':
+        functionName = 'runway_poll';
+        break;
+      case 'kling':
+      default:
+        functionName = 'kling_poll';
+        break;
+    }
     
     const { data, error } = await supabase.functions.invoke(functionName, {
       body: { runId }
