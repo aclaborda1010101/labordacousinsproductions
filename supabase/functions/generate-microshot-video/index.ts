@@ -239,12 +239,20 @@ serve(async (req) => {
     let videoResult: { taskId?: string; operationName?: string; error?: string };
 
     if (engine === 'kling') {
+      // Pass both keyframes for A→B transition if final is available and approved
+      const tailKeyframeUrl = keyframeFinal?.approved && keyframeFinal?.image_url 
+        ? keyframeFinal.image_url 
+        : undefined;
+      
+      console.log(`[generate-microshot-video] Kling: initial=${!!keyframeInitial?.image_url}, tail=${!!tailKeyframeUrl}`);
+      
       const { data, error } = await supabase.functions.invoke('kling_start', {
         body: {
           prompt,
           duration: microShot.duration_sec || 2,
           keyframeUrl: keyframeInitial.image_url,
-          qualityMode: 'high'
+          keyframeTailUrl: tailKeyframeUrl,  // Final keyframe for transition
+          qualityMode: 'CINE'
         }
       });
 
