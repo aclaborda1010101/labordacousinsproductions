@@ -25,9 +25,11 @@ import {
   Check,
   RotateCcw,
   Star,
-  TrendingUp
+  TrendingUp,
+  Layers
 } from 'lucide-react';
 import SetCanonModal from './SetCanonModal';
+import SceneCoverageGenerator from './SceneCoverageGenerator';
 import { EditorialAssistantPanel } from '@/components/editorial/EditorialAssistantPanel';
 import { useRecommendations } from '@/hooks/useRecommendations';
 import { ProjectRecommendationsBar } from './ProjectRecommendationsBar';
@@ -90,6 +92,10 @@ interface KeyframeManagerProps {
     lightingRules?: string[];
     aspectRatio?: string;
   };
+  sceneId?: string;
+  sceneSlugline?: string;
+  sceneType?: string;
+  projectStyle?: { visualStyle?: string; animationType?: string };
   onKeyframesChange?: (keyframes: Keyframe[]) => void;
 }
 
@@ -104,6 +110,10 @@ export default function KeyframeManager({
   location,
   shotDetails,
   stylePack,
+  sceneId,
+  sceneSlugline,
+  sceneType,
+  projectStyle,
   onKeyframesChange
 }: KeyframeManagerProps) {
   const [keyframes, setKeyframes] = useState<Keyframe[]>([]);
@@ -118,6 +128,7 @@ export default function KeyframeManager({
   const [debugPrompt, setDebugPrompt] = useState<string>('');
   const [debugNegativePrompt, setDebugNegativePrompt] = useState<string>('');
   const [lastRawResponse, setLastRawResponse] = useState<unknown>(null);
+  const [showCoverageGenerator, setShowCoverageGenerator] = useState(false);
   const { isDeveloperMode } = useDeveloperMode();
 
   const KEYFRAME_PRESETS = ['initial', 'intermediate', 'final'];
@@ -557,19 +568,33 @@ export default function KeyframeManager({
             {duration}s de duración • {slots.length} frames requeridos
           </p>
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={generateAllMissing}
-          disabled={generating !== null || completedCount === slots.length}
-        >
-          {generating === 'all' ? (
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-          ) : (
-            <Wand2 className="w-4 h-4 mr-2" />
+        <div className="flex items-center gap-2">
+          {/* Coverage Generator Button - only show when there's an approved keyframe */}
+          {keyframes.some(kf => kf.approved && kf.image_url) && sceneId && projectId && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowCoverageGenerator(true)}
+              className="text-primary border-primary/50 hover:bg-primary/10"
+            >
+              <Layers className="w-4 h-4 mr-2" />
+              Cobertura IA
+            </Button>
           )}
-          Generar Todos
-        </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={generateAllMissing}
+            disabled={generating !== null || completedCount === slots.length}
+          >
+            {generating === 'all' ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : (
+              <Wand2 className="w-4 h-4 mr-2" />
+            )}
+            Generar Todos
+          </Button>
+        </div>
       </div>
 
       {/* Progress bar */}
@@ -913,6 +938,41 @@ export default function KeyframeManager({
           projectId={projectId}
           onSuccess={() => {
             toast.success('Asset establecido como versión aprobada');
+          }}
+        />
+      )}
+
+      {/* Scene Coverage Generator Modal */}
+      {sceneId && projectId && (
+        <SceneCoverageGenerator
+          open={showCoverageGenerator}
+          onOpenChange={setShowCoverageGenerator}
+          referenceKeyframe={{
+            id: keyframes.find(kf => kf.approved && kf.image_url)?.id || '',
+            image_url: keyframes.find(kf => kf.approved && kf.image_url)?.image_url || '',
+            shot_id: shotId,
+          }}
+          sceneId={sceneId}
+          sceneSlugline={sceneSlugline || sceneDescription}
+          sceneType={sceneType}
+          characters={characters}
+          location={location}
+          projectId={projectId}
+          projectStyle={projectStyle}
+          onCoverageGenerated={(keyframeIds) => {
+            toast.success(`${keyframeIds.length} keyframes de cobertura generados`);
+            // Refresh keyframes list
+            supabase
+              .from('keyframes')
+              .select('*')
+              .eq('shot_id', shotId)
+              .order('timestamp_sec', { ascending: true })
+              .then(({ data }) => {
+                if (data) {
+                  setKeyframes(data as unknown as Keyframe[]);
+                  onKeyframesChange?.(data as unknown as Keyframe[]);
+                }
+              });
           }}
         />
       )}

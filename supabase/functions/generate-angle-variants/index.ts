@@ -100,6 +100,54 @@ const ANGLE_PRESETS: Record<string, { angles: string[]; context: string }> = {
   },
 };
 
+// Coverage pattern presets for scene production
+const COVERAGE_PATTERN_ANGLES: Record<string, string[]> = {
+  dialogue_2_characters: [
+    "Master wide shot capturing both characters and establishing spatial relationship",
+    "Two-shot medium framing both characters from waist up during interaction",
+    "Over-the-shoulder shot focusing on Character A with Character B's shoulder in frame",
+    "Over-the-shoulder shot focusing on Character B with Character A's shoulder in frame",
+    "Close-up on Character A face capturing emotional reaction",
+    "Close-up on Character B face capturing emotional reaction",
+    "Insert detail shot of hands, object, or environment element",
+  ],
+  dialogue_group: [
+    "Master establishing wide showing entire group arrangement",
+    "Moving dolly medium-wide following conversation flow",
+    "Medium close-up on featured speaker",
+    "Group reaction shot capturing 2-3 listeners",
+    "Extreme close-up detail insert on key prop or gesture",
+  ],
+  action_sequence: [
+    "Wide action master from high angle showing full environment",
+    "Handheld medium shot capturing primary action with motion blur",
+    "Low angle close-up impact shot freezing dramatic moment",
+    "Point-of-view shot from character perspective",
+    "Close-up hero reaction showing determination or fear",
+    "Dutch angle extreme close-up speed insert",
+  ],
+  establishing: [
+    "Aerial drone extreme wide establishing cityscape or landscape",
+    "Wide shot of specific location exterior with architectural detail",
+    "Medium panning shot of environmental detail",
+    "Dolly-in transition shot moving from exterior to scene",
+  ],
+  emotional_intimate: [
+    "Wide shot emphasizing character isolation or intimacy in space",
+    "Intimate two-shot with faces close showing emotional connection",
+    "Extreme close-up on eyes and face capturing micro-expressions",
+    "Close-up on hands touching or reaching",
+    "Profile silhouette shot with dramatic atmospheric lighting",
+  ],
+  suspense: [
+    "Ominous low-angle wide with slow creeping dolly movement",
+    "Steadicam stalker POV watching subject unaware",
+    "Tight close-up capturing fear with shallow depth of field",
+    "Medium-wide with negative space creating unease",
+    "Pan or rack focus reveal shot exposing hidden threat",
+  ],
+};
+
 interface RequestBody {
   referenceImageUrl: string;
   entityType: "character" | "location" | "scene" | "keyframe";
@@ -115,6 +163,7 @@ interface RequestBody {
   presetType?: keyof typeof ANGLE_PRESETS;
   customAngles?: string[];
   projectId?: string;
+  coveragePattern?: keyof typeof COVERAGE_PATTERN_ANGLES;
 }
 
 serve(async (req) => {
@@ -157,6 +206,7 @@ serve(async (req) => {
       projectStyle,
       presetType,
       customAngles,
+      coveragePattern,
     } = body;
 
     if (!referenceImageUrl || !entityType || !entityName) {
@@ -174,9 +224,21 @@ serve(async (req) => {
       });
     }
 
-    // Determine which angles to request
-    const preset = ANGLE_PRESETS[presetType || `${entityType}_turnaround`] || ANGLE_PRESETS.character_turnaround;
-    const requestedAngles = customAngles?.length ? customAngles : preset.angles;
+    // Determine which angles to request - prioritize coverage pattern, then custom, then preset
+    let requestedAngles: string[];
+    let usedPreset: string;
+
+    if (coveragePattern && COVERAGE_PATTERN_ANGLES[coveragePattern]) {
+      requestedAngles = COVERAGE_PATTERN_ANGLES[coveragePattern];
+      usedPreset = `coverage_${coveragePattern}`;
+    } else if (customAngles?.length) {
+      requestedAngles = customAngles;
+      usedPreset = 'custom';
+    } else {
+      const preset = ANGLE_PRESETS[presetType || `${entityType}_turnaround`] || ANGLE_PRESETS.character_turnaround;
+      requestedAngles = preset.angles;
+      usedPreset = presetType || `${entityType}_turnaround`;
+    }
 
     // Build context for the Intent Translator
     const styleContext = projectStyle
@@ -187,11 +249,16 @@ serve(async (req) => {
       ? `Subject identity: ${JSON.stringify(visualDNA).slice(0, 500)}`
       : "";
 
+    const coverageContext = coveragePattern 
+      ? `Coverage pattern: ${coveragePattern}. This is for professional film/video production coverage.`
+      : "";
+
     const intentRequest = `Create instructions for reimagining a ${entityType} named "${entityName}" from multiple camera angles.
 ${description ? `Description: ${description}` : ""}
 ${styleContext}
 ${visualDNAContext}
-Purpose: ${preset.context}`;
+${coverageContext}
+Purpose: ${coveragePattern ? 'Cinematic scene coverage for professional production' : 'character portrait turnaround for visual consistency'}`;
 
     console.log("[generate-angle-variants] Step 1: Intent Translation...");
 
@@ -307,7 +374,8 @@ Return a valid JSON object with keys "ID:1", "ID:2", etc.`;
         referenceImageUrl,
         variants,
         customRules: customRules.slice(0, 500) + "...", // Truncated for response size
-        presetUsed: presetType || `${entityType}_turnaround`,
+        presetUsed: usedPreset,
+        coveragePattern: coveragePattern || null,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

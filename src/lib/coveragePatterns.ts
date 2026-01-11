@@ -444,3 +444,79 @@ export function calculateCoverageDuration(patternId: string): number {
   
   return pattern.shots.reduce((total, shot) => total + shot.duration, 0);
 }
+
+/**
+ * Map coverage pattern shots to angle request format for generate-angle-variants
+ */
+export interface AngleRequest {
+  id: string;
+  shotType: string;
+  shotSize: string;
+  angle: string;
+  movement: string;
+  duration: number;
+  purpose: string;
+  promptHints: string;
+}
+
+export function mapCoverageToAngleRequests(pattern: CoveragePattern): AngleRequest[] {
+  return pattern.shots.map(shot => ({
+    id: shot.type,
+    shotType: shot.type,
+    shotSize: shot.shotSize,
+    angle: shot.angle,
+    movement: shot.movement,
+    duration: shot.duration,
+    purpose: shot.purpose,
+    promptHints: shot.promptHints,
+  }));
+}
+
+/**
+ * Get all pattern IDs
+ */
+export function getAllPatternIds(): string[] {
+  return Object.keys(COVERAGE_PATTERNS);
+}
+
+/**
+ * Detect best coverage pattern based on scene metadata
+ */
+export function detectCoveragePattern(
+  sceneType: string,
+  characterCount: number,
+  mood?: string
+): string {
+  const type = sceneType?.toLowerCase() || '';
+  const moodLower = mood?.toLowerCase() || '';
+
+  // Action sequences
+  if (type.includes('action') || type.includes('chase') || type.includes('fight')) {
+    return 'action_sequence';
+  }
+
+  // Suspense/Horror
+  if (type.includes('suspense') || type.includes('horror') || type.includes('thriller') ||
+      moodLower.includes('tense') || moodLower.includes('scary')) {
+    return 'suspense';
+  }
+
+  // Emotional/Intimate
+  if (type.includes('emotion') || type.includes('intimate') || type.includes('romance') ||
+      moodLower.includes('sad') || moodLower.includes('romantic')) {
+    return 'emotional_intimate';
+  }
+
+  // Establishing shots
+  if (type.includes('establish') || type.includes('opening') || type.includes('transition')) {
+    return 'establishing';
+  }
+
+  // Group scenes
+  if (characterCount >= 3) {
+    return 'dialogue_group';
+  }
+
+  // Default to two-person dialogue
+  return 'dialogue_2_characters';
+}
