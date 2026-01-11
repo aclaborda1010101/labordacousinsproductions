@@ -59,6 +59,31 @@ interface Character {
   pack_completeness_score?: number | null;
   pack_status?: string | null;
   is_ready_for_video?: boolean | null;
+  profile_json?: {
+    physical_identity?: {
+      age_exact?: number;
+      age?: number;
+    };
+  } | null;
+}
+
+/** Helper to get character age from profile_json */
+function getCharacterAge(character: Character): number | null {
+  const physical = character.profile_json?.physical_identity;
+  return physical?.age_exact ?? physical?.age ?? null;
+}
+
+/** Build description with age prefix if available */
+function buildDescriptionWithAge(character: Character): string | null {
+  const age = getCharacterAge(character);
+  const bio = character.bio;
+  
+  if (age && bio) {
+    return `${age} años. ${bio}`;
+  } else if (age) {
+    return `${age} años`;
+  }
+  return bio;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -121,7 +146,7 @@ function CharacterCardWithProgress({
     <EntityCard
       id={character.id}
       name={character.name}
-      description={character.bio}
+      description={buildDescriptionWithAge(character)}
       imageUrl={displayImage}
       placeholderIcon={<Users className="w-6 h-6" />}
       status={getEntityStatus(character.current_run_id, character.accepted_run_id, character.canon_asset_id)}
@@ -298,7 +323,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
       .select(`
         id, name, role, character_role, bio, arc, turnaround_urls, 
         current_run_id, accepted_run_id, canon_asset_id, pack_completeness_score,
-        pack_status, is_ready_for_video
+        pack_status, is_ready_for_video, profile_json
       `)
       .eq('project_id', projectId)
       .order('created_at');
@@ -324,6 +349,7 @@ export default function CharactersList({ projectId }: CharactersListProps) {
       setCharacters(data.map(c => ({
         ...c,
         turnaround_urls: c.turnaround_urls as Record<string, string> | null,
+        profile_json: c.profile_json as Character['profile_json'],
       })));
 
       // Fetch real QC scores for coherence display
