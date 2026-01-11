@@ -19,13 +19,14 @@ import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, 
   Camera, Palette, RefreshCw, Lock, Play, Trash2,
-  Image, Bell, Eye, RotateCcw, Wand2, AlertTriangle, RefreshCcw
+  Image, Bell, Eye, RotateCcw, Wand2, AlertTriangle, RefreshCcw, Layers
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useCharacterPackGeneration, SlotDefinition } from '@/hooks/useCharacterPackGeneration';
 import { CoherenceComparisonModal } from './CoherenceComparisonModal';
+import MultiAnglePreview, { AngleVariant } from './MultiAnglePreview';
 
 // ============================================
 // 12 ESSENTIAL MODEL PACK - 4 PHASES
@@ -183,6 +184,15 @@ export function CharacterPackBuilder({
     previousImage: { url: string; qcScore: number | null; qcIssues: string[] | null };
     newImage: { url: string; qcScore: number | null; qcIssues: string[] | null } | null;
     isGenerating: boolean;
+  } | null>(null);
+
+  // Multi-Angle generation state
+  const [multiAngleState, setMultiAngleState] = useState<{
+    isOpen: boolean;
+    isLoading: boolean;
+    referenceImageUrl: string;
+    variants: AngleVariant[];
+    presetType: 'character_turnaround' | 'character_expressions';
   } | null>(null);
 
   // Fetch or initialize slots - with automatic backfill for missing slots
@@ -1080,6 +1090,140 @@ export function CharacterPackBuilder({
     }
   };
 
+  // Multi-Angle Turnaround Generation
+  const handleAutoTurnarounds = async () => {
+    if (!phase1Complete()) {
+      toast.error('Sube primero la foto frontal obligatoria');
+      return;
+    }
+
+    // Get reference image
+    const refSlot = getSlot('ref_closeup_front');
+    if (!refSlot?.image_url) {
+      toast.error('No hay imagen de referencia');
+      return;
+    }
+
+    // Show loading state
+    setMultiAngleState({
+      isOpen: true,
+      isLoading: true,
+      referenceImageUrl: refSlot.image_url,
+      variants: [],
+      presetType: 'character_turnaround',
+    });
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-angle-variants`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            referenceImageUrl: refSlot.image_url,
+            entityType: 'character',
+            entityName: characterName,
+            description: characterBio,
+            presetType: 'character_turnaround',
+            projectId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to generate angle variants');
+      }
+
+      const result = await response.json();
+      
+      setMultiAngleState(prev => prev ? {
+        ...prev,
+        isLoading: false,
+        variants: result.variants || [],
+      } : null);
+
+    } catch (error) {
+      console.error('Multi-angle generation error:', error);
+      toast.error('Error al generar variantes de ángulo');
+      setMultiAngleState(null);
+    }
+  };
+
+  // Handle confirmed multi-angle generation
+  const handleMultiAngleGenerate = async (selectedVariants: AngleVariant[]) => {
+    setMultiAngleState(null);
+    
+    if (selectedVariants.length === 0) {
+      toast.info('No se seleccionaron variantes');
+      return;
+    }
+
+    toast.info(
+      <div className="flex items-center gap-2">
+        <Bell className="w-4 h-4" />
+        <span>Generando {selectedVariants.length} ángulos en segundo plano...</span>
+      </div>
+    );
+
+    // Map variants to turnaround slots
+    const slotMapping: Record<number, string> = {
+      1: 'turn_front_34',
+      2: 'turn_side',
+      3: 'turn_back_34',
+      4: 'turn_back',
+    };
+
+    const toGenerate: SlotDefinition[] = [];
+    
+    for (const variant of selectedVariants) {
+      const slotType = slotMapping[variant.angleIndex];
+      if (!slotType) continue;
+      
+      const slot = getSlot(slotType);
+      if (!slot?.id) continue;
+      
+      // Save the AI-generated description as prompt
+      await supabase.from('character_pack_slots').update({
+        prompt_text: variant.description,
+      }).eq('id', slot.id);
+
+      const slotDef = TURNAROUND_SLOTS.find(s => s.type === slotType);
+      toGenerate.push({
+        id: slot.id,
+        type: slotType,
+        label: slotDef?.label || slotType,
+        viewAngle: slotDef?.viewAngle || 'front',
+      });
+    }
+
+    if (toGenerate.length === 0) {
+      toast.error('No hay slots disponibles para generar');
+      return;
+    }
+
+    setGeneratingPhase('phase3');
+
+    const result = await generateSlots(
+      toGenerate,
+      `Multi-Ángulo: ${characterName}`,
+      `Generando ${toGenerate.length} ángulos con IA`
+    );
+
+    setGeneratingPhase(null);
+    await fetchSlots();
+
+    if (result.success) {
+      toast.success(`${result.completedCount} ángulos generados`);
+      setActivePhase('phase4');
+    }
+  };
+
   // File input handler
   const handleFileChange = (slotType: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -1315,6 +1459,31 @@ export function CharacterPackBuilder({
                   </>
                 )}
               </Button>
+            )}
+            
+            {/* Multi-Angle Turnaround Button */}
+            {phase1Complete() && !phase3Complete() && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleAutoTurnarounds}
+                      disabled={generatingPhase !== null || multiAngleState !== null}
+                      className="border-primary/50 text-primary hover:bg-primary/10"
+                    >
+                      <Layers className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="font-medium">Multi-Ángulo IA</p>
+                    <p className="text-xs text-muted-foreground">
+                      Genera turnarounds con descripciones inteligentes
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
             
             {/* Rebuild from Base - Nuclear Option */}
@@ -1773,6 +1942,21 @@ export function CharacterPackBuilder({
           onKeepPrevious={handleKeepPrevious}
           onAcceptNew={handleAcceptNew}
           onRegenerateAgain={handleRegenerateAgain}
+        />
+      )}
+
+      {/* Multi-Angle Preview Modal */}
+      {multiAngleState && (
+        <MultiAnglePreview
+          isOpen={multiAngleState.isOpen}
+          onClose={() => setMultiAngleState(null)}
+          referenceImageUrl={multiAngleState.referenceImageUrl}
+          entityName={characterName}
+          entityType="character"
+          variants={multiAngleState.variants}
+          isLoading={multiAngleState.isLoading}
+          onGenerate={handleMultiAngleGenerate}
+          onRegenerate={handleAutoTurnarounds}
         />
       )}
     </>
