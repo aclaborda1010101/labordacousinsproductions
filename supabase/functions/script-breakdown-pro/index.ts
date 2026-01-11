@@ -489,10 +489,10 @@ serve(async (req) => {
       console.log(`[breakdown-pro] First 5 headings:`, headingLines.slice(0, 5));
     }
 
-    // Use Claude for professional analysis
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY not configured');
+    // Use Lovable AI Gateway for professional analysis
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY not configured');
     }
 
     const userPrompt = `Analyze this screenplay/script and provide a COMPLETE production breakdown.
@@ -522,34 +522,59 @@ Remember:
 
 Return ONLY the JSON breakdown. counts.scenes MUST equal ${headingLines.length}.`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 8000,
+        model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'user', content: PRODUCTION_ANALYST_PROMPT + '\n\n' + userPrompt }
+          { role: 'system', content: PRODUCTION_ANALYST_PROMPT },
+          { role: 'user', content: userPrompt }
         ],
+        tools: [BREAKDOWN_TOOL],
+        tool_choice: { type: 'function', function: { name: 'return_production_breakdown' } },
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[breakdown-pro] Anthropic API error:', response.status, errorText);
-      throw new Error(`Anthropic API error: ${response.status}`);
+      console.error('[breakdown-pro] Lovable AI error:', response.status, errorText);
+      
+      // Handle rate limits and payment errors
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: 'Rate limits exceeded, please try again later.' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: 'Payment required, please add credits to your Lovable workspace.' }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      throw new Error(`Lovable AI error: ${response.status}`);
     }
 
     const aiResponse = await response.json();
-    const rawContent = aiResponse.content?.[0]?.text || '';
     
-    console.log(`[breakdown-pro] AI response length: ${rawContent.length}`);
+    // Extract from tool call or content
+    let parsed: any = null;
+    const toolCall = aiResponse.choices?.[0]?.message?.tool_calls?.[0];
+    if (toolCall?.function?.arguments) {
+      parsed = tryParseJson(toolCall.function.arguments);
+    }
     
-    let parsed = tryParseJson(rawContent);
+    if (!parsed) {
+      const rawContent = aiResponse.choices?.[0]?.message?.content || '';
+      console.log(`[breakdown-pro] AI response length: ${rawContent.length}`);
+      parsed = tryParseJson(rawContent);
+    }
+    
     if (!parsed) {
       console.error('[breakdown-pro] Failed to parse AI response as JSON');
       // Use regex fallback
