@@ -329,7 +329,7 @@ async function callLovableAI(
     },
     body: JSON.stringify({
       model: modelConfig.apiModel,
-      max_tokens: modelConfig.maxTokens,
+      max_completion_tokens: modelConfig.maxTokens,
       temperature: modelConfig.temperature,
       messages: [
         { role: "system", content: systemPrompt },
