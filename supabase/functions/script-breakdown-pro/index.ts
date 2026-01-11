@@ -594,6 +594,19 @@ Return ONLY the JSON breakdown. counts.scenes MUST equal ${headingLines.length}.
 
     // Normalize and validate
     const breakdown = normalizeBreakdown(parsed, scriptText);
+    
+    // CRITICAL: Fallback to regex scenes if AI returned 0 scenes
+    const regexScenesForFallback = extractScenesFromScript(scriptText);
+    if ((!breakdown.scenes || breakdown.scenes.length === 0) && regexScenesForFallback.length > 0) {
+      console.warn(`[breakdown-pro] AI returned 0 scenes but regex found ${regexScenesForFallback.length}, using regex fallback`);
+      breakdown.scenes = regexScenesForFallback;
+      if (breakdown.counts) {
+        breakdown.counts.scenes = regexScenesForFallback.length;
+      } else {
+        breakdown.counts = { scenes: regexScenesForFallback.length, locations: 0, characters: 0 };
+      }
+    }
+    
     breakdown._analyzed_at = new Date().toISOString();
     breakdown._script_length = scriptText.length;
 
