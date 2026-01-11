@@ -35,6 +35,9 @@ function getDialogueLines(c: AnyObj): number {
     c.dialogue?.line_count,
     c.counts?.dialogue_lines,
     c.counts?.lines,
+    // Also check nested objects
+    c.metrics?.dialogue_lines,
+    c.stats?.dialogue_lines,
     c.dialogue_words ? Math.ceil(c.dialogue_words / 10) : null,
   ];
   for (const v of candidates) {

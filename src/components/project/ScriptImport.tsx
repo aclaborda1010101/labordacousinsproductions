@@ -4346,25 +4346,43 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                                       )}
 
                                       {/* Dialogue - FULL */}
-                                      {scene.dialogue?.length > 0 && (
-                                        <div className="space-y-3 bg-muted/30 rounded-lg p-4">
-                                          {scene.dialogue.map((d: any, di: number) => (
-                                            <div key={di} className="pl-4">
-                                              <div className="font-bold text-sm text-center uppercase tracking-wide">
-                                                {d.character}
-                                              </div>
-                                              {d.parenthetical && (
-                                                <div className="text-xs text-muted-foreground text-center italic">
-                                                  ({d.parenthetical})
+                                      {(() => {
+                                        const dialogues = scene.dialogue || scene.dialogues || [];
+                                        if (dialogues.length > 0) {
+                                          return (
+                                            <div className="space-y-3 bg-muted/30 rounded-lg p-4">
+                                              {dialogues.map((d: any, di: number) => (
+                                                <div key={di} className="pl-4">
+                                                  <div className="font-bold text-sm text-center uppercase tracking-wide">
+                                                    {d.character}
+                                                  </div>
+                                                  {d.parenthetical && (
+                                                    <div className="text-xs text-muted-foreground text-center italic">
+                                                      ({d.parenthetical})
+                                                    </div>
+                                                  )}
+                                                  <div className="text-sm text-center max-w-md mx-auto mt-1">
+                                                    {d.line || d.text}
+                                                  </div>
                                                 </div>
-                                              )}
-                                              <div className="text-sm text-center max-w-md mx-auto mt-1">
-                                                {d.line}
-                                              </div>
+                                              ))}
                                             </div>
-                                          ))}
-                                        </div>
-                                      )}
+                                          );
+                                        } else {
+                                          // No dialogue - show message
+                                          return (
+                                            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-center">
+                                              <AlertTriangle className="w-5 h-5 mx-auto mb-2 text-amber-600" />
+                                              <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
+                                                Esta escena no tiene diálogos escritos
+                                              </p>
+                                              <p className="text-xs text-amber-600/80 dark:text-amber-400/80 mt-1">
+                                                El guion actual es un <strong>outline</strong> (resumen de escenas). Para ver diálogos completos, genera el screenplay desde la pestaña "Generar".
+                                              </p>
+                                            </div>
+                                          );
+                                        }
+                                      })()}
 
                                       {/* Technical cues: Music, SFX, VFX */}
                                       <div className="flex flex-wrap gap-2 pt-2 border-t">
