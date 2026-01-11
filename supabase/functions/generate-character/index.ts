@@ -495,6 +495,19 @@ ${parts.join('\n')}
 // REFERENCE-BASED PROMPT BUILDERS
 // ============================================
 
+// CRITICAL STYLE CONSISTENCY block - used in all generation prompts
+const STYLE_CONSISTENCY_BLOCK = `
+=== CRITICAL STYLE RULES (MANDATORY) ===
+- Match EXACTLY the visual style of the reference image
+- If reference is cartoon/anime, output MUST be cartoon/anime
+- If reference is photorealistic, output MUST be photorealistic
+- DO NOT switch between styles (cartoon <-> photorealistic <-> 3D render)
+- Maintain the SAME art style, line work, and shading technique
+- Keep SAME color palette and lighting style as reference
+- Use NEUTRAL BACKGROUND (studio grey/white) - no scene elements
+=== END STYLE RULES ===
+`;
+
 function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string): string {
   const angleInstructions: Record<string, string> = {
     'front': 'front view, facing camera directly, standing straight, arms at sides',
@@ -517,7 +530,9 @@ function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleCon
     ? formatWardrobeLock(wardrobeLock)
     : (visualDNA.default_outfit?.description || 'Casual outfit as shown in reference');
 
-  return `SAME PERSON from reference image, ${angle}.
+  return `${STYLE_CONSISTENCY_BLOCK}
+
+SAME PERSON from reference image, ${angle}.
 
 ${identityLock}
 
@@ -544,7 +559,9 @@ TECHNICAL SPECS:
 - Even lighting, no harsh shadows
 - Sharp focus throughout
 - Professional character design quality
-- 8K resolution`;
+- 8K resolution
+
+AVOID: Changing art style, adding background props, scene decorations, seasonal elements`;
 }
 
 function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string): string {
@@ -572,7 +589,23 @@ function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, sty
     ? `Visible clothing: ${wardrobeLock.top}`
     : '';
 
-  return `SAME PERSON from reference image, showing ${expression}.
+  // CRITICAL STYLE CONSISTENCY - Prevents style drift between generations
+  const styleConsistency = `
+=== CRITICAL STYLE RULES (MANDATORY) ===
+- Match EXACTLY the visual style of the reference image
+- If reference is cartoon/anime, output MUST be cartoon/anime
+- If reference is photorealistic, output MUST be photorealistic
+- DO NOT switch between styles (cartoon <-> photorealistic <-> 3D render)
+- Maintain the SAME art style, line work, and shading technique
+- Keep SAME color palette and lighting style as reference
+- Use NEUTRAL BACKGROUND (no Christmas trees, no decorations, no scene elements)
+- Background should be simple, clean, matching the reference style
+=== END STYLE RULES ===
+`;
+
+  return `${styleConsistency}
+
+SAME PERSON from reference image, showing ${expression}.
 
 ${identityLock}
 
@@ -583,6 +616,7 @@ SHOT REQUIREMENTS:
 - Direct eye contact with camera, FACING FORWARD
 - 85mm lens equivalent, f/2.8
 - Shallow depth of field (blurred background)
+- NEUTRAL/CLEAN BACKGROUND - no props, no decorations
 ${outfitHint ? `- ${outfitHint}` : ''}
 
 Only change: facial expression to ${expressionName}
@@ -590,10 +624,12 @@ Only change: facial expression to ${expressionName}
 TECHNICAL SPECS:
 - Professional headshot quality
 - Soft studio lighting
-- Neutral background
+- Neutral background (grey/white/simple gradient)
 - Sharp focus on eyes
 - Natural skin tones
-- 8K quality`;
+- 8K quality
+
+AVOID: Changing art style, adding background elements, scene decorations, props, Christmas themes, seasonal elements`;
 }
 
 function buildOutfitPrompt(visualDNA: VisualDNA, outfitDescription: string, styleConfig: StyleConfig | null): string {
@@ -1498,12 +1534,56 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     console.error('Reference anchors fetch error:', refError);
   }
 
-  // Get the primary reference image from reference_anchors
-  let primaryAnchor = referenceAnchors?.find(a => 
-    a.anchor_type === 'identity_primary' || a.anchor_type === 'face_front'
-  ) || referenceAnchors?.[0];
+  // ============================================
+  // ANCHOR SELECTION STRATEGY (Priority Order):
+  // 1. For expressions/turnarounds: Prefer CANON anchor (closeup_front) for style consistency
+  // 2. If no canon anchor, use user-uploaded reference
+  // 3. Fallback to pack slots
+  // ============================================
+  const isExpression = request.slotType.startsWith('expr_') || request.slotType === 'expression';
+  const isTurnaround = request.slotType.startsWith('turn_') || request.slotType === 'turnaround';
+  const needsCanonAnchor = isExpression || isTurnaround;
 
-  // FALLBACK: If no reference_anchors, check character_pack_slots for uploaded refs
+  let primaryAnchor: { image_url: string; anchor_type: string; id?: string } | null = null;
+  let canonAnchorSource = 'none';
+
+  // PRIORITY 1: For expressions/turnarounds, check for generated closeup_front (CANON ANCHOR)
+  if (needsCanonAnchor) {
+    console.log('[ANCHOR SELECTION] Looking for canon anchor (closeup_front) for style consistency...');
+    
+    const { data: canonSlot, error: canonError } = await supabase
+      .from('character_pack_slots')
+      .select('*')
+      .eq('character_id', request.characterId)
+      .eq('slot_type', 'closeup_front')
+      .in('status', ['generated', 'approved', 'needs_review'])
+      .single();
+    
+    if (!canonError && canonSlot?.image_url) {
+      console.log('[ANCHOR SELECTION] ✓ Found canon anchor: closeup_front');
+      primaryAnchor = {
+        image_url: canonSlot.image_url,
+        anchor_type: 'canon_closeup_front',
+        id: canonSlot.id
+      };
+      canonAnchorSource = 'closeup_front';
+    } else {
+      console.log('[ANCHOR SELECTION] No closeup_front found, falling back to reference...');
+    }
+  }
+
+  // PRIORITY 2: Identity primary from reference_anchors table
+  if (!primaryAnchor?.image_url) {
+    primaryAnchor = referenceAnchors?.find(a => 
+      a.anchor_type === 'identity_primary' || a.anchor_type === 'face_front'
+    ) || referenceAnchors?.[0] || null;
+    
+    if (primaryAnchor?.image_url) {
+      canonAnchorSource = 'reference_anchors';
+    }
+  }
+
+  // PRIORITY 3: Fallback to character_pack_slots for uploaded refs
   if (!primaryAnchor?.image_url) {
     console.log('No reference_anchors found, checking character_pack_slots...');
     const { data: refSlots, error: refSlotsError } = await supabase
@@ -1525,10 +1605,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
         image_url: refSlot.image_url,
         anchor_type: refSlot.slot_type === 'ref_closeup_front' ? 'identity_primary' : 'face_side',
       };
+      canonAnchorSource = 'pack_slots';
     }
   }
 
   const hasReference = !!primaryAnchor?.image_url;
+  console.log(`[ANCHOR SELECTION] Final: hasReference=${hasReference}, source=${canonAnchorSource}`);
   
   // DECISION: Use reference or generate from text
   const isIdentitySlot = request.slotType === 'anchor_closeup' || request.slotType === 'base_look' || request.slotType === 'closeup';
@@ -1590,12 +1672,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     // Use the enhanced prompt directly with reference
     prompt = enhancedPromptFromQC;
     
-    if (hasReference) {
+    if (hasReference && primaryAnchor) {
       generationMode = 'reference';
       console.log(`[COHERENCE MODE] Generating with reference: ${primaryAnchor.image_url.substring(0, 50)}...`);
       
       const result = await withRetry(
-        () => generateWithReference(primaryAnchor.image_url, prompt),
+        () => generateWithReference(primaryAnchor!.image_url, prompt),
         'COHERENCE-REF-GEN'
       );
       imageUrl = result.imageUrl;
@@ -1609,7 +1691,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       );
       imageUrl = result.imageUrl;
     }
-  } else if (hasReference) {
+  } else if (hasReference && primaryAnchor) {
     // === REFERENCE-BASED GENERATION (Normal mode) ===
     generationMode = 'reference';
     console.log(`Using reference image: ${primaryAnchor.anchor_type} - ${primaryAnchor.image_url.substring(0, 50)}...`);
@@ -1693,7 +1775,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     }
     
     const result = await withRetry(
-      () => generateWithReference(primaryAnchor.image_url, prompt),
+      () => generateWithReference(primaryAnchor!.image_url, prompt),
       'REFERENCE-GEN'
     );
     imageUrl = result.imageUrl;
@@ -1789,7 +1871,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     finalImageUrl, 
     request.slotType, 
     request.characterName, 
-    hasReference ? primaryAnchor.image_url : undefined
+    hasReference && primaryAnchor ? primaryAnchor.image_url : undefined
   );
   console.log(`QC Score: ${qcResult.score}, Passed: ${qcResult.passed}`);
 
@@ -1801,7 +1883,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     .update({
       image_url: finalImageUrl,
       prompt_text: prompt,
-      reference_anchor_id: hasReference ? primaryAnchor.id : createdAnchorId,
+      reference_anchor_id: hasReference && primaryAnchor ? primaryAnchor.id : createdAnchorId,
       qc_score: qcResult.score,
       qc_issues: qcResult.issues,
       fix_notes: qcResult.fixNotes,
@@ -1809,7 +1891,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       generation_metadata: {
         engine: IMAGE_ENGINE,
         generation_mode: generationMode,
-        reference_used: hasReference ? primaryAnchor.id : null,
+        reference_used: hasReference && primaryAnchor ? primaryAnchor.id : null,
         created_anchor: createdAnchorId,
         generated_at: new Date().toISOString(),
         duration_ms: durationMs
@@ -1843,7 +1925,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       qcScore: qcResult.score,
       qcPassed: qcResult.passed,
       generationMode,
-      referenceUsed: hasReference ? primaryAnchor.id : null,
+      referenceUsed: hasReference && primaryAnchor ? primaryAnchor.id : null,
       createdAnchor: createdAnchorId
     }
   });
@@ -1866,7 +1948,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     qc: qcResult,
     slotId: request.slotId,
     generationMode,
-    referenceUsed: hasReference ? primaryAnchor.id : null,
+    referenceUsed: hasReference && primaryAnchor ? primaryAnchor.id : null,
     createdAnchor: createdAnchorId
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },

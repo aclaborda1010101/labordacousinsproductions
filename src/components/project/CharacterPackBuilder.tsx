@@ -664,6 +664,14 @@ export function CharacterPackBuilder({
       return;
     }
 
+    // CRITICAL: Validate canon anchor exists for style consistency
+    const canonAnchor = getSlot('closeup_front');
+    if (!canonAnchor?.image_url) {
+      toast.error('Primero genera el Primer Plano Frontal como ancla de estilo');
+      setActivePhase('phase2');
+      return;
+    }
+
     // Check if slots exist
     const slotsExist = TURNAROUND_SLOTS.every(s => getSlot(s.type));
     if (!slotsExist) {
@@ -726,6 +734,14 @@ export function CharacterPackBuilder({
   const generateExpressions = async () => {
     if (!phase3Complete()) {
       toast.error('Genera primero los turnarounds');
+      return;
+    }
+
+    // CRITICAL: Validate canon anchor exists for style consistency
+    const canonAnchor = getSlot('closeup_front');
+    if (!canonAnchor?.image_url) {
+      toast.error('Primero genera el Primer Plano Frontal (Fase 2) como ancla de estilo');
+      setActivePhase('phase2');
       return;
     }
 
