@@ -529,7 +529,7 @@ Return ONLY the JSON breakdown. counts.scenes MUST equal ${headingLines.length}.
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'openai/gpt-5',
         messages: [
           { role: 'system', content: PRODUCTION_ANALYST_PROMPT },
           { role: 'user', content: userPrompt }
