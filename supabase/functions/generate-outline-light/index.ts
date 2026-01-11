@@ -47,7 +47,7 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
 
 // Fallback model when primary model fails parsing
 const FALLBACK_MODEL_CONFIG: ModelConfig = {
-  apiModel: 'google/gemini-2.5-flash',
+  apiModel: 'google/gemini-3-pro-preview',
   provider: 'lovable',
   maxTokens: 8000,
   temperature: 0.7
