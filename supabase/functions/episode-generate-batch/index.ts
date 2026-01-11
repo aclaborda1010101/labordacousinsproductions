@@ -6,32 +6,32 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// ⚠️ MODEL CONFIG - Supports multiple models based on generationModel parameter
+// ⚠️ MODEL CONFIG - Lovable AI Gateway (GPT-5 family)
 type GenerationModelType = 'rapido' | 'profesional' | 'hollywood';
 
 interface ModelConfig {
   apiModel: string;
-  provider: 'openai' | 'anthropic';
+  provider: 'lovable';
   maxTokens: number;
   temperature: number;
 }
 
 const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
-    apiModel: 'gpt-4o-mini',
-    provider: 'openai',
+    apiModel: 'openai/gpt-5-mini',
+    provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.7
   },
   profesional: {
-    apiModel: 'gpt-4o',
-    provider: 'openai',
+    apiModel: 'openai/gpt-5',
+    provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.75
   },
   hollywood: {
-    apiModel: 'claude-sonnet-4-20250514',
-    provider: 'anthropic',
+    apiModel: 'openai/gpt-5.2',
+    provider: 'lovable',
     maxTokens: 12000,
     temperature: 0.75
   }
@@ -310,19 +310,21 @@ const getToolSchema = (scenesPerBatch: number) => ({
   }
 });
 
-// Call OpenAI API
-async function callOpenAI(
-  apiKey: string,
+// Lovable AI Gateway call (unified for all models)
+async function callLovableAI(
   modelConfig: ModelConfig,
   systemPrompt: string,
   userPrompt: string,
   toolSchema: any,
   signal: AbortSignal
 ): Promise<any> {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${apiKey}`,
+      "Authorization": `Bearer ${LOVABLE_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -342,81 +344,28 @@ async function callOpenAI(
     signal
   });
 
+  // Handle rate limits and payment required
+  if (response.status === 429) {
+    throw { status: 429, message: "Rate limit exceeded", retryable: true };
+  }
+  if (response.status === 402) {
+    throw { status: 402, message: "Payment required - add credits to Lovable AI" };
+  }
+
   if (!response.ok) {
     const errorText = await response.text();
-    console.error(`OpenAI API Error:`, response.status, errorText);
-    throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+    console.error(`Lovable AI Gateway Error:`, response.status, errorText);
+    throw new Error(`Lovable AI Gateway error: ${response.status} - ${errorText}`);
   }
 
   const data = await response.json();
   const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
   
   if (!toolCall?.function?.arguments) {
-    throw new Error("No tool call in OpenAI response");
+    throw new Error("No tool call in Lovable AI response");
   }
 
   return JSON.parse(toolCall.function.arguments);
-}
-
-// Call Anthropic API
-async function callAnthropic(
-  apiKey: string,
-  modelConfig: ModelConfig,
-  systemPrompt: string,
-  userPrompt: string,
-  toolSchema: any,
-  signal: AbortSignal
-): Promise<any> {
-  // Convert OpenAI tool schema to Anthropic format
-  const anthropicTool = {
-    name: toolSchema.name,
-    description: toolSchema.description,
-    input_schema: toolSchema.parameters
-  };
-
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: modelConfig.apiModel,
-      max_tokens: modelConfig.maxTokens,
-      temperature: modelConfig.temperature,
-      system: systemPrompt,
-      tools: [anthropicTool],
-      tool_choice: { type: "tool", name: toolSchema.name },
-      messages: [{ role: "user", content: userPrompt }],
-    }),
-    signal
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error(`Anthropic API Error:`, response.status, errorText);
-    
-    if (response.status === 429) {
-      throw { status: 429, message: "Rate limit alcanzado", retryable: true };
-    }
-    if (response.status === 400 && errorText.toLowerCase().includes("credit")) {
-      throw { status: 402, message: "Créditos insuficientes en Claude" };
-    }
-    
-    throw new Error(`Anthropic API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const toolUse = data?.content?.find(
-    (b: any) => b?.type === "tool_use" && b?.name === toolSchema.name
-  );
-
-  if (!toolUse?.input) {
-    throw new Error("No tool_use in Anthropic response");
-  }
-
-  return toolUse.input;
 }
 
 /**
@@ -474,13 +423,10 @@ serve(async (req) => {
     const modelConfig = MODEL_CONFIGS[generationModel] || MODEL_CONFIGS.hollywood;
     console.log(`[EP${episodeNumber} BATCH${batchIndex}] Using model: ${modelConfig.apiModel} (${generationModel})`);
 
-    // Get API key based on provider
-    const apiKey = modelConfig.provider === 'openai' 
-      ? Deno.env.get("OPENAI_API_KEY")
-      : Deno.env.get("ANTHROPIC_API_KEY");
-      
-    if (!apiKey) {
-      throw new Error(`${modelConfig.provider === 'openai' ? 'OPENAI_API_KEY' : 'ANTHROPIC_API_KEY'} no configurada`);
+    // Lovable AI Gateway - no external API key needed
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY no configurada');
     }
 
     // Calculate scene range for this batch using dynamic config
@@ -559,27 +505,14 @@ Usa la herramienta generate_shoot_ready_scenes para devolver las ${SCENES_PER_BA
       };
 
       try {
-        let result: any;
-        
-        if (modelConfig.provider === 'openai') {
-          result = await callOpenAI(
-            apiKey,
-            attemptConfig,
-            SHOOT_READY_SYSTEM_PROMPT,
-            userPrompt,
-            toolSchema,
-            controller.signal
-          );
-        } else {
-          result = await callAnthropic(
-            apiKey,
-            attemptConfig,
-            SHOOT_READY_SYSTEM_PROMPT,
-            userPrompt,
-            toolSchema,
-            controller.signal
-          );
-        }
+        // Call Lovable AI Gateway (unified for all models)
+        const result = await callLovableAI(
+          attemptConfig,
+          SHOOT_READY_SYSTEM_PROMPT,
+          userPrompt,
+          toolSchema,
+          controller.signal
+        );
 
         const scenes = result?.scenes;
         if (!Array.isArray(scenes) || scenes.length !== SCENES_PER_BATCH) {

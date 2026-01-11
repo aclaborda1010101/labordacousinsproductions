@@ -14,32 +14,32 @@ import {
   V3AuthContext
 } from "../_shared/v3-enterprise.ts";
 
-// ⚠️ MODEL CONFIGS - Multi-provider support
+// ⚠️ MODEL CONFIGS - Lovable AI Gateway (GPT-5 family)
 type GenerationModelType = 'rapido' | 'profesional' | 'hollywood';
 
 interface ModelConfig {
   apiModel: string;
-  provider: 'openai' | 'anthropic';
+  provider: 'lovable';
   maxTokens: number;
   temperature: number;
 }
 
 const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
-    apiModel: 'gpt-4o-mini',
-    provider: 'openai',
+    apiModel: 'openai/gpt-5-mini',
+    provider: 'lovable',
     maxTokens: 4000,
     temperature: 0.8
   },
   profesional: {
-    apiModel: 'gpt-4o',
-    provider: 'openai',
+    apiModel: 'openai/gpt-5',
+    provider: 'lovable',
     maxTokens: 4000,
     temperature: 0.7
   },
   hollywood: {
-    apiModel: 'claude-sonnet-4-20250514',
-    provider: 'anthropic',
+    apiModel: 'openai/gpt-5.2',
+    provider: 'lovable',
     maxTokens: 4000,
     temperature: 0.8
   }
@@ -520,9 +520,8 @@ async function logEditorialEvent(
   }
 }
 
-// OpenAI API call with hardened parsing
-async function callOpenAI(
-  apiKey: string,
+// Lovable AI Gateway call with hardened parsing
+async function callLovableAI(
   systemPrompt: string,
   userPrompt: string,
   config: ModelConfig,
@@ -530,18 +529,19 @@ async function callOpenAI(
 ): Promise<{ outline: any; parseWarnings: string[] }> {
   const parseWarnings: string[] = [];
   
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       model: config.apiModel,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
-      // NOTE: response_format: json_object requires "json" in the messages
-      // We use tool_choice instead which is more reliable for structured output
       messages: [
         { role: 'system', content: systemPrompt + '\n\nResponde ÚNICAMENTE en formato JSON válido usando la herramienta deliver_outline.' },
         { role: 'user', content: userPrompt }
@@ -560,26 +560,30 @@ async function callOpenAI(
     })
   });
 
+  // Handle rate limits and payment required
+  if (response.status === 429) {
+    throw { status: 429, message: 'Rate limit exceeded. Try again later.', retryable: true };
+  }
+  if (response.status === 402) {
+    throw { status: 402, message: 'Payment required - add credits to Lovable AI workspace' };
+  }
+
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('[OUTLINE OpenAI ERROR]', response.status, errorText);
-    
-    if (response.status === 429) {
-      throw { status: 429, message: 'Rate limit alcanzado. Espera un momento.' };
-    }
-    throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+    console.error('[OUTLINE Lovable AI ERROR]', response.status, errorText);
+    throw new Error(`Lovable AI Gateway error: ${response.status} - ${errorText}`);
   }
 
   const data = await response.json();
   
-  // Extract tool call result
+  // Extract tool call result (OpenAI-compatible format)
   const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
   const toolArgs = toolCall?.function?.arguments;
 
   // Try tool call arguments first
   if (toolCall?.function?.name === 'deliver_outline' && typeof toolArgs === 'string') {
     try {
-      return { outline: normalizeOutline(parseJsonSafe(toolArgs, 'openai.tool_call.arguments')), parseWarnings };
+      return { outline: normalizeOutline(parseJsonSafe(toolArgs, 'lovable.tool_call.arguments')), parseWarnings };
     } catch (e) {
       parseWarnings.push('TOOL_CALL_PARSE_FAILED');
       console.warn('[OUTLINE] Tool-call JSON invalid. Falling back to content parsing...');
@@ -592,7 +596,7 @@ async function callOpenAI(
 
   if (candidate) {
     try {
-      return { outline: normalizeOutline(parseJsonSafe(candidate, 'openai.content')), parseWarnings };
+      return { outline: normalizeOutline(parseJsonSafe(candidate, 'lovable.content')), parseWarnings };
     } catch (e) {
       parseWarnings.push('CONTENT_PARSE_FAILED');
       console.warn('[OUTLINE] Content JSON also invalid. Using fallback outline.');
@@ -600,80 +604,7 @@ async function callOpenAI(
   }
 
   // Return degraded fallback
-  parseWarnings.push('OPENAI_JSON_PARSE_FAILED');
-  return { outline: buildFallbackOutline(expectedEpisodes), parseWarnings };
-}
-
-// Anthropic API call with hardened parsing
-async function callAnthropic(
-  apiKey: string,
-  systemPrompt: string,
-  userPrompt: string,
-  config: ModelConfig,
-  expectedEpisodes: number
-): Promise<{ outline: any; parseWarnings: string[] }> {
-  const parseWarnings: string[] = [];
-  
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: config.apiModel,
-      max_tokens: config.maxTokens,
-      temperature: config.temperature,
-      system: systemPrompt,
-      tools: [
-        {
-          name: 'deliver_outline',
-          description: 'Entrega el outline estructurado con estilo MASTER SHOWRUNNER.',
-          input_schema: OUTLINE_TOOL_SCHEMA
-        }
-      ],
-      tool_choice: { type: 'tool', name: 'deliver_outline' },
-      messages: [{ role: 'user', content: userPrompt }]
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[OUTLINE Anthropic ERROR]', response.status, errorText);
-    
-    if (response.status === 429) {
-      throw { status: 429, message: 'Rate limit alcanzado. Espera un momento.' };
-    }
-    if (response.status === 400 && errorText.toLowerCase().includes('credit')) {
-      throw { status: 402, message: 'Créditos insuficientes en la cuenta de Claude.' };
-    }
-    throw new Error(`Anthropic API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  // Extract tool use result (Anthropic returns parsed object directly)
-  const toolUse = data.content?.find((c: any) => c.type === 'tool_use' && c.name === 'deliver_outline');
-  if (toolUse?.input && typeof toolUse.input === 'object') {
-    return { outline: normalizeOutline(toolUse.input), parseWarnings };
-  }
-
-  // Fallback: try to parse JSON from text
-  const textBlock = data.content?.find((c: any) => c.type === 'text');
-  const content = textBlock?.text ?? '';
-
-  if (content) {
-    try {
-      return { outline: normalizeOutline(parseJsonSafe(content, 'anthropic.text')), parseWarnings };
-    } catch (e) {
-      parseWarnings.push('ANTHROPIC_TEXT_PARSE_FAILED');
-      console.warn('[OUTLINE] Anthropic text JSON invalid. Using fallback outline.');
-    }
-  }
-
-  // Return degraded fallback
-  parseWarnings.push('ANTHROPIC_JSON_PARSE_FAILED');
+  parseWarnings.push('LOVABLE_JSON_PARSE_FAILED');
   return { outline: buildFallbackOutline(expectedEpisodes), parseWarnings };
 }
 
@@ -764,18 +695,10 @@ serve(async (req) => {
       : 'rapido';
     const modelConfig = MODEL_CONFIGS[modelKey];
 
-    // Get API key based on provider
-    let apiKey: string | undefined;
-    if (modelConfig.provider === 'openai') {
-      apiKey = Deno.env.get('OPENAI_API_KEY');
-      if (!apiKey) {
-        throw new Error('OPENAI_API_KEY no configurada');
-      }
-    } else {
-      apiKey = Deno.env.get('ANTHROPIC_API_KEY');
-      if (!apiKey) {
-        throw new Error('ANTHROPIC_API_KEY no configurada');
-      }
+    // Lovable AI Gateway - no external API key needed
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY no configurada');
     }
 
     // Episode count: prefer explicit mention in the idea (e.g. "8 capítulos"), otherwise use UI selection
@@ -896,13 +819,9 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       `[OUTLINE] Generating with ${modelConfig.apiModel} (${modelConfig.provider}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount}...`
     );
 
-    // Call the appropriate API with hardened parsing
+    // Call Lovable AI Gateway with hardened parsing
     let result: { outline: any; parseWarnings: string[] };
-    if (modelConfig.provider === 'openai') {
-      result = await callOpenAI(apiKey, systemPrompt, userPrompt, modelConfig, cappedEpisodesCount);
-    } else {
-      result = await callAnthropic(apiKey, systemPrompt, userPrompt, modelConfig, cappedEpisodesCount);
-    }
+    result = await callLovableAI(systemPrompt, userPrompt, modelConfig, cappedEpisodesCount);
 
     let { outline, parseWarnings } = result;
     const expectedEpisodes = format === 'series' ? cappedEpisodesCount : 1;
@@ -933,9 +852,7 @@ Reescribe el OUTLINE COMPLETO cumpliendo EXACTAMENTE ${expectedEpisodes} episodi
 episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expectedEpisodes}).`;
 
       try {
-        const retried = modelConfig.provider === 'openai'
-          ? await callOpenAI(apiKey, systemPrompt, retryPrompt, modelConfig, expectedEpisodes)
-          : await callAnthropic(apiKey, systemPrompt, retryPrompt, modelConfig, expectedEpisodes);
+        const retried = await callLovableAI(systemPrompt, retryPrompt, modelConfig, expectedEpisodes);
 
         if (Array.isArray(retried.outline?.episode_beats) && retried.outline.episode_beats.length > 0) {
           outline = retried.outline;
