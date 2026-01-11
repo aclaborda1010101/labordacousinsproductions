@@ -184,12 +184,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const stored = localStorage.getItem(PIPELINE_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Check if pipeline is still running (less than 2 hours old) and for this project
+        // Check if pipeline is still running (less than 2 hours old)
+        // Accept legacy states without projectId field
         if (
           parsed.startedAt && 
           Date.now() - parsed.startedAt < 2 * 60 * 60 * 1000 &&
-          parsed.projectId === projectId
+          (!parsed.projectId || parsed.projectId === projectId)
         ) {
+          // Update storage with projectId for future if missing
+          if (!parsed.projectId) {
+            savePipelineState({ ...parsed, projectId });
+          }
           return parsed;
         }
       }
@@ -458,9 +463,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   useEffect(() => {
     const storedState = loadPipelineState();
     
-    // CRITICAL: Verify the stored state belongs to THIS project
-    // This prevents UI flickering when navigating between projects
-    if (storedState && storedState.pipelineRunning && storedState.projectId === projectId) {
+    // CRITICAL: Verify the stored state is valid
+    // Accept legacy states without projectId field for backward compatibility
+    if (storedState && storedState.pipelineRunning && (!storedState.projectId || storedState.projectId === projectId)) {
       const totalEps = storedState.totalEpisodes || episodesCount;
       const storedEpisodes = (storedState.episodes as any[]) || [];
       const episodesDone = storedEpisodes.length;

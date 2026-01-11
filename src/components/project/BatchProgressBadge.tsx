@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Film, ChevronRight } from 'lucide-react';
+import { Loader2, ChevronRight } from 'lucide-react';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -25,8 +25,10 @@ interface BatchProgressBadgeProps {
 export function BatchProgressBadge({ projectId }: BatchProgressBadgeProps) {
   const [pipelineState, setPipelineState] = useState<PipelineState | null>(null);
   const { activeTasks } = useBackgroundTasks();
+  const location = useLocation();
   
   const PIPELINE_STORAGE_KEY = `script_pipeline_${projectId}`;
+  const targetPath = `/projects/${projectId}/script`;
 
   // Poll localStorage for pipeline state
   useEffect(() => {
@@ -82,11 +84,22 @@ export function BatchProgressBadge({ projectId }: BatchProgressBadgeProps) {
   const tier = pipelineState?.qualityTier ?? (scriptTask?.metadata as any)?.qualityTier ?? 'profesional';
 
   const tierLabel = tier === 'hollywood' ? '🎬' : tier === 'profesional' ? '🎯' : '⚡';
+  
+  // Check if already on the target route
+  const isOnScriptRoute = location.pathname.includes(targetPath) || location.pathname.endsWith('/script');
+  
+  const handleClick = (e: React.MouseEvent) => {
+    if (isOnScriptRoute) {
+      e.preventDefault();
+      // Dispatch event for ScriptImport to scroll to progress
+      window.dispatchEvent(new CustomEvent('focusPipelineProgress'));
+    }
+  };
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Link to={`/projects/${projectId}/script`} className="flex-shrink-0">
+        <Link to={targetPath} onClick={handleClick} className="flex-shrink-0">
           <Badge 
             variant="default" 
             className={cn(
