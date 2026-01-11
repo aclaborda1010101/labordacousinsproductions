@@ -1195,10 +1195,45 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         const perEp = 8000;
         return Math.min(150000, Math.max(60000, base + perEp * outlineEpisodes));
       })();
+      // Pre-extract entities from long documents using regex to capture all names/places
+      const fullIdeaText = ideaText.trim();
+      const extractEntitiesPreview = (text: string): string => {
+        if (text.length <= 15000) return ''; // Not needed for short texts
+        
+        // Extract proper names (2+ capitalized words)
+        const namePattern = /\b([A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]+(?:[\s\-][A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]+)+)\b/g;
+        const names = [...text.matchAll(namePattern)].map(m => m[1]);
+        
+        // Extract single capitalized names that might be character names
+        const singleNamePattern = /\b([A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]{2,})\b/g;
+        const singleNames = [...text.matchAll(singleNamePattern)]
+          .map(m => m[1])
+          .filter(n => !['El', 'La', 'Los', 'Las', 'Un', 'Una', 'Que', 'Con', 'Por', 'Para', 'Como', 'Pero', 'Cuando', 'Donde', 'Mientras', 'Aunque', 'Desde', 'Hasta', 'Sin', 'Sobre', 'Bajo', 'Entre', 'Durante', 'Según', 'Hacia', 'Mediante', 'Capitulo', 'Capítulo', 'Episodio', 'Acto', 'Escena'].includes(n));
+        
+        // Extract locations (words after "en ", "de ", "hacia ", etc.)
+        const locationPattern = /(?:en|de|hacia|bajo|sobre|desde|hasta)\s+(?:el|la|los|las)?\s*([A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]+(?:\s+[A-Za-záéíóúñ]+)*)/gi;
+        const locations = [...text.matchAll(locationPattern)].map(m => m[1]);
+        
+        // Extract titles/roles (Rey, Guardián, Custodia, etc.)
+        const titlePattern = /(?:el|la)\s+(Rey|Reina|Guardián|Guardiána|Custodia|Custodio|Maestro|Maestra|Príncipe|Princesa|Emperador|Emperatriz|Sacerdote|Sacerdotisa|Profeta|Oráculo)(?:\s+(?:del?|de\s+la)\s+([A-Za-záéíóúñ\s]+))?/gi;
+        const titles = [...text.matchAll(titlePattern)].map(m => m[0]);
+        
+        const uniqueNames = [...new Set([...names, ...singleNames])].slice(0, 30);
+        const uniqueLocations = [...new Set(locations)].slice(0, 20);
+        const uniqueTitles = [...new Set(titles)].slice(0, 10);
+        
+        if (uniqueNames.length === 0 && uniqueLocations.length === 0) return '';
+        
+        return `\n\n[ENTIDADES DETECTADAS EN DOCUMENTO COMPLETO - INCLUIR TODAS]\nPersonajes: ${uniqueNames.join(', ')}\nLugares: ${uniqueLocations.join(', ')}${uniqueTitles.length > 0 ? `\nTítulos/Roles: ${uniqueTitles.join(', ')}` : ''}`;
+      };
+      
+      const entitiesPreview = extractEntitiesPreview(fullIdeaText);
+      const ideaToSend = fullIdeaText.slice(0, 15000) + entitiesPreview;
+      
       const { data, error } = await invokeWithTimeout<{ outline: typeof lightOutline }>(
         'generate-outline-light',
         {
-          idea: ideaText.trim().slice(0, 2000),
+          idea: ideaToSend,
           episodesCount: format === 'series' ? episodesCount : 1,
           format,
           genre,
