@@ -797,15 +797,25 @@ CREA representantes individuales con nombres propios que encarnen ese grupo.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 EXTRACCIÓN DE ENTIDADES (PRIORIDAD MÁXIMA)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-ANTES de generar el outline, analiza la IDEA y extrae:
-1. PERSONAJES: Cualquier nombre propio o rol específico mencionado (ej: "María", "el detective", "un hacker")
-2. LOCACIONES: Cualquier lugar específico mencionado (ej: "Nueva York", "una fábrica abandonada", "el hospital")
-3. PROPS: Objetos específicos mencionados que podrían ser importantes (ej: "un diario", "el arma del crimen", "las cartas")
+ANTES de generar el outline, analiza TODA la IDEA/DOCUMENTO y extrae:
+1. PERSONAJES: 
+   - Cualquier nombre propio mencionado (ej: "Leonardo Laborda", "Nikos Anagnostou", "Daniel Weiss")
+   - Personajes con títulos especiales (ej: "Aelion, Rey del Círculo", "Maera, Custodia de la Vida")
+   - Roles específicos mencionados (ej: "el abuelo", "el profesor", "el guardián")
+   - SI hay una sección "[ENTIDADES DETECTADAS]", incluye TODOS los personajes listados ahí
+   
+2. LOCACIONES: 
+   - Lugares reales mencionados (ej: "MIT", "París", "Heidelberg", "Bolonia")
+   - Lugares ficticios o fantásticos (ej: "Atlantis", "Zaia", "el Círculo Interior")
+   - Universidades, instituciones, países, ciudades mencionados
+   
+3. PROPS: Objetos específicos mencionados que podrían ser importantes
 
 REGLA CRÍTICA: Las entidades mencionadas en la IDEA tienen PRIORIDAD ABSOLUTA.
-- Si la idea menciona 8 personajes, deben aparecer los 8, aunque la densidad pida solo 3.
-- Si la idea menciona 12 locaciones, deben aparecer las 12.
-- Los targets de densidad son MÍNIMOS, no límites. La idea siempre gana.
+- Si el documento menciona 10 personajes, DEBEN aparecer los 10, aunque la densidad pida solo 3.
+- Si el documento menciona 15 locaciones, DEBEN aparecer las 15.
+- Los targets de densidad son MÍNIMOS, no límites. EL DOCUMENTO SIEMPRE GANA.
+- Para personajes con títulos como "Rey del Círculo" o "Guardián del Fuego", USA el título como su rol.
 
 Para cada entidad que crees, marca from_idea: true si fue mencionada explícitamente en la idea.
 Incluye en extracted_entities TODOS los nombres/lugares/objetos que identificaste.
