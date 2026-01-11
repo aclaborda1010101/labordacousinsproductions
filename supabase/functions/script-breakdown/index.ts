@@ -361,8 +361,8 @@ OUTPUT JSON ONLY:
   ]
 }`;
 
-// ===== SLUGLINE REGEX =====
-const SLUGLINE_RE = /^(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME))?$/i;
+// ===== SLUGLINE REGEX (supports numbered headings like "1. INT. CASA - NOCHE") =====
+const SLUGLINE_RE = /^(?:\d+\s*[.\):\-–—]?\s*)?(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME))?$/i;
 
 function looksLikeCharacterCue(line: string): boolean {
   const trimmed = line.trim();
@@ -3082,7 +3082,8 @@ async function callAIJson({ modelKey, systemPrompt, userPrompt, maxTokens, label
     },
     body: JSON.stringify({
       model: models.gateway,
-      max_tokens: maxTokens,
+      // GPT-5 models require max_completion_tokens instead of max_tokens
+      max_completion_tokens: maxTokens,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
