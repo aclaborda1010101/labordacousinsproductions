@@ -16,7 +16,7 @@ const corsHeaders = {
 interface BatchOrchestratorRequest {
   projectId: string;
   totalEpisodes: number;
-  qualityTier: 'DRAFT' | 'PRODUCTION';
+  qualityTier: 'rapido' | 'profesional' | 'hollywood';
   outline: any;
   language?: string;
   narrativeMode?: string;
@@ -44,7 +44,7 @@ serve(async (req) => {
     const {
       projectId,
       totalEpisodes,
-      qualityTier = 'PRODUCTION',
+      qualityTier = 'profesional',
       outline,
       language = 'es',
       narrativeMode = 'serie_adictiva',
@@ -250,7 +250,7 @@ serve(async (req) => {
 
       // Delay between episodes to avoid rate limits
       if (epNum < totalEpisodes) {
-        const delayMs = qualityTier === 'PRODUCTION' ? 20000 : 3000;
+        const delayMs = qualityTier === 'hollywood' ? 20000 : qualityTier === 'profesional' ? 10000 : 3000;
         await new Promise(r => setTimeout(r, delayMs));
       }
     }

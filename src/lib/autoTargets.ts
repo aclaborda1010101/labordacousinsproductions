@@ -169,7 +169,7 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
 // V3.0 UNIFIED QUALITY TIER SYSTEM
 // Replaces legacy generation model selection
 // =============================================================================
-export type QualityTier = 'DRAFT' | 'PRODUCTION';
+export type QualityTier = 'rapido' | 'profesional' | 'hollywood';
 
 export interface QualityTierConfig {
   tier: QualityTier;
@@ -181,18 +181,26 @@ export interface QualityTierConfig {
 }
 
 export const QUALITY_TIERS: Record<QualityTier, QualityTierConfig> = {
-  DRAFT: {
-    tier: 'DRAFT',
-    displayName: '📝 Modo Borrador',
-    description: 'Rápido para revisión (GPT-4o-mini). ~2-5 min/episodio',
+  rapido: {
+    tier: 'rapido',
+    displayName: '⚡ Rápido',
+    description: 'MVPs, borradores funcionales (GPT-5-mini). ~2-5 min/ep',
     estimatedTimePerEpisodeMin: 2,
     delayBetweenBatchesMs: 2000,
     delayBetweenEpisodesMs: 3000
   },
-  PRODUCTION: {
-    tier: 'PRODUCTION',
-    displayName: '🎬 Modo Producción',
-    description: 'Calidad Hollywood (Claude Sonnet). ~10-20 min/episodio',
+  profesional: {
+    tier: 'profesional',
+    displayName: '🎬 Profesional',
+    description: 'Scripts robustos y detallados (GPT-5). ~5-10 min/ep',
+    estimatedTimePerEpisodeMin: 7,
+    delayBetweenBatchesMs: 10000,
+    delayBetweenEpisodesMs: 10000
+  },
+  hollywood: {
+    tier: 'hollywood',
+    displayName: '🏆 Hollywood',
+    description: 'Guiones complejos, tono refinado (GPT-5.2). ~15-20 min/ep',
     estimatedTimePerEpisodeMin: 15,
     delayBetweenBatchesMs: 30000,
     delayBetweenEpisodesMs: 20000
@@ -215,10 +223,9 @@ export interface GenerationModelConfig {
   costPerEpisodeUsd: number;
 }
 
-// Map legacy models to new tiers
+// Map legacy models to new tiers (now same values)
 export function legacyModelToTier(model: GenerationModel): QualityTier {
-  if (model === 'rapido' || model === 'profesional') return 'DRAFT';
-  return 'PRODUCTION';
+  return model; // Direct mapping since they're now the same type
 }
 
 // Legacy GENERATION_MODELS - deprecated, use QUALITY_TIERS
@@ -273,7 +280,7 @@ export function calculateDynamicBatches(
   complexity: 'simple' | 'medium' | 'high',
   episodeBeats?: any[],
   durationMin?: number,
-  qualityTier: QualityTier = 'PRODUCTION'
+  qualityTier: QualityTier = 'profesional'
 ): BatchConfig {
   const baseDuration = 45;
   const actualDuration = durationMin || baseDuration;

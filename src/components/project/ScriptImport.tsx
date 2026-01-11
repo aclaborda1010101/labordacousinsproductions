@@ -144,7 +144,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [narrativeMode, setNarrativeMode] = useState<'serie_adictiva' | 'voz_de_autor' | 'giro_imprevisible'>('serie_adictiva');
   
   // V3.0: Quality tier selection (replaces legacy generationModel)
-  const [qualityTier, setQualityTier] = useState<QualityTier>('PRODUCTION');
+  const [qualityTier, setQualityTier] = useState<QualityTier>('profesional');
   
   // V3.0: Disable narrative density (let AI generate based purely on user idea)
   const [disableDensity, setDisableDensity] = useState(true); // Default: OFF (no density constraints)
@@ -1162,13 +1162,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       // Timeout dinámico por tier y nº de episodios (evita aborts falsos)
       const outlineEpisodes = format === 'series' ? episodesCount : 1;
       const timeoutMs = (() => {
-        if (qualityTier === 'PRODUCTION') {
-          // Claude: más lento y con más variabilidad
+        if (qualityTier === 'hollywood') {
+          // Hollywood (GPT-5.2): más lento y con más variabilidad
           const base = 90000;
           const perEp = 25000;
           return Math.min(300000, Math.max(120000, base + perEp * outlineEpisodes));
         }
-        // DRAFT: GPT-4o-mini (rápido)
+        if (qualityTier === 'profesional') {
+          // Profesional (GPT-5): balance
+          const base = 60000;
+          const perEp = 15000;
+          return Math.min(240000, Math.max(90000, base + perEp * outlineEpisodes));
+        }
+        // Rapido (GPT-5-mini): rápido
         const base = 30000;
         const perEp = 8000;
         return Math.min(150000, Math.max(60000, base + perEp * outlineEpisodes));
@@ -3432,11 +3438,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   <Select value={qualityTier} onValueChange={(v: QualityTier) => setQualityTier(v)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="DRAFT">
-                        {QUALITY_TIERS.DRAFT.displayName}
+                      <SelectItem value="rapido">
+                        {QUALITY_TIERS.rapido.displayName}
                       </SelectItem>
-                      <SelectItem value="PRODUCTION">
-                        {QUALITY_TIERS.PRODUCTION.displayName}
+                      <SelectItem value="profesional">
+                        {QUALITY_TIERS.profesional.displayName}
+                      </SelectItem>
+                      <SelectItem value="hollywood">
+                        {QUALITY_TIERS.hollywood.displayName}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -3447,7 +3456,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     <Badge variant="outline" className="text-xs">
                       ~{QUALITY_TIERS[qualityTier].estimatedTimePerEpisodeMin} min/ep
                     </Badge>
-                    {qualityTier === 'PRODUCTION' && (
+                    {qualityTier === 'hollywood' && (
                       <Badge variant="secondary" className="text-xs bg-primary/10">
                         ✨ Calidad Hollywood
                       </Badge>

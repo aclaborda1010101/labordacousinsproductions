@@ -14,7 +14,7 @@ const corsHeaders = {
 // Outputs V3 schema ALWAYS regardless of qualityTier
 // =============================================================================
 
-type QualityTier = 'DRAFT' | 'PRODUCTION';
+type QualityTier = 'rapido' | 'profesional' | 'hollywood';
 
 interface ModelConfig {
   apiModel: string;
@@ -26,7 +26,7 @@ interface ModelConfig {
 }
 
 const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
-  DRAFT: {
+  rapido: {
     apiModel: 'openai/gpt-5-mini',
     provider: 'lovable',
     maxTokens: 16000,
@@ -34,7 +34,15 @@ const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
     confidenceRange: [0.6, 0.8],
     technicalMetadataStatus: 'EMPTY'
   },
-  PRODUCTION: {
+  profesional: {
+    apiModel: 'openai/gpt-5',
+    provider: 'lovable',
+    maxTokens: 16000,
+    temperature: 0.72,
+    confidenceRange: [0.75, 0.9],
+    technicalMetadataStatus: 'PARTIAL'
+  },
+  hollywood: {
     apiModel: 'openai/gpt-5.2',
     provider: 'lovable',
     maxTokens: 16000,
@@ -981,7 +989,7 @@ serve(async (req) => {
       );
     }
 
-    const config = TIER_CONFIGS[qualityTier] || TIER_CONFIGS.PRODUCTION;
+    const config = TIER_CONFIGS[qualityTier as QualityTier] || TIER_CONFIGS.profesional;
     
     console.log('[generate-script] v3.1 CANONICAL ROUTER + BIBLE:', {
       qualityTier,
@@ -1175,9 +1183,11 @@ IDIOMA: ${language}
     }
 
     // Add tier-specific instructions
-    const tierInstructions = qualityTier === 'DRAFT' 
-      ? `\n\nMODO BORRADOR: Genera rápido, confidence 0.6-0.8, technical_metadata._status = "EMPTY" en la mayoría.`
-      : `\n\nMODO PRODUCCIÓN: Alta calidad literaria, confidence 0.8-0.95, technical_metadata._status = "PARTIAL" cuando se infiera del contexto.`;
+    const tierInstructions = qualityTier === 'rapido' 
+      ? `\n\nMODO RÁPIDO: Genera rápido, confidence 0.6-0.8, technical_metadata._status = "EMPTY" en la mayoría.`
+      : qualityTier === 'hollywood'
+        ? `\n\nMODO HOLLYWOOD: Máxima calidad literaria, confidence 0.85-0.95, diálogos pulidos, ritmo cinematográfico, technical_metadata._status = "PARTIAL" cuando se infiera del contexto.`
+        : `\n\nMODO PROFESIONAL: Alta calidad, confidence 0.75-0.9, technical_metadata._status = "PARTIAL" cuando se infiera del contexto.`;
     
     userPrompt += tierInstructions;
 
