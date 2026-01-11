@@ -151,7 +151,7 @@ Generate appropriate UI blocks based on this command. If the command involves cr
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: 'openai/gpt-5-mini',
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userMessage }

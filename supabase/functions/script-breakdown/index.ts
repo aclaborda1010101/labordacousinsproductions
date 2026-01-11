@@ -2936,8 +2936,8 @@ const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 // Updated 2025-01: claude-3-5-sonnet-20241022 deprecated, use claude-sonnet-4-20250514
 // Fallback: GPT-4o for best quality when Anthropic unavailable
 const MODEL_MAP: Record<string, { anthropic: string; gateway: string }> = {
-  sonnet: { anthropic: 'claude-sonnet-4-20250514', gateway: 'openai/gpt-4o' },
-  haiku: { anthropic: 'claude-3-5-haiku-20241022', gateway: 'openai/gpt-4o-mini' },
+  sonnet: { anthropic: 'claude-sonnet-4-20250514', gateway: 'openai/gpt-5' },
+  haiku: { anthropic: 'claude-3-5-haiku-20241022', gateway: 'openai/gpt-5-mini' },
 };
 
 type CallAIJsonArgs = {
