@@ -2255,9 +2255,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 size="sm"
                 variant="destructive"
                 onClick={() => handleAnalyzeScript(existingScriptText)}
-                disabled={status === 'analyzing'}
+                disabled={status === 'generating'}
               >
-                {status === 'analyzing' ? (
+                {status === 'generating' ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Analizando...
@@ -2289,11 +2289,11 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
               variant={needsReanalysis ? "default" : "outline"}
               size="sm"
               onClick={() => handleAnalyzeScript(existingScriptText)}
-              disabled={status === 'analyzing'}
+              disabled={status === 'generating'}
               title="Re-analizar con GPT-5 para extraer escenas, personajes y locaciones"
               className={needsReanalysis ? "animate-pulse" : ""}
             >
-              {status === 'analyzing' ? (
+              {status === 'generating' ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   Analizando...
