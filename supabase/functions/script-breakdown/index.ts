@@ -369,6 +369,117 @@ const normalizeScriptText = (text: string) =>
     .replace(/\r/g, '\n')
     .replace(/[\u2028\u2029]/g, '\n');
 
+// ===== Coerce JSON screenplay to plain text =====
+function coerceToScreenplayText(input: string): { text: string; wasJson: boolean; blocksExtracted: number } {
+  const trimmed = input.trim();
+  if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+    return { text: normalizeScriptText(input), wasJson: false, blocksExtracted: 0 };
+  }
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch {
+    return { text: normalizeScriptText(input), wasJson: false, blocksExtracted: 0 };
+  }
+
+  const blocks: string[] = [];
+
+  // Helper to unescape JSON string escapes
+  const unescape = (s: string) => s
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
+    .replace(/\\t/g, '\t')
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\');
+
+  // Helper to extract text from scene object
+  const extractSceneText = (scene: any): string => {
+    if (!scene || typeof scene !== 'object') return '';
+    // Try various fields
+    const raw = scene.raw_content || scene.text || scene.content || scene.screenplay_text || '';
+    const heading = scene.heading || scene.slugline || '';
+    const action = scene.action || '';
+    const dialogue = scene.dialogue || '';
+    
+    if (raw) return unescape(String(raw));
+    
+    const parts: string[] = [];
+    if (heading) parts.push(unescape(String(heading)));
+    if (action) parts.push(unescape(String(action)));
+    if (dialogue) parts.push(unescape(String(dialogue)));
+    return parts.join('\n\n');
+  };
+
+  // Try extracting from episodes structure
+  if (Array.isArray(parsed.episodes)) {
+    for (let epIdx = 0; epIdx < parsed.episodes.length; epIdx++) {
+      const ep = parsed.episodes[epIdx];
+      blocks.push(`\n\n### EPISODIO ${epIdx + 1} ###\n\n`);
+      
+      const scenes = ep.scenes || ep.scene_list || [];
+      if (Array.isArray(scenes)) {
+        for (const scene of scenes) {
+          const sceneText = extractSceneText(scene);
+          if (sceneText) blocks.push(sceneText);
+        }
+      }
+      // Also check episode-level raw_content
+      if (ep.raw_content) {
+        blocks.push(unescape(String(ep.raw_content)));
+      }
+      if (ep.screenplay_text) {
+        blocks.push(unescape(String(ep.screenplay_text)));
+      }
+    }
+  }
+  
+  // Try extracting from scenes array at root
+  if (Array.isArray(parsed.scenes)) {
+    for (const scene of parsed.scenes) {
+      const sceneText = extractSceneText(scene);
+      if (sceneText) blocks.push(sceneText);
+    }
+  }
+
+  // Try root-level raw_content or screenplay_text
+  if (parsed.raw_content) {
+    blocks.push(unescape(String(parsed.raw_content)));
+  }
+  if (parsed.screenplay_text) {
+    blocks.push(unescape(String(parsed.screenplay_text)));
+  }
+
+  // Fallback: regex to extract all "raw_content": "..." values
+  if (blocks.length === 0) {
+    const rawContentRegex = /"raw_content"\s*:\s*"((?:[^"\\]|\\.)*)"/g;
+    let match;
+    while ((match = rawContentRegex.exec(trimmed)) !== null) {
+      try {
+        const value = JSON.parse(`"${match[1]}"`);
+        if (value && value.trim()) blocks.push(value);
+      } catch { /* skip invalid */ }
+    }
+    
+    // Also try screenplay_text
+    const screenplayRegex = /"screenplay_text"\s*:\s*"((?:[^"\\]|\\.)*)"/g;
+    while ((match = screenplayRegex.exec(trimmed)) !== null) {
+      try {
+        const value = JSON.parse(`"${match[1]}"`);
+        if (value && value.trim()) blocks.push(value);
+      } catch { /* skip invalid */ }
+    }
+  }
+
+  if (blocks.length > 0) {
+    const combined = blocks.join('\n\n');
+    return { text: normalizeScriptText(combined), wasJson: true, blocksExtracted: blocks.length };
+  }
+
+  // If we couldn't extract anything useful, return original
+  return { text: normalizeScriptText(input), wasJson: true, blocksExtracted: 0 };
+}
+
 // Accept headings with optional leading numbering + Spanish/English variants
 const HEADING_LINE_RE = /^\s*(?:\d+\s*[.\):\-–—]?\s*)?(?:INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\b/i;
 
@@ -3152,8 +3263,15 @@ async function processScriptBreakdownInBackground(
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   const { scriptText, projectId, scriptId, language, format, episodesCount, episodeDurationMin } = request;
-  const processedScriptText = normalizeScriptText(scriptText).trim();
+  
+  // ===== CRITICAL: Convert JSON screenplay to plain text if needed =====
+  const coerced = coerceToScreenplayText(scriptText);
+  const processedScriptText = coerced.text.trim();
   const lang = language || 'es-ES';
+  
+  console.log(`[script-breakdown] Input format: ${coerced.wasJson ? 'JSON' : 'plain text'}`);
+  console.log(`[script-breakdown] Coerced text length: ${processedScriptText.length}`);
+  console.log(`[script-breakdown] Blocks extracted from JSON: ${coerced.blocksExtracted}`);
 
   try {
     await supabase.from('background_tasks').update({

@@ -275,6 +275,99 @@ const normalizeScriptText = (text: string) =>
     .replace(/\r/g, '\n')
     .replace(/[\u2028\u2029]/g, '\n');
 
+// ===== Coerce JSON screenplay to plain text =====
+function coerceToScreenplayText(input: string): { text: string; wasJson: boolean; blocksExtracted: number } {
+  const trimmed = input.trim();
+  if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+    return { text: normalizeScriptText(input), wasJson: false, blocksExtracted: 0 };
+  }
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch {
+    return { text: normalizeScriptText(input), wasJson: false, blocksExtracted: 0 };
+  }
+
+  const blocks: string[] = [];
+
+  const unescape = (s: string) => s
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
+    .replace(/\\t/g, '\t')
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\');
+
+  const extractSceneText = (scene: any): string => {
+    if (!scene || typeof scene !== 'object') return '';
+    const raw = scene.raw_content || scene.text || scene.content || scene.screenplay_text || '';
+    const heading = scene.heading || scene.slugline || '';
+    const action = scene.action || '';
+    const dialogue = scene.dialogue || '';
+    
+    if (raw) return unescape(String(raw));
+    
+    const parts: string[] = [];
+    if (heading) parts.push(unescape(String(heading)));
+    if (action) parts.push(unescape(String(action)));
+    if (dialogue) parts.push(unescape(String(dialogue)));
+    return parts.join('\n\n');
+  };
+
+  if (Array.isArray(parsed.episodes)) {
+    for (let epIdx = 0; epIdx < parsed.episodes.length; epIdx++) {
+      const ep = parsed.episodes[epIdx];
+      blocks.push(`\n\n### EPISODIO ${epIdx + 1} ###\n\n`);
+      
+      const scenes = ep.scenes || ep.scene_list || [];
+      if (Array.isArray(scenes)) {
+        for (const scene of scenes) {
+          const sceneText = extractSceneText(scene);
+          if (sceneText) blocks.push(sceneText);
+        }
+      }
+      if (ep.raw_content) blocks.push(unescape(String(ep.raw_content)));
+      if (ep.screenplay_text) blocks.push(unescape(String(ep.screenplay_text)));
+    }
+  }
+  
+  if (Array.isArray(parsed.scenes)) {
+    for (const scene of parsed.scenes) {
+      const sceneText = extractSceneText(scene);
+      if (sceneText) blocks.push(sceneText);
+    }
+  }
+
+  if (parsed.raw_content) blocks.push(unescape(String(parsed.raw_content)));
+  if (parsed.screenplay_text) blocks.push(unescape(String(parsed.screenplay_text)));
+
+  if (blocks.length === 0) {
+    const rawContentRegex = /"raw_content"\s*:\s*"((?:[^"\\]|\\.)*)"/g;
+    let match;
+    while ((match = rawContentRegex.exec(trimmed)) !== null) {
+      try {
+        const value = JSON.parse(`"${match[1]}"`);
+        if (value && value.trim()) blocks.push(value);
+      } catch { /* skip */ }
+    }
+    
+    const screenplayRegex = /"screenplay_text"\s*:\s*"((?:[^"\\]|\\.)*)"/g;
+    while ((match = screenplayRegex.exec(trimmed)) !== null) {
+      try {
+        const value = JSON.parse(`"${match[1]}"`);
+        if (value && value.trim()) blocks.push(value);
+      } catch { /* skip */ }
+    }
+  }
+
+  if (blocks.length > 0) {
+    const combined = blocks.join('\n\n');
+    return { text: normalizeScriptText(combined), wasJson: true, blocksExtracted: blocks.length };
+  }
+
+  return { text: normalizeScriptText(input), wasJson: true, blocksExtracted: 0 };
+}
+
 // Accept headings with optional leading numbering + Spanish/English variants
 const HEADING_LINE_RE = /^\s*(?:\d+\s*[.\):\-–—]?\s*)?(?:INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\b/i;
 
@@ -474,22 +567,28 @@ serve(async (req) => {
       });
     }
 
-    console.log(`[breakdown-pro] Starting analysis for project ${projectId}, script length: ${scriptText.length}`);
+    // ===== CRITICAL: Convert JSON screenplay to plain text if needed =====
+    const coerced = coerceToScreenplayText(scriptText);
+    const processedScriptText = coerced.text.trim();
+    
+    console.log(`[breakdown-pro] Starting analysis for project ${projectId}`);
+    console.log(`[breakdown-pro] Input format: ${coerced.wasJson ? 'JSON' : 'plain text'}`);
+    console.log(`[breakdown-pro] Original length: ${scriptText.length}, Coerced length: ${processedScriptText.length}`);
+    console.log(`[breakdown-pro] Blocks extracted from JSON: ${coerced.blocksExtracted}`);
 
     // ══════════════════════════════════════════════════════════════════════
     // PRE-COUNT SCENE HEADINGS (for debugging and prompt anchoring)
     // ══════════════════════════════════════════════════════════════════════
-    const intMatches = scriptText.match(/\bINT[\./]/gi) || [];
-    const extMatches = scriptText.match(/\bEXT[\./]/gi) || [];
-    const intExtMatches = scriptText.match(/\b(INT\/EXT|I\/E)[\./]?/gi) || [];
+    const intMatches = processedScriptText.match(/\bINT[\./]/gi) || [];
+    const extMatches = processedScriptText.match(/\bEXT[\./]/gi) || [];
+    const intExtMatches = processedScriptText.match(/\b(INT\/EXT|I\/E)[\./]?/gi) || [];
     const headingCount = intMatches.length + extMatches.length + intExtMatches.length;
     
     console.log(`[breakdown-pro] PRE-COUNT HEADINGS: INT=${intMatches.length}, EXT=${extMatches.length}, INT/EXT=${intExtMatches.length}, TOTAL=${headingCount}`);
     
     // Extract actual heading lines for reference
     const headingLines: string[] = [];
-    const normalizedText = normalizeScriptText(scriptText);
-    const lines = normalizedText.split('\n');
+    const lines = processedScriptText.split('\n');
     for (const line of lines) {
       const trimmed = line.trim();
       if (HEADING_LINE_RE.test(trimmed)) {
@@ -520,7 +619,7 @@ ${headingLines.slice(0, 10).map((h, i) => `${i + 1}. ${h}`).join('\n')}
 
 SCRIPT TEXT:
 ---
-${scriptText.slice(0, 100000)}
+${processedScriptText.slice(0, 100000)}
 ---
 
 Remember:
