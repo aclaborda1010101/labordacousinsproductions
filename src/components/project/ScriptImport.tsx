@@ -1699,7 +1699,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   };
 
   // Script Doctor
-  const analyzeWithDoctor = async () => {
+  const analyzeWithDoctor = async (focusAreas?: string[]) => {
     const textToAnalyze = generatedScript ? JSON.stringify(generatedScript) : scriptText;
     if (!textToAnalyze || textToAnalyze.length < 200) {
       toast.error('El guion debe tener contenido suficiente');
@@ -1709,7 +1709,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setAnalyzing(true);
     try {
       const { data, error } = await supabase.functions.invoke('script-doctor', {
-        body: { scriptText: textToAnalyze, language }
+        body: { scriptText: textToAnalyze, language, focusAreas }
       });
       if (error) throw error;
       if (data?.analysis) {
@@ -2511,14 +2511,141 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
+  // Hollywood workflow step computation
+  const workflowStep = (() => {
+    if (!generatedScript && !lightOutline) return 'idea'; // Step 1: Write/Import
+    if (lightOutline && !outlineApproved) return 'review'; // Step 2: Review outline
+    if (pipelineRunning) return 'generating'; // Step 3: Generating
+    
+    // Check if dialogues are missing
+    const hasEpisodes = generatedScript?.episodes?.length > 0;
+    const needsDialogues = hasEpisodes && generatedScript.episodes.some((ep: any) =>
+      ep.scenes?.some((s: any) => !s.dialogue || s.dialogue.length === 0)
+    );
+    if (needsDialogues) return 'dialogues'; // Step 4: Generate dialogues
+    
+    if (hasEpisodes) return 'production'; // Step 5: Ready for production
+    return 'idea';
+  })();
+  
+  const workflowSteps = [
+    { id: 'idea', label: 'Guion', description: 'Genera o importa tu guion' },
+    { id: 'review', label: 'Revisar', description: 'Aprueba el outline' },
+    { id: 'generating', label: 'Generando', description: 'Creando episodios' },
+    { id: 'dialogues', label: 'Diálogos', description: 'Completar diálogos' },
+    { id: 'production', label: 'Producción', description: 'Generar shots y microshots' },
+  ];
+  
+  const currentStepIndex = workflowSteps.findIndex(s => s.id === workflowStep);
+
+  // Check if script is complete (has dialogues)
+  const isScriptComplete = generatedScript?.episodes?.every((ep: any) =>
+    ep.scenes?.every((s: any) => s.dialogue && s.dialogue.length > 0)
+  ) ?? false;
+
+  // Count episodes needing dialogues
+  const episodesNeedingDialogue = generatedScript?.episodes?.filter((ep: any) =>
+    ep.scenes?.some((s: any) => !s.dialogue || s.dialogue.length === 0)
+  ) || [];
+
   return (
     <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+      {/* Hollywood Workflow Progress Indicator */}
+      {(generatedScript || lightOutline || pipelineRunning) && (
+        <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center gap-4 overflow-x-auto pb-2">
+              {workflowSteps.map((step, i) => {
+                const isActive = step.id === workflowStep;
+                const isCompleted = i < currentStepIndex;
+                const isPending = i > currentStepIndex;
+                
+                return (
+                  <div key={step.id} className="flex items-center gap-2 shrink-0">
+                    <div className={`
+                      w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
+                      ${isActive ? 'bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2' : ''}
+                      ${isCompleted ? 'bg-green-500 text-white' : ''}
+                      ${isPending ? 'bg-muted text-muted-foreground' : ''}
+                    `}>
+                      {isCompleted ? <CheckCircle className="w-4 h-4" /> : i + 1}
+                    </div>
+                    <div className={`hidden sm:block ${isActive ? '' : 'opacity-60'}`}>
+                      <p className={`text-sm font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {step.label}
+                      </p>
+                      {isActive && (
+                        <p className="text-xs text-muted-foreground">{step.description}</p>
+                      )}
+                    </div>
+                    {i < workflowSteps.length - 1 && (
+                      <div className={`w-8 h-0.5 ${isCompleted ? 'bg-green-500' : 'bg-muted'}`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* CRITICAL ALERT: Missing Dialogues */}
+      {episodesNeedingDialogue.length > 0 && !pipelineRunning && (
+        <Card className="border-2 border-destructive/50 bg-destructive/5">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-destructive/20">
+                  <AlertTriangle className="w-6 h-6 text-destructive" />
+                </div>
+                <div>
+                  <p className="font-semibold text-destructive">
+                    ⚠️ Guion Incompleto: Faltan Diálogos
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {episodesNeedingDialogue.length} episodio(s) tienen escenas sin diálogos. 
+                    <span className="font-medium"> Un guion profesional requiere diálogos completos.</span>
+                  </p>
+                </div>
+              </div>
+              <Button 
+                variant="gold"
+                size="lg"
+                onClick={generateMissingDialogues}
+                disabled={generatingDialogues}
+                className="gap-2 shrink-0"
+              >
+                {generatingDialogues ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {dialogueProgress.phase || 'Generando...'}
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-5 h-5" />
+                    Generar Diálogos Ahora
+                  </>
+                )}
+              </Button>
+            </div>
+            {generatingDialogues && dialogueProgress.total > 0 && (
+              <div className="mt-4">
+                <Progress value={(dialogueProgress.current / dialogueProgress.total) * 100} className="h-2" />
+                <p className="text-xs text-muted-foreground mt-1 text-center">
+                  Episodio {dialogueProgress.current} de {dialogueProgress.total}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold text-foreground">Guion (Generar / Importar)</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-foreground">Guion</h2>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Pipeline completo: Idea → Outline → QC → Guion → Freeze
+            Flujo Hollywood: Guion → Resumen → Producción → Mejoras
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -2561,7 +2688,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 disabled={pipelineRunning}
               >
                 <RefreshCw className="w-4 h-4" />
-                <span className="ml-2 hidden sm:inline">Regenerar Guion</span>
+                <span className="ml-2 hidden sm:inline">Regenerar</span>
               </Button>
               <Button 
                 variant={scriptLocked ? "default" : "outline"} 
@@ -2570,10 +2697,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               >
                 {scriptLocked ? <Lock className="w-4 h-4" /> : <Snowflake className="w-4 h-4" />}
                 <span className="ml-2 hidden sm:inline">{scriptLocked ? 'Congelado' : 'Freeze'}</span>
-              </Button>
-              <Button variant="outline" size="sm" onClick={analyzeWithDoctor} disabled={analyzing}>
-                {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Stethoscope className="w-4 h-4" />}
-                <span className="ml-2 hidden sm:inline">Doctor</span>
               </Button>
               {/* Delete Script Button */}
               <Button 
@@ -2593,16 +2716,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       {/* Pipeline Status - Hidden for cleaner UI */}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        {/* Scrollable tabs for mobile */}
+        {/* Simplified 5-tab structure */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
-        <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-6 sm:w-full h-auto sm:h-10 gap-1 sm:gap-0">
+        <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-5 sm:w-full h-auto sm:h-10 gap-1 sm:gap-0">
             <TabsTrigger value="generate" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
-              <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Generar
-            </TabsTrigger>
-            <TabsTrigger value="import" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Importar
+              Guion
             </TabsTrigger>
             <TabsTrigger value="summary" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -2610,42 +2729,41 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </TabsTrigger>
             <TabsTrigger value="production" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Producción</span>
-              <span className="sm:hidden">Prod.</span>
+              Producción
             </TabsTrigger>
             <TabsTrigger value="doctor" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Mejorar Guión</span>
-              <span className="sm:hidden">Mejorar</span>
+              Mejoras
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Histórico</span>
-              <span className="sm:hidden">Hist.</span>
+              Histórico
             </TabsTrigger>
           </TabsList>
         </div>
 
-        {/* GENERATE TAB */}
+        {/* GUION TAB - Merged Generate + Import */}
         <TabsContent value="generate" className="space-y-4">
-          {/* CTA Principal - Pipeline V2 */}
-          {/* Generate Outline Button - Only show when no outline and not running */}
-          {!lightOutline && !pipelineRunning && (
-            <Card className="border-primary/50 bg-gradient-to-r from-primary/5 to-transparent">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <div>
-                    <h3 className="font-semibold text-lg flex items-center gap-2">
+          {/* Script Source Selector - Only show when no script exists */}
+          {!lightOutline && !pipelineRunning && !generatedScript && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* OPTION 1: Generate from Idea */}
+              <Card className="border-primary/50 bg-gradient-to-r from-primary/5 to-transparent hover:border-primary transition-colors">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <div className="p-2 bg-primary/10 rounded-lg">
                       <Sparkles className="w-5 h-5 text-primary" />
-                      Genera tu guion
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Describe tu idea y generaremos un outline para tu aprobación
-                    </p>
-                  </div>
+                    </div>
+                    Generar desde Idea
+                  </CardTitle>
+                  <CardDescription>
+                    Describe tu idea y generaremos un guion completo con personajes, localizaciones y diálogos
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <Button 
                     variant="gold" 
-                    size="lg"
+                    className="w-full"
                     onClick={generateLightOutline} 
                     disabled={generatingOutline || !ideaText.trim()}
                   >
@@ -2654,6 +2772,122 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     ) : (
                       <><Sparkles className="w-4 h-4 mr-2" />Generar Outline</>
                     )}
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    ↓ Escribe tu idea abajo primero
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* OPTION 2: Import Existing Script */}
+              <Card className="border-border hover:border-primary/50 transition-colors">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <div className="p-2 bg-muted rounded-lg">
+                      <Upload className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    Importar Guion Existente
+                  </CardTitle>
+                  <CardDescription>
+                    Sube un PDF o pega texto de un guion ya escrito para analizarlo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div 
+                      className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm font-medium">
+                        {uploadedFileName || 'Subir PDF o TXT'}
+                      </p>
+                      <p className="text-xs text-muted-foreground">.pdf, .txt</p>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".txt,.pdf,text/plain,application/pdf"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </div>
+                    {scriptText.length > 0 && (
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={analyzeImportedScript} 
+                        disabled={parsingImportedScript || scriptText.length < 200}
+                      >
+                        {parsingImportedScript ? (
+                          <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Analizando...</>
+                        ) : (
+                          <><Sparkles className="w-4 h-4 mr-2" />Analizar Guion ({scriptText.length} chars)</>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* PDF Processing Indicator */}
+          {pdfProcessing && (
+            <Card className="border-2 border-primary/50 bg-primary/5">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="relative mx-auto w-16 h-16 mb-4">
+                    <FileText className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto" />
+                    <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
+                  </div>
+                  <p className="font-medium text-primary">{uploadedFileName}</p>
+                  <Progress value={pdfProgress} className="h-2 max-w-sm mx-auto" />
+                  <p className="text-sm text-muted-foreground">Extrayendo texto del PDF...</p>
+                  <Button variant="outline" size="sm" onClick={cancelPdfProcessing}>
+                    <Square className="h-4 w-4 mr-2" />
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Script Analysis Progress */}
+          {parsingImportedScript && (
+            <Card className="border-2 border-primary/50 bg-primary/5">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="relative mx-auto w-20 h-20 mb-4">
+                    <Sparkles className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto animate-pulse" />
+                    <div className="absolute inset-0 border-4 border-t-primary border-r-transparent border-b-primary/30 border-l-transparent rounded-full animate-spin" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-primary">Analizando Guion Importado</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Extracción profesional de personajes, localizaciones y escenas
+                  </p>
+                  <p className="text-xs text-muted-foreground/70">Puede tardar hasta 2 minutos</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* CTA Principal - Only when generating and no outline yet */}
+          {!lightOutline && !pipelineRunning && generatedScript && (
+            <Card className="border-primary/50 bg-gradient-to-r from-primary/5 to-transparent">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      Guion Cargado
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {generatedScript.title || 'Sin título'} • {generatedScript.episodes?.length || 1} episodio(s)
+                    </p>
+                  </div>
+                  <Button variant="outline" onClick={() => setActiveTab('summary')}>
+                    <ArrowRight className="w-4 h-4 mr-2" />
+                    Ver Resumen
                   </Button>
                 </div>
               </CardContent>
@@ -3295,148 +3529,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           )}
         </TabsContent>
 
-        {/* IMPORT TAB */}
-        <TabsContent value="import" className="space-y-4">
-          {/* Script Analysis Progress Indicator */}
-          {parsingImportedScript && (
-            <Card className="border-2 border-primary/50 bg-primary/5">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4">
-                  <div className="relative mx-auto w-20 h-20 mb-4">
-                    <Sparkles className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto animate-pulse" />
-                    <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
-                    <div className="absolute inset-0 border-4 border-t-primary border-r-transparent border-b-primary/30 border-l-transparent rounded-full animate-spin" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-primary">Analizando Guion</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Extracción profesional de personajes, localizaciones y escenas
-                    </p>
-                  </div>
-                  <div className="max-w-md mx-auto space-y-2">
-                    <Progress value={undefined} className="h-2 animate-pulse" />
-                    <div className="flex flex-col gap-1">
-                      <p className="text-xs text-muted-foreground animate-pulse">
-                        🎬 Identificando escenas INT./EXT.
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        👤 Clasificando personajes por rol narrativo
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        📍 Mapeando localizaciones únicas
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground/70 pt-2 border-t">
-                    No cierres esta página • Puede tardar hasta 2 minutos
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Importar Guion Existente
-              </CardTitle>
-              <CardDescription>
-                Sube un archivo o pega tu guion para analizarlo
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Tabs value={importMethod} onValueChange={(v) => setImportMethod(v as 'paste' | 'upload')}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="paste">Pegar texto</TabsTrigger>
-                  <TabsTrigger value="upload">Subir archivo</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="paste" className="mt-4">
-                  <Textarea
-                    placeholder="INT. CAFETERÍA - DÍA&#10;&#10;SARA (30s) espera nerviosa..."
-                    value={scriptText}
-                    onChange={(e) => setScriptText(e.target.value)}
-                    className="min-h-[300px] font-mono text-sm"
-                    disabled={scriptLocked || parsingImportedScript}
-                  />
-                </TabsContent>
-
-                <TabsContent value="upload" className="mt-4">
-                  {pdfProcessing ? (
-                    <div className="border-2 border-primary rounded-lg p-8 text-center bg-primary/5">
-                      <div className="relative mx-auto w-16 h-16 mb-4">
-                        <FileText className="h-10 w-10 mx-auto text-primary absolute inset-0 m-auto" />
-                        <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
-                        <div className="absolute inset-0 border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
-                      </div>
-                      <p className="font-medium text-primary mb-2">{uploadedFileName}</p>
-                      <div className="space-y-3 max-w-sm mx-auto">
-                        <Progress value={pdfProgress} className="h-2" />
-                        <p className="text-sm text-muted-foreground animate-pulse">Extrayendo texto del PDF...</p>
-                        <p className="text-xs text-muted-foreground/60">
-                          Esto puede tardar hasta 2 minutos para PDFs grandes
-                        </p>
-                        <Button type="button" variant="outline" size="sm" onClick={cancelPdfProcessing}>
-                          <Square className="h-4 w-4 mr-2" />
-                          Cancelar
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div 
-                      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                        parsingImportedScript 
-                          ? 'opacity-50 cursor-not-allowed' 
-                          : 'cursor-pointer hover:border-primary'
-                      }`}
-                      onClick={() => !parsingImportedScript && fileInputRef.current?.click()}
-                    >
-                      <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
-                      <p className="font-medium">
-                        {uploadedFileName || 'Arrastra un archivo o haz clic para seleccionar'}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Formatos permitidos: .txt, .pdf
-                      </p>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".txt,.pdf,text/plain,application/pdf"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                        disabled={parsingImportedScript}
-                      />
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">{scriptText.length} caracteres</p>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="gold" 
-                    onClick={analyzeImportedScript} 
-                    disabled={parsingImportedScript || scriptText.length < 200}
-                  >
-                    {parsingImportedScript ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Analizando...</>
-                    ) : (
-                      <><Sparkles className="w-4 h-4 mr-2" />Analizar Guion</>
-                    )}
-                  </Button>
-                  <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || parsingImportedScript || scriptText.length < 200}>
-                    {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
-                    Script Doctor
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-
         {/* SUMMARY TAB */}
         <TabsContent value="summary" className="space-y-4">
           {!generatedScript ? (
@@ -3445,11 +3537,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <BookOpen className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
                 <h3 className="font-medium text-lg mb-2">No hay guion generado</h3>
                 <p className="text-muted-foreground mb-4">
-                  Genera un guion desde la pestaña "Generar desde Idea"
+                  Genera o importa un guion desde la pestaña "Guion"
                 </p>
                 <Button variant="outline" onClick={() => setActiveTab('generate')}>
-                  <Lightbulb className="w-4 h-4 mr-2" />
-                  Ir a Generar
+                  <FileText className="w-4 h-4 mr-2" />
+                  Ir a Guion
                 </Button>
               </CardContent>
             </Card>
@@ -3461,18 +3553,34 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   <h3 className="font-semibold text-xl">{generatedScript.title || 'Guion Generado'}</h3>
                   <p className="text-sm text-muted-foreground">
                     {generatedScript.episodes?.length || 1} episodio(s) • {generatedScript.genre || ''} • {generatedScript.counts?.total_scenes || '?'} escenas totales
+                    {!isScriptComplete && <span className="text-amber-500 font-medium ml-2">• ⚠️ Faltan diálogos</span>}
                   </p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
-                  <Button onClick={exportCompletePDF} variant="outline">
-                    <FileDown className="w-4 h-4 mr-2" />
-                    Exportar PDF Profesional
-                  </Button>
-                  <Button onClick={segmentAllEpisodes} disabled={segmenting} variant="gold">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button 
+                          onClick={exportCompletePDF} 
+                          variant="outline"
+                          disabled={!isScriptComplete}
+                        >
+                          <FileDown className="w-4 h-4 mr-2" />
+                          Exportar PDF
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    {!isScriptComplete && (
+                      <TooltipContent>
+                        <p>Genera los diálogos primero para exportar el PDF completo</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                  <Button onClick={segmentAllEpisodes} disabled={segmenting || !isScriptComplete} variant="gold">
                     {segmenting ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Segmentando...</>
                     ) : (
-                      <><Scissors className="w-4 h-4 mr-2" />Segmentar Todas las Escenas</>
+                      <><ArrowRight className="w-4 h-4 mr-2" />Ir a Producción</>
                     )}
                   </Button>
                 </div>
@@ -4912,29 +5020,139 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           </Card>
         </TabsContent>
 
-        {/* DOCTOR TAB - Mejorar Guión */}
+        {/* MEJORAS TAB - 3 Clear Improvement Options */}
         <TabsContent value="doctor" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Stethoscope className="w-5 h-5 text-blue-500" />
-                    Mejorar Guión
-                    {doctorScore !== null && (
-                      <Badge variant={doctorScore >= 80 ? 'default' : doctorScore >= 60 ? 'secondary' : 'destructive'}>
-                        Score: {doctorScore}/100
-                      </Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription>Análisis y mejora de guión y diálogos con sugerencias accionables</CardDescription>
+          {/* Three Improvement Options */}
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* Option 1: Mejorar Guion */}
+            <Card className="border-border hover:border-primary/50 transition-colors">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <div className="p-2 bg-blue-500/10 rounded-lg">
+                    <FileText className="w-5 h-5 text-blue-500" />
+                  </div>
+                  Guion
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>• Estructura narrativa</li>
+                  <li>• Arcos de personaje</li>
+                  <li>• Ritmo y pacing</li>
+                  <li>• Coherencia de trama</li>
+                </ul>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => analyzeWithDoctor(['structure', 'character', 'pacing'])}
+                  disabled={analyzing || (!generatedScript && scriptText.length < 200)}
+                >
+                  {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
+                  Analizar Guion
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Option 2: Mejorar Diálogos */}
+            <Card className="border-border hover:border-primary/50 transition-colors">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <div className="p-2 bg-amber-500/10 rounded-lg">
+                    <Users className="w-5 h-5 text-amber-500" />
+                  </div>
+                  Diálogos
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>• Naturalidad del habla</li>
+                  <li>• Voces distintivas</li>
+                  <li>• Subtexto y tensión</li>
+                  <li>• Exposición sutil</li>
+                </ul>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => analyzeWithDoctor(['dialogue'])}
+                  disabled={analyzing || (!generatedScript && scriptText.length < 200)}
+                >
+                  {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
+                  Analizar Diálogos
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Option 3: Mejorar Producción */}
+            <Card className="border-border hover:border-primary/50 transition-colors">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <div className="p-2 bg-green-500/10 rounded-lg">
+                    <Clapperboard className="w-5 h-5 text-green-500" />
+                  </div>
+                  Producción
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>• Cinematografía visual</li>
+                  <li>• Descripciones de acción</li>
+                  <li>• Continuidad visual</li>
+                  <li>• Transiciones de escena</li>
+                </ul>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => analyzeWithDoctor(['visual', 'continuity'])}
+                  disabled={analyzing || (!generatedScript && scriptText.length < 200)}
+                >
+                  {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Stethoscope className="w-4 h-4 mr-2" />}
+                  Analizar Producción
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Full Analysis Button */}
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="pt-4 pb-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Stethoscope className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Análisis Completo</p>
+                    <p className="text-sm text-muted-foreground">
+                      Analiza todos los aspectos: estructura, diálogos y producción
+                    </p>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || (!generatedScript && scriptText.length < 200)}>
-                    {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-                    Analizar
+                <div className="flex items-center gap-2">
+                  {doctorScore !== null && (
+                    <Badge variant={doctorScore >= 80 ? 'default' : doctorScore >= 60 ? 'secondary' : 'destructive'}>
+                      Score: {doctorScore}/100
+                    </Badge>
+                  )}
+                  <Button 
+                    variant="gold"
+                    onClick={() => analyzeWithDoctor()}
+                    disabled={analyzing || (!generatedScript && scriptText.length < 200)}
+                  >
+                    {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                    Análisis Completo
                   </Button>
-                  {doctorSuggestions.length > 0 && (
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Suggestions Results */}
+          {doctorSuggestions.length > 0 && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">Sugerencias de Mejora</CardTitle>
+                  <div className="flex gap-2">
                     <Button 
                       onClick={applyDoctorSuggestions} 
                       disabled={applyingDoctor || !generatedScript || selectedSuggestions.size === 0}
@@ -4942,11 +5160,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       {applyingDoctor ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
                       Aplicar ({selectedSuggestions.size})
                     </Button>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            {doctorSuggestions.length > 0 && (
+              </CardHeader>
               <CardContent>
                 {/* Select all / none controls */}
                 <div className="flex items-center justify-between mb-3 pb-3 border-b">
@@ -5035,8 +5251,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </ScrollArea>
               </CardContent>
-            )}
-          </Card>
+            </Card>
+          )}
         </TabsContent>
 
         {/* HISTORY TAB */}
