@@ -1,5 +1,6 @@
 // Auto Target Calculator for Script Generation
 // Based on format, duration, complexity, and genre
+// V2.0 - Calibrated to industry standards: 1 página ≈ 1 minuto ≈ 1 escena
 
 export interface TargetInputs {
   format: 'film' | 'series';
@@ -8,6 +9,12 @@ export interface TargetInputs {
   episodeDurationMin?: number;
   complexity: 'simple' | 'medium' | 'high';
   genre: string;
+}
+
+export interface SceneLengthDistribution {
+  short_pct: number;   // escenas < 1 min
+  medium_pct: number;  // escenas 1-2 min
+  long_pct: number;    // escenas > 2 min
 }
 
 export interface CalculatedTargets {
@@ -22,9 +29,41 @@ export interface CalculatedTargets {
   scenes_per_episode?: number;
   scenes_target?: number;
   dialogue_action_ratio: string;
+  scene_length_distribution?: SceneLengthDistribution;
 }
 
 const clamp = (x: number, min: number, max: number) => Math.min(Math.max(x, min), max);
+
+/**
+ * Get scene length distribution based on genre
+ * Industry standard distributions for pacing variety
+ */
+function getSceneLengthDistribution(genre: string): SceneLengthDistribution {
+  const genreLower = genre.toLowerCase();
+  
+  // Action/Thriller: more short scenes for faster pacing
+  if (['action', 'thriller', 'horror'].includes(genreLower)) {
+    return { short_pct: 35, medium_pct: 45, long_pct: 20 };
+  }
+  
+  // Drama/Romance: more long scenes for character development
+  if (['drama', 'romance'].includes(genreLower)) {
+    return { short_pct: 20, medium_pct: 45, long_pct: 35 };
+  }
+  
+  // Comedy: balanced with slight short bias for punch
+  if (['comedy'].includes(genreLower)) {
+    return { short_pct: 30, medium_pct: 50, long_pct: 20 };
+  }
+  
+  // Sci-Fi/Fantasy: balanced for world-building
+  if (['sci-fi', 'fantasy'].includes(genreLower)) {
+    return { short_pct: 25, medium_pct: 45, long_pct: 30 };
+  }
+  
+  // Default balanced distribution
+  return { short_pct: 25, medium_pct: 50, long_pct: 25 };
+}
 
 export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
   const { format, duration, episodesCount, episodeDurationMin, complexity, genre } = inputs;
@@ -45,15 +84,21 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
   };
 
   const dialogue_action_ratio = dialogueActionByGenre[genre.toLowerCase()] || dialogueActionByGenre['default'];
+  const scene_length_distribution = getSceneLengthDistribution(genre);
 
   if (format === 'film') {
     const M = duration || 100;
     
-    // Scenes
-    const scenes_target = clamp(Math.round(M / 2), 35, 80);
+    // RECALIBRADO: 1 min ≈ 0.88 escenas (considerando variación de duración)
+    // 90 min = ~79 escenas, 120 min = ~106, 150 min = ~132
+    const scenes_target = clamp(Math.round(M * 0.88), 60, 150);
     
-    // Locations
-    const locations_min = clamp(Math.round(M / 10), 6, 18);
+    // RECALIBRADO: Más localizaciones basadas en duración
+    // 90 min = ~11 locs, 120 min = ~15, 150 min = ~19
+    const locations_min = clamp(Math.round(M / 8), 8, 25);
+    
+    // Duration factor for scaling characters (100 min = base)
+    const durationFactor = Math.max(0.8, Math.min(1.5, M / 100));
     
     // Characters by complexity
     let protagonists_min: number, supporting_min: number, extras_min: number;
@@ -62,8 +107,8 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
     switch (complexity) {
       case 'simple':
         protagonists_min = 2;
-        supporting_min = 6;
-        extras_min = 8;
+        supporting_min = Math.round(6 * durationFactor);
+        extras_min = Math.round(8 * durationFactor);
         setpieces_min = 2;
         subplots_min = 1;
         twists_min = 2;
@@ -71,8 +116,8 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
         break;
       case 'high':
         protagonists_min = 3;
-        supporting_min = 12;
-        extras_min = 18;
+        supporting_min = Math.round(12 * durationFactor);
+        extras_min = Math.round(18 * durationFactor);
         setpieces_min = 5;
         subplots_min = 4;
         twists_min = 4;
@@ -80,8 +125,8 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
         break;
       default: // medium
         protagonists_min = 3;
-        supporting_min = 9;
-        extras_min = 12;
+        supporting_min = Math.round(9 * durationFactor);
+        extras_min = Math.round(12 * durationFactor);
         setpieces_min = 3;
         subplots_min = 2;
         twists_min = 3;
@@ -98,18 +143,26 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
       subplots_min,
       twists_min,
       scenes_target,
-      dialogue_action_ratio
+      dialogue_action_ratio,
+      scene_length_distribution
     };
   } else {
     // Series
     const E = episodesCount || 6;
     const D = episodeDurationMin || 45;
     
-    // Scenes per episode
-    const scenes_per_episode = clamp(Math.round(D / 2.2), 10, 22);
+    // RECALIBRADO: 1 min ≈ 0.9 escenas
+    // 30 min = ~27 escenas, 45 min = ~40, 60 min = ~54
+    // Estructura TV típica: Teaser (1-2), Acto 1 (6-8), Acto 2 (8-10), Acto 3 (6-8), Tag (1-2)
+    const scenes_per_episode = clamp(Math.round(D * 0.9), 20, 65);
     
-    // Locations (across season)
-    const locations_min = clamp(Math.round((E * D) / 25), 8, 30);
+    // RECALIBRADO: Más localizaciones por minuto de contenido
+    // 6 eps x 30 min = 180 min total → ~15 locs
+    // 10 eps x 60 min = 600 min total → ~50 locs
+    const locations_min = clamp(Math.round((E * D) / 12), 10, 50);
+    
+    // Duration factor for scaling characters (45 min = base)
+    const durationFactor = Math.max(0.8, Math.min(1.5, D / 45));
     
     // Characters by complexity
     let protagonists_min: number, supporting_min: number, extras_min: number;
@@ -118,8 +171,8 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
     switch (complexity) {
       case 'simple':
         protagonists_min = 2;
-        supporting_min = 10;
-        extras_min = 14;
+        supporting_min = Math.round(10 * durationFactor);
+        extras_min = Math.round(14 * durationFactor);
         setpieces_min = E; // 1 per episode
         subplots_min = 3;
         twists_min = 1; // per episode
@@ -127,8 +180,8 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
         break;
       case 'high':
         protagonists_min = 5;
-        supporting_min = 20;
-        extras_min = 40;
+        supporting_min = Math.round(20 * durationFactor);
+        extras_min = Math.round(40 * durationFactor);
         setpieces_min = E + 4;
         subplots_min = 9;
         twists_min = 3; // per episode
@@ -136,8 +189,8 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
         break;
       default: // medium
         protagonists_min = 3;
-        supporting_min = 14;
-        extras_min = 24;
+        supporting_min = Math.round(14 * durationFactor);
+        extras_min = Math.round(24 * durationFactor);
         setpieces_min = E + 2;
         subplots_min = 5;
         twists_min = 2; // per episode
@@ -154,7 +207,8 @@ export function calculateAutoTargets(inputs: TargetInputs): CalculatedTargets {
       subplots_min,
       twists_min,
       scenes_per_episode,
-      dialogue_action_ratio
+      dialogue_action_ratio,
+      scene_length_distribution
     };
   }
 }
@@ -274,6 +328,7 @@ export interface BatchConfig {
 
 /**
  * Calculate dynamic batch config based on complexity and quality tier
+ * Now calibrated to new scene counts (30 min ≈ 27 scenes)
  */
 export function calculateDynamicBatches(
   targets: CalculatedTargets,
@@ -284,7 +339,9 @@ export function calculateDynamicBatches(
 ): BatchConfig {
   const baseDuration = 45;
   const actualDuration = durationMin || baseDuration;
-  const durationMultiplier = Math.max(0.7, Math.min(2, actualDuration / baseDuration));
+  
+  // Use actual scenes_per_episode if available
+  const estimatedScenes = targets.scenes_per_episode || Math.round(actualDuration * 0.9);
   
   let complexityScore = complexity === 'simple' ? 20 : complexity === 'medium' ? 50 : 80;
   
@@ -301,29 +358,25 @@ export function calculateDynamicBatches(
   const tierConfig = QUALITY_TIERS[qualityTier];
   const delayMs = tierConfig.delayBetweenBatchesMs;
   
-  let baseBatches: number;
-  let baseScenesPerBatch: number;
-  
+  // Calculate batches based on target scenes
+  // Aim for 4-6 scenes per batch for best quality
+  let scenesPerBatch: number;
   if (complexityScore <= 30) {
-    baseBatches = 3;
-    baseScenesPerBatch = 5;
+    scenesPerBatch = 6;
   } else if (complexityScore <= 60) {
-    baseBatches = 4;
-    baseScenesPerBatch = 4;
+    scenesPerBatch = 5;
   } else if (complexityScore <= 80) {
-    baseBatches = 5;
-    baseScenesPerBatch = 3;
+    scenesPerBatch = 4;
   } else {
-    baseBatches = 6;
-    baseScenesPerBatch = 3;
+    scenesPerBatch = 3;
   }
   
-  const batchesPerEpisode = Math.max(2, Math.min(12, Math.round(baseBatches * durationMultiplier)));
+  const batchesPerEpisode = Math.max(3, Math.min(15, Math.ceil(estimatedScenes / scenesPerBatch)));
   
   return {
     batchesPerEpisode,
-    scenesPerBatch: baseScenesPerBatch,
+    scenesPerBatch,
     delayBetweenBatchesMs: delayMs,
-    estimatedScenesTotal: batchesPerEpisode * baseScenesPerBatch
+    estimatedScenesTotal: batchesPerEpisode * scenesPerBatch
   };
 }
