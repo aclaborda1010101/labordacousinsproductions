@@ -6,14 +6,20 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Accepts both frontend format (number, heading, characters_present) 
+// and backend format (scene_number, slugline, characters)
 interface Scene {
-  scene_number: number;
-  slugline: string;
+  scene_number?: number;
+  number?: number;
+  slugline?: string;
+  heading?: string;
   summary?: string;
   action?: string;
   characters?: string[];
+  characters_present?: string[];
   mood?: string;
   dialogue?: any[];
+  [key: string]: any; // Allow other fields to pass through
 }
 
 interface GenerateDialoguesRequest {
@@ -177,20 +183,45 @@ serve(async (req) => {
       });
     }
 
+    // Normalize scene fields to handle both frontend and backend formats
+    const normalizeScene = (s: Scene) => {
+      const sceneNo = s.scene_number ?? s.number ?? 0;
+      const slugline = s.slugline ?? s.heading ?? '';
+      // Clean characters: filter out garbage like "FIN", numbers, etc.
+      const rawCharacters = s.characters ?? s.characters_present ?? [];
+      const characters = rawCharacters.filter(c => 
+        c && 
+        typeof c === 'string' && 
+        c.length > 1 && 
+        !/^\d+$/.test(c) && 
+        !['FIN', 'CONTINUARÁ', 'END'].includes(c.toUpperCase())
+      );
+      return { sceneNo, slugline, characters, original: s };
+    };
+
     // Filter scenes that need dialogue (have characters but no dialogue yet)
-    const scenesNeedingDialogue = scenes.filter(s => {
-      const hasCharacters = s.characters && s.characters.length > 0;
-      const hasDialogue = s.dialogue && s.dialogue.length > 0;
-      return hasCharacters && !hasDialogue;
-    });
+    const scenesNeedingDialogue = scenes
+      .map(normalizeScene)
+      .filter(n => {
+        const hasCharacters = n.characters.length > 0;
+        const hasDialogue = n.original.dialogue && Array.isArray(n.original.dialogue) && n.original.dialogue.length > 0;
+        return hasCharacters && !hasDialogue;
+      });
 
     if (scenesNeedingDialogue.length === 0) {
       console.log('[generate-dialogues-batch] No scenes need dialogue generation');
+      // Log why - helps debugging
+      const allNormalized = scenes.map(normalizeScene);
+      console.log('[generate-dialogues-batch] Scene analysis:', allNormalized.map(n => ({
+        sceneNo: n.sceneNo,
+        chars: n.characters.length,
+        hasDialogue: !!(n.original.dialogue && Array.isArray(n.original.dialogue) && n.original.dialogue.length > 0)
+      })));
       return new Response(JSON.stringify({ 
         success: true, 
         scenes: scenes, // Return original scenes unchanged
         generated_count: 0,
-        message: 'No scenes needed dialogue generation'
+        message: 'No scenes needed dialogue generation (all already have dialogues or no characters)'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -199,13 +230,13 @@ serve(async (req) => {
     console.log(`[generate-dialogues-batch] Generating dialogues for ${scenesNeedingDialogue.length} scenes`);
 
     // Build user prompt with scene details
-    const scenesData = scenesNeedingDialogue.map(s => ({
-      scene_number: s.scene_number,
-      slugline: s.slugline,
-      summary: s.summary || '',
-      action: s.action || '',
-      characters: s.characters || [],
-      mood: s.mood || '',
+    const scenesData = scenesNeedingDialogue.map(n => ({
+      scene_number: n.sceneNo,
+      slugline: n.slugline,
+      summary: n.original.summary || n.original.action || '',
+      action: n.original.action || '',
+      characters: n.characters,
+      mood: n.original.mood || '',
     }));
 
     const userPrompt = `Genera diálogos para las siguientes ${scenesNeedingDialogue.length} escenas.
@@ -242,9 +273,10 @@ Devuelve SOLO JSON válido con el formato especificado.`;
       }
     }
 
-    // Update original scenes with generated dialogues
+    // Update original scenes with generated dialogues - use normalized scene number
     const updatedScenes = scenes.map(scene => {
-      const generated = dialogueMap.get(scene.scene_number);
+      const normalized = normalizeScene(scene);
+      const generated = dialogueMap.get(normalized.sceneNo);
       if (generated) {
         return {
           ...scene,
