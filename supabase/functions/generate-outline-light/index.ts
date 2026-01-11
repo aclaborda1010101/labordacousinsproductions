@@ -629,6 +629,7 @@ serve(async (req) => {
   const startTime = Date.now();
 
   try {
+    const body = await req.json();
     const { 
       idea, 
       genre, 
@@ -638,12 +639,13 @@ serve(async (req) => {
       language, 
       narrativeMode, 
       densityTargets,
-      generationModel = 'rapido',
-      project_id,
       disableDensity = false // V3.0: Skip density constraints when true
-    } = await req.json();
+    } = body;
 
-    projectId = project_id || null;
+    // V3.1: Accept both qualityTier (frontend) and generationModel (legacy) for compatibility
+    const generationModel = body.qualityTier || body.generationModel || 'rapido';
+    // V3.1: Accept both projectId (frontend) and project_id (legacy) for compatibility
+    projectId = body.projectId || body.project_id || null;
 
     if (!idea) {
       return v3Error('VALIDATION_ERROR', 'Idea requerida', 400);
