@@ -26,19 +26,19 @@ interface ModelConfig {
 
 const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
-    apiModel: 'openai/gpt-5-mini',
+    apiModel: 'google/gemini-3-flash-preview', // Fastest, good for quick outlines
     provider: 'lovable',
     maxTokens: 6000,
     temperature: 0.8
   },
   profesional: {
-    apiModel: 'openai/gpt-5',
+    apiModel: 'google/gemini-2.5-flash', // Balanced speed and quality
     provider: 'lovable',
     maxTokens: 8000,
     temperature: 0.7
   },
   hollywood: {
-    apiModel: 'openai/gpt-5.2',
+    apiModel: 'google/gemini-2.5-pro', // Best quality, slower but reliable
     provider: 'lovable',
     maxTokens: 10000,
     temperature: 0.8
@@ -47,7 +47,7 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
 
 // Fallback model when primary model fails parsing
 const FALLBACK_MODEL_CONFIG: ModelConfig = {
-  apiModel: 'google/gemini-3-pro-preview',
+  apiModel: 'google/gemini-3-flash-preview', // Fast fallback
   provider: 'lovable',
   maxTokens: 8000,
   temperature: 0.7
