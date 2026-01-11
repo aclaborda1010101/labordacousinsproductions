@@ -33,7 +33,9 @@ import {
   History,
   RefreshCw,
   Sparkles,
+  Layers,
 } from 'lucide-react';
+import MultiAnglePreview, { AngleVariant } from './MultiAnglePreview';
 
 interface LocationsListProps {
   projectId: string;

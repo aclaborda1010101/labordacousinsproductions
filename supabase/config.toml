@@ -256,3 +256,11 @@ verify_jwt = true
 [functions.improve-character-qc]
 # Gateway JWT disabled; function enforces auth internally
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MULTI-ANGLE GENERATION (V3.4 - Meta-Prompting Pipeline)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.generate-angle-variants]
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
