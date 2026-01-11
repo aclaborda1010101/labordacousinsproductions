@@ -177,8 +177,9 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
       console.log('[generate-location] FAL request queued:', requestId);
       
       let attempts = 0;
-      const maxAttempts = 40; // ~120 seconds max with increasing delays
+      const maxAttempts = 60; // ~180 seconds max with increasing delays (increased from 40)
       let pollDelay = 2000; // Start with 2 seconds
+      let lastStatus = '';
       
       while (attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, pollDelay));
@@ -206,7 +207,12 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
             continue;
           }
           
-          console.log(`[generate-location] Poll attempt ${attempts + 1}, status: ${status.status}`);
+          lastStatus = status.status;
+          
+          // Log every 5 attempts to reduce noise
+          if (attempts % 5 === 0) {
+            console.log(`[generate-location] Poll attempt ${attempts + 1}/${maxAttempts}, status: ${status.status}`);
+          }
           
           if (status.status === 'COMPLETED') {
             // Get result
@@ -232,7 +238,7 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
             }
             
             const generationTimeMs = Date.now() - startTime;
-            console.log(`[generate-location] Complete in ${generationTimeMs}ms`);
+            console.log(`[generate-location] Complete in ${generationTimeMs}ms after ${attempts + 1} polls`);
             
             // Log generation cost
             const userId = extractUserId(req.headers.get('authorization'));
@@ -257,7 +263,8 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
                 weather,
                 engine: 'flux-1.1-pro-ultra',
                 generatedAt: new Date().toISOString(),
-                generationTimeMs
+                generationTimeMs,
+                pollAttempts: attempts + 1
               }
             }), {
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -278,12 +285,14 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
       }
       
       // Return partial success with retry hint instead of hard error
-      console.error(`[generate-location] Timeout after ${attempts} attempts, requestId: ${requestId}`);
+      const elapsedSecs = Math.round((Date.now() - startTime) / 1000);
+      console.error(`[generate-location] Timeout after ${attempts} attempts (${elapsedSecs}s), last status: ${lastStatus}, requestId: ${requestId}`);
       return new Response(JSON.stringify({ 
-        error: 'La generación está tomando más tiempo de lo esperado. Por favor, reintenta.',
+        error: `La generación está tomando más tiempo de lo esperado (${elapsedSecs}s). Por favor, reintenta.`,
         code: 'GENERATION_TIMEOUT',
         requestId,
-        retryable: true
+        retryable: true,
+        retryAfterSeconds: 5
       }), {
         status: 504, // Gateway Timeout instead of 500
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -830,6 +830,30 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       stopGenerating(location.id);
     }
   };
+  // Controlled parallel generation with batching and auto-retry
+  const MAX_PARALLEL = 2; // Reduced from 3 to prevent FAL saturation
+  const MAX_RETRIES = 2;
+  const BATCH_DELAY_MS = 500;
+
+  const handleGenerateWithRetry = async (location: Location, attempt = 1): Promise<void> => {
+    try {
+      await handleGenerate(location);
+    } catch (err: any) {
+      // Check if error is retryable (504 timeout)
+      const isRetryable = err?.message?.includes('504') || 
+                          err?.message?.includes('timeout') ||
+                          err?.code === 'GENERATION_TIMEOUT';
+      
+      if (isRetryable && attempt < MAX_RETRIES) {
+        console.log(`[LocationsList] Retrying ${location.name}, attempt ${attempt + 1}/${MAX_RETRIES}`);
+        toast.info(`Reintentando ${location.name}...`);
+        await new Promise(r => setTimeout(r, 2000)); // Wait before retry
+        return handleGenerateWithRetry(location, attempt + 1);
+      }
+      throw err;
+    }
+  };
+
   const handleGenerateAll = async () => {
     const toGenerate = locations.filter(l => !l.current_run_id);
     if (toGenerate.length === 0) {
@@ -837,18 +861,28 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       return;
     }
 
-    if (!confirm(`¿Generar ${toGenerate.length} localizaciones en paralelo?`)) return;
+    if (!confirm(`¿Generar ${toGenerate.length} localizaciones? (${MAX_PARALLEL} en paralelo)`)) return;
 
     setGeneratingAll(true);
     toast.info(`Iniciando generación de ${toGenerate.length} localizaciones...`);
     
-    // Parallel generation with Promise.allSettled
-    await Promise.allSettled(
-      toGenerate.map(loc => handleGenerate(loc))
-    );
+    // Process in batches to avoid FAL saturation
+    for (let i = 0; i < toGenerate.length; i += MAX_PARALLEL) {
+      const batch = toGenerate.slice(i, i + MAX_PARALLEL);
+      
+      await Promise.allSettled(
+        batch.map(loc => handleGenerateWithRetry(loc))
+      );
+      
+      // Delay between batches
+      if (i + MAX_PARALLEL < toGenerate.length) {
+        await new Promise(r => setTimeout(r, BATCH_DELAY_MS));
+      }
+    }
     
     setGeneratingAll(false);
     toast.success('Generación masiva completada');
+    fetchLocations();
   };
 
   // Get first image URL from reference_urls
