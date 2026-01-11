@@ -1,4 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { 
+  HOLLYWOOD_SYSTEM_PROMPT, 
+  EPISODIC_ADDITIONS,
+  getGenreRules,
+  getExamplesBlock 
+} from "../_shared/hollywood-writing-dna.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,37 +23,50 @@ interface ScreenplayRequest {
   targets: any;
   language?: string;
   referenceScripts?: ReferenceScript[];
+  genre?: string;
 }
 
-const SYSTEM_PROMPT = `Eres BLOCKBUSTER_FORGE_WRITER generando un GUION LISTO PARA RODAR desde un outline aprobado.
+// Build the complete system prompt with Hollywood DNA
+function buildSystemPrompt(genre?: string): string {
+  return `${HOLLYWOOD_SYSTEM_PROMPT}
 
-TU MISIÓN: Convertir el outline en un guion profesional completo con TODOS los diálogos.
+${EPISODIC_ADDITIONS}
 
-FORMATO DE SALIDA OBLIGATORIO (JSON ESTRICTO):
+${genre ? getGenreRules(genre) : ''}
+
+═══════════════════════════════════════════════════════════════════════════════
+FORMATO DE SALIDA (JSON ESTRUCTURADO)
+═══════════════════════════════════════════════════════════════════════════════
+
+Devuelve un objeto JSON con la siguiente estructura:
+
 {
   "title": "string",
-  "logline": "string",
-  "synopsis": "string",
+  "logline": "string (máximo 2 oraciones, gancho + conflicto + stakes)",
+  "synopsis": "string (150-300 palabras, cinematográfico)",
   "genre": "string",
-  "tone": "string",
-  "themes": ["array"],
+  "tone": "string (específico: 'thriller noir con toques de dark comedy')",
+  "themes": ["array de temas"],
   
   "characters": [
     {
-      "name": "string",
+      "name": "string (MAYÚSCULAS)",
       "role": "protagonist | antagonist | supporting | recurring | extra_with_lines",
-      "description": "string (física + personalidad)",
-      "arc": "string",
-      "voice_notes": "string (cómo habla)"
+      "description": "string (física + psicológica en 2-3 oraciones VISUALES)",
+      "arc": "string (de qué a qué cambia)",
+      "voice_notes": "string (vocabulario, ritmo, tics verbales)",
+      "secret": "string (algo que oculta, opcional)",
+      "flaw": "string (debilidad explotable)"
     }
   ],
   
   "locations": [
     {
       "name": "string",
-      "type": "INT | EXT",
-      "description": "string visual",
-      "atmosphere": "string"
+      "type": "INT | EXT | INT/EXT",
+      "description": "string visual (luz, textura, sonido ambiental)",
+      "atmosphere": "string (emoción que evoca)",
+      "story_function": "string (qué representa narrativamente)"
     }
   ],
   
@@ -55,39 +74,53 @@ FORMATO DE SALIDA OBLIGATORIO (JSON ESTRICTO):
     {
       "name": "string",
       "importance": "key | recurring | background",
-      "description": "string"
+      "description": "string visual",
+      "story_function": "string (por qué importa)"
     }
   ],
   
   "episodes": [
     {
       "episode_number": 1,
-      "title": "string",
-      "synopsis": "string",
-      "summary": "string corto",
+      "title": "string (evocador, no descriptivo)",
+      "synopsis": "string (100-150 palabras)",
+      "summary": "string (2-3 oraciones)",
       "duration_min": number,
+      "cold_open": "string (descripción del hook inicial)",
+      "cliffhanger": "string (cómo termina el episodio)",
       "scenes": [
         {
           "scene_number": 1,
           "slugline": "INT./EXT. LOCALIZACIÓN - DÍA/NOCHE",
-          "summary": "string (resumen de la escena)",
-          "characters": ["nombres"],
-          "action": "string (descripción visual cinematográfica)",
+          "summary": "string (50-80 palabras, conflicto claro)",
+          "characters": ["NOMBRES EN MAYÚSCULAS"],
+          
+          "action": "string (120-200 palabras, visual, presente, específico)",
+          
           "dialogue": [
             {
               "character": "NOMBRE",
-              "parenthetical": "(opcional)",
-              "line": "El diálogo completo"
+              "parenthetical": "(beat) | (off) | (V.O.) | (CONT'D) | null",
+              "line": "El diálogo con subtexto"
             }
           ],
-          "music_cue": "string opcional",
-          "sfx_cue": "string opcional",
-          "vfx": ["array opcional"],
+          
+          "subtext": "string (qué quieren realmente los personajes)",
+          "scene_turn": "string (qué cambia durante la escena)",
+          "hook_to_next": "string (última imagen o línea que conecta)",
+          
+          "music_cue": "string | null",
+          "sfx_cue": "string | null",
+          "vfx": ["array | null"],
+          
           "mood": "string",
+          "pacing": "frenético | tenso | contemplativo | explosivo",
+          
           "continuity_anchors": {
             "time_of_day": "string",
-            "weather": "string",
-            "character_states": {}
+            "weather": "string | null",
+            "character_states": { "NOMBRE": "estado emocional" },
+            "props_in_scene": ["array"]
           }
         }
       ]
@@ -96,9 +129,9 @@ FORMATO DE SALIDA OBLIGATORIO (JSON ESTRICTO):
   
   "music_design": [
     {
-      "name": "string",
-      "type": "theme | ambient | action | emotional",
-      "description": "string",
+      "name": "string (nombre del tema)",
+      "type": "theme | ambient | action | emotional | diegetic",
+      "description": "string (instrumentación, mood)",
       "scenes": ["dónde se usa"]
     }
   ],
@@ -106,7 +139,7 @@ FORMATO DE SALIDA OBLIGATORIO (JSON ESTRICTO):
   "sfx_design": [
     {
       "category": "string",
-      "description": "string",
+      "description": "string específico",
       "scenes": ["dónde se usa"]
     }
   ],
@@ -114,8 +147,9 @@ FORMATO DE SALIDA OBLIGATORIO (JSON ESTRICTO):
   "vfx_requirements": [
     {
       "name": "string",
-      "type": "CG | composite | practical",
+      "type": "CG | composite | practical | hybrid",
       "description": "string",
+      "complexity": "simple | medium | complex",
       "scenes": ["dónde se usa"]
     }
   ],
@@ -133,24 +167,51 @@ FORMATO DE SALIDA OBLIGATORIO (JSON ESTRICTO):
     "total_dialogue_lines": number
   },
   
+  "writing_notes": {
+    "tone_reference": "string (película o serie de referencia tonal)",
+    "visual_style": "string (descripción del look)",
+    "pacing_philosophy": "string (cómo fluye el ritmo)",
+    "thematic_throughline": "string (qué conecta todo)"
+  },
+  
   "qc_notes": ["observaciones de producción"]
 }
 
-REGLAS DEL GUION:
-1. CADA ESCENA con diálogos COMPLETOS (no resúmenes)
-2. Acciones visuales, cinematográficas, en presente
-3. Diálogos naturales con subtexto
-4. Parentéticos solo cuando necesarios
-5. Music/SFX cues específicos y producibles
-6. Continuity anchors para mantener coherencia
-7. Show don't tell
+REGLAS CRÍTICAS DEL GUION:
 
-NUNCA:
-- Resumir diálogos
-- Usar "etc" o "continúa..."
-- Escenas sin conflicto
-- Diálogos expositivos
-- Clichés de IA`;
+1. DIÁLOGOS COMPLETOS: Cada escena con TODAS las líneas escritas. NUNCA resumir.
+
+2. VOCES DISTINTIVAS: Cada personaje debe tener vocabulario, ritmo y tics únicos.
+   - El CEO habla diferente que el conserje
+   - El adolescente diferente del anciano
+   - El nervioso diferente del seguro
+
+3. SUBTEXTO OBLIGATORIO: Los personajes NUNCA dicen lo que quieren directamente.
+   - Quieren dinero → hablan de "seguridad"
+   - Quieren poder → hablan de "responsabilidad"
+   - Quieren amor → hablan de "tiempo juntos"
+
+4. ACCIONES CINEMATOGRÁFICAS: Describe lo que VEO y OIGO, no lo que pienso.
+   ❌ "Se siente nervioso"
+   ✅ "Sus dedos tamborilean la mesa. Mira la puerta."
+
+5. HOOKS CONSTANTES: Cada escena termina en tensión o pregunta.
+   ❌ "Buenas noches. —Buenas noches."
+   ✅ "Buenas noches. —(beat) Te mentí sobre algo."
+
+6. COLD OPENS IMPACTANTES: Primera escena = gancho que engancha antes de títulos.
+
+7. SHOW DON'T TELL: Información a través de conflicto, no explicación.
+
+ANTI-PATRONES PROHIBIDOS:
+- "Sus ojos reflejan..." → INFILMABLE
+- "Hay algo en su mirada..." → VAGO
+- "La tensión era palpable..." → ABSTRACTO  
+- "Como sabes, Juan..." → EXPOSICIÓN TORPE
+- "De alguna manera supo..." → TELEPATÍA
+- Todos hablan igual → SIN VOCES
+- Escenas sin conflicto → ABURRIDO`;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -158,7 +219,7 @@ serve(async (req) => {
   }
 
   try {
-    const { outline, targets, language, referenceScripts }: ScreenplayRequest = await req.json();
+    const { outline, targets, language, referenceScripts, genre }: ScreenplayRequest = await req.json();
 
     if (!outline) {
       return new Response(
@@ -167,97 +228,146 @@ serve(async (req) => {
       );
     }
 
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY no está configurada');
+    // Use Lovable AI Gateway
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY no está configurada');
     }
+
+    // Build system prompt with Hollywood DNA
+    const detectedGenre = genre || outline.genre || 'drama';
+    const systemPrompt = buildSystemPrompt(detectedGenre);
 
     // Build professional screenplay reference section
     let referenceSection = '';
     if (referenceScripts && referenceScripts.length > 0) {
       referenceSection = `
+═══════════════════════════════════════════════════════════════════════════════
+GUIONES DE REFERENCIA DEL USUARIO
+═══════════════════════════════════════════════════════════════════════════════
 
---- EJEMPLOS DE GUIONES PROFESIONALES ---
-Estudia estos extractos de guiones premiados para entender:
-- Formato correcto de sluglines (INT./EXT. LOCALIZACIÓN - DÍA/NOCHE)
-- Cómo escribir acciones descriptivas cinematográficas
-- Formato y ritmo de diálogos profesionales
-- Parentéticos usados correctamente
+Estudia estos extractos para entender el TONO y ESTILO que el usuario busca:
 
 `;
       for (const ref of referenceScripts.slice(0, 2)) {
         const excerpt = ref.content.slice(0, 4000);
-        referenceSection += `=== ${ref.title} ===
+        referenceSection += `=== ${ref.title} ${ref.genre ? `(${ref.genre})` : ''} ===
+${ref.notes ? `Notas del usuario: ${ref.notes}\n` : ''}
 ${excerpt}
 
 `;
       }
-      referenceSection += `--- FIN DE EJEMPLOS ---
-IMPORTANTE: Tu output debe tener la misma calidad profesional que estos ejemplos.
+      referenceSection += `═══════════════════════════════════════════════════════════════════════════════
 `;
     }
 
-    const userPrompt = `GENERA EL GUION COMPLETO LISTO PARA RODAR:
+    // Add Hollywood examples
+    const hollywoodExamples = getExamplesBlock();
 
-OUTLINE APROBADO:
+    const userPrompt = `GENERA EL GUION COMPLETO CON CALIDAD HOLLYWOOD:
+
+═══════════════════════════════════════════════════════════════════════════════
+OUTLINE APROBADO
+═══════════════════════════════════════════════════════════════════════════════
+
 ${JSON.stringify(outline, null, 2)}
 
-TARGETS:
+═══════════════════════════════════════════════════════════════════════════════
+TARGETS DE PRODUCCIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
 ${JSON.stringify(targets, null, 2)}
 
-IDIOMA: ${language || 'es-ES'}
+${hollywoodExamples}
 ${referenceSection}
-Genera el guion COMPLETO con TODOS los diálogos. Cada escena debe tener:
-- Slugline en formato estándar: INT./EXT. LOCALIZACIÓN - DÍA/NOCHE
-- Acción descriptiva cinematográfica (visual, presente, sin adjetivos excesivos)
-- Diálogos COMPLETOS de todos los personajes (naturales, con subtexto)
-- Parentéticos solo cuando son necesarios
-- Cues de música/SFX específicos
-- Continuity anchors para producción
 
-Devuelve SOLO JSON válido.`;
+═══════════════════════════════════════════════════════════════════════════════
+INSTRUCCIONES FINALES
+═══════════════════════════════════════════════════════════════════════════════
 
-    console.log('Generating screenplay from outline:', outline.title);
+IDIOMA: ${language || 'es-ES'}
+GÉNERO: ${detectedGenre}
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+EJECUTA:
+1. Lee el outline completo y entiende la historia
+2. Desarrolla cada escena con diálogos COMPLETOS y acción CINEMATOGRÁFICA
+3. Asegúrate de que cada personaje tenga VOZ DISTINTIVA
+4. Incluye SUBTEXTO en cada intercambio de diálogo
+5. Termina cada escena con HOOK hacia la siguiente
+6. El Cold Open debe ENGANCHAR en las primeras 3 líneas
+
+CALIDAD ESPERADA: Nivel HBO/Netflix/A24. No un primer borrador, un shooting script.
+
+Devuelve SOLO JSON válido sin comentarios ni markdown.`;
+
+    console.log('Generating Hollywood-tier screenplay from outline:', outline.title);
+
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5',
+        model: 'google/gemini-2.5-pro',
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.35,
-        max_tokens: 16000,
-        response_format: { type: 'json_object' }
+        temperature: 0.7,
+        max_completion_tokens: 32000
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI error:', response.status, errorText);
+      console.error('Lovable AI error:', response.status, errorText);
+      
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded' }),
+          JSON.stringify({ error: 'Rate limit exceeded. Try again in a moment.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      throw new Error(`OpenAI error: ${response.status}`);
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'Payment required - add credits to Lovable AI' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      throw new Error(`Lovable AI error: ${response.status}`);
     }
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
 
     if (!content) {
-      throw new Error('No content from OpenAI');
+      throw new Error('No content from Lovable AI');
     }
 
-    const screenplay = JSON.parse(content);
-    console.log('Screenplay generated:', screenplay.title, 'scenes:', screenplay.counts?.total_scenes);
+    // Parse JSON from response (handle markdown code blocks)
+    let screenplay;
+    try {
+      // Try direct parse
+      screenplay = JSON.parse(content);
+    } catch {
+      // Try extracting from markdown code block
+      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        screenplay = JSON.parse(jsonMatch[1]);
+      } else {
+        // Try finding JSON object
+        const start = content.indexOf('{');
+        const end = content.lastIndexOf('}');
+        if (start !== -1 && end !== -1 && end > start) {
+          screenplay = JSON.parse(content.slice(start, end + 1));
+        } else {
+          throw new Error('Could not parse screenplay JSON');
+        }
+      }
+    }
+
+    console.log('Hollywood-tier screenplay generated:', screenplay.title, 'scenes:', screenplay.counts?.total_scenes);
 
     return new Response(
       JSON.stringify({ success: true, screenplay }),
