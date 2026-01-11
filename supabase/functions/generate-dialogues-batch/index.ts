@@ -6,20 +6,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Accepts both frontend format (number, heading, characters_present) 
-// and backend format (scene_number, slugline, characters)
 interface Scene {
-  scene_number?: number;
-  number?: number;
-  slugline?: string;
-  heading?: string;
+  scene_number: number;
+  slugline: string;
   summary?: string;
   action?: string;
   characters?: string[];
-  characters_present?: string[];
   mood?: string;
   dialogue?: any[];
-  [key: string]: any; // Allow other fields to pass through
 }
 
 interface GenerateDialoguesRequest {
@@ -43,8 +37,6 @@ REGLAS DE DIÁLOGO:
 6. Parentéticos solo cuando son esenciales (tono, acción física)
 7. Evitar clichés y frases de IA genéricas
 8. Acciones intercaladas entre diálogos para ritmo visual
-9. Si una escena NO tiene personajes listados, INFIERE los personajes más probables del contexto narrativo de la escena
-10. Si es una escena puramente visual/de transición sin posibilidad de diálogo (ej: paisaje, montaje), devuelve dialogue: [] pero incluye action_beats descriptivos
 
 FORMATO DE SALIDA (JSON):
 {
@@ -67,8 +59,7 @@ NUNCA:
 - Resumir diálogos con "continúan hablando..."
 - Usar exposición forzada
 - Hacer que todos hablen igual
-- Ignorar el tono/género de la producción
-- Omitir escenas del input (devuelve TODAS, incluso las visuales con dialogue vacío)`;
+- Ignorar el tono/género de la producción`;
 
 const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
@@ -186,45 +177,20 @@ serve(async (req) => {
       });
     }
 
-    // Normalize scene fields to handle both frontend and backend formats
-    const normalizeScene = (s: Scene) => {
-      const sceneNo = s.scene_number ?? s.number ?? 0;
-      const slugline = s.slugline ?? s.heading ?? '';
-      // Clean characters: filter out garbage like "FIN", numbers, etc.
-      const rawCharacters = s.characters ?? s.characters_present ?? [];
-      const characters = rawCharacters.filter(c => 
-        c && 
-        typeof c === 'string' && 
-        c.length > 1 && 
-        !/^\d+$/.test(c) && 
-        !['FIN', 'CONTINUARÁ', 'END'].includes(c.toUpperCase())
-      );
-      return { sceneNo, slugline, characters, original: s };
-    };
-
-    // Filter scenes that need dialogue - ANY scene without dialogue, regardless of characters
-    // The LLM will infer characters from context or mark as action-only scene
-    const scenesNeedingDialogue = scenes
-      .map(normalizeScene)
-      .filter(n => {
-        const hasDialogue = n.original.dialogue && Array.isArray(n.original.dialogue) && n.original.dialogue.length > 0;
-        return !hasDialogue; // Any scene without dialogue
-      });
+    // Filter scenes that need dialogue (have characters but no dialogue yet)
+    const scenesNeedingDialogue = scenes.filter(s => {
+      const hasCharacters = s.characters && s.characters.length > 0;
+      const hasDialogue = s.dialogue && s.dialogue.length > 0;
+      return hasCharacters && !hasDialogue;
+    });
 
     if (scenesNeedingDialogue.length === 0) {
       console.log('[generate-dialogues-batch] No scenes need dialogue generation');
-      // Log why - helps debugging
-      const allNormalized = scenes.map(normalizeScene);
-      console.log('[generate-dialogues-batch] Scene analysis:', allNormalized.map(n => ({
-        sceneNo: n.sceneNo,
-        chars: n.characters.length,
-        hasDialogue: !!(n.original.dialogue && Array.isArray(n.original.dialogue) && n.original.dialogue.length > 0)
-      })));
       return new Response(JSON.stringify({ 
         success: true, 
         scenes: scenes, // Return original scenes unchanged
         generated_count: 0,
-        message: 'No scenes needed dialogue generation (all already have dialogues or no characters)'
+        message: 'No scenes needed dialogue generation'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -233,13 +199,13 @@ serve(async (req) => {
     console.log(`[generate-dialogues-batch] Generating dialogues for ${scenesNeedingDialogue.length} scenes`);
 
     // Build user prompt with scene details
-    const scenesData = scenesNeedingDialogue.map(n => ({
-      scene_number: n.sceneNo,
-      slugline: n.slugline,
-      summary: n.original.summary || n.original.action || '',
-      action: n.original.action || '',
-      characters: n.characters,
-      mood: n.original.mood || '',
+    const scenesData = scenesNeedingDialogue.map(s => ({
+      scene_number: s.scene_number,
+      slugline: s.slugline,
+      summary: s.summary || '',
+      action: s.action || '',
+      characters: s.characters || [],
+      mood: s.mood || '',
     }));
 
     const userPrompt = `Genera diálogos para las siguientes ${scenesNeedingDialogue.length} escenas.
@@ -276,10 +242,9 @@ Devuelve SOLO JSON válido con el formato especificado.`;
       }
     }
 
-    // Update original scenes with generated dialogues - use normalized scene number
+    // Update original scenes with generated dialogues
     const updatedScenes = scenes.map(scene => {
-      const normalized = normalizeScene(scene);
-      const generated = dialogueMap.get(normalized.sceneNo);
+      const generated = dialogueMap.get(scene.scene_number);
       if (generated) {
         return {
           ...scene,
