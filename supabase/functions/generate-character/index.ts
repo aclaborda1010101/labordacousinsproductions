@@ -1895,13 +1895,32 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
 
   const durationMs = Date.now() - startTime;
 
+  // Determine valid reference anchor ID (only set if anchor actually exists)
+  let validReferenceAnchorId: string | null = null;
+  if (hasReference && primaryAnchor?.id) {
+    validReferenceAnchorId = primaryAnchor.id;
+  } else if (createdAnchorId) {
+    // Verify the created anchor exists before referencing it
+    const { data: anchorExists } = await supabase
+      .from('reference_anchors')
+      .select('id')
+      .eq('id', createdAnchorId)
+      .maybeSingle();
+    
+    if (anchorExists) {
+      validReferenceAnchorId = createdAnchorId;
+    } else {
+      console.warn(`[SLOT UPDATE] Created anchor ${createdAnchorId} not found, skipping FK reference`);
+    }
+  }
+
   // Update slot in database
   const { error: updateError } = await supabase
     .from('character_pack_slots')
     .update({
       image_url: finalImageUrl,
       prompt_text: prompt,
-      reference_anchor_id: hasReference && primaryAnchor ? primaryAnchor.id : createdAnchorId,
+      reference_anchor_id: validReferenceAnchorId,
       qc_score: qcResult.score,
       qc_issues: qcResult.issues,
       fix_notes: qcResult.fixNotes,
@@ -1909,7 +1928,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       generation_metadata: {
         engine: IMAGE_ENGINE,
         generation_mode: generationMode,
-        reference_used: hasReference && primaryAnchor ? primaryAnchor.id : null,
+        reference_used: validReferenceAnchorId,
         created_anchor: createdAnchorId,
         generated_at: new Date().toISOString(),
         duration_ms: durationMs
