@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -57,8 +57,57 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [customAnalysis, setCustomAnalysis] = useState<any>(null);
   const [styleDescription, setStyleDescription] = useState('');
+  const [hasExistingStyle, setHasExistingStyle] = useState(false);
+
+  // Load existing style on mount
+  useEffect(() => {
+    const fetchExistingStyle = async () => {
+      setIsLoading(true);
+      try {
+        const { data: stylePack, error } = await supabase
+          .from('style_packs')
+          .select('*')
+          .eq('project_id', projectId)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (stylePack?.style_config) {
+          const config = stylePack.style_config as any;
+          setHasExistingStyle(true);
+          
+          // Hydrate preset
+          if (config.presetId) {
+            setSelectedPreset(config.presetId);
+          }
+          
+          // Hydrate custom analysis
+          if (config.customAnalysis) {
+            setCustomAnalysis(config.customAnalysis);
+          }
+          
+          // Hydrate reference image
+          if (config.referenceImageUrl) {
+            setReferenceImage(config.referenceImageUrl);
+          }
+          
+          // Hydrate description
+          if (stylePack.description) {
+            setStyleDescription(stylePack.description);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading existing style:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExistingStyle();
+  }, [projectId]);
 
   // Current style config based on preset or analysis
   const currentConfig = selectedPreset 
@@ -188,13 +237,33 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
     setCustomAnalysis(null);
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="p-6 flex flex-col items-center justify-center min-h-[300px] gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <span className="text-muted-foreground">Cargando estilo visual...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+      {/* Existing style banner */}
+      {hasExistingStyle && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/30">
+          <Check className="w-4 h-4 text-green-500" />
+          <span className="text-sm text-green-700 dark:text-green-300">
+            Tienes un estilo visual configurado. Puedes modificarlo si lo deseas.
+          </span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
           <Sparkles className="w-4 h-4" />
-          Paso 1: Define tu Estilo Visual
+          {hasExistingStyle ? 'Editar Estilo Visual' : 'Paso 1: Define tu Estilo Visual'}
         </div>
         <h2 className="text-2xl font-bold">Biblia Visual</h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
