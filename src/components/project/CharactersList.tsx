@@ -22,6 +22,7 @@ import { useEntityProgress } from '@/hooks/useEntityProgress';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import CharacterPackMVP from './CharacterPackMVP';
 import NextStepNavigator from './NextStepNavigator';
+import ProfilePreviewDialog from './ProfilePreviewDialog';
 import { resolveImageModel } from '@/config/models';
 import { fetchCharacterImages, CharacterImageData } from '@/lib/resolveCharacterImage';
 import { CharacterWorkflowGuide, getWorkflowStep } from './CharacterWorkflowGuide';
@@ -37,6 +38,7 @@ import {
   RefreshCw,
   Edit2,
   Check,
+  Sparkles,
 } from 'lucide-react';
 
 interface CharactersListProps {
@@ -261,6 +263,19 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   const [previewCharacter, setPreviewCharacter] = useState<{
     character: Character;
     imageUrl: string;
+  } | null>(null);
+  const [enrichingAll, setEnrichingAll] = useState(false);
+
+  // Profile preview state for characters without bio
+  const [profilePreview, setProfilePreview] = useState<{
+    character: Character;
+    description: string;
+    profileJson: any;
+    isLoading: boolean;
+    profileDetails?: {
+      style?: string;
+      characterRole?: string;
+    };
   } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -497,12 +512,18 @@ export default function CharactersList({ projectId }: CharactersListProps) {
   };
 
   // Primary action handler based on status
+  // Primary action handler - show preview for characters without bio
   const handlePrimaryAction = async (character: Character) => {
     const status = getEntityStatus(character.current_run_id, character.accepted_run_id, character.canon_asset_id);
 
     switch (status) {
       case 'not_generated':
-        await handleGenerate(character);
+        // If no bio, show profile preview first
+        if (!character.bio?.trim()) {
+          await handleGenerateWithPreview(character);
+        } else {
+          await handleGenerate(character);
+        }
         break;
       case 'generated':
         await handleAccept(character);
@@ -513,6 +534,155 @@ export default function CharactersList({ projectId }: CharactersListProps) {
       case 'canon':
         await handleRegenerate(character);
         break;
+    }
+  };
+
+  // Generate profile with preview for characters without bio
+  const handleGenerateWithPreview = async (character: Character) => {
+    setProfilePreview({
+      character,
+      description: '',
+      profileJson: null,
+      isLoading: true,
+    });
+
+    try {
+      const { data: projectData } = await supabase
+        .from('projects')
+        .select('visual_style, animation_type, bible')
+        .eq('id', projectId)
+        .single();
+      
+      const visualStyle = (projectData as any)?.visual_style || 'realistic';
+      const animationType = (projectData as any)?.animation_type || 'live_action';
+      const bible = (projectData as any)?.bible;
+      
+      const { data: profileData, error: profileError } = await supabase.functions.invoke('entity-builder', {
+        body: {
+          entityType: 'character',
+          name: character.name,
+          description: character.role || '',
+          context: {
+            role: character.role,
+            characterRole: character.character_role,
+            arc: character.arc,
+          },
+          projectStyle: {
+            genre: bible?.genre || 'Drama',
+            tone: bible?.tone || 'Cinematográfico',
+            visualStyle,
+            animationType,
+          },
+          language: 'es',
+        },
+      });
+      
+      if (!profileError && profileData?.entity?.profile) {
+        const profile = profileData.entity.profile;
+        const generatedBio = profile.description || profile.physical_description || `${character.name} - personaje de la producción.`;
+        
+        setProfilePreview({
+          character,
+          description: generatedBio,
+          profileJson: profileData.entity,
+          isLoading: false,
+          profileDetails: {
+            style: visualStyle,
+            characterRole: character.character_role || 'recurring',
+          },
+        });
+      } else {
+        setProfilePreview({
+          character,
+          description: `${character.name}. ${character.role || 'Personaje de la producción.'}`,
+          profileJson: null,
+          isLoading: false,
+          profileDetails: {
+            characterRole: character.character_role || 'recurring',
+          },
+        });
+      }
+    } catch (err) {
+      console.error('Profile generation error:', err);
+      setProfilePreview({
+        character,
+        description: `${character.name}. ${character.role || 'Personaje de la producción.'}`,
+        profileJson: null,
+        isLoading: false,
+      });
+    }
+  };
+
+  // Confirm profile and generate image
+  const handleConfirmProfileAndGenerate = async (editedDescription: string) => {
+    if (!profilePreview) return;
+    
+    const character = profilePreview.character;
+    const profileJson = profilePreview.profileJson;
+    
+    await supabase.from('characters').update({
+      bio: editedDescription,
+      profile_json: profileJson,
+    }).eq('id', character.id);
+    
+    setProfilePreview(null);
+    
+    // Generate with the confirmed bio
+    await handleGenerateWithBio({ ...character, bio: editedDescription })
+  };
+
+  // Generate image with a given bio
+  const handleGenerateWithBio = async (character: Character) => {
+    startGenerating(character.id);
+    
+    const taskId = addTask({
+      type: 'character_generation',
+      title: `Generando ${character.name}`,
+      projectId,
+      entityId: character.id,
+      entityName: character.name,
+    });
+
+    try {
+      updateTask(taskId, { progress: 30, description: 'Generando imagen...' });
+      
+      const prompt = [character.name, character.bio || '', character.role || ''].filter(Boolean).join('. ');
+      
+      const { data, error } = await supabase.functions.invoke('generate-run', {
+        body: {
+          projectId,
+          type: 'character',
+          phase: 'exploration',
+          engine: resolveImageModel(),
+          engineSelectedBy: 'auto',
+          prompt,
+          context: `Character: ${character.name}`,
+          params: {
+            characterId: character.id,
+            characterName: character.name,
+            slotType: 'base_look',
+            allowTextToImage: true,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
+
+      if (data?.runId) {
+        await supabase.from('characters').update({ current_run_id: data.runId }).eq('id', character.id);
+      }
+
+      completeTask(taskId, data);
+      toast.success(`${character.name} generado`);
+      fetchCharacters();
+    } catch (err) {
+      console.error('Generation error:', err);
+      failTask(taskId, err instanceof Error ? err.message : 'Error al generar');
+      toast.error(`Error al generar ${character.name}`);
+    } finally {
+      stopGenerating(character.id);
     }
   };
 
@@ -984,6 +1154,20 @@ export default function CharactersList({ projectId }: CharactersListProps) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Profile Preview Dialog for characters without bio */}
+      <ProfilePreviewDialog
+        open={!!profilePreview}
+        onOpenChange={(open) => !open && setProfilePreview(null)}
+        entityName={profilePreview?.character.name || ''}
+        entityType="character"
+        generatedDescription={profilePreview?.description || ''}
+        profileDetails={profilePreview?.profileDetails}
+        isLoading={profilePreview?.isLoading}
+        onConfirm={handleConfirmProfileAndGenerate}
+        onCancel={() => setProfilePreview(null)}
+        onRegenerate={() => profilePreview && handleGenerateWithPreview(profilePreview.character)}
+      />
     </div>
   );
 }

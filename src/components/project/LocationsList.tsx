@@ -19,6 +19,7 @@ import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useEntityProgress } from '@/hooks/useEntityProgress';
 import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import NextStepNavigator from './NextStepNavigator';
+import ProfilePreviewDialog from './ProfilePreviewDialog';
 import {
   Plus,
   MapPin,
@@ -31,6 +32,7 @@ import {
   Image,
   History,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
 
 interface LocationsListProps {
@@ -79,6 +81,20 @@ export default function LocationsList({ projectId }: LocationsListProps) {
   const [saving, setSaving] = useState(false);
   const [importingFromScript, setImportingFromScript] = useState(false);
   const [scriptLocations, setScriptLocations] = useState<any[]>([]);
+  const [enrichingAll, setEnrichingAll] = useState(false);
+
+  // Profile preview state
+  const [profilePreview, setProfilePreview] = useState<{
+    location: Location;
+    description: string;
+    profileJson: any;
+    isLoading: boolean;
+    profileDetails?: {
+      style?: string;
+      timeOfDay?: string;
+      locationType?: string;
+    };
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -246,7 +262,8 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
     switch (status) {
       case 'not_generated':
-        await handleGenerate(location);
+        // Show preview dialog for locations without description
+        await handleGenerateWithPreview(location);
         break;
       case 'generated':
         await handleAccept(location);
@@ -294,10 +311,201 @@ export default function LocationsList({ projectId }: LocationsListProps) {
     return upper.match(/(HABITACIÓN|OFICINA|COCINA|BAÑO|SALA|COMEDOR|DORMITORIO|APARTAMENTO|CASA|PISO|HOTEL|BAR|RESTAURANTE|HOSPITAL|TIENDA)/i) !== null;
   };
 
+  // Generate profile and show preview dialog
+  const handleGenerateWithPreview = async (location: Location) => {
+    let description = (location.description || '').trim();
+    
+    // If already has description, generate directly
+    if (description) {
+      await handleGenerateImage(location, description);
+      return;
+    }
+
+    // Show loading state in preview dialog
+    setProfilePreview({
+      location,
+      description: '',
+      profileJson: null,
+      isLoading: true,
+    });
+
+    try {
+      const cleanName = location.name
+        .replace(/[-–]\s*(MAÑANA|TARDE|NOCHE|DÍA|CONTINÚA|CONTINUOUS|DAY|NIGHT|DAWN|DUSK)/gi, '')
+        .replace(/^(INT\.|EXT\.|INT |EXT )/i, '')
+        .trim();
+      
+      const timeOfDay = extractTimeFromName(location.name);
+      const isInterior = isInteriorLocation(location.name);
+      
+      // Fetch project visual style
+      const { data: projectData } = await supabase
+        .from('projects')
+        .select('visual_style, animation_type, bible')
+        .eq('id', projectId)
+        .single();
+      
+      const visualStyle = (projectData as any)?.visual_style || 'realistic';
+      const animationType = (projectData as any)?.animation_type || 'live_action';
+      const bible = (projectData as any)?.bible;
+      
+      const { data: profileData, error: profileError } = await supabase.functions.invoke('entity-builder', {
+        body: {
+          entityType: 'location',
+          name: cleanName,
+          context: {
+            timeOfDay,
+            locationType: isInterior ? 'interior' : 'exterior',
+            projectId,
+          },
+          projectStyle: {
+            genre: bible?.genre || bible?.projectType || 'Drama',
+            tone: bible?.tone || 'Cinematográfico',
+            visualStyle,
+            animationType,
+            realism_level: visualStyle,
+          },
+        },
+      });
+      
+      if (!profileError && (profileData?.entity?.profile || profileData?.profile)) {
+        const profile = profileData?.entity?.profile || profileData?.profile;
+        const generatedDescription = buildDescriptionFromProfile(profile);
+        
+        setProfilePreview({
+          location,
+          description: generatedDescription,
+          profileJson: profileData?.entity || profileData,
+          isLoading: false,
+          profileDetails: {
+            style: visualStyle,
+            timeOfDay,
+            locationType: isInterior ? 'Interior' : 'Exterior',
+          },
+        });
+      } else {
+        // Fallback description
+        const fallbackDescription = `${isInterior ? 'Interior' : 'Exterior'} - ${cleanName}. ${
+          timeOfDay === 'night' ? 'Escena nocturna.' : 
+          timeOfDay === 'dusk' ? 'Iluminación de atardecer.' : 
+          timeOfDay === 'dawn' ? 'Luz de amanecer.' : 
+          'Luz diurna.'
+        }`;
+        
+        setProfilePreview({
+          location,
+          description: fallbackDescription,
+          profileJson: null,
+          isLoading: false,
+          profileDetails: {
+            style: visualStyle,
+            timeOfDay,
+            locationType: isInterior ? 'Interior' : 'Exterior',
+          },
+        });
+      }
+    } catch (err) {
+      console.error('Profile generation error:', err);
+      const timeOfDay = extractTimeFromName(location.name);
+      const isInterior = isInteriorLocation(location.name);
+      const cleanName = location.name
+        .replace(/[-–]\s*(MAÑANA|TARDE|NOCHE|DÍA|CONTINÚA|CONTINUOUS|DAY|NIGHT|DAWN|DUSK)/gi, '')
+        .replace(/^(INT\.|EXT\.|INT |EXT )/i, '')
+        .trim();
+      
+      setProfilePreview({
+        location,
+        description: `${isInterior ? 'Interior' : 'Exterior'} - ${cleanName}. Escenario cinematográfico.`,
+        profileJson: null,
+        isLoading: false,
+        profileDetails: {
+          timeOfDay,
+          locationType: isInterior ? 'Interior' : 'Exterior',
+        },
+      });
+    }
+  };
+
+  // Confirm profile and generate image
+  const handleConfirmProfileAndGenerate = async (editedDescription: string) => {
+    if (!profilePreview) return;
+    
+    const location = profilePreview.location;
+    const profileJson = profilePreview.profileJson;
+    
+    // Save edited description to location
+    await supabase.from('locations').update({
+      description: editedDescription,
+      profile_json: profileJson,
+    }).eq('id', location.id);
+    
+    setProfilePreview(null);
+    
+    // Now generate image with the confirmed description
+    await handleGenerateImage(location, editedDescription, profileJson);
+  };
+
+  // Generate image with a given description
+  const handleGenerateImage = async (location: Location, description: string, profileJson?: any) => {
+    startGenerating(location.id);
+    
+    const taskId = addTask({
+      type: 'location_generation',
+      title: `Generando ${location.name}`,
+      projectId,
+      entityId: location.id,
+      entityName: location.name,
+    });
+
+    try {
+      updateTask(taskId, { progress: 40, description: 'Generando imagen...' });
+      
+      const prompt = description || location.name;
+      const timeOfDay = extractTimeFromName(location.name);
+      
+      const { data, error } = await supabase.functions.invoke('generate-run', {
+        body: {
+          projectId,
+          type: 'location',
+          phase: 'exploration',
+          engine: 'fal-ai/flux-pro/v1.1-ultra',
+          engineSelectedBy: 'auto',
+          prompt,
+          context: `Location: ${location.name}`,
+          params: {
+            locationName: location.name,
+            viewAngle: 'establishing',
+            timeOfDay,
+            weather: 'clear',
+            profileJson,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
+
+      if (data?.runId) {
+        await supabase.from('locations').update({ current_run_id: data.runId }).eq('id', location.id);
+      }
+
+      completeTask(taskId, data);
+      toast.success(`${location.name} generada`);
+      fetchLocations();
+    } catch (err) {
+      console.error('Generation error:', err);
+      failTask(taskId, err instanceof Error ? err.message : 'Error al generar');
+      toast.error(`Error al generar ${location.name}`);
+    } finally {
+      stopGenerating(location.id);
+    }
+  };
+
+  // Legacy handleGenerate for "Generate All" (no preview, direct generation)
   const handleGenerate = async (location: Location) => {
     startGenerating(location.id);
     
-    // Register task in the global background task system
     const taskId = addTask({
       type: 'location_generation',
       title: `Generando ${location.name}`,
@@ -312,7 +520,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       let description = (location.description || '').trim();
       let profileJson = null;
       
-      // If no description, generate profile with entity-builder first
       if (!description) {
         updateTask(taskId, { progress: 15, description: 'Generando perfil visual...' });
         
@@ -324,7 +531,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
         const timeOfDay = extractTimeFromName(location.name);
         const isInterior = isInteriorLocation(location.name);
         
-        // Fetch project visual style
         const { data: projectData } = await supabase
           .from('projects')
           .select('visual_style, animation_type, bible')
@@ -360,7 +566,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
             profileJson = profile;
             description = buildDescriptionFromProfile(profile);
             
-            // Save generated profile and description to location
             await supabase.from('locations').update({
               description,
               profile_json: profileData?.entity || profileData,
@@ -369,7 +574,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
         } catch (profileErr) {
           console.warn('Could not generate profile, creating fallback description:', profileErr);
           
-          // Fallback: generate minimal description from name
           const fallbackDescription = `${isInterior ? 'Interior' : 'Exterior'} - ${cleanName}. ${
             timeOfDay === 'night' ? 'Escena nocturna.' : 
             timeOfDay === 'dusk' ? 'Iluminación de atardecer.' : 
@@ -385,7 +589,6 @@ export default function LocationsList({ projectId }: LocationsListProps) {
         }
       }
       
-      // Use description or fallback to name
       const prompt = description || location.name;
       const timeOfDay = extractTimeFromName(location.name);
 
@@ -405,7 +608,7 @@ export default function LocationsList({ projectId }: LocationsListProps) {
             viewAngle: 'establishing',
             timeOfDay,
             weather: 'clear',
-            profileJson, // Pass profile for richer generation
+            profileJson,
           },
         },
       });
@@ -427,6 +630,92 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       toast.error(`Error al generar ${location.name}`);
     } finally {
       stopGenerating(location.id);
+    }
+  };
+
+  // Enrich all locations: regenerate profiles for all existing locations
+  const handleEnrichAllLocations = async () => {
+    const toEnrich = locations.filter(l => !l.description?.trim());
+    if (toEnrich.length === 0) {
+      toast.info('Todas las localizaciones ya tienen descripción');
+      return;
+    }
+
+    if (!confirm(`¿Enriquecer ${toEnrich.length} localizaciones con perfiles IA? Esto regenerará sus descripciones.`)) return;
+
+    setEnrichingAll(true);
+    toast.info(`Enriqueciendo ${toEnrich.length} localizaciones...`);
+    
+    // Fetch project style once
+    const { data: projectData } = await supabase
+      .from('projects')
+      .select('visual_style, animation_type, bible')
+      .eq('id', projectId)
+      .single();
+    
+    const visualStyle = (projectData as any)?.visual_style || 'realistic';
+    const animationType = (projectData as any)?.animation_type || 'live_action';
+    const bible = (projectData as any)?.bible;
+
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const location of toEnrich) {
+      try {
+        const cleanName = location.name
+          .replace(/[-–]\s*(MAÑANA|TARDE|NOCHE|DÍA|CONTINÚA|CONTINUOUS|DAY|NIGHT|DAWN|DUSK)/gi, '')
+          .replace(/^(INT\.|EXT\.|INT |EXT )/i, '')
+          .trim();
+        
+        const timeOfDay = extractTimeFromName(location.name);
+        const isInterior = isInteriorLocation(location.name);
+        
+        const { data: profileData, error: profileError } = await supabase.functions.invoke('entity-builder', {
+          body: {
+            entityType: 'location',
+            name: cleanName,
+            context: {
+              timeOfDay,
+              locationType: isInterior ? 'interior' : 'exterior',
+              projectId,
+            },
+            projectStyle: {
+              genre: bible?.genre || bible?.projectType || 'Drama',
+              tone: bible?.tone || 'Cinematográfico',
+              visualStyle,
+              animationType,
+              realism_level: visualStyle,
+            },
+          },
+        });
+        
+        if (!profileError && (profileData?.entity?.profile || profileData?.profile)) {
+          const profile = profileData?.entity?.profile || profileData?.profile;
+          const description = buildDescriptionFromProfile(profile);
+          
+          await supabase.from('locations').update({
+            description,
+            profile_json: profileData?.entity || profileData,
+          }).eq('id', location.id);
+          
+          successCount++;
+        } else {
+          errorCount++;
+        }
+      } catch (err) {
+        console.error(`Error enriching ${location.name}:`, err);
+        errorCount++;
+      }
+    }
+
+    setEnrichingAll(false);
+    fetchLocations();
+    
+    if (successCount > 0) {
+      toast.success(`${successCount} localizaciones enriquecidas`);
+    }
+    if (errorCount > 0) {
+      toast.warning(`${errorCount} localizaciones no pudieron ser enriquecidas`);
     }
   };
   const handleAccept = async (location: Location) => {
@@ -595,6 +884,12 @@ export default function LocationsList({ projectId }: LocationsListProps) {
               {importingFromScript ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
               <span className="ml-2 hidden sm:inline">Importar del Guion ({scriptLocations.length})</span>
               <span className="ml-2 sm:hidden">Importar ({scriptLocations.length})</span>
+            </Button>
+          )}
+          {locations.length > 0 && locations.some(l => !l.description?.trim()) && (
+            <Button variant="outline" size="sm" onClick={handleEnrichAllLocations} disabled={enrichingAll}>
+              {enrichingAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              <span className="ml-2 hidden sm:inline">Enriquecer</span>
             </Button>
           )}
           {locations.length > 0 && (
@@ -850,6 +1145,20 @@ export default function LocationsList({ projectId }: LocationsListProps) {
           stats={`${locations.filter(l => l.canon_asset_id || l.accepted_run_id).length}/${locations.length} listas`}
         />
       )}
+
+      {/* Profile Preview Dialog */}
+      <ProfilePreviewDialog
+        open={!!profilePreview}
+        onOpenChange={(open) => !open && setProfilePreview(null)}
+        entityName={profilePreview?.location.name || ''}
+        entityType="location"
+        generatedDescription={profilePreview?.description || ''}
+        profileDetails={profilePreview?.profileDetails}
+        isLoading={profilePreview?.isLoading}
+        onConfirm={handleConfirmProfileAndGenerate}
+        onCancel={() => setProfilePreview(null)}
+        onRegenerate={() => profilePreview && handleGenerateWithPreview(profilePreview.location)}
+      />
     </div>
   );
 }
