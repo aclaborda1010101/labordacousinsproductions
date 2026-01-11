@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
+import { HOLLYWOOD_SYSTEM_PROMPT, getGenreRules, PROFESSIONAL_EXAMPLES } from "../_shared/hollywood-writing-dna.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,125 +19,102 @@ interface ModelConfig {
 
 const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
-    apiModel: 'openai/gpt-5-mini',
+    apiModel: 'google/gemini-2.5-flash',
     provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.7
   },
   profesional: {
-    apiModel: 'openai/gpt-5',
+    apiModel: 'google/gemini-2.5-pro',
     provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.75
   },
   hollywood: {
-    apiModel: 'openai/gpt-5.2',
+    apiModel: 'google/gemini-2.5-pro',
     provider: 'lovable',
-    maxTokens: 12000,
+    maxTokens: 20000,
     temperature: 0.75
   }
 };
 
-// MASTER SHOWRUNNER: Narrative mode specific instructions
+// MASTER SHOWRUNNER: Narrative mode specific instructions with Hollywood DNA
 const NARRATIVE_MODE_SCENE_RULES = {
-  serie_adictiva: `REGLAS SERIE ADICTIVA:
+  serie_adictiva: `REGLAS SERIE ADICTIVA (Estilo Breaking Bad/Succession):
 - Cada escena debe tener CONFLICTO visible (no implícito)
 - Diálogos con SUBTEXTO: lo no dicho importa tanto como lo dicho
 - Termina escenas con TENSIÓN o PREGUNTA sin resolver
 - Ritmo ALTO: entra tarde, sal temprano
-- Si es la última escena del batch 2: CLIFFHANGER del episodio`,
+- Si es la última escena del batch: CLIFFHANGER del episodio
+- VOCES DISTINTIVAS: cada personaje suena único`,
 
-  voz_de_autor: `REGLAS VOZ DE AUTOR:
+  voz_de_autor: `REGLAS VOZ DE AUTOR (Estilo Nolan/Villeneuve):
 - Mantén el TEMPO narrativo del outline (si es lento, respétalo)
 - Diálogos con DENSIDAD literaria (no explicativos)
 - Acciones que REVELAN en lugar de exponer
 - Cada escena debe resonar con los TEMAS del outline
-- Si hay iconos recurrentes, úsalos visualmente`,
+- Si hay iconos recurrentes, úsalos visualmente
+- Subtexto filosófico en cada intercambio`,
 
-  giro_imprevisible: `REGLAS GIRO IMPREVISIBLE:
+  giro_imprevisible: `REGLAS GIRO IMPREVISIBLE (Estilo The Usual Suspects/Gone Girl):
 - Incluye información que PARECE significar una cosa pero significa otra
 - Planta SEMILLAS de giros futuros (foreshadowing sutil)
 - Al menos una escena debe tener DOBLE LECTURA
 - Personajes pueden mentir o tener información que el espectador no tiene
-- Si es la última escena del batch 2: giro o revelación parcial que recontextualice`
+- Si es la última escena: giro o revelación que recontextualice`
 };
 
-// SHOOT-READY SYSTEM PROMPT
-const SHOOT_READY_SYSTEM_PROMPT = `Eres un Director de Fotografía y Script Supervisor profesional de alto nivel (nivel HBO/Netflix).
+// SHOOT-READY SYSTEM PROMPT with Hollywood DNA integration
+const SHOOT_READY_SYSTEM_PROMPT = `${HOLLYWOOD_SYSTEM_PROMPT}
 
-Tu trabajo es generar escenas SHOOT-READY con especificaciones técnicas COMPLETAS que un DP pueda ejecutar directamente.
-
-═══════════════════════════════════════════════════════════
-FORMATO OBLIGATORIO PARA CADA ESCENA
-═══════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════
+ESPECIFICACIONES TÉCNICAS SHOOT-READY (Para Director de Fotografía)
+═══════════════════════════════════════════════════════════════════════════════
 
 1. CAMERA SPECS COMPLETAS:
    - Lens específico (14mm, 24mm, 35mm, 50mm, 85mm, 100mm, 135mm, 200mm)
-   - Aperture exacto (f/1.4, f/1.8, f/2.0, f/2.8, f/4, f/5.6, f/8, f/11)
+   - Aperture exacto (f/1.4, f/1.8, f/2.0, f/2.8, f/4, f/5.6, f/8)
    - Framing type (ELS, LS, MLS, MS, MCU, CU, ECU, OTS, POV, TWO-SHOT, INSERT)
    - Movement description ESPECÍFICO (no genérico)
-   - Movement type (static, dolly in/out, crane, pan, tilt, handheld, steadicam, drone, tracking, whip pan, zoom)
-   - Frame rate (24fps standard, 60fps slight slow-mo, 120fps dramatic slow-mo)
-   - Aspect ratio (2.39:1 cinematic, 16:9 TV, 4:3 retro)
+   - Movement type (static, dolly in/out, crane, pan, tilt, handheld, steadicam, tracking)
+   - Frame rate (24fps standard, 60fps slow-mo, 120fps dramatic)
 
 2. VISUAL SPECIFICS (3-8 elementos):
    - Detalles CONCRETOS que el DP puede ejecutar
    - NO emociones abstractas ("se ve preocupado")
-   - SÍ elementos visuales específicos ("sudor visible en sienes", "reflejo de monitor en pupilas")
+   - SÍ elementos visuales específicos ("sudor visible en sienes", "reflejo en pupilas")
 
 3. ACTION BLOCKS (mínimo 6):
-   - Cada block con camera angle específico (WIDE, MEDIUM, CLOSE ON, ECU, OTS, POV, INSERT, TRACKING, CRANE, ESTABLISHING, AERIAL)
+   - Cada block con camera angle específico
    - Subject específico del encuadre
    - Máximo 4 líneas por block
    - Un beat visual por block
 
 4. LIGHTING SPECS COMPLETAS:
-   - Setup type (natural, three-point, high-key, low-key, silhouette, practical only, mixed)
-   - Key light: position (45° left/right, Rembrandt, Butterfly, Split, overhead), quality (soft/hard/diffused/direct), intensity (low/medium/high)
-   - Fill light: ratio (1:2, 1:4, etc.) si aplica
-   - Rim light: position (back left, back right, directly behind) si aplica
-   - Practicals en escena (nombre y color de temperatura)
-   - Color temperature (2700K tungsten, 3200K tungsten, 4000K cool white, 5600K daylight, 6500K overcast, 7000K+ cool blue)
+   - Setup type (natural, three-point, high-key, low-key, silhouette)
+   - Key light: position, quality (soft/hard), intensity
+   - Color temperature (2700K-7000K)
    - Mood description específico (mínimo 15 palabras)
 
 5. SOUND DESIGN ESPECÍFICO:
-   - Room tone específico del espacio
+   - Room tone del espacio
    - Ambient layers (mínimo 2)
-   - Foley específico (no genérico)
-   - SFX con descripción exacta (incluir frecuencias cuando sea relevante)
-   - Music cue si aplica
-   - Sound perspective (close, medium, distant, POV)
-   - Dialogue recording notes si hay algo especial
+   - Foley específico
+   - SFX con descripción exacta
 
 6. COLOR GRADING:
    - LUT base o style reference
-   - Saturation level (desaturated, normal, saturated, hyper-saturated)
-   - Contrast level (low, normal, high)
-   - Color tone específico (e.g., "cool blue teal shadows", "warm orange highlights")
-   - Notes específicas
+   - Saturation level
+   - Contrast level
+   - Color tone específico
 
 7. TRANSITION AL FINAL:
-   - Type exacto (CUT TO, HARD CUT, SMASH CUT, MATCH CUT, JUMP CUT, CROSS DISSOLVE, FADE TO BLACK, FADE FROM BLACK, FADE TO WHITE, WIPE, IRIS)
-   - Duration si aplica (0.5s, 1s, 2s)
-   - Description si es compleja
+   - Type exacto (CUT TO, SMASH CUT, MATCH CUT, DISSOLVE, FADE)
 
-═══════════════════════════════════════════════════════════
-EJEMPLOS CORRECTOS vs INCORRECTOS
-═══════════════════════════════════════════════════════════
+EJEMPLOS PROFESIONALES:
+${PROFESSIONAL_EXAMPLES.coldOpen.slice(0, 800)}
 
-✅ CORRECTO lens: "85mm portrait"
-❌ INCORRECTO: "standard lens"
-
-✅ CORRECTO movement: "Dolly in 6 inches over 3 seconds, following subject's hand"
-❌ INCORRECTO: "camera moves in"
-
-✅ CORRECTO visual_specifics: ["Iris café con reflejos de códigos", "Sudor visible en sienes", "Pestañas en foco perfecto, resto bokeh extremo"]
-❌ INCORRECTO: ["Elena preocupada", "Se ve tensión"]
-
-✅ CORRECTO lighting mood: "Clinical, cold, scientific atmosphere with blue-tinted practicals casting harsh geometric shadows"
-❌ INCORRECTO: "tense lighting"
-
-NUNCA uses términos genéricos como "normal", "standard", "moves", "lighting". Siempre sé ESPECÍFICO.`;
+NUNCA uses términos genéricos como "normal", "standard", "moves". Siempre sé ESPECÍFICO.`;
 
 // Tool schema for structured output
 const getToolSchema = (scenesPerBatch: number) => ({
