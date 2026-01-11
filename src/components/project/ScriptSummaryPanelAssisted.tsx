@@ -51,6 +51,7 @@ import {
   Wand2,
   Target,
   Package,
+  FileText,
 } from 'lucide-react';
 import { exportScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import { exportBibleSummaryPDF } from '@/lib/exportBibleSummaryPDF';
@@ -176,6 +177,10 @@ export function ScriptSummaryPanelAssisted({
   const [entitiesExtracted, setEntitiesExtracted] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [runningInBackground, setRunningInBackground] = useState(false);
+  
+  // Screenplay generation state
+  const [generatingScreenplay, setGeneratingScreenplay] = useState(false);
+  const [screenplayProgress, setScreenplayProgress] = useState({ current: 0, total: 0, phase: '' });
   
   // Bible counts (from actual database)
   const [bibleCharacterCount, setBibleCharacterCount] = useState<number>(0);
@@ -443,6 +448,95 @@ export function ScriptSummaryPanelAssisted({
     }
     setEditingEpisodeIndex(null);
   };
+
+  // Generate full screenplay with dialogues
+  const generateFullScreenplay = async () => {
+    if (!scriptData?.episodes?.length) return;
+    
+    setGeneratingScreenplay(true);
+    const totalEpisodes = scriptData.episodes.length;
+    let successCount = 0;
+    
+    try {
+      for (let i = 0; i < totalEpisodes; i++) {
+        const episode = scriptData.episodes[i];
+        const scenes = episode.scenes || [];
+        
+        // Skip episodes without scenes or already with dialogues
+        const scenesNeedingDialogue = scenes.filter((s: any) => !s.dialogue || s.dialogue.length === 0);
+        if (scenesNeedingDialogue.length === 0) {
+          successCount++;
+          continue;
+        }
+        
+        setScreenplayProgress({
+          current: i + 1,
+          total: totalEpisodes,
+          phase: `Generando diálogos para Episodio ${episode.episode_number}...`
+        });
+        
+        const { data, error } = await supabase.functions.invoke('generate-dialogues-batch', {
+          body: {
+            projectId,
+            scenes: scenes,
+            language: 'es',
+            tone: 'dramático',
+            genre: 'drama',
+          }
+        });
+        
+        if (error) {
+          console.error(`Error generando diálogos episodio ${episode.episode_number}:`, error);
+          toast.error(`Error en episodio ${episode.episode_number}`);
+        } else {
+          successCount++;
+          
+          // Update the script in database with new dialogues
+          if (data?.scenes) {
+            const { data: script } = await supabase
+              .from('scripts')
+              .select('id, parsed_json')
+              .eq('id', scriptData.id)
+              .single();
+            
+            if (script?.parsed_json) {
+              const parsed = script.parsed_json as any;
+              const updatedEpisodes = [...(parsed.episodes || [])];
+              if (updatedEpisodes[i]) {
+                updatedEpisodes[i] = { ...updatedEpisodes[i], scenes: data.scenes };
+              }
+              
+              await supabase
+                .from('scripts')
+                .update({ parsed_json: { ...parsed, episodes: updatedEpisodes } })
+                .eq('id', scriptData.id);
+            }
+          }
+        }
+      }
+      
+      if (successCount === totalEpisodes) {
+        toast.success('¡Screenplay completo generado con diálogos!');
+      } else {
+        toast.warning(`Generados ${successCount}/${totalEpisodes} episodios`);
+      }
+      
+      // Refresh page to show updated script
+      window.location.reload();
+      
+    } catch (err) {
+      console.error('Error generando screenplay:', err);
+      toast.error('Error al generar screenplay');
+    } finally {
+      setGeneratingScreenplay(false);
+      setScreenplayProgress({ current: 0, total: 0, phase: '' });
+    }
+  };
+  
+  // Check if screenplay needs dialogues
+  const needsDialogueGeneration = scriptData?.episodes?.some(ep => 
+    ep.scenes?.some((s: any) => !s.dialogue || s.dialogue.length === 0)
+  ) ?? false;
 
   // Extract entities to Bible
   const extractEntitiesToBible = async () => {
@@ -813,6 +907,54 @@ export function ScriptSummaryPanelAssisted({
           : undefined}
         mode={effectiveMode}
       />
+
+      {/* Screenplay Generation Card - Shows when dialogues are missing */}
+      {needsDialogueGeneration && (
+        <Card className="border-amber-500/30 bg-amber-500/5">
+          <CardContent className="pt-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-amber-500/20">
+                  <FileText className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-amber-700 dark:text-amber-300">
+                    Guion incompleto: faltan diálogos
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    El outline actual no tiene diálogos escritos
+                  </p>
+                </div>
+              </div>
+              
+              <Button 
+                onClick={generateFullScreenplay}
+                disabled={generatingScreenplay}
+                className="gap-2 w-full sm:w-auto"
+              >
+                {generatingScreenplay ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {screenplayProgress.phase || 'Generando...'}
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-4 h-4" />
+                    Generar Screenplay Completo
+                  </>
+                )}
+              </Button>
+            </div>
+            
+            {generatingScreenplay && screenplayProgress.total > 0 && (
+              <Progress 
+                value={(screenplayProgress.current / screenplayProgress.total) * 100} 
+                className="mt-3 h-2"
+              />
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Header Card - Overview (simplified) */}
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
