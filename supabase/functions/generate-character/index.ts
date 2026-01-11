@@ -169,6 +169,8 @@ interface StyleConfig {
 interface VisualDNA {
   physical_identity?: {
     age_exact_for_prompt?: number;
+    age_exact?: number;  // Fallback field from profile_json
+    age?: number;        // Another fallback
     gender_presentation?: string;
     ethnicity?: {
       primary?: string;
@@ -334,9 +336,24 @@ function buildIdentityLock(visualDNA: VisualDNA, characterName?: string): string
   }
   
   // AGE - Most critical for preventing de-aging
-  if (physical?.age_exact_for_prompt) {
-    parts.push(`AGE: EXACTLY ${physical.age_exact_for_prompt} years old`);
+  // FALLBACK: Check multiple age fields since profile_json uses age_exact but visualDNA might use age_exact_for_prompt
+  const ageValue = physical?.age_exact_for_prompt || physical?.age_exact || physical?.age;
+  if (ageValue) {
+    console.log(`[AGE INJECTION] Using age: ${ageValue} (source: ${physical?.age_exact_for_prompt ? 'age_exact_for_prompt' : physical?.age_exact ? 'age_exact' : 'age'})`);
+    parts.push(`AGE: EXACTLY ${ageValue} years old`);
     parts.push(`- DO NOT make younger or older`);
+    
+    // Special instructions for young children (critical for correct generation)
+    if (ageValue <= 6) {
+      parts.push(`- ⚠️ THIS IS A YOUNG CHILD (${ageValue} years old) - CRITICAL`);
+      parts.push(`- MUST show toddler/young child proportions: round face, large eyes relative to face, soft features`);
+      parts.push(`- DO NOT generate teenager or pre-teen features`);
+      parts.push(`- DO NOT apply any celebrity likeness - ignore adult references`);
+    } else if (ageValue <= 12) {
+      parts.push(`- This is a child (${ageValue} years old)`);
+      parts.push(`- Show child-appropriate features and proportions`);
+    }
+    
     parts.push(`- Preserve ALL age-appropriate features (wrinkles, lines, skin texture)`);
   }
   
@@ -457,7 +474,12 @@ function buildIdentityLock(visualDNA: VisualDNA, characterName?: string): string
   }
   
   // Celebrity likeness hints (if available)
-  if (visualDNA.visual_references?.celebrity_likeness?.primary?.name) {
+  // IMPORTANT: Suppress celebrity likeness for young children - it causes confusion with older actors
+  const ageForCelebCheck = physical?.age_exact_for_prompt || physical?.age_exact || physical?.age;
+  if (ageForCelebCheck && ageForCelebCheck <= 10) {
+    console.log(`[AGE GUARD] Child aged ${ageForCelebCheck}, suppressing celebrity likeness to prevent age confusion`);
+    // Skip celebrity likeness for young children
+  } else if (visualDNA.visual_references?.celebrity_likeness?.primary?.name) {
     const celeb = visualDNA.visual_references.celebrity_likeness.primary;
     parts.push(`VISUAL REFERENCE: Resembles ${celeb.name} (${celeb.percentage || 0}%)`);
     if (celeb.features_borrowed?.length) {
@@ -911,7 +933,14 @@ function buildStandaloneCharacterPrompt(characterName: string, characterBio: str
   const skin = visualDNA.skin;
   const styleBlock = buildStyleBlock(styleConfig);
   
-  const ageStr = physical?.age_exact_for_prompt ? `${physical.age_exact_for_prompt} years old` : '';
+  // FALLBACK: Check multiple age fields for compatibility
+  const ageValue = physical?.age_exact_for_prompt || physical?.age_exact || physical?.age;
+  const ageStr = ageValue ? `${ageValue} years old` : '';
+  
+  // Log age for debugging
+  if (ageValue) {
+    console.log(`[STANDALONE PROMPT] Age: ${ageValue} years old`);
+  }
   const genderStr = physical?.gender_presentation || '';
   const ethnicityStr = physical?.ethnicity?.primary || '';
   const skinTone = physical?.ethnicity?.skin_tone_description || '';
@@ -1650,7 +1679,42 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
 
   // Get active visual DNA
   const activeVisualDNA = character.character_visual_dna?.find((v: any) => v.is_active);
-  const visualDNA: VisualDNA = activeVisualDNA?.visual_dna || {};
+  let visualDNA: VisualDNA = activeVisualDNA?.visual_dna || {};
+  
+  // FALLBACK: If visual DNA is empty or missing key data, populate from profile_json
+  // This fixes the bug where age_exact is in profile_json but code looks for age_exact_for_prompt in visualDNA
+  if (character.profile_json) {
+    const profilePhysical = character.profile_json.physical_identity;
+    if (profilePhysical) {
+      // Ensure physical_identity exists in visualDNA
+      if (!visualDNA.physical_identity) {
+        visualDNA.physical_identity = {};
+      }
+      
+      const phys = visualDNA.physical_identity;
+      
+      // Copy age if not already set
+      if (!phys.age_exact_for_prompt && !phys.age_exact) {
+        const ageFromProfile = profilePhysical.age_exact || profilePhysical.age;
+        if (ageFromProfile) {
+          phys.age_exact = ageFromProfile;
+          console.log(`[PROFILE FALLBACK] Injected age from profile_json: ${ageFromProfile}`);
+        }
+      }
+      
+      // Copy gender if not set
+      if (!phys.gender_presentation && profilePhysical.gender_presentation) {
+        phys.gender_presentation = profilePhysical.gender_presentation;
+      }
+      
+      // Copy ethnicity if not set
+      if (!phys.ethnicity && profilePhysical.ethnicity) {
+        phys.ethnicity = profilePhysical.ethnicity;
+      }
+    }
+  }
+  
+  console.log(`[VISUAL DNA] Age value: ${visualDNA.physical_identity?.age_exact_for_prompt || visualDNA.physical_identity?.age_exact || visualDNA.physical_identity?.age || 'NOT FOUND'}`);
   
   // Get wardrobe lock for consistent outfit across all generations
   const wardrobeLock: WardrobeLock | null = character.wardrobe_lock_json || null;
