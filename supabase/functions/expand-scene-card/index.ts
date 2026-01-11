@@ -99,7 +99,7 @@ async function callAI(systemPrompt: string, userPrompt: string): Promise<string>
     throw new Error('Neither ANTHROPIC_API_KEY nor LOVABLE_API_KEY configured');
   }
   
-  console.log('[expand-scene-card] Calling Gateway GPT-4o');
+  console.log('[expand-scene-card] Calling Gateway GPT-5');
   const response = await fetch(AI_GATEWAY_URL, {
     method: 'POST',
     headers: {
@@ -112,7 +112,7 @@ async function callAI(systemPrompt: string, userPrompt: string): Promise<string>
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
-      max_tokens: 4000,
+      max_completion_tokens: 4000,
     }),
   });
   
