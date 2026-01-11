@@ -872,24 +872,37 @@ PROHIBIDO usar localizaciones abstractas o temporales:
 Si la idea habla de conceptos abstractos, tradúcelos a ESPACIOS FÍSICOS filmables.
 
 ${(!disableDensity && densityTargets) ? `
-DENSIDAD MÍNIMA REQUERIDA (si la idea no especifica más):
-- ${densityTargets.protagonists_min}+ protagonistas
-- ${densityTargets.supporting_min}+ secundarios  
-- ${densityTargets.locations_min}+ localizaciones
-- ${densityTargets.hero_props_min || 5}+ props clave
-- ${densityTargets.subplots_min}+ subtramas
-- ${densityTargets.twists_min}+ giros por episodio
+DENSIDAD MÍNIMA OBLIGATORIA (estos son PISOS, no techos - puedes generar MÁS):
+- ${densityTargets.protagonists_min}+ protagonistas (MÍNIMO, puede haber más si la historia lo requiere)
+- ${densityTargets.supporting_min}+ secundarios (MÍNIMO, puede haber más)
+- ${densityTargets.locations_min}+ localizaciones (MÍNIMO GARANTIZADO, genera MÁS si la historia lo requiere)
+- ${densityTargets.hero_props_min || 5}+ props clave (MÍNIMO, puede haber más)
+- ${densityTargets.subplots_min}+ subtramas (MÍNIMO, puede haber más)
+- ${densityTargets.twists_min}+ giros por episodio (MÍNIMO, puede haber más)
+
+⚠️ REGLA DE ORO: Si la historia naturalmente requiere MÁS entidades que estos mínimos, CRÉALAS.
+Estos números son el PISO, no el TECHO. NO te limites artificialmente.
+Para LOCALIZACIONES: incluye hogares de personajes, lugares de trabajo, espacios públicos relevantes.
 ` : disableDensity ? `
-MODO LIBRE: Genera SOLO los personajes, locaciones y elementos que se desprendan naturalmente de la idea.
-NO inventes entidades adicionales. Sé fiel a lo que el usuario ha descrito.
+MODO LIBRE SIN LÍMITES: Extrae TODAS las localizaciones, personajes y elementos que la historia necesite.
+NO hay límite superior - si la historia requiere 30 localizaciones, genera 30.
+Incluye:
+- Todas las localizaciones mencionadas explícitamente en la idea
+- Todas las localizaciones que se deduzcan lógicamente (hogares de personajes, lugares de trabajo, etc.)
+- Todos los personajes mencionados o necesarios para la trama
+- Props y elementos relevantes para la narrativa
+Sé EXHAUSTIVO, no minimalista. Extrae TODO lo que la historia necesite.
 ` : `
-MÍNIMOS POR DEFECTO OBLIGATORIOS (si la idea no especifica más):
-- Personajes principales (protagonistas): MÍNIMO ${Math.min(3 + Math.floor(cappedEpisodesCount / 4), 8)}
-- Personajes secundarios: MÍNIMO ${Math.min(8 + cappedEpisodesCount, 25)}
-- Localizaciones: MÍNIMO ${Math.min(5 + cappedEpisodesCount, 20)}
-- Props clave: MÍNIMO ${Math.min(3 + Math.floor(cappedEpisodesCount / 3), 10)}
-- Subtramas: MÍNIMO ${Math.max(2, Math.floor(cappedEpisodesCount / 2))}
-NOTA: Estos son mínimos ESTRICTOS. Si la idea sugiere menos, INVENTA personajes y locaciones coherentes con la historia hasta alcanzar estos mínimos.
+MÍNIMOS GARANTIZADOS (PISOS, no límites superiores - puedes generar MÁS):
+- Personajes principales: MÍNIMO ${Math.min(3 + Math.floor(cappedEpisodesCount / 4), 8)} (puede haber más)
+- Personajes secundarios: MÍNIMO ${Math.min(8 + cappedEpisodesCount, 25)} (puede haber más)
+- Localizaciones: MÍNIMO ${Math.min(8 + cappedEpisodesCount, 25)} (puede haber MUCHAS más - sé exhaustivo)
+- Props clave: MÍNIMO ${Math.min(3 + Math.floor(cappedEpisodesCount / 3), 10)} (puede haber más)
+- Subtramas: MÍNIMO ${Math.max(2, Math.floor(cappedEpisodesCount / 2))} (puede haber más)
+
+⚠️ REGLA DE ORO: Estos números son el PISO. Si la historia necesita 40 localizaciones, genera 40.
+NO te limites artificialmente. Sé EXHAUSTIVO especialmente con localizaciones.
+Para LOCALIZACIONES incluye: hogares de todos los personajes, lugares de trabajo, espacios públicos, lugares únicos de la trama.
 `}
 - Si es serie: un beat con cliffhanger por episodio
 - Cada episodio DEBE tener un evento irreversible
