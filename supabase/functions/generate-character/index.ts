@@ -1562,7 +1562,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   const isTurnaround = request.slotType.startsWith('turn_') || request.slotType === 'turnaround';
   const needsCanonAnchor = isExpression || isTurnaround;
 
-  let primaryAnchor: { image_url: string; anchor_type: string; id?: string } | null = null;
+  let primaryAnchor: { image_url: string; anchor_type: string; id?: string; fromReferenceAnchors?: boolean } | null = null;
   let canonAnchorSource = 'none';
 
   // PRIORITY 1: For expressions/turnarounds, check for generated closeup_front (CANON ANCHOR)
@@ -1582,7 +1582,8 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       primaryAnchor = {
         image_url: canonSlot.image_url,
         anchor_type: 'canon_closeup_front',
-        id: canonSlot.id
+        // NOTE: No id here - this comes from pack_slots, not reference_anchors
+        fromReferenceAnchors: false
       };
       canonAnchorSource = 'closeup_front';
     } else {
@@ -1592,11 +1593,15 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
 
   // PRIORITY 2: Identity primary from reference_anchors table
   if (!primaryAnchor?.image_url) {
-    primaryAnchor = referenceAnchors?.find(a => 
+    const foundAnchor = referenceAnchors?.find(a => 
       a.anchor_type === 'identity_primary' || a.anchor_type === 'face_front'
     ) || referenceAnchors?.[0] || null;
     
-    if (primaryAnchor?.image_url) {
+    if (foundAnchor?.image_url) {
+      primaryAnchor = {
+        ...foundAnchor,
+        fromReferenceAnchors: true // This ID is valid for FK reference
+      };
       canonAnchorSource = 'reference_anchors';
     }
   }
@@ -1622,13 +1627,15 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       primaryAnchor = {
         image_url: refSlot.image_url,
         anchor_type: refSlot.slot_type === 'ref_closeup_front' ? 'identity_primary' : 'face_side',
+        // NOTE: No id here - this comes from pack_slots, not reference_anchors
+        fromReferenceAnchors: false
       };
       canonAnchorSource = 'pack_slots';
     }
   }
 
   const hasReference = !!primaryAnchor?.image_url;
-  console.log(`[ANCHOR SELECTION] Final: hasReference=${hasReference}, source=${canonAnchorSource}`);
+  console.log(`[ANCHOR SELECTION] Final: hasReference=${hasReference}, source=${canonAnchorSource}, hasValidAnchorId=${primaryAnchor?.fromReferenceAnchors ?? false}`);
   
   // DECISION: Use reference or generate from text
   const isIdentitySlot = request.slotType === 'anchor_closeup' || request.slotType === 'base_look' || request.slotType === 'closeup';
@@ -1895,10 +1902,13 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
 
   const durationMs = Date.now() - startTime;
 
-  // Determine valid reference anchor ID (only set if anchor actually exists)
+  // Determine valid reference anchor ID (only set if anchor actually exists in reference_anchors table)
   let validReferenceAnchorId: string | null = null;
-  if (hasReference && primaryAnchor?.id) {
+  
+  // Only use primaryAnchor.id if it comes from reference_anchors table (not from pack_slots)
+  if (hasReference && primaryAnchor?.fromReferenceAnchors && primaryAnchor?.id) {
     validReferenceAnchorId = primaryAnchor.id;
+    console.log(`[SLOT UPDATE] Using reference_anchor ID: ${validReferenceAnchorId}`);
   } else if (createdAnchorId) {
     // Verify the created anchor exists before referencing it
     const { data: anchorExists } = await supabase
@@ -1909,9 +1919,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     
     if (anchorExists) {
       validReferenceAnchorId = createdAnchorId;
+      console.log(`[SLOT UPDATE] Using created anchor ID: ${validReferenceAnchorId}`);
     } else {
       console.warn(`[SLOT UPDATE] Created anchor ${createdAnchorId} not found, skipping FK reference`);
     }
+  } else {
+    console.log(`[SLOT UPDATE] No valid reference_anchor to link (source was pack_slots or text-to-image)`);
   }
 
   // Update slot in database
