@@ -475,10 +475,18 @@ export function ScriptSummaryPanelAssisted({
           phase: `Generando diálogos para Episodio ${episode.episode_number}...`
         });
         
+        // Extract character names from scriptData for dialogue generation
+        const scriptCharacters = [
+          ...(scriptData?.characters || []),
+          ...(scriptData?.featured_extras || []),
+          ...(scriptData?.voices || []),
+        ].map((c: any) => c.name || c.canonical_name || '').filter(Boolean);
+        
         const { data, error } = await supabase.functions.invoke('generate-dialogues-batch', {
           body: {
             projectId,
             scenes: scenes,
+            projectCharacters: scriptCharacters,
             language: 'es',
             tone: 'dramático',
             genre: 'drama',

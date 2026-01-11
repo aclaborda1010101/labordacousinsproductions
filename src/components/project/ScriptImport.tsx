@@ -1513,10 +1513,22 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           console.log(`[Pipeline] Episode ${ep.episode_number}: generating dialogues for ${scenesNeedingDialogue.length} scenes`);
           updatePipelineStep('dialogues', 'running', `Diálogos episodio ${ep.episode_number}/${episodes.length}...`);
           
+          // Extract character names from screenplay for dialogue generation
+          const scriptCharacters = completeScreenplay.characters?.narrative_classification
+            ? [
+                ...(completeScreenplay.characters.narrative_classification.protagonists || []),
+                ...(completeScreenplay.characters.narrative_classification.major_supporting || []),
+                ...(completeScreenplay.characters.narrative_classification.minor_speaking || []),
+              ].map((c: any) => c.name || c.canonical_name || '').filter(Boolean)
+            : Array.isArray(completeScreenplay.characters?.cast)
+              ? completeScreenplay.characters.cast.map((c: any) => c.name || c.canonical_name || '').filter(Boolean)
+              : [];
+          
           const { data: dialogueData, error: dialogueError } = await supabase.functions.invoke('generate-dialogues-batch', {
             body: {
               projectId,
               scenes: ep.scenes,
+              projectCharacters: scriptCharacters,
               language,
               tone: completeScreenplay.tone || 'dramático',
               genre: completeScreenplay.genre || 'drama',
@@ -1884,10 +1896,22 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           phase: `Ep ${episode.episode_number} (${i + 1}/${totalEpisodes})...`
         });
         
+        // Extract character names from generated script for dialogue generation
+        const scriptCharacters = generatedScript?.characters?.narrative_classification
+          ? [
+              ...(generatedScript.characters.narrative_classification.protagonists || []),
+              ...(generatedScript.characters.narrative_classification.major_supporting || []),
+              ...(generatedScript.characters.narrative_classification.minor_speaking || []),
+            ].map((c: any) => c.name || c.canonical_name || '').filter(Boolean)
+          : Array.isArray(generatedScript?.characters?.cast)
+            ? generatedScript.characters.cast.map((c: any) => c.name || c.canonical_name || '').filter(Boolean)
+            : [];
+        
         const { data, error } = await supabase.functions.invoke('generate-dialogues-batch', {
           body: {
             projectId,
             scenes: episode.scenes,
+            projectCharacters: scriptCharacters,
             language,
             tone: generatedScript?.tone || 'dramático',
             genre: generatedScript?.genre || 'drama',

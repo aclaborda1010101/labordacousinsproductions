@@ -12,6 +12,7 @@ interface Scene {
   summary?: string;
   action?: string;
   characters?: string[];
+  characters_present?: string[];
   mood?: string;
   dialogue?: any[];
 }
@@ -19,91 +20,100 @@ interface Scene {
 interface GenerateDialoguesRequest {
   projectId: string;
   scenes: Scene[];
+  projectCharacters?: string[];
   language?: string;
   tone?: string;
   genre?: string;
 }
 
-const SYSTEM_PROMPT = `Eres un guionista profesional experto en escribir diálogos cinematográficos naturales y con subtexto.
+const SYSTEM_PROMPT = `Eres un guionista cinematográfico profesional experto en escribir diálogos naturales con subtexto.
 
-TU MISIÓN: Generar diálogos completos para las escenas proporcionadas.
+⚠️ REGLAS OBLIGATORIAS - VIOLACIÓN = RECHAZO COMPLETO:
 
-REGLAS DE DIÁLOGO:
-1. Mínimo 4-8 líneas de diálogo por escena con personajes hablando
-2. Diálogos naturales, no expositivos - show don't tell
-3. Cada personaje tiene voz única (vocabulario, ritmo, tics verbales)
-4. Subtexto: lo que dicen vs lo que quieren decir
-5. Conflicto o tensión en cada intercambio
-6. Parentéticos solo cuando son esenciales (tono, acción física)
-7. Evitar clichés y frases de IA genéricas
-8. Acciones intercaladas entre diálogos para ritmo visual
+1. IDIOMA: TODOS los diálogos DEBEN estar en ESPAÑOL (castellano de España/Latinoamérica).
+   - NUNCA escribas en inglés bajo ninguna circunstancia.
+   - Cualquier línea en inglés invalidará tu respuesta completa.
 
-FORMATO DE SALIDA (JSON):
+2. PERSONAJES: Usa ÚNICAMENTE los personajes de la lista proporcionada.
+   - NUNCA inventes personajes nuevos (SOFIA, MARÍA, JOHN, etc.).
+   - Si un nombre no está en la lista, NO lo uses.
+   - Si una escena no tiene personajes listados, devuelve dialogue: [] vacío.
+
+3. ESCENAS SIN PERSONAJES: Para escenas puramente visuales/descriptivas:
+   - dialogue: [] (array vacío, SIN excepciones)
+   - action_beats: ["Descripción de la acción visual en español"]
+   - NUNCA inventes personajes para rellenar.
+
+REGLAS DE CALIDAD:
+- Mínimo 4-8 líneas de diálogo por escena CON personajes hablando
+- Diálogos naturales, no expositivos - show don't tell
+- Cada personaje tiene voz única (vocabulario, ritmo, tics verbales)
+- Subtexto: lo que dicen vs lo que quieren decir
+- Conflicto o tensión en cada intercambio
+- Parentéticos solo cuando son esenciales
+- Evitar clichés y frases genéricas
+
+FORMATO DE SALIDA (JSON estricto):
 {
   "scenes": [
     {
       "scene_number": 1,
       "dialogue": [
         {
-          "character": "NOMBRE EN MAYÚSCULAS",
+          "character": "NOMBRE_EXACTO_DE_LA_LISTA",
           "parenthetical": "(opcional)",
-          "line": "El diálogo completo"
+          "line": "El diálogo en español"
         }
       ],
-      "action_beats": ["Acción visual entre diálogos"]
+      "action_beats": ["Acción visual en español"]
     }
   ]
 }
 
-NUNCA:
-- Resumir diálogos con "continúan hablando..."
-- Usar exposición forzada
-- Hacer que todos hablen igual
-- Ignorar el tono/género de la producción`;
+RECUERDA: TODO en ESPAÑOL. SOLO personajes de la lista. Escenas sin personajes = dialogue vacío.`;
 
-const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
-
-async function callAI(systemPrompt: string, userPrompt: string): Promise<string> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+async function callClaude(systemPrompt: string, userPrompt: string): Promise<string> {
+  const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
   
-  if (!LOVABLE_API_KEY) {
-    throw new Error('LOVABLE_API_KEY not configured');
+  if (!ANTHROPIC_API_KEY) {
+    throw new Error('ANTHROPIC_API_KEY not configured');
   }
   
-  console.log('[generate-dialogues-batch] Calling Lovable AI Gateway');
+  console.log('[generate-dialogues-batch] Calling Claude Sonnet');
   
-  const response = await fetch(AI_GATEWAY_URL, {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.7,
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 8000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
     }),
   });
   
   if (!response.ok) {
     const errText = await response.text();
-    console.error('[generate-dialogues-batch] Gateway error:', response.status, errText);
+    console.error('[generate-dialogues-batch] Claude error:', response.status, errText);
     
     if (response.status === 429) {
       throw new Error('Rate limit exceeded - please try again later');
     }
-    if (response.status === 402) {
-      throw new Error('Payment required - please add credits');
+    if (response.status === 402 || response.status === 400) {
+      throw new Error('API error - check credits or request format');
     }
-    throw new Error(`AI Gateway error: ${response.status}`);
+    throw new Error(`Claude API error: ${response.status}`);
   }
   
   const data = await response.json();
-  return data.choices?.[0]?.message?.content || '';
+  
+  // Claude returns content as array of blocks
+  const textBlock = data.content?.find((b: any) => b.type === 'text');
+  return textBlock?.text || '';
 }
 
 function parseJSONFromResponse(text: string): any {
@@ -133,6 +143,20 @@ function parseJSONFromResponse(text: string): any {
     
     throw new Error('Could not parse JSON from AI response');
   }
+}
+
+// Extract character names from scenes if projectCharacters not provided
+function extractCharactersFromScenes(scenes: Scene[]): string[] {
+  const charSet = new Set<string>();
+  for (const scene of scenes) {
+    const chars = scene.characters || scene.characters_present || [];
+    for (const c of chars) {
+      if (c && typeof c === 'string') {
+        charSet.add(c.toUpperCase().trim());
+      }
+    }
+  }
+  return Array.from(charSet);
 }
 
 serve(async (req) => {
@@ -168,7 +192,14 @@ serve(async (req) => {
 
     console.log('[generate-dialogues-batch] Authenticated user:', claimsData.user.id);
 
-    const { projectId, scenes, language = 'es', tone = 'dramático', genre = 'drama' } = await req.json() as GenerateDialoguesRequest;
+    const { 
+      projectId, 
+      scenes, 
+      projectCharacters,
+      language = 'es', 
+      tone = 'dramático', 
+      genre = 'drama' 
+    } = await req.json() as GenerateDialoguesRequest;
 
     if (!projectId || !scenes || scenes.length === 0) {
       return new Response(JSON.stringify({ error: 'projectId and scenes are required' }), {
@@ -177,9 +208,18 @@ serve(async (req) => {
       });
     }
 
+    // Get character list - prefer explicit list, fallback to extraction from scenes
+    const characterList = projectCharacters && projectCharacters.length > 0
+      ? projectCharacters.map(c => c.toUpperCase().trim())
+      : extractCharactersFromScenes(scenes);
+    
+    console.log('[generate-dialogues-batch] Character list:', characterList);
+
     // Filter scenes that need dialogue (have characters but no dialogue yet)
+    // Accept both "characters" and "characters_present" field names
     const scenesNeedingDialogue = scenes.filter(s => {
-      const hasCharacters = s.characters && s.characters.length > 0;
+      const chars = s.characters || s.characters_present || [];
+      const hasCharacters = chars.length > 0;
       const hasDialogue = s.dialogue && s.dialogue.length > 0;
       return hasCharacters && !hasDialogue;
     });
@@ -188,7 +228,7 @@ serve(async (req) => {
       console.log('[generate-dialogues-batch] No scenes need dialogue generation');
       return new Response(JSON.stringify({ 
         success: true, 
-        scenes: scenes, // Return original scenes unchanged
+        scenes: scenes,
         generated_count: 0,
         message: 'No scenes needed dialogue generation'
       }), {
@@ -204,29 +244,33 @@ serve(async (req) => {
       slugline: s.slugline,
       summary: s.summary || '',
       action: s.action || '',
-      characters: s.characters || [],
+      characters: s.characters || s.characters_present || [],
       mood: s.mood || '',
     }));
 
-    const userPrompt = `Genera diálogos para las siguientes ${scenesNeedingDialogue.length} escenas.
+    const userPrompt = `⚠️ OBLIGATORIO: Escribe TODO en ESPAÑOL. Cualquier texto en inglés será rechazado.
 
-CONTEXTO:
+PERSONAJES DISPONIBLES (usa SOLO estos nombres exactamente, NUNCA inventes otros):
+${characterList.length > 0 ? characterList.join(', ') : '(ningún personaje definido - solo action_beats)'}
+
+CONTEXTO DE LA PRODUCCIÓN:
 - Género: ${genre}
 - Tono: ${tone}
-- Idioma: ${language === 'es' ? 'Español' : 'English'}
+- Idioma obligatorio: ${language === 'es' ? 'ESPAÑOL' : 'Español'}
 
-ESCENAS:
+ESCENAS A PROCESAR (${scenesNeedingDialogue.length} escenas):
 ${JSON.stringify(scenesData, null, 2)}
 
-Para cada escena:
-1. Analiza qué personajes están presentes
-2. Genera diálogos naturales que avancen la trama
-3. Mantén coherencia con el slugline y mood
-4. Incluye action_beats para ritmo visual
+INSTRUCCIONES:
+1. Analiza qué personajes de la lista están presentes en cada escena
+2. Genera diálogos SOLO para personajes que están en la lista de PERSONAJES DISPONIBLES
+3. Si una escena no tiene personajes de la lista, devuelve dialogue: [] vacío
+4. Incluye action_beats para ritmo visual (también en español)
+5. Mantén coherencia con el slugline y mood
 
-Devuelve SOLO JSON válido con el formato especificado.`;
+Devuelve SOLO JSON válido con el formato especificado. TODO en ESPAÑOL.`;
 
-    const aiResponse = await callAI(SYSTEM_PROMPT, userPrompt);
+    const aiResponse = await callClaude(SYSTEM_PROMPT, userPrompt);
     const parsed = parseJSONFromResponse(aiResponse);
 
     // Merge generated dialogues back into original scenes
@@ -234,8 +278,22 @@ Devuelve SOLO JSON válido con el formato especificado.`;
     if (parsed.scenes && Array.isArray(parsed.scenes)) {
       for (const s of parsed.scenes) {
         if (s.scene_number && s.dialogue) {
+          // Validate that dialogue uses only allowed characters
+          const validatedDialogue = s.dialogue.filter((d: any) => {
+            const charName = (d.character || '').toUpperCase().trim();
+            const isValid = characterList.some(c => 
+              c === charName || 
+              c.includes(charName) || 
+              charName.includes(c)
+            );
+            if (!isValid && charName) {
+              console.warn(`[generate-dialogues-batch] Filtered out invalid character: ${charName}`);
+            }
+            return isValid || !charName;
+          });
+          
           dialogueMap.set(s.scene_number, {
-            dialogue: s.dialogue,
+            dialogue: validatedDialogue,
             action_beats: s.action_beats || [],
           });
         }
