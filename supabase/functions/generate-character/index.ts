@@ -332,7 +332,25 @@ function buildIdentityLock(visualDNA: VisualDNA, characterName?: string): string
       parts.push(`- Skin texture: ${texture} (PRESERVE exactly)`);
     }
     parts.push(`- DO NOT smooth, even out, or change skin complexion`);
-    parts.push(`- PRESERVE all freckles, moles, age spots, pores, and natural texture`);
+    
+    // CONDITIONAL FRECKLES/MOLES - Only preserve if explicitly detected in Visual DNA
+    const hasFreckles = skin?.condition?.hyperpigmentation?.freckles && 
+                        skin.condition.hyperpigmentation.freckles !== 'none' &&
+                        skin.condition.hyperpigmentation.freckles !== 'absent';
+    const hasMoles = face?.distinctive_marks?.moles_birthmarks && 
+                     Array.isArray(face.distinctive_marks.moles_birthmarks) &&
+                     face.distinctive_marks.moles_birthmarks.length > 0;
+    
+    if (hasFreckles || hasMoles) {
+      const preserveList: string[] = [];
+      if (hasFreckles) preserveList.push('freckles');
+      if (hasMoles) preserveList.push('moles/birthmarks');
+      parts.push(`- PRESERVE ${preserveList.join(' and ')} as shown in reference`);
+    } else {
+      parts.push(`- NO FRECKLES - this character has clear skin without freckles`);
+      parts.push(`- DO NOT add freckles, moles, or spots that are not in reference`);
+    }
+    parts.push(`- Preserve pores, natural texture, and age-appropriate skin`);
   }
   
   // FACE STRUCTURE - Detailed bone structure
