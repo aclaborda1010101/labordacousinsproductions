@@ -17,6 +17,7 @@ import {
   Check, X, Film, Music, Volume2, MessageSquare, Database
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { calculateAutoTargets, type TargetInputs } from '@/lib/autoTargets';
 import jsPDF from 'jspdf';
 
 interface GeneratedCharacter {
@@ -245,6 +246,16 @@ export function WizardScriptStep({
       // STEP 1: Generate outline (fast, ~10-15s)
       console.log('[PIPELINE] Step 1: Generating outline...');
       
+      // Calculate density targets based on format and episodes
+      const targetInputs: TargetInputs = {
+        format: format === 'film' ? 'film' : 'series',
+        episodesCount: format === 'film' ? 1 : episodesCount,
+        episodeDurationMin: targetDuration || 45,
+        complexity: 'medium',
+        genre: scriptGenre || 'drama'
+      };
+      const densityTargets = calculateAutoTargets(targetInputs);
+      
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('generate-outline-light', {
         body: {
           idea: scriptIdea,
@@ -253,6 +264,7 @@ export function WizardScriptStep({
           format: format === 'film' ? 'film' : 'series',
           episodesCount: format === 'film' ? 1 : episodesCount,
           language: masterLanguage === 'es' ? 'es-ES' : masterLanguage,
+          densityTargets, // V3.1: Pass calculated density targets
         }
       });
 

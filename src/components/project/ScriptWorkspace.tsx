@@ -25,6 +25,7 @@ import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { ScriptSummaryPanelAssisted } from './ScriptSummaryPanelAssisted';
 import { ScriptGenerationProgress } from './ScriptGenerationProgress';
 import { exportOutlinePDF } from '@/lib/exportOutlinePDF';
+import { calculateAutoTargets, type TargetInputs } from '@/lib/autoTargets';
 import { GenerationActionBar } from '@/components/generation/GenerationActionBar';
 import {
   Lightbulb,
@@ -843,6 +844,16 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     try {
       updateTask(taskId, { progress: 10, description: 'Generando esquema...' });
       
+      // Calculate density targets based on project settings
+      const targetInputs: TargetInputs = {
+        format: projectFormat === 'film' ? 'film' : 'series',
+        episodesCount: projectFormat === 'film' ? 1 : episodesCount,
+        episodeDurationMin: 45,
+        complexity: 'medium',
+        genre: 'drama'
+      };
+      const densityTargets = calculateAutoTargets(targetInputs);
+      
       // Generate outline first (non-streaming)
       const { data: outlineData, error: outlineError } = await supabase.functions.invoke('generate-outline-light', {
         body: {
@@ -850,9 +861,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           idea: ideaText,
           format: projectFormat === 'film' ? 'film' : 'series',
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
-          language: masterLanguage === 'es' ? 'es-ES' : masterLanguage, // Use project language
-          qualityTier, // V3.0: Pass quality tier
-          disableDensity, // V3.0: Skip density constraints if true
+          language: masterLanguage === 'es' ? 'es-ES' : masterLanguage,
+          qualityTier,
+          disableDensity,
+          densityTargets, // V3.1: Pass calculated density targets
         }
       });
 

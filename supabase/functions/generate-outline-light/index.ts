@@ -805,10 +805,14 @@ DENSIDAD MÍNIMA REQUERIDA (si la idea no especifica más):
 MODO LIBRE: Genera SOLO los personajes, locaciones y elementos que se desprendan naturalmente de la idea.
 NO inventes entidades adicionales. Sé fiel a lo que el usuario ha descrito.
 ` : `
-MÍNIMOS POR DEFECTO (si la idea no especifica más):
-- Personajes principales: MÍNIMO 5
-- Localizaciones: MÍNIMO 5
-- Props clave: MÍNIMO 3`}
+MÍNIMOS POR DEFECTO OBLIGATORIOS (si la idea no especifica más):
+- Personajes principales (protagonistas): MÍNIMO ${Math.min(3 + Math.floor(cappedEpisodesCount / 4), 8)}
+- Personajes secundarios: MÍNIMO ${Math.min(8 + cappedEpisodesCount, 25)}
+- Localizaciones: MÍNIMO ${Math.min(5 + cappedEpisodesCount, 20)}
+- Props clave: MÍNIMO ${Math.min(3 + Math.floor(cappedEpisodesCount / 3), 10)}
+- Subtramas: MÍNIMO ${Math.max(2, Math.floor(cappedEpisodesCount / 2))}
+NOTA: Estos son mínimos ESTRICTOS. Si la idea sugiere menos, INVENTA personajes y locaciones coherentes con la historia hasta alcanzar estos mínimos.
+`}
 - Si es serie: un beat con cliffhanger por episodio
 - Cada episodio DEBE tener un evento irreversible
 
