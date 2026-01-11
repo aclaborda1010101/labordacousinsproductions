@@ -777,6 +777,8 @@ export default function Locations({ projectId }: LocationsProps) {
                             locationDescription={location.description || ''}
                             hasDay={location.variants?.day ?? true}
                             hasNight={location.variants?.night ?? false}
+                            projectId={projectId}
+                            primaryReferenceUrl={(location as any).primary_reference_url}
                           />
                         </TabsContent>
                         <TabsContent value="bible">

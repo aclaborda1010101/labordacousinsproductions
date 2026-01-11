@@ -3096,12 +3096,15 @@ export type Database = {
         Row: {
           created_at: string
           fix_notes: string | null
+          generated_image_url: string | null
           id: string
           image_url: string | null
           location_id: string
           prompt_text: string | null
           qc_issues: Json | null
           qc_score: number | null
+          reference_image_url: string | null
+          reference_status: string
           required: boolean
           seed: number | null
           slot_index: number
@@ -3115,12 +3118,15 @@ export type Database = {
         Insert: {
           created_at?: string
           fix_notes?: string | null
+          generated_image_url?: string | null
           id?: string
           image_url?: string | null
           location_id: string
           prompt_text?: string | null
           qc_issues?: Json | null
           qc_score?: number | null
+          reference_image_url?: string | null
+          reference_status?: string
           required?: boolean
           seed?: number | null
           slot_index?: number
@@ -3134,12 +3140,15 @@ export type Database = {
         Update: {
           created_at?: string
           fix_notes?: string | null
+          generated_image_url?: string | null
           id?: string
           image_url?: string | null
           location_id?: string
           prompt_text?: string | null
           qc_issues?: Json | null
           qc_score?: number | null
+          reference_image_url?: string | null
+          reference_status?: string
           required?: boolean
           seed?: number | null
           slot_index?: number
@@ -3171,9 +3180,11 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          primary_reference_url: string | null
           profile_json: Json | null
           project_id: string
           props: Json | null
+          reference_status: string
           reference_urls: Json | null
           sound_profile: Json | null
           source: string | null
@@ -3193,9 +3204,11 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          primary_reference_url?: string | null
           profile_json?: Json | null
           project_id: string
           props?: Json | null
+          reference_status?: string
           reference_urls?: Json | null
           sound_profile?: Json | null
           source?: string | null
@@ -3215,9 +3228,11 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          primary_reference_url?: string | null
           profile_json?: Json | null
           project_id?: string
           props?: Json | null
+          reference_status?: string
           reference_urls?: Json | null
           sound_profile?: Json | null
           source?: string | null
