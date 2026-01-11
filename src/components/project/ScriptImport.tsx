@@ -184,8 +184,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const stored = localStorage.getItem(PIPELINE_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Check if pipeline is still running (less than 30 min old)
-        if (parsed.startedAt && Date.now() - parsed.startedAt < 30 * 60 * 1000) {
+        // Check if pipeline is still running (less than 2 hours old) and for this project
+        if (
+          parsed.startedAt && 
+          Date.now() - parsed.startedAt < 2 * 60 * 60 * 1000 &&
+          parsed.projectId === projectId
+        ) {
           return parsed;
         }
       }
@@ -197,7 +201,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     try {
       localStorage.setItem(PIPELINE_STORAGE_KEY, JSON.stringify({
         ...state,
-        startedAt: state.startedAt || Date.now()
+        projectId, // Always include projectId for validation
+        startedAt: state.startedAt || Date.now(),
+        lastUpdated: Date.now() // Track last update time
       }));
     } catch {}
   };

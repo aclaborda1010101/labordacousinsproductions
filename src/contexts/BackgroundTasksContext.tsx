@@ -13,6 +13,7 @@ export type TaskType =
   | 'lora_training'
   | 'pdf_export'
   | 'batch_generation'
+  | 'episode_batch'  // Multi-episode generation pipeline
   | 'script_breakdown'
   | 'script_analysis'
   | 'outfit_generation'

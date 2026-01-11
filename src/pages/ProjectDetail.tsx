@@ -4,6 +4,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { BatchProgressBadge } from '@/components/project/BatchProgressBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { 
@@ -345,6 +346,9 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
         </div>
 
         <CreativeModeSelector compact showDescription={false} />
+        
+        {/* Batch Progress Badge - visible when generating episodes */}
+        <BatchProgressBadge projectId={project.id} />
         
         <Badge variant={bibleReady ? 'pass' : 'pending'} className="hidden sm:inline-flex">
           Biblia: {project.bible_completeness_score}%
