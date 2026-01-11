@@ -251,6 +251,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [generatedScript, setGeneratedScript] = useState<unknown>(null);
   const [breakdownResult, setBreakdownResult] = useState<BreakdownResult | null>(null);
   const [qualityDiagnosis, setQualityDiagnosis] = useState<QualityDiagnosis | null>(null);
+  const [lastAnalysisError, setLastAnalysisError] = useState<string | null>(null);
   
   // Streaming state for real-time script generation
   const [streamingContent, setStreamingContent] = useState<string>('');
@@ -1414,7 +1415,28 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
         } else if (taskData.status === 'failed') {
           completed = true;
           console.error('[ScriptWorkspace] Background task failed:', taskData.error);
-          throw new Error(taskData.error || 'El análisis falló');
+          const errorMsg = taskData.error || 'El análisis falló';
+          setLastAnalysisError(errorMsg);
+          
+          // Show specific error messages
+          if (errorMsg.includes('GATEWAY_NO_CONTENT') || errorMsg.includes('finish_reason')) {
+            toast.error('El modelo no pudo completar el análisis', {
+              description: 'El guion es muy largo. Intenta de nuevo - la nueva arquitectura híbrida debería manejarlo mejor.',
+              duration: 10000,
+            });
+          } else if (errorMsg.includes('RATE_LIMIT')) {
+            toast.error('Límite de tasa alcanzado', {
+              description: 'Espera un momento y vuelve a intentar.',
+              duration: 8000,
+            });
+          } else {
+            toast.error('Error en el análisis', {
+              description: errorMsg,
+              duration: 8000,
+            });
+          }
+          
+          throw new Error(errorMsg);
         }
 
         // Show elapsed time to user
@@ -2242,8 +2264,31 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
     return (
       <div className="space-y-6 p-6">
+        {/* Error banner if last analysis failed */}
+        {lastAnalysisError && (
+          <Alert className="border-destructive/50 bg-destructive/10">
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <AlertTitle className="text-destructive">Error en el último análisis</AlertTitle>
+            <AlertDescription className="flex items-center justify-between flex-wrap gap-3">
+              <span className="text-sm max-w-[70%]">{lastAnalysisError}</span>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => {
+                  setLastAnalysisError(null);
+                  handleAnalyzeScript(existingScriptText);
+                }}
+                disabled={status === 'generating'}
+              >
+                {status === 'generating' ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                Reintentar análisis
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+        
         {/* Warning banner if 0 scenes detected */}
-        {needsReanalysis && (
+        {needsReanalysis && !lastAnalysisError && (
           <Alert className="border-destructive/50 bg-destructive/10">
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertTitle className="text-destructive">Análisis incompleto</AlertTitle>

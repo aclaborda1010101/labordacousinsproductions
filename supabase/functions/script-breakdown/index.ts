@@ -3251,8 +3251,44 @@ async function callAIJson({ modelKey, systemPrompt, userPrompt, maxTokens, label
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// BACKGROUND PROCESSING - TWO-PHASE ARCHITECTURE
+// BACKGROUND PROCESSING - HYBRID DETERMINISTIC ARCHITECTURE V25
+// Key insight: Don't ask LLM to output 90+ scenes - extract deterministically
 // ═══════════════════════════════════════════════════════════════════════════════
+
+// LIGHT AI PROMPT - Only for metadata + character unification (small output!)
+const LIGHT_METADATA_PROMPT = `You are a screenplay analyst. Extract ONLY metadata and character unification.
+
+TASKS (in order of priority):
+1. TITLE: Extract or infer the film/series title
+2. LOGLINE: Write a one-sentence summary (max 30 words)
+3. SYNOPSIS: Write a 2-paragraph summary of the story
+4. CHARACTER UNIFICATION: For the list of speaker names I provide, identify which are aliases of the same person
+
+CRITICAL RULES:
+- DO NOT list scenes (I will extract them separately)
+- DO NOT list locations (I will extract them separately)
+- ONLY unify character aliases when you're CERTAIN they're the same person
+- Output MUST be valid JSON
+
+OUTPUT FORMAT:
+{
+  "title": "Film/Series Title",
+  "logline": "One sentence summary",
+  "synopsis": "Two paragraph summary...",
+  "character_unification": [
+    {
+      "canonical_name": "PETE MITCHELL",
+      "aliases": ["MAVERICK"],
+      "type": "main",
+      "bio": "Brief description"
+    }
+  ],
+  "production": {
+    "dialogue_density": "low|medium|high",
+    "cast_size": "small|medium|large"
+  }
+}`;
+
 async function processScriptBreakdownInBackground(
   taskId: string,
   request: ScriptBreakdownRequest,
@@ -3269,131 +3305,162 @@ async function processScriptBreakdownInBackground(
   const processedScriptText = coerced.text.trim();
   const lang = language || 'es-ES';
   
-  console.log(`[script-breakdown] Input format: ${coerced.wasJson ? 'JSON' : 'plain text'}`);
-  console.log(`[script-breakdown] Coerced text length: ${processedScriptText.length}`);
-  console.log(`[script-breakdown] Blocks extracted from JSON: ${coerced.blocksExtracted}`);
+  console.log(`[script-breakdown] V25 HYBRID: Input format: ${coerced.wasJson ? 'JSON' : 'plain text'}`);
+  console.log(`[script-breakdown] V25 HYBRID: Coerced text length: ${processedScriptText.length}`);
+  console.log(`[script-breakdown] V25 HYBRID: Blocks extracted from JSON: ${coerced.blocksExtracted}`);
 
   try {
     await supabase.from('background_tasks').update({
       status: 'running',
       progress: 5,
-      description: 'Fase 1: Analizando estructura con Claude Sonnet...',
+      description: 'Fase 1: Extracción determinística de escenas...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    // Use Lovable AI Gateway (configured automatically in this environment)
-
     // ═══════════════════════════════════════════════════════════════════════════
-    // PRE-COUNT SCENE HEADINGS
+    // PHASE 1: DETERMINISTIC EXTRACTION (NO AI - INSTANT!)
+    // This is the KEY change: we extract scenes/locations/speakers WITHOUT AI
     // ═══════════════════════════════════════════════════════════════════════════
-    const headingLines: string[] = [];
-    const scriptLines = processedScriptText.split('\n');
-    for (const line of scriptLines) {
-      const trimmed = line.trim();
-      if (HEADING_LINE_RE.test(trimmed)) {
-        headingLines.push(trimmed);
+    console.log('[script-breakdown] V25: PHASE 1 - Deterministic extraction (no AI)...');
+    
+    const extractionResult = extractScenesFromScript(processedScriptText);
+    const regexScenes = extractionResult.scenes;
+    const dialogueStats = extractionResult.dialogues;
+    
+    console.log(`[script-breakdown] V25: Extracted ${regexScenes.length} scenes deterministically`);
+    console.log(`[script-breakdown] V25: Dialogue stats:`, {
+      total_lines: dialogueStats.total_lines,
+      total_words: dialogueStats.total_words,
+      characters_with_dialogue: Object.keys(dialogueStats.by_character).length,
+    });
+    
+    // Extract unique speakers from dialogue stats (these are our character candidates)
+    const speakerNames = Object.keys(dialogueStats.by_character);
+    console.log(`[script-breakdown] V25: Speaker candidates: ${speakerNames.length}`);
+    console.log(`[script-breakdown] V25: Top 15 speakers:`, speakerNames.slice(0, 15));
+    
+    // Extract unique locations from scenes
+    const locationMap = new Map<string, { name: string; type: string; scenes_count: number }>();
+    for (const scene of regexScenes) {
+      const baseName = scene.location_base || 'UNKNOWN';
+      const existing = locationMap.get(baseName);
+      if (existing) {
+        existing.scenes_count++;
+      } else {
+        locationMap.set(baseName, {
+          name: baseName,
+          type: scene.int_ext === 'EXT' ? 'exterior' : 'interior',
+          scenes_count: 1,
+        });
       }
     }
-    console.log(`[script-breakdown] PRE-COUNTED ${headingLines.length} scene headings`);
-
-    // Extract a sample of scenes for Haiku passes
-    const sceneSample = headingLines.slice(0, 40).map((h, i) => `${i + 1}. ${h}`).join('\n');
-    
-    // ═══════════════════════════════════════════════════════════════════════════
-    // PHASE 1: SONNET - SEMANTIC COMPREHENSION (NEW ARCHITECTURE)
-    // Goal: UNDERSTAND the screenplay semantically, resolve identities, classify
-    // ═══════════════════════════════════════════════════════════════════════════
-    const sonnetUserPrompt = `
-OUTPUT LANGUAGE: ${lang}
-
-SCENE COUNTING (CRITICAL):
-I have PRE-SCANNED this script and found EXACTLY ${headingLines.length} scene headings.
-Your "scenes" array MUST CONTAIN EXACTLY ${headingLines.length} ENTRIES.
-
-Here are the first 50 scene headings I found:
-${headingLines.slice(0, 50).map((h, i) => `${i + 1}. ${h}`).join('\n')}${headingLines.length > 50 ? `\n... and ${headingLines.length - 50} more scenes` : ''}
-
-SCREENPLAY TO ANALYZE:
-━━━━━━━━━━━━━━━━━━━━━━
-${processedScriptText}
-━━━━━━━━━━━━━━━━━━━━━━
-
-Remember:
-- Same location + different time = DIFFERENT scenes
-- RESOLVE all character aliases to canonical names
-- POPULATE characters_present for EVERY scene
-- Filter out ALL technical junk (colors, commands, camera terms)`;
-
-    console.log('[script-breakdown] MEGA-PROMPT V22: Starting unified semantic analysis...');
+    const extractedLocations = Array.from(locationMap.values()).sort((a, b) => b.scenes_count - a.scenes_count);
+    console.log(`[script-breakdown] V25: Extracted ${extractedLocations.length} unique locations`);
     
     await supabase.from('background_tasks').update({
-      progress: 15,
-      description: 'Análisis semántico unificado (V22)...',
+      progress: 25,
+      description: `Fase 1 completada: ${regexScenes.length} escenas, ${speakerNames.length} personajes, ${extractedLocations.length} locaciones`,
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    const canonicalResult = await callAIJson({
-      modelKey: 'sonnet',
-      systemPrompt: MEGA_SEMANTIC_PROMPT,
-      userPrompt: sonnetUserPrompt,
-      maxTokens: 16000, // Increased for complete scene+character output
-      label: 'script_breakdown_mega_v22',
-    });
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PHASE 2: LIGHT AI FOR METADATA ONLY (small input/output!)
+    // Only ask AI for: title, logline, synopsis, character bios/unification
+    // ═══════════════════════════════════════════════════════════════════════════
+    console.log('[script-breakdown] V25: PHASE 2 - Light AI for metadata...');
     
-    const canonicalData = canonicalResult.data;
-    const sonnetProviderInfo = canonicalResult.providerInfo;
+    await supabase.from('background_tasks').update({
+      progress: 35,
+      description: 'Fase 2: Extrayendo metadatos con IA...',
+      updated_at: new Date().toISOString(),
+    }).eq('id', taskId);
+    
+    // Build a SMALL sample for the AI (not the whole script!)
+    const sampleHeadings = regexScenes.slice(0, 30).map((s, i) => `${i + 1}. ${s.heading}`).join('\n');
+    const topSpeakers = speakerNames.slice(0, 40).join(', ');
+    
+    // Take first 15000 chars of script for synopsis (enough for AI to understand story)
+    const scriptSample = processedScriptText.slice(0, 15000);
+    
+    const metadataUserPrompt = `OUTPUT LANGUAGE: ${lang}
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // MEGA-PROMPT V22: UNIFIED OUTPUT - Characters and Scenes come from Sonnet directly
-    // ═══════════════════════════════════════════════════════════════════════════
+SPEAKERS DETECTED (unify aliases if any):
+${topSpeakers}
+
+SAMPLE SCENE HEADINGS (${regexScenes.length} total):
+${sampleHeadings}
+${regexScenes.length > 30 ? `... and ${regexScenes.length - 30} more scenes` : ''}
+
+SCRIPT SAMPLE (first ~15000 chars):
+━━━━━━━━━━━━━━━━━━━━━━
+${scriptSample}
+━━━━━━━━━━━━━━━━━━━━━━
+${processedScriptText.length > 15000 ? `... [${processedScriptText.length - 15000} more characters]` : ''}
+
+Provide title, logline, synopsis, and character unification for the speakers listed above.`;
+
+    let metadataResult: any = null;
+    let metadataProviderInfo: any = null;
+    let aiSucceeded = false;
     
-    // V22 output format: characters is an ARRAY, not an object
-    const megaCharacters = Array.isArray(canonicalData.characters) ? canonicalData.characters : [];
-    const megaScenes = Array.isArray(canonicalData.scenes) ? canonicalData.scenes : [];
-    const megaLocations = Array.isArray(canonicalData.locations) ? canonicalData.locations : [];
-    const megaVoices = Array.isArray(canonicalData.voices_and_systems) ? canonicalData.voices_and_systems : [];
-    const megaRejected = Array.isArray(canonicalData.non_entities_rejected) ? canonicalData.non_entities_rejected : [];
-    
-    console.log('[script-breakdown] MEGA-PROMPT V22 results:', {
-      provider: sonnetProviderInfo.provider,
-      model: sonnetProviderInfo.model,
-      fallback_used: sonnetProviderInfo.fallback_used,
-      title: canonicalData.title,
-      characters: megaCharacters.length,
-      scenes: megaScenes.length,
-      locations: megaLocations.length,
-      voices: megaVoices.length,
-      rejected: megaRejected.length,
-    });
-    
-    // Log rejected entities for debugging
-    if (megaRejected.length > 0) {
-      console.log('[script-breakdown] Non-entities rejected:', 
-        megaRejected.slice(0, 20).map((e: any) => `${e.raw_text} (${e.reason})`).join(', ')
-      );
+    try {
+      const result = await callAIJson({
+        modelKey: 'sonnet',
+        systemPrompt: LIGHT_METADATA_PROMPT,
+        userPrompt: metadataUserPrompt,
+        maxTokens: 4000, // Much smaller! Metadata only
+        label: 'script_breakdown_metadata_v25',
+      });
+      
+      metadataResult = result.data;
+      metadataProviderInfo = result.providerInfo;
+      aiSucceeded = true;
+      
+      console.log('[script-breakdown] V25: Metadata AI succeeded:', {
+        provider: metadataProviderInfo.provider,
+        title: metadataResult.title,
+        characters_unified: metadataResult.character_unification?.length || 0,
+      });
+    } catch (aiError) {
+      console.warn('[script-breakdown] V25: Metadata AI failed, using fallback:', aiError);
+      
+      // FALLBACK: Generate minimal metadata without AI
+      metadataResult = {
+        title: 'Guion Analizado',
+        logline: 'Análisis generado sin IA - metadatos limitados',
+        synopsis: `Este guion contiene ${regexScenes.length} escenas, ${speakerNames.length} personajes con diálogo y ${extractedLocations.length} locaciones.`,
+        character_unification: speakerNames.slice(0, 30).map(name => ({
+          canonical_name: name,
+          aliases: [],
+          type: 'supporting',
+          bio: '',
+        })),
+        production: { dialogue_density: 'medium', cast_size: 'medium' },
+      };
+      metadataProviderInfo = { provider: 'fallback', model: 'none', fallback_used: true };
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // PHASE 2: HAIKU - ONLY FOR PROPS AND SETPIECES (characters done by Sonnet)
-    // ═══════════════════════════════════════════════════════════════════════════
     await supabase.from('background_tasks').update({
       progress: 50,
-      description: 'Extrayendo props y setpieces...',
+      description: 'Fase 2 completada. Extrayendo props y setpieces...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PHASE 3: HAIKU FOR PROPS AND SETPIECES (optional, can fail gracefully)
+    // ═══════════════════════════════════════════════════════════════════════════
+    console.log('[script-breakdown] V25: PHASE 3 - Props and setpieces...');
+    
     const propsContextForHaiku = `
-CONTEXT FROM SEMANTIC BREAKDOWN:
-- Title: ${canonicalData.title || 'Unknown'}
-- Synopsis: ${canonicalData.synopsis || canonicalData.logline || ''}
-- Scenes total: ${megaScenes.length || headingLines.length}
+CONTEXT:
+- Title: ${metadataResult.title || 'Unknown'}
+- Synopsis: ${metadataResult.synopsis || metadataResult.logline || ''}
+- Scenes total: ${regexScenes.length}
 
 SAMPLE SCENE HEADINGS:
-${headingLines.slice(0, 40).map((h, i) => `${i + 1}. ${h}`).join('\n')}
+${sampleHeadings}
 
 OUTPUT LANGUAGE: ${lang}`;
-
-    console.log('[script-breakdown] Phase 2: Haiku for props + setpieces only...');
 
     const [propsResult, setpiecesResult] = await Promise.allSettled([
       callAIJson({
@@ -3401,204 +3468,208 @@ OUTPUT LANGUAGE: ${lang}`;
         systemPrompt: HAIKU_PROPS_PROMPT,
         userPrompt: propsContextForHaiku + `\n\nExtract all production props from this screenplay world.`,
         maxTokens: 3000,
-        label: 'script_breakdown_props',
+        label: 'script_breakdown_props_v25',
       }),
       callAIJson({
         modelKey: 'haiku',
         systemPrompt: HAIKU_SETPIECES_PROMPT,
         userPrompt: propsContextForHaiku + `\n\nExtract all setpieces and production flags.`,
         maxTokens: 2000,
-        label: 'script_breakdown_setpieces',
+        label: 'script_breakdown_setpieces_v25',
       }),
     ]);
 
-    console.log('[script-breakdown] Phase 2 complete:', {
+    const propsData = propsResult.status === 'fulfilled' ? propsResult.value.data : {};
+    const setpiecesData = setpiecesResult.status === 'fulfilled' ? setpiecesResult.value.data : {};
+    
+    console.log('[script-breakdown] V25: Props/setpieces complete:', {
       props: propsResult.status,
       setpieces: setpiecesResult.status,
     });
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // MERGE: Use MEGA-PROMPT output directly for characters/scenes/locations
-    // ═══════════════════════════════════════════════════════════════════════════
     await supabase.from('background_tasks').update({
       progress: 65,
-      description: 'Fusionando resultados...',
+      description: 'Fase 3 completada. Post-procesando datos...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    const propsData = propsResult.status === 'fulfilled' ? propsResult.value.data : {};
-    const setpiecesData = setpiecesResult.status === 'fulfilled' ? setpiecesResult.value.data : {};
-    const haikuProviderInfo = propsResult.status === 'fulfilled' ? propsResult.value.providerInfo : null;
-
-    // Convert MEGA-PROMPT characters to unified format for post-processor
-    const rawCharactersForPostProcess = megaCharacters.map((c: any) => ({
-      canonical_name: c.canonical_name || c.name || '',
-      name: c.canonical_name || c.name || '',
-      id: c.id || '',
-      aliases: c.aliases || [],
-      type: c.type || 'supporting',
-      bio: c.bio || '',
-      confidence: c.confidence || 'high',
-      scenes_count: 0,
-    }));
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PHASE 4: BUILD FINAL STRUCTURE FROM DETERMINISTIC + AI DATA
+    // ═══════════════════════════════════════════════════════════════════════════
+    console.log('[script-breakdown] V25: PHASE 4 - Building final structure...');
     
-    // Also add voices as characters for unified processing
-    const voicesAsCharacters = megaVoices.map((v: any) => ({
-      canonical_name: v.name || '',
-      name: v.name || '',
-      aliases: [],
-      type: 'voice',
-      bio: '',
-      confidence: 'high',
-      scenes_count: 0,
-    }));
+    // Build character alias map from AI unification
+    const aliasToCanonical = new Map<string, string>();
+    const characterUnification = metadataResult.character_unification || [];
     
-    const allRawCharacters = [...rawCharactersForPostProcess, ...voicesAsCharacters];
+    for (const char of characterUnification) {
+      const canonical = (char.canonical_name || '').toUpperCase().trim();
+      if (!canonical) continue;
+      
+      aliasToCanonical.set(canonical, canonical);
+      for (const alias of (char.aliases || [])) {
+        const aliasUpper = (alias || '').toUpperCase().trim();
+        if (aliasUpper) {
+          aliasToCanonical.set(aliasUpper, canonical);
+        }
+      }
+    }
     
-    // Convert scenes for post-processor
-    const rawScenesForPostProcess = megaScenes.map((s: any) => ({
-      number: s.number || 0,
-      heading: s.heading || '',
-      int_ext: s.int_ext || 'INT',
-      location_base: s.location_base || '',
-      location_raw: s.heading || '',
-      time: s.time || '',
-      characters_present: s.characters_present || [],
-      character_ids: [],
-    }));
+    // Map all speakers to canonical names
+    const canonicalCharacters: any[] = [];
+    const seenCanonical = new Set<string>();
     
-    // Convert locations for post-processor
-    const rawLocationsForPostProcess = megaLocations.map((l: any) => ({
-      name: l.name || '',
-      type: l.type || 'interior',
-      scenes_count: l.scenes_count || 0,
-    }));
+    for (const speaker of speakerNames) {
+      const speakerUpper = speaker.toUpperCase().trim();
+      const canonical = aliasToCanonical.get(speakerUpper) || speakerUpper;
+      
+      if (seenCanonical.has(canonical)) continue;
+      seenCanonical.add(canonical);
+      
+      // Find metadata from AI unification
+      const charMeta = characterUnification.find((c: any) => 
+        (c.canonical_name || '').toUpperCase() === canonical ||
+        (c.aliases || []).some((a: string) => (a || '').toUpperCase() === canonical)
+      );
+      
+      const dialogueEntry = dialogueStats.by_character[speaker] || { lines: 0, words: 0 };
+      
+      canonicalCharacters.push({
+        canonical_name: canonical,
+        name: canonical,
+        aliases: charMeta?.aliases || [],
+        type: charMeta?.type || 'supporting',
+        bio: charMeta?.bio || '',
+        dialogue_lines: dialogueEntry.lines,
+        dialogue_words: dialogueEntry.words,
+        scenes_count: 0, // Will be computed below
+        confidence: 'high',
+      });
+    }
     
-    console.log('[script-breakdown] Pre-PostProcessor counts:', {
-      characters: allRawCharacters.length,
-      scenes: rawScenesForPostProcess.length,
-      locations: rawLocationsForPostProcess.length,
+    // Sort by dialogue lines (most dialogue = most important)
+    canonicalCharacters.sort((a, b) => b.dialogue_lines - a.dialogue_lines);
+    
+    // Assign types based on dialogue ranking
+    canonicalCharacters.forEach((char, idx) => {
+      if (idx < 3 && char.dialogue_lines > 10) {
+        char.type = 'main';
+        char.narrative_weight = 'protagonist';
+      } else if (idx < 10 && char.dialogue_lines > 3) {
+        char.type = 'supporting';
+        char.narrative_weight = 'major';
+      } else {
+        char.type = 'featured_extra';
+        char.narrative_weight = 'minor';
+      }
     });
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // PHASE 3: SEMANTIC POST-PROCESSOR
-    // Normalizes variants, collapses duplicates, classifies narrative weight
-    // ═══════════════════════════════════════════════════════════════════════════
+    
+    console.log(`[script-breakdown] V25: Canonical characters: ${canonicalCharacters.length}`);
+    console.log(`[script-breakdown] V25: Top 5 by dialogue:`, canonicalCharacters.slice(0, 5).map(c => `${c.name}:${c.dialogue_lines}`));
+    
+    // Update scenes with canonical character names
+    for (const scene of regexScenes) {
+      const canonicalPresent: string[] = [];
+      for (const rawChar of (scene.characters_present || [])) {
+        const rawUpper = rawChar.toUpperCase().trim();
+        const canonical = aliasToCanonical.get(rawUpper) || rawUpper;
+        if (!canonicalPresent.includes(canonical)) {
+          canonicalPresent.push(canonical);
+        }
+      }
+      scene.characters_present = canonicalPresent;
+    }
+    
+    // Count scene appearances for each character
+    for (const scene of regexScenes) {
+      for (const charName of (scene.characters_present || [])) {
+        const char = canonicalCharacters.find(c => c.canonical_name === charName);
+        if (char) {
+          char.scenes_count++;
+        }
+      }
+    }
+    
     await supabase.from('background_tasks').update({
       progress: 75,
-      description: 'Post-procesado semántico (normalización + clasificación)...',
+      description: 'Fase 4 completada. Normalizando y clasificando...',
       updated_at: new Date().toISOString(),
     }).eq('id', taskId);
 
-    const postProcessed = runSemanticPostProcessor(
-      allRawCharacters,
-      rawScenesForPostProcess,
-      rawLocationsForPostProcess
-    );
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PHASE 5: POST-PROCESSOR (normalize and classify)
+    // ═══════════════════════════════════════════════════════════════════════════
+    console.log('[script-breakdown] V25: PHASE 5 - Post-processing...');
     
-    console.log('[script-breakdown] PostProcessor results:', {
-      cast: postProcessed.characters.cast.length,
-      extras: postProcessed.characters.featured_extras_with_lines.length,
-      voices: postProcessed.characters.voices_and_functional.length,
-      locations: postProcessed.locations.base.length,
-      collapsed_chars: postProcessed.characters._collapsed_count,
-      collapsed_locs: postProcessed.locations._collapsed_count,
-    });
-
-    // Convert post-processed characters to standard format for downstream
-    const toStandardChar = (c: NormalizedCharacter) => ({
-      name: c.canonical_name,
-      aliases: c.aliases,
-      role: c.type,
-      bio: c.bio,
-      scenes_count: c.scenes_count,
-      confidence: c.confidence,
-      narrative_weight: c.narrative_weight,
+    // Classify characters into buckets
+    const castCharacters = canonicalCharacters.filter(c => c.type === 'main' || c.type === 'supporting');
+    const extrasCharacters = canonicalCharacters.filter(c => c.type === 'featured_extra');
+    const voicesCharacters = canonicalCharacters.filter(c => c.type === 'voice');
+    
+    // Apply bucket classifier as additional filter
+    const allNames = canonicalCharacters.map(c => c.canonical_name);
+    const buckets = classifyCharacters(allNames);
+    
+    console.log('[script-breakdown] V25: Bucket classification:', {
+      cast: buckets.cast.length,
+      featured: buckets.featured_extras_with_lines.length,
+      voices: buckets.voices_and_functional.length,
+      discarded: buckets.discarded.length,
     });
     
-    const finalCast = postProcessed.characters.cast.map(toStandardChar);
-    const finalExtras = postProcessed.characters.featured_extras_with_lines.map(toStandardChar);
-    const finalVoices = postProcessed.characters.voices_and_functional.map(toStandardChar);
+    // Build normalized location data
+    const normalizedLocations = collapseLocationVariants(regexScenes);
     
-    // Convert post-processed locations to standard format
-    const finalLocations = postProcessed.locations.base.map((l: NormalizedLocation) => ({
-      name: l.base_name,
-      sub_location: l.sub_location,
-      type: l.type,
-      scenes_count: l.scenes_count,
-      time_of_day: l.time_of_day,
-      variants: l.raw_variants,
-    }));
-    
-    // Use post-processed scenes (same as input but may be enriched later)
-    const finalScenes = postProcessed.scenes;
-    
-    console.log('[script-breakdown] V23 Post-Processed classification:', {
-      cast: finalCast.length,
-      extras: finalExtras.length,
-      voices: finalVoices.length,
-      locations: finalLocations.length,
-      scenes_with_chars: finalScenes.filter((s: any) => s.characters_present?.length > 0).length,
-    });
-
-    // Merge into unified breakdown
+    // Build the merged breakdown structure
     const mergedBreakdown: any = {
-      title: canonicalData.title,
-      logline: canonicalData.logline,
-      synopsis: canonicalData.synopsis,
-      production: canonicalData.production || {},
-      // Scenes from MEGA-PROMPT (already have characters_present!)
+      title: metadataResult.title || 'Guion Analizado',
+      logline: metadataResult.logline || '',
+      synopsis: metadataResult.synopsis || '',
+      production: metadataResult.production || {},
+      
       scenes: {
-        total: finalScenes.length,
-        list: finalScenes,
+        total: regexScenes.length,
+        list: regexScenes,
       },
-      // Characters from POST-PROCESSOR (normalized and classified!)
+      
       characters: {
-        cast: finalCast,
-        featured_extras_with_lines: finalExtras,
-        voices_and_functional: finalVoices,
-        narrative_classification: postProcessed.characters.narrative_classification,
-        _post_processor_stats: {
-          original_count: postProcessed.characters._original_count,
-          collapsed_count: postProcessed.characters._collapsed_count,
-        },
+        cast: castCharacters,
+        featured_extras_with_lines: extrasCharacters,
+        voices_and_functional: voicesCharacters,
+        _ai_unified: characterUnification.length,
       },
-      // Main characters = protagonists from narrative classification
-      characters_main: postProcessed.characters.narrative_classification.protagonists.map(toStandardChar),
-      // Locations from POST-PROCESSOR (normalized!)
+      
+      characters_main: canonicalCharacters.filter(c => c.type === 'main'),
+      
       locations: {
-        base: finalLocations,
-        variants: [],
-        _post_processor_stats: {
-          original_count: postProcessed.locations._original_count,
-          collapsed_count: postProcessed.locations._collapsed_count,
-        },
+        base: normalizedLocations,
+        _extracted_count: extractedLocations.length,
       },
-      // Props from Haiku
+      
       props: [
         ...(propsData.props_key || []),
         ...(propsData.props_production || []),
       ],
       props_key: propsData.props_key || [],
       props_production: propsData.props_production || [],
-      // Setpieces from Haiku
+      
       setpieces: setpiecesData.setpieces || [],
       production_flags: setpiecesData.production_flags || [],
-      // Non-entities rejected (for debugging)
-      non_entities_rejected: megaRejected,
+      
+      dialogues: dialogueStats,
     };
-
-    // Enrich with regex data and normalize
+    
+    // Enrich with script data and normalize
     const enrichedData = enrichBreakdownWithScriptData(mergedBreakdown, processedScriptText);
     const normalizedData = normalizeBreakdown(enrichedData);
-
-    console.log('[script-breakdown] Final normalization complete:', {
-      scenes: normalizedData.counts?.scenes_total || 0,
-      cast: normalizedData.counts?.cast_characters_total || 0,
-      extras: normalizedData.counts?.featured_extras_total || 0,
-      voices: normalizedData.counts?.voices_total || 0,
-      locationsBase: normalizedData.counts?.locations_base_total || 0,
-      props: normalizedData.counts?.props_total || 0,
+    
+    console.log('[script-breakdown] V25: Final normalization complete:', {
+      scenes: normalizedData.counts?.scenes_total || regexScenes.length,
+      cast: castCharacters.length,
+      extras: extrasCharacters.length,
+      locationsBase: normalizedLocations.length,
+      props: mergedBreakdown.props.length,
+      ai_succeeded: aiSucceeded,
     });
 
     await supabase.from('background_tasks').update({
@@ -3632,7 +3703,7 @@ OUTPUT LANGUAGE: ${lang}`;
       );
 
       const scenesList = Array.isArray(normalizedData.scenes?.list) ? normalizedData.scenes.list : [];
-      const synopsisText = (enrichedData.synopsis || canonicalData.synopsis || canonicalData.logline || '') as string;
+      const synopsisText = (enrichedData.synopsis || metadataResult.synopsis || metadataResult.logline || '') as string;
 
       const buildEpisodesFromScenes = (): any[] => {
         if (desiredEpisodesCount <= 1) {
@@ -3694,7 +3765,7 @@ OUTPUT LANGUAGE: ${lang}`;
         ...extractNames((normalizedData as any)?.characters?.cast || []),
         ...extractNames((normalizedData as any)?.characters?.featured_extras_with_lines || []),
         ...extractNames((normalizedData as any)?.characters?.voices_and_functional || []),
-        ...extractNames((canonicalData as any)?.characters_main || []),
+        ...extractNames(mergedBreakdown?.characters_main || []),
       ];
       
       console.log('[filter] Raw character names collected:', allRawNames.length);
@@ -3714,9 +3785,9 @@ OUTPUT LANGUAGE: ${lang}`;
       (normalizedData as any).characters.voices_and_functional = toCharObjects(buckets.voices_and_functional, 'voice');
       
       // Also filter characters_main using the same system
-      const mainNames = extractNames((canonicalData as any)?.characters_main || []);
+      const mainNames = extractNames(mergedBreakdown?.characters_main || []);
       const mainBuckets = classifyCharacters(mainNames);
-      (canonicalData as any).characters_main = toCharObjects(mainBuckets.cast, 'main');
+      mergedBreakdown.characters_main = toCharObjects(mainBuckets.cast, 'main');
       
       console.log('[filter] Classification complete:', {
         cast: buckets.cast.length,
@@ -3732,7 +3803,7 @@ OUTPUT LANGUAGE: ${lang}`;
       console.log('=== POPULATING SCENE CHARACTERS ===');
       
       // Build character mappings (alias→canonical, canonical→id)
-      const semanticChars = (canonicalData as any)?.characters || null;
+      const semanticChars = metadataResult?.character_unification || null;
       const castWithAliases = extractWithAliases((normalizedData as any)?.characters?.cast || []);
       const extrasWithAliases = extractWithAliases((normalizedData as any)?.characters?.featured_extras_with_lines || []);
       const voicesWithAliases = extractWithAliases((normalizedData as any)?.characters?.voices_and_functional || []);
@@ -3872,12 +3943,12 @@ OUTPUT LANGUAGE: ${lang}`;
         counts: normalizedData.counts,
         
         synopsis: synopsisText,
-        logline: (canonicalData.logline || '') as string,
+        logline: (metadataResult.logline || '') as string,
         
-        // From Sonnet
-        acts: canonicalData.acts || [],
-        subplots: canonicalData.subplots || [],
-        production: canonicalData.production || {},
+        // From metadata AI
+        acts: [],
+        subplots: [],
+        production: metadataResult.production || {},
         
         // Scenes in canonical format
         scenes: normalizedData.scenes,
@@ -3910,22 +3981,22 @@ OUTPUT LANGUAGE: ${lang}`;
         validation: enrichedData.validation || {},
         _warnings: normalizedData._warnings || [],
         _phase_status: {
-          mega_semantic_v22: 'success',
-          semantic_post_processor_v1: 'success',
+          hybrid_v25: aiSucceeded ? 'success' : 'fallback',
+          deterministic_extraction: 'success',
           haiku_props: propsResult.status,
           haiku_setpieces: setpiecesResult.status,
         },
         _post_processor_stats: {
-          characters_collapsed: postProcessed.characters._collapsed_count,
-          locations_collapsed: postProcessed.locations._collapsed_count,
+          characters_total: canonicalCharacters.length,
+          locations_total: normalizedLocations.length,
         },
         _provider_info: {
-          sonnet: sonnetProviderInfo,
-          haiku: haikuProviderInfo,
+          metadata: metadataProviderInfo,
+          ai_succeeded: aiSucceeded,
         },
         
-        // Non-entities rejected (for debugging)
-        non_entities_rejected: megaRejected,
+        // Architecture info
+        _architecture: 'hybrid_deterministic_v25',
         
         // Episodes
         episodes: parsedEpisodes,
