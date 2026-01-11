@@ -73,6 +73,10 @@ verify_jwt = true
 [functions.generate-teasers]
 verify_jwt = true
 
+[functions.generate-dialogues-batch]
+# Generates dialogues for scenes in batch - uses Lovable AI
+verify_jwt = true
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # ASSET GENERATION (V3.0 PROTECTED - Expensive AI Operations)
 # ═══════════════════════════════════════════════════════════════════════════════

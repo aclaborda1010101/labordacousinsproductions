@@ -202,6 +202,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     { id: 'outline', label: 'Generando outline rápido', status: 'pending' },
     { id: 'approval', label: 'Aprobación del outline', status: 'pending' },
     { id: 'episodes', label: 'Generando episodios', status: 'pending' },
+    { id: 'dialogues', label: 'Generando diálogos completos', status: 'pending' },
     { id: 'teasers', label: 'Generando teasers', status: 'pending' },
     { id: 'save', label: 'Guardando', status: 'pending' },
   ]);
@@ -1482,7 +1483,84 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       };
 
       setGeneratedScript(completeScreenplay);
-      setPipelineProgress(85);
+      setPipelineProgress(80);
+
+      // Generate dialogues for all scenes that need them
+      updatePipelineStep('dialogues', 'running', 'Generando diálogos completos...');
+      try {
+        // Process episodes in sequence to avoid rate limits
+        let totalDialoguesGenerated = 0;
+        for (let epIdx = 0; epIdx < episodes.length; epIdx++) {
+          const ep = episodes[epIdx];
+          if (!ep.scenes || ep.scenes.length === 0) continue;
+          
+          // Check which scenes need dialogue
+          const scenesNeedingDialogue = ep.scenes.filter((s: any) => {
+            const hasCharacters = s.characters && s.characters.length > 0;
+            const hasDialogue = s.dialogue && s.dialogue.length > 0;
+            return hasCharacters && !hasDialogue;
+          });
+          
+          if (scenesNeedingDialogue.length === 0) {
+            console.log(`[Pipeline] Episode ${ep.episode_number}: all scenes have dialogues`);
+            continue;
+          }
+          
+          console.log(`[Pipeline] Episode ${ep.episode_number}: generating dialogues for ${scenesNeedingDialogue.length} scenes`);
+          updatePipelineStep('dialogues', 'running', `Diálogos episodio ${ep.episode_number}/${episodes.length}...`);
+          
+          const { data: dialogueData, error: dialogueError } = await supabase.functions.invoke('generate-dialogues-batch', {
+            body: {
+              projectId,
+              scenes: ep.scenes,
+              language,
+              tone: completeScreenplay.tone || 'dramático',
+              genre: completeScreenplay.genre || 'drama',
+            }
+          });
+          
+          if (dialogueError) {
+            console.warn(`[Pipeline] Dialogue generation failed for episode ${ep.episode_number}:`, dialogueError);
+            // Continue with other episodes, don't fail the whole pipeline
+          } else if (dialogueData?.scenes) {
+            // Update episode scenes with generated dialogues
+            episodes[epIdx] = {
+              ...ep,
+              scenes: dialogueData.scenes,
+              total_dialogue_lines: dialogueData.scenes.reduce((sum: number, s: any) => 
+                sum + (s.dialogue?.length || 0), 0
+              ),
+            };
+            totalDialoguesGenerated += dialogueData.generated_count || 0;
+          }
+          
+          // Small delay between episodes to avoid rate limits
+          if (epIdx < episodes.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
+        
+        // Update screenplay with enriched episodes
+        completeScreenplay.episodes = episodes;
+        completeScreenplay.counts.total_dialogue_lines = episodes.reduce(
+          (sum, ep) => sum + (ep.total_dialogue_lines || 0), 0
+        );
+        setGeneratedScript({ ...completeScreenplay });
+        setGeneratedEpisodesList([...episodes]);
+        
+        if (totalDialoguesGenerated > 0) {
+          updatePipelineStep('dialogues', 'success');
+          toast.success(`${totalDialoguesGenerated} escenas con diálogos generados`);
+        } else {
+          updatePipelineStep('dialogues', 'success', 'Todas las escenas ya tenían diálogos');
+        }
+      } catch (dialogueErr) {
+        console.error('Dialogue generation exception:', dialogueErr);
+        updatePipelineStep('dialogues', 'error');
+        toast.warning('Diálogos no generados completamente, continuando...');
+      }
+
+      setPipelineProgress(88);
 
       // Generate teasers (60s and 30s)
       updatePipelineStep('teasers', 'running', 'Generando teasers promocionales...');
@@ -1511,7 +1589,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         updatePipelineStep('teasers', 'error');
       }
 
-      setPipelineProgress(90);
+      setPipelineProgress(95);
 
       // Save to DB
       updatePipelineStep('save', 'running');
