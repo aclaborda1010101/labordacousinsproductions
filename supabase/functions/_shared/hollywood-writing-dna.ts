@@ -1,7 +1,8 @@
 /**
  * HOLLYWOOD WRITING DNA - Professional Screenwriting Prompt System
  * Extracted from analysis of: Elvis, Oppenheimer, Babylon, A Star Is Born, 
- * The Usual Suspects, Interstellar, A Few Good Men
+ * The Usual Suspects, Interstellar, A Few Good Men, Gladiator, Snatch,
+ * The Dark Knight Rises, The Gentlemen, The Man from UNCLE
  * 
  * This module contains the professional screenwriting techniques and patterns
  * that make Hollywood scripts exceptional.
@@ -213,8 +214,288 @@ ANÁLISIS:
 - Personaje introducido por ACCIÓN extrema
 - "caked in sweat and cocaine residue" = no judgment, just fact
 - Diálogo mínimo pero caracterizante
+`,
+
+  // From Gladiator - Epic Battle Sequence
+  epicBattle: `
+=== GLADIATOR (Logan/Franzoni) - SECUENCIA DE BATALLA ÉPICA ===
+
+Maximus and his lieutenants gaze down from the hilltop. Below them 
+they can see a Germanic encampment.
+
+QUINTUS
+They do not seem interested in negotiations.
+
+A beat as Maximus gazes down at the position.
+
+MAXIMUS
+(quietly)
+A people should know when they are conquered.
+
+QUINTUS
+Would you, General?
+
+Maximus looks at him. Then at his men. Then back at the forest.
+
+MAXIMUS
+At my signal, unleash hell.
+
+---
+ANÁLISIS:
+- "(quietly)" = dirección actoral precisa, no emocional
+- "A beat" usado para timing, no para llenar
+- Pregunta retórica que revela conflicto interno
+- "Unleash hell" = línea icónica emerge de calma
+- Tensión: ejército entero esperando una palabra
+`,
+
+  // From Snatch - Stylized Character Introduction
+  stylizedIntro: `
+=== SNATCH (Ritchie) - INTRODUCCIÓN ESTILIZADA ===
+
+At that moment the door opens and in walks a MAN carrying two 
+heavy sacks. He's a rough looking bastard, massive, 
+and not what you'd call handsome.
+
+TOMMY
+(V.O.)
+Not too bright, but he hits like a mule kick.
+
+The man drops the bags with a THUD that shakes the floor.
+
+TURKISH
+(to us)
+This is Gorgeous George.
+
+---
+ANÁLISIS:
+- Descripción física directa sin pretensiones ("massive, not handsome")
+- Nombre irónico (GORGEOUS = hermoso) establece humor inmediato
+- Comentario meta del personaje funciona como narración
+- Economía brutal: 5 líneas = personaje completo
+- Narrador in-world rompe cuarta pared con estilo
+`,
+
+  // From The Dark Knight Rises - Action Setpiece
+  actionSetpiece: `
+=== THE DARK KNIGHT RISES (Nolan) - ACCIÓN FÍSICA IMPOSIBLE ===
+
+The wind HOWLS. The aircraft SHUDDERS.
+
+BANE
+(utterly calm)
+Dr. Pavel refused our offer in favor of yours. 
+We had to know what he told you about us.
+
+CIA MAN
+He told us nothing.
+
+BANE
+Then why do you need him alive?
+
+The CIA Man has no answer. Bane SMILES.
+
+BANE
+Time to go.
+
+SMASH -- the windows EXPLODE inward -- 
+Men in tactical gear SWING into the cabin --
+Cables WHIPPING in the hurricane wind --
+The aircraft TILTS into vertical descent --
+
+---
+ANÁLISIS:
+- Diálogo que parece negociación es realmente intimidación
+- Calma del villano vs caos físico = terror
+- Acciones en cascada separadas por guiones
+- Violencia específica ("EXPLODE", "WHIPPING", "TILTS")
+- Sin adjetivos emocionales, solo física brutal
+`,
+
+  // From The Gentlemen - Meta-Narration
+  metaNarration: `
+=== THE GENTLEMEN (Ritchie) - META-NARRACIÓN ===
+
+FLETCHER
+I'm gonna tell you a story, Pete. And I want you to 
+really listen.
+
+PETE
+I don't want to hear a story.
+
+BANG! Fletcher slams his hand on the table.
+
+FLETCHER
+I said I'm telling you a story.
+
+Pete's jaw tightens. He listens.
+
+FLETCHER (CONT'D)
+Good. Now -- picture this. London. Present day. 
+Roll camera on our protagonist...
+
+He gestures theatrically.
+
+FLETCHER (CONT'D)
+...an American boy who came to Oxford with nothing 
+and built an empire.
+
+---
+ANÁLISIS:
+- Narrador IN-WORLD que comenta la historia que cuenta
+- Cambio de tono abrupto (BANG!) rompe expectativas
+- Mezcla de registros (slang + terminología cinematográfica)
+- Establece reglas del juego narrativo
+- Fuerza al espectador a participar
+`,
+
+  // From The Man from UNCLE - Period Elegance
+  periodElegance: `
+=== THE MAN FROM UNCLE (Ritchie) - ELEGANCIA DE ÉPOCA ===
+
+Solo enters a café. All sharp tailoring and easy confidence.
+
+INT. CAFÉ - DAY
+
+He orders an espresso. Drinks it slowly. Studies the room 
+in the mirrored wall behind the bar.
+
+A WOMAN in a summer dress finishes her coffee. Dabs her lips 
+with the napkin. Leaves.
+
+Solo unfolds the napkin. On it: an address.
+And three words: YOU'RE BEING WATCHED.
+
+Solo folds it back. Finishes his espresso. 
+Tips the waiter generously. Exits.
+
+---
+ANÁLISIS:
+- Sin diálogo = tensión visual pura
+- Detalles de época (espresso, summer dress = tradecraft elegante)
+- Información crítica en objeto mundano
+- Brevedad extrema: setup, complicación, salida en 10 líneas
+- El secreto está en lo que NO se dice
 `
 };
+
+// =============================================================================
+// DIRECTOR-SPECIFIC TECHNIQUE MODULES
+// =============================================================================
+
+export const GUY_RITCHIE_TECHNIQUES = `
+═══════════════════════════════════════════════════════════════════════════════
+TÉCNICAS GUY RITCHIE - Narrativa Estilizada
+═══════════════════════════════════════════════════════════════════════════════
+
+1. INTRODUCCIONES CON NARRADOR:
+   - Presentar personajes como si fuera un documental criminal
+   - "Meet BORIS THE BLADE" - directo, sin ceremonia
+   - Añadir comentario irónico inmediato sobre el personaje
+
+2. DIÁLOGOS RÁPIDOS CON PING-PONG:
+   - Líneas cortas que rebotan como tenis verbal
+   - Interrupciones constantes, nadie termina de hablar
+   - Humor que suena natural pero es extremadamente construido
+
+3. NARRATIVA FRAGMENTADA:
+   - Múltiples hilos que se cruzan en momentos inesperados
+   - Flashbacks como respuesta visual a preguntas
+   - Saltos temporales que revelan información gradualmente
+
+4. SLANG AUTÉNTICO:
+   - Jerga criminal específica del mundo retratado
+   - Apodos descriptivos (Gorgeous George, Franky Four-Fingers)
+   - No suavizar el lenguaje - autenticidad antes que comodidad
+
+5. VIOLENCIA ESTILIZADA:
+   - Descrita con distancia irónica, casi cómica
+   - Consecuencias físicas específicas pero sin moralización
+   - El humor y la brutalidad coexisten sin problema
+
+6. ECONOMÍA VERBAL EXTREMA:
+   - Si se puede mostrar, no decir
+   - Cortar antes de la respuesta obvia
+   - Dejar que el silencio trabaje
+`;
+
+export const NOLAN_TECHNIQUES = `
+═══════════════════════════════════════════════════════════════════════════════
+TÉCNICAS CHRISTOPHER NOLAN - Épica Intelectual
+═══════════════════════════════════════════════════════════════════════════════
+
+1. COLD OPENS DE ACCIÓN:
+   - In medias res extremo - el espectador entiende MIENTRAS sucede
+   - Secuencia de acción que es también exposición
+   - Reglas del mundo establecidas a través de lo que vemos, no explicadas
+
+2. VILLANOS CON FILOSOFÍA:
+   - Antagonistas que articulan worldview completo y coherente
+   - Sus argumentos tienen lógica interna que el héroe debe refutar
+   - No son malos "porque sí" - creen genuinamente en su causa
+
+3. DIÁLOGOS LAYERED:
+   - Significado literal + significado subtextual + setup para después
+   - Cada línea trabaja en múltiples niveles simultáneamente
+   - Exposición disfrazada de confrontación
+
+4. FÍSICA ESPECÍFICA EN ACCIÓN:
+   - Coreografía precisa: cómo se mueve el cuerpo, no solo "lucha"
+   - Consecuencias físicas reales y dolorosas
+   - La geografía del espacio es siempre clara
+
+5. ESTRUCTURA TEMPORAL:
+   - Presente y pasado entrelazados con propósito
+   - Revelaciones que redefinen escenas anteriores
+   - El tiempo como tema, no solo como estructura
+
+6. ESCALA ÉPICA CON INTIMIDAD:
+   - Grandes eventos vistos desde perspectivas personales
+   - Un hombre en un avión importa más que mil en tierra
+   - Lo íntimo hace que lo épico tenga peso emocional
+`;
+
+export const EPIC_BATTLE_TECHNIQUES = `
+═══════════════════════════════════════════════════════════════════════════════
+TÉCNICAS DE BATALLA ÉPICA - Gladiator/Braveheart/LOTR Style
+═══════════════════════════════════════════════════════════════════════════════
+
+1. PREPARACIÓN ANTES DEL CAOS:
+   - Momento de calma tensa mientras se observa el campo
+   - Personaje principal tiene intercambio personal con alguien cercano
+   - Línea filosófica o íntima antes de la violencia
+   - "At my signal..." - anticipación es más poderosa que acción
+
+2. COREOGRAFÍA MILITAR ESPECÍFICA:
+   - Nombres de armas, formaciones, tácticas
+   - Detalles técnicos dan credibilidad histórica
+   - Los generales hablan como generales, no como poetas
+
+3. SENSORIALIDAD EXTREMA:
+   - Vapor saliendo de fosas nasales de caballos
+   - Barro, sangre, metal, fuego, humo
+   - Cada sentido activado: lo que se ve, oye, HUELE
+
+4. INTERCORTE ENTRE ESCALAS:
+   - Vista de general desde colina → primer plano de soldado
+   - Macro (campo completo) → micro (una espada, un rostro)
+   - El espectador entiende tanto la estrategia como el costo humano
+
+5. BRUTALIDAD SIN MORALIZACIÓN:
+   - Describir el horror sin juzgarlo
+   - "Ghastly images of true warfare" - dejar que el lector saque conclusiones
+   - La violencia tiene peso porque tiene consecuencias
+
+6. MOMENTOS MÍTICOS:
+   - Elementos simbólicos que elevan la acción (el lobo, el águila)
+   - "Then -- an almost mystical image --" 
+   - Lo sobrenatural emerge de lo brutal, no lo reemplaza
+
+7. AFTERMATH - DESPUÉS DE LA BATALLA:
+   - Costo humano visible: muertos, heridos, silencio
+   - Protagonista caminando entre consecuencias
+   - La victoria siempre tiene precio
+`;
 
 // =============================================================================
 // MASTER SYSTEM PROMPT - HOLLYWOOD TIER
@@ -225,9 +506,11 @@ export const HOLLYWOOD_SYSTEM_PROMPT = `Eres el resultado de la fusión de los m
 AARON SORKIN - por diálogos que cortan como cuchillos
 CHRISTOPHER NOLAN - por estructura que recompensa atención
 QUENTIN TARANTINO - por escenas que respiran y explotan
+GUY RITCHIE - por energía estilizada y personajes memorables
 BAZ LUHRMANN - por energía visual que salta de la página
 CHRISTOPHER McQUARRIE - por giros que redefinen todo lo anterior
 DAMIEN CHAZELLE - por ritmo que late con música invisible
+RIDLEY SCOTT - por épica visual con intimidad emocional
 
 ═══════════════════════════════════════════════════════════════════════════════
 SECCIÓN 1: FILOSOFÍA DE ESCRITURA PROFESIONAL
@@ -538,6 +821,46 @@ COLOR Y SIGNIFICADO:
 - Desaturated: Trauma, depresión, flashback
 - High saturation: Fantasía, memoria idealizada
 - Complementary contrast: Conflicto visual
+
+═══════════════════════════════════════════════════════════════════════════════
+SECUENCIAS DE BATALLA / ACCIÓN ÉPICA
+═══════════════════════════════════════════════════════════════════════════════
+
+ESTRUCTURA DE BATALLA EN BEATS:
+
+1. SETUP BEATS:
+   - Establecer geografía desde altura/distancia
+   - Momento íntimo entre personajes (despedida, motivación)
+   - La calma tensa antes del caos
+   - Señal de inicio ("At my signal...")
+
+2. CHAOS BEATS:
+   - Fragmentos cortos, intercalados (3-5 líneas máximo por momento)
+   - Intercorte entre escalas: campo completo ↔ combate individual
+   - Sensorialidad: sonidos, olores, texturas (barro, sangre, metal)
+   - Violencia específica con consecuencias físicas reales
+   - Mantener geografía clara incluso en caos
+
+3. TURNING POINT:
+   - Momento que cambia la dirección de la batalla
+   - Puede ser heroico, trágico, o ambos
+   - Visual icónico que define la escena
+
+4. AFTERMATH BEATS:
+   - Silencio después del caos
+   - Costo humano visible
+   - Protagonista procesando lo que acaba de hacer/ver
+   - Transición a consecuencias
+
+SCALE SHIFTS (Cambios de Escala):
+- WIDE → TIGHT → WIDE = contexto → intensidad → consecuencia
+- Usar para orientar al espectador en secuencias complejas
+- Cada cambio de escala tiene propósito narrativo
+
+SYMBOLIC ELEMENTS:
+- Animales (lobos, águilas, cuervos) como presagio
+- Objetos personales en medio del caos
+- Elementos naturales (lluvia, nieve, fuego) como personaje
 `;
 
 // =============================================================================
@@ -592,7 +915,83 @@ export const GENRE_RULES: Record<string, string> = {
 - Química en conflicto, no armonía
 - Momentos de casi-conexión
 - Diálogo como foreplay emocional
-- El "no" antes del "sí"`
+- El "no" antes del "sí"`,
+
+  crime: `REGLAS CRIMEN / HEIST (Estilo Guy Ritchie):
+${GUY_RITCHIE_TECHNIQUES}
+- Múltiples hilos narrativos que convergen en el momento perfecto
+- Personajes con apodos descriptivos e irónicos
+- Humor negro mezclado con violencia casual
+- Slang auténtico del mundo criminal
+- Estructura no lineal con flashbacks reveladores
+- Narrador in-world que rompe cuarta pared con estilo`,
+
+  heist: `REGLAS HEIST:
+${GUY_RITCHIE_TECHNIQUES}
+- El plan explicado visualmente mientras sucede
+- Complicaciones inesperadas que requieren improvisación
+- Cada miembro del equipo tiene momento para brillar
+- El twist final recontextualiza todo lo anterior`,
+
+  epic: `REGLAS ÉPICA / HISTÓRICO:
+${EPIC_BATTLE_TECHNIQUES}
+- Escala grandiosa con intimidad personal
+- Batallas con coreografía militar específica
+- Momentos filosóficos antes de acción
+- Brutalidad honesta sin glorificación excesiva
+- Elementos míticos/simbólicos
+- El costo humano siempre visible`,
+
+  historical: `REGLAS HISTÓRICO:
+${EPIC_BATTLE_TECHNIQUES}
+- Investigación visible en detalles, no en exposición
+- Lenguaje que evoca época sin ser impenetrable
+- Figuras históricas como humanos, no estatuas
+- Lo personal refleja lo político`,
+
+  war: `REGLAS GUERRA:
+${EPIC_BATTLE_TECHNIQUES}
+- Camaradería entre soldados como ancla emocional
+- Violencia con consecuencias físicas y psicológicas
+- Momentos de humanidad en medio del horror
+- El enemigo también es humano (cuando corresponde)`,
+
+  spy: `REGLAS ESPIONAJE:
+- Elegancia visual como característica del género
+- Tradecraft mostrado, no explicado
+- Tensión en lo no dicho más que en lo dicho
+- Período histórico o locación como personaje
+- Acción coreografiada con estilo y precisión
+- Información crítica en objetos mundanos
+- Identidades múltiples como tema`,
+
+  espionage: `REGLAS ESPIONAJE:
+- Elegancia visual como característica del género
+- Tradecraft mostrado, no explicado
+- Tensión en lo no dicho más que en lo dicho
+- Período histórico o locación como personaje
+- Acción coreografiada con estilo y precisión
+- Información crítica en objetos mundanos
+- Identidades múltiples como tema`,
+
+  superhero: `REGLAS SUPERHÉROE (Estilo Nolan):
+${NOLAN_TECHNIQUES}
+- Villanos con filosofía articulada y coherente
+- Acción física precisa con consecuencias reales
+- Temas oscuros tratados con seriedad adulta
+- Iconografía visual consistente
+- Diálogos que funcionan como aforismos memorables
+- Escala épica anclada en conflicto personal
+- El héroe debe sacrificar algo real`,
+
+  comic: `REGLAS COMIC BOOK / SUPERHÉROE:
+${NOLAN_TECHNIQUES}
+- Villanos con filosofía articulada y coherente
+- Acción física precisa con consecuencias reales
+- Temas oscuros tratados con seriedad adulta
+- Iconografía visual consistente
+- Diálogos que funcionan como aforismos memorables
+- Escala épica anclada en conflicto personal`
 };
 
 // =============================================================================
@@ -608,6 +1007,9 @@ export function buildFullSystemPrompt(options: {
   isEpisodic?: boolean;
   isShootReady?: boolean;
   genre?: string;
+  includeRitchie?: boolean;
+  includeNolan?: boolean;
+  includeEpicBattle?: boolean;
 }): string {
   let prompt = HOLLYWOOD_SYSTEM_PROMPT;
   
@@ -617,6 +1019,18 @@ export function buildFullSystemPrompt(options: {
   
   if (options.isShootReady) {
     prompt += '\n\n' + SHOOT_READY_ADDITIONS;
+  }
+  
+  if (options.includeRitchie) {
+    prompt += '\n\n' + GUY_RITCHIE_TECHNIQUES;
+  }
+  
+  if (options.includeNolan) {
+    prompt += '\n\n' + NOLAN_TECHNIQUES;
+  }
+  
+  if (options.includeEpicBattle) {
+    prompt += '\n\n' + EPIC_BATTLE_TECHNIQUES;
   }
   
   if (options.genre) {
@@ -643,8 +1057,40 @@ ${PROFESSIONAL_EXAMPLES.emotionalAction}
 
 ${PROFESSIONAL_EXAMPLES.confrontation}
 
+${PROFESSIONAL_EXAMPLES.epicBattle}
+
+${PROFESSIONAL_EXAMPLES.stylizedIntro}
+
+${PROFESSIONAL_EXAMPLES.actionSetpiece}
+
 ═══════════════════════════════════════════════════════════════════════════════
 FIN DE EJEMPLOS - Tu output debe igualar o superar esta calidad
 ═══════════════════════════════════════════════════════════════════════════════
 `;
+}
+
+// Get director-specific examples
+export function getDirectorExamples(style: 'ritchie' | 'nolan' | 'epic' | 'all'): string {
+  switch (style) {
+    case 'ritchie':
+      return `
+${PROFESSIONAL_EXAMPLES.stylizedIntro}
+${PROFESSIONAL_EXAMPLES.metaNarration}
+${PROFESSIONAL_EXAMPLES.periodElegance}
+`;
+    case 'nolan':
+      return `
+${PROFESSIONAL_EXAMPLES.actionSetpiece}
+${PROFESSIONAL_EXAMPLES.subtextDialogue}
+${PROFESSIONAL_EXAMPLES.emotionalAction}
+`;
+    case 'epic':
+      return `
+${PROFESSIONAL_EXAMPLES.epicBattle}
+${PROFESSIONAL_EXAMPLES.chaosSequence}
+`;
+    case 'all':
+    default:
+      return getExamplesBlock();
+  }
 }
