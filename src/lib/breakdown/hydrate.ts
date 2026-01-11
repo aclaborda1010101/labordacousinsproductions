@@ -26,6 +26,7 @@ export const hydrateCharacters = (raw: any): any[] => {
     c?.name ?? c?.canonical_name ?? c?.label ?? c?.id ?? 'Unknown';
 
   // Build dialogue metrics map from characters.cast (contains dialogue_lines, dialogue_rank)
+  // This map allows us to enrich narrative_classification characters with dialogue data
   const dialogueMap = new Map<string, { dialogue_lines: number; dialogue_rank: number; scenes_count: number }>();
   if (ch && typeof ch === "object" && !Array.isArray(ch) && Array.isArray(ch.cast)) {
     for (const c of ch.cast) {
@@ -40,15 +41,25 @@ export const hydrateCharacters = (raw: any): any[] => {
 
   // Helper to enrich character with dialogue metrics from cast
   const enrichWithDialogue = (c: any): any => {
-    const nameKey = normalizeName(c).toUpperCase().trim();
-    const metrics = dialogueMap.get(nameKey);
-    if (metrics) {
-      return {
-        ...c,
-        dialogue_lines: c.dialogue_lines ?? metrics.dialogue_lines,
-        dialogue_rank: c.dialogue_rank ?? metrics.dialogue_rank,
-        scenes_count: c.scenes_count ?? metrics.scenes_count,
-      };
+    // Try multiple name fields to find a match
+    const nameCandidates = [
+      normalizeName(c),
+      c?.canonical_name,
+      c?.name,
+      c?.label,
+    ].filter(Boolean).map(n => n.toUpperCase().trim());
+    
+    // Find first matching name in dialogue map
+    for (const nameKey of nameCandidates) {
+      const metrics = dialogueMap.get(nameKey);
+      if (metrics) {
+        return {
+          ...c,
+          dialogue_lines: c.dialogue_lines ?? metrics.dialogue_lines,
+          dialogue_rank: c.dialogue_rank ?? metrics.dialogue_rank,
+          scenes_count: c.scenes_count ?? metrics.scenes_count,
+        };
+      }
     }
     return c;
   };
