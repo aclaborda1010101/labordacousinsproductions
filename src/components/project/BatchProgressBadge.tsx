@@ -36,14 +36,15 @@ export function BatchProgressBadge({ projectId }: BatchProgressBadgeProps) {
         if (stored) {
           const parsed = JSON.parse(stored) as PipelineState;
           
-          // Verify it's for this project and still valid (< 2 hours old)
+          // Verify it's still valid (< 2 hours old)
+          // Accept legacy states without projectId field
           if (
-            parsed.projectId === projectId &&
             parsed.pipelineRunning &&
             parsed.startedAt &&
-            Date.now() - parsed.startedAt < 2 * 60 * 60 * 1000
+            Date.now() - parsed.startedAt < 2 * 60 * 60 * 1000 &&
+            (!parsed.projectId || parsed.projectId === projectId)
           ) {
-            setPipelineState(parsed);
+            setPipelineState({ ...parsed, projectId });
             return;
           }
         }
