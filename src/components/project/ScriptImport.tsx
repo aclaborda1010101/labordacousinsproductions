@@ -1216,6 +1216,29 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (error) throw error;
       if (!data?.outline) throw new Error('No se generó el outline');
 
+      // V3.1: Validate outline quality - reject degraded outlines
+      const responseData = data as { outline: any; outline_quality?: string; warnings?: string[] };
+      const outlineQuality = responseData?.outline_quality || 'UNKNOWN';
+      const outlineWarnings = responseData?.warnings || [];
+      const targetEpisodes = format === 'series' ? episodesCount : 1;
+      const generatedEpisodes = responseData.outline?.episode_beats?.length || 0;
+      
+      if (outlineQuality === 'DEGRADED') {
+        const errorMsg = outlineWarnings.length > 0 
+          ? `Outline degradado: ${outlineWarnings.join(', ')}`
+          : 'El outline no se generó correctamente. Intenta de nuevo.';
+        toast.error(errorMsg, { duration: 8000 });
+        throw new Error(errorMsg);
+      }
+      
+      // V3.1: Warn if episode count doesn't match but continue
+      if (generatedEpisodes !== targetEpisodes && generatedEpisodes > 0) {
+        toast.warning(`Se generaron ${generatedEpisodes} episodios en lugar de ${targetEpisodes}.`, {
+          description: 'Puedes regenerar o aprobar el outline actual.',
+          duration: 6000,
+        });
+      }
+
       // Aprendizaje: tiempo real de outline
       setTimingModel(prev => {
         const next = updateOutlineTiming(prev, {
@@ -1226,9 +1249,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         return next;
       });
 
-      setLightOutline(data.outline);
+      setLightOutline(responseData.outline);
       // Persist outline + idea to localStorage immediately so it survives re-renders/navigation
-      saveDraft('outline', projectId, { outline: data.outline, idea: ideaText.trim() });
+      saveDraft('outline', projectId, { outline: responseData.outline, idea: ideaText.trim() });
       updatePipelineStep('outline', 'success');
       updatePipelineStep('approval', 'running', 'Esperando aprobación...');
       toast.success('Outline generado. Revísalo y apruébalo para continuar.');

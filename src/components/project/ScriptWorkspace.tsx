@@ -857,6 +857,19 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       });
 
       if (outlineError) throw outlineError;
+      
+      // V3.1: Validate outline quality - reject degraded outlines
+      const responseData = outlineData as { outline: any; outline_quality?: string; warnings?: string[] } | null;
+      const outlineQuality = responseData?.outline_quality || 'UNKNOWN';
+      const outlineWarnings = responseData?.warnings || [];
+      if (outlineQuality === 'DEGRADED' || !responseData?.outline?.title) {
+        const errorMsg = outlineWarnings.length > 0 
+          ? `Outline degradado: ${outlineWarnings.join(', ')}`
+          : 'El outline no se generó correctamente. Intenta de nuevo.';
+        toast.error(errorMsg, { duration: 8000 });
+        throw new Error(errorMsg);
+      }
+      
       if (!runInBackground) setProgress(30);
       updateTask(taskId, { progress: 30, description: 'Escribiendo guion en tiempo real...' });
 
@@ -888,7 +901,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           episodeDurationMin,
           language: masterLanguage === 'es' ? 'es-ES' : masterLanguage, // Use project language
           stream: true,
-          outline: outlineData?.outline,
+          outline: responseData?.outline,
         }),
         signal: streamAbortRef.current.signal,
       });
