@@ -399,6 +399,9 @@ export function CharacterPackBuilder({
   const phase3Count = () => TURNAROUND_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
   const phase4Count = () => EXPRESSION_SLOTS.filter(s => getSlot(s.type)?.image_url).length;
 
+  // Unified condition: can proceed to phase 2 if has reference photo OR has visual DNA
+  const canProceedToPhase2 = phase1Complete() || hasVisualDNA;
+
   // Analyze reference image to extract Visual DNA
   const analyzeReferenceImage = async (imageUrl: string) => {
     try {
@@ -1460,7 +1463,7 @@ export function CharacterPackBuilder({
           {/* Quick Actions Row */}
           <div className="flex gap-2">
             {/* Generate Full Pack */}
-            {phase1Complete() && completenessScore < 100 && (
+            {canProceedToPhase2 && completenessScore < 100 && (
               <Button
                 variant="gold"
                 className="flex-1"
@@ -1482,7 +1485,7 @@ export function CharacterPackBuilder({
             )}
             
             {/* Multi-Angle Turnaround Button */}
-            {phase1Complete() && !phase3Complete() && (
+            {canProceedToPhase2 && !phase3Complete() && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -1566,16 +1569,22 @@ export function CharacterPackBuilder({
                     ¡Listo! Ahora puedes generar la base visual
                   </div>
                 )}
+                {!phase1Complete() && hasVisualDNA && (
+                  <div className="mt-3 flex items-center text-sm text-blue-600">
+                    <Wand2 className="w-4 h-4 mr-2" />
+                    Visual DNA detectado - puedes generar sin foto
+                  </div>
+                )}
               </AccordionContent>
             </AccordionItem>
 
             {/* Phase 2: Base Visual (Front/Profile) */}
-            <AccordionItem value="phase2" className="border rounded-lg" disabled={!phase1Complete()}>
+            <AccordionItem value="phase2" className="border rounded-lg" disabled={!canProceedToPhase2}>
               <AccordionTrigger className="px-4 hover:no-underline">
                 <div className="flex items-center gap-3 flex-1">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     phase2Complete() ? 'bg-green-500 text-white' : 
-                    phase1Complete() ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
+                    canProceedToPhase2 ? 'bg-primary text-primary-foreground' : 'bg-muted opacity-50'
                   }`}>
                     {phase2Complete() ? <CheckCircle2 className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
                   </div>
@@ -1586,12 +1595,12 @@ export function CharacterPackBuilder({
                   <Badge variant={phase2Complete() ? 'pass' : 'secondary'} className="ml-auto mr-2">
                     {phase2Count()}/2
                   </Badge>
-                  {!phase1Complete() && <Lock className="w-4 h-4 text-muted-foreground" />}
+                  {!canProceedToPhase2 && <Lock className="w-4 h-4 text-muted-foreground" />}
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                {!phase1Complete() ? (
-                  <p className="text-sm text-muted-foreground">Completa el Paso 1 primero</p>
+                {!canProceedToPhase2 ? (
+                  <p className="text-sm text-muted-foreground">Sube una foto frontal o define el Visual DNA</p>
                 ) : (
                   <>
                     <div className="grid grid-cols-2 gap-3 mb-3">
