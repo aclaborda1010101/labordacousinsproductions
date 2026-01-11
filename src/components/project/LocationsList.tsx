@@ -324,6 +324,17 @@ export default function LocationsList({ projectId }: LocationsListProps) {
         const timeOfDay = extractTimeFromName(location.name);
         const isInterior = isInteriorLocation(location.name);
         
+        // Fetch project visual style
+        const { data: projectData } = await supabase
+          .from('projects')
+          .select('visual_style, animation_type, bible')
+          .eq('id', projectId)
+          .single();
+        
+        const visualStyle = (projectData as any)?.visual_style || 'realistic';
+        const animationType = (projectData as any)?.animation_type || 'live_action';
+        const bible = (projectData as any)?.bible;
+        
         try {
           const { data: profileData, error: profileError } = await supabase.functions.invoke('entity-builder', {
             body: {
@@ -334,21 +345,43 @@ export default function LocationsList({ projectId }: LocationsListProps) {
                 locationType: isInterior ? 'interior' : 'exterior',
                 projectId,
               },
+              projectStyle: {
+                genre: bible?.genre || bible?.projectType || 'Drama',
+                tone: bible?.tone || 'Cinematográfico',
+                visualStyle,
+                animationType,
+                realism_level: visualStyle,
+              },
             },
           });
           
-          if (!profileError && profileData?.profile) {
-            profileJson = profileData.profile;
-            description = buildDescriptionFromProfile(profileData.profile);
+          if (!profileError && (profileData?.entity?.profile || profileData?.profile)) {
+            const profile = profileData?.entity?.profile || profileData?.profile;
+            profileJson = profile;
+            description = buildDescriptionFromProfile(profile);
             
             // Save generated profile and description to location
             await supabase.from('locations').update({
               description,
-              profile_json: profileData,
+              profile_json: profileData?.entity || profileData,
             }).eq('id', location.id);
           }
         } catch (profileErr) {
-          console.warn('Could not generate profile, using name only:', profileErr);
+          console.warn('Could not generate profile, creating fallback description:', profileErr);
+          
+          // Fallback: generate minimal description from name
+          const fallbackDescription = `${isInterior ? 'Interior' : 'Exterior'} - ${cleanName}. ${
+            timeOfDay === 'night' ? 'Escena nocturna.' : 
+            timeOfDay === 'dusk' ? 'Iluminación de atardecer.' : 
+            timeOfDay === 'dawn' ? 'Luz de amanecer.' : 
+            'Luz diurna.'
+          }`;
+          
+          description = fallbackDescription;
+          
+          await supabase.from('locations').update({
+            description: fallbackDescription,
+          }).eq('id', location.id);
         }
       }
       

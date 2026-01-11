@@ -24,6 +24,8 @@ interface EntityBuilderRequest {
     genre?: string;
     tone?: string;
     realism_level?: string;
+    visualStyle?: string;
+    animationType?: string;
   };
   uploadedImages?: string[];
   language?: string;
@@ -481,7 +483,30 @@ El celebrity_likeness.primary es OBLIGATORIO.
 Todos los hex colors deben estar presentes.
 La edad debe ser un número específico, no un rango.`
       : entityType === 'location'
-        ? `SOLICITUD DE PERFIL DE LOCALIZACIÓN:
+        ? (() => {
+            // Detect if this is an animated/stylized production
+            const isAnimatedProduction = 
+              projectStyle?.animationType === '3D' || 
+              projectStyle?.animationType === '2D' ||
+              ['pixar', 'dreamworks', 'disney', 'anime', 'stylized', 'ghibli', 'cartoon'].some(
+                style => (projectStyle?.visualStyle || '').toLowerCase().includes(style)
+              );
+            
+            const animationStyleGuidelines = isAnimatedProduction ? `
+ESTILO VISUAL: ${projectStyle?.visualStyle || '3D Animation'} (${projectStyle?.animationType || '3D'})
+
+IMPORTANTE - ADAPTACIÓN PARA ANIMACIÓN:
+- Paleta de colores VIBRANTE y expresiva (estilo ${projectStyle?.visualStyle})
+- Geometrías SIMPLIFICADAS y estilizadas, no fotorrealistas
+- Iluminación dramática con bounce lights coloridos y subsurface scattering
+- Set dressing con objetos de escala ligeramente EXAGERADA para expresividad
+- Materiales con textura PINTADA/rendered, NO fotorrealista
+- Proporciones pueden ser estilizadas (puertas más altas, ventanas más grandes)
+- Colores saturados y contrastados, evitar grises neutros
+- Detalles de cartoon/animación: bordes suavizados, superficies limpias
+` : '';
+
+            return `SOLICITUD DE PERFIL DE LOCALIZACIÓN:
 
 NOMBRE: ${name}
 DESCRIPCIÓN: ${description || 'No proporcionada - genera una descripción profesional apropiada basada en el nombre'}
@@ -490,22 +515,26 @@ HORA DEL DÍA: ${context?.timeOfDay || 'day'}
 
 ${projectStyle ? `STYLE BIBLE DEL PROYECTO:
 - Género: ${projectStyle.genre || 'Drama'}
-- Tono: ${projectStyle.tone || 'Cinematográfico realista'}
+- Tono: ${projectStyle.tone || 'Cinematográfico'}
+- Estilo Visual: ${projectStyle.visualStyle || 'Realista'}
+- Tipo de Animación: ${projectStyle.animationType || 'live_action'}
 ` : ''}
-
+${animationStyleGuidelines}
 IDIOMA DE RESPUESTA: ${language || 'es'}
 
 IMPORTANTE: Genera un perfil COMPLETO de location siguiendo el formato JSON especificado.
 Incluye:
 - location_type específico
-- arch_style apropiado al contexto narrativo
-- materials (mínimo 5)
-- set_dressing_fixed (mínimo 8 elementos de decoración/props)
-- lighting_logic completo con motivation, key_source, practicals
-- color_palette descriptiva
+- arch_style apropiado al contexto narrativo ${isAnimatedProduction ? '(adaptado a estilo de animación)' : ''}
+- materials (mínimo 5) ${isAnimatedProduction ? '- descritos con texturas de animación' : ''}
+- set_dressing_fixed (mínimo 8 elementos de decoración/props) ${isAnimatedProduction ? '- con personalidad y escala expresiva' : ''}
+- lighting_logic completo con motivation, key_source, practicals ${isAnimatedProduction ? '- colores vibrantes' : ''}
+- color_palette descriptiva ${isAnimatedProduction ? '(saturada, expresiva, estilo ' + (projectStyle?.visualStyle || 'animación') + ')' : ''}
 - layout_map_text con descripción espacial
 
-Sé MUY ESPECÍFICO y cinematográfico. Piensa como un Production Designer de Hollywood.`
+${isAnimatedProduction ? 'Piensa como un Art Director de ' + (projectStyle?.visualStyle || 'Pixar') + '. Colores VIVOS, formas EXPRESIVAS.' : 'Sé MUY ESPECÍFICO y cinematográfico. Piensa como un Production Designer de Hollywood.'}`;
+          })()
+
         : `SOLICITUD DE PERFIL DE ENTIDAD:
 
 TIPO: ${entityType}
