@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { parseJsonSafe } from "../_shared/llmJson.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -114,8 +115,8 @@ Responde ÚNICAMENTE con un JSON válido con esta estructura:
             ]
           }
         ],
-        temperature: 0.2,
-        max_tokens: 2000,
+        temperature: 0.1,
+        max_tokens: 2500,
         response_format: { type: 'json_object' }
       })
     });
@@ -135,43 +136,29 @@ Responde ÚNICAMENTE con un JSON válido con esta estructura:
     }
 
     const aiData = await response.json();
-    const content = aiData.choices?.[0]?.message?.content || '';
-    
+    const content = aiData.choices?.[0]?.message?.content ?? '';
+
+    console.log(`[analyze-single-reference] Raw AI content length: ${content.length}`);
     console.log(`[analyze-single-reference] Raw AI content (first 500 chars):`, content.substring(0, 500));
-    
-    let visualDNA: any;
-    try {
-      visualDNA = JSON.parse(content);
-    } catch (parseError1) {
-      console.log('[analyze-single-reference] Direct JSON parse failed, trying markdown extraction...');
-      
-      // Try to extract JSON from markdown code blocks
-      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-      if (jsonMatch) {
-        try {
-          visualDNA = JSON.parse(jsonMatch[1]);
-        } catch (parseError2) {
-          console.error('[analyze-single-reference] Markdown JSON parse failed:', parseError2);
-          console.error('[analyze-single-reference] Extracted content:', jsonMatch[1].substring(0, 500));
-          throw new Error('No se pudo parsear el Visual DNA del bloque markdown');
-        }
-      } else {
-        // Try to find JSON object directly in the content
-        const jsonObjectMatch = content.match(/\{[\s\S]*\}/);
-        if (jsonObjectMatch) {
-          try {
-            visualDNA = JSON.parse(jsonObjectMatch[0]);
-          } catch (parseError3) {
-            console.error('[analyze-single-reference] Direct object parse failed:', parseError3);
-            console.error('[analyze-single-reference] Full content:', content);
-            throw new Error('No se pudo parsear el Visual DNA: formato inválido');
-          }
-        } else {
-          console.error('[analyze-single-reference] No JSON found in content:', content);
-          throw new Error('No se pudo parsear el Visual DNA: no se encontró JSON');
-        }
-      }
+    console.log(
+      `[analyze-single-reference] Raw AI content (last 300 chars):`,
+      content.substring(Math.max(0, content.length - 300))
+    );
+
+    const parsed = parseJsonSafe<any>(content, 'analyze-single-reference');
+
+    if (!parsed.ok || !parsed.json) {
+      console.error('[analyze-single-reference] Visual DNA parse failed', {
+        warnings: parsed.warnings,
+        rawSnippetHash: parsed.rawSnippetHash,
+      });
+
+      throw new Error(
+        `No se pudo parsear el Visual DNA (${parsed.rawSnippetHash ?? 'nohash'}): ${parsed.warnings.join(', ')}`
+      );
     }
+
+    const visualDNA = parsed.json;
 
     console.log(`[analyze-single-reference] Visual DNA extracted:`, JSON.stringify(visualDNA).substring(0, 300));
 
