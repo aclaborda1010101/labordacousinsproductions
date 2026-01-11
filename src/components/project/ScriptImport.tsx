@@ -27,7 +27,7 @@ import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
-import ReferenceScriptLibrary from './ReferenceScriptLibrary';
+
 import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
 import { CastingReportTable } from './CastingReportTable';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
@@ -2487,7 +2487,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         {/* Scrollable tabs for mobile */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
-          <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-6 sm:w-full h-auto sm:h-10 gap-1 sm:gap-0">
+        <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-6 sm:w-full h-auto sm:h-10 gap-1 sm:gap-0">
             <TabsTrigger value="generate" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Generar
@@ -2496,23 +2496,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Importar
             </TabsTrigger>
-            <TabsTrigger value="library" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
-              <Film className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Referencias</span>
-              <span className="sm:hidden">Refs</span>
-            </TabsTrigger>
             <TabsTrigger value="summary" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Resumen
+            </TabsTrigger>
+            <TabsTrigger value="production" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Producción</span>
+              <span className="sm:hidden">Prod.</span>
+            </TabsTrigger>
+            <TabsTrigger value="doctor" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+              <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Mejorar Guión</span>
+              <span className="sm:hidden">Mejorar</span>
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
               <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Histórico</span>
               <span className="sm:hidden">Hist.</span>
-            </TabsTrigger>
-            <TabsTrigger value="doctor" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
-              <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Doctor
             </TabsTrigger>
           </TabsList>
         </div>
@@ -3327,10 +3328,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           </Card>
         </TabsContent>
 
-        {/* LIBRARY TAB */}
-        <TabsContent value="library" className="space-y-4">
-          <ReferenceScriptLibrary projectId={projectId} />
-        </TabsContent>
 
         {/* SUMMARY TAB */}
         <TabsContent value="summary" className="space-y-4">
@@ -4563,7 +4560,196 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           )}
         </TabsContent>
 
-        {/* DOCTOR TAB */}
+        {/* PRODUCTION TAB */}
+        <TabsContent value="production" className="space-y-4">
+          <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-transparent">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clapperboard className="w-5 h-5 text-primary" />
+                Producción: Escenas, Shots y Micro-Shots
+              </CardTitle>
+              <CardDescription>
+                Genera propuestas de producción con planos, movimientos de cámara, transiciones y descripciones de keyframes
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {!generatedScript ? (
+                <div className="text-center py-8">
+                  <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <h3 className="font-medium text-lg mb-2">No hay guion disponible</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Primero genera o importa un guion desde las pestañas anteriores
+                  </p>
+                  <Button variant="outline" onClick={() => setActiveTab('generate')}>
+                    <Lightbulb className="w-4 h-4 mr-2" />
+                    Ir a Generar
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="p-4 rounded-lg bg-muted/50 text-center">
+                      <div className="text-2xl font-bold text-primary">
+                        {generatedScript.episodes?.length || 1}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Episodios</div>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/50 text-center">
+                      <div className="text-2xl font-bold text-primary">
+                        {generatedScript.counts?.total_scenes || '?'}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Escenas</div>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/50 text-center">
+                      <div className="text-2xl font-bold text-primary">
+                        {segmentedEpisodes.size}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Eps. Segmentados</div>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/50 text-center">
+                      <div className="text-2xl font-bold text-primary">
+                        {generatedScript.counts?.total_dialogue_lines || '?'}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Líneas Diálogo</div>
+                    </div>
+                  </div>
+
+                  {/* Main Actions */}
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {/* Segment All Button */}
+                    <div className="p-4 border rounded-lg space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Scissors className="w-5 h-5 text-primary" />
+                        <h4 className="font-medium">Segmentar Escenas</h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Crea escenas y planos automáticamente basados en los diálogos del guion
+                      </p>
+                      <Button 
+                        onClick={segmentAllEpisodes} 
+                        disabled={segmenting}
+                        variant="gold"
+                        className="w-full"
+                      >
+                        {segmenting ? (
+                          <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Segmentando...</>
+                        ) : (
+                          <><Scissors className="w-4 h-4 mr-2" />Segmentar Todos los Episodios</>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Go to Scenes Module */}
+                    <div className="p-4 border rounded-lg space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Video className="w-5 h-5 text-primary" />
+                        <h4 className="font-medium">Módulo de Escenas</h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Vista completa con propuestas de shots, microshots, cámara y transiciones
+                      </p>
+                      <Button 
+                        onClick={() => navigate(`/projects/${projectId}/scenes`)}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        <ArrowRight className="w-4 h-4 mr-2" />
+                        Ir al Módulo de Escenas
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Episodes Overview for Production */}
+                  {generatedScript.episodes?.length > 0 && (
+                    <div className="space-y-3">
+                      <Label className="text-xs uppercase text-muted-foreground">Episodios para Producción</Label>
+                      <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+                        {generatedScript.episodes.map((ep: any, idx: number) => {
+                          const epNum = ep.episode_number || idx + 1;
+                          const isSegmented = segmentedEpisodes.has(epNum);
+                          const sceneCount = ep.scenes?.length || 0;
+                          const hasDialogues = ep.scenes?.some((s: any) => s.dialogue?.length > 0);
+                          
+                          return (
+                            <div 
+                              key={idx}
+                              className={`p-4 border rounded-lg transition-colors ${
+                                isSegmented ? 'border-green-500/50 bg-green-500/5' : 'border-border'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between mb-2">
+                                <h5 className="font-medium truncate">Ep {epNum}: {ep.title}</h5>
+                                {isSegmented && (
+                                  <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Listo
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                                <span>{sceneCount} escenas</span>
+                                {hasDialogues ? (
+                                  <Badge variant="outline" className="text-[10px]">Con diálogos</Badge>
+                                ) : (
+                                  <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/30">Sin diálogos</Badge>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {!isSegmented ? (
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => segmentScenesFromEpisode(ep, epNum)}
+                                    disabled={segmenting}
+                                    className="flex-1"
+                                  >
+                                    <Scissors className="w-3 h-3 mr-1" />
+                                    Segmentar
+                                  </Button>
+                                ) : (
+                                  <Button 
+                                    size="sm" 
+                                    variant="secondary"
+                                    onClick={() => navigate(`/projects/${projectId}/scenes?episode=${epNum}`)}
+                                    className="flex-1"
+                                  >
+                                    <Play className="w-3 h-3 mr-1" />
+                                    Producir
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Production Info */}
+                  <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                      <div className="text-sm">
+                        <p className="font-medium text-blue-700 dark:text-blue-400 mb-1">
+                          Flujo de Producción
+                        </p>
+                        <ol className="list-decimal list-inside text-muted-foreground space-y-1">
+                          <li><strong>Segmentar:</strong> Crea escenas y planos desde el guion</li>
+                          <li><strong>Módulo Escenas:</strong> Genera propuestas de producción (shot-suggest)</li>
+                          <li><strong>Review:</strong> Aprueba/edita planos, cámara, transiciones</li>
+                          <li><strong>Micro-shots:</strong> Subdivide en segmentos de 2 segundos para keyframes</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* DOCTOR TAB - Mejorar Guión */}
         <TabsContent value="doctor" className="space-y-4">
           <Card>
             <CardHeader>
@@ -4571,14 +4757,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <div>
                   <CardTitle className="text-base flex items-center gap-2">
                     <Stethoscope className="w-5 h-5 text-blue-500" />
-                    Script Doctor
+                    Mejorar Guión
                     {doctorScore !== null && (
                       <Badge variant={doctorScore >= 80 ? 'default' : doctorScore >= 60 ? 'secondary' : 'destructive'}>
                         Score: {doctorScore}/100
                       </Badge>
                     )}
                   </CardTitle>
-                  <CardDescription>Análisis profesional con sugerencias accionables</CardDescription>
+                  <CardDescription>Análisis y mejora de guión y diálogos con sugerencias accionables</CardDescription>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={analyzeWithDoctor} disabled={analyzing || (!generatedScript && scriptText.length < 200)}>
