@@ -651,6 +651,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
             const hydratedScriptData = {
               ...parsed,
+              // Keep original payload for downstream consumers (e.g., Casting Report enrichment)
+              breakdown: payload,
               title: extractTitle(payload),
               writers: extractWriters(payload),
               main_characters: chars,
@@ -3989,10 +3991,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               </Card>
 
               {/* Casting Report Table */}
-              {(generatedScript.characters?.length > 0 || breakdownPro?.characters) && (
+              {(generatedScript?.characters || breakdownPro?.characters) && (
                 <Card>
                   <CardContent className="pt-6">
-                    <CastingReportTable scriptParsedJson={breakdownPro || generatedScript} />
+                    {/* Prefer generatedScript because it contains characters.cast dialogue_lines */}
+                    <CastingReportTable scriptParsedJson={generatedScript || breakdownPro} />
                   </CardContent>
                 </Card>
               )}
