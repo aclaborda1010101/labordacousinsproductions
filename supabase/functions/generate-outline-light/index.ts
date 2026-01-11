@@ -779,6 +779,22 @@ REGLA DURA DE EPISODIOS (OBLIGATORIO)
 - Si tu salida no tiene ${cappedEpisodesCount} beats, es INCORRECTA y debes rehacerla.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
+REGLA CRÍTICA DE PERSONAJES (OBLIGATORIO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+CADA personaje DEBE ser una PERSONA CONCRETA con:
+- Nombre propio Y apellido (ej: "Elena Vargas", "Marco Chen")
+- Edad aproximada
+- Profesión o rol específico
+
+PROHIBIDO usar personajes conceptuales o grupales como:
+❌ "Los que perdieron", "Quienes decidieron", "La sociedad"
+❌ "El sistema", "Los vencedores", "La resistencia"  
+❌ "El pasado", "El destino", "La verdad"
+
+Si la idea habla de grupos abstractos (ej: "quienes eligieron perder"), 
+CREA representantes individuales con nombres propios que encarnen ese grupo.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 EXTRACCIÓN DE ENTIDADES (PRIORIDAD MÁXIMA)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ANTES de generar el outline, analiza la IDEA y extrae:
@@ -793,6 +809,20 @@ REGLA CRÍTICA: Las entidades mencionadas en la IDEA tienen PRIORIDAD ABSOLUTA.
 
 Para cada entidad que crees, marca from_idea: true si fue mencionada explícitamente en la idea.
 Incluye en extracted_entities TODOS los nombres/lugares/objetos que identificaste.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+REGLA CRÍTICA DE LOCALIZACIONES (OBLIGATORIO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+CADA localización DEBE ser un LUGAR CONCRETO Y FILMABLE:
+- Nombre específico del lugar (ej: "Archivo Histórico Municipal de Madrid", "Apartamento de Elena")
+- Descripción visual detallada
+
+PROHIBIDO usar localizaciones abstractas o temporales:
+❌ "El pasado", "El futuro", "La memoria"
+❌ "El inconsciente", "La mente", "El sueño"
+
+Si la idea habla de conceptos abstractos, tradúcelos a ESPACIOS FÍSICOS filmables.
+
 ${(!disableDensity && densityTargets) ? `
 DENSIDAD MÍNIMA REQUERIDA (si la idea no especifica más):
 - ${densityTargets.protagonists_min}+ protagonistas
@@ -915,6 +945,32 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
       locations: outline.main_locations?.filter((l: any) => l.from_idea)?.length || 0,
       props: outline.main_props?.filter((p: any) => p.from_idea)?.length || 0
     };
+
+    // Detect abstract/conceptual characters
+    const abstractPatterns = /^(los |las |quienes |el grupo|la sociedad|el sistema|la resistencia|el pasado|el futuro|la verdad|el destino)/i;
+    const abstractCharacters = outline.main_characters?.filter((c: any) => 
+      abstractPatterns.test(c.name?.toLowerCase() || '')
+    ) || [];
+    
+    if (abstractCharacters.length > 0) {
+      const abstractNames = abstractCharacters.map((c: any) => c.name).join(', ');
+      qcIssues.push(`Personajes abstractos detectados: ${abstractNames}. Regenera con personajes concretos.`);
+      parseWarnings.push(`ABSTRACT_CHARACTERS: ${abstractNames}`);
+      console.warn('[OUTLINE QC] Abstract characters detected:', abstractNames);
+    }
+
+    // Detect abstract locations
+    const abstractLocationPatterns = /^(el pasado|el futuro|la memoria|el sueño|la mente|el inconsciente)/i;
+    const abstractLocations = outline.main_locations?.filter((l: any) =>
+      abstractLocationPatterns.test(l.name?.toLowerCase() || '')
+    ) || [];
+
+    if (abstractLocations.length > 0) {
+      const abstractLocNames = abstractLocations.map((l: any) => l.name).join(', ');
+      qcIssues.push(`Localizaciones abstractas detectadas: ${abstractLocNames}. Regenera con lugares filmables.`);
+      parseWarnings.push(`ABSTRACT_LOCATIONS: ${abstractLocNames}`);
+      console.warn('[OUTLINE QC] Abstract locations detected:', abstractLocNames);
+    }
 
     if (qcIssues.length > 0) {
       console.warn('[OUTLINE QC]', qcIssues);
