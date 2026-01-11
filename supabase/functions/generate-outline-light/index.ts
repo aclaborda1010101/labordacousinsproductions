@@ -540,7 +540,7 @@ async function callLovableAI(
     },
     body: JSON.stringify({
       model: config.apiModel,
-      max_tokens: config.maxTokens,
+      max_completion_tokens: config.maxTokens,
       temperature: config.temperature,
       messages: [
         { role: 'system', content: systemPrompt + '\n\nResponde ÚNICAMENTE en formato JSON válido usando la herramienta deliver_outline.' },
