@@ -18,7 +18,7 @@ type QualityTier = 'DRAFT' | 'PRODUCTION';
 
 interface ModelConfig {
   apiModel: string;
-  provider: 'openai' | 'anthropic' | 'lovable';
+  provider: 'lovable';
   maxTokens: number;
   temperature: number;
   confidenceRange: [number, number];
@@ -27,16 +27,16 @@ interface ModelConfig {
 
 const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
   DRAFT: {
-    apiModel: 'gpt-4o-mini',
-    provider: 'openai',
+    apiModel: 'openai/gpt-5-mini',
+    provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.7,
     confidenceRange: [0.6, 0.8],
     technicalMetadataStatus: 'EMPTY'
   },
   PRODUCTION: {
-    apiModel: 'claude-sonnet-4-20250514',
-    provider: 'anthropic',
+    apiModel: 'openai/gpt-5.2',
+    provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.75,
     confidenceRange: [0.8, 0.95],
@@ -640,9 +640,9 @@ function buildFallbackScriptResult(episodeNumber?: number, scenesPerBatch: numbe
 }
 
 // =============================================================================
-// API CALLERS WITH HARDENED PARSING
+// LOVABLE AI GATEWAY CALLER WITH HARDENED PARSING
 // =============================================================================
-async function callOpenAI(
+async function callLovableAI(
   systemPrompt: string,
   userPrompt: string,
   config: ModelConfig,
@@ -650,13 +650,13 @@ async function callOpenAI(
   episodeNumber?: number,
   scenesPerBatch: number = 5
 ): Promise<{ result: any; parseWarnings: string[] }> {
-  const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-  if (!OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not configured');
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${OPENAI_API_KEY}`,
+      "Authorization": `Bearer ${LOVABLE_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -673,17 +673,25 @@ async function callOpenAI(
     signal
   });
 
+  // Handle rate limits and payment required
+  if (response.status === 429) {
+    throw { status: 429, message: "Rate limit exceeded", retryable: true };
+  }
+  if (response.status === 402) {
+    throw { status: 402, message: "Payment required - add credits to Lovable AI" };
+  }
+
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('[generate-script] OpenAI error:', response.status, errorText);
-    throw new Error(`OpenAI API error: ${response.status}`);
+    console.error('[generate-script] Lovable AI error:', response.status, errorText);
+    throw new Error(`Lovable AI Gateway error: ${response.status}`);
   }
 
   const data = await response.json();
   const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
   
   // Use hardened parsing
-  const parseResult = parseToolCallArgs(toolCall, V3_OUTPUT_SCHEMA.name, 'openai.generate_script');
+  const parseResult = parseToolCallArgs(toolCall, V3_OUTPUT_SCHEMA.name, 'lovable.generate_script');
   
   if (parseResult.ok && parseResult.json) {
     return { result: parseResult.json, parseWarnings: parseResult.warnings };
@@ -692,7 +700,7 @@ async function callOpenAI(
   // Try fallback from content
   const content = data?.choices?.[0]?.message?.content;
   if (content) {
-    const contentResult = parseJsonSafe(content, 'openai.content_fallback');
+    const contentResult = parseJsonSafe(content, 'lovable.content_fallback');
     if (contentResult.ok && contentResult.json) {
       return { 
         result: contentResult.json, 
@@ -702,73 +710,10 @@ async function callOpenAI(
   }
   
   // Return degraded fallback
-  console.warn('[generate-script] OpenAI parse failed, using fallback');
+  console.warn('[generate-script] Lovable AI parse failed, using fallback');
   return { 
     result: buildFallbackScriptResult(episodeNumber, scenesPerBatch), 
-    parseWarnings: [...parseResult.warnings, 'OPENAI_PARSE_FAILED'] 
-  };
-}
-
-async function callAnthropic(
-  systemPrompt: string,
-  userPrompt: string,
-  config: ModelConfig,
-  signal: AbortSignal,
-  episodeNumber?: number,
-  scenesPerBatch: number = 5
-): Promise<{ result: any; parseWarnings: string[] }> {
-  const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-  if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
-
-  const anthropicTool = {
-    name: V3_OUTPUT_SCHEMA.name,
-    description: V3_OUTPUT_SCHEMA.description,
-    input_schema: V3_OUTPUT_SCHEMA.parameters
-  };
-
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: config.apiModel,
-      max_tokens: config.maxTokens,
-      temperature: config.temperature,
-      system: systemPrompt,
-      tools: [anthropicTool],
-      tool_choice: { type: "tool", name: V3_OUTPUT_SCHEMA.name },
-      messages: [{ role: "user", content: userPrompt }],
-    }),
-    signal
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[generate-script] Anthropic error:', response.status, errorText);
-    
-    if (response.status === 429) {
-      throw { status: 429, message: "Rate limit", retryable: true };
-    }
-    throw new Error(`Anthropic API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  
-  // Use hardened parsing
-  const parseResult = parseAnthropicToolUse(data?.content, V3_OUTPUT_SCHEMA.name, 'anthropic.generate_script');
-  
-  if (parseResult.ok && parseResult.json) {
-    return { result: parseResult.json, parseWarnings: parseResult.warnings };
-  }
-  
-  // Return degraded fallback
-  console.warn('[generate-script] Anthropic parse failed, using fallback');
-  return { 
-    result: buildFallbackScriptResult(episodeNumber, scenesPerBatch), 
-    parseWarnings: [...parseResult.warnings, 'ANTHROPIC_PARSE_FAILED'] 
+    parseWarnings: [...parseResult.warnings, 'LOVABLE_PARSE_FAILED'] 
   };
 }
 
@@ -1239,15 +1184,8 @@ IDIOMA: ${language}
     // =========================================================================
     // Call LLM with hardened parsing
     // =========================================================================
-    let llmResult: { result: any; parseWarnings: string[] };
-    
-    if (config.provider === 'openai') {
-      llmResult = await callOpenAI(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
-    } else if (config.provider === 'anthropic') {
-      llmResult = await callAnthropic(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
-    } else {
-      throw new Error(`Unknown provider: ${config.provider}`);
-    }
+    // Call Lovable AI Gateway with hardened parsing
+    const llmResult = await callLovableAI(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
 
     clearTimeout(timeoutId);
 

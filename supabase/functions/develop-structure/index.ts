@@ -229,10 +229,10 @@ serve(async (req) => {
       model: 'gpt-4o',
     });
 
-    // Use GPT-4o for fast, logical structure generation
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY not configured');
+    // Use Lovable AI Gateway with GPT-5.2 for superior structure generation
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY not configured');
     }
 
     // Build context from existing entities
@@ -267,21 +267,21 @@ Generate a complete story structure following the JSON schema.
 Flag all assumptions explicitly.
 Do NOT write dialogue or technical specs.`;
 
-    console.log('[develop-structure] v3.0 BLUEPRINT MODE:', {
+    console.log('[develop-structure] v3.0 BLUEPRINT MODE (Lovable AI Gateway - gpt-5.2):', {
       idea: idea.substring(0, 100),
       format,
       hasExistingCharacters: !!existingCharacters?.length,
       hasExistingLocations: !!existingLocations?.length
     });
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'openai/gpt-5.2',
         messages: [
           { role: 'system', content: STORY_ARCHITECT_PROMPT },
           { role: 'user', content: userPrompt },
@@ -292,9 +292,17 @@ Do NOT write dialogue or technical specs.`;
       }),
     });
 
+    // Handle rate limits and payment required
+    if (response.status === 429) {
+      return v3Error('RATE_LIMIT_EXCEEDED', 'Rate limit exceeded, try again later', 429);
+    }
+    if (response.status === 402) {
+      return v3Error('INTERNAL_ERROR', 'Payment required - add credits to Lovable AI workspace', 402);
+    }
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[develop-structure] OpenAI API error:', response.status, errorText);
+      console.error('[develop-structure] Lovable AI Gateway error:', response.status, errorText);
       return new Response(
         JSON.stringify({ error: `AI service error: ${response.status}` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
