@@ -260,7 +260,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
   const [generationStartTime, setGenerationStartTime] = useState<Date | null>(null);
 
   // V3.0: Quality tier control (replaces legacy model selection)
-  const [qualityTier, setQualityTier] = useState<'DRAFT' | 'PRODUCTION'>('PRODUCTION');
+  const [qualityTier, setQualityTier] = useState<'rapido' | 'profesional' | 'hollywood'>('profesional');
   const [extractCharacters, setExtractCharacters] = useState(true);
   const [extractLocations, setExtractLocations] = useState(true);
   const [extractScenes, setExtractScenes] = useState(true);
@@ -2480,13 +2480,14 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                       
                       <div className="pt-2">
                         <Label>Modo de generación</Label>
-                        <Select value={qualityTier} onValueChange={(v) => setQualityTier(v as 'DRAFT' | 'PRODUCTION')}>
+                        <Select value={qualityTier} onValueChange={(v) => setQualityTier(v as 'rapido' | 'profesional' | 'hollywood')}>
                           <SelectTrigger className="mt-1">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="DRAFT">📝 Borrador (Rápido)</SelectItem>
-                            <SelectItem value="PRODUCTION">🎬 Producción (Calidad)</SelectItem>
+                            <SelectItem value="rapido">⚡ Rápido (GPT-5-mini)</SelectItem>
+                            <SelectItem value="profesional">🎬 Profesional (GPT-5)</SelectItem>
+                            <SelectItem value="hollywood">🏆 Hollywood (GPT-5.2)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
