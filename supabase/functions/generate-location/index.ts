@@ -21,8 +21,8 @@ interface LocationGenerationRequest {
   };
 }
 
-// Use flux-1.1-pro-ultra for high-quality location scouting images
-const FAL_MODEL = 'fal-ai/flux-pro/v1.1-ultra';
+// Use Lovable AI Gateway with Nano Banana 3 Pro
+const IMAGE_MODEL = 'google/gemini-3-pro-image-preview';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -72,9 +72,9 @@ serve(async (req) => {
 
     console.log(`[generate-location] Generating: ${locationName}, view: ${viewAngle}, time: ${timeOfDay}`);
 
-    const FAL_KEY = Deno.env.get('FAL_API_KEY') || Deno.env.get('FAL_KEY');
-    if (!FAL_KEY) {
-      throw new Error('FAL_API_KEY is not configured');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
     }
 
     // Build the view angle description
@@ -136,179 +136,95 @@ ${styleContext}
 
 Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphic lens characteristics, natural color grading, film-like depth of field, architectural accuracy, environmental storytelling.`;
 
-    console.log('[generate-location] Using FAL flux-pro-ultra with prompt:', prompt.substring(0, 150) + '...');
+    console.log(`[generate-location] Using Lovable AI (${IMAGE_MODEL}) with prompt:`, prompt.substring(0, 150) + '...');
 
-    // Call FAL AI for flux-1.1-pro-ultra
-    const response = await fetch('https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra', {
+    // Call Lovable AI Gateway
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Key ${FAL_KEY}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        prompt,
-        aspect_ratio: '16:9',
-        safety_tolerance: 5,
-        output_format: 'jpeg',
-        raw: false
+        model: IMAGE_MODEL,
+        messages: [{
+          role: 'user',
+          content: prompt
+        }],
+        modalities: ['image', 'text']
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[generate-location] FAL error:', response.status, errorText);
-      throw new Error(`FAL AI failed: ${response.status} - ${errorText}`);
-    }
-
-    // Safely parse JSON response
-    const responseText = await response.text();
-    let result;
-    try {
-      result = JSON.parse(responseText);
-    } catch (parseError) {
-      console.error('[generate-location] Failed to parse FAL response:', responseText.substring(0, 500));
-      throw new Error(`FAL returned invalid JSON: ${responseText.substring(0, 200)}`);
-    }
-    
-    // Handle FAL async queue response
-    if (result.request_id) {
-      // Poll for result with exponential backoff
-      const requestId = result.request_id;
-      console.log('[generate-location] FAL request queued:', requestId);
+      console.error('[generate-location] Lovable AI error:', response.status, errorText);
       
-      let attempts = 0;
-      const maxAttempts = 60; // ~180 seconds max with increasing delays (increased from 40)
-      let pollDelay = 2000; // Start with 2 seconds
-      let lastStatus = '';
-      
-      while (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, pollDelay));
-        
-        // Increase poll delay gradually (max 5 seconds)
-        if (pollDelay < 5000) {
-          pollDelay = Math.min(pollDelay + 500, 5000);
-        }
-        
-        try {
-          const statusResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}/status`, {
-            headers: {
-              'Authorization': `Key ${FAL_KEY}`,
-            },
-          });
-          
-          // Safely parse status response
-          const statusText = await statusResponse.text();
-          let status;
-          try {
-            status = JSON.parse(statusText);
-          } catch (parseError) {
-            console.error('[generate-location] Failed to parse status response:', statusText.substring(0, 200));
-            attempts++;
-            continue;
-          }
-          
-          lastStatus = status.status;
-          
-          // Log every 5 attempts to reduce noise
-          if (attempts % 5 === 0) {
-            console.log(`[generate-location] Poll attempt ${attempts + 1}/${maxAttempts}, status: ${status.status}`);
-          }
-          
-          if (status.status === 'COMPLETED') {
-            // Get result
-            const resultResponse = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${requestId}`, {
-              headers: {
-                'Authorization': `Key ${FAL_KEY}`,
-              },
-            });
-            
-            // Safely parse final result
-            const finalText = await resultResponse.text();
-            let finalResult;
-            try {
-              finalResult = JSON.parse(finalText);
-            } catch (parseError) {
-              console.error('[generate-location] Failed to parse final result:', finalText.substring(0, 200));
-              throw new Error('FAL returned invalid JSON for completed request');
-            }
-            const imageUrl = finalResult.images?.[0]?.url;
-            
-            if (!imageUrl) {
-              throw new Error('No image URL in FAL response');
-            }
-            
-            const generationTimeMs = Date.now() - startTime;
-            console.log(`[generate-location] Complete in ${generationTimeMs}ms after ${attempts + 1} polls`);
-            
-            // Log generation cost
-            const userId = extractUserId(req.headers.get('authorization'));
-            if (userId) {
-              await logGenerationCost({
-                userId,
-                slotType: 'location_image',
-                engine: 'flux-1.1-pro-ultra',
-                durationMs: generationTimeMs,
-                success: true,
-                metadata: { viewAngle, timeOfDay, weather }
-              });
-            }
-            
-            return new Response(JSON.stringify({ 
-              imageUrl,
-              seed: finalResult.seed || Math.floor(Math.random() * 999999),
-              prompt,
-              metadata: {
-                viewAngle,
-                timeOfDay,
-                weather,
-                engine: 'flux-1.1-pro-ultra',
-                generatedAt: new Date().toISOString(),
-                generationTimeMs,
-                pollAttempts: attempts + 1
-              }
-            }), {
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
-          } else if (status.status === 'FAILED') {
-            throw new Error(`FAL generation failed: ${status.error || 'Unknown error'}`);
-          } else if (status.status === 'IN_QUEUE' || status.status === 'IN_PROGRESS') {
-            // Still processing, continue polling
-            attempts++;
-            continue;
-          }
-        } catch (pollError) {
-          console.error(`[generate-location] Poll error on attempt ${attempts + 1}:`, pollError);
-          // Continue polling on network errors
-        }
-        
-        attempts++;
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ 
+          error: 'Rate limit exceeded. Please try again later.',
+          code: 'RATE_LIMITED',
+          retryable: true,
+          retryAfterSeconds: 30
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
       
-      // Return partial success with retry hint instead of hard error
-      const elapsedSecs = Math.round((Date.now() - startTime) / 1000);
-      console.error(`[generate-location] Timeout after ${attempts} attempts (${elapsedSecs}s), last status: ${lastStatus}, requestId: ${requestId}`);
-      return new Response(JSON.stringify({ 
-        error: `La generación está tomando más tiempo de lo esperado (${elapsedSecs}s). Por favor, reintenta.`,
-        code: 'GENERATION_TIMEOUT',
-        requestId,
-        retryable: true,
-        retryAfterSeconds: 5
-      }), {
-        status: 504, // Gateway Timeout instead of 500
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    
-    // Direct response (no queue)
-    const imageUrl = result.images?.[0]?.url;
-    
-    if (!imageUrl) {
-      console.error('[generate-location] No image in response:', JSON.stringify(result).substring(0, 500));
-      throw new Error('No image generated');
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ 
+          error: 'Payment required. Please add credits to your Lovable workspace.',
+          code: 'PAYMENT_REQUIRED'
+        }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      throw new Error(`Lovable AI failed: ${response.status} - ${errorText}`);
     }
 
+    const data = await response.json();
+    
+    // Extract base64 image from response
+    const imageBase64 = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    if (!imageBase64) {
+      console.error('[generate-location] No image in response:', JSON.stringify(data).substring(0, 500));
+      throw new Error('No image generated by Lovable AI');
+    }
+
+    // Upload to Supabase Storage
+    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+    const imageBuffer = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+    
+    const fileName = `locations/${crypto.randomUUID()}.png`;
+    
+    // Use service role for storage upload
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    
+    const { error: uploadError } = await supabaseAdmin
+      .storage
+      .from('renders')
+      .upload(fileName, imageBuffer, {
+        contentType: 'image/png',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('[generate-location] Storage upload error:', uploadError);
+      throw new Error(`Failed to upload image: ${uploadError.message}`);
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabaseAdmin
+      .storage
+      .from('renders')
+      .getPublicUrl(fileName);
+
     const generationTimeMs = Date.now() - startTime;
-    console.log(`[generate-location] Complete in ${generationTimeMs}ms`);
+    console.log(`[generate-location] Complete in ${generationTimeMs}ms, URL: ${publicUrl}`);
 
     // Log generation cost
     const userId = extractUserId(req.headers.get('authorization'));
@@ -316,7 +232,7 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
       await logGenerationCost({
         userId,
         slotType: 'location_image',
-        engine: 'flux-1.1-pro-ultra',
+        engine: IMAGE_MODEL,
         durationMs: generationTimeMs,
         success: true,
         metadata: { viewAngle, timeOfDay, weather }
@@ -324,14 +240,14 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
     }
 
     return new Response(JSON.stringify({ 
-      imageUrl,
-      seed: result.seed || Math.floor(Math.random() * 999999),
+      imageUrl: publicUrl,
+      seed: Math.floor(Math.random() * 999999),
       prompt,
       metadata: {
         viewAngle,
         timeOfDay,
         weather,
-        engine: 'flux-1.1-pro-ultra',
+        engine: IMAGE_MODEL,
         generatedAt: new Date().toISOString(),
         generationTimeMs
       }
