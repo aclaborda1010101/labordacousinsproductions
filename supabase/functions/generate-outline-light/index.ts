@@ -38,7 +38,7 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
     temperature: 0.7
   },
   hollywood: {
-    apiModel: 'google/gemini-2.5-pro', // Best quality, slower but reliable
+    apiModel: 'google/gemini-3-pro-preview', // Next-gen, best quality
     provider: 'lovable',
     maxTokens: 10000,
     temperature: 0.8
