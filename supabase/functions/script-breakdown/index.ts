@@ -361,6 +361,17 @@ OUTPUT JSON ONLY:
   ]
 }`;
 
+// ===== Text normalization (line endings + NBSP) =====
+const normalizeScriptText = (text: string) =>
+  text
+    .replace(/\u00A0/g, ' ')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[\u2028\u2029]/g, '\n');
+
+// Accept headings with optional leading numbering + Spanish/English variants
+const HEADING_LINE_RE = /^\s*(?:\d+\s*[.\):\-–—]?\s*)?(?:INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\b/i;
+
 // ===== SLUGLINE REGEX (supports numbered headings like "1. INT. CASA - NOCHE") =====
 const SLUGLINE_RE = /^(?:\d+\s*[.\):\-–—]?\s*)?(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME))?$/i;
 
@@ -412,7 +423,7 @@ interface ExtractionResult {
 }
 
 function extractScenesFromScript(text: string): ExtractionResult {
-  const lines = text.split('\n');
+  const lines = normalizeScriptText(text).split('\n');
   const scenes: SceneWithDialogue[] = [];
   let currentScene: SceneWithDialogue | null = null;
   let sceneNumber = 0;
@@ -2827,12 +2838,12 @@ function enrichBreakdownWithScriptData(data: any, scriptText: string): any {
   const asArray = (v: any) => (Array.isArray(v) ? v : []);
 
   const expectedHeadings: string[] = [];
-  const scriptLines = scriptText.split(/\r?\n/);
+  const scriptLines = normalizeScriptText(scriptText).split('\n');
   
   // Extract scene headings
   for (const line of scriptLines) {
     const trimmed = line.trim();
-    if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
+    if (HEADING_LINE_RE.test(trimmed)) {
       expectedHeadings.push(trimmed);
     }
   }
@@ -3141,7 +3152,7 @@ async function processScriptBreakdownInBackground(
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   const { scriptText, projectId, scriptId, language, format, episodesCount, episodeDurationMin } = request;
-  const processedScriptText = scriptText.trim();
+  const processedScriptText = normalizeScriptText(scriptText).trim();
   const lang = language || 'es-ES';
 
   try {
@@ -3158,10 +3169,10 @@ async function processScriptBreakdownInBackground(
     // PRE-COUNT SCENE HEADINGS
     // ═══════════════════════════════════════════════════════════════════════════
     const headingLines: string[] = [];
-    const scriptLines = processedScriptText.split(/\r?\n/);
+    const scriptLines = processedScriptText.split('\n');
     for (const line of scriptLines) {
       const trimmed = line.trim();
-      if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
+      if (HEADING_LINE_RE.test(trimmed)) {
         headingLines.push(trimmed);
       }
     }

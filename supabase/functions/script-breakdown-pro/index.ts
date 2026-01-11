@@ -267,11 +267,22 @@ const BREAKDOWN_TOOL = {
   }
 };
 
+// Normalize line endings for reliable parsing
+const normalizeScriptText = (text: string) =>
+  text
+    .replace(/\u00A0/g, ' ')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[\u2028\u2029]/g, '\n');
+
+// Accept headings with optional leading numbering + Spanish/English variants
+const HEADING_LINE_RE = /^\s*(?:\d+\s*[.\):\-–—]?\s*)?(?:INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\b/i;
+
 // Regex for scene headings
-const SLUGLINE_RE = /^(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|CONTINUOUS|LATER))?$/i;
+const SLUGLINE_RE = /^(?:\d+\s*[.\):\-–—]?\s*)?(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME))?$/i;
 
 function extractScenesFromScript(text: string): any[] {
-  const lines = text.split('\n');
+  const lines = normalizeScriptText(text).split('\n');
   const scenes: any[] = [];
   let sceneNumber = 0;
 
@@ -477,10 +488,11 @@ serve(async (req) => {
     
     // Extract actual heading lines for reference
     const headingLines: string[] = [];
-    const lines = scriptText.split(/\r?\n/);
+    const normalizedText = normalizeScriptText(scriptText);
+    const lines = normalizedText.split('\n');
     for (const line of lines) {
       const trimmed = line.trim();
-      if (/^(INT[\./]|EXT[\./]|INT\/EXT[\./]?|I\/E[\./]?)/i.test(trimmed)) {
+      if (HEADING_LINE_RE.test(trimmed)) {
         headingLines.push(trimmed);
       }
     }
