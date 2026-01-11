@@ -1854,12 +1854,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     const episodes = generatedScript?.episodes || [];
     if (episodes.length === 0) return;
     
-    // Check which episodes need dialogues
+    // Check which episodes need dialogues - any scene without dialogue array needs generation
     const episodesNeedingDialogue = episodes.filter((ep: any) => 
       ep.scenes?.some((s: any) => {
-        const hasCharacters = s.characters && s.characters.length > 0;
-        const hasDialogue = s.dialogue && s.dialogue.length > 0;
-        return hasCharacters && !hasDialogue;
+        // Check dialogue exists and has content - don't depend on characters field
+        const hasDialogue = s.dialogue && Array.isArray(s.dialogue) && s.dialogue.length > 0;
+        return !hasDialogue; // Any scene without dialogue needs generation
       })
     );
     
@@ -2560,8 +2560,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 const isCompleted = i < currentStepIndex;
                 const isPending = i > currentStepIndex;
                 
+                // Map workflow step to tab for navigation
+                const stepToTab: Record<string, string> = {
+                  'idea': 'generate',
+                  'review': 'generate',
+                  'generating': 'generate',
+                  'dialogues': 'summary',
+                  'production': 'production',
+                };
+                
+                const handleStepClick = () => {
+                  const targetTab = stepToTab[step.id] || 'generate';
+                  setActiveTab(targetTab);
+                };
+                
                 return (
-                  <div key={step.id} className="flex items-center gap-2 shrink-0">
+                  <div 
+                    key={step.id} 
+                    className="flex items-center gap-2 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={handleStepClick}
+                    title={`Ir a ${step.label}`}
+                  >
                     <div className={`
                       w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
                       ${isActive ? 'bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2' : ''}
