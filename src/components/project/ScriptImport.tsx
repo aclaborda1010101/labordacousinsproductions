@@ -1467,8 +1467,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         characters: lightOutline.main_characters,
         locations: lightOutline.main_locations,
         episodes,
-        // Store both targets and actual achieved values
-        density_targets: targets,
+        // Store density state and only save targets if density is enabled
+        disable_density: disableDensity,
+        ...(disableDensity ? {} : { density_targets: targets }),
+        // Always store achieved values from real breakdown
         density_achieved: {
           protagonists: protagonistsCount,
           supporting: supportingCount,
@@ -3672,31 +3674,32 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </div>
                   )}
 
-                  {/* Density: Targets vs Achieved */}
-                  {(generatedScript.density_targets || generatedScript.counts) && (
+                  {/* Density: Targets vs Achieved (or just Extracted Metrics if no density) */}
+                  {(generatedScript.density_targets || generatedScript.counts || breakdownPro?.counts) && (
                     <div className="space-y-3">
                       <Label className="text-xs text-muted-foreground uppercase flex items-center gap-2">
                         <Settings2 className="w-3 h-3" />
-                        Densidad Narrativa
+                        {generatedScript.density_targets ? 'Densidad Narrativa' : 'Métricas Extraídas'}
                       </Label>
                       <div className="grid gap-2 grid-cols-2 md:grid-cols-5">
                         <DensityCompareCard 
                           label="Protagonistas" 
-                          achieved={generatedScript.counts?.protagonists || breakdownPro?.counts?.protagonists || 0} 
+                          achieved={breakdownPro?.counts?.protagonists || generatedScript.counts?.protagonists || generatedScript.density_achieved?.protagonists || 0} 
+                          target={generatedScript.density_targets?.protagonists_min}
                         />
                         <DensityCompareCard 
                           label="Personajes" 
-                          achieved={generatedScript.counts?.characters_total || breakdownPro?.counts?.characters || generatedScript.main_characters?.length || 0} 
+                          achieved={breakdownPro?.counts?.characters_total || breakdownPro?.counts?.characters || generatedScript.counts?.characters_total || generatedScript.main_characters?.length || 0} 
                           target={generatedScript.density_targets?.characters_min}
                         />
                         <DensityCompareCard 
                           label="Secundarios" 
-                          achieved={generatedScript.counts?.supporting || generatedScript.density_achieved?.supporting || 0} 
+                          achieved={breakdownPro?.counts?.supporting || generatedScript.counts?.supporting || generatedScript.density_achieved?.supporting || 0} 
                           target={generatedScript.density_targets?.supporting_min}
                         />
                         <DensityCompareCard 
                           label="Localizaciones" 
-                          achieved={generatedScript.counts?.locations || breakdownPro?.counts?.locations || generatedScript.density_achieved?.locations || 0} 
+                          achieved={breakdownPro?.counts?.locations || generatedScript.counts?.locations || generatedScript.density_achieved?.locations || 0} 
                           target={generatedScript.density_targets?.locations_min}
                         />
                         <DensityCompareCard 
@@ -3708,12 +3711,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
                         <DensityCompareCard 
                           label="Props" 
-                          achieved={breakdownPro?.props?.length || generatedScript.counts?.props || generatedScript.props?.length || 0} 
+                          achieved={breakdownPro?.props?.length || breakdownPro?.counts?.props || generatedScript.counts?.props || generatedScript.props?.length || 0} 
                           target={generatedScript.density_targets?.props_min}
                         />
                         <DensityCompareCard 
                           label="Setpieces" 
-                          achieved={breakdownPro?.setpieces?.length || generatedScript.counts?.setpieces || 0} 
+                          achieved={breakdownPro?.setpieces?.length || breakdownPro?.counts?.setpieces || generatedScript.counts?.setpieces || 0} 
                           target={generatedScript.density_targets?.setpieces_min}
                         />
                         <DensityCompareCard 
