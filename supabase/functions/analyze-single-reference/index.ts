@@ -59,54 +59,20 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: `Analiza esta imagen de referencia de un personaje llamado "${characterName || 'personaje'}" y extrae sus características visuales técnicas.
+                text: `Analyze this reference image of a character named "${characterName || 'character'}" and extract technical visual traits.
 
-IMPORTANTE: Necesito una descripción TÉCNICA y PRECISA para que la IA mantenga el parecido al generar imágenes nuevas de este personaje.
+Return a CONCISE JSON with:
+- physical_identity: { age_exact: number, biological_sex: "male"|"female", ethnicity_description: string, skin_tone_hex: "#XXXXXX" }
+- face: { shape: string, eyes: { color: string, color_hex: string, shape: string }, nose: string, mouth: string, jaw: string, facial_hair: { type: string, description: string } }
+- hair: { color: string, color_hex: string, grey_percentage: number, length: string, texture: string, style: string }
+- skin: { texture: string, has_freckles: boolean, has_moles: boolean, distinctive_marks: string[] }
+- technical_prompt_fragment: "One-line technical description for generation prompts"
 
-Analiza y extrae:
-1. EDAD: Edad exacta estimada (número)
-2. GÉNERO: male/female
-3. ETNICIDAD: Descripción precisa del origen étnico y tono de piel (con código HEX aproximado)
-4. ROSTRO: Forma de cara, tipo de ojos (forma, color con HEX), nariz, boca, mandíbula
-5. CABELLO: Color exacto (incluyendo canas si las hay), largo, textura, estilo
-6. PIEL: Tono, textura, marcas distintivas
-7. RASGOS DISTINTIVOS: Cicatrices, lunares, barba, etc.
-
-Responde ÚNICAMENTE con un JSON válido con esta estructura:
-{
-  "physical_identity": {
-    "age_exact": número,
-    "biological_sex": "male" o "female",
-    "ethnicity_description": "descripción",
-    "skin_tone_hex": "#XXXXXX",
-    "height_estimate_cm": número
-  },
-  "face": {
-    "shape": "oval/round/square/heart/oblong",
-    "eyes": {
-      "color": "descripción",
-      "color_hex": "#XXXXXX",
-      "shape": "almond/round/hooded/etc"
-    },
-    "nose": { "description": "descripción" },
-    "mouth": { "description": "descripción" },
-    "jaw": { "shape": "descripción" },
-    "facial_hair": { "type": "none/stubble/beard/mustache", "description": "detalle" }
-  },
-  "hair": {
-    "color": "descripción incluyendo canas",
-    "color_hex": "#XXXXXX",
-    "grey_percentage": número de 0 a 100,
-    "length": "short/medium/long",
-    "texture": "straight/wavy/curly",
-    "style": "descripción"
-  },
-  "skin": {
-    "texture": "descripción",
-    "distinctive_marks": ["lista de marcas"]
-  },
-  "technical_prompt_fragment": "Frase técnica de 1 línea para usar en prompts de generación, ej: '45 year old Caucasian male with olive skin, short dark hair with 20% grey, brown almond eyes, square jaw, light stubble'"
-}`
+IMPORTANT: 
+- has_freckles: true ONLY if visible freckles exist in the image
+- has_moles: true ONLY if visible moles/birthmarks exist
+- Keep technical_prompt_fragment under 80 words
+- Respond with valid JSON only, no markdown`
               },
               {
                 type: 'image_url',
@@ -116,7 +82,7 @@ Responde ÚNICAMENTE con un JSON válido con esta estructura:
           }
         ],
         temperature: 0.1,
-        max_tokens: 2500,
+        max_tokens: 4000,
         response_format: { type: 'json_object' }
       })
     });
