@@ -80,6 +80,22 @@ import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, QualityTier, QUALITY_TIERS } from '@/lib/autoTargets';
+
+// Helper to migrate legacy quality tier values to new system
+function migrateQualityTier(tier: string): QualityTier {
+  const legacyMap: Record<string, QualityTier> = {
+    'DRAFT': 'rapido',
+    'PRODUCTION': 'profesional',
+    'draft': 'rapido',
+    'production': 'profesional'
+  };
+  
+  if (tier === 'rapido' || tier === 'profesional' || tier === 'hollywood') {
+    return tier as QualityTier;
+  }
+  
+  return legacyMap[tier] || 'profesional';
+}
 import { useCreativeModeOptional } from '@/contexts/CreativeModeContext';
 import { exportScreenplayPDF, exportEpisodeScreenplayPDF } from '@/lib/exportScreenplayPDF';
 import { getSceneSlugline } from '@/lib/sceneNormalizer';
@@ -505,7 +521,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           if (draft.tone) setTone(draft.tone);
           if (draft.references) setReferences(draft.references);
           if (draft.narrativeMode) setNarrativeMode(draft.narrativeMode);
-          if (draft.qualityTier) setQualityTier(draft.qualityTier);
+          if (draft.qualityTier) setQualityTier(migrateQualityTier(draft.qualityTier));
           if (typeof draft.episodesCount === 'number') setEpisodesCount(draft.episodesCount);
           if (typeof draft.episodeDurationMin === 'number') setEpisodeDurationMin(draft.episodeDurationMin);
           if (typeof draft.filmDurationMin === 'number') setFilmDurationMin(draft.filmDurationMin);
@@ -3450,11 +3466,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    {QUALITY_TIERS[qualityTier].description}
+                    {QUALITY_TIERS[qualityTier]?.description || 'Selecciona un modo de generación'}
                   </p>
                   <div className="flex gap-2 flex-wrap mt-1">
                     <Badge variant="outline" className="text-xs">
-                      ~{QUALITY_TIERS[qualityTier].estimatedTimePerEpisodeMin} min/ep
+                      ~{QUALITY_TIERS[qualityTier]?.estimatedTimePerEpisodeMin || 5} min/ep
                     </Badge>
                     {qualityTier === 'hollywood' && (
                       <Badge variant="secondary" className="text-xs bg-primary/10">
