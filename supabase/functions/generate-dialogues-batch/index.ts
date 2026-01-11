@@ -43,6 +43,8 @@ REGLAS DE DIÁLOGO:
 6. Parentéticos solo cuando son esenciales (tono, acción física)
 7. Evitar clichés y frases de IA genéricas
 8. Acciones intercaladas entre diálogos para ritmo visual
+9. Si una escena NO tiene personajes listados, INFIERE los personajes más probables del contexto narrativo de la escena
+10. Si es una escena puramente visual/de transición sin posibilidad de diálogo (ej: paisaje, montaje), devuelve dialogue: [] pero incluye action_beats descriptivos
 
 FORMATO DE SALIDA (JSON):
 {
@@ -65,7 +67,8 @@ NUNCA:
 - Resumir diálogos con "continúan hablando..."
 - Usar exposición forzada
 - Hacer que todos hablen igual
-- Ignorar el tono/género de la producción`;
+- Ignorar el tono/género de la producción
+- Omitir escenas del input (devuelve TODAS, incluso las visuales con dialogue vacío)`;
 
 const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
@@ -199,13 +202,13 @@ serve(async (req) => {
       return { sceneNo, slugline, characters, original: s };
     };
 
-    // Filter scenes that need dialogue (have characters but no dialogue yet)
+    // Filter scenes that need dialogue - ANY scene without dialogue, regardless of characters
+    // The LLM will infer characters from context or mark as action-only scene
     const scenesNeedingDialogue = scenes
       .map(normalizeScene)
       .filter(n => {
-        const hasCharacters = n.characters.length > 0;
         const hasDialogue = n.original.dialogue && Array.isArray(n.original.dialogue) && n.original.dialogue.length > 0;
-        return hasCharacters && !hasDialogue;
+        return !hasDialogue; // Any scene without dialogue
       });
 
     if (scenesNeedingDialogue.length === 0) {
