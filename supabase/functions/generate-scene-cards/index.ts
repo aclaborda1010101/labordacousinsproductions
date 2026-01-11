@@ -74,7 +74,7 @@ const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 const MODEL_MAP = {
-  primary: { anthropic: 'claude-sonnet-4-20250514', gateway: 'openai/gpt-4o' },
+  primary: { anthropic: 'claude-sonnet-4-20250514', gateway: 'openai/gpt-5' },
 };
 
 async function callAI(systemPrompt: string, userPrompt: string): Promise<string> {
