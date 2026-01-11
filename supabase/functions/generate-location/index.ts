@@ -19,6 +19,12 @@ interface LocationGenerationRequest {
     lensStyle?: string;
     grainLevel?: string;
   };
+  // NEW: Reference-based generation
+  projectId?: string;
+  locationId?: string;
+  referenceImageUrl?: string;
+  mode?: 'text_to_image' | 'stylize_from_reference';
+  stylePackId?: string;
 }
 
 // Use Lovable AI Gateway with Nano Banana 3 Pro
@@ -67,14 +73,69 @@ serve(async (req) => {
       timeOfDay = 'day',
       weather = 'clear',
       styleToken,
-      projectStyle 
+      projectStyle,
+      projectId,
+      locationId,
+      referenceImageUrl,
+      mode = referenceImageUrl ? 'stylize_from_reference' : 'text_to_image',
+      stylePackId
     }: LocationGenerationRequest = await req.json();
 
-    console.log(`[generate-location] Generating: ${locationName}, view: ${viewAngle}, time: ${timeOfDay}`);
+    console.log(`[generate-location] Generating: ${locationName}, view: ${viewAngle}, time: ${timeOfDay}, mode: ${mode}`);
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
+    }
+
+    // Load project style pack if available
+    let styleLockBlock = '';
+    let negativeModifiers = '';
+    
+    if (projectId) {
+      // Use service role to fetch style pack
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+      
+      const { data: stylePack } = await supabaseAdmin
+        .from('style_packs')
+        .select('style_config, token, prompt_modifiers, negative_modifiers')
+        .eq('project_id', projectId)
+        .eq('is_active', true)
+        .maybeSingle();
+      
+      if (stylePack) {
+        console.log(`[generate-location] Found style pack for project, applying style lock`);
+        
+        const styleConfig = stylePack.style_config as any;
+        
+        // Build style lock block from project's Visual Bible
+        const styleParts: string[] = [];
+        
+        if (styleConfig?.style_name) {
+          styleParts.push(`Art style: ${styleConfig.style_name}`);
+        }
+        if (styleConfig?.animation_type) {
+          styleParts.push(`Animation type: ${styleConfig.animation_type}`);
+        }
+        if (styleConfig?.lighting?.key_style) {
+          styleParts.push(`Lighting: ${styleConfig.lighting.key_style}`);
+        }
+        if (styleConfig?.color_grading?.mood) {
+          styleParts.push(`Color mood: ${styleConfig.color_grading.mood}`);
+        }
+        if (stylePack.prompt_modifiers) {
+          styleParts.push(stylePack.prompt_modifiers);
+        }
+        
+        if (styleParts.length > 0) {
+          styleLockBlock = `\n\n=== STYLE LOCK (MANDATORY - DO NOT DEVIATE) ===\n${styleParts.join('\n')}\n=== END STYLE LOCK ===`;
+        }
+        
+        if (stylePack.negative_modifiers) {
+          negativeModifiers = stylePack.negative_modifiers;
+        }
+      }
     }
 
     // Build the view angle description
@@ -123,8 +184,50 @@ serve(async (req) => {
       styleContext += ` Apply visual style token: ${styleToken}.`;
     }
 
-    // Construct the prompt
-    const prompt = `Cinematic film still, location scouting photograph.
+    // Construct the prompt based on mode
+    let prompt: string;
+    let messageContent: any;
+    
+    if (mode === 'stylize_from_reference' && referenceImageUrl) {
+      // Multimodal: Transform reference photo to project style
+      prompt = `Transform this reference photo into the project's art style while maintaining the exact composition, layout, architecture, and spatial arrangement.
+
+KEEP EXACTLY:
+- The room layout and furniture positions
+- Architectural elements (windows, doors, walls)
+- The perspective and camera angle
+- Key objects and their placement
+
+APPLY STYLE:
+- Convert to the project's visual style (cartoon/3D/anime if animated project)
+- Apply consistent lighting: ${timeDesc}
+- Weather conditions: ${weatherDesc}
+${styleLockBlock}
+${styleContext}
+
+Location: ${locationName}
+Description: ${locationDescription || locationName}
+View: ${viewDesc}
+
+CRITICAL: The output must look like a stylized illustration of this EXACT space, not a generic location. Preserve all unique architectural and decorative elements visible in the reference.`;
+
+      messageContent = [
+        {
+          type: 'text',
+          text: prompt
+        },
+        {
+          type: 'image_url',
+          image_url: {
+            url: referenceImageUrl
+          }
+        }
+      ];
+      
+      console.log(`[generate-location] Using multimodal with reference: ${referenceImageUrl.substring(0, 80)}...`);
+    } else {
+      // Text-only generation
+      prompt = `Cinematic film still, location scouting photograph.
 
 Location: ${locationName}
 Description: ${locationDescription || locationName}
@@ -133,12 +236,27 @@ View: ${viewDesc}
 Lighting: ${timeDesc}
 Weather: ${weatherDesc}
 ${styleContext}
+${styleLockBlock}
 
 Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphic lens characteristics, natural color grading, film-like depth of field, architectural accuracy, environmental storytelling.`;
 
-    console.log(`[generate-location] Using Lovable AI (${IMAGE_MODEL}) with prompt:`, prompt.substring(0, 150) + '...');
+      messageContent = prompt;
+    }
+
+    // Add negative prompt if available
+    const systemContent = negativeModifiers 
+      ? `You are a cinematic location artist. AVOID: ${negativeModifiers}`
+      : undefined;
+
+    console.log(`[generate-location] Using Lovable AI (${IMAGE_MODEL}) with mode: ${mode}`);
 
     // Call Lovable AI Gateway
+    const messages: any[] = [];
+    if (systemContent) {
+      messages.push({ role: 'system', content: systemContent });
+    }
+    messages.push({ role: 'user', content: messageContent });
+
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -147,10 +265,7 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
       },
       body: JSON.stringify({
         model: IMAGE_MODEL,
-        messages: [{
-          role: 'user',
-          content: prompt
-        }],
+        messages,
         modalities: ['image', 'text']
       }),
     });
@@ -235,7 +350,7 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
         engine: IMAGE_MODEL,
         durationMs: generationTimeMs,
         success: true,
-        metadata: { viewAngle, timeOfDay, weather }
+        metadata: { viewAngle, timeOfDay, weather, mode, hasReference: !!referenceImageUrl }
       });
     }
 
@@ -243,13 +358,15 @@ Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphi
       imageUrl: publicUrl,
       seed: Math.floor(Math.random() * 999999),
       prompt,
+      mode,
       metadata: {
         viewAngle,
         timeOfDay,
         weather,
         engine: IMAGE_MODEL,
         generatedAt: new Date().toISOString(),
-        generationTimeMs
+        generationTimeMs,
+        hadReference: !!referenceImageUrl
       }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

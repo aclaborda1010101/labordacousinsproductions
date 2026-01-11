@@ -54,6 +54,9 @@ interface Location {
   current_run_image?: string | null;
   accepted_run_image?: string | null;
   canon_image?: string | null;
+  // NEW: Reference protection
+  primary_reference_url?: string | null;
+  reference_status?: string;
 }
 
 export default function LocationsList({ projectId }: LocationsListProps) {
@@ -108,7 +111,7 @@ export default function LocationsList({ projectId }: LocationsListProps) {
   const fetchLocations = async () => {
     const { data } = await supabase
       .from('locations')
-      .select('id, name, description, variants, reference_urls, current_run_id, accepted_run_id, canon_asset_id')
+      .select('id, name, description, variants, reference_urls, current_run_id, accepted_run_id, canon_asset_id, primary_reference_url, reference_status')
       .eq('project_id', projectId)
       .order('created_at');
 
@@ -465,22 +468,26 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       const prompt = description || location.name;
       const timeOfDay = extractTimeFromName(location.name);
       
-      const { data, error } = await supabase.functions.invoke('generate-run', {
+      // Get primary reference URL for stylization
+      const referenceUrl = location.primary_reference_url || 
+        (location.reference_urls && Object.values(location.reference_urls)[0]);
+      
+      const generationMode = referenceUrl ? 'stylize_from_reference' : 'text_to_image';
+      
+      console.log(`[LocationsList] Generating ${location.name} with mode: ${generationMode}`);
+      
+      // Use generate-location directly with style lock and reference support
+      const { data, error } = await supabase.functions.invoke('generate-location', {
         body: {
           projectId,
-          type: 'location',
-          phase: 'exploration',
-          engine: 'fal-ai/flux-pro/v1.1-ultra',
-          engineSelectedBy: 'auto',
-          prompt,
-          context: `Location: ${location.name}`,
-          params: {
-            locationName: location.name,
-            viewAngle: 'establishing',
-            timeOfDay,
-            weather: 'clear',
-            profileJson,
-          },
+          locationId: location.id,
+          locationName: location.name,
+          locationDescription: prompt,
+          viewAngle: 'establishing',
+          timeOfDay,
+          weather: 'clear',
+          referenceImageUrl: referenceUrl,
+          mode: generationMode,
         },
       });
 
@@ -488,8 +495,14 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
       updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
 
-      if (data?.runId) {
-        await supabase.from('locations').update({ current_run_id: data.runId }).eq('id', location.id);
+      // Update location with generated image URL directly
+      // The generate-location function already uploads to storage
+      if (data?.imageUrl) {
+        // Store URL in reference_urls for now (backward compat)
+        const currentRefUrls = location.reference_urls || {};
+        await supabase.from('locations').update({ 
+          reference_urls: { ...currentRefUrls, generated: data.imageUrl }
+        }).eq('id', location.id);
       }
 
       completeTask(taskId, data);
@@ -596,22 +609,26 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
       updateTask(taskId, { progress: 40, description: 'Generando imagen...' });
       
-      const { data, error } = await supabase.functions.invoke('generate-run', {
+      // Get primary reference URL for stylization
+      const referenceUrl = location.primary_reference_url || 
+        (location.reference_urls && Object.values(location.reference_urls)[0]);
+      
+      const generationMode = referenceUrl ? 'stylize_from_reference' : 'text_to_image';
+      
+      console.log(`[LocationsList] Generating ${location.name} with mode: ${generationMode}`);
+      
+      // Use generate-location directly with style lock and reference support
+      const { data, error } = await supabase.functions.invoke('generate-location', {
         body: {
           projectId,
-          type: 'location',
-          phase: 'exploration',
-          engine: 'fal-ai/flux-pro/v1.1-ultra',
-          engineSelectedBy: 'auto',
-          prompt,
-          context: `Location: ${location.name}`,
-          params: {
-            locationName: location.name,
-            viewAngle: 'establishing',
-            timeOfDay,
-            weather: 'clear',
-            profileJson,
-          },
+          locationId: location.id,
+          locationName: location.name,
+          locationDescription: prompt,
+          viewAngle: 'establishing',
+          timeOfDay,
+          weather: 'clear',
+          referenceImageUrl: referenceUrl,
+          mode: generationMode,
         },
       });
 
@@ -619,8 +636,12 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
       updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
 
-      if (data?.runId) {
-        await supabase.from('locations').update({ current_run_id: data.runId }).eq('id', location.id);
+      // Update location with generated image URL directly
+      if (data?.imageUrl) {
+        const currentRefUrls = location.reference_urls || {};
+        await supabase.from('locations').update({ 
+          reference_urls: { ...currentRefUrls, generated: data.imageUrl }
+        }).eq('id', location.id);
       }
 
       completeTask(taskId, data);
@@ -790,25 +811,25 @@ export default function LocationsList({ projectId }: LocationsListProps) {
       updateTask(taskId, { progress: 10, description: 'Preparando regeneración...' });
       
       const prompt = (location.description || '').trim() || location.name;
+      const timeOfDay = extractTimeFromName(location.name);
+      
+      // Get primary reference URL for stylization
+      const referenceUrl = location.primary_reference_url || 
+        (location.reference_urls && Object.values(location.reference_urls)[0]);
 
       updateTask(taskId, { progress: 30, description: 'Generando nueva variante...' });
 
-      const { data, error } = await supabase.functions.invoke('generate-run', {
+      const { data, error } = await supabase.functions.invoke('generate-location', {
         body: {
           projectId,
-          type: 'location',
-          phase: 'exploration',
-          engine: 'fal-ai/flux-pro/v1.1-ultra',
-          engineSelectedBy: 'auto',
-          prompt,
-          context: `Location: ${location.name}`,
-          parentRunId: location.accepted_run_id,
-          params: {
-            locationName: location.name,
-            viewAngle: 'establishing',
-            timeOfDay: 'day',
-            weather: 'clear',
-          },
+          locationId: location.id,
+          locationName: location.name,
+          locationDescription: prompt,
+          viewAngle: 'establishing',
+          timeOfDay,
+          weather: 'clear',
+          referenceImageUrl: referenceUrl,
+          mode: referenceUrl ? 'stylize_from_reference' : 'text_to_image',
         },
       });
 
@@ -816,8 +837,11 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
       updateTask(taskId, { progress: 90, description: 'Guardando resultado...' });
 
-      if (data?.runId) {
-        await supabase.from('locations').update({ current_run_id: data.runId }).eq('id', location.id);
+      if (data?.imageUrl) {
+        const currentRefUrls = location.reference_urls || {};
+        await supabase.from('locations').update({ 
+          reference_urls: { ...currentRefUrls, generated: data.imageUrl }
+        }).eq('id', location.id);
       }
 
       completeTask(taskId, data);

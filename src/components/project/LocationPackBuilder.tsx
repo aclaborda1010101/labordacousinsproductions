@@ -33,6 +33,10 @@ interface LocationPackSlot {
   qc_issues: any;
   fix_notes: string | null;
   required: boolean;
+  // NEW: Separate reference from generated
+  reference_image_url: string | null;
+  generated_image_url: string | null;
+  reference_status: string;
 }
 
 interface LocationPackBuilderProps {
@@ -41,6 +45,8 @@ interface LocationPackBuilderProps {
   locationDescription: string;
   hasDay: boolean;
   hasNight: boolean;
+  projectId: string;
+  primaryReferenceUrl?: string | null;
   onPackComplete?: () => void;
 }
 
@@ -53,6 +59,8 @@ export function LocationPackBuilder({
   locationDescription,
   hasDay,
   hasNight,
+  projectId,
+  primaryReferenceUrl,
   onPackComplete,
 }: LocationPackBuilderProps) {
   const [slots, setSlots] = useState<LocationPackSlot[]>([]);
@@ -198,7 +206,13 @@ export function LocationPackBuilder({
 
       toast.info(`Generando ${slot.view_angle} (${slot.time_of_day})...`);
       
-      // Call edge function
+      // Determine reference to use: slot reference > primary reference
+      const referenceToUse = slot.reference_image_url || primaryReferenceUrl;
+      const generationMode = referenceToUse ? 'stylize_from_reference' : 'text_to_image';
+      
+      console.log(`[LocationPackBuilder] Generating slot ${slot.view_angle} with mode: ${generationMode}`);
+      
+      // Call edge function with reference if available
       const { data, error } = await supabase.functions.invoke('generate-location', {
         body: {
           locationName,
@@ -206,6 +220,10 @@ export function LocationPackBuilder({
           viewAngle: slot.view_angle,
           timeOfDay: slot.time_of_day,
           weather: slot.weather || 'clear',
+          projectId,
+          locationId,
+          referenceImageUrl: referenceToUse,
+          mode: generationMode,
         }
       });
 
@@ -244,9 +262,10 @@ export function LocationPackBuilder({
       // Run QC analysis (simulated score for now)
       const qcScore = 80 + Math.random() * 20; // 80-100 range
 
-      // Update slot with result
+      // Update slot with result - save to generated_image_url, preserve reference
       const updateData: Partial<LocationPackSlot> = {
-        image_url: finalImageUrl,
+        generated_image_url: finalImageUrl,
+        image_url: finalImageUrl, // Keep for backward compat
         prompt_text: data.prompt,
         seed: data.seed,
         qc_score: qcScore,
@@ -383,12 +402,12 @@ export function LocationPackBuilder({
     toast.success('Imagen eliminada');
   };
 
-  // Upload image to slot
+  // Upload image to slot as REFERENCE (never overwritten by AI)
   const uploadImageToSlot = async (slot: LocationPackSlot, file: File) => {
     setUploading(slot.id);
 
     try {
-      const fileName = `${locationId}/${slot.id}_${Date.now()}.${file.name.split('.').pop()}`;
+      const fileName = `${locationId}/${slot.id}_ref_${Date.now()}.${file.name.split('.').pop()}`;
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('character-packs')
@@ -400,10 +419,13 @@ export function LocationPackBuilder({
         .from('character-packs')
         .getPublicUrl(fileName);
 
+      // Save as REFERENCE image, not generated - this protects it from being overwritten
       await supabase
         .from('location_pack_slots')
         .update({ 
-          image_url: urlData.publicUrl, 
+          reference_image_url: urlData.publicUrl,
+          reference_status: 'uploaded',
+          image_url: urlData.publicUrl, // Also set image_url for display
           status: 'approved', 
           qc_score: 95 
         })
@@ -412,14 +434,21 @@ export function LocationPackBuilder({
       setSlots(prev => {
         const updated = prev.map(s => 
           s.id === slot.id 
-            ? { ...s, image_url: urlData.publicUrl, status: 'approved', qc_score: 95 }
+            ? { 
+                ...s, 
+                reference_image_url: urlData.publicUrl,
+                reference_status: 'uploaded',
+                image_url: urlData.publicUrl, 
+                status: 'approved', 
+                qc_score: 95 
+              }
             : s
         );
         calculateCompleteness(updated);
         return updated;
       });
       
-      toast.success('Imagen subida correctamente');
+      toast.success('Referencia subida (protegida de sobrescritura)');
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Error al subir imagen');
