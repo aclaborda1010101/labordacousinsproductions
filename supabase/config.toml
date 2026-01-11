@@ -74,8 +74,8 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-dialogues-batch]
-# Generates dialogues for scenes in batch - uses Lovable AI
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ASSET GENERATION (V3.0 PROTECTED - Expensive AI Operations)
