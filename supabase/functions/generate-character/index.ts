@@ -36,16 +36,61 @@ interface SlotGenerateRequest {
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
 // See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
 // Character generation uses gemini-3-pro-image-preview (nano-banana-pro)
-const IMAGE_ENGINE = 'google/gemini-3-pro-image-preview'; // nano-banana-pro
+const IMAGE_ENGINE_PRIMARY = 'google/gemini-3-pro-image-preview'; // nano-banana-pro
+const IMAGE_ENGINE_FALLBACK = 'google/gemini-2.5-flash-image-preview'; // fallback for image generation issues
 
 // Retry configuration
 const MAX_RETRIES = 2;
 const INITIAL_BACKOFF_MS = 1000;
 const TRANSIENT_ERROR_PATTERNS = ['timeout', 'rate limit', 'rate_limit', '500', '502', '503', '504', 'network', 'ETIMEDOUT', 'ECONNRESET', 'temporarily unavailable', 'service unavailable'];
 
+// Recoverable errors that should trigger smart retry (model fallback)
+const RECOVERABLE_IMAGE_ERRORS = [
+  'no image generated',
+  'content_blocked',
+  'image_prohibited',
+  'safety',
+  'blocked',
+  'policy'
+];
+
+// Check for content block signals in response
+function isContentBlocked(data: any): { blocked: boolean; reason: string } {
+  const finishReason = data?.choices?.[0]?.native_finish_reason || data?.choices?.[0]?.finish_reason || '';
+  const finishReasonLower = finishReason.toLowerCase();
+  
+  // Direct block reasons
+  if (finishReasonLower.includes('image_prohibited') || 
+      finishReasonLower.includes('safety') || 
+      finishReasonLower.includes('blocked') ||
+      finishReasonLower.includes('content_filter')) {
+    return { blocked: true, reason: finishReason };
+  }
+  
+  // Check for text-only response when image was expected
+  const content = data?.choices?.[0]?.message?.content;
+  if (typeof content === 'string' && content.length < 500) {
+    const contentLower = content.toLowerCase();
+    if (contentLower.includes('cannot generate') || 
+        contentLower.includes('unable to') ||
+        contentLower.includes('i apologize') ||
+        contentLower.includes('safety policy') ||
+        contentLower.includes('policy violation')) {
+      return { blocked: true, reason: `text_response: ${content.substring(0, 100)}` };
+    }
+  }
+  
+  return { blocked: false, reason: '' };
+}
+
 function isTransientError(error: string): boolean {
   const lowerError = error.toLowerCase();
   return TRANSIENT_ERROR_PATTERNS.some(pattern => lowerError.includes(pattern.toLowerCase()));
+}
+
+function isRecoverableImageError(error: string): boolean {
+  const lowerError = error.toLowerCase();
+  return RECOVERABLE_IMAGE_ERRORS.some(pattern => lowerError.includes(pattern));
 }
 
 async function sleep(ms: number): Promise<void> {
@@ -957,18 +1002,25 @@ AVOID: Anthropomorphized features, cartoon style, AI artifacts, blurry details, 
 }
 
 // ============================================
-// TEXT-TO-IMAGE GENERATION (NO REFERENCE)
+// TEXT-TO-IMAGE GENERATION (NO REFERENCE) - WITH AUTO-FALLBACK
 // ============================================
 async function generateWithoutReference(
-  prompt: string
-): Promise<{ imageUrl: string }> {
+  prompt: string,
+  useFallbackModel: boolean = false
+): Promise<{ imageUrl: string; modelUsed: string }> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) {
     throw new Error('LOVABLE_API_KEY is not configured');
   }
 
-  console.log(`[TEXT-TO-IMAGE] Generating with ${IMAGE_ENGINE}...`);
+  const modelToUse = useFallbackModel ? IMAGE_ENGINE_FALLBACK : IMAGE_ENGINE_PRIMARY;
+  console.log(`[TEXT-TO-IMAGE] Generating with ${modelToUse}${useFallbackModel ? ' (FALLBACK)' : ''}...`);
   console.log(`[TEXT-TO-IMAGE] Prompt length: ${prompt.length} chars`);
+
+  // Add explicit image request instruction for fallback
+  const finalPrompt = useFallbackModel 
+    ? `${prompt}\n\n[IMPORTANT: Generate an image as output. Do not respond with text only.]`
+    : prompt;
 
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
@@ -977,11 +1029,11 @@ async function generateWithoutReference(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: IMAGE_ENGINE,
+      model: modelToUse,
       messages: [
         {
           role: 'user',
-          content: prompt
+          content: finalPrompt
         }
       ],
       modalities: ['image', 'text']
@@ -1005,22 +1057,84 @@ async function generateWithoutReference(
   }
   console.log('[TEXT-TO-IMAGE] Response received');
 
-  // Check for content policy block
-  const finishReason = data.choices?.[0]?.native_finish_reason || data.choices?.[0]?.finish_reason;
-  if (finishReason === 'IMAGE_PROHIBITED_CONTENT') {
-    console.warn('[TEXT-TO-IMAGE] Content blocked by safety filter');
-    throw new Error('CONTENT_BLOCKED: Image generation blocked by safety filter. Try a different prompt.');
+  // Enhanced logging for debugging "no image" issues
+  const finishReason = data.choices?.[0]?.native_finish_reason || data.choices?.[0]?.finish_reason || 'unknown';
+  const choicesCount = data.choices?.length || 0;
+  const messageContent = data.choices?.[0]?.message?.content;
+  const contentType = typeof messageContent;
+  const hasImagesArray = !!data.choices?.[0]?.message?.images;
+  
+  console.log(`[TEXT-TO-IMAGE] Debug: finish_reason=${finishReason}, choices=${choicesCount}, contentType=${contentType}, hasImagesArray=${hasImagesArray}`);
+  
+  if (Array.isArray(messageContent)) {
+    const blockTypes = messageContent.map((b: any) => b.type || 'unknown').join(', ');
+    console.log(`[TEXT-TO-IMAGE] Debug: content is array with types: [${blockTypes}]`);
+  }
+
+  // Check for content policy block (expanded detection)
+  const blockCheck = isContentBlocked(data);
+  if (blockCheck.blocked) {
+    console.warn(`[TEXT-TO-IMAGE] Content blocked: ${blockCheck.reason}`);
+    throw new Error(`CONTENT_BLOCKED: ${blockCheck.reason}`);
   }
 
   const imageUrl = extractImageFromResponse(data);
   
   if (!imageUrl) {
-    console.error('[TEXT-TO-IMAGE] No image in response:', JSON.stringify(data).substring(0, 500));
+    // Enhanced error logging
+    console.error('[TEXT-TO-IMAGE] No image in response. Full debug:');
+    console.error(`  - finish_reason: ${finishReason}`);
+    console.error(`  - error in data: ${JSON.stringify(data.error || 'none')}`);
+    console.error(`  - response preview: ${responseText.substring(0, 1500)}`);
     throw new Error('No image generated in response');
   }
 
-  console.log('[TEXT-TO-IMAGE] Image generated successfully');
-  return { imageUrl };
+  console.log(`[TEXT-TO-IMAGE] Image generated successfully with ${modelToUse}`);
+  return { imageUrl, modelUsed: modelToUse };
+}
+
+// Smart image generation with auto-fallback
+async function generateImageWithFallback(
+  prompt: string,
+  referenceImageUrl?: string
+): Promise<{ imageUrl: string; modelUsed: string; retriedWithFallback: boolean }> {
+  let lastError: Error | null = null;
+  
+  // Attempt 1: Primary model
+  try {
+    if (referenceImageUrl) {
+      const result = await generateWithReference(referenceImageUrl, prompt, false);
+      return { ...result, retriedWithFallback: false };
+    } else {
+      const result = await generateWithoutReference(prompt, false);
+      return { ...result, retriedWithFallback: false };
+    }
+  } catch (err) {
+    lastError = err instanceof Error ? err : new Error(String(err));
+    console.log(`[IMAGE-GEN] Primary model failed: ${lastError.message}`);
+    
+    // Check if this is a recoverable error worth retrying with fallback
+    if (!isRecoverableImageError(lastError.message) && !isTransientError(lastError.message)) {
+      throw lastError; // Non-recoverable, don't retry
+    }
+  }
+  
+  // Attempt 2: Fallback model
+  console.log(`[IMAGE-GEN] Attempting fallback model: ${IMAGE_ENGINE_FALLBACK}`);
+  try {
+    if (referenceImageUrl) {
+      const result = await generateWithReference(referenceImageUrl, prompt, true);
+      return { ...result, retriedWithFallback: true };
+    } else {
+      const result = await generateWithoutReference(prompt, true);
+      return { ...result, retriedWithFallback: true };
+    }
+  } catch (err) {
+    const fallbackError = err instanceof Error ? err : new Error(String(err));
+    console.error(`[IMAGE-GEN] Fallback model also failed: ${fallbackError.message}`);
+    // Throw the original error but note that fallback was attempted
+    throw new Error(`${lastError?.message || 'Unknown error'} (fallback also failed: ${fallbackError.message})`);
+  }
 }
 
 // ============================================
@@ -1079,23 +1193,30 @@ async function ensureSupportedImageFormat(imageUrl: string): Promise<string> {
 }
 
 // ============================================
-// REFERENCE-BASED GENERATION WITH LOVABLE AI
+// REFERENCE-BASED GENERATION WITH LOVABLE AI - WITH AUTO-FALLBACK
 // ============================================
 async function generateWithReference(
   referenceImageUrl: string,
-  prompt: string
-): Promise<{ imageUrl: string }> {
+  prompt: string,
+  useFallbackModel: boolean = false
+): Promise<{ imageUrl: string; modelUsed: string }> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) {
     throw new Error('LOVABLE_API_KEY is not configured');
   }
 
-  console.log(`[REFERENCE-GEN] Generating with ${IMAGE_ENGINE}...`);
+  const modelToUse = useFallbackModel ? IMAGE_ENGINE_FALLBACK : IMAGE_ENGINE_PRIMARY;
+  console.log(`[REFERENCE-GEN] Generating with ${modelToUse}${useFallbackModel ? ' (FALLBACK)' : ''}...`);
   console.log(`[REFERENCE-GEN] Reference image: ${referenceImageUrl.substring(0, 100)}...`);
   console.log(`[REFERENCE-GEN] Prompt length: ${prompt.length} chars`);
 
   // Ensure image format is supported by the API
   const processedImageUrl = await ensureSupportedImageFormat(referenceImageUrl);
+
+  // Add explicit image request instruction for fallback
+  const finalPrompt = useFallbackModel 
+    ? `${prompt}\n\n[IMPORTANT: Generate an image as output based on this reference. Do not respond with text only.]`
+    : prompt;
 
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
@@ -1104,7 +1225,7 @@ async function generateWithReference(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: IMAGE_ENGINE,
+      model: modelToUse,
       messages: [
         {
           role: 'user',
@@ -1117,7 +1238,7 @@ async function generateWithReference(
             },
             {
               type: 'text',
-              text: prompt
+              text: finalPrompt
             }
           ]
         }
@@ -1143,22 +1264,35 @@ async function generateWithReference(
   }
   console.log('[REFERENCE-GEN] Response received');
 
-  // Check for content policy block
-  const finishReason = data.choices?.[0]?.native_finish_reason || data.choices?.[0]?.finish_reason;
-  if (finishReason === 'IMAGE_PROHIBITED_CONTENT') {
-    console.warn('[REFERENCE-GEN] Content blocked by safety filter');
-    throw new Error('CONTENT_BLOCKED: Image generation blocked by safety filter. Try a different expression or pose.');
+  // Enhanced logging for debugging "no image" issues
+  const finishReason = data.choices?.[0]?.native_finish_reason || data.choices?.[0]?.finish_reason || 'unknown';
+  const choicesCount = data.choices?.length || 0;
+  const messageContent = data.choices?.[0]?.message?.content;
+  const contentType = typeof messageContent;
+  const hasImagesArray = !!data.choices?.[0]?.message?.images;
+  
+  console.log(`[REFERENCE-GEN] Debug: finish_reason=${finishReason}, choices=${choicesCount}, contentType=${contentType}, hasImagesArray=${hasImagesArray}`);
+
+  // Check for content policy block (expanded detection)
+  const blockCheck = isContentBlocked(data);
+  if (blockCheck.blocked) {
+    console.warn(`[REFERENCE-GEN] Content blocked: ${blockCheck.reason}`);
+    throw new Error(`CONTENT_BLOCKED: ${blockCheck.reason}`);
   }
 
   const imageUrl = extractImageFromResponse(data);
   
   if (!imageUrl) {
-    console.error('[REFERENCE-GEN] No image in response:', JSON.stringify(data).substring(0, 500));
+    // Enhanced error logging
+    console.error('[REFERENCE-GEN] No image in response. Full debug:');
+    console.error(`  - finish_reason: ${finishReason}`);
+    console.error(`  - error in data: ${JSON.stringify(data.error || 'none')}`);
+    console.error(`  - response preview: ${responseText.substring(0, 1500)}`);
     throw new Error('No image generated in response');
   }
 
-  console.log('[REFERENCE-GEN] Image generated successfully');
-  return { imageUrl };
+  console.log(`[REFERENCE-GEN] Image generated successfully with ${modelToUse}`);
+  return { imageUrl, modelUsed: modelToUse };
 }
 
 function extractImageFromResponse(data: any): string | null {
@@ -1683,6 +1817,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
   let prompt: string;
   let generationMode: 'reference' | 'text-to-image';
   let createdAnchorId: string | null = null;
+  let modelUsed: string = IMAGE_ENGINE_PRIMARY;
 
   // ============================================
   // CHECK: COHERENCE MODE - Use enhanced prompt from improve-character-qc
@@ -1701,20 +1836,19 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       generationMode = 'reference';
       console.log(`[COHERENCE MODE] Generating with reference: ${primaryAnchor.image_url.substring(0, 50)}...`);
       
-      const result = await withRetry(
-        () => generateWithReference(primaryAnchor!.image_url, prompt),
-        'COHERENCE-REF-GEN'
-      );
+      const result = await generateImageWithFallback(prompt, primaryAnchor.image_url);
       imageUrl = result.imageUrl;
+      modelUsed = result.modelUsed;
+      if (result.retriedWithFallback) {
+        console.log('[COHERENCE MODE] Used fallback model successfully');
+      }
     } else {
       generationMode = 'text-to-image';
       console.log('[COHERENCE MODE] No reference found, using text-to-image');
       
-      const result = await withRetry(
-        () => generateWithoutReference(prompt),
-        'COHERENCE-TEXT-GEN'
-      );
+      const result = await generateImageWithFallback(prompt);
       imageUrl = result.imageUrl;
+      modelUsed = result.modelUsed;
     }
   } else if (hasReference && primaryAnchor) {
     // === REFERENCE-BASED GENERATION (Normal mode) ===
@@ -1799,11 +1933,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
         : buildCloseupPrompt(visualDNA, styleConfig, 'front', request.characterName);
     }
     
-    const result = await withRetry(
-      () => generateWithReference(primaryAnchor!.image_url, prompt),
-      'REFERENCE-GEN'
-    );
+    const result = await generateImageWithFallback(prompt, primaryAnchor.image_url);
     imageUrl = result.imageUrl;
+    modelUsed = result.modelUsed;
+    if (result.retriedWithFallback) {
+      console.log('[REFERENCE-GEN] Used fallback model successfully');
+    }
     
   } else {
     // === TEXT-TO-IMAGE GENERATION (No Reference) ===
@@ -1815,11 +1950,12 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
       ? buildStandaloneAnimalPrompt(request.characterName, request.characterBio, styleConfig)
       : buildStandaloneCharacterPrompt(request.characterName, request.characterBio, visualDNA, styleConfig);
     
-    const result = await withRetry(
-      () => generateWithoutReference(prompt),
-      'TEXT-TO-IMAGE'
-    );
+    const result = await generateImageWithFallback(prompt);
     imageUrl = result.imageUrl;
+    modelUsed = result.modelUsed;
+    if (result.retriedWithFallback) {
+      console.log('[TEXT-TO-IMAGE] Used fallback model successfully');
+    }
     
     // Create the generated image as primary reference anchor for future generations
     if (isIdentitySlot && imageUrl) {
@@ -1837,7 +1973,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
           metadata: {
             source: 'auto_generated',
             generated_at: new Date().toISOString(),
-            engine: IMAGE_ENGINE,
+            engine: IMAGE_ENGINE_PRIMARY,
             note: 'Auto-generated identity. Approve to use for future generations.'
           }
         })
@@ -1927,28 +2063,58 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     console.log(`[SLOT UPDATE] No valid reference_anchor to link (source was pack_slots or text-to-image)`);
   }
 
-  // Update slot in database
-  const { error: updateError } = await supabase
+  // Update slot in database with FK error retry
+  const slotUpdateData = {
+    image_url: finalImageUrl,
+    prompt_text: prompt,
+    reference_anchor_id: validReferenceAnchorId,
+    qc_score: qcResult.score,
+    qc_issues: qcResult.issues,
+    fix_notes: qcResult.fixNotes,
+    status: qcResult.passed ? 'generated' : 'needs_review',
+    generation_metadata: {
+      engine: modelUsed,
+      generation_mode: generationMode,
+      reference_used: validReferenceAnchorId,
+      created_anchor: createdAnchorId,
+      generated_at: new Date().toISOString(),
+      duration_ms: durationMs
+    },
+    updated_at: new Date().toISOString()
+  };
+
+  let { error: updateError } = await supabase
     .from('character_pack_slots')
-    .update({
-      image_url: finalImageUrl,
-      prompt_text: prompt,
-      reference_anchor_id: validReferenceAnchorId,
-      qc_score: qcResult.score,
-      qc_issues: qcResult.issues,
-      fix_notes: qcResult.fixNotes,
-      status: qcResult.passed ? 'generated' : 'needs_review',
-      generation_metadata: {
-        engine: IMAGE_ENGINE,
-        generation_mode: generationMode,
-        reference_used: validReferenceAnchorId,
-        created_anchor: createdAnchorId,
-        generated_at: new Date().toISOString(),
-        duration_ms: durationMs
-      },
-      updated_at: new Date().toISOString()
-    })
+    .update(slotUpdateData)
     .eq('id', request.slotId);
+
+  // If FK error on reference_anchor_id, retry with null
+  if (updateError && updateError.message?.includes('fk_character_pack_slots_reference_anchor')) {
+    console.warn(`[SLOT UPDATE] FK constraint error, retrying with reference_anchor_id=null`);
+    console.warn(`[SLOT UPDATE] Invalid anchor ID was: ${validReferenceAnchorId}`);
+    
+    const { error: retryError } = await supabase
+      .from('character_pack_slots')
+      .update({
+        ...slotUpdateData,
+        reference_anchor_id: null,
+        generation_metadata: {
+          ...slotUpdateData.generation_metadata,
+          reference_used: null,
+          fk_retry: true,
+          original_anchor_id: validReferenceAnchorId
+        }
+      })
+      .eq('id', request.slotId);
+    
+    if (retryError) {
+      console.error('[SLOT UPDATE] Retry also failed:', retryError);
+      throw new Error(`Failed to update slot: ${retryError.message}`);
+    }
+    
+    console.log('[SLOT UPDATE] Retry succeeded with null reference_anchor_id');
+    updateError = null; // Clear the error since retry succeeded
+  }
 
   if (updateError) {
     console.error('Slot update error:', updateError);
@@ -1968,7 +2134,7 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     characterId: request.characterId,
     slotId: request.slotId,
     slotType: `character_${request.slotType}`,
-    engine: IMAGE_ENGINE,
+    engine: modelUsed || IMAGE_ENGINE_PRIMARY,
     durationMs: durationMs,
     success: true,
     metadata: {
