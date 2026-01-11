@@ -246,6 +246,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [segmenting, setSegmenting] = useState(false);
   const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
   
+  // Dialogue generation state (PRO mode)
+  const [generatingDialogues, setGeneratingDialogues] = useState(false);
+  const [dialogueProgress, setDialogueProgress] = useState({ current: 0, total: 0, phase: '' });
+  
   // Imported script parsing state
   const [parsingImportedScript, setParsingImportedScript] = useState(false);
   
@@ -1843,6 +1847,110 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
     setScriptLocked(false);
     toast.success('Guion desbloqueado');
+  };
+
+  // Generate missing dialogues for episodes that need them
+  const generateMissingDialogues = async () => {
+    const episodes = generatedScript?.episodes || [];
+    if (episodes.length === 0) return;
+    
+    // Check which episodes need dialogues
+    const episodesNeedingDialogue = episodes.filter((ep: any) => 
+      ep.scenes?.some((s: any) => {
+        const hasCharacters = s.characters && s.characters.length > 0;
+        const hasDialogue = s.dialogue && s.dialogue.length > 0;
+        return hasCharacters && !hasDialogue;
+      })
+    );
+    
+    if (episodesNeedingDialogue.length === 0) {
+      toast.info('Todas las escenas ya tienen diálogos');
+      return;
+    }
+    
+    setGeneratingDialogues(true);
+    const totalEpisodes = episodesNeedingDialogue.length;
+    
+    try {
+      let updatedEpisodes = [...episodes];
+      
+      for (let i = 0; i < episodesNeedingDialogue.length; i++) {
+        const episode = episodesNeedingDialogue[i];
+        const epIdx = episodes.findIndex((ep: any) => ep.episode_number === episode.episode_number);
+        
+        setDialogueProgress({
+          current: i + 1,
+          total: totalEpisodes,
+          phase: `Ep ${episode.episode_number} (${i + 1}/${totalEpisodes})...`
+        });
+        
+        const { data, error } = await supabase.functions.invoke('generate-dialogues-batch', {
+          body: {
+            projectId,
+            scenes: episode.scenes,
+            language,
+            tone: generatedScript?.tone || 'dramático',
+            genre: generatedScript?.genre || 'drama',
+          }
+        });
+        
+        if (error) {
+          console.error(`Error generando diálogos episodio ${episode.episode_number}:`, error);
+          toast.error(`Error en episodio ${episode.episode_number}`);
+        } else if (data?.scenes) {
+          // Update episode with new dialogues
+          updatedEpisodes[epIdx] = {
+            ...updatedEpisodes[epIdx],
+            scenes: data.scenes,
+            total_dialogue_lines: data.scenes.reduce((sum: number, s: any) => 
+              sum + (s.dialogue?.length || 0), 0
+            ),
+          };
+        }
+        
+        // Small delay to avoid rate limits
+        if (i < episodesNeedingDialogue.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      // Update generatedScript state
+      const updatedScript = {
+        ...generatedScript,
+        episodes: updatedEpisodes,
+        counts: {
+          ...generatedScript?.counts,
+          total_dialogue_lines: updatedEpisodes.reduce(
+            (sum: number, ep: any) => sum + (ep.total_dialogue_lines || 0), 0
+          ),
+        },
+      };
+      setGeneratedScript(updatedScript);
+      
+      // Save to database
+      if (currentScriptId) {
+        const { error: saveError } = await supabase
+          .from('scripts')
+          .update({ parsed_json: updatedScript })
+          .eq('id', currentScriptId);
+          
+        if (saveError) {
+          console.error('Error saving dialogues:', saveError);
+          toast.warning('Diálogos generados pero hubo un error al guardar');
+        } else {
+          toast.success('¡Diálogos generados correctamente!');
+        }
+      } else {
+        toast.success('¡Diálogos generados!');
+      }
+      
+    } catch (err) {
+      console.error('Error generating dialogues:', err);
+      toast.error('Error al generar diálogos');
+    } finally {
+      setGeneratingDialogues(false);
+      setDialogueProgress({ current: 0, total: 0, phase: '' });
+    }
   };
 
   // Delete current script
@@ -4161,6 +4269,61 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 );
               })()}
+
+              {/* GENERATE MISSING DIALOGUES - PRO MODE */}
+              {generatedScript?.episodes?.some((ep: any) => 
+                ep.scenes?.some((s: any) => {
+                  const hasCharacters = s.characters && s.characters.length > 0;
+                  const hasDialogue = s.dialogue && s.dialogue.length > 0;
+                  return hasCharacters && !hasDialogue;
+                })
+              ) && (
+                <Card className="border-amber-500/30 bg-amber-500/5">
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-amber-500/20">
+                          <FileText className="w-5 h-5 text-amber-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-amber-700 dark:text-amber-300">
+                            Algunas escenas no tienen diálogos escritos
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Genera diálogos completos para las escenas que solo tienen resumen
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        variant="gold"
+                        onClick={generateMissingDialogues}
+                        disabled={generatingDialogues}
+                        className="gap-2"
+                      >
+                        {generatingDialogues ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            {dialogueProgress.phase || 'Generando...'}
+                          </>
+                        ) : (
+                          <>
+                            <Wand2 className="w-4 h-4" />
+                            Generar Diálogos Faltantes
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    
+                    {generatingDialogues && dialogueProgress.total > 0 && (
+                      <Progress 
+                        value={(dialogueProgress.current / dialogueProgress.total) * 100} 
+                        className="mt-3 h-2"
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
               {/* EPISODES / CHAPTERS - WITH SUMMARY vs FULL SCREENPLAY TOGGLE */}
               <div className="space-y-4">
