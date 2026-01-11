@@ -93,6 +93,7 @@ interface CharacterPackBuilderProps {
   styleToken?: string;
   projectId?: string;
   onPackComplete?: () => void;
+  hasVisualDNA?: boolean; // Character has visual_dna_id or profile_json with physical data
 }
 
 // Valid statuses that count as "complete" for phase progression
@@ -151,6 +152,7 @@ export function CharacterPackBuilder({
   styleToken,
   projectId,
   onPackComplete,
+  hasVisualDNA = false,
 }: CharacterPackBuilderProps) {
   const [slots, setSlots] = useState<PackSlot[]>([]);
   const [loading, setLoading] = useState(true);
@@ -591,9 +593,10 @@ export function CharacterPackBuilder({
   };
 
   // Generate Base Visual (Phase 2) with Background Tasks
+  // Allows text-to-image generation if Visual DNA exists (no photo required)
   const generateBaseVisual = async () => {
-    if (!phase1Complete()) {
-      toast.error('Sube primero la foto frontal obligatoria');
+    if (!phase1Complete() && !hasVisualDNA) {
+      toast.error('Sube una foto frontal o define el Visual DNA del personaje');
       return;
     }
 
@@ -803,9 +806,10 @@ export function CharacterPackBuilder({
   };
 
   // Generate full pack with Background Tasks
+  // Allows text-to-image generation if Visual DNA exists (no photo required)
   const generateFullPack = async () => {
-    if (!phase1Complete()) {
-      toast.error('Sube primero la foto frontal obligatoria');
+    if (!phase1Complete() && !hasVisualDNA) {
+      toast.error('Sube una foto frontal o define el Visual DNA del personaje');
       return;
     }
 
