@@ -2236,8 +2236,43 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
       );
     }
 
+    // Check if scenes are missing (indicates failed analysis)
+    const scenesCount = breakdownResult?.scenes?.length || 0;
+    const needsReanalysis = scenesCount === 0;
+
     return (
       <div className="space-y-6 p-6">
+        {/* Warning banner if 0 scenes detected */}
+        {needsReanalysis && (
+          <Alert className="border-destructive/50 bg-destructive/10">
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <AlertTitle className="text-destructive">Análisis incompleto</AlertTitle>
+            <AlertDescription className="flex items-center justify-between flex-wrap gap-3">
+              <span className="text-sm">
+                El análisis anterior no detectó escenas. Re-analiza el guion con GPT-5 para extraer las ~118 escenas correctamente.
+              </span>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleAnalyzeScript(existingScriptText)}
+                disabled={status === 'analyzing'}
+              >
+                {status === 'analyzing' ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Analizando...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    Re-analizar con GPT-5
+                  </>
+                )}
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Quick actions header */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
@@ -2251,14 +2286,24 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline"
+              variant={needsReanalysis ? "default" : "outline"}
               size="sm"
               onClick={() => handleAnalyzeScript(existingScriptText)}
-              disabled={status === 'generating'}
-              title="Recalcular episodios, duración y entidades desde el texto actual"
+              disabled={status === 'analyzing'}
+              title="Re-analizar con GPT-5 para extraer escenas, personajes y locaciones"
+              className={needsReanalysis ? "animate-pulse" : ""}
             >
-              <Search className="h-4 w-4 mr-2" />
-              Reanalizar
+              {status === 'analyzing' ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Analizando...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  Re-analizar (GPT-5)
+                </>
+              )}
             </Button>
             <Button variant="outline" size="sm" onClick={handleChangeScript}>
               <RefreshCw className="h-4 w-4 mr-2" />
