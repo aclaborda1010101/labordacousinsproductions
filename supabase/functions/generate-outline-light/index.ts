@@ -28,21 +28,29 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
     apiModel: 'openai/gpt-5-mini',
     provider: 'lovable',
-    maxTokens: 4000,
+    maxTokens: 6000,
     temperature: 0.8
   },
   profesional: {
     apiModel: 'openai/gpt-5',
     provider: 'lovable',
-    maxTokens: 4000,
+    maxTokens: 8000,
     temperature: 0.7
   },
   hollywood: {
     apiModel: 'openai/gpt-5.2',
     provider: 'lovable',
-    maxTokens: 4000,
+    maxTokens: 10000,
     temperature: 0.8
   }
+};
+
+// Fallback model when primary model fails parsing
+const FALLBACK_MODEL_CONFIG: ModelConfig = {
+  apiModel: 'google/gemini-2.5-flash',
+  provider: 'lovable',
+  maxTokens: 8000,
+  temperature: 0.7
 };
 
 // =============================================================================
@@ -579,6 +587,20 @@ async function callLovableAI(
   // Extract tool call result (OpenAI-compatible format)
   const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
   const toolArgs = toolCall?.function?.arguments;
+  const content = data.choices?.[0]?.message?.content ?? '';
+  const finishReason = data.choices?.[0]?.finish_reason;
+
+  // DEBUG LOGGING: Log exactly what the model returns
+  console.log('[OUTLINE DEBUG] Response structure:', JSON.stringify({
+    hasToolCalls: !!data.choices?.[0]?.message?.tool_calls,
+    toolCallsCount: data.choices?.[0]?.message?.tool_calls?.length ?? 0,
+    toolCallName: toolCall?.function?.name ?? 'none',
+    toolArgsLength: typeof toolArgs === 'string' ? toolArgs.length : 0,
+    toolArgsPreview: typeof toolArgs === 'string' ? toolArgs.slice(0, 200) : 'N/A',
+    contentLength: content?.length || 0,
+    contentPreview: content?.slice(0, 200) || 'N/A',
+    finishReason: finishReason
+  }));
 
   // Try tool call arguments first
   if (toolCall?.function?.name === 'deliver_outline' && typeof toolArgs === 'string') {
@@ -586,12 +608,12 @@ async function callLovableAI(
       return { outline: normalizeOutline(parseJsonSafe(toolArgs, 'lovable.tool_call.arguments')), parseWarnings };
     } catch (e) {
       parseWarnings.push('TOOL_CALL_PARSE_FAILED');
-      console.warn('[OUTLINE] Tool-call JSON invalid. Falling back to content parsing...');
+      console.warn('[OUTLINE] Tool-call JSON invalid. Details:', (e as Error).message);
+      console.warn('[OUTLINE] Tool args (first 1000 chars):', toolArgs.slice(0, 1000));
     }
   }
 
   // Fallback: try to parse from content
-  const content = data.choices?.[0]?.message?.content ?? '';
   const candidate = content || (typeof toolArgs === 'string' ? toolArgs : '');
 
   if (candidate) {
@@ -599,7 +621,23 @@ async function callLovableAI(
       return { outline: normalizeOutline(parseJsonSafe(candidate, 'lovable.content')), parseWarnings };
     } catch (e) {
       parseWarnings.push('CONTENT_PARSE_FAILED');
-      console.warn('[OUTLINE] Content JSON also invalid. Using fallback outline.');
+      console.warn('[OUTLINE] Content JSON also invalid. Details:', (e as Error).message);
+    }
+  }
+
+  // Try aggressive JSON extraction from any available text
+  const allText = [toolArgs, content].filter(Boolean).join('\n');
+  if (allText) {
+    // Look for JSON structure with episode_beats (key indicator of valid outline)
+    const jsonMatch = allText.match(/\{[\s\S]*?"episode_beats"[\s\S]*?\[[\s\S]*?\][\s\S]*?\}/);
+    if (jsonMatch) {
+      try {
+        console.log('[OUTLINE] Attempting aggressive JSON extraction...');
+        return { outline: normalizeOutline(parseJsonSafe(jsonMatch[0], 'lovable.aggressive')), parseWarnings };
+      } catch (e) {
+        parseWarnings.push('AGGRESSIVE_PARSE_FAILED');
+        console.warn('[OUTLINE] Aggressive extraction also failed.');
+      }
     }
   }
 
@@ -868,6 +906,23 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
     // Call Lovable AI Gateway with hardened parsing
     let result: { outline: any; parseWarnings: string[] };
     result = await callLovableAI(systemPrompt, userPrompt, modelConfig, cappedEpisodesCount);
+
+    // If primary model failed to parse, retry with fallback model (google/gemini-2.5-flash)
+    if (result.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
+      console.warn(`[OUTLINE] Primary model ${modelConfig.apiModel} failed to produce parseable JSON. Retrying with fallback model ${FALLBACK_MODEL_CONFIG.apiModel}...`);
+      try {
+        const fallbackResult = await callLovableAI(systemPrompt, userPrompt, FALLBACK_MODEL_CONFIG, cappedEpisodesCount);
+        if (!fallbackResult.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
+          console.log('[OUTLINE] Fallback model succeeded!');
+          result = fallbackResult;
+          result.parseWarnings.push('FALLBACK_MODEL_USED');
+        } else {
+          console.warn('[OUTLINE] Fallback model also failed to parse.');
+        }
+      } catch (fallbackError) {
+        console.error('[OUTLINE] Fallback model call failed:', fallbackError);
+      }
+    }
 
     let { outline, parseWarnings } = result;
     const expectedEpisodes = format === 'series' ? cappedEpisodesCount : 1;
