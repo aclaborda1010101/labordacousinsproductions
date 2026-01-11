@@ -74,7 +74,15 @@ interface Character {
   turnaround_urls: Record<string, string> | null;
   expressions: Record<string, string> | null;
   pack_completeness_score?: number | null;
-  profile_json?: unknown;
+  profile_json?: {
+    physical_identity?: {
+      age_exact?: number;
+      age?: number;
+      gender_presentation?: string;
+    };
+  } | null;
+  visual_dna_id?: string | null;
+  active_visual_dna_id?: string | null;
   outfits?: CharacterOutfit[];
   // Unified generation system fields
   current_run_id?: string | null;
@@ -172,10 +180,11 @@ export default function Characters({ projectId }: CharactersProps) {
           ...char, 
           turnaround_urls: char.turnaround_urls as Record<string, string> | null,
           expressions: char.expressions as Record<string, string> | null,
+          profile_json: char.profile_json as Character['profile_json'],
           outfits: (outfits || []) as CharacterOutfit[]
         };
       }));
-      setCharacters(charsWithOutfits);
+      setCharacters(charsWithOutfits as Character[]);
 
       // Unified image resolution for consistent display
       const imageMap = await fetchCharacterImages(charsWithOutfits.map(c => ({
@@ -1945,6 +1954,12 @@ export default function Characters({ projectId }: CharactersProps) {
           {showPackBuilder && (() => {
             const char = characters.find(c => c.id === showPackBuilder);
             if (!char || !char.character_role) return null;
+            // Check if character has Visual DNA (allows text-to-image generation)
+            const hasVisualDNA = !!(
+              char.visual_dna_id || 
+              char.active_visual_dna_id ||
+              (char.profile_json?.physical_identity?.age_exact && char.profile_json?.physical_identity?.gender_presentation)
+            );
             return (
               <CharacterPackBuilder
                 characterId={char.id}
@@ -1953,6 +1968,7 @@ export default function Characters({ projectId }: CharactersProps) {
                 characterRole={char.character_role}
                 styleToken={char.token || undefined}
                 projectId={projectId}
+                hasVisualDNA={hasVisualDNA}
                 onPackComplete={() => {
                   fetchCharacters();
                   toast.success('Character Pack completado');
