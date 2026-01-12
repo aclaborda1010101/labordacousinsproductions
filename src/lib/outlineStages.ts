@@ -14,19 +14,19 @@ export const OUTLINE_STAGES: Record<string, OutlineStageInfo> = {
     label: 'Analizando texto...',
     description: 'Procesando y resumiendo el contenido',
     progressRange: [0, 30],
-    timeoutSeconds: 90,
+    timeoutSeconds: 75, // V8.0: Reduced from 90 to detect stuck faster
   },
   outline: {
     label: 'Construyendo estructura...',
     description: 'Diseñando episodios y arcos narrativos',
     progressRange: [30, 80],
-    timeoutSeconds: 180,
+    timeoutSeconds: 150, // V8.0: Reduced from 180
   },
   merge: {
     label: 'Finalizando...',
     description: 'Normalizando y validando outline',
     progressRange: [80, 95],
-    timeoutSeconds: 60,
+    timeoutSeconds: 45, // V8.0: Reduced from 60
   },
   done: {
     label: 'Completado',
