@@ -773,13 +773,24 @@ episode_beats debe contener EXACTAMENTE ${batchSize} elementos numerados ${start
   return { beats: [], parseWarnings };
 }
 
+// V4.3: Check if model supports temperature parameter
+// GPT-5 models may not support custom temperature values
+function supportsTemperature(modelId: string): boolean {
+  // GPT-5 family models don't support custom temperature
+  if (modelId.startsWith('openai/gpt-5')) {
+    return false;
+  }
+  return true;
+}
+
 // Lovable AI Gateway call with hardened parsing
 async function callLovableAI(
   systemPrompt: string,
   userPrompt: string,
   config: ModelConfig,
   expectedEpisodes: number,
-  overrideMaxTokens?: number // V3.4: Allow override for long texts
+  overrideMaxTokens?: number, // V3.4: Allow override for long texts
+  skipTemperature?: boolean // V4.3: Force skip temperature parameter
 ): Promise<{ outline: any; parseWarnings: string[]; durationMs: number }> {
   const parseWarnings: string[] = [];
   const callStartTime = Date.now();
@@ -788,35 +799,45 @@ async function callLovableAI(
   if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
   
   const effectiveMaxTokens = overrideMaxTokens ?? config.maxTokens;
-
-  console.log(`[OUTLINE] Calling Lovable AI: model=${config.apiModel}, maxTokens=${effectiveMaxTokens}, temp=${config.temperature}`);
   
-  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  // V4.3: Only include temperature if model supports it and not skipped
+  const includeTemperature = !skipTemperature && supportsTemperature(config.apiModel);
+
+  console.log(`[OUTLINE] Calling Lovable AI: model=${config.apiModel}, maxTokens=${effectiveMaxTokens}, temp=${includeTemperature ? config.temperature : 'omitted'}`);
+  
+  // Build request body conditionally
+  const requestBody: Record<string, any> = {
+    model: config.apiModel,
+    max_completion_tokens: effectiveMaxTokens,
+    messages: [
+      { role: 'system', content: systemPrompt + '\n\nResponde ÚNICAMENTE en formato JSON válido usando la herramienta deliver_outline.' },
+      { role: 'user', content: userPrompt }
+    ],
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'deliver_outline',
+          description: 'Entrega el outline estructurado con estilo MASTER SHOWRUNNER.',
+          parameters: OUTLINE_TOOL_SCHEMA
+        }
+      }
+    ],
+    tool_choice: { type: 'function', function: { name: 'deliver_outline' } }
+  };
+  
+  // Only add temperature if supported
+  if (includeTemperature) {
+    requestBody.temperature = config.temperature;
+  }
+  
+  let response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      model: config.apiModel,
-      max_completion_tokens: effectiveMaxTokens,
-      temperature: config.temperature,
-      messages: [
-        { role: 'system', content: systemPrompt + '\n\nResponde ÚNICAMENTE en formato JSON válido usando la herramienta deliver_outline.' },
-        { role: 'user', content: userPrompt }
-      ],
-      tools: [
-        {
-          type: 'function',
-          function: {
-            name: 'deliver_outline',
-            description: 'Entrega el outline estructurado con estilo MASTER SHOWRUNNER.',
-            parameters: OUTLINE_TOOL_SCHEMA
-          }
-        }
-      ],
-      tool_choice: { type: 'function', function: { name: 'deliver_outline' } }
-    })
+    body: JSON.stringify(requestBody)
   });
 
   // Handle rate limits and payment required
@@ -825,6 +846,30 @@ async function callLovableAI(
   }
   if (response.status === 402) {
     throw { status: 402, message: 'Payment required - add credits to Lovable AI workspace' };
+  }
+
+  // V4.3: Self-healing retry - if 400 error mentions temperature, retry without it
+  if (response.status === 400 && !skipTemperature) {
+    const errorText = await response.text();
+    const isTemperatureError = errorText.toLowerCase().includes('temperature') || 
+                                errorText.includes('unsupported') ||
+                                errorText.includes('does not support');
+    
+    if (isTemperatureError) {
+      console.warn('[OUTLINE] Temperature not supported by model, retrying without temperature...');
+      parseWarnings.push('TEMPERATURE_RETRY');
+      
+      // Retry without temperature
+      delete requestBody.temperature;
+      response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+    }
   }
 
   if (!response.ok) {

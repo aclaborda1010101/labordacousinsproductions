@@ -1451,7 +1451,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     } catch (err: any) {
       console.error('Error generating light outline:', err);
       updatePipelineStep('outline', 'error');
-      toast.error(err.message || 'Error al generar outline');
+      
+      // V4.3: Better error messages for specific error types
+      const errorMessage = String(err?.message || err || '').toLowerCase();
+      
+      if (errorMessage.includes('temperature') || errorMessage.includes('unsupported')) {
+        toast.error('Error de compatibilidad del modelo', {
+          description: 'Reintentando con configuración alternativa...',
+          duration: 6000,
+        });
+        // Auto-retry with a slight delay
+        setTimeout(() => generateLightOutline(), 1500);
+        return;
+      }
+      
+      if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
+        toast.error('Límite de solicitudes alcanzado', {
+          description: 'Espera unos segundos e inténtalo de nuevo.',
+          duration: 8000,
+        });
+      } else if (errorMessage.includes('402') || errorMessage.includes('payment')) {
+        toast.error('Créditos agotados', {
+          description: 'Añade créditos a tu workspace de Lovable AI.',
+          duration: 10000,
+        });
+      } else {
+        toast.error(err.message || 'Error al generar outline');
+      }
     } finally {
       // Only set to false if we're not polling
       if (!outlinePersistence.isPolling) {
