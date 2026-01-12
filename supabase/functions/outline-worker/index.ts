@@ -483,16 +483,17 @@ async function stageMerge(
     normalized.qc_warnings = qcIssues;
   }
 
-  // Mark as completed
-  await updateOutline(supabase, outline.id, {
-    status: 'draft',
-    stage: 'done',
-    progress: 100,
-    outline_json: normalized,
-    qc_issues: qcIssues.length > 0 ? qcIssues : null,
-    error_code: null,
-    error_detail: null
-  });
+    // Mark as completed - FIX: status Y quality correctos
+    await updateOutline(supabase, outline.id, {
+      status: 'completed',
+      stage: 'done',
+      progress: 100,
+      quality: qcIssues.length > 0 ? 'degraded' : 'ok',
+      outline_json: normalized,
+      qc_issues: qcIssues.length > 0 ? qcIssues : null,
+      error_code: null,
+      error_detail: null
+    });
 
   console.log(`[WORKER] Completed: ${normalized.title} | ${normalized.episode_beats.length} episodes`);
   return normalized;
