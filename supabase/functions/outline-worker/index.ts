@@ -3,6 +3,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/v3-enterprise.ts";
 import { parseJsonSafe } from "../_shared/llmJson.ts";
+import { MODEL_CONFIG, getOutputLimit } from "../_shared/model-config.ts";
+import { EPISODE_OUTLINE_PROMPT, EPISODE_OUTLINE_TOOL_SCHEMA } from "../_shared/production-prompts.ts";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // V3 OUTLINE WORKER - Step-based async processor with resumability
@@ -12,15 +14,15 @@ import { parseJsonSafe } from "../_shared/llmJson.ts";
 // Can be resumed from any stage if interrupted
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// Model configuration
-const FAST_MODEL = 'google/gemini-2.5-flash';
-const QUALITY_MODEL = 'openai/gpt-5';
-const LONG_INPUT_THRESHOLD = 12000;
+// Model configuration from centralized config
+const FAST_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;
+const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD;
+const LONG_INPUT_THRESHOLD = MODEL_CONFIG.LIMITS.MAX_INPUT_TOKENS_SOFT * MODEL_CONFIG.LIMITS.CHARS_PER_TOKEN;
 const MULTI_EPISODE_THRESHOLD = 1;
 
 // Timeout configuration per stage (must complete within gateway limits)
-const STAGE_TIMEOUT_MS = 85000; // 85 seconds per stage (gateway cuts at ~100s)
-const MAX_ATTEMPTS = 3;
+const STAGE_TIMEOUT_MS = MODEL_CONFIG.LIMITS.STAGE_TIMEOUT_MS;
+const MAX_ATTEMPTS = MODEL_CONFIG.LIMITS.RETRY_COUNT;
 
 interface OutlineRecord {
   id: string;
@@ -349,32 +351,14 @@ async function stageOutline(
 
   console.log(`[WORKER] Using model: ${model} (input: ${inputChars} chars, episodes: ${episodesCount})`);
 
-  const systemPrompt = `Eres MASTER_SHOWRUNNER_ENGINE, un showrunner profesional de nivel estudio.
-Tu función es diseñar series y películas ADICTIVAS con identidad CLARA.
-
-REGLAS:
-- Cada episodio DEBE terminar con cliffhanger REAL
-- Cada episodio DEBE cambiar el estado del mundo
-- NO narrativa genérica
-- Convierte ideas en ACCIONES y CONSECUENCIAS
-
-Responde ÚNICAMENTE usando la herramienta deliver_outline.`;
-
-  const userPrompt = `GENERA OUTLINE PARA:
-
-IDEA: ${summaryText}
-
-CONFIGURACIÓN:
-- Formato: ${format}
-- Episodios: ${episodesCount}
-- Género: ${genre || 'auto-detectar'}
-- Tono: ${tone || 'auto-detectar'}
-- Modo narrativo: ${narrativeMode}
-
-REQUISITOS:
-- episode_beats debe tener EXACTAMENTE ${episodesCount} elementos
-- Cada episodio numerado 1..${episodesCount}
-- Cliffhanger POTENTE en cada episodio`;
+  // Use centralized production prompts
+  const systemPrompt = EPISODE_OUTLINE_PROMPT.system;
+  const userPrompt = EPISODE_OUTLINE_PROMPT.buildUserPrompt({
+    seriesBibleJson: JSON.stringify({ idea: summaryText, genre, tone, format, narrativeMode }),
+    episodeNumber: 1, // This worker generates all at once
+    totalEpisodes: episodesCount,
+    episodeGoal: `Generate ${episodesCount} episode outlines`,
+  });
 
   try {
     const { toolArgs, content } = await callLovableAIWithTool(

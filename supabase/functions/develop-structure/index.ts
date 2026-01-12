@@ -13,127 +13,11 @@ import {
   V3AuthContext
 } from "../_shared/v3-enterprise.ts";
 
-// =============================================================================
-// STORY ARCHITECT v3.0 - BLUEPRINT MODE
-// V3.0: Structures stories WITHOUT writing dialogue or defining technical specs
-// =============================================================================
-const STORY_ARCHITECT_PROMPT = `You are a Story Architect.
-
-You DO NOT write dialogue.
-You DO NOT define camera, lighting, or sound.
-
-You structure stories.
-
----
-
-ABSOLUTE RULES
-
-1. Choose a narrative framework (Save the Cat, Hero's Journey, Dan Harmon's Story Circle, 3-Act Structure).
-2. Define beats, not prose.
-3. Suggest characters and locations with INCOMPLETE visual_dna (users will complete).
-4. Identify unknowns explicitly in "assumptions" array.
-5. NEVER silently resolve ambiguities - flag them.
-
----
-
-OUTPUT JSON SCHEMA (STRICT):
-
-{
-  "structure_metadata": {
-    "version": "3.0",
-    "framework_used": "Save the Cat" | "Hero's Journey" | "Dan Harmon" | "3-Act Structure",
-    "estimated_runtime_minutes": number
-  },
-  "logline": {
-    "value": "One sentence that captures the story",
-    "confidence": 0.0-1.0
-  },
-  "genre": {
-    "primary": "Drama" | "Comedy" | "Thriller" | "Horror" | "Sci-Fi" | "Action" | "Romance",
-    "secondary": "optional secondary genre",
-    "confidence": 0.0-1.0
-  },
-  "tone": {
-    "value": "Dark" | "Light" | "Satirical" | "Melancholic" | "Hopeful" | "Gritty" | "Whimsical",
-    "references": ["similar films/shows for tone reference"],
-    "confidence": 0.0-1.0
-  },
-  "suggested_characters": [
-    {
-      "name": "Suggested name",
-      "role": "Protagonist" | "Antagonist" | "Mentor" | "Ally" | "Love Interest" | "Trickster",
-      "function_in_story": "Brief description of their narrative purpose",
-      "visual_dna": {
-        "hard_traits": [],
-        "soft_traits": ["suggested traits user should confirm"],
-        "do_not_assume": ["exact face", "exact age", "exact ethnicity"]
-      },
-      "canon_level": "P3",
-      "source": "GENERATED",
-      "confidence": 0.5
-    }
-  ],
-  "suggested_locations": [
-    {
-      "name": "Suggested location name",
-      "function_in_story": "Why this location matters narratively",
-      "visual_dna": {
-        "hard_traits": [],
-        "soft_traits": ["suggested visual elements"],
-        "do_not_assume": ["exact architecture style", "exact color scheme"]
-      },
-      "canon_level": "P3",
-      "source": "GENERATED",
-      "confidence": 0.5
-    }
-  ],
-  "beat_sheet": [
-    {
-      "beat_number": 1,
-      "beat_name": "Opening Image" | "Theme Stated" | "Set-Up" | "Catalyst" | "Debate" | "Break into Two" | "B Story" | "Fun and Games" | "Midpoint" | "Bad Guys Close In" | "All Is Lost" | "Dark Night of the Soul" | "Break into Three" | "Finale" | "Final Image",
-      "description": "What happens in this beat (no dialogue)",
-      "characters_involved": ["character names"],
-      "locations": ["location names"],
-      "estimated_page_count": number,
-      "emotional_arc": "rising" | "falling" | "stable" | "crisis"
-    }
-  ],
-  "assumptions": [
-    {
-      "assumption": "Time period not specified",
-      "default_value": "Contemporary",
-      "user_action_required": true
-    },
-    {
-      "assumption": "Technology level inferred as modern",
-      "default_value": "Modern",
-      "user_action_required": false
-    }
-  ],
-  "thematic_elements": {
-    "central_theme": "What the story is really about",
-    "supporting_themes": ["secondary themes"],
-    "moral_question": "The ethical dilemma at the heart of the story"
-  },
-  "world_building_notes": {
-    "era": "When does this take place?",
-    "setting_type": "Urban" | "Rural" | "Suburban" | "Fantasy" | "Sci-Fi" | "Historical",
-    "cultural_context": "Any specific cultural elements?",
-    "rules_of_the_world": ["Any special rules or logic that applies"]
-  }
-}
-
----
-
-CRITICAL NOTES:
-
-1. All suggested_characters and suggested_locations start at canon_level: "P3" with source: "GENERATED"
-2. Users will upgrade to P1/P0 as they confirm or modify suggestions
-3. Do NOT invent dialogue or specific action sequences
-4. Do NOT define technical metadata (camera, lighting, etc.)
-5. Focus on STRUCTURE and NARRATIVE FUNCTION only
-
-Return ONLY valid JSON. No markdown, no commentary.`;
+import { 
+  SERIES_BIBLE_PROMPT, 
+  SERIES_BIBLE_TOOL_SCHEMA 
+} from "../_shared/production-prompts.ts";
+import { MODEL_CONFIG, getOutputLimit } from "../_shared/model-config.ts";
 
 interface DevelopStructureRequest {
   idea: string;
@@ -251,23 +135,17 @@ serve(async (req) => {
       });
     }
 
-    const userPrompt = `
-DEVELOP STORY STRUCTURE FOR:
+    // Build prompt using centralized production prompts
+    const userPrompt = SERIES_BIBLE_PROMPT.buildUserPrompt({
+      title: undefined,
+      genre: genre || 'Auto-detectar',
+      tone: tone || 'Auto-detectar',
+      audience: format === 'series' ? `Series de ${episodesCount || 6} episodios` : 'Película',
+      logline: undefined,
+      idea: `${idea}${contextBlock}`,
+    });
 
-IDEA: ${idea}
-
-GENRE: ${genre || 'Not specified - suggest one'}
-TONE: ${tone || 'Not specified - suggest one'}
-FORMAT: ${format === 'series' ? `Series of ${episodesCount || 6} episodes, ${episodeDurationMin || 45} minutes each` : 'Feature film 90-120 minutes'}
-LANGUAGE: ${language}
-
-${contextBlock}
-
-Generate a complete story structure following the JSON schema. 
-Flag all assumptions explicitly.
-Do NOT write dialogue or technical specs.`;
-
-    console.log('[develop-structure] v3.0 BLUEPRINT MODE (Lovable AI Gateway - gpt-5.2):', {
+    console.log('[develop-structure] v3.0 PRODUCTION PROMPTS (gpt-5.2):', {
       idea: idea.substring(0, 100),
       format,
       hasExistingCharacters: !!existingCharacters?.length,
@@ -281,14 +159,22 @@ Do NOT write dialogue or technical specs.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5.2',
+        model: MODEL_CONFIG.SCRIPT.HOLLYWOOD,
         messages: [
-          { role: 'system', content: STORY_ARCHITECT_PROMPT },
+          { role: 'system', content: SERIES_BIBLE_PROMPT.system },
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.7,
-        max_completion_tokens: 8000,
-        response_format: { type: 'json_object' }
+        max_completion_tokens: getOutputLimit('BIBLE'),
+        tools: [{
+          type: 'function',
+          function: {
+            name: 'deliver_series_bible',
+            description: 'Deliver structured series bible',
+            parameters: SERIES_BIBLE_TOOL_SCHEMA
+          }
+        }],
+        tool_choice: { type: 'function', function: { name: 'deliver_series_bible' } }
       }),
     });
 
