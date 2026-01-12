@@ -75,7 +75,8 @@ import {
   MicOff,
   Upload,
   ArrowRight,
-  Crown
+  Crown,
+  Shield
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -254,6 +255,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // Showrunner upgrade state (Phase 2)
   const [upgradingOutline, setUpgradingOutline] = useState(false);
+  
+  // Enrichment state (Operational Meat)
+  const [enrichingOutline, setEnrichingOutline] = useState(false);
   
   // Outline generation progress tracking (V4.0 - Polling UI)
   const [outlineStartTime, setOutlineStartTime] = useState<number | null>(null);
@@ -3828,6 +3832,71 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 )}
 
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {/* OPERATIONAL MEAT: Factions & Entity Rules                       */}
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                
+                {/* Factions Display */}
+                {Array.isArray(lightOutline.factions) && lightOutline.factions.length > 0 && (
+                  <div className="p-4 bg-red-500/5 border border-red-500/30 rounded-lg">
+                    <Label className="text-xs uppercase text-red-600 dark:text-red-400 mb-3 block flex items-center gap-2">
+                      <Shield className="w-3 h-3" />
+                      Facciones ({lightOutline.factions.length})
+                    </Label>
+                    <div className="grid gap-3">
+                      {lightOutline.factions.map((faction: any, i: number) => (
+                        <div key={i} className="p-3 bg-muted/30 rounded border">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="destructive">{faction.name}</Badge>
+                            {faction.leader && <span className="text-xs text-muted-foreground">Líder: {faction.leader}</span>}
+                          </div>
+                          <p className="text-xs"><strong>Objetivo:</strong> {faction.objective}</p>
+                          <p className="text-xs"><strong>Método:</strong> {faction.method}</p>
+                          {faction.red_line && (
+                            <p className="text-xs text-red-600 dark:text-red-400 mt-1">🚫 Línea roja: {faction.red_line}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Entity Rules Display */}
+                {Array.isArray(lightOutline.entity_rules) && lightOutline.entity_rules.length > 0 && (
+                  <div className="p-4 bg-emerald-500/5 border border-emerald-500/30 rounded-lg">
+                    <Label className="text-xs uppercase text-emerald-600 dark:text-emerald-400 mb-3 block flex items-center gap-2">
+                      <Zap className="w-3 h-3" />
+                      Reglas Operativas de Entidades ({lightOutline.entity_rules.length})
+                    </Label>
+                    <div className="grid gap-3">
+                      {lightOutline.entity_rules.map((rule: any, i: number) => (
+                        <div key={i} className="p-3 bg-muted/30 rounded border">
+                          <Badge variant="outline" className="mb-2 bg-emerald-500/10 border-emerald-500/30">{rule.entity}</Badge>
+                          <div className="grid md:grid-cols-2 gap-2 text-xs">
+                            {rule.can_do?.length > 0 && (
+                              <div className="p-2 bg-green-500/10 rounded">
+                                <span className="text-green-600 dark:text-green-400 font-medium">✅ Puede:</span>
+                                <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                                  {rule.can_do.map((item: string, j: number) => <li key={j}>• {item}</li>)}
+                                </ul>
+                              </div>
+                            )}
+                            {rule.cannot_do?.length > 0 && (
+                              <div className="p-2 bg-red-500/10 rounded">
+                                <span className="text-red-600 dark:text-red-400 font-medium">❌ No puede:</span>
+                                <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                                  {rule.cannot_do.map((item: string, j: number) => <li key={j}>• {item}</li>)}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                          {rule.cost && <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">💰 Coste: {rule.cost}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
                     Episodios ({lightOutline.episode_beats?.length || 0}) 
@@ -3913,6 +3982,52 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     <Badge variant="outline" className="h-10 px-4 bg-purple-500/10 border-purple-500/50 text-purple-600 dark:text-purple-400 flex items-center gap-2">
                       <Crown className="w-3 h-3" />
                       Nivel Showrunner
+                    </Badge>
+                  )}
+                  
+                  {/* Enrichment Button - Add Operational Meat */}
+                  {outlinePersistence.savedOutline?.quality !== 'enriched' && (
+                    <Button 
+                      variant="outline"
+                      onClick={async () => {
+                        if (!outlinePersistence.savedOutline?.id) return;
+                        setEnrichingOutline(true);
+                        try {
+                          const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                            outline_id: outlinePersistence.savedOutline.id
+                          });
+                          if (error) throw error;
+                          await outlinePersistence.refreshOutline();
+                          if (data?.outline) setLightOutline(data.outline);
+                          toast.success('Outline enriquecido con facciones, reglas y setpieces');
+                        } catch (err) {
+                          toast.error('Error al enriquecer: ' + (err as Error).message);
+                        } finally {
+                          setEnrichingOutline(false);
+                        }
+                      }}
+                      disabled={generatingOutline || pipelineRunning || upgradingOutline || enrichingOutline}
+                      className="bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
+                    >
+                      {enrichingOutline ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Enriqueciendo...
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="w-4 h-4 mr-2" />
+                          Añadir Carne Operativa
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  
+                  {/* Badge if enriched */}
+                  {outlinePersistence.savedOutline?.quality === 'enriched' && (
+                    <Badge variant="outline" className="h-10 px-4 bg-emerald-500/10 border-emerald-500/50 text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                      <Zap className="w-3 h-3" />
+                      Operativo
                     </Badge>
                   )}
                   

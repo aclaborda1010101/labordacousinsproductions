@@ -264,7 +264,12 @@ const PART_A_TOOL_SCHEMA = {
         midpoint_reversal: { type: 'string' },
         end_state: { type: 'string' },
         theme: { type: 'string' },
-        stakes: { type: 'string' }
+        stakes: { type: 'string' },
+        // 5-hitos enrichment fields
+        inciting_incident: { type: 'string', description: 'Triggering event in ep1' },
+        first_turn: { type: 'string', description: 'Point of no return (end ep1-2)' },
+        all_is_lost: { type: 'string', description: 'Maximum crisis (~75% of season)' },
+        final_choice: { type: 'string', description: 'Irreversible protagonist decision' }
       },
       required: ['start_state', 'midpoint_reversal', 'end_state']
     },
@@ -303,12 +308,42 @@ const PART_A_TOOL_SCHEMA = {
           visual_identity: { type: 'string' }
         }
       }
+    },
+    // Operational enrichment fields
+    factions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          objective: { type: 'string' },
+          resources: { type: 'array', items: { type: 'string' } },
+          method: { type: 'string' },
+          red_line: { type: 'string' },
+          leader: { type: 'string' }
+        },
+        required: ['name', 'objective', 'method']
+      }
+    },
+    entity_rules: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          entity: { type: 'string' },
+          can_do: { type: 'array', items: { type: 'string' } },
+          cannot_do: { type: 'array', items: { type: 'string' } },
+          cost: { type: 'string' },
+          dramatic_purpose: { type: 'string' }
+        },
+        required: ['entity', 'can_do', 'cannot_do', 'cost']
+      }
     }
   },
   required: ['title', 'logline', 'season_arc', 'cast', 'locations']
 };
 
-// PART_B/C: Episodes with turning points
+// PART_B/C: Episodes with turning points and setpieces
 const EPISODES_TOOL_SCHEMA = {
   type: 'object',
   properties: {
@@ -334,7 +369,18 @@ const EPISODES_TOOL_SCHEMA = {
               required: ['tp', 'event', 'agent', 'consequence']
             }
           },
-          cliffhanger: { type: 'string' }
+          cliffhanger: { type: 'string' },
+          // Setpiece enrichment field
+          setpiece: {
+            type: 'object',
+            properties: {
+              name: { type: 'string', description: 'Setpiece name (e.g., "Laboratory Chase")' },
+              location: { type: 'string', description: 'Where it happens' },
+              participants: { type: 'array', items: { type: 'string' }, description: 'Characters involved' },
+              stakes: { type: 'string', description: 'What is lost if it fails' }
+            },
+            required: ['name', 'stakes']
+          }
         },
         required: ['episode', 'title', 'central_conflict', 'turning_points', 'cliffhanger']
       }
