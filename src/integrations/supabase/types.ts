@@ -2540,6 +2540,48 @@ export type Database = {
           },
         ]
       }
+      generation_jobs: {
+        Row: {
+          attempts: number | null
+          chunk_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          error_detail: string | null
+          hash_input: string
+          id: string
+          job_id: string
+          job_type: string
+          result_json: Json | null
+          status: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          chunk_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          error_detail?: string | null
+          hash_input: string
+          id?: string
+          job_id: string
+          job_type: string
+          result_json?: Json | null
+          status?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          chunk_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          error_detail?: string | null
+          hash_input?: string
+          id?: string
+          job_id?: string
+          job_type?: string
+          result_json?: Json | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       generation_logs: {
         Row: {
           category: string | null

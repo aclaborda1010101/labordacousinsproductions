@@ -6,6 +6,7 @@ import {
   getGenreRules,
   PROFESSIONAL_EXAMPLES
 } from "../_shared/hollywood-writing-dna.ts";
+import { MODEL_CONFIG, getOutputLimit } from "../_shared/model-config.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,6 +20,9 @@ interface EpisodeRequest {
   characters: any[];
   locations: any[];
   language?: string;
+  // New: single scene mode for anti-timeout
+  sceneSpec?: any;
+  singleSceneMode?: boolean;
 }
 
 // Build the Hollywood-tier system prompt for episodes
@@ -96,7 +100,7 @@ serve(async (req) => {
   }
 
   try {
-    const { outline, episodeNumber, episodeOutline, characters, locations, language }: EpisodeRequest = await req.json();
+    const { outline, episodeNumber, episodeOutline, characters, locations, language, sceneSpec, singleSceneMode }: EpisodeRequest = await req.json();
 
     if (!outline || !episodeOutline) {
       return new Response(
@@ -260,6 +264,11 @@ Usa la herramienta deliver_episode para entregar el episodio completo.`;
 
     console.log(`Generating Hollywood-tier episode ${episodeNumber} with Lovable AI`);
 
+    // Use Hollywood model from centralized config
+    const model = singleSceneMode 
+      ? MODEL_CONFIG.SCRIPT.HOLLYWOOD  // GPT-5.2 for single scene quality
+      : 'google/gemini-2.5-pro';       // Keep existing for full episode
+
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -267,8 +276,10 @@ Usa la herramienta deliver_episode para entregar el episodio completo.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
-        max_completion_tokens: 32000,
+        model,
+        max_completion_tokens: singleSceneMode 
+          ? getOutputLimit('SINGLE_SCENE') 
+          : 32000,
         temperature: 0.75,
         messages: [
           { role: 'system', content: systemPrompt },
