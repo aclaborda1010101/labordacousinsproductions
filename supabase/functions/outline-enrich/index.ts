@@ -195,6 +195,68 @@ const SETPIECES_SCHEMA = {
 };
 
 // ============================================================================
+// V11: THREADS SCHEMA
+// ============================================================================
+
+const THREADS_SCHEMA = {
+  type: 'object',
+  properties: {
+    threads: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', description: 'Thread ID: T_MAIN, T_REL, T_ANTAGONIST_1, etc.' },
+          type: { 
+            type: 'string', 
+            enum: ['main', 'subplot', 'relationship', 'ethical', 'mystery', 'procedural', 'myth', 'entity'],
+            description: 'Type of narrative thread'
+          },
+          question: { type: 'string', description: 'Dramatic question this thread explores' },
+          engine: { type: 'string', description: 'Core mechanic: investigate, hunt, blackmail, etc.' },
+          stake: { type: 'string', description: 'Concrete loss if the thread fails' },
+          milestones: { 
+            type: 'array', 
+            items: { type: 'string' }, 
+            description: '3-7 concrete milestones (observable events)'
+          },
+          end_state: { type: 'string', description: 'Final state of this thread' }
+        },
+        required: ['id', 'type', 'question', 'engine', 'stake', 'milestones', 'end_state']
+      }
+    }
+  },
+  required: ['threads']
+};
+
+const THREAD_USAGE_SCHEMA = {
+  type: 'object',
+  properties: {
+    episode_thread_usage: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          episode: { type: 'number' },
+          thread_usage: {
+            type: 'object',
+            properties: {
+              A: { type: 'string', description: 'Primary thread.id (mandatory)' },
+              B: { type: 'string', description: 'Secondary thread.id (optional)' },
+              C: { type: 'string', description: 'Tertiary thread.id (optional)' },
+              crossover_event: { type: 'string', description: 'Observable event where threads collide' }
+            },
+            required: ['A', 'crossover_event']
+          }
+        },
+        required: ['episode', 'thread_usage']
+      }
+    }
+  },
+  required: ['episode_thread_usage']
+};
+
+// ============================================================================
 // PROMPT BUILDERS
 // ============================================================================
 
@@ -345,6 +407,117 @@ IMPORTANT:
 }
 
 // ============================================================================
+// V11: THREADS PROMPT BUILDERS
+// ============================================================================
+
+function buildThreadsPrompt(outline: any): string {
+  const synopsis = outline.synopsis || outline.logline || '';
+  const episodes = outline.episode_beats || [];
+  const cast = outline.main_characters || outline.cast || [];
+  const factions = outline.factions || [];
+  const entityRules = outline.entity_rules || [];
+  const arc = outline.season_arc || {};
+  
+  return `Analyze this story and create NARRATIVE THREADS (carriles narrativos).
+
+SYNOPSIS: ${synopsis}
+
+SEASON ARC:
+${JSON.stringify(arc, null, 2)}
+
+CAST:
+${JSON.stringify(cast.map((c: any) => ({ name: c.name, role: c.role, wants: c.wants, arc: c.arc })), null, 2)}
+
+FACTIONS:
+${JSON.stringify(factions, null, 2)}
+
+ENTITY RULES:
+${JSON.stringify(entityRules, null, 2)}
+
+EPISODES (${episodes.length}):
+${JSON.stringify(episodes.map((e: any) => ({ episode: e.episode, title: e.title, summary: e.summary })), null, 2)}
+
+TASK: Create 5-8 narrative threads that organize the story's structure.
+
+THREAD TYPES:
+- main: Primary protagonist journey
+- subplot: Secondary story with its own arc
+- relationship: Dynamic between characters
+- ethical: Moral dilemma the character faces
+- mystery: Question revealed gradually
+- procedural: Technical process/investigation
+- myth: Lore/worldbuilding of the universe
+- entity: Rules of special entities
+
+FOR EACH THREAD:
+- id: Unique identifier (T_MAIN, T_REL_LEO_NIKOS, T_MYSTERY_ARTIFACT, etc.)
+- type: One of the types above
+- question: The dramatic question this thread explores
+- engine: Core mechanic (investigate, hunt, blackmail, protect, hide, etc.)
+- stake: Concrete loss if the thread fails (specific, not "everything")
+- milestones: 3-7 observable events that advance this thread
+- end_state: How this thread resolves by series end
+
+EXAMPLE OF GOOD THREAD:
+{
+  "id": "T_MAIN",
+  "type": "main",
+  "question": "¿Podrá Leo descubrir quién saboteó el proyecto de su padre?",
+  "engine": "investigar rastros digitales",
+  "stake": "Si falla, los responsables destruirán toda evidencia",
+  "milestones": [
+    "Leo encuentra el diario cifrado",
+    "Descubre que Nexus financió el proyecto",
+    "Localiza a un testigo superviviente",
+    "El testigo es asesinado antes de hablar",
+    "Encuentra grabación de audio del sabotaje"
+  ],
+  "end_state": "Leo expone a Nexus pero pierde a su mejor amigo"
+}
+
+FORBIDDEN:
+- Threads without clear dramatic question
+- Milestones that are vague ("things get complicated")
+- Stakes that are abstract ("everything changes")`;
+}
+
+function buildThreadUsagePrompt(outline: any, threads: any[]): string {
+  const episodes = outline.episode_beats || [];
+  
+  return `Assign THREADS to each episode.
+
+THREADS AVAILABLE:
+${JSON.stringify(threads.map(t => ({ id: t.id, type: t.type, question: t.question })), null, 2)}
+
+EPISODES:
+${JSON.stringify(episodes.map((e: any) => ({ episode: e.episode, title: e.title, summary: e.summary })), null, 2)}
+
+TASK: For each episode, assign which threads are active and how they collide.
+
+FOR EACH EPISODE:
+- A: Primary thread.id (MANDATORY)
+- B: Secondary thread.id (optional)
+- C: Tertiary thread.id (optional)
+- crossover_event: Observable event where the threads collide (MANDATORY)
+
+EXAMPLE:
+{
+  "episode": 1,
+  "thread_usage": {
+    "A": "T_MAIN",
+    "B": "T_REL_LEO_NIKOS",
+    "crossover_event": "Nikos descubre que Leo investiga a espaldas de todos, confrontación en el laboratorio"
+  }
+}
+
+RULES:
+- T_MAIN should appear in most episodes
+- Each thread should progress across multiple episodes
+- crossover_event must be CONCRETE (who does what, where)
+- Vary which threads are primary vs secondary across episodes`;
+}
+
+// ============================================================================
 // MAIN HANDLER
 // ============================================================================
 
@@ -421,6 +594,8 @@ serve(async (req) => {
     const needsArc5Hitos = !outline.season_arc?.inciting_incident || 
                            !outline.season_arc?.all_is_lost || 
                            !outline.season_arc?.final_choice;
+    const needsThreads = !outline.threads || outline.threads.length < 5;
+    const needsThreadUsage = !outline.episode_beats?.every((ep: any) => ep.thread_usage?.A && ep.thread_usage?.crossover_event);
 
     let enrichedOutline = { ...outline };
     let progress = 20;
@@ -479,7 +654,7 @@ serve(async (req) => {
     if ((enrich_mode === 'all' || enrich_mode === 'arc') && needsArc5Hitos) {
       console.log('[outline-enrich] Completing 5-hitos season arc...');
       
-      await supabase.from('script_outlines').update({ progress: 65 }).eq('id', outline_id);
+      await supabase.from('script_outlines').update({ progress: 60 }).eq('id', outline_id);
 
       const arcPrompt = buildSeasonArc5HitosPrompt(outline);
       const arcResult = await callLovableAI(
@@ -497,7 +672,7 @@ serve(async (req) => {
         };
         console.log('[outline-enrich] Completed 5-hitos season arc');
       }
-      progress = 75;
+      progress = 65;
     }
 
     // ========================================================================
@@ -506,7 +681,7 @@ serve(async (req) => {
     if ((enrich_mode === 'all' || enrich_mode === 'setpieces') && needsSetpieces) {
       console.log('[outline-enrich] Generating setpieces...');
       
-      await supabase.from('script_outlines').update({ progress: 85 }).eq('id', outline_id);
+      await supabase.from('script_outlines').update({ progress: 70 }).eq('id', outline_id);
 
       const setpiecesPrompt = buildSetpiecesPrompt(outline);
       const setpiecesResult = await callLovableAI(
@@ -527,17 +702,73 @@ serve(async (req) => {
         });
         console.log(`[outline-enrich] Added ${setpiecesResult.episode_setpieces.length} setpieces`);
       }
+      progress = 75;
+    }
+
+    // ========================================================================
+    // V11: ENRICH THREADS (NARRATIVE LANES)
+    // ========================================================================
+    if ((enrich_mode === 'all' || enrich_mode === 'threads') && needsThreads) {
+      console.log('[outline-enrich] Generating narrative threads...');
+      
+      await supabase.from('script_outlines').update({ 
+        progress: 80,
+        stage: 'threads'
+      }).eq('id', outline_id);
+
+      const threadsPrompt = buildThreadsPrompt(enrichedOutline);
+      const threadsResult = await callLovableAI(
+        QUALITY_MODEL,
+        'You are a narrative architect. Create 5-8 dramatic threads that organize the story. Return ONLY valid JSON.',
+        threadsPrompt,
+        'generate_threads',
+        THREADS_SCHEMA
+      );
+
+      if (threadsResult?.threads && threadsResult.threads.length >= 3) {
+        enrichedOutline.threads = threadsResult.threads;
+        console.log(`[outline-enrich] Generated ${threadsResult.threads.length} threads`);
+        
+        // Now generate thread_usage for each episode
+        if (needsThreadUsage || enrich_mode === 'threads') {
+          console.log('[outline-enrich] Assigning threads to episodes...');
+          
+          await supabase.from('script_outlines').update({ progress: 90 }).eq('id', outline_id);
+          
+          const threadUsagePrompt = buildThreadUsagePrompt(enrichedOutline, threadsResult.threads);
+          const threadUsageResult = await callLovableAI(
+            QUALITY_MODEL,
+            'You are a narrative architect. Assign threads to each episode with crossover events. Return ONLY valid JSON.',
+            threadUsagePrompt,
+            'generate_thread_usage',
+            THREAD_USAGE_SCHEMA
+          );
+
+          if (threadUsageResult?.episode_thread_usage) {
+            // Merge thread_usage into episode_beats
+            enrichedOutline.episode_beats = (enrichedOutline.episode_beats || []).map((ep: any) => {
+              const usageData = threadUsageResult.episode_thread_usage.find(
+                (u: any) => u.episode === ep.episode
+              );
+              return usageData ? { ...ep, thread_usage: usageData.thread_usage } : ep;
+            });
+            console.log(`[outline-enrich] Added thread_usage to ${threadUsageResult.episode_thread_usage.length} episodes`);
+          }
+        }
+      }
       progress = 95;
     }
 
     // ========================================================================
     // SAVE ENRICHED OUTLINE
     // ========================================================================
+    const qualityLevel = enrichedOutline.threads?.length >= 5 ? 'threaded' : 'enriched';
+    
     const { error: saveError } = await supabase
       .from('script_outlines')
       .update({
         outline_json: enrichedOutline,
-        quality: 'enriched',
+        quality: qualityLevel,
         status: 'completed',
         stage: 'done',
         progress: 100,
@@ -559,7 +790,9 @@ serve(async (req) => {
         factions: enrichedOutline.factions?.length || 0,
         entity_rules: enrichedOutline.entity_rules?.length || 0,
         setpieces: enrichedOutline.episode_beats?.filter((ep: any) => ep.setpiece).length || 0,
-        arc_complete: !!(enrichedOutline.season_arc?.inciting_incident && enrichedOutline.season_arc?.final_choice)
+        arc_complete: !!(enrichedOutline.season_arc?.inciting_incident && enrichedOutline.season_arc?.final_choice),
+        threads: enrichedOutline.threads?.length || 0,
+        thread_usage: enrichedOutline.episode_beats?.filter((ep: any) => ep.thread_usage?.A).length || 0
       }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

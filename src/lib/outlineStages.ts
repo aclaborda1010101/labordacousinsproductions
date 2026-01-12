@@ -41,6 +41,12 @@ export const OUTLINE_STAGES: Record<string, OutlineStageInfo> = {
     progressRange: [0, 100],
     timeoutSeconds: 120,
   },
+  threads: {
+    label: 'Generando Threads...',
+    description: 'Creando carriles narrativos y cruces por episodio',
+    progressRange: [0, 100],
+    timeoutSeconds: 120,
+  },
   done: {
     label: 'Completado',
     description: 'Outline listo para revisar',

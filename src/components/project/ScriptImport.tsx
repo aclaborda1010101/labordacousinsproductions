@@ -76,7 +76,8 @@ import {
   Upload,
   ArrowRight,
   Crown,
-  Shield
+  Shield,
+  GitBranch
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -4028,6 +4029,55 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     <Badge variant="outline" className="h-10 px-4 bg-emerald-500/10 border-emerald-500/50 text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                       <Zap className="w-3 h-3" />
                       Operativo
+                    </Badge>
+                  )}
+                  
+                  {/* V11: Threads Button - Add Narrative Lanes */}
+                  {(outlinePersistence.savedOutline?.quality === 'enriched' || outlinePersistence.savedOutline?.quality === 'showrunner') && 
+                   (!lightOutline?.threads || lightOutline.threads.length < 5 || 
+                    !lightOutline?.episode_beats?.every((ep: any) => ep.thread_usage?.A)) && (
+                    <Button 
+                      variant="outline"
+                      onClick={async () => {
+                        if (!outlinePersistence.savedOutline?.id) return;
+                        setEnrichingOutline(true);
+                        try {
+                          const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                            outline_id: outlinePersistence.savedOutline.id,
+                            enrich_mode: 'threads'
+                          });
+                          if (error) throw error;
+                          await outlinePersistence.refreshOutline();
+                          if (data?.outline) setLightOutline(data.outline);
+                          toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
+                        } catch (err) {
+                          toast.error('Error al generar threads: ' + (err as Error).message);
+                        } finally {
+                          setEnrichingOutline(false);
+                        }
+                      }}
+                      disabled={generatingOutline || pipelineRunning || upgradingOutline || enrichingOutline}
+                      className="bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/30 text-indigo-700 dark:text-indigo-300"
+                    >
+                      {enrichingOutline ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generando threads...
+                        </>
+                      ) : (
+                        <>
+                          <GitBranch className="w-4 h-4 mr-2" />
+                          Añadir Threads ({lightOutline?.threads?.length || 0}/5-8)
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  
+                  {/* Badge if threaded */}
+                  {outlinePersistence.savedOutline?.quality === 'threaded' && (
+                    <Badge variant="outline" className="h-10 px-4 bg-indigo-500/10 border-indigo-500/50 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                      <GitBranch className="w-3 h-3" />
+                      Threads V11
                     </Badge>
                   )}
                   
