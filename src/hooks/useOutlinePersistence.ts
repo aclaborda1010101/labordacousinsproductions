@@ -174,14 +174,17 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
 
         setSavedOutline(outline);
 
-        // V5: Robust completion check - truly completed when:
+        // V6: Robust completion check with defensive fallback
         // 1. status is 'completed' or 'approved'
-        // 2. OR has valid content (title) AND quality is not 'generating'
+        // 2. OR stage=done + progress=100 + has valid content (defensive fallback)
+        // 3. OR has valid content (title) AND quality is not 'generating'
         const hasValidContent = !!(data.outline_json as any)?.title;
         const qualityDone = data.quality && data.quality !== 'generating';
+        const stageDone = data.stage === 'done' && data.progress === 100;
         const isComplete = 
           data.status === 'completed' || 
           data.status === 'approved' ||
+          (stageDone && hasValidContent) ||
           (hasValidContent && qualityDone);
 
         if (isComplete) {
