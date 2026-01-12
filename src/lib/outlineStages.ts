@@ -35,6 +35,12 @@ export const OUTLINE_STAGES: Record<string, OutlineStageInfo> = {
     progressRange: [85, 100],
     timeoutSeconds: 30,
   },
+  enriching: {
+    label: 'Enriqueciendo...',
+    description: 'Añadiendo facciones, reglas y setpieces',
+    progressRange: [0, 100],
+    timeoutSeconds: 120,
+  },
   done: {
     label: 'Completado',
     description: 'Outline listo para revisar',
