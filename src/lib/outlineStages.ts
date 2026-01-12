@@ -1,5 +1,11 @@
 /**
- * outlineStages.ts - V9 with substages for fan-out/fan-in architecture
+ * outlineStages.ts - V10 Industrial Pipeline with 4 Substeps
+ * 
+ * Architecture:
+ * - PART_A: arc, cast, locations, rules (35-50%)
+ * - PART_B: episodes 1-5 (55-68%)
+ * - PART_C: episodes 6-10 (72-82%)
+ * - MERGE+QC: unify + validate (85-100%)
  */
 
 export interface OutlineStageInfo {
@@ -15,42 +21,41 @@ export const OUTLINE_STAGES: Record<string, OutlineStageInfo> = {
     label: 'Analizando texto...',
     description: 'Procesando y resumiendo el contenido',
     progressRange: [0, 30],
-    timeoutSeconds: 70, // Aligned with STAGE_TIMEOUT_MS
+    timeoutSeconds: 70,
   },
   outline: {
     label: 'Construyendo estructura...',
     description: 'Diseñando episodios y arcos narrativos',
-    progressRange: [30, 75],
-    timeoutSeconds: 140, // 2x stage timeout for complex generation
+    progressRange: [30, 85],
+    timeoutSeconds: 200, // 4 substeps × ~50s each
   },
   merge: {
     label: 'Finalizando...',
     description: 'Validando calidad y normalizando',
-    progressRange: [75, 95],
-    timeoutSeconds: 40,
+    progressRange: [85, 100],
+    timeoutSeconds: 30,
   },
   done: {
     label: 'Completado',
     description: 'Outline listo para revisar',
-    progressRange: [95, 100],
+    progressRange: [100, 100],
     timeoutSeconds: 0,
   },
 } as const;
 
-// Substages for more granular progress tracking
+// Substages for granular progress tracking (V10: 4-substep pipeline)
 export const OUTLINE_SUBSTAGES: Record<string, { label: string; progressOffset: number }> = {
   // Summarize substages
-  processing: { label: 'Procesando texto...', progressOffset: 10 },
+  processing: { label: 'Procesando texto...', progressOffset: 15 },
   
-  // Outline substages (fan-out)
-  arc: { label: 'Generando arco de temporada...', progressOffset: 35 },
-  episodes_1: { label: 'Generando episodios (parte 1)...', progressOffset: 50 },
-  episodes_2: { label: 'Generando episodios (parte 2)...', progressOffset: 65 },
-  generating: { label: 'Generando outline completo...', progressOffset: 45 },
+  // Outline substages (fan-out: PART_A, PART_B, PART_C)
+  arc: { label: 'Generando arco de temporada...', progressOffset: 40 },
+  episodes_1: { label: 'Generando episodios 1-5...', progressOffset: 58 },
+  episodes_2: { label: 'Generando episodios 6-10...', progressOffset: 75 },
   
   // Merge substages
-  qc: { label: 'Validando calidad...', progressOffset: 85 },
-  normalizing: { label: 'Normalizando datos...', progressOffset: 90 },
+  merging: { label: 'Unificando partes...', progressOffset: 85 },
+  qc: { label: 'Validando calidad...', progressOffset: 92 },
 };
 
 /**

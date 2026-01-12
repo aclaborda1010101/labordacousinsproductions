@@ -54,15 +54,15 @@ export const MODEL_CONFIG = {
     TRANSITIONS: 'runway',   // Transiciones, abstractos
   },
   
-  // === LIMITS (V9: Industrial-grade anti-timeout) ===
+  // === LIMITS (V10: Industrial pipeline with 4 substeps) ===
   LIMITS: {
     // Token limits per request type
     MAX_INPUT_TOKENS_SOFT: 10000,       // Conservative for reliability
     MAX_OUTPUT_TOKENS_SOFT: 3000,       // Standard requests
     MAX_OUTPUT_TOKENS_HARD: 6000,       // Episode final pass only
     
-    // Chunking configuration (V9: reduced for stability)
-    CHUNK_SIZE_CHARS: 10000,            // V9: Reduced from 12000
+    // Chunking configuration
+    CHUNK_SIZE_CHARS: 10000,            // V10: 10k chars per chunk
     CHUNK_PAGES_EXTRACT: 15,            // PDF extraction
     CHUNK_PAGES_WRITE: 5,               // Scene writing (1-3 scenes)
     MAX_SCENES_PER_REQUEST: 10,
@@ -70,11 +70,11 @@ export const MODEL_CONFIG = {
     // Token estimation
     CHARS_PER_TOKEN: 4,
     
-    // Timeout configuration (V9: conservative margins)
-    TIMEOUT_MS: 55000,                  // V9: 55s per request (was 60s)
-    STAGE_TIMEOUT_MS: 70000,            // 70s stage, 20s gateway margin
-    RETRY_COUNT: 2,                     // V9: Reduced from 3
-    RETRY_CHUNK_REDUCTION: 0.6,         // V9: 60% chunk on retry
+    // Timeout configuration (V10: tuned for 4-substep pipeline)
+    TIMEOUT_MS: 55000,                  // 55s per AI request
+    STAGE_TIMEOUT_MS: 80000,            // 80s stage, 10s margin before gateway
+    RETRY_COUNT: 2,                     // Max retries per substep
+    RETRY_CHUNK_REDUCTION: 0.6,         // 60% chunk on retry
     
     // Output limits per task type
     OUTPUT_LIMITS: {
