@@ -529,6 +529,98 @@ async function logEditorialEvent(
   }
 }
 
+// =============================================================================
+// V4.1: TIMEOUT WRAPPER - Protect against edge function timeouts
+// =============================================================================
+const AI_CALL_TIMEOUT_MS = 50000; // 50 seconds - leave buffer before edge function dies
+
+async function callWithTimeout<T>(
+  promise: Promise<T>, 
+  timeoutMs: number, 
+  operationName: string
+): Promise<T> {
+  let timeoutId: number;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(`AI_TIMEOUT:${operationName}`)), timeoutMs);
+  });
+  
+  try {
+    const result = await Promise.race([promise, timeoutPromise]);
+    clearTimeout(timeoutId!);
+    return result;
+  } catch (err) {
+    clearTimeout(timeoutId!);
+    throw err;
+  }
+}
+
+// =============================================================================
+// V4.1: SUMMARIZE LONG TEXT - For texts > 25k chars
+// =============================================================================
+const MAX_IDEA_CHARS = 25000;
+
+async function summarizeLongText(idea: string): Promise<{ summary: string; wasSummarized: boolean }> {
+  if (idea.length <= MAX_IDEA_CHARS) {
+    return { summary: idea, wasSummarized: false };
+  }
+  
+  console.log(`[OUTLINE] Idea too long (${idea.length} chars). Summarizing first...`);
+  
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  
+  const summaryResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'openai/gpt-5-mini', // Fast model for summarization
+      max_completion_tokens: 4000,
+      temperature: 0.3,
+      messages: [
+        { 
+          role: 'system', 
+          content: `Eres un asistente que resume guiones y novelas para producción audiovisual.
+          
+INSTRUCCIONES:
+1. Resume el texto manteniendo TODOS los elementos narrativos clave:
+   - Nombres de TODOS los personajes mencionados
+   - TODAS las localizaciones específicas
+   - Arcos argumentales principales
+   - Eventos clave y giros dramáticos
+   - Relaciones entre personajes
+   - Tono y género
+
+2. Mantén el resumen en máximo 10,000 caracteres
+3. NO omitas personajes ni localizaciones - son críticos para la producción
+4. Usa el mismo idioma que el texto original` 
+        },
+        { 
+          role: 'user', 
+          content: `Resume el siguiente texto para generación de outline audiovisual:\n\n${idea}` 
+        }
+      ]
+    })
+  });
+  
+  if (!summaryResponse.ok) {
+    console.error('[OUTLINE] Summary failed, using truncated original');
+    return { 
+      summary: idea.slice(0, MAX_IDEA_CHARS) + '\n\n[TEXTO TRUNCADO - El documento original es más largo]', 
+      wasSummarized: true 
+    };
+  }
+  
+  const summaryData = await summaryResponse.json();
+  const summaryText = summaryData.choices?.[0]?.message?.content || idea.slice(0, MAX_IDEA_CHARS);
+  
+  console.log(`[OUTLINE] Summarized ${idea.length} chars -> ${summaryText.length} chars`);
+  
+  return { summary: summaryText, wasSummarized: true };
+}
+
 // Lovable AI Gateway call with hardened parsing
 async function callLovableAI(
   systemPrompt: string,
@@ -741,6 +833,39 @@ serve(async (req) => {
       const accessResult = await v3RequireProjectAccess(auth, projectId);
       if (accessResult instanceof Response) {
         return accessResult;
+      }
+
+      // V4.1: Auto-cleanup stale locks (older than 5 minutes)
+      const STALE_LOCK_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+      try {
+        const { data: staleLock } = await auth.supabase
+          .from('project_locks')
+          .select('created_at')
+          .eq('project_id', projectId)
+          .single();
+
+        if (staleLock) {
+          const lockAge = Date.now() - new Date(staleLock.created_at).getTime();
+          if (lockAge > STALE_LOCK_THRESHOLD_MS) {
+            console.log('[V3-LOCK] Cleaning stale lock:', { projectId, ageMinutes: Math.round(lockAge / 60000) });
+            await auth.supabase
+              .from('project_locks')
+              .delete()
+              .eq('project_id', projectId);
+            
+            // Also mark any stuck 'generating' outlines as error
+            await auth.supabase
+              .from('project_outlines')
+              .update({ 
+                status: 'error', 
+                qc_issues: ['Timeout del servidor - generación interrumpida'] 
+              })
+              .eq('project_id', projectId)
+              .eq('status', 'generating');
+          }
+        }
+      } catch (e) {
+        console.warn('[V3-LOCK] Stale lock check failed (non-critical):', e);
       }
 
       // Acquire project lock
@@ -1002,19 +1127,77 @@ FORMATO LIGHT: Mantén summaries CORTOS (máx 2 frases). Sin diálogos.
 Usa la herramienta deliver_outline para entregar el resultado.
 Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
 
-    console.log(
-      `[OUTLINE] Generating with ${modelConfig.apiModel} (effective model: ${effectiveModelKey}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount} | Idea length: ${ideaLength} chars | MaxTokens: ${effectiveMaxTokens}`
+    // V4.1: Summarize long texts to avoid timeout
+    let effectiveIdea = idea;
+    let ideaWasSummarized = false;
+    
+    if (idea.length > MAX_IDEA_CHARS) {
+      try {
+        console.log(`[OUTLINE] Long text detected (${idea.length} chars). Summarizing...`);
+        const summaryResult = await callWithTimeout(
+          summarizeLongText(idea),
+          AI_CALL_TIMEOUT_MS,
+          'summarize'
+        );
+        effectiveIdea = summaryResult.summary;
+        ideaWasSummarized = summaryResult.wasSummarized;
+        
+        // Update outline record to indicate summarization was used
+        if (outlineRecordId && ideaWasSummarized) {
+          await updateOutlineRecord(auth.supabase, outlineRecordId, {
+            qc_issues: ['Texto largo resumido para procesamiento óptimo']
+          });
+        }
+      } catch (summaryError) {
+        console.warn('[OUTLINE] Summarization failed, using truncated text:', summaryError);
+        effectiveIdea = idea.slice(0, MAX_IDEA_CHARS) + '\n\n[TEXTO TRUNCADO]';
+        ideaWasSummarized = true;
+      }
+    }
+
+    // Build actual user prompt with (potentially summarized) idea
+    const actualUserPrompt = userPrompt.replace(
+      `IDEA: ${idea}`,
+      `IDEA: ${effectiveIdea}${ideaWasSummarized ? '\n\n[Nota: Este texto fue procesado para optimizar la generación]' : ''}`
     );
 
-    // Call Lovable AI Gateway with hardened parsing
+    console.log(
+      `[OUTLINE] Generating with ${modelConfig.apiModel} (effective model: ${effectiveModelKey}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount} | Idea length: ${effectiveIdea.length} chars (original: ${ideaLength}) | MaxTokens: ${effectiveMaxTokens}`
+    );
+
+    // V4.1: Call with timeout protection
     let result: { outline: any; parseWarnings: string[]; durationMs: number };
-    result = await callLovableAI(systemPrompt, userPrompt, modelConfig, cappedEpisodesCount, effectiveMaxTokens);
+    
+    try {
+      result = await callWithTimeout(
+        callLovableAI(systemPrompt, actualUserPrompt, modelConfig, cappedEpisodesCount, effectiveMaxTokens),
+        AI_CALL_TIMEOUT_MS,
+        'generate_outline'
+      );
+    } catch (timeoutError) {
+      const errorMsg = (timeoutError as Error).message || 'Unknown timeout';
+      console.error('[OUTLINE] AI call timeout:', errorMsg);
+      
+      // Update outline record with timeout error before function dies
+      if (outlineRecordId) {
+        await updateOutlineRecord(auth.supabase, outlineRecordId, {
+          status: 'error',
+          qc_issues: ['Timeout - el texto es muy largo o el servidor está saturado. Intenta con un texto más corto.']
+        });
+      }
+      
+      throw new Error(`AI_TIMEOUT: ${errorMsg}`);
+    }
 
     // If primary model failed to parse, retry with fallback model (google/gemini-2.5-flash)
     if (result.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
       console.warn(`[OUTLINE] Primary model ${modelConfig.apiModel} failed to produce parseable JSON. Retrying with fallback model ${FALLBACK_MODEL_CONFIG.apiModel}...`);
       try {
-        const fallbackResult = await callLovableAI(systemPrompt, userPrompt, FALLBACK_MODEL_CONFIG, cappedEpisodesCount, effectiveMaxTokens);
+        const fallbackResult = await callWithTimeout(
+          callLovableAI(systemPrompt, actualUserPrompt, FALLBACK_MODEL_CONFIG, cappedEpisodesCount, effectiveMaxTokens),
+          AI_CALL_TIMEOUT_MS,
+          'fallback_outline'
+        );
         if (!fallbackResult.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
           console.log('[OUTLINE] Fallback model succeeded!');
           result = fallbackResult;
