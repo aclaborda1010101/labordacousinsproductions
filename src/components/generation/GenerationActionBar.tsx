@@ -39,13 +39,14 @@ interface GenerationActionBarProps {
   className?: string;
   /** Human-friendly label for the current view/preset type */
   viewTypeLabel?: string;
-  /** Optional extra action button between Accept and Regenerate */
-  extraAction?: {
+  /** Optional extra action buttons between Accept and Regenerate */
+  extraActions?: Array<{
     label: string;
     icon?: React.ReactNode;
     onClick: () => void;
     disabled?: boolean;
-  };
+    variant?: 'outline' | 'destructive' | 'ghost';
+  }>;
 }
 
 export function GenerationActionBar({
@@ -64,7 +65,7 @@ export function GenerationActionBar({
   errorMessage,
   className = '',
   viewTypeLabel,
-  extraAction,
+  extraActions,
 }: GenerationActionBarProps) {
   const isGenerating = status === 'generating';
   const isError = status === 'error';
@@ -156,19 +157,20 @@ export function GenerationActionBar({
               {acceptLabel}
             </Button>
 
-            {/* Extra action button (e.g., Export) */}
-            {extraAction && (
+            {/* Extra action buttons (e.g., Export, Delete) */}
+            {extraActions?.map((action, idx) => (
               <Button
-                variant="outline"
+                key={idx}
+                variant={action.variant || 'outline'}
                 size="sm"
-                onClick={extraAction.onClick}
-                disabled={extraAction.disabled || isGenerating}
+                onClick={action.onClick}
+                disabled={action.disabled || isGenerating}
                 className="flex-1"
               >
-                {extraAction.icon}
-                {extraAction.label}
+                {action.icon}
+                {action.label}
               </Button>
-            )}
+            ))}
 
             {/* Regenerate button */}
             <Button
