@@ -1140,7 +1140,7 @@ serve(async (req) => {
     const cappedEpisodesCount = Math.min(desiredEpisodesCount, LIGHT_MODE_LIMITS.MAX_SCENES);
 
     // =======================================================================
-    // V4.0 POLLING: Create outline record in 'generating' state BEFORE generation
+    // V5.0 ASYNC: Create outline record with 'queued' status and fire worker
     // =======================================================================
     if (usePolling && projectId) {
       // Delete any existing outline for this project first
@@ -1149,7 +1149,7 @@ serve(async (req) => {
         .delete()
         .eq('project_id', projectId);
 
-      // Create new outline record with 'generating' status
+      // Create new outline record with 'queued' status (V5 async)
       const { data: outlineRecord, error: insertErr } = await auth.supabase
         .from('project_outlines')
         .insert({
@@ -1157,8 +1157,12 @@ serve(async (req) => {
           outline_json: {},
           quality: 'generating',
           qc_issues: [],
-          status: 'generating',
-          idea: idea.slice(0, 50000), // Store idea for reference (capped at 50K chars)
+          status: 'queued',
+          stage: 'summarize',
+          progress: 0,
+          attempts: 0,
+          input_chars: idea.length,
+          idea: idea.slice(0, 50000),
           genre: genre || null,
           tone: tone || null,
           format: format || null,
@@ -1168,16 +1172,45 @@ serve(async (req) => {
         .single();
 
       if (insertErr) {
-        console.error('[OUTLINE] Failed to create generating outline record:', insertErr);
-        // Continue without polling - fall back to synchronous mode
+        console.error('[OUTLINE] Failed to create outline record:', insertErr);
       } else {
         outlineRecordId = outlineRecord.id;
-        console.log('[OUTLINE] Created generating outline record:', outlineRecordId);
+        console.log('[OUTLINE V5] Created queued outline:', outlineRecordId);
 
-        // Return immediately with outline_id for frontend to poll
-        // But we'll continue processing in this same request
-        // The frontend will start polling, and when this request completes,
-        // the DB will have the updated outline
+        // Fire-and-forget: Call outline-worker (don't await)
+        const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+        const authHeader = req.headers.get('Authorization');
+        
+        fetch(`${SUPABASE_URL}/functions/v1/outline-worker`, {
+          method: 'POST',
+          headers: {
+            'Authorization': authHeader || '',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            outline_id: outlineRecordId,
+            project_id: projectId,
+            idea_text: idea,
+          })
+        }).catch(err => console.warn('[OUTLINE V5] Worker fire-and-forget error:', err));
+
+        // Release lock immediately since worker will handle processing
+        if (lockAcquired) {
+          await v3ReleaseProjectLock(auth.supabase, projectId);
+          lockAcquired = false;
+        }
+
+        // Return immediately - frontend will poll for status
+        return new Response(
+          JSON.stringify({
+            success: true,
+            outline_id: outlineRecordId,
+            status: 'queued',
+            polling: true,
+            message: 'Outline generation started. Poll for status.'
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
     }
 
