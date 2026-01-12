@@ -34,7 +34,11 @@ verify_jwt = true
 # ═══════════════════════════════════════════════════════════════════════════════
 
 [functions.generate-outline-light]
-# Temporarily disable gateway JWT verification; function enforces auth internally (v3RequireAuth)
+# V3 Async: Fast enqueue endpoint - validates auth internally
+verify_jwt = false
+
+[functions.outline-worker]
+# V3 Async: Step-based worker - validates auth internally
 verify_jwt = false
 
 [functions.script-breakdown]

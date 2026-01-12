@@ -3710,49 +3710,70 @@ export type Database = {
       }
       project_outlines: {
         Row: {
+          attempts: number | null
           created_at: string | null
           episode_count: number | null
+          error_code: string | null
+          error_detail: string | null
           format: string | null
           genre: string | null
           id: string
           idea: string | null
+          input_chars: number | null
           outline_json: Json
+          progress: number | null
           project_id: string
           qc_issues: Json | null
           quality: string | null
+          stage: string | null
           status: string | null
+          summary_text: string | null
           target_duration: number | null
           tone: string | null
           updated_at: string | null
         }
         Insert: {
+          attempts?: number | null
           created_at?: string | null
           episode_count?: number | null
+          error_code?: string | null
+          error_detail?: string | null
           format?: string | null
           genre?: string | null
           id?: string
           idea?: string | null
+          input_chars?: number | null
           outline_json: Json
+          progress?: number | null
           project_id: string
           qc_issues?: Json | null
           quality?: string | null
+          stage?: string | null
           status?: string | null
+          summary_text?: string | null
           target_duration?: number | null
           tone?: string | null
           updated_at?: string | null
         }
         Update: {
+          attempts?: number | null
           created_at?: string | null
           episode_count?: number | null
+          error_code?: string | null
+          error_detail?: string | null
           format?: string | null
           genre?: string | null
           id?: string
           idea?: string | null
+          input_chars?: number | null
           outline_json?: Json
+          progress?: number | null
           project_id?: string
           qc_issues?: Json | null
           quality?: string | null
+          stage?: string | null
           status?: string | null
+          summary_text?: string | null
           target_duration?: number | null
           tone?: string | null
           updated_at?: string | null
@@ -5475,6 +5496,17 @@ export type Database = {
           priority: number
         }[]
       }
+      get_resumable_outline: {
+        Args: { p_project_id: string }
+        Returns: {
+          attempts: number
+          id: string
+          input_chars: number
+          progress: number
+          stage: string
+          summary_text: string
+        }[]
+      }
       has_project_access: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
@@ -5489,6 +5521,10 @@ export type Database = {
       increment_user_usage: {
         Args: { p_cost: number; p_month: string; p_user_id: string }
         Returns: undefined
+      }
+      mark_stuck_outlines_timeout: {
+        Args: { p_minutes?: number }
+        Returns: number
       }
       recalc_character_pack: {
         Args: { p_character_id: string }
