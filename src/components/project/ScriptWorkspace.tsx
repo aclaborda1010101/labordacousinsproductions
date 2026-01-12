@@ -76,6 +76,7 @@ import {
   extractWriters,
 } from '@/lib/breakdown/hydrate';
 import { importCharactersFromScript } from '@/lib/importCharactersFromScript';
+import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
 
 interface ScriptWorkspaceProps {
   projectId: string;
@@ -228,6 +229,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     assetType: 'character',
   });
   const isPro = userLevel === 'pro';
+  
+  // Outline persistence hook (saves to database)
+  const outlinePersistence = useOutlinePersistence({ projectId });
 
   // Draft persistence key
   const DRAFT_KEY = `script_draft_${projectId}`;
@@ -881,6 +885,24 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           : 'El outline no se generó correctamente. Intenta de nuevo.';
         toast.error(errorMsg, { duration: 8000 });
         throw new Error(errorMsg);
+      }
+      
+      // V3.3: Persist outline to database for recovery after page refresh
+      const saveResult = await outlinePersistence.saveOutline({
+        outline: responseData.outline,
+        quality: outlineQuality,
+        qcIssues: outlineWarnings,
+        idea: ideaText.trim(),
+        format: projectFormat === 'film' ? 'film' : 'series',
+        episodeCount: projectFormat === 'film' ? 1 : episodesCount,
+        targetDuration: episodeDurationMin,
+        status: 'approved', // Auto-approve since we're continuing to script generation
+      });
+      
+      if (saveResult.success) {
+        console.log('[ScriptWorkspace] Outline persisted to database:', saveResult.id);
+      } else {
+        console.warn('[ScriptWorkspace] Failed to persist outline to DB:', saveResult.error);
       }
       
       if (!runInBackground) setProgress(30);
