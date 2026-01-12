@@ -51,8 +51,8 @@ serve(async (req) => {
       });
     }
 
-    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY no configurada");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY no configurada");
 
     const charactersRef =
       outline.main_characters
@@ -129,21 +129,43 @@ serve(async (req) => {
       },
     ];
 
-    const callClaude = async (prompt: string, temperature: number): Promise<ClaudeRes> => {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+    // Convert Anthropic tool format to OpenAI format
+    const openAITools = tools.map(t => ({
+      type: "function" as const,
+      function: {
+        name: t.name,
+        description: t.description,
+        parameters: t.input_schema,
+      },
+    }));
+
+    const callLovableAI = async (prompt: string, temperature: number): Promise<ClaudeRes> => {
+      const systemPrompt = `Eres un guionista profesional de Hollywood especializado en series de TV de alta calidad.
+Tu trabajo es generar episodios con estructura narrativa impecable, diálogos naturales y ritmo cinematográfico.
+
+REGLAS CRÍTICAS:
+- Cada escena DEBE tener mínimo 6 intercambios de diálogo
+- La acción debe ser visual y cinematográfica (80-160 palabras)
+- Los sluglines siguen formato: INT./EXT. LOCALIZACIÓN - DÍA/NOCHE
+- Mantén coherencia con personajes y localizaciones proporcionados
+- Genera EXACTAMENTE 5 escenas por chunk`;
+
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: {
-          "x-api-key": ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-          "content-type": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${LOVABLE_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 6500,
+          model: "openai/gpt-5",
+          max_completion_tokens: 8000,
           temperature,
-          tools,
-          tool_choice: { type: "tool", name: "generate_episode_chunk" },
-          messages: [{ role: "user", content: prompt }],
+          tools: openAITools,
+          tool_choice: { type: "function", function: { name: "generate_episode_chunk" } },
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: prompt }
+          ],
         }),
       });
 
@@ -159,11 +181,11 @@ serve(async (req) => {
           };
         }
 
-        if (response.status === 400 && errorText.toLowerCase().includes("credit")) {
+        if (response.status === 402) {
           return {
             kind: "http_error",
             status: 402,
-            payload: { error: "Créditos insuficientes en la cuenta de Claude." },
+            payload: { error: "Créditos Lovable insuficientes. Añade créditos en tu workspace." },
           };
         }
 
@@ -171,13 +193,41 @@ serve(async (req) => {
           kind: "http_error",
           status: 500,
           payload: {
-            error: `Claude API error: ${response.status}`,
+            error: `Lovable AI error: ${response.status}`,
             details: errorText.slice(0, 1200),
           },
         };
       }
 
       const data = await response.json();
+      
+      // Adapt OpenAI response format to expected structure (compatible with Anthropic format)
+      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall) {
+        try {
+          const input = JSON.parse(toolCall.function.arguments);
+          return {
+            kind: "ok",
+            data: {
+              stop_reason: "tool_use",
+              usage: data.usage,
+              content: [{
+                type: "tool_use",
+                name: toolCall.function.name,
+                input,
+              }],
+            },
+          };
+        } catch (parseErr) {
+          console.error(`[EPISODE ${episodeNumber}] Tool call parse error:`, parseErr);
+          return {
+            kind: "http_error",
+            status: 500,
+            payload: { error: "Failed to parse tool call response" },
+          };
+        }
+      }
+      
       return { kind: "ok", data };
     };
 
@@ -243,7 +293,7 @@ IMPORTANTE: devuelve TODO via tool use (no texto).`;
       for (let attempt = 1; attempt <= 2; attempt++) {
         const temperature = attempt === 1 ? 0.7 : 0.4;
 
-        const res = await callClaude(prompt, temperature);
+        const res = await callLovableAI(prompt, temperature);
         if (res.kind === "http_error") {
           return new Response(JSON.stringify(res.payload), {
             status: res.status,
