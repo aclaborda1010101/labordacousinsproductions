@@ -29,19 +29,19 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
     apiModel: 'google/gemini-2.5-flash', // Fastest for quick outlines
     provider: 'lovable',
-    maxTokens: 6000,
+    maxTokens: 24000, // Generous limit to prevent truncation
     temperature: 0.8
   },
   profesional: {
     apiModel: 'openai/gpt-5-mini', // Good balance quality/speed
     provider: 'lovable',
-    maxTokens: 8000,
+    maxTokens: 28000, // Generous limit to prevent truncation
     temperature: 0.7
   },
   hollywood: {
     apiModel: 'openai/gpt-5', // Best quality, stable
     provider: 'lovable',
-    maxTokens: 10000,
+    maxTokens: 32000, // Generous limit to prevent truncation
     temperature: 0.8
   }
 };
@@ -538,11 +538,11 @@ async function logEditorialEvent(
 }
 
 // =============================================================================
-// V4.2: TIMEOUT CONFIGURATION - Optimized for different operations
+// V4.2: TIMEOUT CONFIGURATION - Generous limits (optimize down later)
 // =============================================================================
-const SUMMARIZE_TIMEOUT_MS = 30000; // 30 seconds for summarization (more margin for long texts)
-const GENERATION_TIMEOUT_MS = 120000; // 120 seconds (2 minutes for complex outlines)
-const BATCH_TIMEOUT_MS = 90000; // 90 seconds per batch
+const SUMMARIZE_TIMEOUT_MS = 60000; // 60 seconds for summarization (generous)
+const GENERATION_TIMEOUT_MS = 300000; // 300 seconds (5 minutes - generous limit)
+const BATCH_TIMEOUT_MS = 180000; // 180 seconds (3 minutes per batch)
 const MAX_EPISODES_PER_BATCH = 5; // Split large series into batches of 5
 
 async function callWithTimeout<T>(
