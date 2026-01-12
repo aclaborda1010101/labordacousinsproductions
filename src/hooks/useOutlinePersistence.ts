@@ -81,13 +81,29 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     setError(null);
     
     try {
-      const { data, error: fetchError } = await supabase
+      // V10.3: Prioritize completed/generating/approved outlines over draft
+      // This prevents orphan drafts from hiding completed outlines
+      let { data, error: fetchError } = await supabase
         .from('project_outlines')
         .select('*')
         .eq('project_id', projectId)
+        .in('status', ['completed', 'generating', 'approved', 'queued'])
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      // Fallback: if no completed/generating outline, get any (including draft)
+      if (!data && !fetchError) {
+        const fallback = await supabase
+          .from('project_outlines')
+          .select('*')
+          .eq('project_id', projectId)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        data = fallback.data;
+        fetchError = fallback.error;
+      }
 
       if (fetchError) {
         console.error('[useOutlinePersistence] Error loading outline:', fetchError);
