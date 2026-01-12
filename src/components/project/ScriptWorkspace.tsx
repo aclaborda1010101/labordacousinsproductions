@@ -62,6 +62,7 @@ import {
   Mic,
   MicOff,
   Square,
+  Trash2,
 } from 'lucide-react';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 
@@ -466,6 +467,29 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     setEntryMode('existing');
     setUploadedFileName(null);
     toast.info('Puedes subir un nuevo guión');
+  };
+
+  // Function to delete the outline completely
+  const handleDeleteOutline = async () => {
+    if (!confirm('¿Seguro que quieres borrar el outline? Esta acción no se puede deshacer.')) {
+      return;
+    }
+    
+    const success = await outlinePersistence.deleteOutline();
+    if (success) {
+      // Clear local state
+      setBreakdownResult(null);
+      setQualityDiagnosis(null);
+      setStatus('idle');
+      setProgress(0);
+      setHasExistingScript(false);
+      setExistingScriptText('');
+      setEntryMode(null);
+      localStorage.removeItem(DRAFT_KEY);
+      toast.success('Outline eliminado correctamente');
+    } else {
+      toast.error('Error al eliminar el outline');
+    }
   };
 
   // Evaluate script quality from breakdown result
@@ -2237,34 +2261,42 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           }}
           onSetCanon={() => {}}
           showCanonButton={false}
-          extraAction={{
-            label: 'Exportar',
-            icon: <FileDown className="w-4 h-4 mr-2" />,
-            onClick: () => {
-              try {
-                exportOutlinePDF({
-                  title: 'Outline del Proyecto',
-                  logline: synopsis?.faithful_summary?.split('.')[0],
-                  synopsis: synopsis?.faithful_summary,
-                  format: projectFormat,
-                  estimatedDuration: estimatedRuntime || undefined,
-                  episodes: [],
-                  characters,
-                  locations,
-                  props: breakdownResult.props,
-                  subplots,
-                  plot_twists,
-                  counts: {
-                    total_scenes: scenes?.length,
-                  },
-                });
-                toast.success('Outline profesional exportado');
-              } catch (err) {
-                console.error('Export error:', err);
-                toast.error('Error al exportar Outline');
-              }
+          extraActions={[
+            {
+              label: 'Exportar',
+              icon: <FileDown className="w-4 h-4 mr-2" />,
+              onClick: () => {
+                try {
+                  exportOutlinePDF({
+                    title: 'Outline del Proyecto',
+                    logline: synopsis?.faithful_summary?.split('.')[0],
+                    synopsis: synopsis?.faithful_summary,
+                    format: projectFormat,
+                    estimatedDuration: estimatedRuntime || undefined,
+                    episodes: [],
+                    characters,
+                    locations,
+                    props: breakdownResult.props,
+                    subplots,
+                    plot_twists,
+                    counts: {
+                      total_scenes: scenes?.length,
+                    },
+                  });
+                  toast.success('Outline profesional exportado');
+                } catch (err) {
+                  console.error('Export error:', err);
+                  toast.error('Error al exportar Outline');
+                }
+              },
             },
-          }}
+            {
+              label: 'Borrar',
+              icon: <Trash2 className="w-4 h-4 mr-2" />,
+              onClick: handleDeleteOutline,
+              variant: 'destructive' as const,
+            },
+          ]}
         />
       </div>
     );
