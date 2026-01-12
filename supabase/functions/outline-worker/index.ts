@@ -1,12 +1,17 @@
 // ============================================================================
-// V9 OUTLINE WORKER - Industrial-grade with heartbeat, fan-out, and QC
+// V10 OUTLINE WORKER - Industrial Pipeline with 4 Substeps
+// ============================================================================
+// Architecture:
+// - PART_A: Season arc, rules, cast, locations (gpt-5.2)
+// - PART_B: Episodes 1-5 with turning points (gpt-5.2)
+// - PART_C: Episodes 6-10 with turning points (gpt-5.2)
+// - MERGE+QC: Unify + validate with anti-vaguedad filter
 // ============================================================================
 // Features:
+// - Each substep < 55s (no timeouts)
+// - Partial persistence (resumable from any substep)
 // - Heartbeat every 12s for stuck detection
-// - Fan-out: divide outline into substeps (arc, episodes_1, episodes_2, merge)
-// - Structured prompts that preserve narrative information
-// - Automatic QC before marking completed
-// - Resumability from any substep
+// - Anti-vaguedad QC with degraded quality marking
 // ============================================================================
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
@@ -14,19 +19,19 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/v3-enterprise.ts";
 import { parseJsonSafe } from "../_shared/llmJson.ts";
-import { MODEL_CONFIG, getOutputLimit } from "../_shared/model-config.ts";
+import { MODEL_CONFIG } from "../_shared/model-config.ts";
 
 // Model configuration
-const FAST_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;
-const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD;
+const FAST_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;       // gpt-5-mini
+const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD; // gpt-5.2
+const MERGE_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;      // gpt-5-mini for deterministic merge
 const LONG_INPUT_THRESHOLD = MODEL_CONFIG.LIMITS.MAX_INPUT_TOKENS_SOFT * MODEL_CONFIG.LIMITS.CHARS_PER_TOKEN;
-const MULTI_EPISODE_THRESHOLD = 1;
 
 // Timeout configuration
-const STAGE_TIMEOUT_MS = MODEL_CONFIG.LIMITS.STAGE_TIMEOUT_MS;
 const AI_TIMEOUT_MS = MODEL_CONFIG.LIMITS.TIMEOUT_MS;
 const MAX_ATTEMPTS = MODEL_CONFIG.LIMITS.RETRY_COUNT;
-const HEARTBEAT_INTERVAL_MS = 12000; // Heartbeat every 12 seconds
+const HEARTBEAT_INTERVAL_MS = 12000;
+const MAX_EPISODES = 10;
 
 interface OutlineRecord {
   id: string;
@@ -82,77 +87,6 @@ async function heartbeat(
     updates.substage = substage;
   }
   await supabase.from('project_outlines').update(updates).eq('id', outlineId);
-}
-
-// ============================================================================
-// AI CALL: With timeout and heartbeat during wait
-// ============================================================================
-async function callLovableAIWithHeartbeat(
-  supabase: SupabaseClient,
-  outlineId: string,
-  systemPrompt: string,
-  userPrompt: string,
-  model: string,
-  maxTokens: number,
-  substage: string
-): Promise<{ content: string; toolArgs?: string }> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
-
-  // Start heartbeat interval
-  const heartbeatInterval = setInterval(() => {
-    heartbeat(supabase, outlineId, substage);
-  }, HEARTBEAT_INTERVAL_MS);
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
-
-  try {
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        max_completion_tokens: maxTokens,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ]
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-    clearInterval(heartbeatInterval);
-
-    if (response.status === 429) {
-      throw { status: 429, message: 'Rate limit exceeded', retryable: true };
-    }
-    if (response.status === 402) {
-      throw { status: 402, message: 'Payment required' };
-    }
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`AI Gateway error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content ?? '';
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    const toolArgs = toolCall?.function?.arguments;
-
-    return { content, toolArgs };
-  } catch (err: any) {
-    clearTimeout(timeoutId);
-    clearInterval(heartbeatInterval);
-    if (err.name === 'AbortError') {
-      throw new Error('AI_TIMEOUT: Request timeout exceeded');
-    }
-    throw err;
-  }
 }
 
 // ============================================================================
@@ -233,7 +167,269 @@ async function callLovableAIWithToolAndHeartbeat(
 }
 
 // ============================================================================
-// STAGE A: STRUCTURED SUMMARIZE (preserves narrative information)
+// AI CALL: Without tool (for summarize)
+// ============================================================================
+async function callLovableAIWithHeartbeat(
+  supabase: SupabaseClient,
+  outlineId: string,
+  systemPrompt: string,
+  userPrompt: string,
+  model: string,
+  maxTokens: number,
+  substage: string
+): Promise<{ content: string }> {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+
+  const heartbeatInterval = setInterval(() => {
+    heartbeat(supabase, outlineId, substage);
+  }, HEARTBEAT_INTERVAL_MS);
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model,
+        max_completion_tokens: maxTokens,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ]
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+    clearInterval(heartbeatInterval);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`AI Gateway error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content ?? '';
+    return { content };
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    clearInterval(heartbeatInterval);
+    if (err.name === 'AbortError') {
+      throw new Error('AI_TIMEOUT: Request timeout exceeded');
+    }
+    throw err;
+  }
+}
+
+// ============================================================================
+// SCHEMAS FOR EACH SUBSTEP
+// ============================================================================
+
+// PART_A: Season structure (arc, cast, locations, rules)
+const PART_A_TOOL_SCHEMA = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    logline: { type: 'string' },
+    season_arc: {
+      type: 'object',
+      properties: {
+        start_state: { type: 'string' },
+        midpoint_reversal: { type: 'string' },
+        end_state: { type: 'string' },
+        theme: { type: 'string' },
+        stakes: { type: 'string' }
+      },
+      required: ['start_state', 'midpoint_reversal', 'end_state']
+    },
+    world_rules: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          rule: { type: 'string' },
+          dramatic_effect: { type: 'string' }
+        }
+      }
+    },
+    cast: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          role: { type: 'string' },
+          want: { type: 'string' },
+          need: { type: 'string' },
+          flaw: { type: 'string' },
+          function: { type: 'string' }
+        },
+        required: ['name', 'role', 'want', 'need', 'flaw']
+      }
+    },
+    locations: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          function: { type: 'string' },
+          visual_identity: { type: 'string' }
+        }
+      }
+    }
+  },
+  required: ['title', 'logline', 'season_arc', 'cast', 'locations']
+};
+
+// PART_B/C: Episodes with turning points
+const EPISODES_TOOL_SCHEMA = {
+  type: 'object',
+  properties: {
+    episodes: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          episode: { type: 'number' },
+          title: { type: 'string' },
+          central_question: { type: 'string' },
+          central_conflict: { type: 'string' },
+          turning_points: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                tp: { type: 'number' },
+                event: { type: 'string' },
+                agent: { type: 'string' },
+                consequence: { type: 'string' }
+              },
+              required: ['tp', 'event', 'agent', 'consequence']
+            }
+          },
+          cliffhanger: { type: 'string' }
+        },
+        required: ['episode', 'title', 'central_conflict', 'turning_points', 'cliffhanger']
+      }
+    }
+  },
+  required: ['episodes']
+};
+
+// ============================================================================
+// SYSTEM PROMPTS
+// ============================================================================
+
+const PART_A_SYSTEM = `Eres showrunner técnico. Produces estructura accionable, no un pitch vago.
+No inventes elementos fuera del material. Prohibidas frases genéricas.
+
+REGLAS ABSOLUTAS:
+- midpoint_reversal OBLIGATORIO y debe ser un EVENTO CONCRETO con agente.
+- world_rules mínimo 2 reglas del mundo con efecto dramático.
+- cast mínimo 4 personajes, cada uno con WANT (lo que busca), NEED (lo que realmente necesita), FLAW (defecto dramático).
+- locations mínimo 3 con función dramática.
+- Devuelve SOLO JSON válido.`;
+
+const EPISODES_SYSTEM = `Eres showrunner. Cada episodio requiere conflicto central, 4 turning points concretos y cliffhanger.
+
+REGLAS ABSOLUTAS:
+- PROHIBIDO frases genéricas como "aparecen amenazas", "surge un conflicto", "algo cambia".
+- Cada turning point tiene: evento (QUÉ pasa), agente (QUIÉN lo hace), consecuencia (QUÉ provoca).
+- turning_points deben ser HECHOS OBSERVABLES, no sensaciones.
+- cliffhanger debe ser específico y generar tensión.
+- NO introducir personajes fuera del cast salvo que lo declares explícitamente.
+- Devuelve SOLO JSON válido.`;
+
+// ============================================================================
+// PROMPT BUILDERS
+// ============================================================================
+
+function buildPartAPrompt(summary: string, episodesCount: number, genre: string, tone: string): string {
+  return `SERIES_CONFIG:
+{ "season_episodes": ${episodesCount}, "episode_minutes": 60, "max_episodes": ${MAX_EPISODES}, "tone": "${tone || 'cinematográfico realista'}", "genre": "${genre || 'Drama'}" }
+
+INPUT_SUMMARY:
+${summary}
+
+TAREA: Devuelve SOLO la estructura de la temporada (NO los episodios aún):
+- title: título de la serie
+- logline: máximo 2 frases
+- season_arc con midpoint_reversal OBLIGATORIO y concreto (un EVENTO, no una sensación)
+- world_rules: mínimo 2 reglas del mundo con dramatic_effect
+- cast: mínimo 4 personajes con WANT/NEED/FLAW/function
+- locations: mínimo 3 con function dramática y visual_identity
+
+EJEMPLOS DE MIDPOINT INCORRECTO:
+❌ "Todo cambia cuando descubren la verdad"
+❌ "Las cosas se complican"
+
+EJEMPLOS DE MIDPOINT CORRECTO:
+✅ "Elena descubre que su padre vendió a Aelion a la corporación hace 20 años, lo que la obliga a elegir entre lealtad familiar y justicia"
+✅ "Marcus mata accidentalmente a su mentor al intentar proteger el secreto, lo que lo convierte en fugitivo"`;
+}
+
+function buildPartBPrompt(summary: string, partA: any, startEp: number, endEp: number): string {
+  return `SERIES_CONFIG:
+{ "episode_range": "${startEp}-${endEp}", "total_episodes": ${endEp} }
+
+SEASON_SCAFFOLD:
+${JSON.stringify(partA, null, 2)}
+
+INPUT_SUMMARY:
+${summary}
+
+TAREA: Genera episodios ${startEp} a ${endEp}. Cada episodio DEBE tener:
+- episode: número
+- title: título del episodio
+- central_question: pregunta que el episodio responde
+- central_conflict: quién vs quién/qué (ESPECÍFICO)
+- turning_points: EXACTAMENTE 4, cada uno con {tp, event, agent, consequence}
+- cliffhanger: gancho final CONCRETO
+
+EJEMPLOS DE TURNING POINT INCORRECTO:
+❌ {"tp":1, "event":"Surge un problema", "agent":"algo", "consequence":"las cosas cambian"}
+
+EJEMPLOS DE TURNING POINT CORRECTO:
+✅ {"tp":1, "event":"Elena encuentra el diario cifrado de su padre", "agent":"Elena", "consequence":"Descubre que el proyecto Aelion fue saboteado intencionalmente"}
+✅ {"tp":2, "event":"Marcus dispara a Kowalski en defensa propia", "agent":"Marcus", "consequence":"Se convierte en sospechoso principal y pierde acceso al laboratorio"}`;
+}
+
+function buildPartCPrompt(summary: string, partA: any, partB: any, startEp: number, endEp: number): string {
+  return `SERIES_CONFIG:
+{ "episode_range": "${startEp}-${endEp}", "total_episodes": ${endEp} }
+
+SEASON_SCAFFOLD:
+${JSON.stringify(partA, null, 2)}
+
+EPISODES_PREVIOS (${partB.episodes?.length || 0} episodios):
+${JSON.stringify(partB.episodes || [], null, 2)}
+
+INPUT_SUMMARY:
+${summary}
+
+TAREA: Genera episodios ${startEp} a ${endEp} continuando la escalada narrativa.
+
+REGLAS DE ESCALADA:
+- La escala debe subir: personal → institucional → civilizatorio/existencial
+- Cada episodio debe preparar el siguiente
+- El penúltimo episodio es el punto más bajo del protagonista
+- El último episodio es la resolución (puede ser abierta pero debe cerrar arco principal)
+
+Cada episodio DEBE tener:
+- episode, title, central_question, central_conflict
+- turning_points: EXACTAMENTE 4 con {tp, event, agent, consequence}
+- cliffhanger: el del último episodio puede ser resolución o setup de siguiente temporada`;
+}
+
+// ============================================================================
+// STAGE: SUMMARIZE (unchanged, for long inputs)
 // ============================================================================
 const STRUCTURED_SUMMARIZE_SYSTEM = `Eres un compresor estructural experto en narrativa audiovisual.
 
@@ -292,7 +488,7 @@ async function stageSummarize(
     await updateOutline(supabase, outline.id, {
       stage: 'outline',
       substage: 'arc',
-      progress: 33,
+      progress: 30,
       summary_text: ideaText,
       input_chars: inputChars,
       heartbeat_at: new Date().toISOString()
@@ -323,13 +519,11 @@ async function stageSummarize(
     let structuredSummary: any = null;
     let summaryText = ideaText.slice(0, 8000);
 
-    // Try to parse structured summary
     const parsed = parseJsonSafe(content, 'structured_summary');
     if (parsed.ok && parsed.json) {
       structuredSummary = parsed.json;
       summaryText = parsed.json.text_summary || content.slice(0, 8000);
     } else {
-      // Fallback: use raw content as summary
       summaryText = content || ideaText.slice(0, 8000);
     }
 
@@ -338,7 +532,7 @@ async function stageSummarize(
     await updateOutline(supabase, outline.id, {
       stage: 'outline',
       substage: 'arc',
-      progress: 33,
+      progress: 30,
       summary_text: summaryText,
       outline_parts: { structured_summary: structuredSummary },
       heartbeat_at: new Date().toISOString()
@@ -347,12 +541,11 @@ async function stageSummarize(
     return { summary: summaryText, structuredSummary, skipped: false };
   } catch (err) {
     console.error('[WORKER] Summarize failed:', err);
-    // Fallback: truncate
     const truncated = ideaText.slice(0, 8000) + '\n\n[TEXTO TRUNCADO]';
     await updateOutline(supabase, outline.id, {
       stage: 'outline',
       substage: 'arc',
-      progress: 33,
+      progress: 30,
       summary_text: truncated,
       heartbeat_at: new Date().toISOString()
     });
@@ -361,266 +554,227 @@ async function stageSummarize(
 }
 
 // ============================================================================
-// STAGE B: OUTLINE GENERATION (Fan-out: arc -> episodes -> merge)
+// STAGE: OUTLINE FAN-OUT (4 substeps)
 // ============================================================================
-const OUTLINE_TOOL_SCHEMA = {
-  type: 'object',
-  properties: {
-    title: { type: 'string' },
-    logline: { type: 'string' },
-    genre: { type: 'string' },
-    tone: { type: 'string' },
-    narrative_mode: { type: 'string' },
-    synopsis: { type: 'string' },
-    season_arc: {
-      type: 'object',
-      properties: {
-        protagonist_start_state: { type: 'string' },
-        midpoint_reversal: { type: 'string' },
-        protagonist_end_state: { type: 'string' },
-        thematic_question: { type: 'string' }
-      }
-    },
-    world_rules: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          entity: { type: 'string' },
-          can_do: { type: 'array', items: { type: 'string' } },
-          cannot_do: { type: 'array', items: { type: 'string' } },
-          dramatic_purpose: { type: 'string' }
-        }
-      }
-    },
-    main_characters: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          role: { type: 'string' },
-          description: { type: 'string' },
-          arc_summary: { type: 'string' }
-        },
-        required: ['name', 'role', 'description']
-      }
-    },
-    main_locations: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          type: { type: 'string' },
-          description: { type: 'string' }
-        },
-        required: ['name', 'type', 'description']
-      }
-    },
-    main_props: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          importance: { type: 'string' },
-          description: { type: 'string' }
-        },
-        required: ['name', 'description']
-      }
-    },
-    subplots: { type: 'array', items: { type: 'object' } },
-    plot_twists: { type: 'array', items: { type: 'object' } },
-    episode_beats: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          episode: { type: 'number' },
-          title: { type: 'string' },
-          central_conflict: { type: 'string' },
-          turning_points: { type: 'array', items: { type: 'string' } },
-          summary: { type: 'string' },
-          cliffhanger: { type: 'string' }
-        },
-        required: ['episode', 'title', 'summary', 'cliffhanger']
-      }
-    },
-    qc_status: { type: 'string' }
-  },
-  required: ['title', 'logline', 'synopsis', 'main_characters', 'main_locations', 'episode_beats']
-};
 
-const OUTLINE_SYSTEM = `Eres showrunner técnico. Tu objetivo es un outline ÚTIL y ACCIONABLE.
-
-REGLAS:
-- Cada episodio DEBE tener 4 turning points concretos (no frases genéricas).
-- Cada turning point es un HECHO OBSERVABLE con actor/agente y consecuencia.
-- PROHIBIDO frases como "aparecen amenazas", "surge un conflicto" - especifica QUÉ y QUIÉN.
-- El season_arc DEBE tener midpoint_reversal concreto.
-- Si falta información, haz suposición y marca con [SUPOSICIÓN: razón].
-- Devuelve SOLO JSON válido.`;
-
-function buildOutlineUserPrompt(params: {
-  summaryText: string;
-  episodesCount: number;
-  genre: string;
-  tone: string;
-  format: string;
-  narrativeMode: string;
-}): string {
-  return `CONFIG SERIE:
-{ "season_episodes": ${params.episodesCount}, "genre": "${params.genre}", "tone": "${params.tone}", "format": "${params.format}", "narrativeMode": "${params.narrativeMode}" }
-
-RESUMEN/IDEA:
-${params.summaryText}
-
-GENERA outline completo con:
-1. title, logline, synopsis
-2. season_arc con midpoint_reversal CONCRETO
-3. main_characters (mínimo 3) con role y arc_summary
-4. main_locations (mínimo 3)
-5. episode_beats: ${params.episodesCount} episodios, cada uno con:
-   - title
-   - central_conflict (quién vs quién/qué)
-   - turning_points (MÍNIMO 4, hechos concretos)
-   - summary
-   - cliffhanger
-
-REGLAS FINALES:
-- Cada turning_point debe contener un VERBO DE ACCIÓN y un AGENTE específico.
-- Prohibido frases genéricas.`;
-}
-
-async function stageOutline(
+async function stageOutlineFanOut(
   supabase: SupabaseClient,
   outline: OutlineRecord,
   summaryText: string
 ): Promise<any> {
-  console.log(`[WORKER] Stage OUTLINE: generating structure`);
-  await updateOutline(supabase, outline.id, { 
-    stage: 'outline', 
-    substage: 'generating',
-    progress: 40,
-    heartbeat_at: new Date().toISOString()
-  });
+  const episodesCount = Math.min(outline.episode_count || 6, MAX_EPISODES);
+  const midpoint = Math.ceil(episodesCount / 2);
+  
+  // Recover existing parts for resumability
+  let parts: any = outline.outline_parts || {};
+  
+  const genre = outline.genre || 'Drama';
+  const tone = outline.tone || 'Cinematográfico';
 
-  const format = outline.format || 'series';
-  const episodesCount = outline.episode_count || 6;
-  const narrativeMode = outline.narrative_mode || 'serie_adictiva';
-  const genre = outline.genre || '';
-  const tone = outline.tone || '';
+  console.log(`[WORKER] Stage OUTLINE FAN-OUT: ${episodesCount} episodes, midpoint at ${midpoint}`);
 
-  // Select model based on input size and episode count
-  const inputChars = outline.input_chars || summaryText.length;
-  const usesFastModel = inputChars > LONG_INPUT_THRESHOLD || episodesCount > MULTI_EPISODE_THRESHOLD;
-  const model = usesFastModel ? FAST_MODEL : QUALITY_MODEL;
-
-  console.log(`[WORKER] Using model: ${model} (input: ${inputChars} chars, episodes: ${episodesCount})`);
-
-  const userPrompt = buildOutlineUserPrompt({
-    summaryText,
-    episodesCount,
-    genre,
-    tone,
-    format,
-    narrativeMode
-  });
-
-  try {
-    const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-      supabase,
-      outline.id,
-      OUTLINE_SYSTEM,
-      userPrompt,
-      model,
-      16000,
-      'deliver_outline',
-      OUTLINE_TOOL_SCHEMA,
-      'outline_generate'
-    );
-
-    let parsedOutline: any = null;
-
-    // Try to parse tool arguments first
-    if (toolArgs) {
-      try {
-        const result = parseJsonSafe(toolArgs, 'outline_tool_args');
-        if (result.ok) {
-          parsedOutline = result.json;
-        }
-      } catch (e) {
-        console.warn('[WORKER] Tool args parse failed, trying content');
-      }
-    }
-
-    // Fallback to content if tool args failed
-    if (!parsedOutline && content) {
-      try {
-        const result = parseJsonSafe(content, 'outline_content');
-        if (result.ok) {
-          parsedOutline = result.json;
-        }
-      } catch (e) {
-        console.warn('[WORKER] Content parse also failed');
-      }
-    }
-
-    if (!parsedOutline) {
-      throw new Error('MODEL_OUTPUT_INVALID: Could not parse outline from AI response');
-    }
-
-    // Validate and fix episode beats
-    if (!Array.isArray(parsedOutline.episode_beats)) {
-      parsedOutline.episode_beats = [];
-    }
-    
-    // Ensure correct number of episodes
-    while (parsedOutline.episode_beats.length < episodesCount) {
-      const epNum = parsedOutline.episode_beats.length + 1;
-      parsedOutline.episode_beats.push({
-        episode: epNum,
-        title: `Episodio ${epNum}`,
-        central_conflict: 'Por definir',
-        turning_points: ['TP1', 'TP2', 'TP3', 'TP4'],
-        summary: 'Por generar',
-        cliffhanger: 'Por definir'
-      });
-    }
-    parsedOutline.episode_beats = parsedOutline.episode_beats.slice(0, episodesCount);
-
-    // Add narrative mode
-    parsedOutline.narrative_mode = narrativeMode;
-
-    // Save outline parts for resumability
-    const existingParts = outline.outline_parts || {};
-    await updateOutline(supabase, outline.id, {
-      stage: 'merge',
-      substage: 'qc',
-      progress: 75,
-      outline_json: parsedOutline,
-      outline_parts: { ...existingParts, outline: parsedOutline },
+  // ========================================
+  // PART_A: Season arc + rules + cast + locations
+  // ========================================
+  if (!parts.part_a) {
+    console.log(`[WORKER] PART_A: generating arc/cast/locations`);
+    await updateOutline(supabase, outline.id, { 
+      stage: 'outline', 
+      substage: 'arc', 
+      progress: 35,
       heartbeat_at: new Date().toISOString()
     });
-
-    return parsedOutline;
-  } catch (err: any) {
-    console.error('[WORKER] Outline generation failed:', err);
     
-    if (err.message?.includes('AI_TIMEOUT')) {
-      await updateOutline(supabase, outline.id, {
-        error_code: 'STAGE_TIMEOUT',
-        error_detail: 'Outline stage timed out'
-      });
+    const partAPrompt = buildPartAPrompt(summaryText, episodesCount, genre, tone);
+    const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+      supabase, outline.id,
+      PART_A_SYSTEM, partAPrompt,
+      QUALITY_MODEL, 4000,
+      'deliver_part_a', PART_A_TOOL_SCHEMA, 'arc'
+    );
+    
+    const parseResult = parseJsonSafe(toolArgs || content, 'part_a');
+    parts.part_a = parseResult.json;
+    
+    if (!parts.part_a) {
+      throw new Error('PART_A failed to parse');
     }
     
-    throw err;
+    // Persist immediately
+    await updateOutline(supabase, outline.id, { 
+      outline_parts: parts,
+      progress: 50,
+      heartbeat_at: new Date().toISOString()
+    });
+    console.log(`[WORKER] PART_A saved: ${parts.part_a.title || 'Sin título'}`);
   }
+  
+  // ========================================
+  // PART_B: Episodes 1 - midpoint
+  // ========================================
+  if (!parts.part_b) {
+    console.log(`[WORKER] PART_B: generating episodes 1-${midpoint}`);
+    await updateOutline(supabase, outline.id, { 
+      substage: 'episodes_1', 
+      progress: 55,
+      heartbeat_at: new Date().toISOString()
+    });
+    
+    const partBPrompt = buildPartBPrompt(summaryText, parts.part_a, 1, midpoint);
+    const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+      supabase, outline.id,
+      EPISODES_SYSTEM, partBPrompt,
+      QUALITY_MODEL, 6000,
+      'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_1'
+    );
+    
+    const parseResult = parseJsonSafe(toolArgs || content, 'part_b');
+    parts.part_b = parseResult.json;
+    
+    if (!parts.part_b?.episodes) {
+      throw new Error('PART_B failed to parse');
+    }
+    
+    await updateOutline(supabase, outline.id, { 
+      outline_parts: parts,
+      progress: 68,
+      heartbeat_at: new Date().toISOString()
+    });
+    console.log(`[WORKER] PART_B saved: ${parts.part_b.episodes.length} episodes`);
+  }
+  
+  // ========================================
+  // PART_C: Episodes midpoint+1 - end (only if needed)
+  // ========================================
+  if (!parts.part_c && episodesCount > midpoint) {
+    console.log(`[WORKER] PART_C: generating episodes ${midpoint + 1}-${episodesCount}`);
+    await updateOutline(supabase, outline.id, { 
+      substage: 'episodes_2', 
+      progress: 72,
+      heartbeat_at: new Date().toISOString()
+    });
+    
+    const partCPrompt = buildPartCPrompt(summaryText, parts.part_a, parts.part_b, midpoint + 1, episodesCount);
+    const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+      supabase, outline.id,
+      EPISODES_SYSTEM, partCPrompt,
+      QUALITY_MODEL, 6000,
+      'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_2'
+    );
+    
+    const parseResult = parseJsonSafe(toolArgs || content, 'part_c');
+    parts.part_c = parseResult.json;
+    
+    await updateOutline(supabase, outline.id, { 
+      outline_parts: parts,
+      progress: 82,
+      heartbeat_at: new Date().toISOString()
+    });
+    console.log(`[WORKER] PART_C saved: ${parts.part_c?.episodes?.length || 0} episodes`);
+  }
+  
+  // ========================================
+  // MERGE: Unify all parts locally
+  // ========================================
+  console.log(`[WORKER] MERGE: unifying parts`);
+  await updateOutline(supabase, outline.id, { 
+    stage: 'merge',
+    substage: 'merging', 
+    progress: 85,
+    heartbeat_at: new Date().toISOString()
+  });
+  
+  const merged = mergeOutlineParts(parts, episodesCount);
+  
+  // Save unified outline
+  await updateOutline(supabase, outline.id, { 
+    outline_json: merged,
+    outline_parts: parts,
+    progress: 88,
+    heartbeat_at: new Date().toISOString()
+  });
+  
+  return merged;
 }
 
 // ============================================================================
-// QC ENGINE: Validate outline quality before completion
+// MERGE FUNCTION: Combine all parts into final outline
+// ============================================================================
+function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
+  const partA = parts.part_a || {};
+  const episodesB = parts.part_b?.episodes || [];
+  const episodesC = parts.part_c?.episodes || [];
+  
+  // Combine episodes
+  const allEpisodes = [...episodesB, ...episodesC];
+  
+  // Normalize episodes to standard format
+  const normalizedEpisodes = allEpisodes.map((ep: any, i: number) => {
+    // Convert turning_points from objects to strings if needed
+    const tps = Array.isArray(ep.turning_points) 
+      ? ep.turning_points.map((tp: any) => {
+          if (typeof tp === 'string') return tp;
+          return `${tp.event || 'Evento'} (${tp.agent || 'Agente'}) → ${tp.consequence || 'Consecuencia'}`;
+        })
+      : ['TP1', 'TP2', 'TP3', 'TP4'];
+    
+    return {
+      episode: ep.episode || i + 1,
+      title: ep.title || `Episodio ${i + 1}`,
+      central_conflict: ep.central_conflict || ep.central_question || 'Por definir',
+      turning_points: tps,
+      summary: ep.summary || '',
+      cliffhanger: ep.cliffhanger || 'Por definir'
+    };
+  });
+  
+  // Ensure correct number of episodes
+  while (normalizedEpisodes.length < expectedEpisodes) {
+    normalizedEpisodes.push({
+      episode: normalizedEpisodes.length + 1,
+      title: `Episodio ${normalizedEpisodes.length + 1}`,
+      central_conflict: 'Por definir',
+      turning_points: ['TP1', 'TP2', 'TP3', 'TP4'],
+      summary: 'Por generar',
+      cliffhanger: 'Por definir'
+    });
+  }
+  
+  // Convert cast to standard format
+  const mainCharacters = (partA.cast || []).map((c: any) => ({
+    name: c.name || 'Sin nombre',
+    role: c.role || 'support',
+    description: `Quiere: ${c.want || '?'} | Necesita: ${c.need || '?'} | Defecto: ${c.flaw || '?'}`,
+    arc_summary: c.function || ''
+  }));
+  
+  // Convert locations
+  const mainLocations = (partA.locations || []).map((loc: any) => ({
+    name: loc.name || 'Sin nombre',
+    type: loc.visual_identity || 'interior',
+    description: loc.function || ''
+  }));
+  
+  // Build complete outline
+  return {
+    title: partA.title || 'Sin título',
+    logline: partA.logline || '',
+    genre: partA.genre || 'Drama',
+    tone: partA.tone || 'Cinematográfico',
+    synopsis: partA.synopsis || partA.logline || '',
+    season_arc: partA.season_arc || {},
+    world_rules: Array.isArray(partA.world_rules) ? partA.world_rules : [],
+    main_characters: mainCharacters,
+    main_locations: mainLocations,
+    main_props: [],
+    subplots: [],
+    plot_twists: [],
+    episode_beats: normalizedEpisodes.slice(0, expectedEpisodes)
+  };
+}
+
+// ============================================================================
+// QC ENGINE: Anti-vaguedad filter + quality scoring
 // ============================================================================
 interface QCResult {
   passed: boolean;
@@ -633,6 +787,17 @@ function runOutlineQC(outline: any, expectedEpisodes: number): QCResult {
   const issues: string[] = [];
   let score = 100;
 
+  // Generic phrases to detect (anti-vaguedad)
+  const genericPhrases = [
+    'aparecen amenazas', 'surge un conflicto', 'algo cambia',
+    'las cosas cambian', 'se complican las cosas', 'aparece un problema',
+    'surge una amenaza', 'fuerzas ocultas', 'intereses externos',
+    'descubre algo importante', 'enfrenta consecuencias', 'todo cambia',
+    'las cosas se ponen difíciles', 'surge un desafío', 'aparece alguien',
+    'pasan cosas', 'sucede algo', 'hay problemas', 'surgen dificultades',
+    'se revela información', 'descubre la verdad', 'algo sucede'
+  ];
+
   // 1. Verify number of episodes
   const actualEpisodes = outline.episode_beats?.length || 0;
   if (actualEpisodes !== expectedEpisodes) {
@@ -640,38 +805,57 @@ function runOutlineQC(outline: any, expectedEpisodes: number): QCResult {
     score -= 20;
   }
 
-  // 2. Verify turning points per episode (minimum 4)
-  const genericPhrases = [
-    'aparecen amenazas', 'surge un conflicto', 'algo cambia', 'las cosas cambian',
-    'se complican las cosas', 'aparece un problema', 'surge una amenaza'
-  ];
-  
+  // 2. Check turning points and detect generic phrases
+  let genericCount = 0;
   outline.episode_beats?.forEach((ep: any, i: number) => {
     const tps = ep.turning_points?.length || 0;
     if (tps < 4) {
-      issues.push(`Ep ${i + 1}: solo ${tps} turning points (mínimo 4)`);
+      issues.push(`Ep ${i + 1}: solo ${tps} TPs (mínimo 4)`);
       score -= 5;
     }
 
-    // Detect generic phrases
-    ep.turning_points?.forEach((tp: string, j: number) => {
-      if (genericPhrases.some(phrase => tp.toLowerCase().includes(phrase))) {
-        issues.push(`Ep ${i + 1} TP${j + 1}: frase genérica`);
+    // Detect generic phrases in turning points
+    const tpTexts = ep.turning_points || [];
+    tpTexts.forEach((tp: string, j: number) => {
+      const tpLower = (typeof tp === 'string' ? tp : JSON.stringify(tp)).toLowerCase();
+      const foundGeneric = genericPhrases.find(phrase => tpLower.includes(phrase));
+      if (foundGeneric) {
+        genericCount++;
+        if (genericCount <= 3) {
+          issues.push(`Ep ${i + 1} TP${j + 1}: vaguedad "${foundGeneric}"`);
+        }
         score -= 3;
       }
     });
 
-    // Check for concrete cliffhanger
+    // Check cliffhanger
     if (!ep.cliffhanger || ep.cliffhanger.length < 15) {
       issues.push(`Ep ${i + 1}: cliffhanger débil`);
       score -= 3;
     }
+    
+    // Check cliffhanger for generic phrases
+    if (ep.cliffhanger) {
+      const cliffLower = ep.cliffhanger.toLowerCase();
+      if (genericPhrases.some(phrase => cliffLower.includes(phrase))) {
+        issues.push(`Ep ${i + 1}: cliffhanger genérico`);
+        score -= 2;
+      }
+    }
   });
+  
+  if (genericCount > 3) {
+    issues.push(`+${genericCount - 3} frases genéricas adicionales detectadas`);
+  }
 
   // 3. Verify season_arc.midpoint_reversal
-  if (!outline.season_arc?.midpoint_reversal || outline.season_arc.midpoint_reversal.length < 20) {
-    issues.push('Falta midpoint_reversal concreto en season_arc');
+  const midpointReversal = outline.season_arc?.midpoint_reversal || '';
+  if (!midpointReversal || midpointReversal.length < 20) {
+    issues.push('Falta midpoint_reversal concreto');
     score -= 15;
+  } else if (genericPhrases.some(phrase => midpointReversal.toLowerCase().includes(phrase))) {
+    issues.push('midpoint_reversal es genérico');
+    score -= 10;
   }
 
   // 4. Verify minimum characters
@@ -679,6 +863,9 @@ function runOutlineQC(outline: any, expectedEpisodes: number): QCResult {
   if (charCount < 3) {
     issues.push(`Solo ${charCount} personajes (mínimo 3)`);
     score -= 10;
+  } else if (charCount < 4) {
+    issues.push(`Solo ${charCount} personajes (recomendado 4)`);
+    score -= 5;
   }
 
   // 5. Verify minimum locations
@@ -688,27 +875,21 @@ function runOutlineQC(outline: any, expectedEpisodes: number): QCResult {
     score -= 5;
   }
 
-  // 6. Check for title and logline
+  // 6. Check title and logline
   if (!outline.title || outline.title.length < 3) {
     issues.push('Falta título');
     score -= 10;
   }
   if (!outline.logline || outline.logline.length < 20) {
-    issues.push('Logline muy corto o ausente');
+    issues.push('Logline muy corto');
     score -= 5;
   }
 
   // Determine quality
-  let quality: 'ok' | 'degraded' | 'rejected';
-  if (score >= 80) {
-    quality = 'ok';
-  } else if (score >= 50) {
-    quality = 'degraded';
-  } else {
-    quality = 'rejected';
-  }
+  const quality: 'ok' | 'degraded' | 'rejected' = 
+    score >= 80 ? 'ok' : score >= 50 ? 'degraded' : 'rejected';
 
-  console.log(`[WORKER] QC Result: ${quality} (score: ${score}, issues: ${issues.length})`);
+  console.log(`[WORKER] QC: ${quality} (score: ${score}, issues: ${issues.length}, genericCount: ${genericCount})`);
 
   return {
     passed: score >= 50,
@@ -719,7 +900,7 @@ function runOutlineQC(outline: any, expectedEpisodes: number): QCResult {
 }
 
 // ============================================================================
-// STAGE C: MERGE/FINALIZE with QC
+// STAGE: MERGE/FINALIZE with QC
 // ============================================================================
 async function stageMerge(
   supabase: SupabaseClient,
@@ -730,11 +911,11 @@ async function stageMerge(
   await updateOutline(supabase, outline.id, { 
     stage: 'merge', 
     substage: 'qc',
-    progress: 85,
+    progress: 90,
     heartbeat_at: new Date().toISOString()
   });
 
-  // Normalize and validate
+  // Normalize final output
   const normalized = {
     ...outlineJson,
     title: outlineJson.title || 'Sin título',
@@ -749,7 +930,8 @@ async function stageMerge(
     plot_twists: Array.isArray(outlineJson.plot_twists) ? outlineJson.plot_twists : [],
     episode_beats: Array.isArray(outlineJson.episode_beats) ? outlineJson.episode_beats : [],
     season_arc: outlineJson.season_arc || {},
-    world_rules: Array.isArray(outlineJson.world_rules) ? outlineJson.world_rules : []
+    world_rules: Array.isArray(outlineJson.world_rules) ? outlineJson.world_rules : [],
+    narrative_mode: outline.narrative_mode || 'serie_adictiva'
   };
 
   // Run QC
@@ -759,6 +941,7 @@ async function stageMerge(
   // Add QC status to outline
   normalized.qc_status = qcResult.quality;
   normalized.qc_warnings = qcResult.issues.length > 0 ? qcResult.issues : undefined;
+  normalized.qc_score = qcResult.score;
 
   // Mark as completed with quality rating
   await updateOutline(supabase, outline.id, {
@@ -775,7 +958,7 @@ async function stageMerge(
     error_detail: null
   });
 
-  console.log(`[WORKER] Completed: ${normalized.title} | ${normalized.episode_beats.length} episodes | Quality: ${qcResult.quality}`);
+  console.log(`[WORKER] Completed: ${normalized.title} | ${normalized.episode_beats.length} episodes | Quality: ${qcResult.quality} (score: ${qcResult.score})`);
   return normalized;
 }
 
@@ -890,18 +1073,18 @@ serve(async (req) => {
     let summaryText = outline.summary_text;
     let outlineJson = outline.outline_json;
 
-    // Stage A: Summarize
+    // Stage A: Summarize (if needed)
     if (currentStage === 'none' || currentStage === 'summarize') {
       const summaryResult = await stageSummarize(supabase, outline, effectiveIdeaText);
       summaryText = summaryResult.summary;
     }
 
-    // Stage B: Outline
+    // Stage B: Outline Fan-Out (PART_A, PART_B, PART_C, MERGE)
     if (currentStage === 'none' || currentStage === 'summarize' || currentStage === 'outline') {
-      outlineJson = await stageOutline(supabase, { ...outline, summary_text: summaryText }, summaryText!);
+      outlineJson = await stageOutlineFanOut(supabase, { ...outline, summary_text: summaryText }, summaryText!);
     }
 
-    // Stage C: Merge with QC
+    // Stage C: Final QC
     if (currentStage !== 'done') {
       outlineJson = await stageMerge(supabase, outline, outlineJson);
     }
@@ -915,6 +1098,7 @@ serve(async (req) => {
         outline_id: outline.id,
         status: 'completed',
         quality: outlineJson?.qc_status || 'ok',
+        score: outlineJson?.qc_score || 100,
         duration_ms: duration
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
