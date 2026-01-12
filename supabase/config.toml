@@ -41,6 +41,10 @@ verify_jwt = false
 # V3 Async: Step-based worker - validates auth internally
 verify_jwt = false
 
+[functions.outline-upgrade]
+# Showrunner upgrade: transforms outline light to deep dramatic structure using gpt-5.2
+verify_jwt = false
+
 [functions.script-breakdown]
 verify_jwt = false
 

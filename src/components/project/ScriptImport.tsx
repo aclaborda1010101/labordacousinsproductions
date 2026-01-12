@@ -74,7 +74,8 @@ import {
   Mic,
   MicOff,
   Upload,
-  ArrowRight
+  ArrowRight,
+  Crown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -250,6 +251,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [lightOutline, setLightOutline] = useState<any>(null);
   const [outlineApproved, setOutlineApproved] = useState(false);
   const [generatingOutline, setGeneratingOutline] = useState(false);
+  
+  // Showrunner upgrade state (Phase 2)
+  const [upgradingOutline, setUpgradingOutline] = useState(false);
   
   // Outline generation progress tracking (V4.0 - Polling UI)
   const [outlineStartTime, setOutlineStartTime] = useState<number | null>(null);
@@ -1581,6 +1585,73 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       toast.success('Outline eliminado correctamente');
     } else {
       toast.error('Error al eliminar el outline');
+    }
+  };
+
+  // PHASE 2: Upgrade Outline to Showrunner level using gpt-5.2
+  const handleUpgradeToShowrunner = async () => {
+    const outlineId = outlinePersistence.savedOutline?.id;
+    if (!outlineId) {
+      toast.error('No hay outline guardado para mejorar');
+      return;
+    }
+    
+    // Already showrunner level
+    if (outlinePersistence.savedOutline?.quality === 'showrunner') {
+      toast.info('Este outline ya está a nivel Showrunner');
+      return;
+    }
+    
+    setUpgradingOutline(true);
+    toast.info('Elevando outline a nivel Showrunner con gpt-5.2...', {
+      description: 'Esto puede tardar 1-2 minutos. Añadiendo arcos dramáticos, reglas de mitología y estructura profunda.',
+      duration: 10000,
+    });
+    
+    try {
+      const { data, error } = await invokeWithTimeout<any>(
+        'outline-upgrade',
+        { outline_id: outlineId },
+        { timeoutMs: 300000 } // 5 minutes timeout
+      );
+      
+      if (error) {
+        throw new Error(error.message || 'Error al mejorar outline');
+      }
+      
+      if (data?.success) {
+        // Update local state with upgraded outline
+        setLightOutline(data.outline);
+        
+        // Refresh from database to get latest state
+        await outlinePersistence.refreshOutline();
+        
+        toast.success('🎬 Outline elevado a nivel Showrunner', {
+          description: 'Ahora incluye arcos del protagonista, midpoint, reglas de mitología y estructura dramática profunda.',
+          duration: 8000,
+        });
+      } else {
+        throw new Error(data?.error || 'Error desconocido');
+      }
+    } catch (err: any) {
+      console.error('Error upgrading outline:', err);
+      
+      const errorMsg = err.message || '';
+      if (errorMsg.includes('Rate limit') || errorMsg.includes('429')) {
+        toast.error('Límite de solicitudes alcanzado', {
+          description: 'Espera unos segundos e inténtalo de nuevo.',
+        });
+      } else if (errorMsg.includes('402') || errorMsg.includes('credits')) {
+        toast.error('Créditos agotados', {
+          description: 'Añade créditos a tu workspace de Lovable AI.',
+        });
+      } else {
+        toast.error('Error al mejorar outline', {
+          description: errorMsg || 'Inténtalo de nuevo.',
+        });
+      }
+    } finally {
+      setUpgradingOutline(false);
     }
   };
 
@@ -3451,11 +3522,166 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         </div>
                       ))}
                     </div>
+                </div>
+                )}
+
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {/* SHOWRUNNER-LEVEL SECTIONS (only visible when quality=showrunner) */}
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                
+                {/* Season Arc - Showrunner Enhancement */}
+                {lightOutline.season_arc && (
+                  <div className="p-4 bg-purple-500/5 border border-purple-500/30 rounded-lg">
+                    <Label className="text-xs uppercase text-purple-600 dark:text-purple-400 mb-3 block flex items-center gap-2">
+                      <Crown className="w-3 h-3" />
+                      Arco de Temporada (Showrunner)
+                    </Label>
+                    <div className="grid gap-3 text-sm">
+                      {lightOutline.season_arc.protagonist_name && (
+                        <div className="font-medium text-purple-700 dark:text-purple-300">
+                          Protagonista: {lightOutline.season_arc.protagonist_name}
+                        </div>
+                      )}
+                      <div className="grid md:grid-cols-3 gap-3">
+                        <div className="p-2 bg-green-500/10 rounded border border-green-500/20">
+                          <span className="text-xs text-green-600 dark:text-green-400 uppercase block mb-1">Inicio</span>
+                          <p className="text-xs">{lightOutline.season_arc.protagonist_start}</p>
+                        </div>
+                        <div className="p-2 bg-amber-500/10 rounded border border-amber-500/20">
+                          <span className="text-xs text-amber-600 dark:text-amber-400 uppercase block mb-1">Quiebre</span>
+                          <p className="text-xs">{lightOutline.season_arc.protagonist_break}</p>
+                        </div>
+                        <div className="p-2 bg-red-500/10 rounded border border-red-500/20">
+                          <span className="text-xs text-red-600 dark:text-red-400 uppercase block mb-1">Final</span>
+                          <p className="text-xs">{lightOutline.season_arc.protagonist_end}</p>
+                        </div>
+                      </div>
+                      {lightOutline.season_arc.midpoint_event && (
+                        <div className="p-2 bg-blue-500/10 rounded border border-blue-500/20">
+                          <span className="text-xs text-blue-600 dark:text-blue-400 uppercase block mb-1">
+                            Midpoint {lightOutline.season_arc.midpoint_episode ? `(Ep ${lightOutline.season_arc.midpoint_episode})` : ''}
+                          </span>
+                          <p className="text-xs">{lightOutline.season_arc.midpoint_event}</p>
+                          {lightOutline.season_arc.midpoint_consequence && (
+                            <p className="text-xs text-muted-foreground mt-1 italic">{lightOutline.season_arc.midpoint_consequence}</p>
+                          )}
+                        </div>
+                      )}
+                      {lightOutline.season_arc.thematic_question && (
+                        <div className="p-2 bg-muted/30 rounded border">
+                          <span className="text-xs text-muted-foreground uppercase block mb-1">Pregunta Temática</span>
+                          <p className="text-xs font-medium">{lightOutline.season_arc.thematic_question}</p>
+                          {lightOutline.season_arc.thematic_answer && (
+                            <p className="text-xs text-muted-foreground mt-1">→ {lightOutline.season_arc.thematic_answer}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
+                {/* Mythology Rules - Showrunner Enhancement */}
+                {Array.isArray(lightOutline.mythology_rules) && lightOutline.mythology_rules.length > 0 && (
+                  <div className="p-4 bg-purple-500/5 border border-purple-500/30 rounded-lg">
+                    <Label className="text-xs uppercase text-purple-600 dark:text-purple-400 mb-3 block flex items-center gap-2">
+                      <Sparkles className="w-3 h-3" />
+                      Reglas de Mitología ({lightOutline.mythology_rules.length})
+                    </Label>
+                    <div className="space-y-3">
+                      {lightOutline.mythology_rules.map((rule: any, i: number) => (
+                        <div key={i} className="p-3 bg-muted/30 rounded border">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline" className="bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300">
+                              {rule.entity}
+                            </Badge>
+                            {rule.nature && (
+                              <span className="text-xs text-muted-foreground">{rule.nature}</span>
+                            )}
+                          </div>
+                          <div className="grid md:grid-cols-2 gap-2 text-xs">
+                            {rule.can_do?.length > 0 && (
+                              <div className="p-2 bg-green-500/10 rounded">
+                                <span className="text-green-600 dark:text-green-400 font-medium">✓ Puede:</span>
+                                <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                                  {rule.can_do.map((item: string, j: number) => (
+                                    <li key={j}>• {item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {rule.cannot_do?.length > 0 && (
+                              <div className="p-2 bg-red-500/10 rounded">
+                                <span className="text-red-600 dark:text-red-400 font-medium">✗ No puede:</span>
+                                <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                                  {rule.cannot_do.map((item: string, j: number) => (
+                                    <li key={j}>• {item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                          {rule.weakness && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                              ⚡ Debilidad: {rule.weakness}
+                            </p>
+                          )}
+                          {rule.dramatic_purpose && (
+                            <p className="text-xs text-muted-foreground mt-1 italic">
+                              Propósito dramático: {rule.dramatic_purpose}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-                {/* Episodes - Editable Titles */}
+                {/* Character Arcs - Showrunner Enhancement */}
+                {Array.isArray(lightOutline.character_arcs) && lightOutline.character_arcs.length > 0 && (
+                  <div className="p-4 bg-purple-500/5 border border-purple-500/30 rounded-lg">
+                    <Label className="text-xs uppercase text-purple-600 dark:text-purple-400 mb-3 block flex items-center gap-2">
+                      <Users className="w-3 h-3" />
+                      Arcos de Personajes ({lightOutline.character_arcs.length})
+                    </Label>
+                    <div className="space-y-3">
+                      {lightOutline.character_arcs.map((arc: any, i: number) => (
+                        <div key={i} className="p-3 bg-muted/30 rounded border">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="default">{arc.name}</Badge>
+                            {arc.role && <span className="text-xs text-muted-foreground">{arc.role}</span>}
+                            {arc.arc_type && (
+                              <Badge variant="outline" className="text-xs">
+                                {arc.arc_type}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="grid md:grid-cols-3 gap-2 text-xs">
+                            <div className="p-2 bg-green-500/10 rounded">
+                              <span className="text-green-600 dark:text-green-400 block mb-1">Inicio:</span>
+                              <p className="text-muted-foreground">{arc.arc_start}</p>
+                            </div>
+                            {arc.arc_midpoint && (
+                              <div className="p-2 bg-amber-500/10 rounded">
+                                <span className="text-amber-600 dark:text-amber-400 block mb-1">Midpoint:</span>
+                                <p className="text-muted-foreground">{arc.arc_midpoint}</p>
+                              </div>
+                            )}
+                            <div className="p-2 bg-red-500/10 rounded">
+                              <span className="text-red-600 dark:text-red-400 block mb-1">Final:</span>
+                              <p className="text-muted-foreground">{arc.arc_end}</p>
+                            </div>
+                          </div>
+                          {arc.internal_conflict && (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              💭 Conflicto interno: {arc.internal_conflict}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
                     Episodios ({lightOutline.episode_beats?.length || 0}) 
@@ -3502,21 +3728,52 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t">
+                <div className="flex flex-wrap gap-3 pt-4 border-t">
                   <Button 
                     variant="gold" 
                     size="lg"
-                    className="flex-1"
+                    className="flex-1 min-w-[200px]"
                     onClick={approveAndGenerateEpisodes}
-                    disabled={pipelineRunning}
+                    disabled={pipelineRunning || upgradingOutline}
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
                     ✅ Aprobar y Generar Episodios
                   </Button>
+                  
+                  {/* Showrunner Upgrade Button - Only show if not already showrunner */}
+                  {outlinePersistence.savedOutline?.quality !== 'showrunner' && (
+                    <Button 
+                      variant="secondary"
+                      onClick={handleUpgradeToShowrunner}
+                      disabled={generatingOutline || pipelineRunning || upgradingOutline}
+                      className="bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/30 text-purple-700 dark:text-purple-300"
+                    >
+                      {upgradingOutline ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Mejorando...
+                        </>
+                      ) : (
+                        <>
+                          <Crown className="w-4 h-4 mr-2" />
+                          Mejorar (Showrunner)
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  
+                  {/* Badge if already showrunner */}
+                  {outlinePersistence.savedOutline?.quality === 'showrunner' && (
+                    <Badge variant="outline" className="h-10 px-4 bg-purple-500/10 border-purple-500/50 text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                      <Crown className="w-3 h-3" />
+                      Nivel Showrunner
+                    </Badge>
+                  )}
+                  
                   <Button 
                     variant="outline"
                     onClick={regenerateOutline}
-                    disabled={generatingOutline}
+                    disabled={generatingOutline || upgradingOutline}
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Regenerar
@@ -3524,7 +3781,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   <Button 
                     variant="destructive"
                     onClick={handleDeleteOutline}
-                    disabled={pipelineRunning || generatingOutline}
+                    disabled={pipelineRunning || generatingOutline || upgradingOutline}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Borrar
