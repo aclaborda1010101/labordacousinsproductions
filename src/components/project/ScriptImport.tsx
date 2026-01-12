@@ -1219,25 +1219,40 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     try {
       const t0 = Date.now();
+      
+      // V3.4: Detect long text and show warning to user
+      const LONG_TEXT_THRESHOLD = 30000;
+      const ideaLength = ideaText.trim().length;
+      const isLongText = ideaLength > LONG_TEXT_THRESHOLD;
+      
+      if (isLongText) {
+        toast.info('Texto extenso detectado', {
+          description: `${Math.round(ideaLength / 1000)}K caracteres. La generación puede tardar hasta 4 minutos...`,
+          duration: 6000,
+        });
+      }
+      
       // Timeout dinámico por tier y nº de episodios (evita aborts falsos)
       const outlineEpisodes = format === 'series' ? episodesCount : 1;
+      // V3.4: Increase timeouts for long texts
+      const longTextMultiplier = isLongText ? 1.5 : 1;
       const timeoutMs = (() => {
         if (qualityTier === 'hollywood') {
           // Hollywood (GPT-5.2): más lento y con más variabilidad
           const base = 90000;
           const perEp = 25000;
-          return Math.min(300000, Math.max(120000, base + perEp * outlineEpisodes));
+          return Math.min(360000, Math.max(150000, (base + perEp * outlineEpisodes) * longTextMultiplier));
         }
         if (qualityTier === 'profesional') {
           // Profesional (GPT-5): balance
           const base = 60000;
           const perEp = 15000;
-          return Math.min(240000, Math.max(90000, base + perEp * outlineEpisodes));
+          return Math.min(300000, Math.max(120000, (base + perEp * outlineEpisodes) * longTextMultiplier));
         }
         // Rapido (GPT-5-mini): rápido
         const base = 30000;
         const perEp = 8000;
-        return Math.min(150000, Math.max(60000, base + perEp * outlineEpisodes));
+        return Math.min(180000, Math.max(90000, (base + perEp * outlineEpisodes) * longTextMultiplier));
       })();
       // Pre-extract entities from long documents using regex to capture all names/places
       const fullIdeaText = ideaText.trim();
@@ -1369,7 +1384,51 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     } catch (err: any) {
       console.error('Error generating light outline:', err);
       updatePipelineStep('outline', 'error');
-      toast.error(err.message || 'Error al generar outline');
+      
+      // V3.4: Improved error handling for timeout/network issues
+      const errorMessage = String(err?.message || '').toLowerCase();
+      const isTimeoutError = errorMessage.includes('timeout') || 
+                             errorMessage.includes('failed to fetch') ||
+                             errorMessage.includes('shutdown') ||
+                             errorMessage.includes('aborted');
+      
+      if (isTimeoutError) {
+        const ideaLength = ideaText.trim().length;
+        const isLongText = ideaLength > 30000;
+        
+        if (isLongText && qualityTier === 'hollywood') {
+          toast.error('La generación tardó demasiado', {
+            description: 'El texto es muy extenso para el modo Hollywood. Prueba con el modo Profesional.',
+            duration: 10000,
+            action: {
+              label: 'Usar Profesional',
+              onClick: () => {
+                setQualityTier('profesional');
+                toast.info('Cambiado a modo Profesional. Pulsa "Generar" de nuevo.');
+              },
+            },
+          });
+        } else if (isLongText) {
+          toast.error('La generación tardó demasiado', {
+            description: 'El texto es muy extenso. Prueba con el modo Rápido o reduce el texto.',
+            duration: 10000,
+            action: {
+              label: 'Usar Rápido',
+              onClick: () => {
+                setQualityTier('rapido');
+                toast.info('Cambiado a modo Rápido. Pulsa "Generar" de nuevo.');
+              },
+            },
+          });
+        } else {
+          toast.error('Error de conexión o timeout', {
+            description: 'Inténtalo de nuevo. Si persiste, prueba con un tier más rápido.',
+            duration: 8000,
+          });
+        }
+      } else {
+        toast.error(err.message || 'Error al generar outline');
+      }
     } finally {
       setGeneratingOutline(false);
     }
