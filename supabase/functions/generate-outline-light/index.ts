@@ -48,10 +48,18 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
 
 // Fallback model when primary model fails parsing
 const FALLBACK_MODEL_CONFIG: ModelConfig = {
-  apiModel: 'openai/gpt-5-mini', // Fast fallback
+  apiModel: 'google/gemini-2.5-flash', // Fast fallback - much faster than GPT models
   provider: 'lovable',
   maxTokens: 8000,
   temperature: 0.7
+};
+
+// Ultra-fast model for summarization and batch merge
+const FAST_MODEL_CONFIG: ModelConfig = {
+  apiModel: 'google/gemini-2.5-flash', // Fastest multimodal model
+  provider: 'lovable',
+  maxTokens: 6000,
+  temperature: 0.5
 };
 
 // =============================================================================
@@ -530,9 +538,12 @@ async function logEditorialEvent(
 }
 
 // =============================================================================
-// V4.1: TIMEOUT WRAPPER - Protect against edge function timeouts
+// V4.2: TIMEOUT CONFIGURATION - Optimized for different operations
 // =============================================================================
-const AI_CALL_TIMEOUT_MS = 50000; // 50 seconds - leave buffer before edge function dies
+const SUMMARIZE_TIMEOUT_MS = 15000; // 15 seconds for summarization
+const GENERATION_TIMEOUT_MS = 45000; // 45 seconds for main generation
+const BATCH_TIMEOUT_MS = 40000; // 40 seconds per batch
+const MAX_EPISODES_PER_BATCH = 5; // Split large series into batches of 5
 
 async function callWithTimeout<T>(
   promise: Promise<T>, 
@@ -555,34 +566,22 @@ async function callWithTimeout<T>(
 }
 
 // =============================================================================
-// V4.1: SUMMARIZE LONG TEXT - For texts > 25k chars
+// V4.2: SUMMARIZE LONG TEXT - For texts > 15k chars (reduced from 25k)
 // =============================================================================
-const MAX_IDEA_CHARS = 25000;
+const MAX_IDEA_CHARS = 15000; // Reduced for faster processing
 
 async function summarizeLongText(idea: string): Promise<{ summary: string; wasSummarized: boolean }> {
   if (idea.length <= MAX_IDEA_CHARS) {
     return { summary: idea, wasSummarized: false };
   }
   
-  console.log(`[OUTLINE] Idea too long (${idea.length} chars). Summarizing first...`);
+  console.log(`[OUTLINE] Idea too long (${idea.length} chars). Summarizing with fast model...`);
   
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
   
-  const summaryResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'openai/gpt-5-mini', // Fast model for summarization
-      max_completion_tokens: 4000,
-      temperature: 0.3,
-      messages: [
-        { 
-          role: 'system', 
-          content: `Eres un asistente que resume guiones y novelas para producción audiovisual.
+  const summaryPrompt = `Resume el siguiente texto para generación de outline audiovisual:\n\n${idea}`;
+  const systemPrompt = `Eres un asistente que resume guiones y novelas para producción audiovisual.
           
 INSTRUCCIONES:
 1. Resume el texto manteniendo TODOS los elementos narrativos clave:
@@ -593,32 +592,185 @@ INSTRUCCIONES:
    - Relaciones entre personajes
    - Tono y género
 
-2. Mantén el resumen en máximo 10,000 caracteres
+2. Mantén el resumen en máximo 8,000 caracteres
 3. NO omitas personajes ni localizaciones - son críticos para la producción
-4. Usa el mismo idioma que el texto original` 
+4. Usa el mismo idioma que el texto original`;
+
+  // Try fast model first (google/gemini-2.5-flash)
+  const tryModel = async (model: string): Promise<string | null> => {
+    try {
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
         },
-        { 
-          role: 'user', 
-          content: `Resume el siguiente texto para generación de outline audiovisual:\n\n${idea}` 
-        }
-      ]
-    })
-  });
+        body: JSON.stringify({
+          model,
+          max_completion_tokens: 4000,
+          temperature: 0.3,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: summaryPrompt }
+          ]
+        })
+      });
+      
+      if (!response.ok) {
+        console.warn(`[OUTLINE] Summary with ${model} failed: ${response.status}`);
+        return null;
+      }
+      
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || null;
+    } catch (e) {
+      console.warn(`[OUTLINE] Summary with ${model} exception:`, e);
+      return null;
+    }
+  };
+
+  // Try fast model with timeout
+  let summaryText: string | null = null;
   
-  if (!summaryResponse.ok) {
-    console.error('[OUTLINE] Summary failed, using truncated original');
+  try {
+    summaryText = await callWithTimeout(
+      tryModel('google/gemini-2.5-flash'),
+      SUMMARIZE_TIMEOUT_MS,
+      'summary_gemini'
+    );
+  } catch (e) {
+    console.warn('[OUTLINE] Fast model timed out, trying fallback...');
+  }
+  
+  // Fallback to gpt-5-mini if gemini failed
+  if (!summaryText) {
+    try {
+      summaryText = await callWithTimeout(
+        tryModel('openai/gpt-5-mini'),
+        SUMMARIZE_TIMEOUT_MS,
+        'summary_gpt5mini'
+      );
+    } catch (e) {
+      console.warn('[OUTLINE] Fallback model also timed out');
+    }
+  }
+  
+  // Final fallback: truncate
+  if (!summaryText) {
+    console.error('[OUTLINE] All summary attempts failed, using truncated original');
     return { 
       summary: idea.slice(0, MAX_IDEA_CHARS) + '\n\n[TEXTO TRUNCADO - El documento original es más largo]', 
       wasSummarized: true 
     };
   }
   
-  const summaryData = await summaryResponse.json();
-  const summaryText = summaryData.choices?.[0]?.message?.content || idea.slice(0, MAX_IDEA_CHARS);
-  
   console.log(`[OUTLINE] Summarized ${idea.length} chars -> ${summaryText.length} chars`);
-  
   return { summary: summaryText, wasSummarized: true };
+}
+
+// =============================================================================
+// V4.2: BATCH EPISODE GENERATION - Split large series into manageable chunks
+// =============================================================================
+async function generateEpisodeBatch(
+  systemPrompt: string,
+  baseUserPrompt: string,
+  config: ModelConfig,
+  startEpisode: number,
+  endEpisode: number,
+  totalEpisodes: number,
+  previousContext?: string
+): Promise<{ beats: any[]; parseWarnings: string[] }> {
+  const batchSize = endEpisode - startEpisode + 1;
+  const parseWarnings: string[] = [];
+  
+  const batchPrompt = `${baseUserPrompt}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+GENERACIÓN POR LOTES - LOTE ${startEpisode}-${endEpisode} de ${totalEpisodes}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Genera SOLO los episodios ${startEpisode} a ${endEpisode} (${batchSize} episodios).
+${previousContext ? `\nCONTEXTO DE EPISODIOS ANTERIORES:\n${previousContext}` : ''}
+
+episode_beats debe contener EXACTAMENTE ${batchSize} elementos numerados ${startEpisode}..${endEpisode}.`;
+
+  // Simplified tool schema for batch - only need episode_beats
+  const BATCH_TOOL_SCHEMA = {
+    type: 'object',
+    properties: {
+      episode_beats: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            episode: { type: 'number' },
+            title: { type: 'string' },
+            summary: { type: 'string' },
+            irreversible_event: { type: 'string' },
+            cliffhanger: { type: 'string' },
+            subplot_progress: { type: 'array', items: { type: 'string' } }
+          },
+          required: ['episode', 'title', 'summary', 'cliffhanger']
+        }
+      }
+    },
+    required: ['episode_beats']
+  };
+
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: config.apiModel,
+      max_completion_tokens: 4000,
+      temperature: config.temperature,
+      messages: [
+        { role: 'system', content: systemPrompt + '\n\nGenera SOLO episode_beats en formato JSON usando la herramienta.' },
+        { role: 'user', content: batchPrompt }
+      ],
+      tools: [
+        {
+          type: 'function',
+          function: {
+            name: 'deliver_episode_beats',
+            description: 'Entrega los beats de episodios para este lote.',
+            parameters: BATCH_TOOL_SCHEMA
+          }
+        }
+      ],
+      tool_choice: { type: 'function', function: { name: 'deliver_episode_beats' } }
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('[BATCH] API error:', response.status, errorText);
+    parseWarnings.push(`BATCH_${startEpisode}_${endEpisode}_FAILED`);
+    return { beats: [], parseWarnings };
+  }
+
+  const data = await response.json();
+  const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+  const toolArgs = toolCall?.function?.arguments;
+
+  if (typeof toolArgs === 'string') {
+    try {
+      const parsed = parseJsonSafe(toolArgs, `batch_${startEpisode}_${endEpisode}`);
+      const beats = Array.isArray(parsed.episode_beats) ? parsed.episode_beats : [];
+      console.log(`[BATCH] Generated ${beats.length} beats for episodes ${startEpisode}-${endEpisode}`);
+      return { beats, parseWarnings };
+    } catch (e) {
+      console.error('[BATCH] Parse failed:', e);
+      parseWarnings.push(`BATCH_PARSE_${startEpisode}_${endEpisode}_FAILED`);
+    }
+  }
+
+  return { beats: [], parseWarnings };
 }
 
 // Lovable AI Gateway call with hardened parsing
@@ -1134,11 +1286,8 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
     if (idea.length > MAX_IDEA_CHARS) {
       try {
         console.log(`[OUTLINE] Long text detected (${idea.length} chars). Summarizing...`);
-        const summaryResult = await callWithTimeout(
-          summarizeLongText(idea),
-          AI_CALL_TIMEOUT_MS,
-          'summarize'
-        );
+        // Summarization now handles its own timeouts internally
+        const summaryResult = await summarizeLongText(idea);
         effectiveIdea = summaryResult.summary;
         ideaWasSummarized = summaryResult.wasSummarized;
         
@@ -1165,13 +1314,13 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       `[OUTLINE] Generating with ${modelConfig.apiModel} (effective model: ${effectiveModelKey}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount} | Idea length: ${effectiveIdea.length} chars (original: ${ideaLength}) | MaxTokens: ${effectiveMaxTokens}`
     );
 
-    // V4.1: Call with timeout protection
+    // V4.2: Call with timeout protection (45s for generation)
     let result: { outline: any; parseWarnings: string[]; durationMs: number };
     
     try {
       result = await callWithTimeout(
         callLovableAI(systemPrompt, actualUserPrompt, modelConfig, cappedEpisodesCount, effectiveMaxTokens),
-        AI_CALL_TIMEOUT_MS,
+        GENERATION_TIMEOUT_MS,
         'generate_outline'
       );
     } catch (timeoutError) {
@@ -1189,13 +1338,13 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       throw new Error(`AI_TIMEOUT: ${errorMsg}`);
     }
 
-    // If primary model failed to parse, retry with fallback model (google/gemini-2.5-flash)
+    // If primary model failed to parse, retry with fallback model (google/gemini-2.5-flash - much faster)
     if (result.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
-      console.warn(`[OUTLINE] Primary model ${modelConfig.apiModel} failed to produce parseable JSON. Retrying with fallback model ${FALLBACK_MODEL_CONFIG.apiModel}...`);
+      console.warn(`[OUTLINE] Primary model ${modelConfig.apiModel} failed to produce parseable JSON. Retrying with faster fallback model ${FALLBACK_MODEL_CONFIG.apiModel}...`);
       try {
         const fallbackResult = await callWithTimeout(
           callLovableAI(systemPrompt, actualUserPrompt, FALLBACK_MODEL_CONFIG, cappedEpisodesCount, effectiveMaxTokens),
-          AI_CALL_TIMEOUT_MS,
+          GENERATION_TIMEOUT_MS,
           'fallback_outline'
         );
         if (!fallbackResult.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
