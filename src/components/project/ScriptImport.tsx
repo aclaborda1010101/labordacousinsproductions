@@ -1385,7 +1385,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       console.error('Error generating light outline:', err);
       updatePipelineStep('outline', 'error');
       
-      // V3.4: Improved error handling for timeout/network issues
+      // V4.0: Improved error handling - check DB for recovered outline on timeout
       const errorMessage = String(err?.message || '').toLowerCase();
       const isTimeoutError = errorMessage.includes('timeout') || 
                              errorMessage.includes('failed to fetch') ||
@@ -1393,6 +1393,44 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                              errorMessage.includes('aborted');
       
       if (isTimeoutError) {
+        // Check if outline was saved to DB before timeout
+        toast.info('Verificando si el outline se generó...', { duration: 3000 });
+        
+        await outlinePersistence.refreshOutline();
+        
+        // Wait a moment for refresh
+        await new Promise(r => setTimeout(r, 1000));
+        
+        const recovered = outlinePersistence.savedOutline;
+        if (recovered && recovered.status === 'draft' && recovered.outline_json && Object.keys(recovered.outline_json).length > 0) {
+          // Outline was saved! Recover it
+          console.log('[ScriptImport] Recovered outline from DB after timeout:', recovered.id);
+          setLightOutline(recovered.outline_json);
+          updatePipelineStep('outline', 'success');
+          updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+          toast.success('¡Outline recuperado! La conexión se interrumpió pero el outline se generó correctamente.');
+          return;
+        } else if (recovered && recovered.status === 'generating') {
+          // Still generating - start polling
+          console.log('[ScriptImport] Outline still generating, starting polling:', recovered.id);
+          outlinePersistence.startPolling(recovered.id, {
+            onComplete: (completedOutline) => {
+              setLightOutline(completedOutline.outline_json);
+              updatePipelineStep('outline', 'success');
+              updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+              toast.success('¡Outline generado! Revísalo y apruébalo.');
+              setGeneratingOutline(false);
+            },
+            onError: (error) => {
+              toast.error(`Error en generación: ${error}`);
+              setGeneratingOutline(false);
+            },
+          });
+          toast.info('La generación continúa en segundo plano. Espera unos segundos...');
+          return; // Keep generatingOutline true while polling
+        }
+        
+        // No recovered outline - show helpful error
         const ideaLength = ideaText.trim().length;
         const isLongText = ideaLength > 30000;
         
