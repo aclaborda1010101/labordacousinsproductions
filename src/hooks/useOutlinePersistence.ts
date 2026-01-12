@@ -293,11 +293,40 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           .update(payload)
           .eq('id', savedOutline.id)
           .select()
-          .single();
+          .maybeSingle(); // V4.3: Use maybeSingle to avoid PGRST116 errors
 
-        if (updateError) {
+        // V4.3: Handle stale ID (record was deleted/replaced) - fallback to insert
+        if (updateError || !data) {
+          const errorCode = (updateError as any)?.code;
+          const isStaleId = !data || errorCode === 'PGRST116' || errorCode === '22P02';
+          
+          if (isStaleId) {
+            console.warn('[useOutlinePersistence] Stale outline ID, inserting new record instead');
+            
+            // Insert new outline since the old one doesn't exist
+            const { data: newData, error: insertError } = await supabase
+              .from('project_outlines')
+              .insert(payload)
+              .select()
+              .single();
+
+            if (insertError) {
+              console.error('[useOutlinePersistence] Fallback insert error:', insertError);
+              return { success: false, error: insertError.message };
+            }
+
+            setSavedOutline({
+              ...newData,
+              outline_json: newData.outline_json as Record<string, unknown>,
+              qc_issues: Array.isArray(newData.qc_issues) ? newData.qc_issues as string[] : [],
+              status: newData.status as PersistedOutline['status'],
+            });
+            console.log('[useOutlinePersistence] Saved new outline (stale ID recovery):', newData.id);
+            return { success: true, id: newData.id };
+          }
+          
           console.error('[useOutlinePersistence] Update error:', updateError);
-          return { success: false, error: updateError.message };
+          return { success: false, error: updateError?.message || 'Update failed' };
         }
 
         setSavedOutline({
