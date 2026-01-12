@@ -540,9 +540,9 @@ async function logEditorialEvent(
 // =============================================================================
 // V4.2: TIMEOUT CONFIGURATION - Optimized for different operations
 // =============================================================================
-const SUMMARIZE_TIMEOUT_MS = 15000; // 15 seconds for summarization
-const GENERATION_TIMEOUT_MS = 45000; // 45 seconds for main generation
-const BATCH_TIMEOUT_MS = 40000; // 40 seconds per batch
+const SUMMARIZE_TIMEOUT_MS = 30000; // 30 seconds for summarization (more margin for long texts)
+const GENERATION_TIMEOUT_MS = 120000; // 120 seconds (2 minutes for complex outlines)
+const BATCH_TIMEOUT_MS = 90000; // 90 seconds per batch
 const MAX_EPISODES_PER_BATCH = 5; // Split large series into batches of 5
 
 async function callWithTimeout<T>(
