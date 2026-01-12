@@ -1564,6 +1564,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     generateLightOutline();
   };
 
+  // PIPELINE V2: Delete Outline
+  const handleDeleteOutline = async () => {
+    if (!confirm('¿Seguro que quieres borrar el outline? Esta acción no se puede deshacer.')) {
+      return;
+    }
+    
+    // Clear local state
+    setLightOutline(null);
+    setOutlineApproved(false);
+    
+    // Delete from database via persistence hook
+    const success = await outlinePersistence.deleteOutline();
+    if (success) {
+      toast.success('Outline eliminado correctamente');
+    } else {
+      toast.error('Error al eliminar el outline');
+    }
+  };
+
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
   const approveAndGenerateEpisodes = async () => {
     if (!lightOutline) return;
@@ -3500,6 +3519,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Regenerar
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={handleDeleteOutline}
+                    disabled={pipelineRunning || generatingOutline}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Borrar
                   </Button>
                 </div>
               </CardContent>
