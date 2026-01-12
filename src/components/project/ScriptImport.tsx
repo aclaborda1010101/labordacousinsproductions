@@ -111,6 +111,7 @@ import {
 import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
 import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
 import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
+import { getStageInfo, deriveProgress } from '@/lib/outlineStages';
 import {
   hydrateCharacters,
   hydrateLocations,
@@ -3601,66 +3602,113 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           )}
 
-          {/* V4.0: Outline Generation Progress Card (visible during polling) */}
-          {generatingOutline && !pipelineRunning && (
-            <Card className="border-2 border-amber-500/50 bg-amber-500/5">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4">
-                  {/* Animated icon */}
-                  <div className="relative mx-auto w-20 h-20 mb-4">
-                    <Sparkles className="h-10 w-10 mx-auto text-amber-500 absolute inset-0 m-auto animate-pulse" />
-                    <div className="absolute inset-0 border-4 border-t-amber-500 border-r-transparent border-b-amber-500/30 border-l-transparent rounded-full animate-spin" />
+          {/* V7.0: Outline Generation Progress Card with stage-aware progress */}
+          {generatingOutline && !pipelineRunning && (() => {
+            const stageInfo = getStageInfo(outlinePersistence.savedOutline?.stage);
+            const derivedProgress = deriveProgress(
+              outlinePersistence.savedOutline?.stage,
+              outlinePersistence.savedOutline?.progress
+            );
+            
+            return (
+              <Card className="border-2 border-amber-500/50 bg-amber-500/5">
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    {/* Header with animated icon and stage info */}
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-14 h-14 flex-shrink-0">
+                        <Sparkles className="h-7 w-7 mx-auto text-amber-500 absolute inset-0 m-auto animate-pulse" />
+                        <div className="absolute inset-0 border-4 border-t-amber-500 border-r-transparent border-b-amber-500/30 border-l-transparent rounded-full animate-spin" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-amber-600 dark:text-amber-400">
+                          {stageInfo.label}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {stageInfo.description}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Real progress bar */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Progreso</span>
+                        <span>{Math.round(derivedProgress)}%</span>
+                      </div>
+                      <Progress value={derivedProgress} className="h-2" />
+                    </div>
+                    
+                    {/* Elapsed time with active indicator */}
+                    <div className="flex items-center justify-center gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                        <span className="text-muted-foreground">Activo</span>
+                      </div>
+                      <span className="font-mono text-lg text-amber-600 dark:text-amber-400">
+                        {Math.floor(outlineElapsedSeconds / 60)}:{String(outlineElapsedSeconds % 60).padStart(2, '0')}
+                      </span>
+                    </div>
+                    
+                    {/* V7: Stuck warning */}
+                    {outlinePersistence.isStuck && (
+                      <div className="p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+                        <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
+                          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                          <span className="text-sm font-medium">Posible bloqueo detectado</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          El proceso no ha progresado en un rato. Puedes reintentar la etapa actual.
+                        </p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="mt-2"
+                          onClick={async () => {
+                            const success = await outlinePersistence.retryCurrentStage?.();
+                            if (success) {
+                              toast.info('Reintentando etapa actual...');
+                            } else {
+                              toast.error('No se pudo reintentar');
+                            }
+                          }}
+                        >
+                          <RefreshCw className="w-3 h-3 mr-2" />
+                          Reintentar etapa
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {/* Background notice */}
+                    <div className="p-2 bg-amber-500/10 rounded border border-amber-500/20">
+                      <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center justify-center gap-2">
+                        <Rocket className="w-3 h-3" />
+                        Puedes navegar. La generación continúa en segundo plano.
+                      </p>
+                    </div>
+                    
+                    {/* Cancel button */}
+                    <div className="flex justify-center">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          outlinePersistence.stopPolling?.();
+                          setGeneratingOutline(false);
+                          setOutlineStartTime(null);
+                          updatePipelineStep('outline', 'pending');
+                          toast.info('Generación cancelada');
+                        }}
+                      >
+                        <Square className="h-4 w-4 mr-2" />
+                        Cancelar
+                      </Button>
+                    </div>
                   </div>
-                  
-                  {/* Title and message */}
-                  <h3 className="text-lg font-semibold text-amber-600 dark:text-amber-400">
-                    Generando Outline
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    El servidor está procesando tu idea con IA Hollywood
-                  </p>
-                  
-                  {/* Elapsed time */}
-                  <div className="text-3xl font-mono text-amber-600 dark:text-amber-400">
-                    {Math.floor(outlineElapsedSeconds / 60)}:{String(outlineElapsedSeconds % 60).padStart(2, '0')}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Tiempo transcurrido • Textos largos pueden tardar hasta 10 minutos
-                  </p>
-                  
-                  {/* Active polling indicator */}
-                  <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    Consultando estado del servidor...
-                  </div>
-                  
-                  {/* Background notice */}
-                  <div className="p-2 bg-amber-500/10 rounded border border-amber-500/20">
-                    <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center justify-center gap-2">
-                      <Rocket className="w-3 h-3" />
-                      Puedes navegar. La generación continúa en segundo plano.
-                    </p>
-                  </div>
-                  
-                  {/* Cancel button */}
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      outlinePersistence.stopPolling?.();
-                      setGeneratingOutline(false);
-                      setOutlineStartTime(null);
-                      updatePipelineStep('outline', 'pending');
-                      toast.info('Generación cancelada');
-                    }}
-                  >
-                    <Square className="h-4 w-4 mr-2" />
-                    Cancelar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                </CardContent>
+              </Card>
+            );
+          })()}
 
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Idea & Format */}

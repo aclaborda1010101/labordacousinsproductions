@@ -2,11 +2,14 @@
  * useOutlinePersistence - Hook for persisting and recovering script outlines
  * Ensures outline data survives page reloads and interruptions
  * V4.0: Supports polling for async generation (status: 'generating')
+ * V7.0: Added stuck detection + stage-aware progress
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
+import { getStageTimeout } from '@/lib/outlineStages';
+import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 
 export interface PersistedOutline {
   id: string;
@@ -22,7 +25,7 @@ export interface PersistedOutline {
   episode_count?: number;
   target_duration?: number;
   error_message?: string;
-  stage?: string | null;       // V5: 'summarize' | 'outline' | 'complete'
+  stage?: string | null;       // V5: 'summarize' | 'outline' | 'merge' | 'done'
   progress?: number | null;    // V5: 0-100 progress indicator
   created_at: string;
   updated_at: string;
@@ -45,6 +48,11 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   
+  // V7: Stuck detection state
+  const [stuckSince, setStuckSince] = useState<Date | null>(null);
+  const [isStuck, setIsStuck] = useState(false);
+  const lastUpdatedRef = useRef<string | null>(null);
+  
   // Refs for polling (V5: use Timeout instead of Interval for backoff)
   const pollIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pollStartTimeRef = useRef<number | null>(null);
@@ -57,6 +65,9 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     }
     pollStartTimeRef.current = null;
     setIsPolling(false);
+    setStuckSince(null);
+    setIsStuck(false);
+    lastUpdatedRef.current = null;
   }, []);
 
   // Load existing outline on mount
@@ -173,6 +184,28 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         };
 
         setSavedOutline(outline);
+
+        // V7: Stuck detection - check if updated_at has changed
+        const currentUpdatedAt = data.updated_at;
+        if (currentUpdatedAt === lastUpdatedRef.current) {
+          // No change since last poll - potential stuck
+          if (!stuckSince) {
+            setStuckSince(new Date());
+          } else {
+            // Check if we've been stuck longer than stage timeout
+            const stuckDuration = (Date.now() - stuckSince.getTime()) / 1000;
+            const stageTimeout = getStageTimeout(data.stage);
+            if (stageTimeout > 0 && stuckDuration > stageTimeout) {
+              console.warn('[useOutlinePersistence] Possible stuck detected:', data.stage, 'duration:', stuckDuration);
+              setIsStuck(true);
+            }
+          }
+        } else {
+          // Progress detected - reset stuck state
+          lastUpdatedRef.current = currentUpdatedAt;
+          setStuckSince(null);
+          setIsStuck(false);
+        }
 
         // V6: Robust completion check with defensive fallback
         // 1. status is 'completed' or 'approved'
@@ -440,11 +473,54 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     }
   }, [savedOutline?.id, stopPolling]);
 
+  // V7: Retry current stage if stuck
+  const retryCurrentStage = useCallback(async (): Promise<boolean> => {
+    if (!savedOutline?.id) {
+      console.warn('[useOutlinePersistence] No outline to retry');
+      return false;
+    }
+
+    try {
+      console.log('[useOutlinePersistence] Retrying current stage for outline:', savedOutline.id);
+      
+      // Reset stuck state and clear error, bump updated_at
+      const { error: updateError } = await supabase
+        .from('project_outlines')
+        .update({
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', savedOutline.id);
+
+      if (updateError) {
+        console.error('[useOutlinePersistence] Retry update error:', updateError);
+        return false;
+      }
+
+      // Re-invoke the worker
+      await invokeAuthedFunction('outline-worker', {
+        outline_id: savedOutline.id,
+      });
+
+      // Reset stuck state
+      setStuckSince(null);
+      setIsStuck(false);
+      lastUpdatedRef.current = null;
+
+      console.log('[useOutlinePersistence] Retry initiated for outline:', savedOutline.id);
+      return true;
+    } catch (e) {
+      console.error('[useOutlinePersistence] Retry error:', e);
+      return false;
+    }
+  }, [savedOutline?.id]);
+
   return {
     savedOutline,
     isLoading,
     error,
     isPolling,
+    isStuck,
+    stuckSince,
     saveOutline,
     approveOutline,
     deleteOutline,
@@ -452,6 +528,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     createGeneratingOutline,
     startPolling,
     stopPolling,
+    retryCurrentStage,
     hasRecoverableOutline: !!savedOutline && savedOutline.status === 'draft',
     isGenerating: savedOutline?.status === 'generating',
   };
