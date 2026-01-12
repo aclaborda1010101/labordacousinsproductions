@@ -24,22 +24,22 @@ interface ModelConfig {
   temperature: number;
 }
 
-// GPT-5 Family for consistent quality across all tiers
+// Model tiers: Gemini Flash (rápido), GPT-5 Mini (profesional), GPT-5 (hollywood)
 const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
-    apiModel: 'openai/gpt-5-mini', // Fast, good quality for quick outlines
+    apiModel: 'google/gemini-2.5-flash', // Fastest for quick outlines
     provider: 'lovable',
     maxTokens: 6000,
     temperature: 0.8
   },
   profesional: {
-    apiModel: 'openai/gpt-5', // High quality professional tier
+    apiModel: 'openai/gpt-5-mini', // Good balance quality/speed
     provider: 'lovable',
     maxTokens: 8000,
     temperature: 0.7
   },
   hollywood: {
-    apiModel: 'openai/gpt-5.2', // Latest model, best quality
+    apiModel: 'openai/gpt-5', // Best quality, stable
     provider: 'lovable',
     maxTokens: 10000,
     temperature: 0.8
