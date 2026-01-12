@@ -27,8 +27,8 @@ interface LocationGenerationRequest {
   stylePackId?: string;
 }
 
-// Use Lovable AI Gateway with Nano Banana 3 Pro
-const IMAGE_MODEL = 'google/gemini-3-pro-image-preview';
+// Use FLUX for locations - better spatial composition and cinematic environments
+const IMAGE_MODEL = 'flux-1.1-pro-ultra';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
