@@ -1220,79 +1220,36 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     try {
       const t0 = Date.now();
       
-      // V3.4: Detect long text and show warning to user
-      const LONG_TEXT_THRESHOLD = 30000;
+      // Timeout dinámico por tier y nº de episodios
+      // Para textos largos con Hollywood: hasta 10 minutos
+      const outlineEpisodes = format === 'series' ? episodesCount : 1;
       const ideaLength = ideaText.trim().length;
-      const isLongText = ideaLength > LONG_TEXT_THRESHOLD;
       
-      if (isLongText) {
+      // Show info for long texts
+      if (ideaLength > 30000) {
         toast.info('Texto extenso detectado', {
-          description: `${Math.round(ideaLength / 1000)}K caracteres. La generación puede tardar hasta 4 minutos...`,
-          duration: 6000,
+          description: `${Math.round(ideaLength / 1000)}K caracteres. Esto puede tardar varios minutos...`,
+          duration: 8000,
         });
       }
       
-      // Timeout dinámico por tier y nº de episodios (evita aborts falsos)
-      const outlineEpisodes = format === 'series' ? episodesCount : 1;
-      // V3.4: Increase timeouts for long texts
-      const longTextMultiplier = isLongText ? 1.5 : 1;
       const timeoutMs = (() => {
         if (qualityTier === 'hollywood') {
-          // Hollywood (GPT-5.2): más lento y con más variabilidad
-          const base = 90000;
-          const perEp = 25000;
-          return Math.min(360000, Math.max(150000, (base + perEp * outlineEpisodes) * longTextMultiplier));
+          // Hollywood (GPT-5.2): máximo 10 minutos para textos largos
+          return 600000;
         }
         if (qualityTier === 'profesional') {
-          // Profesional (GPT-5): balance
-          const base = 60000;
-          const perEp = 15000;
-          return Math.min(300000, Math.max(120000, (base + perEp * outlineEpisodes) * longTextMultiplier));
+          // Profesional (GPT-5): hasta 5 minutos
+          return 300000;
         }
-        // Rapido (GPT-5-mini): rápido
-        const base = 30000;
-        const perEp = 8000;
-        return Math.min(180000, Math.max(90000, (base + perEp * outlineEpisodes) * longTextMultiplier));
+        // Rapido (GPT-5-mini): hasta 3 minutos
+        return 180000;
       })();
-      // Pre-extract entities from long documents using regex to capture all names/places
-      const fullIdeaText = ideaText.trim();
-      const extractEntitiesPreview = (text: string): string => {
-        if (text.length <= 15000) return ''; // Not needed for short texts
-        
-        // Extract proper names (2+ capitalized words)
-        const namePattern = /\b([A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]+(?:[\s\-][A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]+)+)\b/g;
-        const names = [...text.matchAll(namePattern)].map(m => m[1]);
-        
-        // Extract single capitalized names that might be character names
-        const singleNamePattern = /\b([A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]{2,})\b/g;
-        const singleNames = [...text.matchAll(singleNamePattern)]
-          .map(m => m[1])
-          .filter(n => !['El', 'La', 'Los', 'Las', 'Un', 'Una', 'Que', 'Con', 'Por', 'Para', 'Como', 'Pero', 'Cuando', 'Donde', 'Mientras', 'Aunque', 'Desde', 'Hasta', 'Sin', 'Sobre', 'Bajo', 'Entre', 'Durante', 'Según', 'Hacia', 'Mediante', 'Capitulo', 'Capítulo', 'Episodio', 'Acto', 'Escena'].includes(n));
-        
-        // Extract locations (words after "en ", "de ", "hacia ", etc.)
-        const locationPattern = /(?:en|de|hacia|bajo|sobre|desde|hasta)\s+(?:el|la|los|las)?\s*([A-ZÁÉÍÓÚÑÇŒÆØ][a-záéíóúñçœæø]+(?:\s+[A-Za-záéíóúñ]+)*)/gi;
-        const locations = [...text.matchAll(locationPattern)].map(m => m[1]);
-        
-        // Extract titles/roles (Rey, Guardián, Custodia, etc.)
-        const titlePattern = /(?:el|la)\s+(Rey|Reina|Guardián|Guardiána|Custodia|Custodio|Maestro|Maestra|Príncipe|Princesa|Emperador|Emperatriz|Sacerdote|Sacerdotisa|Profeta|Oráculo)(?:\s+(?:del?|de\s+la)\s+([A-Za-záéíóúñ\s]+))?/gi;
-        const titles = [...text.matchAll(titlePattern)].map(m => m[0]);
-        
-        const uniqueNames = [...new Set([...names, ...singleNames])].slice(0, 30);
-        const uniqueLocations = [...new Set(locations)].slice(0, 20);
-        const uniqueTitles = [...new Set(titles)].slice(0, 10);
-        
-        if (uniqueNames.length === 0 && uniqueLocations.length === 0) return '';
-        
-        return `\n\n[ENTIDADES DETECTADAS EN DOCUMENTO COMPLETO - INCLUIR TODAS]\nPersonajes: ${uniqueNames.join(', ')}\nLugares: ${uniqueLocations.join(', ')}${uniqueTitles.length > 0 ? `\nTítulos/Roles: ${uniqueTitles.join(', ')}` : ''}`;
-      };
-      
-      const entitiesPreview = extractEntitiesPreview(fullIdeaText);
-      const ideaToSend = fullIdeaText.slice(0, 15000) + entitiesPreview;
-      
+
       const { data, error } = await invokeWithTimeout<{ outline: typeof lightOutline }>(
         'generate-outline-light',
         {
-          idea: ideaToSend,
+          idea: ideaText.trim(), // NO truncar - enviar texto completo
           episodesCount: format === 'series' ? episodesCount : 1,
           format,
           genre,
@@ -1300,8 +1257,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           language,
           narrativeMode,
           densityTargets: targets,
-          qualityTier, // V3.0: Pass quality tier instead of model
-          disableDensity // V3.0: Skip density constraints if true
+          qualityTier,
+          disableDensity,
+          usePolling: false // Modo síncrono (sin polling)
         },
         timeoutMs
       );
@@ -1385,85 +1343,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       console.error('Error generating light outline:', err);
       updatePipelineStep('outline', 'error');
       
-      // V4.0: Improved error handling - check DB for recovered outline on timeout
+      // Simple error handling without polling
       const errorMessage = String(err?.message || '').toLowerCase();
       const isTimeoutError = errorMessage.includes('timeout') || 
                              errorMessage.includes('failed to fetch') ||
-                             errorMessage.includes('shutdown') ||
                              errorMessage.includes('aborted');
       
       if (isTimeoutError) {
-        // Check if outline was saved to DB before timeout
-        toast.info('Verificando si el outline se generó...', { duration: 3000 });
-        
-        await outlinePersistence.refreshOutline();
-        
-        // Wait a moment for refresh
-        await new Promise(r => setTimeout(r, 1000));
-        
-        const recovered = outlinePersistence.savedOutline;
-        if (recovered && recovered.status === 'draft' && recovered.outline_json && Object.keys(recovered.outline_json).length > 0) {
-          // Outline was saved! Recover it
-          console.log('[ScriptImport] Recovered outline from DB after timeout:', recovered.id);
-          setLightOutline(recovered.outline_json);
-          updatePipelineStep('outline', 'success');
-          updatePipelineStep('approval', 'running', 'Esperando aprobación...');
-          toast.success('¡Outline recuperado! La conexión se interrumpió pero el outline se generó correctamente.');
-          return;
-        } else if (recovered && recovered.status === 'generating') {
-          // Still generating - start polling
-          console.log('[ScriptImport] Outline still generating, starting polling:', recovered.id);
-          outlinePersistence.startPolling(recovered.id, {
-            onComplete: (completedOutline) => {
-              setLightOutline(completedOutline.outline_json);
-              updatePipelineStep('outline', 'success');
-              updatePipelineStep('approval', 'running', 'Esperando aprobación...');
-              toast.success('¡Outline generado! Revísalo y apruébalo.');
-              setGeneratingOutline(false);
-            },
-            onError: (error) => {
-              toast.error(`Error en generación: ${error}`);
-              setGeneratingOutline(false);
-            },
-          });
-          toast.info('La generación continúa en segundo plano. Espera unos segundos...');
-          return; // Keep generatingOutline true while polling
-        }
-        
-        // No recovered outline - show helpful error
-        const ideaLength = ideaText.trim().length;
-        const isLongText = ideaLength > 30000;
-        
-        if (isLongText && qualityTier === 'hollywood') {
-          toast.error('La generación tardó demasiado', {
-            description: 'El texto es muy extenso para el modo Hollywood. Prueba con el modo Profesional.',
-            duration: 10000,
-            action: {
-              label: 'Usar Profesional',
-              onClick: () => {
-                setQualityTier('profesional');
-                toast.info('Cambiado a modo Profesional. Pulsa "Generar" de nuevo.');
-              },
-            },
-          });
-        } else if (isLongText) {
-          toast.error('La generación tardó demasiado', {
-            description: 'El texto es muy extenso. Prueba con el modo Rápido o reduce el texto.',
-            duration: 10000,
-            action: {
-              label: 'Usar Rápido',
-              onClick: () => {
-                setQualityTier('rapido');
-                toast.info('Cambiado a modo Rápido. Pulsa "Generar" de nuevo.');
-              },
-            },
-          });
-        } else {
-          toast.error('Error de conexión o timeout', {
-            description: 'Inténtalo de nuevo. Si persiste, prueba con un tier más rápido.',
-            duration: 8000,
-          });
-        }
+        toast.error('La generación tardó demasiado', {
+          description: 'El texto es muy extenso. Inténtalo de nuevo o prueba con menos contenido.',
+          duration: 10000,
+        });
       } else {
         toast.error(err.message || 'Error al generar outline');
       }

@@ -741,183 +741,19 @@ serve(async (req) => {
       provider: generationModel === 'hollywood' ? 'anthropic' : 'openai',
     });
 
-    // Validate and get model config
-    // V3.4: Auto-switch to faster model for very long texts to avoid timeout
-    const MAX_IDEA_LENGTH = 50000;
-    const LONG_TEXT_THRESHOLD = 30000;
-    
-    // Truncate extremely long input to prevent memory issues
-    let processedIdea = idea;
-    if (idea.length > MAX_IDEA_LENGTH) {
-      processedIdea = idea.slice(0, MAX_IDEA_LENGTH);
-      console.log(`[OUTLINE] Truncated idea from ${idea.length} to ${MAX_IDEA_LENGTH} chars`);
-    }
-    
-    // Auto-downgrade model for long texts to avoid timeout
-    let effectiveModelKey = (generationModel as GenerationModelType) in MODEL_CONFIGS 
+    // Validate and get model config - NO truncation, NO auto-downgrade (user preference)
+    const effectiveModelKey = (generationModel as GenerationModelType) in MODEL_CONFIGS 
       ? generationModel as GenerationModelType 
       : 'rapido';
     
-    const ideaLength = processedIdea.length;
-    if (ideaLength > LONG_TEXT_THRESHOLD && effectiveModelKey === 'hollywood') {
-      effectiveModelKey = 'profesional'; // GPT-5 is faster than GPT-5.2 for long texts
-      console.log(`[OUTLINE] Long text detected (${ideaLength} chars), downgrading from hollywood to profesional`);
-    }
-    
     const modelConfig = MODEL_CONFIGS[effectiveModelKey];
-    
-    // Reduce max tokens for very long input to speed up response
-    const effectiveMaxTokens = ideaLength > LONG_TEXT_THRESHOLD 
-      ? Math.min(modelConfig.maxTokens, 6000) 
-      : modelConfig.maxTokens;
+    const effectiveMaxTokens = modelConfig.maxTokens;
+    const ideaLength = idea.length;
 
     // Lovable AI Gateway - no external API key needed
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY no configurada');
-    }
-
-    // =======================================================================
-    // V4.0 POLLING ARCHITECTURE: Create outline record immediately
-    // =======================================================================
-    const desiredEpisodesCount = format === 'series'
-      ? Math.max(1, Number(episodesCount || 6))
-      : 1;
-    const cappedEpisodesCount = Math.min(desiredEpisodesCount, LIGHT_MODE_LIMITS.MAX_SCENES);
-
-    // Only use polling if projectId is provided and usePolling is true
-    if (projectId && usePolling) {
-      // Delete any existing generating outline for this project
-      await auth.supabase
-        .from('project_outlines')
-        .delete()
-        .eq('project_id', projectId)
-        .eq('status', 'generating');
-
-      // Create initial record with 'generating' status
-      const { data: outlineRecord, error: insertError } = await auth.supabase
-        .from('project_outlines')
-        .insert({
-          project_id: projectId,
-          outline_json: {},
-          quality: 'generating',
-          qc_issues: [],
-          status: 'generating',
-          idea: processedIdea.slice(0, 10000), // Store first 10K for reference
-          genre: genre || 'Drama',
-          tone: tone || 'Realista',
-          format: format || 'series',
-          episode_count: cappedEpisodesCount,
-        })
-        .select('id')
-        .single();
-
-      if (insertError) {
-        console.error('[OUTLINE] Failed to create generating record:', insertError);
-        throw new Error('Failed to create outline record');
-      }
-
-      outlineRecordId = outlineRecord.id;
-      console.log('[OUTLINE] Created generating record:', outlineRecordId);
-
-      // Return immediately with outline ID - generation continues in background
-      const immediateResponse = new Response(
-        JSON.stringify({
-          success: true,
-          polling: true,
-          outline_id: outlineRecordId,
-          message: 'Generación iniciada. Consulta el estado via polling.',
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-
-      // Use EdgeRuntime.waitUntil to continue generation after response is sent
-      // Note: In Deno Deploy, we don't have waitUntil, so we'll continue synchronously
-      // but the client already has the ID and can poll
-      
-      // Continue with generation (this will run after response in environments with waitUntil)
-      const generateInBackground = async () => {
-        try {
-          const result = await generateOutlineCore({
-            processedIdea,
-            genre,
-            tone,
-            format,
-            cappedEpisodesCount,
-            language,
-            narrativeMode,
-            densityTargets,
-            disableDensity,
-            modelConfig,
-            effectiveModelKey,
-            effectiveMaxTokens,
-            startTime,
-            projectId: projectId!,
-            runId,
-          });
-
-          // Update the outline record with the result
-          const { error: updateError } = await auth.supabase
-            .from('project_outlines')
-            .update({
-              outline_json: result.outline,
-              quality: result.outline_quality,
-              qc_issues: result.warnings || [],
-              status: 'draft',
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', outlineRecordId);
-
-          if (updateError) {
-            console.error('[OUTLINE] Failed to update outline record:', updateError);
-          } else {
-            console.log('[OUTLINE] Updated outline record to draft:', outlineRecordId);
-          }
-
-          // Release lock
-          if (lockAcquired && projectId) {
-            await v3ReleaseProjectLock(auth.supabase, projectId);
-            lockAcquired = false;
-          }
-
-          // Log run completion
-          if (runId) {
-            await v3LogRunComplete(runId, 'success', undefined, undefined, undefined, undefined);
-          }
-        } catch (error: any) {
-          console.error('[OUTLINE] Background generation error:', error);
-          
-          // Update record with error status
-          if (outlineRecordId) {
-            await auth.supabase
-              .from('project_outlines')
-              .update({
-                status: 'error',
-                quality: 'error',
-                qc_issues: [error?.message || 'Unknown error'],
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', outlineRecordId);
-          }
-
-          // Release lock on error
-          if (lockAcquired && projectId) {
-            await v3ReleaseProjectLock(auth.supabase, projectId);
-          }
-
-          // Log failure
-          if (runId) {
-            await v3LogRunComplete(runId, 'failed', undefined, undefined, 'GENERATION_ERROR', error?.message);
-          }
-        }
-      };
-
-      // Start background generation
-      // In Deno Deploy, we don't have true waitUntil, but we can use promise
-      // The response is already sent, so the client can start polling
-      generateInBackground().catch(console.error);
-      
-      return immediateResponse;
     }
 
     // Episode count: prefer explicit mention in the idea (e.g. "8 capítulos"), otherwise use UI selection
@@ -981,7 +817,7 @@ FORMATO LIGHT: Mantén summaries en máximo 2 frases. No incluyas diálogos comp
 
     const userPrompt = `Genera un OUTLINE profesional para:
 
-IDEA: ${processedIdea}
+IDEA: ${idea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
 FORMATO: ${format === 'series' ? `Serie de ${cappedEpisodesCount} episodios` : 'Película'}
