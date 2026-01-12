@@ -875,8 +875,61 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
 
       if (outlineError) throw outlineError;
       
+      // V5: Handle both sync and async (polling) responses
+      const initial = outlineData as any;
+      let responseData: { outline: any; outline_quality?: string; warnings?: string[] } | null = null;
+      
+      // CASE A: Synchronous response (outline already present)
+      if (initial?.outline?.title) {
+        responseData = initial;
+        console.log('[ScriptWorkspace] Sync outline received');
+      }
+      
+      // CASE B: Async polling mode - wait for worker to complete
+      if (!responseData && initial?.polling && initial?.outline_id) {
+        const outlineId = initial.outline_id;
+        console.log('[ScriptWorkspace] Async polling mode, waiting for outline:', outlineId);
+        
+        // Wait for outline completion using polling
+        responseData = await new Promise<{ outline: any; outline_quality?: string; warnings?: string[] }>((resolve, reject) => {
+          let progressCheckInterval: ReturnType<typeof setInterval> | null = null;
+          
+          outlinePersistence.startPolling(outlineId, {
+            maxPollDuration: 4 * 60 * 1000, // 4 minutes
+            onComplete: (outline) => {
+              if (progressCheckInterval) clearInterval(progressCheckInterval);
+              resolve({
+                outline: outline.outline_json,
+                outline_quality: outline.quality ?? 'UNKNOWN',
+                warnings: outline.qc_issues ?? [],
+              });
+            },
+            onError: (errorMsg) => {
+              if (progressCheckInterval) clearInterval(progressCheckInterval);
+              reject(new Error(errorMsg));
+            },
+          });
+          
+          // Update task progress during polling
+          progressCheckInterval = setInterval(() => {
+            const current = outlinePersistence.savedOutline;
+            if (current) {
+              const stageLabel = current.stage === 'summarize' ? 'Analizando texto...' 
+                : current.stage === 'outline' ? 'Generando estructura...'
+                : current.stage === 'complete' ? 'Finalizando...'
+                : 'Procesando...';
+              updateTask(taskId, {
+                progress: current.progress ?? 15,
+                description: `Generando outline... (${stageLabel})`,
+              });
+            }
+          }, 2000);
+        });
+        
+        console.log('[ScriptWorkspace] Async outline received after polling');
+      }
+      
       // V3.1: Validate outline quality - reject degraded outlines
-      const responseData = outlineData as { outline: any; outline_quality?: string; warnings?: string[] } | null;
       const outlineQuality = responseData?.outline_quality || 'UNKNOWN';
       const outlineWarnings = responseData?.warnings || [];
       if (outlineQuality === 'DEGRADED' || !responseData?.outline?.title) {

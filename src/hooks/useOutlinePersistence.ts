@@ -14,7 +14,7 @@ export interface PersistedOutline {
   outline_json: Record<string, unknown>;
   quality: string;
   qc_issues: string[];
-  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error';
+  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed';
   idea?: string;
   genre?: string;
   tone?: string;
@@ -22,6 +22,8 @@ export interface PersistedOutline {
   episode_count?: number;
   target_duration?: number;
   error_message?: string;
+  stage?: string | null;       // V5: 'summarize' | 'outline' | 'complete'
+  progress?: number | null;    // V5: 0-100 progress indicator
   created_at: string;
   updated_at: string;
 }
@@ -43,14 +45,14 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   
-  // Refs for polling
-  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  // Refs for polling (V5: use Timeout instead of Interval for backoff)
+  const pollIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pollStartTimeRef = useRef<number | null>(null);
 
-  // Clear polling interval
+  // Clear polling timeout
   const stopPolling = useCallback(() => {
     if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
+      clearTimeout(pollIntervalRef.current);
       pollIntervalRef.current = null;
     }
     pollStartTimeRef.current = null;
@@ -107,13 +109,12 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     return () => stopPolling(); // Cleanup on unmount
   }, [loadOutline, stopPolling]);
 
-  // Start polling for outline completion
+  // Start polling for outline completion with backoff
   const startPolling = useCallback((outlineId: string, options: PollOptions = {}) => {
     const {
       onComplete,
       onError,
-      maxPollDuration = 10 * 60 * 1000, // 10 minutes default
-      pollInterval = 5000 // 5 seconds default
+      maxPollDuration = 4 * 60 * 1000, // 4 minutes default (V5: reduced from 10)
     } = options;
 
     // Stop any existing polling
@@ -121,16 +122,22 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
 
     setIsPolling(true);
     pollStartTimeRef.current = Date.now();
+    let attempt = 0;
 
     console.log('[useOutlinePersistence] Starting polling for outline:', outlineId);
 
+    // V5: Backoff suave: 1.5s -> 2s -> 2.5s -> ... -> 5s cap
+    const getBackoffDelay = (att: number) => Math.min(1500 + att * 500, 5000);
+
     const poll = async () => {
       try {
+        attempt++;
+        
         // Check timeout
         if (pollStartTimeRef.current && Date.now() - pollStartTimeRef.current > maxPollDuration) {
           console.warn('[useOutlinePersistence] Polling timeout reached');
           stopPolling();
-          onError?.('La generación tardó demasiado. Recarga la página para verificar el estado.');
+          onError?.('Timeout esperando outline. Intenta de nuevo o reduce el texto.');
           return;
         }
 
@@ -142,11 +149,14 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
 
         if (fetchError) {
           console.error('[useOutlinePersistence] Polling error:', fetchError);
-          return; // Keep polling, might be transient
+          // Schedule next poll with backoff
+          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
+          return;
         }
 
         if (!data) {
           console.warn('[useOutlinePersistence] Outline not found during polling');
+          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
           return;
         }
 
@@ -155,36 +165,46 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           outline_json: data.outline_json as Record<string, unknown>,
           qc_issues: Array.isArray(data.qc_issues) ? data.qc_issues as string[] : [],
           status: data.status as PersistedOutline['status'],
-          // error_message stored in qc_issues[0] for error status
-          error_message: data.status === 'error' && Array.isArray(data.qc_issues) && data.qc_issues.length > 0 
+          stage: data.stage ?? null,
+          progress: data.progress ?? null,
+          error_message: (data.status === 'error' && Array.isArray(data.qc_issues) && data.qc_issues.length > 0) 
             ? String(data.qc_issues[0]) 
             : undefined,
         };
 
         setSavedOutline(outline);
 
-        // Check if generation completed
-        if (data.status === 'draft' || data.status === 'approved') {
-          console.log('[useOutlinePersistence] Outline generation completed:', data.id);
+        // V5: Robust completion check - truly completed when:
+        // 1. status is 'completed' or 'approved'
+        // 2. OR has valid content (title) AND quality is not 'generating'
+        const hasValidContent = !!(data.outline_json as any)?.title;
+        const qualityDone = data.quality && data.quality !== 'generating';
+        const isComplete = 
+          data.status === 'completed' || 
+          data.status === 'approved' ||
+          (hasValidContent && qualityDone);
+
+        if (isComplete) {
+          console.log('[useOutlinePersistence] Outline generation completed:', data.id, 'status:', data.status);
           stopPolling();
           onComplete?.(outline);
-        } else if (data.status === 'error') {
+        } else if (data.status === 'error' || data.quality === 'error') {
           console.error('[useOutlinePersistence] Outline generation failed:', outline.error_message);
           stopPolling();
           onError?.(outline.error_message || 'Error en la generación');
+        } else {
+          // Still generating - schedule next poll with backoff
+          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
         }
-        // If still 'generating', keep polling
       } catch (e) {
         console.error('[useOutlinePersistence] Poll error:', e);
-        // Keep polling on error
+        // Schedule next poll with backoff
+        pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
       }
     };
 
     // Initial poll
     poll();
-
-    // Set up interval
-    pollIntervalRef.current = setInterval(poll, pollInterval);
   }, [stopPolling]);
 
   // Create a new outline in 'generating' state (returns immediately)
