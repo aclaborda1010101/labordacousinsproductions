@@ -23,7 +23,8 @@ export const MODEL_CONFIG = {
   // === ANÁLISIS (precisión JSON, no creatividad) ===
   ANALYSIS: {
     CHUNK_EXTRACTOR: 'openai/gpt-5-mini',   // Parsing por chunks
-    CONSOLIDATOR: 'openai/gpt-5.2',          // Unificación final
+    CONSOLIDATOR: 'openai/gpt-5-mini',       // Merge determinístico, mini suficiente
+    POLISH: 'openai/gpt-5.2',                // Para mejoras de calidad narrativa
     FALLBACK: 'google/gemini-2.5-flash',     // Emergencia
   },
   
@@ -140,6 +141,14 @@ export function shouldChunk(inputChars: number): boolean {
   return inputChars > MODEL_CONFIG.LIMITS.CHUNK_SIZE_CHARS;
 }
 
+export function shouldForceSummarize(inputChars: number): boolean {
+  // Force summarize if estimated tokens > 85% of soft limit
+  // Prevents timeouts when prompt overhead pushes total over limits
+  const estimatedTokens = estimateTokens(inputChars);
+  const threshold = MODEL_CONFIG.LIMITS.MAX_INPUT_TOKENS_SOFT * 0.85;
+  return estimatedTokens > threshold;
+}
+
 export function getChunkSize(): number {
   return MODEL_CONFIG.LIMITS.CHUNK_SIZE_CHARS;
 }
@@ -158,17 +167,19 @@ export function estimateTokens(chars: number): number {
 
 // Retry policy helpers
 export function getRetryModel(currentModel: string, attempt: number): string {
-  // Retry 3: fallback to different model tier
-  if (attempt >= 3) {
-    if (currentModel.includes('gpt-5.2')) return MODEL_CONFIG.SCRIPT.PROFESIONAL;
-    if (currentModel.includes('gpt-5-mini')) return MODEL_CONFIG.SCRIPT.PROFESIONAL;
-    return MODEL_CONFIG.SCRIPT.FALLBACK;
+  // Retry 2+: fallback to different model tier (aligned with RETRY_COUNT=2)
+  if (attempt >= 2) {
+    if (currentModel.includes('gpt-5.2')) return MODEL_CONFIG.SCRIPT.PROFESIONAL; // gpt-5
+    if (currentModel.includes('gpt-5-mini')) return MODEL_CONFIG.SCRIPT.PROFESIONAL; // gpt-5
+    return MODEL_CONFIG.SCRIPT.FALLBACK; // gemini-2.5-flash
   }
   return currentModel;
 }
 
 export function getRetryChunkSize(originalSize: number, attempt: number): number {
-  // Retry 2: reduce chunk by 50%
-  if (attempt >= 2) return Math.floor(originalSize / 2);
+  // Retry 2+: reduce chunk using configured reduction factor
+  if (attempt >= 2) {
+    return Math.floor(originalSize * MODEL_CONFIG.LIMITS.RETRY_CHUNK_REDUCTION);
+  }
   return originalSize;
 }
