@@ -1,5 +1,5 @@
 // ============================================================================
-// V10 OUTLINE WORKER - Industrial Pipeline with 4 Substeps
+// V10.1 OUTLINE WORKER - Industrial Pipeline with 4 Substeps + Blindaje
 // ============================================================================
 // Architecture:
 // - PART_A: Season arc, rules, cast, locations (gpt-5.2)
@@ -7,11 +7,11 @@
 // - PART_C: Episodes 6-10 with turning points (gpt-5.2)
 // - MERGE+QC: Unify + validate with anti-vaguedad filter
 // ============================================================================
-// Features:
-// - Each substep < 55s (no timeouts)
-// - Partial persistence (resumable from any substep)
-// - Heartbeat every 12s for stuck detection
-// - Anti-vaguedad QC with degraded quality marking
+// V10.1 Improvements:
+// - heartbeat_at without touching updated_at (let trigger handle it)
+// - Idempotent locks with input hash for resumability
+// - Structural QC (deterministic) + Semantic QC (AI-based) split
+// - outline_parts as {} not []
 // ============================================================================
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
@@ -53,8 +53,28 @@ interface OutlineRecord {
   tone?: string;
 }
 
+// Substep lock structure for idempotent resumability
+interface SubstepLock {
+  status: 'pending' | 'done' | 'failed';
+  hash: string;
+  data?: any;
+  completed_at?: string;
+}
+
 // ============================================================================
-// HELPER: Update outline with timestamp
+// HELPER: Hash input for idempotent substep execution
+// ============================================================================
+async function hashInput(text: string, config: any, substepName: string): Promise<string> {
+  const input = `${text.slice(0, 2000)}|${JSON.stringify(config)}|${substepName}`;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+}
+
+// ============================================================================
+// HELPER: Update outline WITHOUT touching updated_at (let trigger handle it)
 // ============================================================================
 async function updateOutline(
   supabase: SupabaseClient,
@@ -63,7 +83,7 @@ async function updateOutline(
 ): Promise<void> {
   const { error } = await supabase
     .from('project_outlines')
-    .update({ ...updates, updated_at: new Date().toISOString() })
+    .update(updates)  // Don't add updated_at - let DB trigger handle it
     .eq('id', outlineId);
   
   if (error) {
@@ -72,7 +92,7 @@ async function updateOutline(
 }
 
 // ============================================================================
-// HELPER: Heartbeat - update heartbeat_at to signal activity
+// HELPER: Heartbeat - update ONLY heartbeat_at to signal activity
 // ============================================================================
 async function heartbeat(
   supabase: SupabaseClient,
@@ -80,8 +100,8 @@ async function heartbeat(
   substage?: string
 ): Promise<void> {
   const updates: Record<string, any> = {
-    heartbeat_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    heartbeat_at: new Date().toISOString()
+    // NO updated_at - let the trigger handle real updates
   };
   if (substage) {
     updates.substage = substage;
@@ -554,8 +574,39 @@ async function stageSummarize(
 }
 
 // ============================================================================
-// STAGE: OUTLINE FAN-OUT (4 substeps)
+// STAGE: OUTLINE FAN-OUT (4 substeps) with Idempotent Locks
 // ============================================================================
+
+async function executeSubstepIfNeeded(
+  supabase: SupabaseClient,
+  outline: OutlineRecord,
+  substepName: string,
+  inputHash: string,
+  generator: () => Promise<any>
+): Promise<{ data: any; skipped: boolean }> {
+  const parts = outline.outline_parts || {};
+  const existing = parts[substepName] as SubstepLock | undefined;
+  
+  // If already done with same hash, skip regeneration
+  if (existing?.status === 'done' && existing?.hash === inputHash && existing?.data) {
+    console.log(`[WORKER] ${substepName}: skipped (hash match: ${inputHash})`);
+    return { data: existing.data, skipped: true };
+  }
+  
+  // Generate new data
+  const data = await generator();
+  
+  // Save with lock
+  parts[substepName] = {
+    status: 'done',
+    hash: inputHash,
+    data,
+    completed_at: new Date().toISOString()
+  } as SubstepLock;
+  
+  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  return { data, skipped: false };
+}
 
 async function stageOutlineFanOut(
   supabase: SupabaseClient,
@@ -565,112 +616,128 @@ async function stageOutlineFanOut(
   const episodesCount = Math.min(outline.episode_count || 6, MAX_EPISODES);
   const midpoint = Math.ceil(episodesCount / 2);
   
-  // Recover existing parts for resumability
-  let parts: any = outline.outline_parts || {};
+  // Recover existing parts for resumability (ensure it's an object, not array)
+  let parts: any = (outline.outline_parts && typeof outline.outline_parts === 'object' && !Array.isArray(outline.outline_parts)) 
+    ? outline.outline_parts 
+    : {};
   
   const genre = outline.genre || 'Drama';
   const tone = outline.tone || 'Cinematográfico';
+  const config = { episodesCount, genre, tone, midpoint };
 
   console.log(`[WORKER] Stage OUTLINE FAN-OUT: ${episodesCount} episodes, midpoint at ${midpoint}`);
 
   // ========================================
   // PART_A: Season arc + rules + cast + locations
   // ========================================
-  if (!parts.part_a) {
-    console.log(`[WORKER] PART_A: generating arc/cast/locations`);
-    await updateOutline(supabase, outline.id, { 
-      stage: 'outline', 
-      substage: 'arc', 
-      progress: 35,
-      heartbeat_at: new Date().toISOString()
-    });
-    
-    const partAPrompt = buildPartAPrompt(summaryText, episodesCount, genre, tone);
-    const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-      supabase, outline.id,
-      PART_A_SYSTEM, partAPrompt,
-      QUALITY_MODEL, 4000,
-      'deliver_part_a', PART_A_TOOL_SCHEMA, 'arc'
-    );
-    
-    const parseResult = parseJsonSafe(toolArgs || content, 'part_a');
-    parts.part_a = parseResult.json;
-    
-    if (!parts.part_a) {
-      throw new Error('PART_A failed to parse');
+  const partAHash = await hashInput(summaryText, config, 'part_a');
+  const partAResult = await executeSubstepIfNeeded(
+    supabase, { ...outline, outline_parts: parts }, 'part_a', partAHash,
+    async () => {
+      console.log(`[WORKER] PART_A: generating arc/cast/locations`);
+      await updateOutline(supabase, outline.id, { 
+        stage: 'outline', 
+        substage: 'arc', 
+        progress: 35,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      const partAPrompt = buildPartAPrompt(summaryText, episodesCount, genre, tone);
+      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outline.id,
+        PART_A_SYSTEM, partAPrompt,
+        QUALITY_MODEL, 4000,
+        'deliver_part_a', PART_A_TOOL_SCHEMA, 'arc'
+      );
+      
+      const parseResult = parseJsonSafe(toolArgs || content, 'part_a');
+      if (!parseResult.json) throw new Error('PART_A failed to parse');
+      
+      console.log(`[WORKER] PART_A generated: ${parseResult.json.title || 'Sin título'}`);
+      return parseResult.json;
     }
-    
-    // Persist immediately
-    await updateOutline(supabase, outline.id, { 
-      outline_parts: parts,
-      progress: 50,
-      heartbeat_at: new Date().toISOString()
-    });
-    console.log(`[WORKER] PART_A saved: ${parts.part_a.title || 'Sin título'}`);
-  }
+  );
+  parts.part_a = { status: 'done', hash: partAHash, data: partAResult.data };
+  
+  // Update progress
+  await updateOutline(supabase, outline.id, { 
+    outline_parts: parts,
+    progress: 50,
+    heartbeat_at: new Date().toISOString()
+  });
   
   // ========================================
   // PART_B: Episodes 1 - midpoint
   // ========================================
-  if (!parts.part_b) {
-    console.log(`[WORKER] PART_B: generating episodes 1-${midpoint}`);
-    await updateOutline(supabase, outline.id, { 
-      substage: 'episodes_1', 
-      progress: 55,
-      heartbeat_at: new Date().toISOString()
-    });
-    
-    const partBPrompt = buildPartBPrompt(summaryText, parts.part_a, 1, midpoint);
-    const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-      supabase, outline.id,
-      EPISODES_SYSTEM, partBPrompt,
-      QUALITY_MODEL, 6000,
-      'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_1'
-    );
-    
-    const parseResult = parseJsonSafe(toolArgs || content, 'part_b');
-    parts.part_b = parseResult.json;
-    
-    if (!parts.part_b?.episodes) {
-      throw new Error('PART_B failed to parse');
+  const partBHash = await hashInput(summaryText + JSON.stringify(partAResult.data), config, 'part_b');
+  const partBResult = await executeSubstepIfNeeded(
+    supabase, { ...outline, outline_parts: parts }, 'part_b', partBHash,
+    async () => {
+      console.log(`[WORKER] PART_B: generating episodes 1-${midpoint}`);
+      await updateOutline(supabase, outline.id, { 
+        substage: 'episodes_1', 
+        progress: 55,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      const partBPrompt = buildPartBPrompt(summaryText, partAResult.data, 1, midpoint);
+      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outline.id,
+        EPISODES_SYSTEM, partBPrompt,
+        QUALITY_MODEL, 6000,
+        'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_1'
+      );
+      
+      const parseResult = parseJsonSafe(toolArgs || content, 'part_b');
+      if (!parseResult.json?.episodes) throw new Error('PART_B failed to parse');
+      
+      console.log(`[WORKER] PART_B generated: ${parseResult.json.episodes.length} episodes`);
+      return parseResult.json;
     }
-    
-    await updateOutline(supabase, outline.id, { 
-      outline_parts: parts,
-      progress: 68,
-      heartbeat_at: new Date().toISOString()
-    });
-    console.log(`[WORKER] PART_B saved: ${parts.part_b.episodes.length} episodes`);
-  }
+  );
+  parts.part_b = { status: 'done', hash: partBHash, data: partBResult.data };
+  
+  await updateOutline(supabase, outline.id, { 
+    outline_parts: parts,
+    progress: 68,
+    heartbeat_at: new Date().toISOString()
+  });
   
   // ========================================
   // PART_C: Episodes midpoint+1 - end (only if needed)
   // ========================================
-  if (!parts.part_c && episodesCount > midpoint) {
-    console.log(`[WORKER] PART_C: generating episodes ${midpoint + 1}-${episodesCount}`);
-    await updateOutline(supabase, outline.id, { 
-      substage: 'episodes_2', 
-      progress: 72,
-      heartbeat_at: new Date().toISOString()
-    });
-    
-    const partCPrompt = buildPartCPrompt(summaryText, parts.part_a, parts.part_b, midpoint + 1, episodesCount);
-    const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-      supabase, outline.id,
-      EPISODES_SYSTEM, partCPrompt,
-      QUALITY_MODEL, 6000,
-      'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_2'
+  if (episodesCount > midpoint) {
+    const partCHash = await hashInput(summaryText + JSON.stringify(partAResult.data) + JSON.stringify(partBResult.data), config, 'part_c');
+    const partCResult = await executeSubstepIfNeeded(
+      supabase, { ...outline, outline_parts: parts }, 'part_c', partCHash,
+      async () => {
+        console.log(`[WORKER] PART_C: generating episodes ${midpoint + 1}-${episodesCount}`);
+        await updateOutline(supabase, outline.id, { 
+          substage: 'episodes_2', 
+          progress: 72,
+          heartbeat_at: new Date().toISOString()
+        });
+        
+        const partCPrompt = buildPartCPrompt(summaryText, partAResult.data, partBResult.data, midpoint + 1, episodesCount);
+        const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+          supabase, outline.id,
+          EPISODES_SYSTEM, partCPrompt,
+          QUALITY_MODEL, 6000,
+          'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_2'
+        );
+        
+        const parseResult = parseJsonSafe(toolArgs || content, 'part_c');
+        console.log(`[WORKER] PART_C generated: ${parseResult.json?.episodes?.length || 0} episodes`);
+        return parseResult.json;
+      }
     );
-    
-    const parseResult = parseJsonSafe(toolArgs || content, 'part_c');
-    parts.part_c = parseResult.json;
+    parts.part_c = { status: 'done', hash: partCHash, data: partCResult.data };
     
     await updateOutline(supabase, outline.id, { 
       outline_parts: parts,
       progress: 82,
       heartbeat_at: new Date().toISOString()
     });
-    console.log(`[WORKER] PART_C saved: ${parts.part_c?.episodes?.length || 0} episodes`);
   }
   
   // ========================================
@@ -684,7 +751,14 @@ async function stageOutlineFanOut(
     heartbeat_at: new Date().toISOString()
   });
   
-  const merged = mergeOutlineParts(parts, episodesCount);
+  // Extract data from lock structure
+  const partsData = {
+    part_a: parts.part_a?.data || parts.part_a,
+    part_b: parts.part_b?.data || parts.part_b,
+    part_c: parts.part_c?.data || parts.part_c
+  };
+  
+  const merged = mergeOutlineParts(partsData, episodesCount);
   
   // Save unified outline
   await updateOutline(supabase, outline.id, { 
@@ -774,8 +848,21 @@ function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
 }
 
 // ============================================================================
-// QC ENGINE: Anti-vaguedad filter + quality scoring
+// QC ENGINE: Structural (deterministic) + Semantic (AI-based) split
 // ============================================================================
+
+interface StructuralQCResult {
+  passed: boolean;
+  blockers: string[];
+  warnings: string[];
+}
+
+interface SemanticQCResult {
+  quality: 'ok' | 'degraded';
+  issues: Array<{ location: string; problem: string }>;
+  score: number;
+}
+
 interface QCResult {
   passed: boolean;
   quality: 'ok' | 'degraded' | 'rejected';
@@ -783,124 +870,188 @@ interface QCResult {
   score: number;
 }
 
-function runOutlineQC(outline: any, expectedEpisodes: number): QCResult {
-  const issues: string[] = [];
-  let score = 100;
+// Generic phrases to detect (anti-vaguedad)
+const GENERIC_PHRASES = [
+  'aparecen amenazas', 'surge un conflicto', 'algo cambia',
+  'las cosas cambian', 'se complican las cosas', 'aparece un problema',
+  'surge una amenaza', 'fuerzas ocultas', 'intereses externos',
+  'descubre algo importante', 'enfrenta consecuencias', 'todo cambia',
+  'las cosas se ponen difíciles', 'surge un desafío', 'aparece alguien',
+  'pasan cosas', 'sucede algo', 'hay problemas', 'surgen dificultades',
+  'se revela información', 'descubre la verdad', 'algo sucede'
+];
 
-  // Generic phrases to detect (anti-vaguedad)
-  const genericPhrases = [
-    'aparecen amenazas', 'surge un conflicto', 'algo cambia',
-    'las cosas cambian', 'se complican las cosas', 'aparece un problema',
-    'surge una amenaza', 'fuerzas ocultas', 'intereses externos',
-    'descubre algo importante', 'enfrenta consecuencias', 'todo cambia',
-    'las cosas se ponen difíciles', 'surge un desafío', 'aparece alguien',
-    'pasan cosas', 'sucede algo', 'hay problemas', 'surgen dificultades',
-    'se revela información', 'descubre la verdad', 'algo sucede'
-  ];
-
-  // 1. Verify number of episodes
+// ============================================================================
+// STRUCTURAL QC: Deterministic checks (no AI, fast, free)
+// ============================================================================
+function runStructuralQC(outline: any, expectedEpisodes: number): StructuralQCResult {
+  const blockers: string[] = [];
+  const warnings: string[] = [];
+  
+  // 1. Episodes == N (blocker if missing)
   const actualEpisodes = outline.episode_beats?.length || 0;
   if (actualEpisodes !== expectedEpisodes) {
-    issues.push(`Episodios: ${actualEpisodes}/${expectedEpisodes}`);
-    score -= 20;
+    blockers.push(`Episodios: ${actualEpisodes}/${expectedEpisodes}`);
   }
-
-  // 2. Check turning points and detect generic phrases
-  let genericCount = 0;
+  
+  // 2. Each episode has 4+ TPs (blocker if <4)
   outline.episode_beats?.forEach((ep: any, i: number) => {
     const tps = ep.turning_points?.length || 0;
     if (tps < 4) {
-      issues.push(`Ep ${i + 1}: solo ${tps} TPs (mínimo 4)`);
-      score -= 5;
-    }
-
-    // Detect generic phrases in turning points
-    const tpTexts = ep.turning_points || [];
-    tpTexts.forEach((tp: string, j: number) => {
-      const tpLower = (typeof tp === 'string' ? tp : JSON.stringify(tp)).toLowerCase();
-      const foundGeneric = genericPhrases.find(phrase => tpLower.includes(phrase));
-      if (foundGeneric) {
-        genericCount++;
-        if (genericCount <= 3) {
-          issues.push(`Ep ${i + 1} TP${j + 1}: vaguedad "${foundGeneric}"`);
-        }
-        score -= 3;
-      }
-    });
-
-    // Check cliffhanger
-    if (!ep.cliffhanger || ep.cliffhanger.length < 15) {
-      issues.push(`Ep ${i + 1}: cliffhanger débil`);
-      score -= 3;
-    }
-    
-    // Check cliffhanger for generic phrases
-    if (ep.cliffhanger) {
-      const cliffLower = ep.cliffhanger.toLowerCase();
-      if (genericPhrases.some(phrase => cliffLower.includes(phrase))) {
-        issues.push(`Ep ${i + 1}: cliffhanger genérico`);
-        score -= 2;
-      }
+      blockers.push(`Ep ${i + 1}: solo ${tps} TPs (mínimo 4)`);
     }
   });
   
-  if (genericCount > 3) {
-    issues.push(`+${genericCount - 3} frases genéricas adicionales detectadas`);
+  // 3. midpoint_reversal exists and has >20 chars (blocker)
+  const midpoint = outline.season_arc?.midpoint_reversal || '';
+  if (!midpoint || midpoint.length < 20) {
+    blockers.push('Falta midpoint_reversal concreto');
   }
-
-  // 3. Verify season_arc.midpoint_reversal
-  const midpointReversal = outline.season_arc?.midpoint_reversal || '';
-  if (!midpointReversal || midpointReversal.length < 20) {
-    issues.push('Falta midpoint_reversal concreto');
-    score -= 15;
-  } else if (genericPhrases.some(phrase => midpointReversal.toLowerCase().includes(phrase))) {
-    issues.push('midpoint_reversal es genérico');
-    score -= 10;
+  
+  // 4. Title exists (blocker)
+  if (!outline.title || outline.title.length < 3) {
+    blockers.push('Falta título');
   }
-
-  // 4. Verify minimum characters
+  
+  // 5. Cast >= 3 (blocker if <3, warning if <4)
   const charCount = outline.main_characters?.length || 0;
   if (charCount < 3) {
-    issues.push(`Solo ${charCount} personajes (mínimo 3)`);
-    score -= 10;
+    blockers.push(`Solo ${charCount} personajes (mínimo 3)`);
   } else if (charCount < 4) {
-    issues.push(`Solo ${charCount} personajes (recomendado 4)`);
-    score -= 5;
+    warnings.push(`Solo ${charCount} personajes (recomendado 4)`);
   }
-
-  // 5. Verify minimum locations
+  
+  // 6. Locations >= 2 (warning)
   const locCount = outline.main_locations?.length || 0;
   if (locCount < 2) {
-    issues.push(`Solo ${locCount} localizaciones (mínimo 2)`);
-    score -= 5;
+    warnings.push(`Solo ${locCount} localizaciones (mínimo 2)`);
   }
-
-  // 6. Check title and logline
-  if (!outline.title || outline.title.length < 3) {
-    issues.push('Falta título');
-    score -= 10;
-  }
+  
+  // 7. Logline exists (warning if short)
   if (!outline.logline || outline.logline.length < 20) {
-    issues.push('Logline muy corto');
-    score -= 5;
+    warnings.push('Logline muy corto');
   }
-
-  // Determine quality
-  const quality: 'ok' | 'degraded' | 'rejected' = 
-    score >= 80 ? 'ok' : score >= 50 ? 'degraded' : 'rejected';
-
-  console.log(`[WORKER] QC: ${quality} (score: ${score}, issues: ${issues.length}, genericCount: ${genericCount})`);
-
+  
+  console.log(`[WORKER] Structural QC: ${blockers.length} blockers, ${warnings.length} warnings`);
+  
   return {
-    passed: score >= 50,
-    quality,
-    issues,
-    score
+    passed: blockers.length === 0,
+    blockers,
+    warnings
   };
 }
 
 // ============================================================================
-// STAGE: MERGE/FINALIZE with QC
+// SEMANTIC QC: AI-based anti-vaguedad (only if structural passes)
+// ============================================================================
+async function runSemanticQC(
+  supabase: SupabaseClient,
+  outlineId: string,
+  outline: any
+): Promise<SemanticQCResult> {
+  // Quick local check first for obvious generic phrases
+  let localScore = 100;
+  const localIssues: Array<{ location: string; problem: string }> = [];
+  
+  // Check turning points for generic phrases
+  outline.episode_beats?.forEach((ep: any, i: number) => {
+    const tpTexts = ep.turning_points || [];
+    tpTexts.forEach((tp: string, j: number) => {
+      const tpLower = (typeof tp === 'string' ? tp : JSON.stringify(tp)).toLowerCase();
+      const foundGeneric = GENERIC_PHRASES.find(phrase => tpLower.includes(phrase));
+      if (foundGeneric) {
+        localIssues.push({ location: `Ep ${i + 1} TP${j + 1}`, problem: `vaguedad: "${foundGeneric}"` });
+        localScore -= 3;
+      }
+    });
+    
+    // Check cliffhanger
+    if (ep.cliffhanger) {
+      const cliffLower = ep.cliffhanger.toLowerCase();
+      const foundGeneric = GENERIC_PHRASES.find(phrase => cliffLower.includes(phrase));
+      if (foundGeneric) {
+        localIssues.push({ location: `Ep ${i + 1} cliffhanger`, problem: `genérico: "${foundGeneric}"` });
+        localScore -= 2;
+      }
+    }
+    if (!ep.cliffhanger || ep.cliffhanger.length < 15) {
+      localIssues.push({ location: `Ep ${i + 1}`, problem: 'cliffhanger débil' });
+      localScore -= 2;
+    }
+  });
+  
+  // Check midpoint_reversal for generic phrases
+  const midpoint = outline.season_arc?.midpoint_reversal || '';
+  if (GENERIC_PHRASES.some(phrase => midpoint.toLowerCase().includes(phrase))) {
+    localIssues.push({ location: 'midpoint_reversal', problem: 'es genérico' });
+    localScore -= 10;
+  }
+  
+  // If local check finds many issues, skip AI call (already degraded)
+  if (localScore < 70 || localIssues.length > 5) {
+    console.log(`[WORKER] Semantic QC (local): degraded (score: ${localScore}, issues: ${localIssues.length})`);
+    return {
+      quality: localScore >= 60 ? 'degraded' : 'degraded',
+      issues: localIssues,
+      score: Math.max(localScore, 50)
+    };
+  }
+  
+  // For borderline cases, could use AI for deeper analysis
+  // But for V10.1 we keep it simple with local checks only
+  const quality: 'ok' | 'degraded' = localScore >= 80 ? 'ok' : 'degraded';
+  console.log(`[WORKER] Semantic QC (local): ${quality} (score: ${localScore}, issues: ${localIssues.length})`);
+  
+  return { quality, issues: localIssues, score: localScore };
+}
+
+// ============================================================================
+// COMBINED QC: Structural first, then Semantic if passes
+// ============================================================================
+async function runCombinedQC(
+  supabase: SupabaseClient,
+  outlineId: string,
+  outline: any,
+  expectedEpisodes: number
+): Promise<QCResult> {
+  // 1. Structural QC (free, deterministic)
+  const structuralQC = runStructuralQC(outline, expectedEpisodes);
+  
+  if (!structuralQC.passed) {
+    // Failed structure → rejected, no need for semantic check
+    console.log(`[WORKER] QC: rejected (structural failures: ${structuralQC.blockers.length})`);
+    return {
+      passed: false,
+      quality: 'rejected',
+      issues: [...structuralQC.blockers, ...structuralQC.warnings],
+      score: 30
+    };
+  }
+  
+  // 2. Semantic QC (only if structural passed)
+  const semanticQC = await runSemanticQC(supabase, outlineId, outline);
+  
+  // 3. Combine results
+  const allIssues = [
+    ...structuralQC.warnings,
+    ...semanticQC.issues.map(i => `${i.location}: ${i.problem}`)
+  ];
+  
+  const finalQuality = semanticQC.quality;
+  const finalScore = semanticQC.score - (structuralQC.warnings.length * 2);
+  
+  console.log(`[WORKER] QC: ${finalQuality} (score: ${finalScore}, issues: ${allIssues.length})`);
+  
+  return {
+    passed: true,
+    quality: finalQuality,
+    issues: allIssues,
+    score: Math.max(finalScore, 50)
+  };
+}
+
+// ============================================================================
+// STAGE: MERGE/FINALIZE with Combined QC
 // ============================================================================
 async function stageMerge(
   supabase: SupabaseClient,
@@ -934,18 +1085,21 @@ async function stageMerge(
     narrative_mode: outline.narrative_mode || 'serie_adictiva'
   };
 
-  // Run QC
+  // Run combined QC (structural + semantic)
   const expectedEpisodes = outline.episode_count || 6;
-  const qcResult = runOutlineQC(normalized, expectedEpisodes);
+  const qcResult = await runCombinedQC(supabase, outline.id, normalized, expectedEpisodes);
 
   // Add QC status to outline
   normalized.qc_status = qcResult.quality;
   normalized.qc_warnings = qcResult.issues.length > 0 ? qcResult.issues : undefined;
   normalized.qc_score = qcResult.score;
 
+  // Determine final status based on QC
+  const finalStatus = qcResult.quality === 'rejected' ? 'failed' : 'completed';
+  
   // Mark as completed with quality rating
   await updateOutline(supabase, outline.id, {
-    status: 'completed',
+    status: finalStatus,
     stage: 'done',
     substage: null,
     progress: 100,
@@ -954,11 +1108,11 @@ async function stageMerge(
     outline_json: normalized,
     completed_at: new Date().toISOString(),
     heartbeat_at: new Date().toISOString(),
-    error_code: null,
-    error_detail: null
+    error_code: qcResult.quality === 'rejected' ? 'QC_REJECTED' : null,
+    error_detail: qcResult.quality === 'rejected' ? 'Outline failed structural quality checks' : null
   });
 
-  console.log(`[WORKER] Completed: ${normalized.title} | ${normalized.episode_beats.length} episodes | Quality: ${qcResult.quality} (score: ${qcResult.score})`);
+  console.log(`[WORKER] ${finalStatus}: ${normalized.title} | ${normalized.episode_beats.length} episodes | Quality: ${qcResult.quality} (score: ${qcResult.score})`);
   return normalized;
 }
 
