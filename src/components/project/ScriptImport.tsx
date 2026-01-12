@@ -250,6 +250,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [outlineApproved, setOutlineApproved] = useState(false);
   const [generatingOutline, setGeneratingOutline] = useState(false);
   
+  // Outline generation progress tracking (V4.0 - Polling UI)
+  const [outlineStartTime, setOutlineStartTime] = useState<number | null>(null);
+  const [outlineElapsedSeconds, setOutlineElapsedSeconds] = useState(0);
+  
   // Episode view mode: summary vs full screenplay
   const [episodeViewMode, setEpisodeViewMode] = useState<Record<number, 'summary' | 'full'>>({});
 
@@ -770,6 +774,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     return () => window.clearInterval(id);
   }, [pipelineRunning]);
 
+  // Tick for outline generation elapsed time
+  useEffect(() => {
+    if (!generatingOutline || !outlineStartTime) {
+      setOutlineElapsedSeconds(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setOutlineElapsedSeconds(Math.floor((Date.now() - outlineStartTime) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [generatingOutline, outlineStartTime]);
+
   const updatePipelineStep = (stepId: string, status: PipelineStep['status'], label?: string) => {
     setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status, label: label || s.label } : s));
     if (label) setCurrentStepLabel(label);
@@ -1212,6 +1228,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
 
     setGeneratingOutline(true);
+    setOutlineStartTime(Date.now()); // V4.0: Track start time for progress UI
     setLightOutline(null);
     setOutlineApproved(false);
     setPipelineSteps(prev => prev.map(s => ({ ...s, status: 'pending' })));
@@ -1287,6 +1304,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             
             handleOutlineSuccess(outlineJson, quality, qcIssues, durationMs);
             setGeneratingOutline(false);
+            setOutlineStartTime(null); // V4.0: Clear start time
           },
           onError: (errorMsg) => {
             console.error('[ScriptImport] Outline polling error:', errorMsg);
@@ -1296,6 +1314,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               duration: 10000,
             });
             setGeneratingOutline(false);
+            setOutlineStartTime(null); // V4.0: Clear start time
           }
         });
         
@@ -1342,11 +1361,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   const outlineJson = completedOutline.outline_json as typeof lightOutline;
                   handleOutlineSuccess(outlineJson, completedOutline.quality || 'FULL', completedOutline.qc_issues || [], durationMs);
                   setGeneratingOutline(false);
+                  setOutlineStartTime(null); // V4.0: Clear start time
                 },
                 onError: (errorMsg) => {
                   updatePipelineStep('outline', 'error');
                   toast.error('Error generando outline', { description: errorMsg });
                   setGeneratingOutline(false);
+                  setOutlineStartTime(null); // V4.0: Clear start time
                 }
               });
               
@@ -1373,6 +1394,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       // Only set to false if we're not polling
       if (!outlinePersistence.isPolling) {
         setGeneratingOutline(false);
+        setOutlineStartTime(null); // V4.0: Clear start time
       }
     }
   };
@@ -3457,6 +3479,67 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     onClick={cancelGeneration}
                   >
                     <XCircle className="w-4 h-4 mr-2" />
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* V4.0: Outline Generation Progress Card (visible during polling) */}
+          {generatingOutline && !pipelineRunning && (
+            <Card className="border-2 border-amber-500/50 bg-amber-500/5">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  {/* Animated icon */}
+                  <div className="relative mx-auto w-20 h-20 mb-4">
+                    <Sparkles className="h-10 w-10 mx-auto text-amber-500 absolute inset-0 m-auto animate-pulse" />
+                    <div className="absolute inset-0 border-4 border-t-amber-500 border-r-transparent border-b-amber-500/30 border-l-transparent rounded-full animate-spin" />
+                  </div>
+                  
+                  {/* Title and message */}
+                  <h3 className="text-lg font-semibold text-amber-600 dark:text-amber-400">
+                    Generando Outline
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    El servidor está procesando tu idea con IA Hollywood
+                  </p>
+                  
+                  {/* Elapsed time */}
+                  <div className="text-3xl font-mono text-amber-600 dark:text-amber-400">
+                    {Math.floor(outlineElapsedSeconds / 60)}:{String(outlineElapsedSeconds % 60).padStart(2, '0')}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Tiempo transcurrido • Textos largos pueden tardar hasta 10 minutos
+                  </p>
+                  
+                  {/* Active polling indicator */}
+                  <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    Consultando estado del servidor...
+                  </div>
+                  
+                  {/* Background notice */}
+                  <div className="p-2 bg-amber-500/10 rounded border border-amber-500/20">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center justify-center gap-2">
+                      <Rocket className="w-3 h-3" />
+                      Puedes navegar. La generación continúa en segundo plano.
+                    </p>
+                  </div>
+                  
+                  {/* Cancel button */}
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      outlinePersistence.stopPolling?.();
+                      setGeneratingOutline(false);
+                      setOutlineStartTime(null);
+                      updatePipelineStep('outline', 'pending');
+                      toast.info('Generación cancelada');
+                    }}
+                  >
+                    <Square className="h-4 w-4 mr-2" />
                     Cancelar
                   </Button>
                 </div>
