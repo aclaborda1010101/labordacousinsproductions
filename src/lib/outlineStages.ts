@@ -1,5 +1,5 @@
 /**
- * outlineStages.ts - Helper for mapping outline generation stages to user-friendly info
+ * outlineStages.ts - V9 with substages for fan-out/fan-in architecture
  */
 
 export interface OutlineStageInfo {
@@ -9,24 +9,25 @@ export interface OutlineStageInfo {
   timeoutSeconds: number;
 }
 
+// Main stages
 export const OUTLINE_STAGES: Record<string, OutlineStageInfo> = {
   summarize: {
     label: 'Analizando texto...',
     description: 'Procesando y resumiendo el contenido',
     progressRange: [0, 30],
-    timeoutSeconds: 75, // V8.0: Reduced from 90 to detect stuck faster
+    timeoutSeconds: 70, // Aligned with STAGE_TIMEOUT_MS
   },
   outline: {
     label: 'Construyendo estructura...',
     description: 'Diseñando episodios y arcos narrativos',
-    progressRange: [30, 80],
-    timeoutSeconds: 150, // V8.0: Reduced from 180
+    progressRange: [30, 75],
+    timeoutSeconds: 140, // 2x stage timeout for complex generation
   },
   merge: {
     label: 'Finalizando...',
-    description: 'Normalizando y validando outline',
-    progressRange: [80, 95],
-    timeoutSeconds: 45, // V8.0: Reduced from 60
+    description: 'Validando calidad y normalizando',
+    progressRange: [75, 95],
+    timeoutSeconds: 40,
   },
   done: {
     label: 'Completado',
@@ -35,6 +36,22 @@ export const OUTLINE_STAGES: Record<string, OutlineStageInfo> = {
     timeoutSeconds: 0,
   },
 } as const;
+
+// Substages for more granular progress tracking
+export const OUTLINE_SUBSTAGES: Record<string, { label: string; progressOffset: number }> = {
+  // Summarize substages
+  processing: { label: 'Procesando texto...', progressOffset: 10 },
+  
+  // Outline substages (fan-out)
+  arc: { label: 'Generando arco de temporada...', progressOffset: 35 },
+  episodes_1: { label: 'Generando episodios (parte 1)...', progressOffset: 50 },
+  episodes_2: { label: 'Generando episodios (parte 2)...', progressOffset: 65 },
+  generating: { label: 'Generando outline completo...', progressOffset: 45 },
+  
+  // Merge substages
+  qc: { label: 'Validando calidad...', progressOffset: 85 },
+  normalizing: { label: 'Normalizando datos...', progressOffset: 90 },
+};
 
 /**
  * Get stage info with fallback to summarize stage
@@ -45,14 +62,32 @@ export function getStageInfo(stage: string | null | undefined): OutlineStageInfo
 }
 
 /**
- * Derive progress percentage from stage and raw progress
- * If rawProgress is available and > 0, use it directly
- * Otherwise, return the minimum of the stage's progress range
+ * Get substage label for display
  */
-export function deriveProgress(stage: string | null | undefined, rawProgress: number | null | undefined): number {
+export function getSubstageLabel(substage: string | null | undefined): string | null {
+  if (!substage) return null;
+  return OUTLINE_SUBSTAGES[substage]?.label || null;
+}
+
+/**
+ * Derive progress percentage from stage, substage, and raw progress
+ */
+export function deriveProgress(
+  stage: string | null | undefined, 
+  rawProgress: number | null | undefined,
+  substage?: string | null
+): number {
+  // If we have raw progress, use it directly
   if (rawProgress !== null && rawProgress !== undefined && rawProgress > 0) {
     return Math.min(100, Math.max(0, rawProgress));
   }
+  
+  // If we have a substage, use its offset
+  if (substage && OUTLINE_SUBSTAGES[substage]) {
+    return OUTLINE_SUBSTAGES[substage].progressOffset;
+  }
+  
+  // Otherwise use stage minimum
   const info = getStageInfo(stage);
   return info.progressRange[0];
 }

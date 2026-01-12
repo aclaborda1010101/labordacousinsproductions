@@ -17,7 +17,7 @@ export interface PersistedOutline {
   outline_json: Record<string, unknown>;
   quality: string;
   qc_issues: string[];
-  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed';
+  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed' | 'timeout' | 'failed';
   idea?: string;
   genre?: string;
   tone?: string;
@@ -25,8 +25,11 @@ export interface PersistedOutline {
   episode_count?: number;
   target_duration?: number;
   error_message?: string;
-  stage?: string | null;       // V5: 'summarize' | 'outline' | 'merge' | 'done'
-  progress?: number | null;    // V5: 0-100 progress indicator
+  stage?: string | null;       // 'summarize' | 'outline' | 'merge' | 'done'
+  substage?: string | null;    // V9: 'arc' | 'episodes_1' | 'episodes_2' | 'qc' etc
+  progress?: number | null;    // 0-100 progress indicator
+  heartbeat_at?: string | null; // V9: Updated every 12s during processing
+  completed_at?: string | null; // V9: When generation completed
   created_at: string;
   updated_at: string;
 }
@@ -185,22 +188,32 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
 
         setSavedOutline(outline);
 
-        // V7: Stuck detection - check if updated_at has changed
+        // V9: Stuck detection using heartbeat_at (more reliable than updated_at)
+        const heartbeatAt = data.heartbeat_at;
         const currentUpdatedAt = data.updated_at;
-        if (currentUpdatedAt === lastUpdatedRef.current) {
-          // No change since last poll - potential stuck
+        
+        // Use heartbeat_at if available, otherwise fall back to updated_at
+        const lastActivityAt = heartbeatAt || currentUpdatedAt;
+        const lastActivityTime = new Date(lastActivityAt).getTime();
+        const timeSinceActivity = (Date.now() - lastActivityTime) / 1000;
+        
+        // If no activity for 30+ seconds while generating, consider potentially stuck
+        const isActivityStale = timeSinceActivity > 30;
+        
+        if (isActivityStale && data.status === 'generating') {
           if (!stuckSince) {
             setStuckSince(new Date());
+            console.log('[useOutlinePersistence] No heartbeat for 30s, monitoring...');
           } else {
             // Check if we've been stuck longer than stage timeout
             const stuckDuration = (Date.now() - stuckSince.getTime()) / 1000;
             const stageTimeout = getStageTimeout(data.stage);
             if (stageTimeout > 0 && stuckDuration > stageTimeout) {
-              console.warn('[useOutlinePersistence] Possible stuck detected:', data.stage, 'duration:', stuckDuration);
+              console.warn('[useOutlinePersistence] Stuck detected:', data.stage, 'duration:', stuckDuration, 'no heartbeat for:', timeSinceActivity);
               setIsStuck(true);
             }
           }
-        } else {
+        } else if (currentUpdatedAt !== lastUpdatedRef.current) {
           // Progress detected - reset stuck state
           lastUpdatedRef.current = currentUpdatedAt;
           setStuckSince(null);
