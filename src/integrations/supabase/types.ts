@@ -3753,22 +3753,26 @@ export type Database = {
       project_outlines: {
         Row: {
           attempts: number | null
+          completed_at: string | null
           created_at: string | null
           episode_count: number | null
           error_code: string | null
           error_detail: string | null
           format: string | null
           genre: string | null
+          heartbeat_at: string | null
           id: string
           idea: string | null
           input_chars: number | null
           outline_json: Json
+          outline_parts: Json | null
           progress: number | null
           project_id: string
           qc_issues: Json | null
           quality: string | null
           stage: string | null
           status: string | null
+          substage: string | null
           summary_text: string | null
           target_duration: number | null
           tone: string | null
@@ -3776,22 +3780,26 @@ export type Database = {
         }
         Insert: {
           attempts?: number | null
+          completed_at?: string | null
           created_at?: string | null
           episode_count?: number | null
           error_code?: string | null
           error_detail?: string | null
           format?: string | null
           genre?: string | null
+          heartbeat_at?: string | null
           id?: string
           idea?: string | null
           input_chars?: number | null
           outline_json: Json
+          outline_parts?: Json | null
           progress?: number | null
           project_id: string
           qc_issues?: Json | null
           quality?: string | null
           stage?: string | null
           status?: string | null
+          substage?: string | null
           summary_text?: string | null
           target_duration?: number | null
           tone?: string | null
@@ -3799,22 +3807,26 @@ export type Database = {
         }
         Update: {
           attempts?: number | null
+          completed_at?: string | null
           created_at?: string | null
           episode_count?: number | null
           error_code?: string | null
           error_detail?: string | null
           format?: string | null
           genre?: string | null
+          heartbeat_at?: string | null
           id?: string
           idea?: string | null
           input_chars?: number | null
           outline_json?: Json
+          outline_parts?: Json | null
           progress?: number | null
           project_id?: string
           qc_issues?: Json | null
           quality?: string | null
           stage?: string | null
           status?: string | null
+          substage?: string | null
           summary_text?: string | null
           target_duration?: number | null
           tone?: string | null
