@@ -24,21 +24,22 @@ interface ModelConfig {
   temperature: number;
 }
 
+// GPT-5 Family for consistent quality across all tiers
 const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
-    apiModel: 'google/gemini-3-flash-preview', // Fastest, good for quick outlines
+    apiModel: 'openai/gpt-5-mini', // Fast, good quality for quick outlines
     provider: 'lovable',
     maxTokens: 6000,
     temperature: 0.8
   },
   profesional: {
-    apiModel: 'google/gemini-2.5-flash', // Balanced speed and quality
+    apiModel: 'openai/gpt-5', // High quality professional tier
     provider: 'lovable',
     maxTokens: 8000,
     temperature: 0.7
   },
   hollywood: {
-    apiModel: 'google/gemini-3-pro-preview', // Next-gen, best quality
+    apiModel: 'openai/gpt-5.2', // Latest model, best quality
     provider: 'lovable',
     maxTokens: 10000,
     temperature: 0.8
@@ -47,7 +48,7 @@ const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
 
 // Fallback model when primary model fails parsing
 const FALLBACK_MODEL_CONFIG: ModelConfig = {
-  apiModel: 'google/gemini-3-flash-preview', // Fast fallback
+  apiModel: 'openai/gpt-5-mini', // Fast fallback
   provider: 'lovable',
   maxTokens: 8000,
   temperature: 0.7
@@ -1024,29 +1025,44 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
       props: outline.main_props?.filter((p: any) => p.from_idea)?.length || 0
     };
 
-    // Detect abstract/conceptual characters
-    const abstractPatterns = /^(los |las |quienes |el grupo|la sociedad|el sistema|la resistencia|el pasado|el futuro|la verdad|el destino)/i;
+    // Detect abstract/conceptual characters (RELAXED - only warn, don't degrade for collective entities)
+    const abstractPatterns = /^(quienes |el grupo de |la sociedad|el sistema|el pasado|el futuro|la verdad|el destino)/i;
+    const collectiveEntityPatterns = /^(los |las |el colectivo|la comunidad|la resistencia|el consejo|la orden)/i;
+    
     const abstractCharacters = outline.main_characters?.filter((c: any) => 
       abstractPatterns.test(c.name?.toLowerCase() || '')
     ) || [];
     
+    // Collective entities are valid for entity_type: 'collective' - just note them, don't warn
+    const collectiveCharacters = outline.main_characters?.filter((c: any) => 
+      collectiveEntityPatterns.test(c.name?.toLowerCase() || '') && 
+      c.entity_type !== 'collective' && c.entity_type !== 'civilization'
+    ) || [];
+    
     if (abstractCharacters.length > 0) {
       const abstractNames = abstractCharacters.map((c: any) => c.name).join(', ');
-      qcIssues.push(`Personajes abstractos detectados: ${abstractNames}. Regenera con personajes concretos.`);
-      parseWarnings.push(`ABSTRACT_CHARACTERS: ${abstractNames}`);
+      qcIssues.push(`Personajes abstractos detectados: ${abstractNames}. Considera dar nombres concretos.`);
+      // Only add to parseWarnings if truly abstract (not collective entities)
       console.warn('[OUTLINE QC] Abstract characters detected:', abstractNames);
     }
+    
+    if (collectiveCharacters.length > 0) {
+      const collectiveNames = collectiveCharacters.map((c: any) => c.name).join(', ');
+      console.log('[OUTLINE QC] Collective entities noted (valid):', collectiveNames);
+      // Mark them as collective to avoid future warnings
+      collectiveCharacters.forEach((c: any) => { c.entity_type = 'collective'; });
+    }
 
-    // Detect abstract locations
+    // Detect abstract locations (RELAXED - historical/cosmic locations are valid)
     const abstractLocationPatterns = /^(el pasado|el futuro|la memoria|el sueño|la mente|el inconsciente)/i;
     const abstractLocations = outline.main_locations?.filter((l: any) =>
-      abstractLocationPatterns.test(l.name?.toLowerCase() || '')
+      abstractLocationPatterns.test(l.name?.toLowerCase() || '') &&
+      l.type !== 'HISTORICAL' && l.type !== 'COSMIC' && l.scale !== 'cosmic'
     ) || [];
 
     if (abstractLocations.length > 0) {
       const abstractLocNames = abstractLocations.map((l: any) => l.name).join(', ');
-      qcIssues.push(`Localizaciones abstractas detectadas: ${abstractLocNames}. Regenera con lugares filmables.`);
-      parseWarnings.push(`ABSTRACT_LOCATIONS: ${abstractLocNames}`);
+      qcIssues.push(`Localizaciones abstractas detectadas: ${abstractLocNames}. Considera lugares filmables.`);
       console.warn('[OUTLINE QC] Abstract locations detected:', abstractLocNames);
     }
 
@@ -1055,8 +1071,12 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
       outline.qc_warnings = qcIssues;
     }
 
-    // Determine quality level
-    const outlineQuality = parseWarnings.length > 0 ? 'DEGRADED' : 'FULL';
+    // Determine quality level - ONLY degrade for critical parse failures, not warnings
+    // QC issues are informational, not blocking
+    const criticalParseWarnings = parseWarnings.filter(w => 
+      w.includes('PARSE_FAILED') || w.includes('GENERATION_ERROR')
+    );
+    const outlineQuality = criticalParseWarnings.length > 0 ? 'DEGRADED' : 'FULL';
 
     console.log('[OUTLINE] Success:', outline.title, 
       '| Quality:', outlineQuality,

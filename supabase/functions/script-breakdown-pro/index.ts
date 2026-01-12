@@ -600,11 +600,19 @@ serve(async (req) => {
       console.log(`[breakdown-pro] First 5 headings:`, headingLines.slice(0, 5));
     }
 
-    // Use Lovable AI Gateway for professional analysis
+    // Use Lovable AI Gateway for professional analysis - GPT-5-mini for speed
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
+
+    // Limit script text to prevent timeouts (90k chars max for breakdown)
+    const MAX_SCRIPT_LENGTH = 90000;
+    const truncatedScript = processedScriptText.length > MAX_SCRIPT_LENGTH 
+      ? processedScriptText.slice(0, MAX_SCRIPT_LENGTH) + '\n\n[... SCRIPT TRUNCATED FOR ANALYSIS ...]' 
+      : processedScriptText;
+    
+    console.log(`[breakdown-pro] Script length for AI: ${truncatedScript.length} (truncated: ${processedScriptText.length > MAX_SCRIPT_LENGTH})`);
 
     const userPrompt = `Analyze this screenplay/script and provide a COMPLETE production breakdown.
 
@@ -619,7 +627,7 @@ ${headingLines.slice(0, 10).map((h, i) => `${i + 1}. ${h}`).join('\n')}
 
 SCRIPT TEXT:
 ---
-${processedScriptText.slice(0, 100000)}
+${truncatedScript}
 ---
 
 Remember:
@@ -633,6 +641,9 @@ Remember:
 
 Return ONLY the JSON breakdown. counts.scenes MUST equal ${headingLines.length}.`;
 
+    console.log(`[breakdown-pro] Calling Lovable AI...`);
+    const aiStartTime = Date.now();
+
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -640,7 +651,8 @@ Return ONLY the JSON breakdown. counts.scenes MUST equal ${headingLines.length}.
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5',
+        model: 'openai/gpt-5-mini',  // Faster model for breakdown analysis
+        max_completion_tokens: 4000, // Limit response size for speed
         messages: [
           { role: 'system', content: PRODUCTION_ANALYST_PROMPT },
           { role: 'user', content: userPrompt }
@@ -649,6 +661,8 @@ Return ONLY the JSON breakdown. counts.scenes MUST equal ${headingLines.length}.
         tool_choice: { type: 'function', function: { name: 'return_production_breakdown' } },
       }),
     });
+
+    console.log(`[breakdown-pro] AI response received in ${Date.now() - aiStartTime}ms, status: ${response.status}`);
 
     if (!response.ok) {
       const errorText = await response.text();
