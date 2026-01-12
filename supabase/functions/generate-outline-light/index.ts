@@ -534,13 +534,19 @@ async function callLovableAI(
   systemPrompt: string,
   userPrompt: string,
   config: ModelConfig,
-  expectedEpisodes: number
-): Promise<{ outline: any; parseWarnings: string[] }> {
+  expectedEpisodes: number,
+  overrideMaxTokens?: number // V3.4: Allow override for long texts
+): Promise<{ outline: any; parseWarnings: string[]; durationMs: number }> {
   const parseWarnings: string[] = [];
+  const callStartTime = Date.now();
   
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  
+  const effectiveMaxTokens = overrideMaxTokens ?? config.maxTokens;
 
+  console.log(`[OUTLINE] Calling Lovable AI: model=${config.apiModel}, maxTokens=${effectiveMaxTokens}, temp=${config.temperature}`);
+  
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -549,7 +555,7 @@ async function callLovableAI(
     },
     body: JSON.stringify({
       model: config.apiModel,
-      max_completion_tokens: config.maxTokens,
+      max_completion_tokens: effectiveMaxTokens,
       temperature: config.temperature,
       messages: [
         { role: 'system', content: systemPrompt + '\n\nResponde ÚNICAMENTE en formato JSON válido usando la herramienta deliver_outline.' },
@@ -602,11 +608,14 @@ async function callLovableAI(
     contentPreview: content?.slice(0, 200) || 'N/A',
     finishReason: finishReason
   }));
+  
+  const durationMs = Date.now() - callStartTime;
+  console.log(`[OUTLINE] AI call completed in ${durationMs}ms`);
 
   // Try tool call arguments first
   if (toolCall?.function?.name === 'deliver_outline' && typeof toolArgs === 'string') {
     try {
-      return { outline: normalizeOutline(parseJsonSafe(toolArgs, 'lovable.tool_call.arguments')), parseWarnings };
+      return { outline: normalizeOutline(parseJsonSafe(toolArgs, 'lovable.tool_call.arguments')), parseWarnings, durationMs };
     } catch (e) {
       parseWarnings.push('TOOL_CALL_PARSE_FAILED');
       console.warn('[OUTLINE] Tool-call JSON invalid. Details:', (e as Error).message);
@@ -619,7 +628,7 @@ async function callLovableAI(
 
   if (candidate) {
     try {
-      return { outline: normalizeOutline(parseJsonSafe(candidate, 'lovable.content')), parseWarnings };
+      return { outline: normalizeOutline(parseJsonSafe(candidate, 'lovable.content')), parseWarnings, durationMs };
     } catch (e) {
       parseWarnings.push('CONTENT_PARSE_FAILED');
       console.warn('[OUTLINE] Content JSON also invalid. Details:', (e as Error).message);
@@ -634,7 +643,7 @@ async function callLovableAI(
     if (jsonMatch) {
       try {
         console.log('[OUTLINE] Attempting aggressive JSON extraction...');
-        return { outline: normalizeOutline(parseJsonSafe(jsonMatch[0], 'lovable.aggressive')), parseWarnings };
+        return { outline: normalizeOutline(parseJsonSafe(jsonMatch[0], 'lovable.aggressive')), parseWarnings, durationMs };
       } catch (e) {
         parseWarnings.push('AGGRESSIVE_PARSE_FAILED');
         console.warn('[OUTLINE] Aggressive extraction also failed.');
@@ -644,7 +653,7 @@ async function callLovableAI(
 
   // Return degraded fallback
   parseWarnings.push('LOVABLE_JSON_PARSE_FAILED');
-  return { outline: buildFallbackOutline(expectedEpisodes), parseWarnings };
+  return { outline: buildFallbackOutline(expectedEpisodes), parseWarnings, durationMs };
 }
 
 serve(async (req) => {
@@ -731,10 +740,34 @@ serve(async (req) => {
     });
 
     // Validate and get model config
-    const modelKey = (generationModel as GenerationModelType) in MODEL_CONFIGS 
+    // V3.4: Auto-switch to faster model for very long texts to avoid timeout
+    const MAX_IDEA_LENGTH = 50000;
+    const LONG_TEXT_THRESHOLD = 30000;
+    
+    // Truncate extremely long input to prevent memory issues
+    let processedIdea = idea;
+    if (idea.length > MAX_IDEA_LENGTH) {
+      processedIdea = idea.slice(0, MAX_IDEA_LENGTH);
+      console.log(`[OUTLINE] Truncated idea from ${idea.length} to ${MAX_IDEA_LENGTH} chars`);
+    }
+    
+    // Auto-downgrade model for long texts to avoid timeout
+    let effectiveModelKey = (generationModel as GenerationModelType) in MODEL_CONFIGS 
       ? generationModel as GenerationModelType 
       : 'rapido';
-    const modelConfig = MODEL_CONFIGS[modelKey];
+    
+    const ideaLength = processedIdea.length;
+    if (ideaLength > LONG_TEXT_THRESHOLD && effectiveModelKey === 'hollywood') {
+      effectiveModelKey = 'profesional'; // GPT-5 is faster than GPT-5.2 for long texts
+      console.log(`[OUTLINE] Long text detected (${ideaLength} chars), downgrading from hollywood to profesional`);
+    }
+    
+    const modelConfig = MODEL_CONFIGS[effectiveModelKey];
+    
+    // Reduce max tokens for very long input to speed up response
+    const effectiveMaxTokens = ideaLength > LONG_TEXT_THRESHOLD 
+      ? Math.min(modelConfig.maxTokens, 6000) 
+      : modelConfig.maxTokens;
 
     // Lovable AI Gateway - no external API key needed
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -803,7 +836,7 @@ FORMATO LIGHT: Mantén summaries en máximo 2 frases. No incluyas diálogos comp
 
     const userPrompt = `Genera un OUTLINE profesional para:
 
-IDEA: ${idea}
+IDEA: ${processedIdea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
 FORMATO: ${format === 'series' ? `Serie de ${cappedEpisodesCount} episodios` : 'Película'}
@@ -914,18 +947,18 @@ Usa la herramienta deliver_outline para entregar el resultado.
 Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
 
     console.log(
-      `[OUTLINE] Generating with ${modelConfig.apiModel} (${modelConfig.provider}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount}...`
+      `[OUTLINE] Generating with ${modelConfig.apiModel} (effective model: ${effectiveModelKey}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount} | Idea length: ${ideaLength} chars | MaxTokens: ${effectiveMaxTokens}`
     );
 
     // Call Lovable AI Gateway with hardened parsing
-    let result: { outline: any; parseWarnings: string[] };
-    result = await callLovableAI(systemPrompt, userPrompt, modelConfig, cappedEpisodesCount);
+    let result: { outline: any; parseWarnings: string[]; durationMs: number };
+    result = await callLovableAI(systemPrompt, userPrompt, modelConfig, cappedEpisodesCount, effectiveMaxTokens);
 
     // If primary model failed to parse, retry with fallback model (google/gemini-2.5-flash)
     if (result.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
       console.warn(`[OUTLINE] Primary model ${modelConfig.apiModel} failed to produce parseable JSON. Retrying with fallback model ${FALLBACK_MODEL_CONFIG.apiModel}...`);
       try {
-        const fallbackResult = await callLovableAI(systemPrompt, userPrompt, FALLBACK_MODEL_CONFIG, cappedEpisodesCount);
+        const fallbackResult = await callLovableAI(systemPrompt, userPrompt, FALLBACK_MODEL_CONFIG, cappedEpisodesCount, effectiveMaxTokens);
         if (!fallbackResult.parseWarnings.includes('LOVABLE_JSON_PARSE_FAILED')) {
           console.log('[OUTLINE] Fallback model succeeded!');
           result = fallbackResult;
@@ -938,7 +971,8 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       }
     }
 
-    let { outline, parseWarnings } = result;
+    let { outline, parseWarnings, durationMs } = result;
+    console.log(`[OUTLINE] Total AI processing time: ${durationMs}ms`);
     const expectedEpisodes = format === 'series' ? cappedEpisodesCount : 1;
 
     const buildPlaceholderBeats = (count: number) =>
@@ -967,7 +1001,7 @@ Reescribe el OUTLINE COMPLETO cumpliendo EXACTAMENTE ${expectedEpisodes} episodi
 episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expectedEpisodes}).`;
 
       try {
-        const retried = await callLovableAI(systemPrompt, retryPrompt, modelConfig, expectedEpisodes);
+        const retried = await callLovableAI(systemPrompt, retryPrompt, modelConfig, expectedEpisodes, effectiveMaxTokens);
 
         if (Array.isArray(retried.outline?.episode_beats) && retried.outline.episode_beats.length > 0) {
           outline = retried.outline;
