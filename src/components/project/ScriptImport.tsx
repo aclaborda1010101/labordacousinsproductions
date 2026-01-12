@@ -3303,7 +3303,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           )}
 
           {/* OUTLINE APPROVAL CARD - Pipeline V2 Step 2 */}
-          {lightOutline && !outlineApproved && (
+          {lightOutline && !outlineApproved && !generatingOutline && outlinePersistence.savedOutline?.status === 'completed' && (
             <Card className="border-2 border-amber-500/50 bg-amber-500/5">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
