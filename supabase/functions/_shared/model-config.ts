@@ -55,15 +55,16 @@ export const MODEL_CONFIG = {
     TRANSITIONS: 'runway',   // Transiciones, abstractos
   },
   
-  // === LIMITS (V10: Industrial pipeline with 4 substeps) ===
+  // === LIMITS (V11: Industrial pipeline with threads support) ===
   LIMITS: {
     // Token limits per request type
     MAX_INPUT_TOKENS_SOFT: 10000,       // Conservative for reliability
     MAX_OUTPUT_TOKENS_SOFT: 3000,       // Standard requests
     MAX_OUTPUT_TOKENS_HARD: 6000,       // Episode final pass only
     
-    // Chunking configuration
-    CHUNK_SIZE_CHARS: 10000,            // V10: 10k chars per chunk
+    // Chunking configuration (V11: overlap for entity preservation)
+    CHUNK_SIZE_CHARS: 8000,             // V11: 8k chars per chunk (safer)
+    CHUNK_OVERLAP_CHARS: 600,           // V11: Overlap for names/relationships
     CHUNK_PAGES_EXTRACT: 15,            // PDF extraction
     CHUNK_PAGES_WRITE: 5,               // Scene writing (1-3 scenes)
     MAX_SCENES_PER_REQUEST: 10,
@@ -71,11 +72,20 @@ export const MODEL_CONFIG = {
     // Token estimation
     CHARS_PER_TOKEN: 4,
     
-    // Timeout configuration (V10: tuned for 4-substep pipeline)
+    // Timeout configuration (V11: tuned for pipeline)
     TIMEOUT_MS: 55000,                  // 55s per AI request
     STAGE_TIMEOUT_MS: 80000,            // 80s stage, 10s margin before gateway
     RETRY_COUNT: 2,                     // Max retries per substep
-    RETRY_CHUNK_REDUCTION: 0.6,         // 60% chunk on retry
+    RETRY_CHUNK_REDUCTION: 0.6,         // 60% chunk on retry 1
+    RETRY_CHUNK_REDUCTION_2: 0.5,       // 50% chunk on retry 2
+    
+    // Model fallback chain (V11: graceful degradation)
+    RETRY_MODELS: {
+      'openai/gpt-5.2': 'openai/gpt-5',
+      'openai/gpt-5': 'openai/gpt-5-mini',
+      'openai/gpt-5-mini': 'google/gemini-2.5-flash',
+      'google/gemini-2.5-flash': 'google/gemini-2.5-flash-lite',
+    } as Record<string, string>,
     
     // Output limits per task type
     OUTPUT_LIMITS: {
@@ -88,6 +98,7 @@ export const MODEL_CONFIG = {
       GLOBAL_CONSOLIDATION: 2500,
       PRODUCER_DIRECTOR: 1400,
       MICROSHOTS: 2000,
+      THREADS: 3000,                    // V11: Thread generation
     },
   }
 } as const;
