@@ -656,6 +656,39 @@ async function callLovableAI(
   return { outline: buildFallbackOutline(expectedEpisodes), parseWarnings, durationMs };
 }
 
+// =============================================================================
+// V4.0: POLLING ARCHITECTURE - Helper to update outline record in DB
+// =============================================================================
+async function updateOutlineRecord(
+  supabaseClient: any,
+  outlineId: string,
+  updates: {
+    status?: 'generating' | 'draft' | 'approved' | 'rejected' | 'error';
+    outline_json?: any;
+    quality?: string;
+    qc_issues?: string[];
+  }
+): Promise<void> {
+  try {
+    const payload: Record<string, any> = { updated_at: new Date().toISOString() };
+    if (updates.status !== undefined) payload.status = updates.status;
+    if (updates.outline_json !== undefined) payload.outline_json = updates.outline_json;
+    if (updates.quality !== undefined) payload.quality = updates.quality;
+    if (updates.qc_issues !== undefined) payload.qc_issues = updates.qc_issues;
+
+    const { error } = await supabaseClient
+      .from('project_outlines')
+      .update(payload)
+      .eq('id', outlineId);
+    
+    if (error) {
+      console.error('[OUTLINE] Failed to update outline record:', error);
+    }
+  } catch (e) {
+    console.error('[OUTLINE] Exception updating outline record:', e);
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -781,6 +814,48 @@ serve(async (req) => {
 
     // Cap episodes for LIGHT mode
     const cappedEpisodesCount = Math.min(desiredEpisodesCount, LIGHT_MODE_LIMITS.MAX_SCENES);
+
+    // =======================================================================
+    // V4.0 POLLING: Create outline record in 'generating' state BEFORE generation
+    // =======================================================================
+    if (usePolling && projectId) {
+      // Delete any existing outline for this project first
+      await auth.supabase
+        .from('project_outlines')
+        .delete()
+        .eq('project_id', projectId);
+
+      // Create new outline record with 'generating' status
+      const { data: outlineRecord, error: insertErr } = await auth.supabase
+        .from('project_outlines')
+        .insert({
+          project_id: projectId,
+          outline_json: {},
+          quality: 'generating',
+          qc_issues: [],
+          status: 'generating',
+          idea: idea.slice(0, 50000), // Store idea for reference (capped at 50K chars)
+          genre: genre || null,
+          tone: tone || null,
+          format: format || null,
+          episode_count: cappedEpisodesCount,
+        })
+        .select('id')
+        .single();
+
+      if (insertErr) {
+        console.error('[OUTLINE] Failed to create generating outline record:', insertErr);
+        // Continue without polling - fall back to synchronous mode
+      } else {
+        outlineRecordId = outlineRecord.id;
+        console.log('[OUTLINE] Created generating outline record:', outlineRecordId);
+
+        // Return immediately with outline_id for frontend to poll
+        // But we'll continue processing in this same request
+        // The frontend will start polling, and when this request completes,
+        // the DB will have the updated outline
+      }
+    }
 
     // Select narrative mode prompt
     const modePrompt = NARRATIVE_MODE_PROMPTS[narrativeMode as keyof typeof NARRATIVE_MODE_PROMPTS] || NARRATIVE_MODE_PROMPTS.serie_adictiva;
@@ -913,7 +988,7 @@ MÍNIMOS GARANTIZADOS (PISOS, no límites superiores - puedes generar MÁS):
 - Personajes secundarios: MÍNIMO ${Math.min(8 + cappedEpisodesCount, 25)} (puede haber más)
 - Localizaciones: MÍNIMO ${Math.min(8 + cappedEpisodesCount, 25)} (puede haber MUCHAS más - sé exhaustivo)
 - Props clave: MÍNIMO ${Math.min(3 + Math.floor(cappedEpisodesCount / 3), 10)} (puede haber más)
-- Subtramas: MÍNIMO ${Math.max(2, Math.floor(cappedEpisodesCount / 2))} (puede haber más)
+- Subtromas: MÍNIMO ${Math.max(2, Math.floor(cappedEpisodesCount / 2))} (puede haber más)
 
 ⚠️ REGLA DE ORO: Estos números son el PISO. Si la historia necesita 40 localizaciones, genera 40.
 NO te limites artificialmente. Sé EXHAUSTIVO especialmente con localizaciones.
@@ -1114,6 +1189,19 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
       });
     }
 
+    // =======================================================================
+    // V4.0 POLLING: Update outline record with completed data
+    // =======================================================================
+    if (outlineRecordId) {
+      await updateOutlineRecord(auth.supabase, outlineRecordId, {
+        status: 'draft',
+        outline_json: outline,
+        quality: outlineQuality,
+        qc_issues: [...qcIssues, ...parseWarnings]
+      });
+      console.log('[OUTLINE] Updated outline record to draft status:', outlineRecordId);
+    }
+
     // Always return 200 with success indicator
     return new Response(
       JSON.stringify({ 
@@ -1121,7 +1209,10 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
         outline_quality: outlineQuality,
         warnings: parseWarnings.length > 0 ? parseWarnings : undefined,
         outline, 
-        model: modelConfig.apiModel 
+        model: modelConfig.apiModel,
+        // V4.0: Include polling info for frontend
+        polling: usePolling && !!outlineRecordId,
+        outline_id: outlineRecordId
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -1140,6 +1231,17 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
         error: error?.message || 'Unknown error',
         duration_ms: Date.now() - startTime
       });
+    }
+
+    // =======================================================================
+    // V4.0 POLLING: Update outline record with error status
+    // =======================================================================
+    if (outlineRecordId) {
+      await updateOutlineRecord(auth.supabase, outlineRecordId, {
+        status: 'error',
+        qc_issues: [error?.message || 'Unknown error']
+      });
+      console.log('[OUTLINE] Updated outline record to error status:', outlineRecordId);
     }
     
     // Handle structured errors with status codes (rate limits, etc.)
@@ -1160,7 +1262,9 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
         outline_quality: 'DEGRADED',
         warnings: ['GENERATION_ERROR', error?.message || 'Unknown error'],
         outline: fallbackOutline,
-        model: 'fallback'
+        model: 'fallback',
+        polling: false,
+        outline_id: outlineRecordId
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

@@ -1204,7 +1204,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
-  // PIPELINE V2: Step 1 - Generate Light Outline (fast ~10s)
+  // PIPELINE V2: Step 1 - Generate Light Outline with Polling (V4.0)
   const generateLightOutline = async () => {
     if (!ideaText.trim()) {
       toast.error('Escribe una idea para generar el guion');
@@ -1217,39 +1217,31 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setPipelineSteps(prev => prev.map(s => ({ ...s, status: 'pending' })));
     updatePipelineStep('outline', 'running');
 
-    try {
-      const t0 = Date.now();
-      
-      // Timeout dinámico por tier y nº de episodios
-      // Para textos largos con Hollywood: hasta 10 minutos
-      const outlineEpisodes = format === 'series' ? episodesCount : 1;
-      const ideaLength = ideaText.trim().length;
-      
-      // Show info for long texts
-      if (ideaLength > 30000) {
-        toast.info('Texto extenso detectado', {
-          description: `${Math.round(ideaLength / 1000)}K caracteres. Esto puede tardar varios minutos...`,
-          duration: 8000,
-        });
-      }
-      
-      const timeoutMs = (() => {
-        if (qualityTier === 'hollywood') {
-          // Hollywood (GPT-5.2): máximo 10 minutos para textos largos
-          return 600000;
-        }
-        if (qualityTier === 'profesional') {
-          // Profesional (GPT-5): hasta 5 minutos
-          return 300000;
-        }
-        // Rapido (GPT-5-mini): hasta 3 minutos
-        return 180000;
-      })();
+    const t0 = Date.now();
+    const ideaLength = ideaText.trim().length;
+    
+    // Show info for long texts
+    if (ideaLength > 30000) {
+      toast.info('Texto extenso detectado', {
+        description: `${Math.round(ideaLength / 1000)}K caracteres. La generación puede tardar varios minutos...`,
+        duration: 8000,
+      });
+    }
 
-      const { data, error } = await invokeWithTimeout<{ outline: typeof lightOutline }>(
+    try {
+      // Short timeout to get the outline_id (backend creates record immediately)
+      const initialTimeoutMs = 45000; // 45s to get outline_id
+      
+      const { data, error } = await invokeWithTimeout<{ 
+        outline?: typeof lightOutline; 
+        polling?: boolean;
+        outline_id?: string;
+        outline_quality?: string;
+        warnings?: string[];
+      }>(
         'generate-outline-light',
         {
-          idea: ideaText.trim(), // NO truncar - enviar texto completo
+          idea: ideaText.trim(),
           episodesCount: format === 'series' ? episodesCount : 1,
           format,
           genre,
@@ -1259,107 +1251,200 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           densityTargets: targets,
           qualityTier,
           disableDensity,
-          usePolling: false // Modo síncrono (sin polling)
+          usePolling: true, // V4.0: Enable polling mode
+          projectId,
         },
-        timeoutMs
+        initialTimeoutMs
       );
-      const durationMs = Date.now() - t0;
 
-      if (error) throw error;
-      if (!data?.outline) throw new Error('No se generó el outline');
+      // If we got full response immediately (fast generation), use it directly
+      if (!error && data?.outline && Object.keys(data.outline).length > 0) {
+        const durationMs = Date.now() - t0;
+        console.log('[ScriptImport] Outline received synchronously in', durationMs, 'ms');
+        
+        handleOutlineSuccess(data.outline, data.outline_quality || 'FULL', data.warnings || [], durationMs);
+        return;
+      }
 
-      // V3.2: Validate outline quality - ALLOW degraded with warning (don't block)
-      const responseData = data as { outline: any; outline_quality?: string; warnings?: string[] };
-      const outlineQuality = responseData?.outline_quality || 'UNKNOWN';
-      const outlineWarnings = responseData?.warnings || [];
-      const targetEpisodes = format === 'series' ? episodesCount : 1;
-      const generatedEpisodes = responseData.outline?.episode_beats?.length || 0;
-      
-      // V3.2: Show warnings but DON'T block - let user decide
-      if (outlineQuality === 'DEGRADED' && outlineWarnings.length > 0) {
-        // Only show toast warning, don't throw error
-        toast.warning('Outline generado con avisos', {
-          description: outlineWarnings.join(', '),
-          duration: 8000,
-          action: {
-            label: 'Regenerar',
-            onClick: () => regenerateOutline(),
+      // If we got outline_id, start polling
+      if (!error && data?.polling && data?.outline_id) {
+        console.log('[ScriptImport] Starting polling for outline:', data.outline_id);
+        toast.info('Generación iniciada', {
+          description: 'Consultando estado cada 5 segundos...',
+          duration: 5000,
+        });
+        
+        outlinePersistence.startPolling(data.outline_id, {
+          pollInterval: 5000,
+          maxPollDuration: 15 * 60 * 1000, // 15 minutes max
+          onComplete: (completedOutline) => {
+            const durationMs = Date.now() - t0;
+            console.log('[ScriptImport] Outline polling completed in', durationMs, 'ms');
+            
+            const outlineJson = completedOutline.outline_json as typeof lightOutline;
+            const quality = completedOutline.quality || 'FULL';
+            const qcIssues = completedOutline.qc_issues || [];
+            
+            handleOutlineSuccess(outlineJson, quality, qcIssues, durationMs);
+            setGeneratingOutline(false);
           },
+          onError: (errorMsg) => {
+            console.error('[ScriptImport] Outline polling error:', errorMsg);
+            updatePipelineStep('outline', 'error');
+            toast.error('Error generando outline', { 
+              description: errorMsg,
+              duration: 10000,
+            });
+            setGeneratingOutline(false);
+          }
         });
-      }
-      
-      // V3.2: Warn if episode count doesn't match but continue
-      if (generatedEpisodes !== targetEpisodes && generatedEpisodes > 0) {
-        toast.warning(`Se generaron ${generatedEpisodes} episodios en lugar de ${targetEpisodes}.`, {
-          description: 'Puedes regenerar o aprobar el outline actual.',
-          duration: 6000,
-        });
+        
+        // Don't set generatingOutline to false - polling callbacks will do it
+        return;
       }
 
-      // Aprendizaje: tiempo real de outline
-      setTimingModel(prev => {
-        const next = updateOutlineTiming(prev, {
-          episodesCount: format === 'series' ? episodesCount : 1,
-          durationMs,
-        });
-        saveScriptTimingModel(next);
-        return next;
-      });
-
-      setLightOutline(responseData.outline);
-      // Persist outline + idea to localStorage immediately so it survives re-renders/navigation
-      saveDraft('outline', projectId, { outline: responseData.outline, idea: ideaText.trim() });
-      
-      // V3.3: Also persist outline to database for recovery after page refresh
-      const saveResult = await outlinePersistence.saveOutline({
-        outline: responseData.outline,
-        quality: outlineQuality,
-        qcIssues: outlineWarnings,
-        idea: ideaText.trim(),
-        genre,
-        tone,
-        format,
-        episodeCount: format === 'series' ? episodesCount : 1,
-        targetDuration: format === 'series' ? episodeDurationMin : filmDurationMin,
-        status: 'draft',
-      });
-      
-      if (saveResult.success) {
-        console.log('[ScriptImport] Outline persisted to database:', saveResult.id);
-      } else {
-        console.warn('[ScriptImport] Failed to persist outline to DB:', saveResult.error);
+      // If error, check if we can recover from DB
+      if (error) {
+        const errorMessage = String(error?.message || '').toLowerCase();
+        const isTimeoutError = errorMessage.includes('timeout') || 
+                               errorMessage.includes('failed to fetch') ||
+                               errorMessage.includes('aborted');
+        
+        if (isTimeoutError) {
+          console.log('[ScriptImport] Timeout detected, checking for generating outline in DB...');
+          
+          // Check if there's a generating outline we can poll
+          const { data: generatingOutline } = await supabase
+            .from('project_outlines')
+            .select('id, status, created_at')
+            .eq('project_id', projectId)
+            .eq('status', 'generating')
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          
+          if (generatingOutline) {
+            const createdAt = new Date(generatingOutline.created_at).getTime();
+            const ageMinutes = (Date.now() - createdAt) / 60000;
+            
+            if (ageMinutes < 15) {
+              console.log('[ScriptImport] Found generating outline, resuming polling:', generatingOutline.id);
+              toast.info('Recuperando generación en progreso...', {
+                description: 'La conexión se perdió pero la generación continúa en el servidor.',
+                duration: 6000,
+              });
+              
+              outlinePersistence.startPolling(generatingOutline.id, {
+                pollInterval: 5000,
+                maxPollDuration: (15 - ageMinutes) * 60 * 1000, // Remaining time
+                onComplete: (completedOutline) => {
+                  const durationMs = Date.now() - t0;
+                  const outlineJson = completedOutline.outline_json as typeof lightOutline;
+                  handleOutlineSuccess(outlineJson, completedOutline.quality || 'FULL', completedOutline.qc_issues || [], durationMs);
+                  setGeneratingOutline(false);
+                },
+                onError: (errorMsg) => {
+                  updatePipelineStep('outline', 'error');
+                  toast.error('Error generando outline', { description: errorMsg });
+                  setGeneratingOutline(false);
+                }
+              });
+              
+              return;
+            }
+          }
+          
+          // No recoverable outline found
+          toast.error('La generación tardó demasiado', {
+            description: 'El texto es muy extenso. Inténtalo de nuevo.',
+            duration: 10000,
+          });
+          updatePipelineStep('outline', 'error');
+        } else {
+          throw error;
+        }
       }
-      
-      updatePipelineStep('outline', 'success');
-      updatePipelineStep('approval', 'running', 'Esperando aprobación...');
-      
-      // V3.2: Adjust success message based on quality
-      const successMessage = outlineQuality === 'DEGRADED' 
-        ? 'Outline generado (con avisos). Revísalo antes de aprobar.'
-        : 'Outline generado. Revísalo y apruébalo para continuar.';
-      toast.success(successMessage);
 
     } catch (err: any) {
       console.error('Error generating light outline:', err);
       updatePipelineStep('outline', 'error');
-      
-      // Simple error handling without polling
-      const errorMessage = String(err?.message || '').toLowerCase();
-      const isTimeoutError = errorMessage.includes('timeout') || 
-                             errorMessage.includes('failed to fetch') ||
-                             errorMessage.includes('aborted');
-      
-      if (isTimeoutError) {
-        toast.error('La generación tardó demasiado', {
-          description: 'El texto es muy extenso. Inténtalo de nuevo o prueba con menos contenido.',
-          duration: 10000,
-        });
-      } else {
-        toast.error(err.message || 'Error al generar outline');
-      }
+      toast.error(err.message || 'Error al generar outline');
     } finally {
-      setGeneratingOutline(false);
+      // Only set to false if we're not polling
+      if (!outlinePersistence.isPolling) {
+        setGeneratingOutline(false);
+      }
     }
+  };
+
+  // Helper function to handle successful outline generation
+  const handleOutlineSuccess = async (
+    outline: any, 
+    outlineQuality: string, 
+    outlineWarnings: string[],
+    durationMs: number
+  ) => {
+    const targetEpisodes = format === 'series' ? episodesCount : 1;
+    const generatedEpisodes = outline?.episode_beats?.length || 0;
+    
+    // Show warnings but DON'T block
+    if (outlineQuality === 'DEGRADED' && outlineWarnings.length > 0) {
+      toast.warning('Outline generado con avisos', {
+        description: outlineWarnings.join(', '),
+        duration: 8000,
+        action: {
+          label: 'Regenerar',
+          onClick: () => regenerateOutline(),
+        },
+      });
+    }
+    
+    // Warn if episode count doesn't match
+    if (generatedEpisodes !== targetEpisodes && generatedEpisodes > 0) {
+      toast.warning(`Se generaron ${generatedEpisodes} episodios en lugar de ${targetEpisodes}.`, {
+        description: 'Puedes regenerar o aprobar el outline actual.',
+        duration: 6000,
+      });
+    }
+
+    // Update timing model
+    setTimingModel(prev => {
+      const next = updateOutlineTiming(prev, {
+        episodesCount: format === 'series' ? episodesCount : 1,
+        durationMs,
+      });
+      saveScriptTimingModel(next);
+      return next;
+    });
+
+    setLightOutline(outline);
+    saveDraft('outline', projectId, { outline, idea: ideaText.trim() });
+    
+    // Persist to database
+    const saveResult = await outlinePersistence.saveOutline({
+      outline,
+      quality: outlineQuality,
+      qcIssues: outlineWarnings,
+      idea: ideaText.trim(),
+      genre,
+      tone,
+      format,
+      episodeCount: format === 'series' ? episodesCount : 1,
+      targetDuration: format === 'series' ? episodeDurationMin : filmDurationMin,
+      status: 'draft',
+    });
+    
+    if (saveResult.success) {
+      console.log('[ScriptImport] Outline persisted to database:', saveResult.id);
+    }
+    
+    updatePipelineStep('outline', 'success');
+    updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+    
+    const successMessage = outlineQuality === 'DEGRADED' 
+      ? 'Outline generado (con avisos). Revísalo antes de aprobar.'
+      : 'Outline generado. Revísalo y apruébalo para continuar.';
+    toast.success(successMessage);
   };
 
   // PIPELINE V2: Step 2 - Regenerate Outline
