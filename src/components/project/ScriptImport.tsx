@@ -1329,6 +1329,68 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                                errorMessage.includes('failed to fetch') ||
                                errorMessage.includes('aborted');
         
+        // V4.1: Handle PROJECT_BUSY error (409) - another generation is in progress
+        const errorObj = error as any;
+        const isProjectBusy = errorMessage.includes('project_busy') || 
+                              errorMessage.includes('ya está generando') ||
+                              (errorObj?.status === 409);
+        
+        if (isProjectBusy) {
+          console.log('[ScriptImport] Project busy, checking for existing generation...');
+          
+          // Check if there's a generating outline we can poll instead
+          const { data: generatingOutline } = await supabase
+            .from('project_outlines')
+            .select('id, status, created_at')
+            .eq('project_id', projectId)
+            .eq('status', 'generating')
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          
+          if (generatingOutline) {
+            const createdAt = new Date(generatingOutline.created_at).getTime();
+            const ageMinutes = (Date.now() - createdAt) / 60000;
+            
+            if (ageMinutes < 15) {
+              console.log('[ScriptImport] Found existing generation, starting polling:', generatingOutline.id);
+              toast.info('Ya hay una generación en progreso', {
+                description: 'Conectando con la generación existente...',
+                duration: 5000,
+              });
+              
+              outlinePersistence.startPolling(generatingOutline.id, {
+                pollInterval: 5000,
+                maxPollDuration: (15 - ageMinutes) * 60 * 1000,
+                onComplete: (completedOutline) => {
+                  const durationMs = Date.now() - t0;
+                  const outlineJson = completedOutline.outline_json as typeof lightOutline;
+                  handleOutlineSuccess(outlineJson, completedOutline.quality || 'FULL', completedOutline.qc_issues || [], durationMs);
+                  setGeneratingOutline(false);
+                  setOutlineStartTime(null);
+                },
+                onError: (errorMsg) => {
+                  updatePipelineStep('outline', 'error');
+                  toast.error('Error generando outline', { description: errorMsg });
+                  setGeneratingOutline(false);
+                  setOutlineStartTime(null);
+                }
+              });
+              
+              return;
+            }
+          }
+          
+          // No active generation found - show message to wait
+          const retryAfter = errorObj?.retryAfter || 30;
+          toast.error('Proyecto ocupado', {
+            description: `Ya hay una operación en curso. Espera ${retryAfter} segundos e inténtalo de nuevo.`,
+            duration: 10000,
+          });
+          updatePipelineStep('outline', 'error');
+          return;
+        }
+        
         if (isTimeoutError) {
           console.log('[ScriptImport] Timeout detected, checking for generating outline in DB...');
           
