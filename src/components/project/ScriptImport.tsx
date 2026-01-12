@@ -110,6 +110,7 @@ import {
 } from '@/lib/scriptTimingModel';
 import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
 import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
+import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
 import {
   hydrateCharacters,
   hydrateLocations,
@@ -138,6 +139,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [scriptText, setScriptText] = useState('');
   const [scriptLocked, setScriptLocked] = useState(false);
   const [currentScriptId, setCurrentScriptId] = useState<string | null>(null);
+  
+  // Outline persistence hook (saves to database)
+  const outlinePersistence = useOutlinePersistence({ projectId });
   
   // Script history state
   const [scriptHistory, setScriptHistory] = useState<any[]>([]);
@@ -508,17 +512,46 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         clearPipelineState();
       }
       
-      // No pipeline running - check for saved outline draft (pre-approval state)
-      const outlineDraft = loadDraft<any>('outline', projectId);
-      if (outlineDraft?.data && !lightOutline) {
-        setLightOutline(outlineDraft.data.outline || outlineDraft.data);
-        // Also restore idea if saved with outline
-        if (outlineDraft.data.idea) {
-          setIdeaText(outlineDraft.data.idea);
+      // No pipeline running - first check for database-persisted outline
+      if (outlinePersistence.savedOutline && !outlinePersistence.isLoading && !lightOutline) {
+        const dbOutline = outlinePersistence.savedOutline;
+        setLightOutline(dbOutline.outline_json);
+        if (dbOutline.idea) setIdeaText(dbOutline.idea);
+        if (dbOutline.format) setFormat(dbOutline.format as 'film' | 'series');
+        if (dbOutline.genre) setGenre(dbOutline.genre);
+        if (dbOutline.tone) setTone(dbOutline.tone);
+        if (dbOutline.episode_count) setEpisodesCount(dbOutline.episode_count);
+        if (dbOutline.target_duration) {
+          if (dbOutline.format === 'film') {
+            setFilmDurationMin(dbOutline.target_duration);
+          } else {
+            setEpisodeDurationMin(dbOutline.target_duration);
+          }
         }
-        updatePipelineStep('outline', 'success');
-        updatePipelineStep('approval', 'running', 'Esperando aprobación...');
-        toast.info('Outline recuperado. Revísalo y apruébalo.');
+        
+        if (dbOutline.status === 'approved') {
+          setOutlineApproved(true);
+          updatePipelineStep('outline', 'success');
+          updatePipelineStep('approval', 'success');
+          toast.info('Outline aprobado recuperado de la base de datos.');
+        } else {
+          updatePipelineStep('outline', 'success');
+          updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+          toast.info('Outline recuperado de la base de datos. Revísalo y apruébalo.');
+        }
+      } else {
+        // Fallback: check localStorage for saved outline draft (pre-approval state)
+        const outlineDraft = loadDraft<any>('outline', projectId);
+        if (outlineDraft?.data && !lightOutline) {
+          setLightOutline(outlineDraft.data.outline || outlineDraft.data);
+          // Also restore idea if saved with outline
+          if (outlineDraft.data.idea) {
+            setIdeaText(outlineDraft.data.idea);
+          }
+          updatePipelineStep('outline', 'success');
+          updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+          toast.info('Outline recuperado. Revísalo y apruébalo.');
+        }
       }
       
       // Restore form draft (ideaText + config) for PRO mode regeneration
@@ -543,7 +576,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         console.warn('[ScriptImport] Error loading draft:', e);
       }
     }
-  }, [projectId, episodesCount]);
+  }, [projectId, episodesCount, outlinePersistence.savedOutline, outlinePersistence.isLoading]);
 
   // Auto-save form draft for PRO mode (debounced)
   useEffect(() => {
@@ -1303,6 +1336,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setLightOutline(responseData.outline);
       // Persist outline + idea to localStorage immediately so it survives re-renders/navigation
       saveDraft('outline', projectId, { outline: responseData.outline, idea: ideaText.trim() });
+      
+      // V3.3: Also persist outline to database for recovery after page refresh
+      const saveResult = await outlinePersistence.saveOutline({
+        outline: responseData.outline,
+        quality: outlineQuality,
+        qcIssues: outlineWarnings,
+        idea: ideaText.trim(),
+        genre,
+        tone,
+        format,
+        episodeCount: format === 'series' ? episodesCount : 1,
+        targetDuration: format === 'series' ? episodeDurationMin : filmDurationMin,
+        status: 'draft',
+      });
+      
+      if (saveResult.success) {
+        console.log('[ScriptImport] Outline persisted to database:', saveResult.id);
+      } else {
+        console.warn('[ScriptImport] Failed to persist outline to DB:', saveResult.error);
+      }
+      
       updatePipelineStep('outline', 'success');
       updatePipelineStep('approval', 'running', 'Esperando aprobación...');
       
@@ -1347,6 +1401,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     // Clear the outline draft since it's now saved in pipeline state
     deleteDraft('outline', projectId);
+    
+    // V3.3: Mark outline as approved in database
+    if (outlinePersistence.savedOutline) {
+      await outlinePersistence.approveOutline();
+      console.log('[ScriptImport] Outline marked as approved in database');
+    }
 
     // Save initial pipeline state for background recovery
     savePipelineState({

@@ -3708,6 +3708,65 @@ export type Database = {
           },
         ]
       }
+      project_outlines: {
+        Row: {
+          created_at: string | null
+          episode_count: number | null
+          format: string | null
+          genre: string | null
+          id: string
+          idea: string | null
+          outline_json: Json
+          project_id: string
+          qc_issues: Json | null
+          quality: string | null
+          status: string | null
+          target_duration: number | null
+          tone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          episode_count?: number | null
+          format?: string | null
+          genre?: string | null
+          id?: string
+          idea?: string | null
+          outline_json: Json
+          project_id: string
+          qc_issues?: Json | null
+          quality?: string | null
+          status?: string | null
+          target_duration?: number | null
+          tone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          episode_count?: number | null
+          format?: string | null
+          genre?: string | null
+          id?: string
+          idea?: string | null
+          outline_json?: Json
+          project_id?: string
+          qc_issues?: Json | null
+          quality?: string | null
+          status?: string | null
+          target_duration?: number | null
+          tone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_outlines_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_rule_overrides: {
         Row: {
           created_at: string
