@@ -54,12 +54,39 @@ export const MODEL_CONFIG = {
     TRANSITIONS: 'runway',   // Transiciones, abstractos
   },
   
-  // === LIMITS (anti-timeout) ===
+  // === LIMITS (anti-timeout) - OPERATIONAL POLICY ===
   LIMITS: {
-    CHUNK_SIZE_CHARS: 15000,         // ~10-15 páginas
+    // Token limits per request type
+    MAX_INPUT_TOKENS_SOFT: 12000,       // ~48k chars
+    MAX_OUTPUT_TOKENS_SOFT: 3000,       // Standard requests
+    MAX_OUTPUT_TOKENS_HARD: 6000,       // Episode final pass only
+    
+    // Chunking configuration
+    CHUNK_SIZE_CHARS: 15000,            // ~10-15 páginas
+    CHUNK_PAGES_EXTRACT: 15,            // PDF extraction
+    CHUNK_PAGES_WRITE: 5,               // Scene writing (1-3 scenes)
     MAX_SCENES_PER_REQUEST: 10,
-    TIMEOUT_MS: 90000,               // 90s por request
-    RETRY_COUNT: 2,
+    
+    // Token estimation (no libraries needed)
+    CHARS_PER_TOKEN: 4,                 // tokens ≈ chars / 4
+    
+    // Timeout configuration
+    TIMEOUT_MS: 60000,                  // 60s per request
+    STAGE_TIMEOUT_MS: 85000,            // 85s for stage-based workers
+    RETRY_COUNT: 3,
+    
+    // Output limits per task type
+    OUTPUT_LIMITS: {
+      BIBLE: 1800,
+      OUTLINE: 1400,
+      SCENE_LIST: 2000,
+      SINGLE_SCENE: 1500,
+      CONSOLIDATION: 6000,
+      CHUNK_EXTRACTION: 1800,
+      GLOBAL_CONSOLIDATION: 2500,
+      PRODUCER_DIRECTOR: 1400,
+      MICROSHOTS: 2000,
+    },
   }
 } as const;
 
@@ -67,6 +94,7 @@ export const MODEL_CONFIG = {
 export type ScriptTier = keyof typeof MODEL_CONFIG.SCRIPT;
 export type ImageAssetType = keyof typeof MODEL_CONFIG.IMAGE;
 export type VideoType = keyof typeof MODEL_CONFIG.VIDEO;
+export type OutputLimitType = keyof typeof MODEL_CONFIG.LIMITS.OUTPUT_LIMITS;
 
 // Helper functions
 export function getScriptModel(tier: 'hollywood' | 'profesional' | 'rapido' | 'nano' | 'fallback'): string {
@@ -117,4 +145,29 @@ export function getChunkSize(): number {
 
 export function getTimeout(): number {
   return MODEL_CONFIG.LIMITS.TIMEOUT_MS;
+}
+
+export function getOutputLimit(taskType: OutputLimitType): number {
+  return MODEL_CONFIG.LIMITS.OUTPUT_LIMITS[taskType];
+}
+
+export function estimateTokens(chars: number): number {
+  return Math.ceil(chars / MODEL_CONFIG.LIMITS.CHARS_PER_TOKEN);
+}
+
+// Retry policy helpers
+export function getRetryModel(currentModel: string, attempt: number): string {
+  // Retry 3: fallback to different model tier
+  if (attempt >= 3) {
+    if (currentModel.includes('gpt-5.2')) return MODEL_CONFIG.SCRIPT.PROFESIONAL;
+    if (currentModel.includes('gpt-5-mini')) return MODEL_CONFIG.SCRIPT.PROFESIONAL;
+    return MODEL_CONFIG.SCRIPT.FALLBACK;
+  }
+  return currentModel;
+}
+
+export function getRetryChunkSize(originalSize: number, attempt: number): number {
+  // Retry 2: reduce chunk by 50%
+  if (attempt >= 2) return Math.floor(originalSize / 2);
+  return originalSize;
 }
