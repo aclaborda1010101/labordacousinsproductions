@@ -620,6 +620,37 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   }, [projectId, episodesCount, outlinePersistence.savedOutline, outlinePersistence.isLoading]);
 
+  // V10.3: Sync generatingOutline state with DB status (for progress bar visibility)
+  useEffect(() => {
+    const status = outlinePersistence.savedOutline?.status;
+    if (status === 'generating' || status === 'queued') {
+      if (!generatingOutline) {
+        setGeneratingOutline(true);
+        if (!outlineStartTime) setOutlineStartTime(Date.now());
+      }
+    } else if (status === 'completed' || status === 'approved' || status === 'error' || status === 'failed') {
+      if (generatingOutline) {
+        setGeneratingOutline(false);
+      }
+    }
+  }, [outlinePersistence.savedOutline?.status]);
+
+  // V10.3: Fallback to load outline from persistence when completed but lightOutline is empty
+  useEffect(() => {
+    const outline = outlinePersistence.savedOutline;
+    if (
+      outline?.status === 'completed' && 
+      outline?.outline_json && 
+      Object.keys(outline.outline_json).length > 0 &&
+      !lightOutline
+    ) {
+      console.log('[ScriptImport] Loading completed outline from persistence:', outline.id);
+      setLightOutline(outline.outline_json);
+      updatePipelineStep('outline', 'success');
+      updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+    }
+  }, [outlinePersistence.savedOutline, lightOutline]);
+
   // Auto-save form draft for PRO mode (debounced)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
