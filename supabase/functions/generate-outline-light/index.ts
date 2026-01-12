@@ -538,12 +538,14 @@ async function logEditorialEvent(
 }
 
 // =============================================================================
-// V4.2: TIMEOUT CONFIGURATION - Generous limits (optimize down later)
+// V4.3: TIMEOUT CONFIGURATION - Optimized with fallback strategy
 // =============================================================================
-const SUMMARIZE_TIMEOUT_MS = 60000; // 60 seconds for summarization (generous)
-const GENERATION_TIMEOUT_MS = 300000; // 300 seconds (5 minutes - generous limit)
+const SUMMARIZE_TIMEOUT_MS = 60000; // 60 seconds for summarization
+const FIRST_ATTEMPT_TIMEOUT_MS = 90000; // 90 seconds first attempt (before gateway cuts)
+const GENERATION_TIMEOUT_MS = 300000; // 300 seconds fallback (5 minutes)
 const BATCH_TIMEOUT_MS = 180000; // 180 seconds (3 minutes per batch)
 const MAX_EPISODES_PER_BATCH = 5; // Split large series into batches of 5
+const LONG_TEXT_THRESHOLD = 30000; // Texts longer than this auto-switch to fast model
 
 async function callWithTimeout<T>(
   promise: Promise<T>, 
@@ -566,9 +568,9 @@ async function callWithTimeout<T>(
 }
 
 // =============================================================================
-// V4.2: SUMMARIZE LONG TEXT - For texts > 15k chars (reduced from 25k)
+// V4.3: SUMMARIZE LONG TEXT - Aggressive summarization to avoid timeouts
 // =============================================================================
-const MAX_IDEA_CHARS = 15000; // Reduced for faster processing
+const MAX_IDEA_CHARS = 10000; // Aggressive summarization for gateway timeout avoidance
 
 async function summarizeLongText(idea: string): Promise<{ summary: string; wasSummarized: boolean }> {
   if (idea.length <= MAX_IDEA_CHARS) {
@@ -1359,28 +1361,53 @@ Recuerda: NO narrativa genérica. Cada beat debe ser ESPECÍFICO y ADICTIVO.`;
       `[OUTLINE] Generating with ${modelConfig.apiModel} (effective model: ${effectiveModelKey}) | Mode: ${narrativeMode || 'serie_adictiva'} | Target episodes: ${cappedEpisodesCount} | Idea length: ${effectiveIdea.length} chars (original: ${ideaLength}) | MaxTokens: ${effectiveMaxTokens}`
     );
 
-    // V4.2: Call with timeout protection (45s for generation)
+    // V4.3: Auto-switch to faster model for very long texts to avoid gateway timeout
+    let effectiveModelConfig = modelConfig;
+    let effectiveModelKeyUsed = effectiveModelKey;
+    
+    if (ideaLength > LONG_TEXT_THRESHOLD && effectiveModelKey === 'hollywood') {
+      console.log(`[OUTLINE] Long text detected (${ideaLength} chars > ${LONG_TEXT_THRESHOLD}). Auto-switching to faster model to avoid timeout.`);
+      effectiveModelConfig = MODEL_CONFIGS.rapido;
+      effectiveModelKeyUsed = 'rapido';
+    }
+
+    // V4.3: Call with short timeout first, then fallback to fast model
     let result: { outline: any; parseWarnings: string[]; durationMs: number };
     
     try {
+      // First attempt with configured model (90s timeout to stay under gateway limit)
       result = await callWithTimeout(
-        callLovableAI(systemPrompt, actualUserPrompt, modelConfig, cappedEpisodesCount, effectiveMaxTokens),
-        GENERATION_TIMEOUT_MS,
-        'generate_outline'
+        callLovableAI(systemPrompt, actualUserPrompt, effectiveModelConfig, cappedEpisodesCount, effectiveMaxTokens),
+        FIRST_ATTEMPT_TIMEOUT_MS,
+        'generate_outline_primary'
       );
-    } catch (timeoutError) {
-      const errorMsg = (timeoutError as Error).message || 'Unknown timeout';
-      console.error('[OUTLINE] AI call timeout:', errorMsg);
+    } catch (primaryError) {
+      const errorMsg = (primaryError as Error).message || 'Unknown error';
+      console.warn(`[OUTLINE] Primary model timeout/error (${errorMsg}). Retrying with fast model...`);
       
-      // Update outline record with timeout error before function dies
-      if (outlineRecordId) {
-        await updateOutlineRecord(auth.supabase, outlineRecordId, {
-          status: 'error',
-          qc_issues: ['Timeout - el texto es muy largo o el servidor está saturado. Intenta con un texto más corto.']
-        });
+      // Fallback: Use fastest model with longer timeout
+      try {
+        result = await callWithTimeout(
+          callLovableAI(systemPrompt, actualUserPrompt, MODEL_CONFIGS.rapido, cappedEpisodesCount, 24000),
+          GENERATION_TIMEOUT_MS,
+          'generate_outline_fast_fallback'
+        );
+        result.parseWarnings.push('FAST_MODEL_FALLBACK_USED');
+        console.log('[OUTLINE] Fast model fallback succeeded!');
+      } catch (fallbackError) {
+        const fallbackMsg = (fallbackError as Error).message || 'Unknown fallback error';
+        console.error('[OUTLINE] Fast model fallback also failed:', fallbackMsg);
+        
+        // Update outline record with error before function dies
+        if (outlineRecordId) {
+          await updateOutlineRecord(auth.supabase, outlineRecordId, {
+            status: 'error',
+            qc_issues: ['Timeout - el servidor no pudo completar la generación. Intenta con un texto más corto o reinténtalo más tarde.']
+          });
+        }
+        
+        throw new Error(`AI_TIMEOUT: Primary and fallback models both failed. ${fallbackMsg}`);
       }
-      
-      throw new Error(`AI_TIMEOUT: ${errorMsg}`);
     }
 
     // If primary model failed to parse, retry with fallback model (google/gemini-2.5-flash - much faster)
