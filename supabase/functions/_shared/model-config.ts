@@ -57,12 +57,12 @@ export const MODEL_CONFIG = {
   // === LIMITS (anti-timeout) - OPERATIONAL POLICY ===
   LIMITS: {
     // Token limits per request type
-    MAX_INPUT_TOKENS_SOFT: 12000,       // ~48k chars
+    MAX_INPUT_TOKENS_SOFT: 10000,       // V8.0: Reduced from 12000 for safer margins
     MAX_OUTPUT_TOKENS_SOFT: 3000,       // Standard requests
     MAX_OUTPUT_TOKENS_HARD: 6000,       // Episode final pass only
     
     // Chunking configuration
-    CHUNK_SIZE_CHARS: 15000,            // ~10-15 páginas
+    CHUNK_SIZE_CHARS: 12000,            // V8.0: Reduced from 15000 for stability
     CHUNK_PAGES_EXTRACT: 15,            // PDF extraction
     CHUNK_PAGES_WRITE: 5,               // Scene writing (1-3 scenes)
     MAX_SCENES_PER_REQUEST: 10,
@@ -72,7 +72,7 @@ export const MODEL_CONFIG = {
     
     // Timeout configuration
     TIMEOUT_MS: 60000,                  // 60s per request
-    STAGE_TIMEOUT_MS: 85000,            // 85s for stage-based workers
+    STAGE_TIMEOUT_MS: 70000,            // V8.0: Reduced from 85s for 20s gateway margin
     RETRY_COUNT: 3,
     
     // Output limits per task type

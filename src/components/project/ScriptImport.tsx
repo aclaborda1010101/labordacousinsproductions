@@ -524,6 +524,39 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       // No pipeline running - first check for database-persisted outline
       if (outlinePersistence.savedOutline && !outlinePersistence.isLoading && !lightOutline) {
         const dbOutline = outlinePersistence.savedOutline;
+        
+        // V8.0: Handle incomplete/draft outlines - sync generatingOutline state with DB
+        if (dbOutline.status === 'generating' || (dbOutline.status === 'draft' && dbOutline.stage && dbOutline.stage !== 'none')) {
+          // Outline is in progress - sync UI state and start polling
+          setGeneratingOutline(true);
+          setOutlineStartTime(Date.now());
+          outlinePersistence.startPolling(dbOutline.id, {
+            onComplete: () => {
+              setGeneratingOutline(false);
+              outlinePersistence.refreshOutline();
+              toast.success('Outline generado correctamente');
+            },
+            onError: (err) => {
+              setGeneratingOutline(false);
+              toast.error('Error: ' + err);
+            }
+          });
+          return; // Don't continue - wait for completion
+        }
+        
+        // V8.0: Draft with stage=none means never started or failed to start - show recovery card
+        if (dbOutline.status === 'draft' && (!dbOutline.stage || dbOutline.stage === 'none')) {
+          // Restore form fields but not lightOutline - this triggers recovery card
+          if (dbOutline.idea) setIdeaText(dbOutline.idea);
+          if (dbOutline.format) setFormat(dbOutline.format as 'film' | 'series');
+          if (dbOutline.genre) setGenre(dbOutline.genre);
+          if (dbOutline.tone) setTone(dbOutline.tone);
+          if (dbOutline.episode_count) setEpisodesCount(dbOutline.episode_count);
+          // Don't set lightOutline - let recovery card show
+          return;
+        }
+        
+        // Normal case: completed or approved outline
         setLightOutline(dbOutline.outline_json);
         if (dbOutline.idea) setIdeaText(dbOutline.idea);
         if (dbOutline.format) setFormat(dbOutline.format as 'film' | 'series');
@@ -543,7 +576,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           updatePipelineStep('outline', 'success');
           updatePipelineStep('approval', 'success');
           toast.info('Outline aprobado recuperado de la base de datos.');
-        } else {
+        } else if (dbOutline.status === 'completed') {
           updatePipelineStep('outline', 'success');
           updatePipelineStep('approval', 'running', 'Esperando aprobación...');
           toast.info('Outline recuperado de la base de datos. Revísalo y apruébalo.');
@@ -1652,6 +1685,63 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       }
     } finally {
       setUpgradingOutline(false);
+    }
+  };
+
+  // V8.0: Retry draft outline that failed to start
+  const handleRetryDraftOutline = async () => {
+    const outlineId = outlinePersistence.savedOutline?.id;
+    if (!outlineId) {
+      toast.error('No hay outline para reintentar');
+      return;
+    }
+    
+    setGeneratingOutline(true);
+    setOutlineStartTime(Date.now());
+    
+    try {
+      // Update status to 'generating' and set initial stage
+      const { error: updateError } = await supabase.from('project_outlines').update({
+        status: 'generating',
+        stage: 'summarize',
+        progress: 0,
+        updated_at: new Date().toISOString()
+      }).eq('id', outlineId);
+      
+      if (updateError) {
+        throw new Error('Error actualizando outline: ' + updateError.message);
+      }
+      
+      // Invoke worker
+      const { error: invokeError } = await invokeWithTimeout('outline-worker', {
+        outline_id: outlineId
+      }, { timeoutMs: 10000 });
+      
+      if (invokeError) {
+        console.warn('[ScriptImport] Worker invoke warning:', invokeError);
+        // Continue anyway - worker might still be processing
+      }
+      
+      // Start polling
+      outlinePersistence.startPolling(outlineId, {
+        onComplete: () => {
+          setGeneratingOutline(false);
+          outlinePersistence.refreshOutline();
+          toast.success('Outline generado correctamente');
+        },
+        onError: (err) => {
+          setGeneratingOutline(false);
+          toast.error('Error: ' + err);
+        }
+      });
+      
+      toast.info('Reintentando generación de outline...', {
+        description: 'El proceso puede tardar 1-3 minutos.',
+      });
+    } catch (err: any) {
+      setGeneratingOutline(false);
+      console.error('Error retrying draft outline:', err);
+      toast.error('Error al reintentar: ' + (err.message || 'Error desconocido'));
     }
   };
 
@@ -3345,6 +3435,31 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     Extracción profesional de personajes, localizaciones y escenas
                   </p>
                   <p className="text-xs text-muted-foreground/70">Puede tardar hasta 2 minutos</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* V8.0: DRAFT OUTLINE RECOVERY CARD - For outlines that never started */}
+          {!lightOutline && !generatingOutline && !pipelineRunning && 
+           outlinePersistence.savedOutline?.status === 'draft' && 
+           (!outlinePersistence.savedOutline?.stage || outlinePersistence.savedOutline?.stage === 'none') && (
+            <Card className="border-2 border-yellow-500/50 bg-yellow-500/5">
+              <CardContent className="pt-6 text-center space-y-4">
+                <AlertTriangle className="w-12 h-12 mx-auto text-yellow-500" />
+                <h3 className="font-semibold text-lg">Outline Incompleto Detectado</h3>
+                <p className="text-sm text-muted-foreground">
+                  Se encontró un outline que no terminó de generarse. Puedes reintentar la generación o empezar de nuevo.
+                </p>
+                <div className="flex gap-3 justify-center flex-wrap">
+                  <Button onClick={handleRetryDraftOutline} variant="default">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Reintentar Generación
+                  </Button>
+                  <Button variant="destructive" onClick={handleDeleteOutline}>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Borrar y Empezar
+                  </Button>
                 </div>
               </CardContent>
             </Card>
