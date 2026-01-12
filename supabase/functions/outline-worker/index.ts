@@ -34,7 +34,7 @@ interface OutlineRecord {
   outline_json: any;
   idea_text?: string;
   format?: string;
-  episodes_count?: number;
+  episode_count?: number;
   narrative_mode?: string;
   genre?: string;
   tone?: string;
@@ -337,7 +337,7 @@ async function stageOutline(
   await updateOutline(supabase, outline.id, { stage: 'outline', progress: 40 });
 
   const format = outline.format || 'series';
-  const episodesCount = outline.episodes_count || 6;
+  const episodesCount = outline.episode_count || 6;
   const narrativeMode = outline.narrative_mode || 'serie_adictiva';
   const genre = outline.genre || '';
   const tone = outline.tone || '';
