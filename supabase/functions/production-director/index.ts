@@ -569,7 +569,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5',
+        model: 'openai/gpt-5.2', // Upgraded: GPT-5.2 for professional cinematographic decisions
         messages: fullMessages,
         tools: FORGE_TOOLS,
         tool_choice: 'auto',

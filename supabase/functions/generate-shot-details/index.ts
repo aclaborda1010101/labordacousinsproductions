@@ -288,7 +288,7 @@ Generate the complete shot details following the schema above. Return ONLY the J
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5-mini", // Optimized: GPT-5-mini for precise micro-shot decomposition
         messages: [
           { role: "system", content: systemPrompt + "\n\n" + outputSchema },
           { role: "user", content: inputData }
