@@ -356,6 +356,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // P1 FIX: Entity materialization state (sync outline to Bible)
   const [materializingEntities, setMaterializingEntities] = useState(false);
   
+  // Scene materialization state (sync outline to scenes table)
+  const [materializingScenes, setMaterializingScenes] = useState(false);
+  const [scenesCount, setScenesCount] = useState(0);
+  
   // Bible data from DB (source of truth for UI)
   const [bibleCharacters, setBibleCharacters] = useState<any[]>([]);
   const [bibleLocations, setBibleLocations] = useState<any[]>([]);
@@ -2132,6 +2136,52 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       return true;
     } finally {
       setMaterializingEntities(false);
+    }
+  };
+
+  // Fetch scenes count from DB
+  const fetchScenesCount = async () => {
+    if (!projectId) return;
+    const { count } = await supabase
+      .from('scenes')
+      .select('id', { count: 'exact', head: true })
+      .eq('project_id', projectId);
+    setScenesCount(count || 0);
+  };
+
+  // Fetch scenes count on mount
+  useEffect(() => {
+    fetchScenesCount();
+  }, [projectId]);
+
+  // Materialize scenes from outline
+  const materializeScenesFromOutline = async (): Promise<boolean> => {
+    setMaterializingScenes(true);
+    try {
+      toast.info('Extrayendo escenas del outline...');
+
+      const { data, error } = await supabase.functions.invoke('materialize-scenes', {
+        body: { projectId }
+      });
+
+      if (error) {
+        toast.error('No se pudieron extraer las escenas: ' + error.message);
+        return false;
+      }
+
+      if (data?.scenes?.created > 0) {
+        toast.success(`✓ ${data.scenes.created} escenas creadas desde el outline`);
+        await fetchScenesCount();
+        return true;
+      } else {
+        toast.warning('No se encontraron escenas en el outline');
+        return false;
+      }
+    } catch (err: any) {
+      toast.error('Error al materializar escenas: ' + err.message);
+      return false;
+    } finally {
+      setMaterializingScenes(false);
     }
   };
 
@@ -6295,6 +6345,68 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           Ver Locaciones
                         </Button>
                       </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              )}
+
+              {/* Scenes Empty State - Generate from Outline */}
+              {lightOutline && scenesCount === 0 && (bibleCharacters.length > 0 || bibleLocations.length > 0) && (
+                <Card className="border-amber-500/50 bg-amber-500/5">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-amber-500/20 rounded-lg">
+                          <Film className="w-5 h-5 text-amber-500" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">Escenas pendientes de generar</CardTitle>
+                          <CardDescription>
+                            El outline tiene {lightOutline.episode_beats?.length || 0} episodios definidos pero aún no hay escenas en producción.
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="gold" 
+                        onClick={materializeScenesFromOutline}
+                        disabled={materializingScenes}
+                      >
+                        {materializingScenes ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Clapperboard className="w-4 h-4 mr-2" />
+                        )}
+                        Generar Escenas desde Outline
+                      </Button>
+                    </div>
+                  </CardHeader>
+                </Card>
+              )}
+
+              {/* Scenes Synced Success State */}
+              {scenesCount > 0 && (
+                <Card className="border-green-500/50 bg-green-500/5">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-green-500/20 rounded-lg">
+                          <Film className="w-5 h-5 text-green-500" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">Escenas Listas</CardTitle>
+                          <CardDescription>
+                            {scenesCount} escenas en la tabla de producción.
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate(`/projects/${projectId}/scenes`)}
+                      >
+                        <Clapperboard className="w-4 h-4 mr-1" />
+                        Ir a Escenas
+                      </Button>
                     </div>
                   </CardHeader>
                 </Card>
