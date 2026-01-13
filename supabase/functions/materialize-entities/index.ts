@@ -49,27 +49,31 @@ function normalizeName(name: string): string {
     .replace(/\s+/g, ' ');
 }
 
-// Map role strings to character_role enum
-function mapToCharacterRole(role: string): 'protagonist' | 'antagonist' | 'supporting' | 'recurring' | 'cameo' {
+// Map role strings to character_role enum (valid values: protagonist, recurring, episodic, extra)
+function mapToCharacterRole(role: string): 'protagonist' | 'recurring' | 'episodic' | 'extra' {
   const roleLower = (role || '').toLowerCase();
   
-  if (roleLower.includes('protagonist') || roleLower.includes('main') || roleLower.includes('hero')) {
+  // Protagonist includes main, hero, lead
+  if (roleLower.includes('protagonist') || roleLower.includes('main') || 
+      roleLower.includes('hero') || roleLower.includes('lead')) {
     return 'protagonist';
   }
-  if (roleLower.includes('antagonist') || roleLower.includes('villain')) {
-    return 'antagonist';
-  }
-  if (roleLower.includes('supporting') || roleLower.includes('secondary')) {
-    return 'supporting';
-  }
-  if (roleLower.includes('recurring')) {
+  
+  // Recurring includes supporting, secondary, antagonist (they recur across episodes)
+  if (roleLower.includes('supporting') || roleLower.includes('secondary') || 
+      roleLower.includes('antagonist') || roleLower.includes('villain') ||
+      roleLower.includes('recurring')) {
     return 'recurring';
   }
-  if (roleLower.includes('cameo') || roleLower.includes('extra') || roleLower.includes('minor')) {
-    return 'cameo';
+  
+  // Extra includes cameo, minor, bit parts
+  if (roleLower.includes('cameo') || roleLower.includes('extra') || 
+      roleLower.includes('minor') || roleLower.includes('bit')) {
+    return 'extra';
   }
   
-  return 'supporting'; // Default
+  // Default: episodic (appears in specific episodes)
+  return 'episodic';
 }
 
 // Extract characters from outline structure
@@ -364,7 +368,7 @@ serve(async (req) => {
             bio: char.bio || existingBio,
             arc: char.arc,
             profile_json: char.profile_json,
-            source: source,
+            source: 'EXTRACTED', // Valid CHECK constraint value (original source stored in profile_json)
             updated_at: new Date().toISOString()
           })
           .eq('id', existing.id);
@@ -382,7 +386,7 @@ serve(async (req) => {
             bio: char.bio,
             arc: char.arc,
             profile_json: char.profile_json,
-            source: source,
+            source: 'EXTRACTED', // Valid CHECK constraint value (original source stored in profile_json)
             canon_level: 'P2', // Default to P2 (user can promote to P1/P0)
             confidence: 0.8
           });
