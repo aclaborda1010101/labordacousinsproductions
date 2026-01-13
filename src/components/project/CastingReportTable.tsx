@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, forwardRef } from "react";
 import { hydrateCharacters, hydrateScenes, getBreakdownPayload } from "@/lib/breakdown/hydrate";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -151,7 +151,8 @@ interface CastingReportTableProps {
   scriptParsedJson: AnyObj;
 }
 
-export function CastingReportTable({ scriptParsedJson }: CastingReportTableProps) {
+export const CastingReportTable = forwardRef<HTMLDivElement, CastingReportTableProps>(
+  function CastingReportTable({ scriptParsedJson }, ref) {
   const [q, setQ] = useState("");
   const [hideVoices, setHideVoices] = useState(true);
   const [hideFeaturedExtras, setHideFeaturedExtras] = useState(false);
@@ -221,7 +222,7 @@ export function CastingReportTable({ scriptParsedJson }: CastingReportTableProps
 
   return (
     <TooltipProvider>
-      <div className="space-y-4">
+      <div ref={ref} className="space-y-4">
         {/* Script Completeness Alert */}
         {completeness.level === "outline" && (
           <Alert variant="default" className="bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
@@ -398,4 +399,4 @@ export function CastingReportTable({ scriptParsedJson }: CastingReportTableProps
       </div>
     </TooltipProvider>
   );
-}
+});

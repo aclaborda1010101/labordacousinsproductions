@@ -1924,6 +1924,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const approveAndGenerateEpisodes = async () => {
     if (!lightOutline) return;
 
+    // Proactively refresh session before starting long pipeline
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error('Sesión expirada. Por favor inicia sesión de nuevo.');
+      return;
+    }
+    // Refresh token to maximize validity for the pipeline
+    await supabase.auth.refreshSession();
+    console.log('[ScriptImport] Session refreshed before starting pipeline');
+
     setOutlineApproved(true);
     updatePipelineStep('approval', 'success');
     updatePipelineStep('episodes', 'running');
@@ -2279,15 +2289,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
       setPipelineProgress(88);
 
-      // Generate teasers (60s and 30s)
+      // Generate teasers (60s and 30s) - use invokeAuthedFunction to ensure fresh JWT
       updatePipelineStep('teasers', 'running', 'Generando teasers promocionales...');
       try {
-        const { data: teaserData, error: teaserError } = await supabase.functions.invoke('generate-teasers', {
-          body: {
-            projectId,
-            screenplay: completeScreenplay,
-            language
-          }
+        const { data: teaserData, error: teaserError } = await invokeAuthedFunction('generate-teasers', {
+          projectId,
+          screenplay: completeScreenplay,
+          language
         });
 
         if (teaserError) {
