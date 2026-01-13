@@ -72,48 +72,48 @@ FORMATO DE SALIDA (JSON estricto):
 
 RECUERDA: TODO en ESPAÑOL. SOLO personajes de la lista. Escenas sin personajes = dialogue vacío.`;
 
-async function callClaude(systemPrompt: string, userPrompt: string): Promise<string> {
-  const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+async function callLovableAI(systemPrompt: string, userPrompt: string): Promise<string> {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   
-  if (!ANTHROPIC_API_KEY) {
-    throw new Error('ANTHROPIC_API_KEY not configured');
+  if (!LOVABLE_API_KEY) {
+    throw new Error('LOVABLE_API_KEY not configured');
   }
   
-  console.log('[generate-dialogues-batch] Calling Claude Sonnet');
+  console.log('[generate-dialogues-batch] Calling GPT-5.2 via Lovable Gateway');
   
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 8000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
+      model: 'openai/gpt-5.2',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      max_completion_tokens: 8000,
     }),
   });
   
   if (!response.ok) {
     const errText = await response.text();
-    console.error('[generate-dialogues-batch] Claude error:', response.status, errText);
+    console.error('[generate-dialogues-batch] Gateway error:', response.status, errText);
     
     if (response.status === 429) {
       throw new Error('Rate limit exceeded - please try again later');
     }
-    if (response.status === 402 || response.status === 400) {
-      throw new Error('API error - check credits or request format');
+    if (response.status === 402) {
+      throw new Error('Payment required - add credits to Lovable workspace');
     }
-    throw new Error(`Claude API error: ${response.status}`);
+    throw new Error(`AI Gateway error: ${response.status} - ${errText}`);
   }
   
   const data = await response.json();
   
-  // Claude returns content as array of blocks
-  const textBlock = data.content?.find((b: any) => b.type === 'text');
-  return textBlock?.text || '';
+  // OpenAI format: choices[0].message.content
+  return data.choices?.[0]?.message?.content || '';
 }
 
 function parseJSONFromResponse(text: string): any {
@@ -270,7 +270,7 @@ INSTRUCCIONES:
 
 Devuelve SOLO JSON válido con el formato especificado. TODO en ESPAÑOL.`;
 
-    const aiResponse = await callClaude(SYSTEM_PROMPT, userPrompt);
+    const aiResponse = await callLovableAI(SYSTEM_PROMPT, userPrompt);
     const parsed = parseJSONFromResponse(aiResponse);
 
     // Merge generated dialogues back into original scenes
