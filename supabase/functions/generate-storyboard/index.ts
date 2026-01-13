@@ -101,8 +101,6 @@ async function buildCharacterDNAContext(
   supabaseClient: any,
   characterRefs: { id: string; name: string; image_url?: string }[]
 ): Promise<string> {
-  characterRefs: { id: string; name: string; image_url?: string }[]
-): Promise<string> {
   if (!characterRefs || characterRefs.length === 0) {
     return "No characters specified for this scene.";
   }
