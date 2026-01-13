@@ -79,7 +79,8 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-teasers]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
 
 [functions.generate-dialogues-batch]
 # Gateway JWT disabled; function enforces auth internally
