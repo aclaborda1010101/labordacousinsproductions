@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 import { parseJsonSafe, parseToolCallArgs, parseAnthropicToolUse, ParseResult } from "../_shared/llmJson.ts";
+import { extractEpisodeContract, formatContractForPrompt, type EpisodeContract } from "../_shared/episode-contracts.ts";
+import { validateScriptAgainstContract, getQCSummary, type ScriptQCResult } from "../_shared/script-qc.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -1073,11 +1075,32 @@ serve(async (req) => {
     // =========================================================================
     let userPrompt: string;
 
+    // =======================================================================
+    // V11 CONTRACT EXTRACTION - Extract structural contracts from outline
+    // =======================================================================
+    let episodeContract: EpisodeContract | null = null;
+    
     if (outline && episodeNumber !== undefined && batchIndex !== undefined) {
-      // BATCH MODE: Generating scenes from outline
+      // BATCH MODE: Generating scenes from outline with CONTRACT ENFORCEMENT
       const episodeBeat = outline.episode_beats?.[episodeNumber - 1];
       const episodeTitle = episodeBeat?.title || `Episodio ${episodeNumber}`;
       const episodeSummary = episodeBeat?.summary || '';
+      
+      // =====================================================================
+      // V11: Extract episode contract (non-negotiable structural requirements)
+      // =====================================================================
+      try {
+        episodeContract = extractEpisodeContract(outline, episodeNumber);
+        console.log('[generate-script] Contract extracted:', {
+          episode: episodeNumber,
+          threads: episodeContract.threads_required.length,
+          turning_points: episodeContract.turning_points.length,
+          factions: episodeContract.factions_in_play.length,
+          characters_required: episodeContract.characters_required.length
+        });
+      } catch (contractError) {
+        console.warn('[generate-script] Contract extraction failed, continuing with legacy mode:', contractError);
+      }
       
       // Build outline context
       let outlineContext = '';
@@ -1108,16 +1131,25 @@ serve(async (req) => {
         });
       }
       
-      // Subplots
-      if (outline.subplots?.length) {
+      // Subplots (legacy - now using threads)
+      if (outline.subplots?.length && !outline.threads?.length) {
         outlineContext += `\n\n=== SUBTRAMAS ===`;
         outline.subplots.forEach((subplot: any) => {
           outlineContext += `\n• ${subplot.name}: ${subplot.description || ''}`;
         });
       }
       
+      // =====================================================================
+      // V11: Build IMPERATIVE prompt with structural contracts
+      // =====================================================================
+      const contractBlock = episodeContract 
+        ? formatContractForPrompt(episodeContract)
+        : '';
+      
       userPrompt = `
 ${contextBlock}
+
+${contractBlock}
 
 ═══════════════════════════════════════════════════════════════
 📝 INSTRUCCIONES DE GENERACIÓN
@@ -1129,11 +1161,11 @@ ${outlineContext ? `=== CONTEXTO DEL OUTLINE ===${outlineContext}` : ''}
 
 === EPISODIO ACTUAL ===
 EPISODIO: ${episodeNumber} - "${episodeTitle}"
+CONFLICTO CENTRAL: ${episodeContract?.central_conflict || episodeBeat?.central_conflict || 'Ver outline'}
 BATCH: ${batchIndex + 1}${totalBatches ? ` de ${totalBatches}` : ''}
-${isLastBatch ? '⚠️ ÚLTIMO BATCH - incluye resolución o cliffhanger' : ''}
+${isLastBatch ? '⚠️ ÚLTIMO BATCH - DEBE INCLUIR EL CLIFFHANGER PLANIFICADO ARRIBA' : ''}
 
-OUTLINE DEL EPISODIO:
-${episodeSummary}
+${episodeSummary ? `RESUMEN:\n${episodeSummary}` : ''}
 
 ${episodeBeat?.scenes_summary || ''}
 
@@ -1144,11 +1176,16 @@ IDIOMA: ${language}
 GÉNERO: ${genre || outline.genre || bible.project?.genre || 'Drama'}
 TONO: ${tone || outline.tone || bible.project?.tone || 'Cinematic'}
 
-⚠️ REGLAS CRÍTICAS:
-1. USA SOLO personajes del STORY_BIBLE o explícitamente en el outline
-2. USA SOLO locaciones del STORY_BIBLE o explícitamente en el outline
-3. Si necesitas entidad nueva → añádela a "new_entities_requested", NO la uses
-4. Si algo no está claro → añádelo a "uncertainties"
+═══════════════════════════════════════════════════════════════
+⚠️ REGLAS CRÍTICAS (NO NEGOCIABLES)
+═══════════════════════════════════════════════════════════════
+1. EJECUTA los turning points del contrato - NO los resumas ni omitas
+2. USA SOLO personajes del STORY_BIBLE o del contrato estructural
+3. USA SOLO locaciones del STORY_BIBLE o del contrato estructural
+4. CADA thread del contrato debe avanzar con escenas concretas
+5. El SETPIECE debe dramatizarse completamente
+6. Si necesitas entidad nueva → añádela a "new_entities_requested", NO la uses
+7. Si algo no está claro → añádelo a "uncertainties"
 
 GENERA exactamente ${scenesPerBatch} escenas con V3 schema completo.`;
 
@@ -1219,27 +1256,21 @@ IDIOMA: ${language}
       parseWarnings: parseWarnings.length > 0 ? parseWarnings.join(', ') : 'none'
     });
 
-    // Log parse warnings to editorial_events if degraded
-    if (isDegraded && projectId) {
+    // =========================================================================
+    // V11: POST-GENERATION QC - Validate script against contract
+    // =========================================================================
+    let scriptQC: ScriptQCResult | null = null;
+    
+    if (episodeContract && v3Result.scenes?.length > 0) {
       try {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-        const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-        const supabase = createClient(supabaseUrl, serviceRoleKey);
+        scriptQC = validateScriptAgainstContract(v3Result as Record<string, unknown>, episodeContract);
+        console.log('[generate-script] Script QC:', getQCSummary(scriptQC));
         
-        await supabase.from('editorial_events').insert({
-          project_id: projectId,
-          event_type: 'script_parse_warning',
-          asset_type: 'script',
-          payload: {
-            warnings: parseWarnings,
-            episode_number: episodeNumber,
-            batch_index: batchIndex,
-            quality_tier: qualityTier,
-            provider: config.provider
-          }
-        });
-      } catch (e) {
-        console.warn('[generate-script] Failed to log parse warning event:', e);
+        if (!scriptQC.passed) {
+          console.warn('[generate-script] Script QC FAILED:', scriptQC.blockers);
+        }
+      } catch (qcError) {
+        console.warn('[generate-script] Script QC failed to run:', qcError);
       }
     }
 
@@ -1257,7 +1288,22 @@ IDIOMA: ${language}
           bibleLocations: filteredBible.locations.length,
           resultQuality,
           parseWarnings: parseWarnings.length > 0 ? parseWarnings : undefined
-        }
+        },
+        _contract: episodeContract ? {
+          episode: episodeContract.episode_number,
+          threads_required: episodeContract.threads_required.length,
+          turning_points: episodeContract.turning_points.length,
+          characters_required: episodeContract.characters_required
+        } : undefined,
+        _qc: scriptQC ? {
+          passed: scriptQC.passed,
+          score: scriptQC.score,
+          quality: scriptQC.quality,
+          threads_coverage: scriptQC.threads_coverage.coverage_percent,
+          tp_coverage: scriptQC.turning_points_executed.coverage_percent,
+          blockers: scriptQC.blockers,
+          warnings: scriptQC.warnings
+        } : undefined
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
