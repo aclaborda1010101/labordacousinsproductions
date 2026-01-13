@@ -302,6 +302,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Imported script parsing state
   const [parsingImportedScript, setParsingImportedScript] = useState(false);
   
+  // Script sync state (sync dialogues from breakdown to scenes)
+  const [syncingFromScript, setSyncingFromScript] = useState(false);
+  
   // Professional Breakdown state (two-step analysis)
   const [breakdownPro, setBreakdownPro] = useState<any>(null);
   const [generatingBreakdownPro, setGeneratingBreakdownPro] = useState(false);
@@ -3294,6 +3297,150 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
+  // Sync dialogues from script breakdown to episode scenes
+  const syncDialoguesFromScript = async () => {
+    if (!breakdownPro || !generatedScript) {
+      toast.error('No hay datos de breakdown para sincronizar');
+      return;
+    }
+    
+    setSyncingFromScript(true);
+    try {
+      // Get scenes from breakdown (scripts.parsed_json)
+      const breakdownScenes = breakdownPro.scenes || hydrateScenes(breakdownPro) || [];
+      
+      if (breakdownScenes.length === 0) {
+        toast.error('El breakdown no contiene escenas con diálogos');
+        setSyncingFromScript(false);
+        return;
+      }
+      
+      // Extract dialogues from raw script text for each scene
+      const rawText = scriptText || '';
+      
+      // Helper to extract dialogues from a scene block
+      const extractDialoguesFromBlock = (sceneText: string): { character: string; line: string; parenthetical?: string }[] => {
+        const dialogues: { character: string; line: string; parenthetical?: string }[] = [];
+        const lines = sceneText.split('\n');
+        let currentSpeaker: string | null = null;
+        let currentParenthetical: string | null = null;
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          
+          // Skip empty lines
+          if (!line) {
+            currentSpeaker = null;
+            currentParenthetical = null;
+            continue;
+          }
+          
+          // Character cue detection: ALL CAPS name, not a slugline, < 40 chars
+          const isSlugline = /^(INT\.|EXT\.|INT\/EXT\.|I\/E\.)/i.test(line);
+          const isAllCaps = /^[A-ZÁÉÍÓÚÑÜ][A-ZÁÉÍÓÚÑÜ\s.'\-]+$/.test(line);
+          
+          if (!isSlugline && isAllCaps && line.length < 40 && line.length > 1) {
+            // This is a character cue
+            currentSpeaker = line.replace(/\s*\(.*?\)\s*$/, '').trim();
+            // Check for parenthetical in same line
+            const parenMatch = line.match(/\((.*?)\)$/);
+            currentParenthetical = parenMatch ? parenMatch[1] : null;
+          } else if (currentSpeaker && line && !isSlugline) {
+            // Check if this line is a parenthetical
+            if (/^\(.*\)$/.test(line)) {
+              currentParenthetical = line.replace(/^\(|\)$/g, '');
+            } else {
+              // This is a dialogue line
+              dialogues.push({
+                character: currentSpeaker,
+                line: line,
+                parenthetical: currentParenthetical || undefined
+              });
+              currentParenthetical = null;
+            }
+          }
+        }
+        
+        return dialogues;
+      };
+      
+      // Match breakdown scenes with episode scenes and sync dialogues
+      const updatedEpisodes = [...(generatedScript.episodes || [generatedScript])];
+      let syncedCount = 0;
+      
+      for (let epIdx = 0; epIdx < updatedEpisodes.length; epIdx++) {
+        const ep = updatedEpisodes[epIdx];
+        if (!ep.scenes) continue;
+        
+        for (let scIdx = 0; scIdx < ep.scenes.length; scIdx++) {
+          const scene = ep.scenes[scIdx];
+          const sceneSlugline = (scene.slugline || scene.heading || getSceneSlugline(scene) || '').toUpperCase();
+          
+          // Find matching scene in breakdown by slugline or scene number
+          const matchingBreakdown = breakdownScenes.find((bs: any) => {
+            const bsSlugline = (bs.heading || bs.slugline || bs.location_raw || '').toUpperCase();
+            return bsSlugline && sceneSlugline && (
+              bsSlugline.includes(sceneSlugline.substring(0, 20)) || 
+              sceneSlugline.includes(bsSlugline.substring(0, 20)) ||
+              bs.scene_number === scene.scene_number
+            );
+          });
+          
+          if (matchingBreakdown) {
+            // Get dialogues from breakdown or extract from raw text
+            let dialogues = matchingBreakdown.dialogue || matchingBreakdown.dialogues || [];
+            
+            // If no pre-parsed dialogues, try to extract from raw text
+            if (dialogues.length === 0 && rawText && matchingBreakdown.heading) {
+              const sceneStart = rawText.indexOf(matchingBreakdown.heading);
+              if (sceneStart >= 0) {
+                // Find the end of this scene (next slugline)
+                const textAfter = rawText.slice(sceneStart + matchingBreakdown.heading.length);
+                const nextSceneMatch = textAfter.match(/\n\s*(INT\.|EXT\.)/i);
+                const sceneEnd = nextSceneMatch 
+                  ? sceneStart + matchingBreakdown.heading.length + (nextSceneMatch.index || 0)
+                  : rawText.length;
+                
+                const sceneBlock = rawText.slice(sceneStart, sceneEnd);
+                dialogues = extractDialoguesFromBlock(sceneBlock);
+              }
+            }
+            
+            if (dialogues.length > 0) {
+              ep.scenes[scIdx] = {
+                ...scene,
+                dialogue: dialogues,
+                characters_present: matchingBreakdown.characters_present || matchingBreakdown.characters || scene.characters_present,
+                parsed_json: {
+                  ...(scene.parsed_json || {}),
+                  dialogue: dialogues,
+                  synced_from_breakdown: true
+                }
+              };
+              syncedCount++;
+            }
+          }
+        }
+      }
+      
+      // Update generatedScript state
+      if (syncedCount > 0) {
+        setGeneratedScript({
+          ...generatedScript,
+          episodes: updatedEpisodes
+        });
+        toast.success(`${syncedCount} escenas sincronizadas con diálogos del guión`);
+      } else {
+        toast.info('No se encontraron diálogos para sincronizar. Puede que el guión sea solo un outline.');
+      }
+    } catch (err: any) {
+      console.error('Error syncing dialogues:', err);
+      toast.error('Error al sincronizar diálogos');
+    } finally {
+      setSyncingFromScript(false);
+    }
+  };
+
   // Helper: Extract time of day from slugline
   const extractTimeOfDay = (slugline: string): string => {
     if (!slugline) return 'day';
@@ -6151,16 +6298,35 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
               {/* EPISODES / CHAPTERS - WITH SUMMARY vs FULL SCREENPLAY TOGGLE */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <h4 className="font-semibold text-lg">Capítulos / Episodios</h4>
-                  <Button variant="outline" size="sm" onClick={() => {
-                    const allExpanded = Object.values(expandedEpisodes).every(v => v);
-                    const newState: Record<number, boolean> = {};
-                    (generatedScript.episodes || [generatedScript]).forEach((_: any, i: number) => { newState[i] = !allExpanded; });
-                    setExpandedEpisodes(newState);
-                  }}>
-                    {Object.values(expandedEpisodes).every(v => v) ? 'Contraer todos' : 'Expandir todos'}
-                  </Button>
+                  <div className="flex gap-2">
+                    {/* Sync dialogues from script breakdown */}
+                    {breakdownPro && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={syncDialoguesFromScript}
+                        disabled={syncingFromScript}
+                        className="gap-1"
+                      >
+                        {syncingFromScript ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="w-4 h-4" />
+                        )}
+                        Sincronizar desde Guión
+                      </Button>
+                    )}
+                    <Button variant="outline" size="sm" onClick={() => {
+                      const allExpanded = Object.values(expandedEpisodes).every(v => v);
+                      const newState: Record<number, boolean> = {};
+                      (generatedScript.episodes || [generatedScript]).forEach((_: any, i: number) => { newState[i] = !allExpanded; });
+                      setExpandedEpisodes(newState);
+                    }}>
+                      {Object.values(expandedEpisodes).every(v => v) ? 'Contraer todos' : 'Expandir todos'}
+                    </Button>
+                  </div>
                 </div>
 
                 {(generatedScript.episodes || [{ episode_number: 1, title: generatedScript.title || 'Película', synopsis: generatedScript.synopsis, scenes: generatedScript.scenes || [] }]).map((ep: any, epIdx: number) => {
@@ -6412,14 +6578,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
                                       {/* Dialogue - FULL */}
                                       {(() => {
-                                        const dialogues = scene.dialogue || scene.dialogues || [];
+                                        // Fallback: check scene.dialogue, scene.dialogues, and scene.parsed_json.dialogue
+                                        const dialogues = scene.dialogue || scene.dialogues || scene.parsed_json?.dialogue || [];
                                         if (dialogues.length > 0) {
                                           return (
                                             <div className="space-y-3 bg-muted/30 rounded-lg p-4">
                                               {dialogues.map((d: any, di: number) => (
                                                 <div key={di} className="pl-4">
                                                   <div className="font-bold text-sm text-center uppercase tracking-wide">
-                                                    {d.character}
+                                                    {d.character || d.speaker}
                                                   </div>
                                                   {d.parenthetical && (
                                                     <div className="text-xs text-muted-foreground text-center italic">
