@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
 
@@ -36,12 +37,11 @@ const IMAGE_MODEL = 'google/gemini-3-pro-image-preview';
 const SUPPORTED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
 const VALID_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
 
-// Convert image URL to base64 data URL
+// Convert image URL to base64 data URL using Deno's standard library (no call stack issues)
 async function urlToBase64(url: string): Promise<string | null> {
   try {
-    console.log(`[generate-location] urlToBase64 called with: ${url}`);
+    console.log(`[generate-location] urlToBase64 called with: ${url.substring(0, 100)}...`);
     
-    // First fetch to check content type
     const response = await fetch(url);
     if (!response.ok) {
       console.error(`[generate-location] Failed to fetch image: ${response.status}`);
@@ -49,40 +49,35 @@ async function urlToBase64(url: string): Promise<string | null> {
     }
     
     const contentType = response.headers.get('content-type') || '';
-    console.log(`[generate-location] Content-Type header: ${contentType}`);
+    console.log(`[generate-location] Content-Type: ${contentType}`);
     
-    // Validate by content type first (more reliable)
+    // Validate by content type (most reliable)
     const isValidType = VALID_MIME_TYPES.some(t => contentType.toLowerCase().includes(t));
-    
-    // Also check URL extension as fallback
     const urlLower = url.toLowerCase();
     const hasValidExtension = SUPPORTED_EXTENSIONS.some(ext => urlLower.includes(ext));
     
     if (!isValidType && !hasValidExtension) {
-      console.log(`[generate-location] Skipping unsupported format. ContentType: ${contentType}, URL: ${url}`);
+      console.log(`[generate-location] Skipping unsupported format: ${contentType}`);
       return null;
     }
     
     const arrayBuffer = await response.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
+    const bytes = new Uint8Array(arrayBuffer);
     
-    // Convert to base64 in chunks to avoid call stack issues with large images
-    let binary = '';
-    const chunkSize = 32768;
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-      const chunk = uint8Array.subarray(i, i + chunkSize);
-      binary += String.fromCharCode.apply(null, Array.from(chunk));
+    // Check file size (skip if > 10MB to avoid memory issues)
+    if (bytes.length > 10 * 1024 * 1024) {
+      console.log(`[generate-location] Skipping oversized image: ${(bytes.length / 1024 / 1024).toFixed(1)}MB`);
+      return null;
     }
-    const base64 = btoa(binary);
     
-    // Use the actual content type or infer from extension
+    // Use Deno's standard base64 encoder - no call stack issues
+    const base64 = base64Encode(arrayBuffer);
     const mimeType = contentType.split(';')[0] || 'image/jpeg';
     
-    console.log(`[generate-location] Converted to base64: ${base64.length} chars, type: ${mimeType}`);
-    
+    console.log(`[generate-location] ✓ Converted to base64: ${base64.length} chars, ${mimeType}`);
     return `data:${mimeType};base64,${base64}`;
   } catch (error) {
-    console.error(`[generate-location] Error converting URL to base64:`, error);
+    console.error(`[generate-location] Error in urlToBase64:`, error);
     return null;
   }
 }
@@ -156,50 +151,84 @@ serve(async (req) => {
     // Load project style pack if available
     let styleLockBlock = '';
     let negativeModifiers = '';
+    let isAnimatedStyle = false;
+    let stylePresetId = '';
     
     if (projectId) {
-      // Use service role to fetch style pack
       const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
       
-      const { data: stylePack } = await supabaseAdmin
+      // Query style_packs with actual schema (no is_active column)
+      const { data: stylePack, error: styleError } = await supabaseAdmin
         .from('style_packs')
-        .select('style_config, token, prompt_modifiers, negative_modifiers')
+        .select('style_config, visual_preset, lens_style, grain_level, color_palette')
         .eq('project_id', projectId)
-        .eq('is_active', true)
         .maybeSingle();
       
+      if (styleError) {
+        console.log(`[generate-location] Style pack query error (non-fatal):`, styleError.message);
+      }
+      
       if (stylePack) {
-        console.log(`[generate-location] Found style pack for project, applying style lock`);
+        console.log(`[generate-location] ✓ Found style pack for project`);
         
-        const styleConfig = stylePack.style_config as any;
+        // Parse style_config - may be string or object
+        let styleConfig: any = stylePack.style_config;
+        if (typeof styleConfig === 'string') {
+          try { styleConfig = JSON.parse(styleConfig); } catch { styleConfig = {}; }
+        }
+        styleConfig = styleConfig || {};
         
-        // Build style lock block from project's Visual Bible
+        // Extract style info from actual schema
+        stylePresetId = styleConfig.presetId || stylePack.visual_preset || '';
+        const promptMods: string[] = Array.isArray(styleConfig.promptModifiers) ? styleConfig.promptModifiers : [];
+        const negativeMods: string[] = Array.isArray(styleConfig.negativeModifiers) ? styleConfig.negativeModifiers : [];
+        
+        // Detect if this is an animated/3D style (not photorealistic)
+        const animatedPresets = ['pixar', 'anime', 'ghibli', 'disney', '3d', 'cartoon', 'stylized', 'illustrated'];
+        isAnimatedStyle = animatedPresets.some(p => 
+          stylePresetId.toLowerCase().includes(p) || 
+          promptMods.some(m => m.toLowerCase().includes(p))
+        );
+        
+        console.log(`[generate-location] Style preset: ${stylePresetId}, isAnimated: ${isAnimatedStyle}`);
+        
+        // Build comprehensive style lock block
         const styleParts: string[] = [];
         
-        if (styleConfig?.style_name) {
-          styleParts.push(`Art style: ${styleConfig.style_name}`);
+        if (stylePresetId) {
+          styleParts.push(`Visual Style: ${stylePresetId.toUpperCase()}`);
         }
-        if (styleConfig?.animation_type) {
-          styleParts.push(`Animation type: ${styleConfig.animation_type}`);
+        if (promptMods.length > 0) {
+          styleParts.push(...promptMods);
         }
-        if (styleConfig?.lighting?.key_style) {
-          styleParts.push(`Lighting: ${styleConfig.lighting.key_style}`);
+        if (stylePack.lens_style) {
+          styleParts.push(`Lens: ${stylePack.lens_style}`);
         }
-        if (styleConfig?.color_grading?.mood) {
-          styleParts.push(`Color mood: ${styleConfig.color_grading.mood}`);
-        }
-        if (stylePack.prompt_modifiers) {
-          styleParts.push(stylePack.prompt_modifiers);
+        if (stylePack.color_palette) {
+          styleParts.push(`Color palette: ${JSON.stringify(stylePack.color_palette)}`);
         }
         
-        if (styleParts.length > 0) {
-          styleLockBlock = `\n\n=== STYLE LOCK (MANDATORY - DO NOT DEVIATE) ===\n${styleParts.join('\n')}\n=== END STYLE LOCK ===`;
+        if (styleParts.length > 0 || isAnimatedStyle) {
+          styleLockBlock = `
+
+=== STYLE TRANSFER RULES (MANDATORY) ===
+${isAnimatedStyle ? `
+CRITICAL: This is a ${stylePresetId.toUpperCase() || 'STYLIZED/ANIMATED'} production.
+- The reference photos are ONLY for LAYOUT, ARCHITECTURE, and SPATIAL ARRANGEMENT
+- You MUST render in ${stylePresetId || 'stylized animated'} visual style
+- ABSOLUTELY NO photorealism, no live-action look, no photographic textures
+- Use soft GI lighting, stylized materials, characteristic ${stylePresetId} rendering
+` : ''}
+${styleParts.join('\n')}
+=== END STYLE TRANSFER RULES ===`;
         }
         
-        if (stylePack.negative_modifiers) {
-          negativeModifiers = stylePack.negative_modifiers;
+        if (negativeMods.length > 0) {
+          negativeModifiers = negativeMods.join(', ');
         }
+      } else {
+        console.log(`[generate-location] No style pack found for project ${projectId}`);
       }
     }
 
@@ -331,8 +360,16 @@ CRITICAL: The output must look like a stylized illustration of this EXACT space,
       
       console.log(`[generate-location] Using multimodal with ${base64References.length} base64 references`);
     } else {
-      // Text-only generation
-      prompt = `Cinematic film still, location scouting photograph.
+      // Text-only generation - adapt base prompt to style
+      const baseStyle = isAnimatedStyle 
+        ? `Animated ${stylePresetId || '3D'} film still, stylized environment render`
+        : `Cinematic film still, location scouting photograph`;
+      
+      const qualityTerms = isAnimatedStyle
+        ? `High quality ${stylePresetId || 'stylized'} 3D render, soft global illumination, characteristic animated film lighting, artistic color grading`
+        : `Ultra high resolution, professional cinematography, anamorphic lens characteristics, natural color grading, film-like depth of field`;
+
+      prompt = `${baseStyle}.
 
 Location: ${locationName}
 Description: ${locationDescription || locationName}
@@ -343,7 +380,7 @@ Weather: ${weatherDesc}
 ${styleContext}
 ${styleLockBlock}
 
-Ultra high resolution, 16:9 aspect ratio, professional cinematography, anamorphic lens characteristics, natural color grading, film-like depth of field, architectural accuracy, environmental storytelling.`;
+${qualityTerms}, 16:9 aspect ratio, architectural accuracy, environmental storytelling.${isAnimatedStyle ? ' NO photorealism, NO live-action textures.' : ''}`;
 
       messageContent = prompt;
     }
