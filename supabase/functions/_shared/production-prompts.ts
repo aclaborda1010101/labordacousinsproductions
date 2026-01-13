@@ -402,11 +402,11 @@ REGLAS:
 };
 
 // =============================================================================
-// 10. KEYFRAME PROMPT (for Nano Banana image generation)
-// Engine: google/gemini-2.5-flash-image
+// 10. KEYFRAME PROMPT (for Nano Banana Pro image generation)
+// Engine: google/gemini-3-pro-image-preview
 // =============================================================================
 export const KEYFRAME_PROMPT = {
-  engine: 'google/gemini-2.5-flash-image',
+  engine: 'google/gemini-3-pro-image-preview',
   
   buildPrompt: (params: {
     sceneId: string;

@@ -42,10 +42,10 @@ export const MODEL_CONFIG = {
   
   // === IMAGEN ===
   IMAGE: {
-    CHARACTERS: 'google/gemini-2.5-flash-image',  // Nano Banana - identity lock
-    LOCATIONS: 'flux-1.1-pro-ultra',              // FLUX - spatial composition
-    PROPS: 'google/gemini-2.5-flash-image',       // Nano Banana - consistency
-    KEYFRAMES: 'google/gemini-2.5-flash-image',   // Nano Banana - continuity
+    CHARACTERS: 'google/gemini-3-pro-image-preview',  // Nano Banana Pro - identity lock
+    LOCATIONS: 'flux-1.1-pro-ultra',                   // FLUX - spatial composition
+    PROPS: 'google/gemini-3-pro-image-preview',        // Nano Banana Pro - consistency
+    KEYFRAMES: 'google/gemini-3-pro-image-preview',    // Nano Banana Pro - continuity
   },
   
   // === VIDEO ===

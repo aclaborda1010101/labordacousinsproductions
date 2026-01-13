@@ -36,8 +36,8 @@ interface SlotGenerateRequest {
 // ⚠️ MODEL CONFIG - DO NOT CHANGE WITHOUT USER AUTHORIZATION
 // See docs/MODEL_CONFIG_EXPERT_VERSION.md for rationale
 // Character generation uses gemini-3-pro-image-preview (nano-banana-pro)
-const IMAGE_ENGINE_PRIMARY = 'google/gemini-3-pro-image-preview'; // nano-banana-pro
-const IMAGE_ENGINE_FALLBACK = 'google/gemini-2.5-flash-image-preview'; // fallback for image generation issues
+const IMAGE_ENGINE_PRIMARY = 'google/gemini-3-pro-image-preview'; // Nano Banana Pro
+const IMAGE_ENGINE_FALLBACK = 'google/gemini-3-pro-image-preview'; // Same model - consistent quality
 
 // Retry configuration
 const MAX_RETRIES = 2;
