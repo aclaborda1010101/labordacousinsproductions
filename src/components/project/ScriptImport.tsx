@@ -804,23 +804,30 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, [outlinePersistence.savedOutline]);
   
   // V11: Reset zombie outline to allow retry
+  // V11.1: Recoverable error codes that allow retry
+  const RECOVERABLE_ERROR_CODES = ['AI_TIMEOUT', 'ZOMBIE_TIMEOUT', 'STAGE_TIMEOUT', 'RATE_LIMIT', 'WORKER_TIMEOUT', 'QUEUE_TIMEOUT'];
+
   const handleResetZombieOutline = async () => {
     const saved = outlinePersistence.savedOutline;
     if (!saved) return;
     
     try {
+      // V11.1: Use 'error' status (valid) instead of 'stalled' (invalid)
       const { error } = await supabase
         .from('project_outlines')
         .update({ 
-          status: 'stalled', 
+          status: 'error', 
+          stage: 'done',
+          quality: 'error',
           error_code: 'WORKER_TIMEOUT',
-          error_detail: 'Marcado como atascado por el usuario'
+          error_detail: 'Marcado como fallido por el usuario',
+          completed_at: new Date().toISOString()
         })
         .eq('id', saved.id);
       
       if (error) throw error;
       
-      toast.info('Outline marcado como atascado. Puedes reintentar la generación.');
+      toast.info('Outline marcado como fallido. Puedes reintentar la generación.');
       outlinePersistence.refreshOutline();
     } catch (err: any) {
       console.error('[ScriptImport] Error resetting zombie outline:', err);
@@ -4483,71 +4490,95 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           )}
           
-          {/* V11: Stalled/Failed Outline Recovery Card */}
-          {(outlinePersistence.savedOutline?.status === 'stalled' || 
-            outlinePersistence.savedOutline?.status === 'timeout' ||
-            (outlinePersistence.savedOutline?.status === 'failed' && outlinePersistence.savedOutline?.error_code)) && 
-           !generatingOutline && !pipelineRunning && !lightOutline && (
-            <Card className="border-2 border-orange-500/50 bg-orange-500/5">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <AlertTriangle className="h-8 w-8 text-orange-500 flex-shrink-0" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-orange-600 dark:text-orange-400">
-                        {outlinePersistence.savedOutline.status === 'stalled' 
-                          ? 'Generación interrumpida'
-                          : outlinePersistence.savedOutline.status === 'timeout'
-                            ? 'Timeout del servidor'
-                            : 'Error en la generación'}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {outlinePersistence.savedOutline.error_detail || 
-                          'El proceso anterior no completó correctamente. Puedes reintentar la generación.'}
-                      </p>
-                      {outlinePersistence.savedOutline.error_code && (
-                        <Badge variant="outline" className="mt-2 text-xs">
-                          {outlinePersistence.savedOutline.error_code}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Show last known progress if available */}
-                  {(outlinePersistence.savedOutline?.progress ?? 0) > 0 && (
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                        <span>Progreso alcanzado</span>
-                        <span className="font-mono">{outlinePersistence.savedOutline.progress}%</span>
+          {/* V11.1: Error/Failed Outline Recovery Card - Shows for recoverable errors */}
+          {(() => {
+            const saved = outlinePersistence.savedOutline;
+            const status = saved?.status;
+            const errorCode = saved?.error_code;
+            
+            // Show recovery card for:
+            // - status='error' with recoverable error_code
+            // - status='timeout' or 'failed' with error_code
+            const isRecoverableError = status === 'error' && 
+              errorCode && RECOVERABLE_ERROR_CODES.includes(errorCode);
+            const isTimeoutOrFailed = (status === 'timeout' || status === 'failed') && errorCode;
+            
+            const shouldShowRecovery = (isRecoverableError || isTimeoutOrFailed) && 
+              !generatingOutline && !pipelineRunning && !lightOutline;
+            
+            if (!shouldShowRecovery || !saved) return null;
+            
+            // Get friendly title based on error code
+            const getErrorTitle = () => {
+              switch (errorCode) {
+                case 'ZOMBIE_TIMEOUT': return 'Proceso interrumpido';
+                case 'AI_TIMEOUT': return 'Timeout del modelo AI';
+                case 'STAGE_TIMEOUT': return 'Timeout de etapa';
+                case 'WORKER_TIMEOUT': return 'Worker no respondió';
+                case 'QUEUE_TIMEOUT': return 'Tiempo de espera agotado';
+                case 'RATE_LIMIT': return 'Límite de velocidad';
+                default: return 'Error en la generación';
+              }
+            };
+            
+            return (
+              <Card className="border-2 border-orange-500/50 bg-orange-500/5">
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-4">
+                      <AlertTriangle className="h-8 w-8 text-orange-500 flex-shrink-0" />
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-orange-600 dark:text-orange-400">
+                          {getErrorTitle()}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {saved.error_detail || 
+                            'El proceso anterior no completó correctamente. Puedes reintentar la generación.'}
+                        </p>
+                        {errorCode && (
+                          <Badge variant="outline" className="mt-2 text-xs">
+                            {errorCode}
+                          </Badge>
+                        )}
                       </div>
-                      <Progress value={outlinePersistence.savedOutline.progress ?? 0} className="h-2" />
                     </div>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={generateLightOutline}
-                      disabled={!ideaText.trim() || ideaText.trim().length < 30}
-                      className="flex-1"
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Reintentar generación
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={async () => {
-                        await outlinePersistence.deleteOutline?.();
-                        toast.info('Outline eliminado. Puedes empezar de nuevo.');
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Descartar
-                    </Button>
+                    
+                    {/* Show last known progress if available */}
+                    {(saved.progress ?? 0) > 0 && (
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                          <span>Progreso alcanzado</span>
+                          <span className="font-mono">{saved.progress}%</span>
+                        </div>
+                        <Progress value={saved.progress ?? 0} className="h-2" />
+                      </div>
+                    )}
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={generateLightOutline}
+                        disabled={!ideaText.trim() || ideaText.trim().length < 30}
+                        className="flex-1"
+                      >
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Reintentar generación
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={async () => {
+                          await outlinePersistence.deleteOutline?.();
+                          toast.info('Outline eliminado. Puedes empezar de nuevo.');
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Descartar
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                </CardContent>
+              </Card>
+            );
+          })()}
 
           {/* V7.0: Outline Generation Progress Card with stage-aware progress */}
           {generatingOutline && !pipelineRunning && !isZombieOutline && (() => {
