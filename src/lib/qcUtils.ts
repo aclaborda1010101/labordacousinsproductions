@@ -66,9 +66,19 @@ const BLOCKER_MESSAGES: Record<string, string> = {
   // Outline incomplete (pipeline didn't finish)
   'OUTLINE_INCOMPLETE:no_episodes_generated': '⚠️ El outline no tiene episodios. Regenera el outline para continuar.',
   
-  // Script extraction issues (NO_DIALOGUES)
+  // Script extraction issues - V3.1 Completeness Score
   'NO_DIALOGUES:extraction_failed': '⚠️ El PDF tiene escenas pero no se detectaron diálogos. Revisa el formato o pega el texto directamente.',
   'NO_DIALOGUES_DETECTED': '⚠️ Se detectaron escenas pero ningún diálogo. El formato del PDF puede estar corrupto.',
+  'LOW_COMPLETENESS_SCORE': '⚠️ El documento no tiene suficiente estructura de guion para continuar.',
+  'LOW_COMPLETENESS_SCORE:report': '📋 Este PDF parece un plan de rodaje o reporte, no un guion. Sube el PDF del guion completo.',
+  'LOW_COMPLETENESS_SCORE:format': '⚠️ El formato no permite extraer suficiente información. Copia y pega el texto directamente.',
+  'LOW_COMPLETENESS_SCORE:scanned': '🖼️ Este PDF parece ser una imagen escaneada. Necesitas una versión con texto seleccionable.',
+  'REPORT_STRUCTURE_DETECTED': '📊 Detecté cabeceras tipo "Cast Principal / Localizaciones". Eso es un reporte, no el guion.',
+  'LOW_TEXT_DENSITY': '📝 Hay demasiados títulos y muy poco contenido de escena.',
+  'NO_VALID_SLUGLINES': '🎬 No encontré encabezados de escena (INT./EXT.). Revisa el formato del guion.',
+  'SIN_SLUGLINES': '🎬 No se detectaron encabezados de escena. Asegúrate de que el guion tenga formato INT./EXT.',
+  'SIN_PERSONAJES': '👤 No se detectaron personajes con diálogo. Los nombres deben estar en MAYÚSCULAS.',
+  'ESTRUCTURA_REPORTE': '📋 La estructura parece más un reporte que un guion cinematográfico.',
   
   // Title/cast
   'TITLE:missing': 'Falta el título del proyecto',
