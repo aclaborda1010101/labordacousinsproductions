@@ -29,21 +29,74 @@ serve(async (req) => {
     }
     const auth = authResult;
 
-    const { characterId, characterName } = await req.json();
+    const { characterId, characterName, projectId } = await req.json();
+
+    // Validate that at least one identifier is provided
+    if (!characterId && !characterName) {
+      return new Response(JSON.stringify({
+        error: 'CHARACTER_IDENTIFIER_MISSING',
+        message: 'Se requiere characterId o characterName',
+        hint: 'Proporciona characterId (UUID) o characterName + projectId',
+      }), { 
+        status: 400, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-    const { data: character } = await supabaseAdmin
-      .from('characters')
-      .select('*')
-      .eq('id', characterId)
-      .single();
+    let character = null;
 
+    // 1. Try to find by characterId first (primary lookup)
+    if (characterId) {
+      const { data } = await supabaseAdmin
+        .from('characters')
+        .select('*')
+        .eq('id', characterId)
+        .single();
+      character = data;
+      
+      if (character) {
+        console.log(`[generate-visual-dna] Found character by ID: ${character.name}`);
+      }
+    }
+
+    // 2. Fallback: search by name + projectId (case-insensitive)
+    if (!character && characterName && projectId) {
+      const normalizedName = characterName.trim().toLowerCase();
+      console.log(`[generate-visual-dna] Searching by name: "${normalizedName}" in project ${projectId}`);
+      
+      const { data } = await supabaseAdmin
+        .from('characters')
+        .select('*')
+        .eq('project_id', projectId)
+        .ilike('name', `%${normalizedName}%`)
+        .maybeSingle();
+      character = data;
+      
+      if (character) {
+        console.log(`[generate-visual-dna] Found character by name fallback: ${character.name}`);
+      }
+    }
+
+    // 3. Return 404 with helpful payload if not found
     if (!character) {
-      throw new Error('Character not found');
+      console.warn(`[generate-visual-dna] Character not found`, { characterId, characterName, projectId });
+      return new Response(JSON.stringify({
+        error: 'CHARACTER_NOT_FOUND',
+        characterId: characterId || null,
+        characterName: characterName || null,
+        projectId: projectId || null,
+        hint: 'Asegúrate de que el personaje existe en la Bible del proyecto. Usa "Crear personajes desde outline" si aún no existen.',
+        actionable: true,
+        suggestedAction: 'materialize_characters',
+      }), { 
+        status: 404, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
     }
 
     const accessResult = await v3RequireProjectAccess(auth, character.project_id);
@@ -56,9 +109,12 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
+    // Use the actual character name from DB (not the potentially partial search term)
+    const finalCharacterName = character.name;
+
     const userPrompt = `Genera un Visual DNA completo para este personaje:
 
-NOMBRE: ${characterName}
+NOMBRE: ${finalCharacterName}
 BIOGRAFÍA: ${character.bio || 'No proporcionada'}
 ROL: ${character.role || 'No especificado'}
 TIPO: ${character.character_role || 'protagonist'}
@@ -109,8 +165,9 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
   }
 }`;
 
-    console.log('Calling Lovable AI Gateway for Visual DNA generation...', {
-      characterId,
+    console.log('[generate-visual-dna] Calling Lovable AI Gateway...', {
+      characterId: character.id,
+      characterName: finalCharacterName,
       userId: auth.userId,
     });
 
@@ -126,22 +183,30 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.3,
+        temperature: 0, // Deterministic for consistent JSON
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Lovable AI Gateway error:', response.status, errorText);
+      console.error('[generate-visual-dna] Lovable AI Gateway error:', response.status, errorText);
 
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), {
+        return new Response(JSON.stringify({ 
+          error: 'RATE_LIMIT_EXCEEDED',
+          message: 'Límite de peticiones excedido. Inténtalo más tarde.',
+          actionable: true,
+        }), {
           status: 429,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: 'Payment required. Please add credits to your workspace.' }), {
+        return new Response(JSON.stringify({ 
+          error: 'PAYMENT_REQUIRED',
+          message: 'Se requieren créditos adicionales.',
+          actionable: true,
+        }), {
           status: 402,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
@@ -152,7 +217,7 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
 
-    console.log('Received response from AI, parsing JSON...');
+    console.log('[generate-visual-dna] Received response from AI, parsing JSON...');
 
     let visualDNA;
     try {
@@ -160,22 +225,40 @@ Genera el JSON con esta estructura exacta (rellena todos los campos con valores 
       const jsonMatch = content?.match(/```(?:json)?\s*([\s\S]*?)```/) || content?.match(/\{[\s\S]*\}/);
       const jsonStr = jsonMatch ? ((jsonMatch as any)[1] || (jsonMatch as any)[0]) : content;
       visualDNA = JSON.parse((jsonStr || '').trim());
-      console.log('Visual DNA parsed successfully');
+      console.log('[generate-visual-dna] Visual DNA parsed successfully');
     } catch (e) {
-      console.error('JSON parse error:', e);
-      console.error('Raw content:', content?.substring(0, 500));
-      throw new Error('Failed to parse Visual DNA from AI response');
+      console.error('[generate-visual-dna] JSON parse error:', e);
+      console.error('[generate-visual-dna] Raw content:', content?.substring(0, 1000));
+      
+      return new Response(JSON.stringify({
+        error: 'INVALID_JSON_RESPONSE',
+        message: 'El modelo no devolvió JSON válido. Intenta de nuevo.',
+        rawSnippet: content?.substring(0, 200),
+        actionable: true,
+      }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
     }
 
     return new Response(
-      JSON.stringify({ success: true, visualDNA }),
+      JSON.stringify({ 
+        success: true, 
+        visualDNA,
+        characterId: character.id,
+        characterName: finalCharacterName,
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('[generate-visual-dna] Error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ 
+        error: 'INTERNAL_ERROR',
+        message: error instanceof Error ? error.message : 'Error desconocido',
+        actionable: false,
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
