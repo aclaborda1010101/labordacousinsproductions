@@ -316,6 +316,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // P1 FIX: Entity materialization state (sync outline to Bible)
   const [materializingEntities, setMaterializingEntities] = useState(false);
+  
+  // Bible data from DB (source of truth for UI)
+  const [bibleCharacters, setBibleCharacters] = useState<any[]>([]);
+  const [bibleLocations, setBibleLocations] = useState<any[]>([]);
+  const [bibleLoading, setBibleLoading] = useState(false);
 
   // Episode regeneration state
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
@@ -2048,16 +2053,36 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   };
 
   // Pre-flight check: ensure Bible has entities before generating
+  // Fetch Bible data from DB (characters + locations)
+  const fetchBibleData = async () => {
+    if (!projectId) return;
+    setBibleLoading(true);
+    try {
+      const [charsRes, locsRes] = await Promise.all([
+        supabase.from('characters').select('id, name, role, bio, character_role, profile_json, created_at')
+          .eq('project_id', projectId).order('created_at', { ascending: false }).limit(50),
+        supabase.from('locations').select('id, name, description, int_ext, created_at')
+          .eq('project_id', projectId).order('created_at', { ascending: false }).limit(50),
+      ]);
+      setBibleCharacters(charsRes.data || []);
+      setBibleLocations(locsRes.data || []);
+    } catch (err) {
+      console.error('[fetchBibleData] Error:', err);
+    } finally {
+      setBibleLoading(false);
+    }
+  };
+  
+  // Fetch Bible on mount and when projectId changes
+  useEffect(() => {
+    fetchBibleData();
+  }, [projectId]);
+
   const ensureBibleMaterialized = async (): Promise<boolean> => {
     setMaterializingEntities(true);
     try {
-      const [charsCheck, locsCheck] = await Promise.all([
-        supabase.from('characters').select('id').eq('project_id', projectId).limit(1),
-        supabase.from('locations').select('id').eq('project_id', projectId).limit(1),
-      ]);
-
-      const hasChars = (charsCheck.data?.length ?? 0) > 0;
-      const hasLocs = (locsCheck.data?.length ?? 0) > 0;
+      const hasChars = bibleCharacters.length > 0;
+      const hasLocs = bibleLocations.length > 0;
 
       if (hasChars && hasLocs) return true;
 
@@ -2072,6 +2097,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         return false;
       }
 
+      // Refresh Bible data after sync
+      await fetchBibleData();
       toast.success('Bible sincronizada ✓');
       return true;
     } finally {
@@ -2090,17 +2117,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       
       if (!outlineHasChars && !outlineHasLocs) return;
       
-      // Quick check: do we have characters/locations in DB?
-      const [charsCheck, locsCheck] = await Promise.all([
-        supabase.from('characters').select('id').eq('project_id', projectId).limit(1),
-        supabase.from('locations').select('id').eq('project_id', projectId).limit(1),
-      ]);
-      
-      const hasChars = (charsCheck.data?.length ?? 0) > 0;
-      const hasLocs = (locsCheck.data?.length ?? 0) > 0;
+      // Use already-fetched Bible state (no redundant query)
+      const hasChars = bibleCharacters.length > 0;
+      const hasLocs = bibleLocations.length > 0;
       
       // If outline has data but Bible is empty, sync silently
-      if (!hasChars && !hasLocs) {
+      if (!hasChars && !hasLocs && !bibleLoading) {
         console.log('[AutoMaterialize] Bible empty but outline has entities, syncing in background...');
         setMaterializingEntities(true);
         try {
@@ -2108,6 +2130,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             body: { projectId, source: 'outline' }
           });
           console.log('[AutoMaterialize] Sync completed successfully');
+          // Refresh Bible data after auto-sync
+          await fetchBibleData();
         } catch (err) {
           console.error('[AutoMaterialize] Sync failed:', err);
         } finally {
@@ -2117,7 +2141,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     };
     
     autoMaterializeIfNeeded();
-  }, [projectId, lightOutline]);
+  }, [projectId, lightOutline, bibleCharacters.length, bibleLocations.length, bibleLoading]);
 
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
   const approveAndGenerateEpisodes = async () => {
@@ -4159,6 +4183,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                             body: { projectId, source: 'outline' }
                           });
                           if (error) throw error;
+                          // Refresh Bible data after sync
+                          await fetchBibleData();
                           toast.success(data?.message || 'Personajes y locaciones sincronizados a la Bible');
                         } catch (err: any) {
                           console.error('[materialize-entities]', err);
@@ -6171,8 +6197,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </Card>
               )}
 
-              {/* Bible Empty State - Sync from Outline */}
-              {lightOutline && (!generatedScript?.characters?.length && !generatedScript?.locations?.length) && (
+              {/* Bible Empty State - Sync from Outline (reads from DB, not snapshot) */}
+              {lightOutline && (bibleCharacters.length === 0 && bibleLocations.length === 0) && (
                 ((lightOutline.main_characters?.length || 0) > 0 || (lightOutline.main_locations?.length || 0) > 0) && (
                   <Card className="border-amber-500/50 bg-amber-500/5">
                     <CardHeader className="pb-3">
@@ -6190,13 +6216,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         </div>
                         <Button 
                           variant="gold" 
-                          onClick={async () => {
-                            const synced = await ensureBibleMaterialized();
-                            if (synced) {
-                              // Force a small delay and suggest refresh
-                              toast.success('Bible sincronizada. Recarga la página para ver las entidades.');
-                            }
-                          }}
+                          onClick={() => ensureBibleMaterialized()}
                           disabled={materializingEntities}
                         >
                           {materializingEntities ? (
@@ -6210,6 +6230,45 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </CardHeader>
                   </Card>
                 )
+              )}
+              
+              {/* Bible Synced Success State */}
+              {(bibleCharacters.length > 0 || bibleLocations.length > 0) && (
+                <Card className="border-green-500/50 bg-green-500/5">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-green-500/20 rounded-lg">
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">Bible Sincronizada</CardTitle>
+                          <CardDescription>
+                            {bibleCharacters.length} personajes y {bibleLocations.length} locaciones en la Bible del proyecto.
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/projects/${projectId}/bible/characters`)}
+                        >
+                          <Users className="w-4 h-4 mr-1" />
+                          Ver Personajes
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/projects/${projectId}/bible/locations`)}
+                        >
+                          <MapPin className="w-4 h-4 mr-1" />
+                          Ver Locaciones
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
               )}
 
               {/* BREAKDOWN - Import Entities */}
