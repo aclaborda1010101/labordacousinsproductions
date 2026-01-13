@@ -2968,6 +2968,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       return;
     }
 
+    // V11.2: Check for degraded/placeholder scenes before segmentation
+    const hasDegradedScenes = episode.scenes.every((s: any) => 
+      s.slugline === 'INT. UBICACIÓN - DÍA' || 
+      s.action_summary === 'Por generar' ||
+      !s.action_summary
+    );
+    
+    if (hasDegradedScenes) {
+      toast.error('Este episodio tiene escenas placeholder. Regenera el episodio primero.');
+      return;
+    }
+
     setSegmenting(true);
     try {
       // Check if scenes already exist for this episode
@@ -3016,12 +3028,22 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         }
       }));
 
+      // V11.2: Diagnostic logging for scene insertion
+      console.log(`[segmentScenes] Inserting ${scenesToInsert.length} scenes for Episode ${episodeNumber}:`,
+        scenesToInsert.map((s: any) => ({ scene_no: s.scene_no, slugline: s.slugline }))
+      );
+
       const { data: insertedScenes, error } = await supabase
         .from('scenes')
         .insert(scenesToInsert)
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[segmentScenes] Insert error:', error);
+        throw error;
+      }
+
+      console.log(`[segmentScenes] Successfully inserted ${insertedScenes?.length} scenes`);
 
       // Generate shots automatically from dialogue and action
       if (insertedScenes && insertedScenes.length > 0) {
