@@ -3584,25 +3584,23 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Hollywood workflow step computation
   const workflowStep = (() => {
     if (!generatedScript && !lightOutline) return 'idea'; // Step 1: Write/Import
-    if (lightOutline && !outlineApproved) return 'review'; // Step 2: Review outline
-    if (pipelineRunning) return 'generating'; // Step 3: Generating
+    if (lightOutline && !outlineApproved) return 'review'; // Step 2: Review outline (Outline)
     
     // Check if dialogues are missing
     const hasEpisodes = generatedScript?.episodes?.length > 0;
     const needsDialogues = hasEpisodes && generatedScript.episodes.some((ep: any) =>
       ep.scenes?.some((s: any) => !s.dialogue || s.dialogue.length === 0)
     );
-    if (needsDialogues) return 'dialogues'; // Step 4: Generate dialogues
+    if (needsDialogues) return 'script'; // Step 3: Script generated (needs dialogues)
     
-    if (hasEpisodes) return 'production'; // Step 5: Ready for production
+    if (hasEpisodes) return 'production'; // Step 4: Ready for production
     return 'idea';
   })();
   
   const workflowSteps = [
     { id: 'idea', label: 'Guion', description: 'Genera o importa tu guion' },
-    { id: 'review', label: 'Revisar', description: 'Aprueba el outline' },
-    { id: 'generating', label: 'Generando', description: 'Creando episodios' },
-    { id: 'dialogues', label: 'Diálogos', description: 'Completar diálogos' },
+    { id: 'review', label: 'Outline', description: 'Revisa y aprueba la estructura' },
+    { id: 'script', label: 'Guion generado', description: 'Episodios y diálogos completos' },
     { id: 'production', label: 'Producción', description: 'Generar shots y microshots' },
   ];
   
@@ -3634,8 +3632,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 const stepToTab: Record<string, string> = {
                   'idea': 'generate',
                   'review': 'generate',
-                  'generating': 'generate',
-                  'dialogues': 'summary',
+                  'script': 'summary',
                   'production': 'production',
                 };
                 
@@ -3673,6 +3670,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 );
               })}
+              
+              {/* Generating badge overlay */}
+              {pipelineRunning && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 rounded-full animate-pulse ml-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-amber-600" />
+                  <span className="text-sm font-medium text-amber-600">Generando...</span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
