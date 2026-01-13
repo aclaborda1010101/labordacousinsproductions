@@ -9,7 +9,8 @@ const corsHeaders = {
 interface TechnicalDocRequest {
   scene_id: string;
   project_id: string;
-  storyboard_panels: {
+  camera_plan_version?: number; // NEW: Use camera plan as input if available
+  storyboard_panels?: {
     id: string;
     panel_no: number;
     panel_intent: string;
@@ -19,17 +20,42 @@ interface TechnicalDocRequest {
     characters_present?: string[];
     props_present?: string[];
   }[];
-  scene_slugline: string;
+  scene_slugline?: string;
   scene_duration_s?: number;
   visual_style?: string;
   characters_in_scene?: { id: string; name: string }[];
   props_in_scene?: { id: string; name: string }[];
 }
 
-// DoP + DirectorTech (IA 3) PROMPT - Official from pipeline spec
+// =============================================================================
+// CINEMATOGRAPHIC DEFAULTS BY SHOT TYPE
+// Pre-fill technical specs based on shot type for faster workflow
+// =============================================================================
+const CINEMATOGRAPHIC_DEFAULTS: Record<string, {
+  focal_mm: number;
+  duration_s: [number, number];
+  focus: string;
+  movement: string;
+  aperture: number;
+}> = {
+  'PG': { focal_mm: 24, duration_s: [6, 10], focus: 'deep', movement: 'dolly_optional', aperture: 5.6 },
+  'PM': { focal_mm: 35, duration_s: [5, 8], focus: 'follow', movement: 'static', aperture: 4.0 },
+  'PMC': { focal_mm: 50, duration_s: [4, 7], focus: 'follow', movement: 'handheld_subtle', aperture: 2.8 },
+  'PP': { focal_mm: 85, duration_s: [3, 6], focus: 'static', movement: 'static', aperture: 2.0 },
+  'PPP': { focal_mm: 100, duration_s: [2, 4], focus: 'static', movement: 'static', aperture: 1.8 },
+  'INSERT': { focal_mm: 100, duration_s: [2, 4], focus: 'macro', movement: 'static', aperture: 4.0 },
+  'OTS': { focal_mm: 50, duration_s: [4, 8], focus: 'rack', movement: 'static', aperture: 2.8 },
+  'POV': { focal_mm: 35, duration_s: [3, 6], focus: 'follow', movement: 'handheld', aperture: 4.0 },
+  'WIDE': { focal_mm: 24, duration_s: [5, 10], focus: 'deep', movement: 'static', aperture: 5.6 },
+  'WIDE_MASTER': { focal_mm: 24, duration_s: [5, 10], focus: 'deep', movement: 'static', aperture: 5.6 },
+  'MEDIUM': { focal_mm: 50, duration_s: [4, 7], focus: 'follow', movement: 'static', aperture: 2.8 },
+  'CLOSE': { focal_mm: 85, duration_s: [3, 5], focus: 'static', movement: 'static', aperture: 2.0 },
+};
+
+// DoP + DirectorTech PROMPT
 const DOP_DIRECTOR_SYSTEM_PROMPT = `ROLE: DIRECTOR + DIRECTOR OF PHOTOGRAPHY (DoP)
 
-You convert approved storyboard panels into a TECHNICAL SHOT DOCUMENT - the source of truth for AI generation.
+You convert a Camera Plan (or approved storyboard) into a TECHNICAL SHOT DOCUMENT - the source of truth for AI generation.
 
 GLOBAL CONTINUITY RULES (NON-NEGOTIABLE):
 - No wardrobe changes between shots
@@ -119,9 +145,9 @@ OUTPUT: A valid JSON object with this EXACT structure:
 
 CAMERA MOVE TYPES: static, dolly, crane, arc, handheld, steadicam
 FOCUS MODES: follow, rack, deep, static
-LIGHTING LOOKS: day_exterior_soft, day_interior_natural, night_interior_practical, golden_hour, etc.
+LIGHTING LOOKS: day_exterior_soft, day_interior_natural, night_interior_practical, golden_hour, overcast, dramatic_contrast
 
-CRITICAL: Every shot MUST include ALL fields. No missing fields. This is the source of truth.`;
+CRITICAL: Every shot MUST include ALL fields. This is the source of truth for keyframe and video generation.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -138,6 +164,7 @@ serve(async (req) => {
     const {
       scene_id,
       project_id,
+      camera_plan_version,
       storyboard_panels,
       scene_slugline,
       scene_duration_s = 30,
@@ -153,35 +180,105 @@ serve(async (req) => {
       );
     }
 
-    // PRECONDITION: Check storyboard is approved
-    const { data: storyboardData } = await supabase
-      .from("storyboards")
-      .select("status")
-      .eq("scene_id", scene_id)
-      .eq("project_id", project_id)
-      .single();
+    console.log(`[generate-technical-doc] Processing scene ${scene_id}`);
 
-    if (storyboardData?.status !== "approved") {
-      // Also check if all panels are approved as fallback
-      const { data: panelsData } = await supabase
-        .from("storyboard_panels")
-        .select("approved")
-        .eq("scene_id", scene_id);
+    // FIRST: Try to use Camera Plan if version specified or exists
+    let cameraPlanData: {
+      plan_header: Record<string, unknown>;
+      shots_list: Array<{
+        shot_no: number;
+        panel_ref: string;
+        shot_label: string;
+        shot_type_hint: string;
+        framing_hint: string;
+        blocking_ref?: string;
+        notes?: string;
+      }>;
+      blocking_diagrams: Array<Record<string, unknown>>;
+    } | null = null;
+
+    if (camera_plan_version) {
+      const { data: cameraPlan } = await supabase
+        .from("scene_camera_plan")
+        .select("*")
+        .eq("scene_id", scene_id)
+        .eq("version", camera_plan_version)
+        .single();
       
-      const allPanelsApproved = panelsData && panelsData.length > 0 && panelsData.every(p => p.approved);
+      if (cameraPlan) {
+        cameraPlanData = {
+          plan_header: cameraPlan.plan_header as Record<string, unknown>,
+          shots_list: cameraPlan.shots_list as Array<{
+            shot_no: number;
+            panel_ref: string;
+            shot_label: string;
+            shot_type_hint: string;
+            framing_hint: string;
+            blocking_ref?: string;
+            notes?: string;
+          }>,
+          blocking_diagrams: cameraPlan.blocking_diagrams as Array<Record<string, unknown>>,
+        };
+        console.log(`[generate-technical-doc] Using Camera Plan v${camera_plan_version}`);
+      }
+    } else {
+      // Try to get the latest approved/locked camera plan
+      const { data: latestCameraPlan } = await supabase
+        .from("scene_camera_plan")
+        .select("*")
+        .eq("scene_id", scene_id)
+        .in("status", ["approved", "locked"])
+        .order("version", { ascending: false })
+        .limit(1);
       
-      if (!allPanelsApproved) {
-        return new Response(
-          JSON.stringify({ 
-            error: "Storyboard must be approved before generating Technical Document",
-            success: false 
-          }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+      if (latestCameraPlan && latestCameraPlan.length > 0) {
+        cameraPlanData = {
+          plan_header: latestCameraPlan[0].plan_header as Record<string, unknown>,
+          shots_list: latestCameraPlan[0].shots_list as Array<{
+            shot_no: number;
+            panel_ref: string;
+            shot_label: string;
+            shot_type_hint: string;
+            framing_hint: string;
+            blocking_ref?: string;
+            notes?: string;
+          }>,
+          blocking_diagrams: latestCameraPlan[0].blocking_diagrams as Array<Record<string, unknown>>,
+        };
+        console.log(`[generate-technical-doc] Using latest Camera Plan v${latestCameraPlan[0].version}`);
       }
     }
 
-    // If no panels provided, fetch from DB
+    // PRECONDITION: Check storyboard is approved (if no camera plan)
+    if (!cameraPlanData) {
+      const { data: storyboardData } = await supabase
+        .from("storyboards")
+        .select("status")
+        .eq("scene_id", scene_id)
+        .eq("project_id", project_id)
+        .single();
+
+      if (storyboardData?.status !== "approved") {
+        const { data: panelsData } = await supabase
+          .from("storyboard_panels")
+          .select("approved")
+          .eq("scene_id", scene_id);
+        
+        const allPanelsApproved = panelsData && panelsData.length > 0 && panelsData.every(p => p.approved);
+        
+        if (!allPanelsApproved) {
+          return new Response(
+            JSON.stringify({ 
+              error: "Storyboard must be approved before generating Technical Document. Approve at least 1 storyboard panel.",
+              success: false 
+            }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+    }
+
+    // Fetch panels if not provided
     let panels = storyboard_panels;
     if (!panels || panels.length === 0) {
       const { data: dbPanels } = await supabase
@@ -203,58 +300,73 @@ serve(async (req) => {
       }));
     }
 
-    if (panels.length === 0) {
+    if ((panels?.length === 0) && !cameraPlanData) {
       return new Response(
-        JSON.stringify({ error: "No approved storyboard panels found" }),
+        JSON.stringify({ error: "No approved storyboard panels or camera plan found" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log(`[generate-technical-doc] Processing ${panels.length} panels for scene ${scene_id}`);
+    console.log(`[generate-technical-doc] Processing ${cameraPlanData ? cameraPlanData.shots_list.length : panels?.length} shots`);
 
     // Build character and prop context
     const charactersList = characters_in_scene.length > 0
-      ? characters_in_scene.map(c => `${c.id}: ${c.name}`).join(', ')
-      : 'Characters TBD';
+      ? characters_in_scene.map(c => `${c.id}: ${c.name}`).join(", ")
+      : "Characters TBD";
     
     const propsList = props_in_scene.length > 0
-      ? props_in_scene.map(p => `${p.id}: ${p.name}`).join(', ')
-      : 'Props TBD';
+      ? props_in_scene.map(p => `${p.id}: ${p.name}`).join(", ")
+      : "Props TBD";
 
-    // Build panels summary for the prompt
-    const panelsSummary = panels.map(p => 
-      `Panel ${p.panel_no} (${p.id}): ${p.shot_hint} - ${p.panel_intent}
-       Characters: ${p.characters_present?.join(', ') || 'N/A'}
-       Props: ${p.props_present?.join(', ') || 'N/A'}`
-    ).join('\n\n');
+    // Build source summary - prefer Camera Plan if available
+    let sourceSummary: string;
+    if (cameraPlanData) {
+      const header = cameraPlanData.plan_header;
+      sourceSummary = `CAMERA PLAN SOURCE:
+SEC: ${header.sec_code || "N/A"}
+LOCATION: ${header.location_code || "N/A"}
+TIME: ${header.time_context || "N/A"}
+LOGLINE: ${header.scene_logline || "N/A"}
+
+SHOTS LIST:
+${cameraPlanData.shots_list.map(s => 
+  `${s.shot_no}. ${s.panel_ref} | ${s.shot_type_hint} ${s.framing_hint || ""} | ${s.shot_label}${s.notes ? ` (${s.notes})` : ""}`
+).join("\n")}
+
+BLOCKING DIAGRAMS: ${cameraPlanData.blocking_diagrams.length} available`;
+    } else {
+      sourceSummary = `STORYBOARD PANELS:
+${(panels || []).map(p => 
+  `Panel ${p.panel_no} (${p.id}): ${p.shot_hint} - ${p.panel_intent}
+   Characters: ${p.characters_present?.join(", ") || "N/A"}
+   Props: ${p.props_present?.join(", ") || "N/A"}`
+).join("\n\n")}`;
+    }
 
     const userPrompt = `Create a COMPLETE technical document for this scene.
 
-SCENE: ${scene_slugline}
+SCENE: ${scene_slugline || "Untitled Scene"}
 DURATION: ~${scene_duration_s}s
 VISUAL STYLE: ${visual_style}
 CHARACTERS: ${charactersList}
 PROPS: ${propsList}
 
-APPROVED STORYBOARD PANELS:
-${panelsSummary}
+${sourceSummary}
+
+CINEMATOGRAPHIC DEFAULTS TO USE (by shot type):
+- PG/WIDE: 24mm, f/5.6, deep focus, 6-10s
+- PM/MEDIUM: 35-50mm, f/4.0, follow focus, 5-8s
+- PMC: 50mm, f/2.8, follow focus, 4-7s
+- PP/CLOSE: 85mm, f/2.0, static focus, 3-6s
+- INSERT: 100mm, f/4.0, macro, 2-4s
+- OTS: 50mm, f/2.8, rack focus, 4-8s
 
 Generate a technical document with:
 1. continuity_lock - what must remain consistent
-2. cameras - array of camera setups (typically CAM_A for OTS_A, CAM_B for OTS_B, CAM_C for WIDE)
-3. shots - one shot per panel, each with COMPLETE specs
+2. cameras - array of camera setups
+3. shots - one shot per panel/camera plan entry, each with COMPLETE specs
 
-For each shot, you MUST specify:
-- frame (size, aspect_ratio, composition)
-- blocking (subjects with screen positions, props with positions)
-- camera_setup (position xyz, rotation, lens with focal_mm and aperture, stabilization)
-- camera_move (type: static/dolly/crane/arc/handheld/steadicam, path if moving, speed, easing)
-- lighting (look, key with direction/intensity/color_k, fill, back, practicals)
-- focus (mode: follow/rack/deep/static, events timeline with targets and transitions)
-- timing (start_s, end_s)
-- constraints (must_keep, must_not, negatives for AI generation)
-
-Return ONLY valid JSON matching the schema. No explanations.`;
+Return ONLY valid JSON matching the schema.`;
 
     // Call Lovable AI with GPT-5.2 for complex reasoning
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -308,11 +420,11 @@ Return ONLY valid JSON matching the schema. No explanations.`;
         camera_id: string;
         shot_type: string;
         frame: { size: string; aspect_ratio: string; composition: string; headroom?: string };
-        blocking: { subjects: any[]; props: any[] };
-        camera_setup: { position: any; rotation: any; lens: any; stabilization?: string };
-        camera_move: { type: string; path: any[]; speed: string | null; easing: string | null };
-        lighting: { look: string; key: any; fill: any; back: any; practicals?: any[] };
-        focus: { mode: string; depth_profile?: string; events: any[] };
+        blocking: { subjects: unknown[]; props: unknown[] };
+        camera_setup: { position: unknown; rotation: unknown; lens: { focal_mm?: number; aperture?: number }; stabilization?: string };
+        camera_move: { type: string; path: unknown[]; speed: string | null; easing: string | null };
+        lighting: { look: string; key: unknown; fill: unknown; back: unknown; practicals?: unknown[] };
+        focus: { mode: string; depth_profile?: string; events: unknown[] };
         timing: { start_s: number; end_s: number };
         constraints: { must_keep: string[]; must_not: string[]; negatives: string[] };
       }>;
@@ -331,6 +443,29 @@ Return ONLY valid JSON matching the schema. No explanations.`;
     }
 
     console.log(`[generate-technical-doc] Generated doc with ${technicalDoc.shots?.length || 0} shots`);
+
+    // Apply cinematographic defaults where AI didn't specify
+    for (const shot of technicalDoc.shots || []) {
+      const shotType = shot.frame?.size || shot.shot_type || "PM";
+      const defaults = CINEMATOGRAPHIC_DEFAULTS[shotType] || CINEMATOGRAPHIC_DEFAULTS["PM"];
+      
+      // Fill in defaults if not specified
+      if (!shot.camera_setup?.lens?.focal_mm) {
+        shot.camera_setup = shot.camera_setup || { position: {}, rotation: {}, lens: {} };
+        shot.camera_setup.lens = shot.camera_setup.lens || {};
+        shot.camera_setup.lens.focal_mm = defaults.focal_mm;
+        shot.camera_setup.lens.aperture = defaults.aperture;
+      }
+      
+      if (!shot.focus?.mode) {
+        shot.focus = shot.focus || { mode: defaults.focus, events: [] };
+        shot.focus.mode = defaults.focus;
+      }
+      
+      if (!shot.camera_move?.type) {
+        shot.camera_move = { type: defaults.movement, path: [], speed: null, easing: null };
+      }
+    }
 
     // Upsert scene_technical_docs
     const { data: techDoc, error: docError } = await supabase
@@ -360,15 +495,16 @@ Return ONLY valid JSON matching the schema. No explanations.`;
     }
 
     // Map panels to their IDs for shot linking
-    const panelIdMap = new Map(panels.map(p => [p.panel_no, p.id]));
+    const panelIdMap = new Map((panels || []).map(p => [p.panel_no, p.id]));
 
     // Delete existing shots for this scene
     await supabase.from("shots").delete().eq("scene_id", scene_id);
 
     // Prepare shots for insertion with FULL technical data
     const shotsToUpsert = (technicalDoc.shots || []).map((shot, idx) => {
-      // Parse panel number from panel_id (P1, P2, etc)
-      const panelNum = parseInt(shot.panel_id?.replace(/\D/g, '') || String(idx + 1));
+      const panelNum = parseInt(shot.panel_id?.replace(/\D/g, "") || String(idx + 1));
+      const shotType = shot.frame?.size || shot.shot_type || "PM";
+      const defaults = CINEMATOGRAPHIC_DEFAULTS[shotType] || CINEMATOGRAPHIC_DEFAULTS["PM"];
       
       return {
         scene_id,
@@ -377,13 +513,12 @@ Return ONLY valid JSON matching the schema. No explanations.`;
         shot_type: shot.shot_type || "WIDE",
         camera: {
           id: shot.camera_id,
-          focal_mm: shot.camera_setup?.lens?.focal_mm || 50,
-          aperture: shot.camera_setup?.lens?.aperture || 2.8,
+          focal_mm: shot.camera_setup?.lens?.focal_mm || defaults.focal_mm,
+          aperture: shot.camera_setup?.lens?.aperture || defaults.aperture,
         },
         blocking: shot.blocking || { subjects: [], props: [] },
         lighting: shot.lighting || { look: "natural" },
         keyframe_hints: [],
-        // Full technical fields
         focus_config: shot.focus,
         timing_config: shot.timing,
         camera_path: shot.camera_move,
@@ -392,8 +527,7 @@ Return ONLY valid JSON matching the schema. No explanations.`;
         constraints: shot.constraints,
         frame_config: shot.frame,
         storyboard_panel_id: panelIdMap.get(panelNum) || null,
-        // Duration from timing
-        duration_target: shot.timing ? (shot.timing.end_s - shot.timing.start_s) : 5,
+        duration_target: shot.timing ? (shot.timing.end_s - shot.timing.start_s) : defaults.duration_s[0],
       };
     });
 
@@ -408,13 +542,14 @@ Return ONLY valid JSON matching the schema. No explanations.`;
       throw shotsError;
     }
 
-    console.log(`[generate-technical-doc] Inserted ${insertedShots?.length} shots`);
+    console.log(`[generate-technical-doc] Inserted ${insertedShots?.length} shots with cinematographic defaults`);
 
     return new Response(
       JSON.stringify({
         success: true,
         technical_doc: techDoc,
         shots: insertedShots,
+        used_camera_plan: !!cameraPlanData,
         message: `Generated technical document with ${insertedShots?.length} shots`,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

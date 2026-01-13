@@ -4454,6 +4454,72 @@ export type Database = {
           },
         ]
       }
+      scene_camera_plan: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          blocking_diagrams: Json
+          constraints: Json
+          created_at: string
+          generated_from_storyboard: boolean | null
+          id: string
+          plan_header: Json
+          project_id: string
+          scene_id: string
+          shots_list: Json
+          status: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          blocking_diagrams?: Json
+          constraints?: Json
+          created_at?: string
+          generated_from_storyboard?: boolean | null
+          id?: string
+          plan_header?: Json
+          project_id: string
+          scene_id: string
+          shots_list?: Json
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          blocking_diagrams?: Json
+          constraints?: Json
+          created_at?: string
+          generated_from_storyboard?: boolean | null
+          id?: string
+          plan_header?: Json
+          project_id?: string
+          scene_id?: string
+          shots_list?: Json
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scene_camera_plan_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_camera_plan_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scene_technical_docs: {
         Row: {
           cameras: Json | null
@@ -5104,51 +5170,60 @@ export type Database = {
           action_beat_ref: string | null
           approved: boolean | null
           characters_present: string[] | null
+          continuity: Json | null
           created_at: string | null
           id: string
           image_prompt: string | null
           image_url: string | null
           notes: string | null
+          panel_code: string | null
           panel_intent: string | null
           panel_no: number
           project_id: string
           props_present: string[] | null
           scene_id: string
           shot_hint: string | null
+          staging: Json | null
           updated_at: string | null
         }
         Insert: {
           action_beat_ref?: string | null
           approved?: boolean | null
           characters_present?: string[] | null
+          continuity?: Json | null
           created_at?: string | null
           id?: string
           image_prompt?: string | null
           image_url?: string | null
           notes?: string | null
+          panel_code?: string | null
           panel_intent?: string | null
           panel_no: number
           project_id: string
           props_present?: string[] | null
           scene_id: string
           shot_hint?: string | null
+          staging?: Json | null
           updated_at?: string | null
         }
         Update: {
           action_beat_ref?: string | null
           approved?: boolean | null
           characters_present?: string[] | null
+          continuity?: Json | null
           created_at?: string | null
           id?: string
           image_prompt?: string | null
           image_url?: string | null
           notes?: string | null
+          panel_code?: string | null
           panel_intent?: string | null
           panel_no?: number
           project_id?: string
           props_present?: string[] | null
           scene_id?: string
           shot_hint?: string | null
+          staging?: Json | null
           updated_at?: string | null
         }
         Relationships: [
