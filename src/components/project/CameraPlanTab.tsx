@@ -150,7 +150,7 @@ export function CameraPlanTab({
     try {
       const { error } = await supabase
         .from('scene_camera_plan')
-        .update({ shots_list: editedShots as unknown as Record<string, unknown>[] })
+        .update({ shots_list: JSON.parse(JSON.stringify(editedShots)) })
         .eq('id', cameraPlan.id);
 
       if (error) throw error;
