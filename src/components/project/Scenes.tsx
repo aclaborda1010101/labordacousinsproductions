@@ -30,6 +30,8 @@ import { StoryboardPanelView } from './StoryboardPanelView';
 import { TechnicalDocEditor } from './TechnicalDocEditor';
 import { KeyframesPanel } from './KeyframesPanel';
 import { SceneScreenplayView } from './SceneScreenplayView';
+import { ScenePipelineStepper } from './ScenePipelineStepper';
+import { PipelineGateOverlay } from './PipelineGateOverlay';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -112,6 +114,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [scriptRawText, setScriptRawText] = useState<string>('');
   const [technicalDocStatus, setTechnicalDocStatus] = useState<Record<string, 'draft' | 'approved' | 'locked' | null>>({});
   const [storyboardApproved, setStoryboardApproved] = useState<Record<string, boolean>>({});
+  const [activeSceneTab, setActiveSceneTab] = useState<Record<string, string>>({});
   
   // Production Proposal flow state
   const [productionProposals, setProductionProposals] = useState<Map<string, ProductionProposal>>(new Map());
@@ -1256,8 +1259,15 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                           </div>
 
                           {expandedScenes.has(scene.id) && (
-                            <div className="border-t border-border bg-muted/20 p-4">
-                              <Tabs defaultValue="screenplay" className="w-full">
+                            <div className="border-t border-border bg-muted/20 p-4 space-y-4">
+                              {/* P0.5: Pipeline Stepper */}
+                              <ScenePipelineStepper sceneId={scene.id} projectId={projectId} />
+                              
+                              <Tabs 
+                                value={activeSceneTab[scene.id] || 'screenplay'} 
+                                onValueChange={(val) => setActiveSceneTab(prev => ({...prev, [scene.id]: val}))}
+                                className="w-full"
+                              >
                                 <TabsList className="mb-4">
                                   {/* P0: Tab Guion - Vista de guion por escena */}
                                   <TabsTrigger value="screenplay" className="gap-2">
@@ -1347,16 +1357,24 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
                                 {/* TECHNICAL DOC TAB */}
                                 <TabsContent value="technical" className="space-y-4">
-                                  <TechnicalDocEditor
-                                    sceneId={scene.id}
-                                    projectId={projectId}
-                                    sceneSlugline={scene.slugline}
-                                    visualStyle={visualStyle || undefined}
-                                    charactersInScene={scene.character_ids?.map(cid => {
-                                      const char = characters.find(c => c.id === cid);
-                                      return char?.name || cid;
-                                    })}
-                                  />
+                                  {!storyboardApproved[scene.id] ? (
+                                    <PipelineGateOverlay
+                                      message="Primero aprueba al menos 1 panel del Storyboard para desbloquear el Documento Técnico"
+                                      action="Ir a Storyboard"
+                                      onAction={() => setActiveSceneTab(prev => ({...prev, [scene.id]: 'storyboard'}))}
+                                    />
+                                  ) : (
+                                    <TechnicalDocEditor
+                                      sceneId={scene.id}
+                                      projectId={projectId}
+                                      sceneSlugline={scene.slugline}
+                                      visualStyle={visualStyle || undefined}
+                                      charactersInScene={scene.character_ids?.map(cid => {
+                                        const char = characters.find(c => c.id === cid);
+                                        return char?.name || cid;
+                                      })}
+                                    />
+                                  )}
                                 </TabsContent>
 
                                 {/* SHOTS TAB - Original content */}
@@ -1510,16 +1528,24 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
                                 {/* KEYFRAMES TAB */}
                                 <TabsContent value="keyframes" className="space-y-4">
-                                  <KeyframesPanel
-                                    sceneId={scene.id}
-                                    projectId={projectId}
-                                    sceneSlugline={scene.slugline}
-                                    sceneSummary={scene.summary || undefined}
-                                    technicalDocStatus={technicalDocStatus[scene.id] || null}
-                                    characters={characters.filter(c => scene.character_ids?.includes(c.id))}
-                                    location={locations.find(l => l.id === scene.location_id)}
-                                    visualStyle={visualStyle || undefined}
-                                  />
+                                  {technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked' ? (
+                                    <PipelineGateOverlay
+                                      message="Primero aprueba el Documento Técnico para desbloquear los Keyframes"
+                                      action="Ir a Doc. Técnico"
+                                      onAction={() => setActiveSceneTab(prev => ({...prev, [scene.id]: 'technical'}))}
+                                    />
+                                  ) : (
+                                    <KeyframesPanel
+                                      sceneId={scene.id}
+                                      projectId={projectId}
+                                      sceneSlugline={scene.slugline}
+                                      sceneSummary={scene.summary || undefined}
+                                      technicalDocStatus={technicalDocStatus[scene.id] || null}
+                                      characters={characters.filter(c => scene.character_ids?.includes(c.id))}
+                                      location={locations.find(l => l.id === scene.location_id)}
+                                      visualStyle={visualStyle || undefined}
+                                    />
+                                  )}
                                 </TabsContent>
                               </Tabs>
                             </div>

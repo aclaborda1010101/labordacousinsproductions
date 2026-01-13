@@ -6397,9 +6397,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                             <Collapsible>
                               <CollapsibleTrigger className="text-xs text-primary flex items-center gap-1 hover:underline">
                                 <ChevronDown className="w-3 h-3" />
-                                Ver secuencia de planos
+                                Ver montaje teaser (auto)
                               </CollapsibleTrigger>
                               <CollapsibleContent className="mt-2 space-y-2">
+                                <p className="text-xs text-amber-600 dark:text-amber-400 mb-2">
+                                  ⚠️ Este montaje es automático y promocional. No sustituye el Storyboard de producción.
+                                </p>
                                 {(generatedScript?.teasers?.teaser60?.scenes || generatedTeasers?.teaser60?.scenes)?.map((shot: any, idx: number) => (
                                   <div key={idx} className="p-2 bg-muted/50 rounded text-xs">
                                     <div className="flex items-center justify-between mb-1">
@@ -6466,9 +6469,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                             <Collapsible>
                               <CollapsibleTrigger className="text-xs text-primary flex items-center gap-1 hover:underline">
                                 <ChevronDown className="w-3 h-3" />
-                                Ver secuencia de planos
+                                Ver montaje teaser (auto)
                               </CollapsibleTrigger>
                               <CollapsibleContent className="mt-2 space-y-2">
+                                <p className="text-xs text-amber-600 dark:text-amber-400 mb-2">
+                                  ⚠️ Este montaje es automático y promocional. No sustituye el Storyboard de producción.
+                                </p>
                                 {(generatedScript?.teasers?.teaser30?.scenes || generatedTeasers?.teaser30?.scenes)?.map((shot: any, idx: number) => (
                                   <div key={idx} className="p-2 bg-muted/50 rounded text-xs">
                                     <div className="flex items-center justify-between mb-1">
