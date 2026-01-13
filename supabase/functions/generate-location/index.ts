@@ -27,8 +27,8 @@ interface LocationGenerationRequest {
   stylePackId?: string;
 }
 
-// Use FLUX for locations - better spatial composition and cinematic environments
-const IMAGE_MODEL = 'flux-1.1-pro-ultra';
+// Use Gemini 3 Pro Image for locations - best available for cinematic environments
+const IMAGE_MODEL = 'google/gemini-3-pro-image-preview';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {

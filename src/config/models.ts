@@ -11,8 +11,8 @@
 // Real Nano Banana model for character identity consistency
 export const IMAGE_MODEL_NANO_BANANA = "google/gemini-3-pro-image-preview";
 
-// FLUX for locations - better spatial composition
-export const IMAGE_MODEL_FLUX = "flux-1.1-pro-ultra";
+// Unified model for all image generation (Lovable AI Gateway)
+export const IMAGE_MODEL_FLUX = "google/gemini-3-pro-image-preview";
 
 // Default for general use (characters, props, keyframes)
 export const IMAGE_MODEL_DEFAULT = IMAGE_MODEL_NANO_BANANA;
