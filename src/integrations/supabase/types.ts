@@ -3222,6 +3222,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          narrative_role: string | null
           primary_reference_url: string | null
           profile_json: Json | null
           project_id: string
@@ -3246,6 +3247,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          narrative_role?: string | null
           primary_reference_url?: string | null
           profile_json?: Json | null
           project_id: string
@@ -3270,6 +3272,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          narrative_role?: string | null
           primary_reference_url?: string | null
           profile_json?: Json | null
           project_id?: string
@@ -3960,13 +3963,19 @@ export type Database = {
           episodes_count: number
           format: Database["public"]["Enums"]["project_format"]
           format_profile: string | null
+          genre: string | null
+          global_visual_dna: Json | null
           id: string
+          logline: string | null
           master_language: string
+          narrative_framework: string | null
           owner_id: string
           preferred_engine: string | null
+          style_pack: string | null
           target_duration_min: number
           target_languages: string[] | null
           title: string
+          tone: string | null
           updated_at: string
           user_level: string | null
           visual_style: string | null
@@ -3987,13 +3996,19 @@ export type Database = {
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
           format_profile?: string | null
+          genre?: string | null
+          global_visual_dna?: Json | null
           id?: string
+          logline?: string | null
           master_language?: string
+          narrative_framework?: string | null
           owner_id: string
           preferred_engine?: string | null
+          style_pack?: string | null
           target_duration_min?: number
           target_languages?: string[] | null
           title: string
+          tone?: string | null
           updated_at?: string
           user_level?: string | null
           visual_style?: string | null
@@ -4014,13 +4029,19 @@ export type Database = {
           episodes_count?: number
           format?: Database["public"]["Enums"]["project_format"]
           format_profile?: string | null
+          genre?: string | null
+          global_visual_dna?: Json | null
           id?: string
+          logline?: string | null
           master_language?: string
+          narrative_framework?: string | null
           owner_id?: string
           preferred_engine?: string | null
+          style_pack?: string | null
           target_duration_min?: number
           target_languages?: string[] | null
           title?: string
+          tone?: string | null
           updated_at?: string
           user_level?: string | null
           visual_style?: string | null
