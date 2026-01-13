@@ -4392,6 +4392,63 @@ export type Database = {
           },
         ]
       }
+      scene_technical_docs: {
+        Row: {
+          cameras: Json | null
+          continuity_lock: Json | null
+          created_at: string | null
+          edit_plan: Json | null
+          id: string
+          project_id: string
+          scene_id: string
+          status: string | null
+          updated_at: string | null
+          version: number | null
+          visual_style: Json | null
+        }
+        Insert: {
+          cameras?: Json | null
+          continuity_lock?: Json | null
+          created_at?: string | null
+          edit_plan?: Json | null
+          id?: string
+          project_id: string
+          scene_id: string
+          status?: string | null
+          updated_at?: string | null
+          version?: number | null
+          visual_style?: Json | null
+        }
+        Update: {
+          cameras?: Json | null
+          continuity_lock?: Json | null
+          created_at?: string | null
+          edit_plan?: Json | null
+          id?: string
+          project_id?: string
+          scene_id?: string
+          status?: string | null
+          updated_at?: string | null
+          version?: number | null
+          visual_style?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scene_technical_docs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_technical_docs_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: true
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scenes: {
         Row: {
           approval_status: Database["public"]["Enums"]["approval_status"] | null
@@ -4750,6 +4807,10 @@ export type Database = {
           blocking: Json | null
           blocking_timestamps: Json | null
           camera: Json | null
+          camera_path: Json | null
+          camera_position: Json | null
+          camera_rotation: Json | null
+          constraints: Json | null
           continuity_notes: string | null
           coverage_type: string | null
           created_at: string
@@ -4760,6 +4821,7 @@ export type Database = {
           engine: string | null
           estimated_cost: Json | null
           fields_json: Json | null
+          focus_config: Json | null
           hero: boolean | null
           id: string
           keyframe_hints: Json | null
@@ -4772,6 +4834,8 @@ export type Database = {
           shot_type: string
           sound_plan: Json | null
           story_purpose: string | null
+          storyboard_panel_id: string | null
+          timing_config: Json | null
           transition_in: string | null
           transition_out: string | null
           updated_at: string
@@ -4788,6 +4852,10 @@ export type Database = {
           blocking?: Json | null
           blocking_timestamps?: Json | null
           camera?: Json | null
+          camera_path?: Json | null
+          camera_position?: Json | null
+          camera_rotation?: Json | null
+          constraints?: Json | null
           continuity_notes?: string | null
           coverage_type?: string | null
           created_at?: string
@@ -4798,6 +4866,7 @@ export type Database = {
           engine?: string | null
           estimated_cost?: Json | null
           fields_json?: Json | null
+          focus_config?: Json | null
           hero?: boolean | null
           id?: string
           keyframe_hints?: Json | null
@@ -4810,6 +4879,8 @@ export type Database = {
           shot_type?: string
           sound_plan?: Json | null
           story_purpose?: string | null
+          storyboard_panel_id?: string | null
+          timing_config?: Json | null
           transition_in?: string | null
           transition_out?: string | null
           updated_at?: string
@@ -4826,6 +4897,10 @@ export type Database = {
           blocking?: Json | null
           blocking_timestamps?: Json | null
           camera?: Json | null
+          camera_path?: Json | null
+          camera_position?: Json | null
+          camera_rotation?: Json | null
+          constraints?: Json | null
           continuity_notes?: string | null
           coverage_type?: string | null
           created_at?: string
@@ -4836,6 +4911,7 @@ export type Database = {
           engine?: string | null
           estimated_cost?: Json | null
           fields_json?: Json | null
+          focus_config?: Json | null
           hero?: boolean | null
           id?: string
           keyframe_hints?: Json | null
@@ -4848,6 +4924,8 @@ export type Database = {
           shot_type?: string
           sound_plan?: Json | null
           story_purpose?: string | null
+          storyboard_panel_id?: string | null
+          timing_config?: Json | null
           transition_in?: string | null
           transition_out?: string | null
           updated_at?: string
@@ -4866,6 +4944,13 @@ export type Database = {
             columns: ["scene_id"]
             isOneToOne: false
             referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shots_storyboard_panel_id_fkey"
+            columns: ["storyboard_panel_id"]
+            isOneToOne: false
+            referencedRelation: "storyboard_panels"
             referencedColumns: ["id"]
           },
         ]
@@ -4948,6 +5033,66 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      storyboard_panels: {
+        Row: {
+          approved: boolean | null
+          created_at: string | null
+          id: string
+          image_prompt: string | null
+          image_url: string | null
+          notes: string | null
+          panel_intent: string | null
+          panel_no: number
+          project_id: string
+          scene_id: string
+          shot_hint: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          approved?: boolean | null
+          created_at?: string | null
+          id?: string
+          image_prompt?: string | null
+          image_url?: string | null
+          notes?: string | null
+          panel_intent?: string | null
+          panel_no: number
+          project_id: string
+          scene_id: string
+          shot_hint?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          approved?: boolean | null
+          created_at?: string | null
+          id?: string
+          image_prompt?: string | null
+          image_url?: string | null
+          notes?: string | null
+          panel_intent?: string | null
+          panel_no?: number
+          project_id?: string
+          scene_id?: string
+          shot_hint?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storyboard_panels_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "storyboard_panels_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
             referencedColumns: ["id"]
           },
         ]
