@@ -426,7 +426,37 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         return { success: true, id: data.id };
       }
 
-      // Insert new outline
+      // V10.5: Check if there's already a completed/approved outline before inserting
+      const { data: existingCompleted } = await supabase
+        .from('project_outlines')
+        .select('id, status')
+        .eq('project_id', projectId)
+        .in('status', ['completed', 'approved'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingCompleted) {
+        console.warn('[useOutlinePersistence] Found existing completed outline, updating instead of inserting:', existingCompleted.id);
+        const { data: updatedData, error: updateExistingError } = await supabase
+          .from('project_outlines')
+          .update({ ...payload, updated_at: new Date().toISOString() })
+          .eq('id', existingCompleted.id)
+          .select()
+          .single();
+        
+        if (!updateExistingError && updatedData) {
+          setSavedOutline({
+            ...updatedData,
+            outline_json: updatedData.outline_json as Record<string, unknown>,
+            qc_issues: Array.isArray(updatedData.qc_issues) ? updatedData.qc_issues as string[] : [],
+            status: updatedData.status as PersistedOutline['status'],
+          });
+          return { success: true, id: updatedData.id };
+        }
+      }
+
+      // Insert new outline only if no completed outline exists
       const { data, error: insertError } = await supabase
         .from('project_outlines')
         .insert(payload)
