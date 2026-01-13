@@ -52,7 +52,8 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.script-doctor]
-verify_jwt = true
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
 
 [functions.script-freeze]
 verify_jwt = true
