@@ -9,7 +9,7 @@
  */
 
 // Real Nano Banana model for character identity consistency
-export const IMAGE_MODEL_NANO_BANANA = "google/gemini-2.5-flash-image";
+export const IMAGE_MODEL_NANO_BANANA = "google/gemini-3-pro-image-preview";
 
 // FLUX for locations - better spatial composition
 export const IMAGE_MODEL_FLUX = "flux-1.1-pro-ultra";
