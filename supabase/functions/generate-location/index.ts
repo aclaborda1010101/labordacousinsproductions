@@ -34,33 +34,53 @@ const IMAGE_MODEL = 'google/gemini-3-pro-image-preview';
 
 // Supported image formats for Gemini
 const SUPPORTED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+const VALID_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
 
 // Convert image URL to base64 data URL
 async function urlToBase64(url: string): Promise<string | null> {
   try {
-    // Check if format is supported
-    const urlLower = url.toLowerCase();
-    const isSupported = SUPPORTED_EXTENSIONS.some(ext => urlLower.includes(ext));
+    console.log(`[generate-location] urlToBase64 called with: ${url}`);
     
-    if (!isSupported) {
-      console.log(`[generate-location] Skipping unsupported format: ${url}`);
-      return null;
-    }
-    
-    console.log(`[generate-location] Converting to base64: ${url.substring(0, 80)}...`);
-    
+    // First fetch to check content type
     const response = await fetch(url);
     if (!response.ok) {
       console.error(`[generate-location] Failed to fetch image: ${response.status}`);
       return null;
     }
     
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
-    const arrayBuffer = await response.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const contentType = response.headers.get('content-type') || '';
+    console.log(`[generate-location] Content-Type header: ${contentType}`);
     
-    // Return as data URL
-    return `data:${contentType};base64,${base64}`;
+    // Validate by content type first (more reliable)
+    const isValidType = VALID_MIME_TYPES.some(t => contentType.toLowerCase().includes(t));
+    
+    // Also check URL extension as fallback
+    const urlLower = url.toLowerCase();
+    const hasValidExtension = SUPPORTED_EXTENSIONS.some(ext => urlLower.includes(ext));
+    
+    if (!isValidType && !hasValidExtension) {
+      console.log(`[generate-location] Skipping unsupported format. ContentType: ${contentType}, URL: ${url}`);
+      return null;
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    
+    // Convert to base64 in chunks to avoid call stack issues with large images
+    let binary = '';
+    const chunkSize = 32768;
+    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+      const chunk = uint8Array.subarray(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, Array.from(chunk));
+    }
+    const base64 = btoa(binary);
+    
+    // Use the actual content type or infer from extension
+    const mimeType = contentType.split(';')[0] || 'image/jpeg';
+    
+    console.log(`[generate-location] Converted to base64: ${base64.length} chars, type: ${mimeType}`);
+    
+    return `data:${mimeType};base64,${base64}`;
   } catch (error) {
     console.error(`[generate-location] Error converting URL to base64:`, error);
     return null;
