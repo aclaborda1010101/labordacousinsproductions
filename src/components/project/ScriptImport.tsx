@@ -1799,22 +1799,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setLightOutline(outline);
     saveDraft('outline', projectId, { outline, idea: ideaText.trim() });
     
-    // Persist to database
-    const saveResult = await outlinePersistence.saveOutline({
-      outline,
-      quality: outlineQuality,
-      qcIssues: outlineWarnings,
-      idea: ideaText.trim(),
-      genre,
-      tone,
-      format,
-      episodeCount: format === 'series' ? episodesCount : 1,
-      targetDuration: format === 'series' ? episodeDurationMin : filmDurationMin,
-      status: 'draft',
-    });
-    
-    if (saveResult.success) {
-      console.log('[ScriptImport] Outline persisted to database:', saveResult.id);
+    // Persist to database - but avoid creating duplicates if already completed
+    const existingOutline = outlinePersistence.savedOutline;
+    if (existingOutline?.status === 'completed' || existingOutline?.status === 'approved') {
+      console.log('[ScriptImport] Outline already persisted as completed/approved, skipping duplicate save');
+    } else {
+      const saveResult = await outlinePersistence.saveOutline({
+        outline,
+        quality: outlineQuality,
+        qcIssues: outlineWarnings,
+        idea: ideaText.trim(),
+        genre,
+        tone,
+        format,
+        episodeCount: format === 'series' ? episodesCount : 1,
+        targetDuration: format === 'series' ? episodeDurationMin : filmDurationMin,
+        status: 'approved', // V10.5: Mark as approved directly since it's ready for review
+      });
+      
+      if (saveResult.success) {
+        console.log('[ScriptImport] Outline persisted to database:', saveResult.id);
+      }
     }
     
     updatePipelineStep('outline', 'success');
