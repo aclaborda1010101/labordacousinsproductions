@@ -69,6 +69,9 @@ export function useVisualDNA(characterId: string) {
   ) => {
     setSaving(true);
     try {
+      // V49: Refresh state before saving to avoid race conditions
+      await fetchVersions();
+      
       if (options?.createNewVersion) {
         // Create new version using database function
         const { data, error } = await supabase.rpc('create_visual_dna_version', {
@@ -93,25 +96,51 @@ export function useVisualDNA(characterId: string) {
         if (error) throw error;
         toast.success('Visual DNA guardado');
       } else {
-        // Create first version
-        const { error } = await supabase
+        // V49: Check DB for existing versions to avoid race condition with analyze-single-reference
+        const { data: existingVersions, error: checkError } = await supabase
           .from('character_visual_dna')
-          .insert({
-            character_id: characterId,
-            version: 1,
-            version_name: 'default',
-            is_active: true,
-            visual_dna: visualDna,
-            continuity_lock: options?.continuityLock || {
-              never_change: [],
-              allowed_variants: [],
-              must_avoid: [],
-              version_notes: ''
-            }
-          });
+          .select('id, version')
+          .eq('character_id', characterId)
+          .order('version', { ascending: false })
+          .limit(1);
 
-        if (error) throw error;
-        toast.success('Visual DNA creado');
+        if (checkError) throw checkError;
+
+        if (existingVersions && existingVersions.length > 0) {
+          // Version already exists from edge function - update instead of insert
+          const existing = existingVersions[0];
+          const { error } = await supabase
+            .from('character_visual_dna')
+            .update({
+              visual_dna: visualDna,
+              ...(options?.continuityLock && { continuity_lock: options.continuityLock }),
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existing.id);
+
+          if (error) throw error;
+          toast.success('Visual DNA actualizado');
+        } else {
+          // No versions exist, safe to insert version 1
+          const { error } = await supabase
+            .from('character_visual_dna')
+            .insert({
+              character_id: characterId,
+              version: 1,
+              version_name: 'default',
+              is_active: true,
+              visual_dna: visualDna,
+              continuity_lock: options?.continuityLock || {
+                never_change: [],
+                allowed_variants: [],
+                must_avoid: [],
+                version_notes: ''
+              }
+            });
+
+          if (error) throw error;
+          toast.success('Visual DNA creado');
+        }
       }
 
       await fetchVersions();
