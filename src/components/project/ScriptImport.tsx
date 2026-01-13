@@ -360,9 +360,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const blockers: string[] = [];
       const arc = lightOutline.season_arc as Record<string, unknown> || {};
       const episodes = lightOutline.episode_beats as Array<Record<string, unknown>> || [];
-      // Use outline's episode_count as source of truth, fallback to actual episodes length
+      // Use outline's episode_count as source of truth, fallback to UI episodesCount
       const outlineEpisodeCount = lightOutline.episode_count as number | undefined;
-      const expectedEps = outlineEpisodeCount || episodes.length;
+      const expectedEps = outlineEpisodeCount || episodesCount;
+      
+      // CRITICAL: Block if outline has NO episodes or incomplete episode generation
+      if (!episodes || episodes.length === 0) {
+        blockers.push('OUTLINE_INCOMPLETE:no_episodes_generated');
+        return blockers; // Early return - no point checking other things
+      }
+      
+      // Block if episodes generated don't match expected count
+      if (episodes.length < expectedEps) {
+        blockers.push(`OUTLINE_INCOMPLETE:${episodes.length}/${expectedEps}_episodes`);
+        return blockers; // Early return - need to regenerate outline
+      }
       
       // Season arc hitos
       if (!arc.inciting_incident) blockers.push('SEASON_ARC:inciting_incident_missing');
@@ -370,11 +382,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (!arc.midpoint_reversal) blockers.push('SEASON_ARC:midpoint_reversal_missing');
       if (!arc.all_is_lost) blockers.push('SEASON_ARC:all_is_lost_missing');
       if (!arc.final_choice) blockers.push('SEASON_ARC:final_choice_missing');
-      
-      // Episodes count - only block if explicitly defined and mismatched
-      if (outlineEpisodeCount && episodes.length !== outlineEpisodeCount) {
-        blockers.push(`EPISODES:${episodes.length}/${outlineEpisodeCount}`);
-      }
       
       // Per-episode checks
       episodes.forEach((ep: any, idx: number) => {
