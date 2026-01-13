@@ -72,6 +72,7 @@ import {
   RotateCcw,
   Video,
   Play,
+  PlayCircle,
   Clapperboard,
   Mic,
   MicOff,
@@ -807,17 +808,39 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // V11.1: Recoverable error codes that allow retry
   const RECOVERABLE_ERROR_CODES = ['AI_TIMEOUT', 'ZOMBIE_TIMEOUT', 'STAGE_TIMEOUT', 'RATE_LIMIT', 'WORKER_TIMEOUT', 'QUEUE_TIMEOUT'];
 
+  // V11.1: Helper to detect resumable outline parts
+  const getResumableInfo = (outline: any) => {
+    if (!outline) return { canResume: false, fromStep: null, label: null };
+    
+    const parts = outline.outline_parts || {};
+    const hasSummary = !!outline.summary_text;
+    const hasArc = !!parts.arc || !!parts.part_a;
+    const hasEpisodes1 = !!parts.episodes_1 || !!parts.part_b;
+    const hasEpisodes2 = !!parts.episodes_2 || !!parts.part_c;
+    
+    if (hasEpisodes1 && !hasEpisodes2) {
+      return { canResume: true, fromStep: 'episodes_2', label: 'Reanudar desde Episodios 6-10' };
+    }
+    if (hasArc && !hasEpisodes1) {
+      return { canResume: true, fromStep: 'episodes_1', label: 'Reanudar desde Episodios 1-5' };
+    }
+    if (hasSummary && !hasArc) {
+      return { canResume: true, fromStep: 'arc', label: 'Reanudar desde Arc' };
+    }
+    return { canResume: false, fromStep: null, label: null };
+  };
+
   const handleResetZombieOutline = async () => {
     const saved = outlinePersistence.savedOutline;
     if (!saved) return;
     
     try {
-      // V11.1: Use 'error' status (valid) instead of 'stalled' (invalid)
+      // V11.1: Use 'error' status but do NOT overwrite stage - preserve for resume
       const { error } = await supabase
         .from('project_outlines')
         .update({ 
           status: 'error', 
-          stage: 'done',
+          // stage: preserved - do NOT overwrite with 'done'
           quality: 'error',
           error_code: 'WORKER_TIMEOUT',
           error_detail: 'Marcado como fallido por el usuario',
@@ -832,6 +855,43 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     } catch (err: any) {
       console.error('[ScriptImport] Error resetting zombie outline:', err);
       toast.error('Error al resetear el outline');
+    }
+  };
+
+  // V11.1: Resume generation from specific substep
+  const handleResumeGeneration = async (fromStep: string) => {
+    const saved = outlinePersistence.savedOutline;
+    if (!saved) return;
+    
+    try {
+      // Reset status to generating but keep outline_parts
+      await supabase
+        .from('project_outlines')
+        .update({
+          status: 'generating',
+          substage: fromStep,
+          error_code: null,
+          error_detail: null,
+          heartbeat_at: new Date().toISOString()
+        })
+        .eq('id', saved.id);
+      
+      // Invoke worker with resume flag
+      const { error } = await supabase.functions.invoke('outline-worker', {
+        body: { 
+          outline_id: saved.id,
+          resume_from: fromStep  // Worker will use existing outline_parts
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast.success(`Reanudando generación desde ${fromStep}...`);
+      outlinePersistence.startPolling(saved.id);
+      setGeneratingOutline(true);
+    } catch (err: any) {
+      console.error('[ScriptImport] Resume failed:', err);
+      toast.error('Error al reanudar. Intenta reiniciar.');
     }
   };
 
@@ -4498,23 +4558,45 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           {/* V11.1: Error/Failed Outline Recovery Card - Shows for recoverable errors */}
           {(() => {
             const saved = outlinePersistence.savedOutline;
-            const status = saved?.status;
-            const errorCode = saved?.error_code;
+            if (!saved) return null;
             
-            // Show recovery card for:
-            // - status='error' with recoverable error_code
-            // - status='timeout' or 'failed' with error_code
+            const status = saved.status;
+            const errorCode = saved.error_code;
+            const quality = saved.quality;
+            
+            // V11.1: Unified recovery detection
+            // Case 1: Error status with recoverable error_code
             const isRecoverableError = status === 'error' && 
               errorCode && RECOVERABLE_ERROR_CODES.includes(errorCode);
-            const isTimeoutOrFailed = (status === 'timeout' || status === 'failed') && errorCode;
             
-            const shouldShowRecovery = (isRecoverableError || isTimeoutOrFailed) && 
-              !generatingOutline && !pipelineRunning && !lightOutline;
+            // Case 2: Error without specific code (generic error)
+            const isGenericError = status === 'error' && !errorCode;
             
-            if (!shouldShowRecovery || !saved) return null;
+            // Case 3: Timeout status (exists in DB)
+            const isTimeout = status === 'timeout';
             
-            // Get friendly title based on error code
+            // Case 4: Zombie - generating with stale heartbeat (already detected above)
+            const isZombie = isZombieOutline;
+            
+            // Case 5: Degraded quality that might need retry
+            const isDegraded = (status === 'completed' || status === 'approved') && 
+              quality === 'degraded';
+            
+            // V11.1: Show recovery if any condition met
+            // REMOVED: !lightOutline check - show even if partial outline exists
+            const shouldShowRecovery = 
+              (isRecoverableError || isGenericError || isTimeout || isZombie || isDegraded) && 
+              !generatingOutline && !pipelineRunning;
+            
+            if (!shouldShowRecovery) return null;
+            
+            // Get resumable info for intelligent retry
+            const resumeInfo = getResumableInfo(saved);
+            
+            // Get friendly title based on error code or state
             const getErrorTitle = () => {
+              if (isZombie) return 'Proceso detenido';
+              if (isDegraded) return 'Outline con calidad degradada';
               switch (errorCode) {
                 case 'ZOMBIE_TIMEOUT': return 'Proceso interrumpido';
                 case 'AI_TIMEOUT': return 'Timeout del modelo AI';
@@ -4537,14 +4619,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           {getErrorTitle()}
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {saved.error_detail || 
-                            'El proceso anterior no completó correctamente. Puedes reintentar la generación.'}
+                          {isZombie 
+                            ? 'El proceso de generación dejó de responder. Puedes marcarlo como fallido y reintentar.'
+                            : isDegraded
+                            ? 'El outline fue generado pero con calidad reducida. Puedes intentar regenerarlo.'
+                            : saved.error_detail || 
+                              'El proceso anterior no completó correctamente. Puedes reintentar la generación.'}
                         </p>
-                        {errorCode && (
-                          <Badge variant="outline" className="mt-2 text-xs">
-                            {errorCode}
-                          </Badge>
-                        )}
+                        <div className="flex gap-2 mt-2 flex-wrap">
+                          {errorCode && (
+                            <Badge variant="outline" className="text-xs">
+                              {errorCode}
+                            </Badge>
+                          )}
+                          {saved.stage && saved.stage !== 'done' && (
+                            <Badge variant="secondary" className="text-xs">
+                              Etapa: {saved.stage}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </div>
                     
@@ -4559,15 +4652,43 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </div>
                     )}
                     
-                    <div className="flex gap-2">
-                      <Button 
-                        onClick={generateLightOutline}
-                        disabled={!ideaText.trim() || ideaText.trim().length < 30}
-                        className="flex-1"
-                      >
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Reintentar generación
-                      </Button>
+                    <div className="flex gap-2 flex-wrap">
+                      {/* V11.1: Resume button if parts exist */}
+                      {resumeInfo.canResume && !isZombie && (
+                        <Button 
+                          onClick={() => handleResumeGeneration(resumeInfo.fromStep!)}
+                          className="flex-1"
+                        >
+                          <PlayCircle className="h-4 w-4 mr-2" />
+                          {resumeInfo.label}
+                        </Button>
+                      )}
+                      
+                      {/* Zombie needs to be marked as failed first */}
+                      {isZombie && (
+                        <Button 
+                          onClick={handleResetZombieOutline}
+                          variant="destructive"
+                          className="flex-1"
+                        >
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          Marcar como fallido
+                        </Button>
+                      )}
+                      
+                      {/* Retry from scratch */}
+                      {!isZombie && (
+                        <Button 
+                          onClick={generateLightOutline}
+                          disabled={!ideaText.trim() || ideaText.trim().length < 30}
+                          variant={resumeInfo.canResume ? "outline" : "default"}
+                          className={resumeInfo.canResume ? "" : "flex-1"}
+                        >
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          {resumeInfo.canResume ? 'Reintentar todo' : 'Reintentar generación'}
+                        </Button>
+                      )}
+                      
                       <Button
                         variant="outline"
                         onClick={async () => {

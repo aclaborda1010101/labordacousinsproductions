@@ -36,11 +36,13 @@ serve(async (req) => {
     // Find and update zombie outlines
     // Status must be 'generating' or 'queued' and heartbeat must be older than threshold
     // V11.1: Use 'error' status (valid) instead of 'stalled' (invalid)
+    // V11.1: Do NOT overwrite stage - preserve where the worker actually died
+    // This allows the UI to offer "resume from X" functionality
     const { data: zombies, error } = await supabase
       .from('project_outlines')
       .update({ 
         status: 'error',              // Valid status for retry
-        stage: 'done',
+        // stage: preserved - do NOT overwrite with 'done'
         quality: 'error',
         error_code: 'ZOMBIE_TIMEOUT',
         error_detail: 'Detectado por watchdog: sin heartbeat por más de 5 minutos',
