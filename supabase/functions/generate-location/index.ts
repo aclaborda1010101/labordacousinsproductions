@@ -19,10 +19,12 @@ interface LocationGenerationRequest {
     lensStyle?: string;
     grainLevel?: string;
   };
-  // NEW: Reference-based generation
+  // Reference-based generation
   projectId?: string;
   locationId?: string;
   referenceImageUrl?: string;
+  // NEW: 360° multi-angle references
+  spatialReferenceUrls?: string[];
   mode?: 'text_to_image' | 'stylize_from_reference';
   stylePackId?: string;
 }
@@ -77,9 +79,17 @@ serve(async (req) => {
       projectId,
       locationId,
       referenceImageUrl,
-      mode = referenceImageUrl ? 'stylize_from_reference' : 'text_to_image',
+      spatialReferenceUrls,
+      mode = (referenceImageUrl || spatialReferenceUrls?.length) ? 'stylize_from_reference' : 'text_to_image',
       stylePackId
     }: LocationGenerationRequest = await req.json();
+
+    // Collect all reference images (primary + spatial 360°)
+    const allReferenceUrls: string[] = [];
+    if (referenceImageUrl) allReferenceUrls.push(referenceImageUrl);
+    if (spatialReferenceUrls?.length) allReferenceUrls.push(...spatialReferenceUrls);
+    
+    console.log(`[generate-location] References available: ${allReferenceUrls.length} (primary: ${referenceImageUrl ? 1 : 0}, spatial: ${spatialReferenceUrls?.length || 0})`);
 
     console.log(`[generate-location] Generating: ${locationName}, view: ${viewAngle}, time: ${timeOfDay}, mode: ${mode}`);
 
@@ -188,9 +198,35 @@ serve(async (req) => {
     let prompt: string;
     let messageContent: any;
     
-    if (mode === 'stylize_from_reference' && referenceImageUrl) {
-      // Multimodal: Transform reference photo to project style
-      prompt = `Transform this reference photo into the project's art style while maintaining the exact composition, layout, architecture, and spatial arrangement.
+    if (mode === 'stylize_from_reference' && allReferenceUrls.length > 0) {
+      // Multimodal: Use all reference photos for comprehensive spatial understanding
+      const hasMultipleRefs = allReferenceUrls.length > 1;
+      
+      prompt = hasMultipleRefs 
+        ? `You have been given ${allReferenceUrls.length} reference photos of the same location from different angles (360° coverage). Use ALL of them to understand the complete 3D space, then generate a ${viewDesc} view.
+
+SPATIAL UNDERSTANDING:
+- Analyze all reference images to build a mental 3D model of this space
+- Understand how walls, furniture, and objects connect across views
+- Maintain architectural consistency and proportions from all angles
+
+GENERATE THIS VIEW: ${viewDesc}
+- Camera position for this specific view type
+- Use information from ALL reference photos to ensure accuracy
+- The output should feel like a new camera angle of the SAME real space
+
+APPLY STYLE:
+- Convert to the project's visual style (cartoon/3D/anime if animated project)
+- Apply consistent lighting: ${timeDesc}
+- Weather conditions: ${weatherDesc}
+${styleLockBlock}
+${styleContext}
+
+Location: ${locationName}
+Description: ${locationDescription || locationName}
+
+CRITICAL: The generated view must be architecturally consistent with ALL provided reference photos. This is the same physical space viewed from a different angle.`
+        : `Transform this reference photo into the project's art style while maintaining the exact composition, layout, architecture, and spatial arrangement.
 
 KEEP EXACTLY:
 - The room layout and furniture positions
@@ -211,20 +247,19 @@ View: ${viewDesc}
 
 CRITICAL: The output must look like a stylized illustration of this EXACT space, not a generic location. Preserve all unique architectural and decorative elements visible in the reference.`;
 
+      // Build multimodal content with all reference images
       messageContent = [
         {
           type: 'text',
           text: prompt
         },
-        {
+        ...allReferenceUrls.map(url => ({
           type: 'image_url',
-          image_url: {
-            url: referenceImageUrl
-          }
-        }
+          image_url: { url }
+        }))
       ];
       
-      console.log(`[generate-location] Using multimodal with reference: ${referenceImageUrl.substring(0, 80)}...`);
+      console.log(`[generate-location] Using multimodal with ${allReferenceUrls.length} references`);
     } else {
       // Text-only generation
       prompt = `Cinematic film still, location scouting photograph.

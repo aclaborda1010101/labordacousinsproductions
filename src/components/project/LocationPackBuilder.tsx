@@ -8,13 +8,27 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Loader2, Upload, Sparkles, CheckCircle2, XCircle, AlertTriangle, 
-  MapPin, Camera, RefreshCw, Lock, Play, ImagePlus, FolderUp, Trash2, Sun, Moon
+  MapPin, Camera, RefreshCw, Lock, Play, ImagePlus, FolderUp, Trash2, Sun, Moon,
+  RotateCcw, Image as ImageIcon, Eye
 } from 'lucide-react';
 
-// Location pack slot requirements
+// Location pack slot requirements with 360° spatial references
 const LOCATION_REQUIREMENTS = {
+  // Spatial references (user uploads photos) - for 360° coverage
+  spatialReferences: ['front', 'back', 'lateral_left', 'lateral_right'],
+  panoramicReference: 'panoramic_360',
+  // Cinematic views (AI generates based on references)
   requiredViews: ['establishing', 'detail'],
   optionalViews: ['3/4', 'close-up', 'alternate'],
+};
+
+// Labels for spatial reference slots
+const SPATIAL_LABELS: Record<string, string> = {
+  'front': 'Frontal',
+  'back': 'Trasera',
+  'lateral_left': 'Lat. Izq',
+  'lateral_right': 'Lat. Der',
+  'panoramic_360': 'Panorámica 360°',
 };
 
 interface LocationPackSlot {
@@ -37,6 +51,16 @@ interface LocationPackSlot {
   reference_image_url: string | null;
   generated_image_url: string | null;
   reference_status: string;
+}
+
+// Spatial reference slot (separate from cinematic slots)
+interface SpatialReferenceSlot {
+  id: string;
+  location_id: string;
+  slot_type: 'spatial_reference';
+  angle: string; // 'front' | 'back' | 'lateral_left' | 'lateral_right' | 'panoramic_360'
+  image_url: string | null;
+  status: 'pending' | 'uploaded';
 }
 
 interface LocationPackBuilderProps {
@@ -64,23 +88,40 @@ export function LocationPackBuilder({
   onPackComplete,
 }: LocationPackBuilderProps) {
   const [slots, setSlots] = useState<LocationPackSlot[]>([]);
+  const [spatialRefs, setSpatialRefs] = useState<SpatialReferenceSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [uploadingSpatial, setUploadingSpatial] = useState<string | null>(null);
   const [batchGenerating, setBatchGenerating] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, phase: '' });
   const [completenessScore, setCompletenessScore] = useState(0);
+  const [spatialCoverage, setSpatialCoverage] = useState({ count: 0, total: 5, percentage: 0 });
   const [isDragOver, setIsDragOver] = useState(false);
   const [batchUploading, setBatchUploading] = useState(false);
   const [batchUploadProgress, setBatchUploadProgress] = useState({ current: 0, total: 0 });
   const [showOptionalSlots, setShowOptionalSlots] = useState(true);
+  const [showSpatialSection, setShowSpatialSection] = useState(true);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const spatialFileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const globalFileInputRef = useRef<HTMLInputElement | null>(null);
   const retryCountRef = useRef<Record<string, number>>({});
+
+  // Calculate spatial coverage
+  const calculateSpatialCoverage = (refs: SpatialReferenceSlot[]) => {
+    const uploaded = refs.filter(r => r.status === 'uploaded').length;
+    const total = 5; // 4 sides + panoramic
+    setSpatialCoverage({
+      count: uploaded,
+      total,
+      percentage: Math.round((uploaded / total) * 100)
+    });
+  };
 
   // Fetch slots from database
   const fetchSlots = useCallback(async () => {
     try {
+      // Fetch cinematic slots
       const { data, error } = await supabase
         .from('location_pack_slots')
         .select('*')
@@ -96,6 +137,25 @@ export function LocationPackBuilder({
         // Initialize slots if none exist
         await initializeSlots();
       }
+
+      // Fetch spatial references using raw query (table may not be in types.ts yet)
+      try {
+        const { data: spatialData, error: spatialError } = await supabase
+          .from('location_spatial_refs' as any)
+          .select('*')
+          .eq('location_id', locationId);
+
+        if (!spatialError && spatialData && spatialData.length > 0) {
+          setSpatialRefs(spatialData as unknown as SpatialReferenceSlot[]);
+          calculateSpatialCoverage(spatialData as unknown as SpatialReferenceSlot[]);
+        } else {
+          // Initialize spatial refs if none exist
+          await initializeSpatialRefs();
+        }
+      } catch (spatialErr) {
+        console.log('Spatial refs not available, initializing in memory');
+        await initializeSpatialRefs();
+      }
     } catch (error) {
       console.error('Error fetching location slots:', error);
       toast.error('Error al cargar slots');
@@ -103,6 +163,40 @@ export function LocationPackBuilder({
       setLoading(false);
     }
   }, [locationId]);
+
+  // Initialize spatial reference slots
+  const initializeSpatialRefs = async () => {
+    const allAngles = [...LOCATION_REQUIREMENTS.spatialReferences, LOCATION_REQUIREMENTS.panoramicReference];
+    const newSpatialRefs = allAngles.map(angle => ({
+      location_id: locationId,
+      slot_type: 'spatial_reference' as const,
+      angle,
+      status: 'pending' as const,
+    }));
+
+    try {
+      const { data, error } = await supabase
+        .from('location_spatial_refs' as any)
+        .insert(newSpatialRefs as any)
+        .select();
+
+      if (error) {
+        // Table might not exist yet, just use in-memory state
+        console.log('Spatial refs table not available, using in-memory');
+        setSpatialRefs(newSpatialRefs.map((r, i) => ({ ...r, id: `temp-${i}`, image_url: null })));
+        return;
+      }
+
+      if (data) {
+        setSpatialRefs(data as unknown as SpatialReferenceSlot[]);
+        calculateSpatialCoverage(data as unknown as SpatialReferenceSlot[]);
+      }
+    } catch (error) {
+      console.error('Error initializing spatial refs:', error);
+      // Fallback to in-memory
+      setSpatialRefs(newSpatialRefs.map((r, i) => ({ ...r, id: `temp-${i}`, image_url: null })));
+    }
+  };
 
   // Initialize slots in database
   const initializeSlots = async () => {
@@ -206,13 +300,17 @@ export function LocationPackBuilder({
 
       toast.info(`Generando ${slot.view_angle} (${slot.time_of_day})...`);
       
-      // Determine reference to use: slot reference > primary reference
-      const referenceToUse = slot.reference_image_url || primaryReferenceUrl;
-      const generationMode = referenceToUse ? 'stylize_from_reference' : 'text_to_image';
+      // Collect all spatial references for multi-angle generation
+      const spatialUrls = getSpatialReferenceUrls();
       
-      console.log(`[LocationPackBuilder] Generating slot ${slot.view_angle} with mode: ${generationMode}`);
+      // Determine reference to use: spatial refs > slot reference > primary reference
+      const primaryRef = slot.reference_image_url || primaryReferenceUrl;
+      const hasReferences = spatialUrls.length > 0 || primaryRef;
+      const generationMode = hasReferences ? 'stylize_from_reference' : 'text_to_image';
       
-      // Call edge function with reference if available
+      console.log(`[LocationPackBuilder] Generating slot ${slot.view_angle} with mode: ${generationMode}, spatial refs: ${spatialUrls.length}`);
+      
+      // Call edge function with all references
       const { data, error } = await supabase.functions.invoke('generate-location', {
         body: {
           locationName,
@@ -222,7 +320,8 @@ export function LocationPackBuilder({
           weather: slot.weather || 'clear',
           projectId,
           locationId,
-          referenceImageUrl: referenceToUse,
+          referenceImageUrl: primaryRef,
+          spatialReferenceUrls: spatialUrls.length > 0 ? spatialUrls : undefined,
           mode: generationMode,
         }
       });
@@ -457,6 +556,90 @@ export function LocationPackBuilder({
     }
   };
 
+  // Upload spatial reference (360° angles)
+  const uploadSpatialReference = async (ref: SpatialReferenceSlot, file: File) => {
+    setUploadingSpatial(ref.id);
+
+    try {
+      const fileName = `${locationId}/spatial_${ref.angle}_${Date.now()}.${file.name.split('.').pop()}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('renders')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from('renders')
+        .getPublicUrl(fileName);
+
+      // Update in database (if table exists)
+      if (!ref.id.startsWith('temp-')) {
+        await supabase
+          .from('location_spatial_refs' as any)
+          .update({ 
+            image_url: urlData.publicUrl,
+            status: 'uploaded'
+          } as any)
+          .eq('id', ref.id);
+      }
+
+      // Also update location's primary_reference_url if this is the front view
+      if (ref.angle === 'front') {
+        await supabase
+          .from('locations')
+          .update({ 
+            primary_reference_url: urlData.publicUrl,
+            reference_status: 'uploaded'
+          })
+          .eq('id', locationId);
+      }
+
+      setSpatialRefs(prev => {
+        const updated = prev.map(r => 
+          r.id === ref.id 
+            ? { ...r, image_url: urlData.publicUrl, status: 'uploaded' as const }
+            : r
+        );
+        calculateSpatialCoverage(updated);
+        return updated;
+      });
+      
+      toast.success(`Referencia ${SPATIAL_LABELS[ref.angle]} subida`);
+    } catch (error) {
+      console.error('Upload spatial error:', error);
+      toast.error('Error al subir referencia');
+    } finally {
+      setUploadingSpatial(null);
+    }
+  };
+
+  // Delete spatial reference
+  const deleteSpatialReference = async (ref: SpatialReferenceSlot) => {
+    if (!ref.id.startsWith('temp-')) {
+      await supabase
+        .from('location_spatial_refs' as any)
+        .update({ image_url: null, status: 'pending' } as any)
+        .eq('id', ref.id);
+    }
+
+    setSpatialRefs(prev => {
+      const updated = prev.map(r => 
+        r.id === ref.id ? { ...r, image_url: null, status: 'pending' as const } : r
+      );
+      calculateSpatialCoverage(updated);
+      return updated;
+    });
+    toast.success('Referencia eliminada');
+  };
+
+  // Get all spatial reference URLs for generation
+  const getSpatialReferenceUrls = (): string[] => {
+    return spatialRefs
+      .filter(r => r.status === 'uploaded' && r.image_url)
+      .map(r => r.image_url!);
+  };
+
   // Drag and drop handlers
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -637,6 +820,160 @@ export function LocationPackBuilder({
             className="h-2" 
           />
         )}
+
+        {/* 360° Spatial References Section */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium flex items-center gap-2">
+              <RotateCcw className="w-4 h-4 text-primary" />
+              Referencias 360°
+              <Badge variant={spatialCoverage.percentage >= 75 ? 'default' : 'outline'} 
+                     className={spatialCoverage.percentage >= 75 ? 'bg-green-600' : ''}>
+                {spatialCoverage.count}/{spatialCoverage.total}
+              </Badge>
+            </h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSpatialSection(!showSpatialSection)}
+            >
+              {showSpatialSection ? 'Ocultar' : 'Mostrar'}
+            </Button>
+          </div>
+
+          {showSpatialSection && (
+            <div className="space-y-3">
+              {/* Coverage indicator */}
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Eye className="w-4 h-4" />
+                <span>Cobertura espacial:</span>
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <div 
+                      key={i}
+                      className={`w-4 h-2 rounded-sm ${i < spatialCoverage.count ? 'bg-green-500' : 'bg-muted'}`}
+                    />
+                  ))}
+                </div>
+                <span className="font-medium">{spatialCoverage.percentage}%</span>
+              </div>
+
+              {/* 4-side grid + panoramic */}
+              <div className="grid grid-cols-4 gap-2">
+                {spatialRefs
+                  .filter(r => r.angle !== 'panoramic_360')
+                  .map((ref) => (
+                    <div 
+                      key={ref.id}
+                      className={`group relative aspect-square rounded-lg border-2 overflow-hidden transition-all
+                        ${ref.status === 'uploaded' ? 'border-green-500/50' : 'border-dashed border-muted-foreground/30'}
+                      `}
+                    >
+                      {ref.image_url ? (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="absolute top-1 right-1 h-5 w-5 p-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => deleteSpatialReference(ref)}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                          <img 
+                            src={ref.image_url} 
+                            alt={SPATIAL_LABELS[ref.angle]}
+                            className="w-full h-full object-cover"
+                          />
+                        </>
+                      ) : (
+                        <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
+                          {uploadingSpatial === ref.id ? (
+                            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                          ) : (
+                            <>
+                              <ImageIcon className="w-5 h-5 text-muted-foreground mb-1" />
+                              <span className="text-[9px] text-muted-foreground text-center font-medium">
+                                {SPATIAL_LABELS[ref.angle]}
+                              </span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            ref={el => { spatialFileInputRefs.current[ref.id] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) uploadSpatialReference(ref, file);
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                      )}
+                      {/* Label */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[8px] text-center py-0.5">
+                        {SPATIAL_LABELS[ref.angle]}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              {/* Panoramic slot (wider) */}
+              {spatialRefs.filter(r => r.angle === 'panoramic_360').map(ref => (
+                <div 
+                  key={ref.id}
+                  className={`group relative aspect-[4/1] rounded-lg border-2 overflow-hidden transition-all
+                    ${ref.status === 'uploaded' ? 'border-green-500/50' : 'border-dashed border-muted-foreground/30'}
+                  `}
+                >
+                  {ref.image_url ? (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="absolute top-1 right-1 h-5 w-5 p-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => deleteSpatialReference(ref)}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                      <img 
+                        src={ref.image_url} 
+                        alt="Panorámica 360°"
+                        className="w-full h-full object-cover"
+                      />
+                    </>
+                  ) : (
+                    <label className="w-full h-full flex items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors">
+                      {uploadingSpatial === ref.id ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                      ) : (
+                        <>
+                          <RotateCcw className="w-5 h-5 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">Subir Panorámica 360°</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        ref={el => { spatialFileInputRefs.current[ref.id] = el; }}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) uploadSpatialReference(ref, file);
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  )}
+                </div>
+              ))}
+
+              <p className="text-xs text-muted-foreground">
+                Sube fotos de los 4 lados del espacio y/o una panorámica. La IA usará estas referencias para generar vistas cinematográficas coherentes.
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Required Turnarounds Warning */}
         {!requiredTurnaroundsComplete() && (
