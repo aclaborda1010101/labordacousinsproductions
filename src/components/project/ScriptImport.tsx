@@ -2660,6 +2660,45 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         completeScreenplay.counts.total_dialogue_lines = episodes.reduce(
           (sum, ep) => sum + (ep.total_dialogue_lines || 0), 0
         );
+
+        // === V48: Aggregate dialogue metrics for Casting Report ===
+        const { aggregateDialogueMetrics } = await import('@/lib/breakdown/hydrate');
+        const { byCharacter, totalLines } = aggregateDialogueMetrics(episodes);
+
+        // Build dialogues.by_character for CastingReportTable
+        const dialoguesByCharacter: Record<string, { lines: number; words: number; scenes_count: number }> = {};
+        for (const [name, data] of Object.entries(byCharacter)) {
+          dialoguesByCharacter[name] = {
+            lines: data.lines,
+            words: data.words,
+            scenes_count: data.scenes.size,
+          };
+        }
+
+        // Enrich characters array with dialogue counts
+        const baseChars = Array.isArray(completeScreenplay.characters)
+          ? completeScreenplay.characters
+          : completeScreenplay.characters?.cast || completeScreenplay.characters?.narrative_classification?.protagonists || [];
+        
+        const enrichedCharacters = baseChars.map((c: any) => {
+          const nameKey = (c.name || c.canonical_name || '').toUpperCase().trim();
+          const metrics = byCharacter[nameKey];
+          return {
+            ...c,
+            dialogue_lines: metrics?.lines || 0,
+            dialogue_words: metrics?.words || 0,
+            scenes_count: metrics?.scenes.size || 0,
+          };
+        });
+
+        // Store in expected format with dialogues map
+        completeScreenplay.dialogues = {
+          by_character: dialoguesByCharacter,
+          total_lines: totalLines,
+        };
+        completeScreenplay.characters = { cast: enrichedCharacters };
+        completeScreenplay.counts.total_dialogue_lines = totalLines;
+
         setGeneratedScript({ ...completeScreenplay });
         setGeneratedEpisodesList([...episodes]);
         
@@ -3153,6 +3192,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     if (script.parsed_json && typeof script.parsed_json === 'object') {
       const parsed = script.parsed_json as Record<string, unknown>;
       if (parsed.episodes || parsed.screenplay || parsed.title) {
+        // V48: Recalculate dialogue metrics if missing (legacy scripts)
+        if (Array.isArray(parsed.episodes) && !((parsed.dialogues as any)?.by_character)) {
+          const { aggregateDialogueMetrics } = await import('@/lib/breakdown/hydrate');
+          const { byCharacter, totalLines } = aggregateDialogueMetrics(parsed.episodes as any[]);
+          
+          const dialoguesByCharacter: Record<string, any> = {};
+          for (const [name, data] of Object.entries(byCharacter)) {
+            dialoguesByCharacter[name] = { lines: data.lines, words: data.words, scenes_count: data.scenes.size };
+          }
+          parsed.dialogues = { by_character: dialoguesByCharacter, total_lines: totalLines };
+        }
         setGeneratedScript(parsed);
         setActiveTab('summary');
       }

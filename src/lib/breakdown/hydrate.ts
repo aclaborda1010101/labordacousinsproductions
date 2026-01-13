@@ -314,3 +314,41 @@ export const hasValidThreads = (raw: any): boolean => {
   );
   return threadsWithEvidence.length >= 3;
 };
+
+// =============================================================================
+// V48 - Aggregate dialogue metrics from episodes for Casting Report
+// =============================================================================
+
+export interface DialogueMetrics {
+  byCharacter: Record<string, { lines: number; words: number; scenes: Set<number> }>;
+  totalLines: number;
+}
+
+/**
+ * Aggregates dialogue metrics from generated episodes.
+ * Iterates through all scenes and counts dialogue lines/words per character.
+ */
+export function aggregateDialogueMetrics(episodes: any[]): DialogueMetrics {
+  const byCharacter: Record<string, { lines: number; words: number; scenes: Set<number> }> = {};
+  let totalLines = 0;
+
+  for (const ep of episodes || []) {
+    for (const scene of ep.scenes || []) {
+      const sceneNum = scene.scene_number ?? scene.number ?? 0;
+      for (const d of scene.dialogue || []) {
+        const charName = (d.character || '').toUpperCase().trim();
+        if (!charName) continue;
+        
+        if (!byCharacter[charName]) {
+          byCharacter[charName] = { lines: 0, words: 0, scenes: new Set() };
+        }
+        byCharacter[charName].lines += 1;
+        byCharacter[charName].words += (d.line || d.text || '').split(/\s+/).filter(Boolean).length;
+        byCharacter[charName].scenes.add(sceneNum);
+        totalLines += 1;
+      }
+    }
+  }
+
+  return { byCharacter, totalLines };
+}
