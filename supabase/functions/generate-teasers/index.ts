@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { logGenerationCost, extractAnthropicTokens, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
@@ -55,6 +56,32 @@ serve(async (req) => {
   }
 
   try {
+    // Internal JWT validation
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ code: 401, message: 'Missing authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.error('[TEASERS] Auth failed:', authError?.message);
+      return new Response(
+        JSON.stringify({ code: 401, message: 'Invalid JWT' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('[TEASERS] Authenticated user:', user.id);
+
     const { projectId, screenplay, language = 'es-ES' } = await req.json() as TeaserRequest;
 
     if (!screenplay || !screenplay.title) {
