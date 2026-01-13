@@ -55,7 +55,7 @@ export const MODEL_CONFIG = {
     TRANSITIONS: 'runway',   // Transiciones, abstractos
   },
   
-  // === LIMITS (V11: Industrial pipeline with threads support) ===
+  // === LIMITS (V11.1: Industrial pipeline with improved timeouts) ===
   LIMITS: {
     // Token limits per request type
     MAX_INPUT_TOKENS_SOFT: 10000,       // Conservative for reliability
@@ -72,12 +72,21 @@ export const MODEL_CONFIG = {
     // Token estimation
     CHARS_PER_TOKEN: 4,
     
-    // Timeout configuration (V11: tuned for pipeline)
-    TIMEOUT_MS: 55000,                  // 55s per AI request
-    STAGE_TIMEOUT_MS: 80000,            // 80s stage, 10s margin before gateway
+    // Timeout configuration (V11.1: INCREASED for reliability)
+    TIMEOUT_MS: 70000,                  // 70s per AI request (was 55s)
+    STAGE_TIMEOUT_MS: 85000,            // 85s stage timeout
     RETRY_COUNT: 2,                     // Max retries per substep
     RETRY_CHUNK_REDUCTION: 0.6,         // 60% chunk on retry 1
     RETRY_CHUNK_REDUCTION_2: 0.5,       // 50% chunk on retry 2
+    
+    // Per-task timeouts (V11.1: differentiated by task type)
+    TIMEOUTS: {
+      SUMMARIZE_MS: 70000,              // Summarize can take longer
+      OUTLINE_ARC_MS: 65000,            // PART_A
+      OUTLINE_EPISODES_MS: 75000,       // PART_B/C - more complex
+      MERGE_MS: 45000,                  // Merge is faster
+      QC_MS: 30000,                     // QC is deterministic
+    },
     
     // Model fallback chain (V11: graceful degradation)
     RETRY_MODELS: {

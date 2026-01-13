@@ -30,8 +30,15 @@ const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD; // gpt-5.2
 const MERGE_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;      // gpt-5-mini for deterministic merge
 const LONG_INPUT_THRESHOLD = MODEL_CONFIG.LIMITS.MAX_INPUT_TOKENS_SOFT * MODEL_CONFIG.LIMITS.CHARS_PER_TOKEN;
 
-// Timeout configuration
-const AI_TIMEOUT_MS = MODEL_CONFIG.LIMITS.TIMEOUT_MS;
+// Timeout configuration (V11.1: Per-task timeouts)
+const TIMEOUTS = (MODEL_CONFIG.LIMITS as any).TIMEOUTS || {
+  SUMMARIZE_MS: 70000,
+  OUTLINE_ARC_MS: 65000,
+  OUTLINE_EPISODES_MS: 75000,
+  MERGE_MS: 45000,
+  QC_MS: 30000,
+};
+const AI_TIMEOUT_MS = MODEL_CONFIG.LIMITS.TIMEOUT_MS;  // Default fallback
 const MAX_ATTEMPTS = MODEL_CONFIG.LIMITS.RETRY_COUNT;
 const HEARTBEAT_INTERVAL_MS = 12000;
 const MAX_EPISODES = 10;
@@ -113,7 +120,7 @@ async function heartbeat(
 }
 
 // ============================================================================
-// AI CALL: With tool schema and heartbeat
+// AI CALL: With tool schema and heartbeat (V11.1: configurable timeout)
 // ============================================================================
 async function callLovableAIWithToolAndHeartbeat(
   supabase: SupabaseClient,
@@ -124,7 +131,8 @@ async function callLovableAIWithToolAndHeartbeat(
   maxTokens: number,
   toolName: string,
   toolSchema: any,
-  substage: string
+  substage: string,
+  timeoutMs: number = AI_TIMEOUT_MS  // V11.1: Configurable timeout
 ): Promise<{ toolArgs: string | null; content: string }> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
@@ -134,7 +142,7 @@ async function callLovableAIWithToolAndHeartbeat(
   }, HEARTBEAT_INTERVAL_MS);
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);  // V11.1: Use configurable timeout
 
   try {
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -190,7 +198,7 @@ async function callLovableAIWithToolAndHeartbeat(
 }
 
 // ============================================================================
-// AI CALL: Without tool (for summarize)
+// AI CALL: Without tool (for summarize) - V11.1: configurable timeout
 // ============================================================================
 async function callLovableAIWithHeartbeat(
   supabase: SupabaseClient,
@@ -199,7 +207,8 @@ async function callLovableAIWithHeartbeat(
   userPrompt: string,
   model: string,
   maxTokens: number,
-  substage: string
+  substage: string,
+  timeoutMs: number = AI_TIMEOUT_MS  // V11.1: Configurable timeout
 ): Promise<{ content: string }> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
@@ -209,7 +218,7 @@ async function callLovableAIWithHeartbeat(
   }, HEARTBEAT_INTERVAL_MS);
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);  // V11.1: Use configurable timeout
 
   try {
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -610,6 +619,26 @@ async function stageSummarize(
 // STAGE: OUTLINE FAN-OUT (4 substeps) with Idempotent Locks
 // ============================================================================
 
+// V11.1: Helper for fallback model execution on AI_TIMEOUT
+async function executeWithFallback<T>(
+  primaryFn: (model: string, timeoutMs: number) => Promise<T>,
+  primaryModel: string,
+  fallbackModel: string,
+  primaryTimeout: number,
+  fallbackTimeout: number,
+  label: string
+): Promise<T> {
+  try {
+    return await primaryFn(primaryModel, primaryTimeout);
+  } catch (err: any) {
+    if (err.message?.includes('AI_TIMEOUT')) {
+      console.log(`[WORKER] ${label}: Timeout with ${primaryModel}, retrying with ${fallbackModel}`);
+      return await primaryFn(fallbackModel, fallbackTimeout);
+    }
+    throw err;
+  }
+}
+
 async function executeSubstepIfNeeded(
   supabase: SupabaseClient,
   outline: OutlineRecord,
@@ -676,14 +705,27 @@ async function stageOutlineFanOut(
       });
       
       const partAPrompt = buildPartAPrompt(summaryText, episodesCount, genre, tone);
-      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outline.id,
-        PART_A_SYSTEM, partAPrompt,
-        QUALITY_MODEL, 4000,
-        'deliver_part_a', PART_A_TOOL_SCHEMA, 'arc'
+      
+      // V11.1: Use executeWithFallback for PART_A with specific timeout
+      const result = await executeWithFallback(
+        async (model, timeout) => {
+          const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+            supabase, outline.id,
+            PART_A_SYSTEM, partAPrompt,
+            model, 4000,
+            'deliver_part_a', PART_A_TOOL_SCHEMA, 'arc',
+            timeout
+          );
+          return { toolArgs, content };
+        },
+        QUALITY_MODEL,
+        FAST_MODEL,
+        TIMEOUTS.OUTLINE_ARC_MS,
+        TIMEOUTS.OUTLINE_ARC_MS + 10000,  // Extra time for fallback
+        'PART_A'
       );
       
-      const parseResult = parseJsonSafe(toolArgs || content, 'part_a');
+      const parseResult = parseJsonSafe(result.toolArgs || result.content, 'part_a');
       if (!parseResult.json) throw new Error('PART_A failed to parse');
       
       console.log(`[WORKER] PART_A generated: ${parseResult.json.title || 'Sin título'}`);
@@ -714,14 +756,27 @@ async function stageOutlineFanOut(
       });
       
       const partBPrompt = buildPartBPrompt(summaryText, partAResult.data, 1, midpoint);
-      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outline.id,
-        EPISODES_SYSTEM, partBPrompt,
-        QUALITY_MODEL, 6000,
-        'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_1'
+      
+      // V11.1: Use executeWithFallback for PART_B with specific timeout
+      const result = await executeWithFallback(
+        async (model, timeout) => {
+          const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+            supabase, outline.id,
+            EPISODES_SYSTEM, partBPrompt,
+            model, 6000,
+            'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_1',
+            timeout
+          );
+          return { toolArgs, content };
+        },
+        QUALITY_MODEL,
+        FAST_MODEL,
+        TIMEOUTS.OUTLINE_EPISODES_MS,
+        TIMEOUTS.OUTLINE_EPISODES_MS + 10000,  // Extra time for fallback
+        'PART_B'
       );
       
-      const parseResult = parseJsonSafe(toolArgs || content, 'part_b');
+      const parseResult = parseJsonSafe(result.toolArgs || result.content, 'part_b');
       if (!parseResult.json?.episodes) throw new Error('PART_B failed to parse');
       
       console.log(`[WORKER] PART_B generated: ${parseResult.json.episodes.length} episodes`);
@@ -752,14 +807,27 @@ async function stageOutlineFanOut(
         });
         
         const partCPrompt = buildPartCPrompt(summaryText, partAResult.data, partBResult.data, midpoint + 1, episodesCount);
-        const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-          supabase, outline.id,
-          EPISODES_SYSTEM, partCPrompt,
-          QUALITY_MODEL, 6000,
-          'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_2'
+        
+        // V11.1: Use executeWithFallback for PART_C with specific timeout
+        const result = await executeWithFallback(
+          async (model, timeout) => {
+            const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+              supabase, outline.id,
+              EPISODES_SYSTEM, partCPrompt,
+              model, 6000,
+              'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_2',
+              timeout
+            );
+            return { toolArgs, content };
+          },
+          QUALITY_MODEL,
+          FAST_MODEL,
+          TIMEOUTS.OUTLINE_EPISODES_MS,
+          TIMEOUTS.OUTLINE_EPISODES_MS + 10000,  // Extra time for fallback
+          'PART_C'
         );
         
-        const parseResult = parseJsonSafe(toolArgs || content, 'part_c');
+        const parseResult = parseJsonSafe(result.toolArgs || result.content, 'part_c');
         console.log(`[WORKER] PART_C generated: ${parseResult.json?.episodes?.length || 0} episodes`);
         return parseResult.json;
       }
