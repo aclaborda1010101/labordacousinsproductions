@@ -164,12 +164,19 @@ export const hydrateLocations = (raw: any): any[] => {
 
   const loc = p.locations;
 
+  let base: any[] = [];
   if (loc && typeof loc === "object" && !Array.isArray(loc)) {
-    const base = pickArray(loc.base, loc.items, loc.list);
-    if (base.length) return base;
+    base = pickArray(loc.base, loc.items, loc.list);
+  }
+  if (!base.length) {
+    base = pickArray(p.locations);
   }
 
-  return pickArray(p.locations);
+  // Normalize 'name' field from various source properties (base_name, location_name, etc.)
+  return base.map((l: any) => ({
+    ...l,
+    name: l.name ?? l.base_name ?? l.location_name ?? l.location ?? 'UNKNOWN',
+  }));
 };
 
 export const hydrateScenes = (raw: any): any[] => {

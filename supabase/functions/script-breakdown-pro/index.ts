@@ -368,11 +368,15 @@ function coerceToScreenplayText(input: string): { text: string; wasJson: boolean
   return { text: normalizeScriptText(input), wasJson: true, blocksExtracted: 0 };
 }
 
-// Accept headings with optional leading numbering + Spanish/English variants
-const HEADING_LINE_RE = /^\s*(?:\d+\s*[.\):\-–—]?\s*)?(?:INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\b/i;
+// Accept headings with optional leading numbering - STRICT: require separator after INT/EXT
+// Removed INTERIOR|EXTERIOR|INTERNO|EXTERNO as these appear too often in Spanish dialogue
+const HEADING_LINE_RE = /^\s*(?:\d+\s*[.\):\-–—]?\s*)?(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?)\s*[.:\-–—]/i;
 
-// Regex for scene headings
-const SLUGLINE_RE = /^(?:\d+\s*[.\):\-–—]?\s*)?(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?|INTERIOR|EXTERIOR|INTERNO|EXTERNO)\s*[.:\-–—]?\s*(.+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME))?$/i;
+// Regex for scene headings - STRICT version:
+// 1. Require separator (. - :) after INT/EXT to avoid matching dialogue like "intenta..."
+// 2. Location must start with uppercase letter and be mostly ALLCAPS
+// 3. Time of day is optional
+const SLUGLINE_RE = /^(?:\d+\s*[.\):\-–—]?\s*)?(INT\.?|EXT\.?|INT\/EXT\.?|I\/E\.?)\s*[.:\-–—]\s*([A-ZÁÉÍÓÚÑÜ][A-ZÁÉÍÓÚÑÜ0-9\s\/\-'',.()]+?)(?:\s*[.:\-–—]\s*(DAY|NIGHT|DAWN|DUSK|DÍA|NOCHE|AMANECER|ATARDECER|CONTINUOUS|CONTINUA|LATER|MÁS TARDE|MISMO|SAME|MOMENTS LATER|LATER THAT|CONTINUOUS|CONT'?D?))?$/i;
 
 function extractScenesFromScript(text: string): any[] {
   const lines = normalizeScriptText(text).split('\n');

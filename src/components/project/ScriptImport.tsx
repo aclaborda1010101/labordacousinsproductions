@@ -3389,8 +3389,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         for (const loc of locsToImport) {
           const { error } = await supabase.from('locations').insert({
             project_id: projectId,
-            name: typeof loc === 'string' ? loc : loc.name,
-            description: typeof loc === 'object' ? (loc.description || '') : '',
+            name: typeof loc === 'string' ? loc : (loc.name ?? loc.base_name ?? loc.location_name ?? 'UNKNOWN'),
+            description: typeof loc === 'object' ? (loc.description || loc.int_ext || '') : '',
           });
           if (error) throw error;
         }
@@ -5945,8 +5945,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                               <Square className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                             }
                             <div className="min-w-0">
-                              <p className="font-medium text-sm truncate">{typeof loc === 'string' ? loc : loc.name}</p>
-                              {typeof loc === 'object' && loc.description && (
+                              <p className="font-medium text-sm truncate">{typeof loc === 'string' ? loc : (loc.name ?? loc.base_name ?? loc.location_name ?? 'UNKNOWN')}</p>
+                              {typeof loc === 'object' && (loc.description || loc.int_ext) && (
                                 <p className="text-xs text-muted-foreground mt-1 break-words">{loc.description}</p>
                               )}
                             </div>
