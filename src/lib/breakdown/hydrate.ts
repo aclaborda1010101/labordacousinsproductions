@@ -27,21 +27,49 @@ export const hydrateCharacters = (raw: any): any[] => {
 
   // Build dialogue metrics map - PRIORITY ORDER:
   // 1. dialogues.by_character (complete source with ALL characters and their dialogue counts)
-  // 2. characters.cast (may have additional metadata like rank)
+  // 2. Fallback: aggregate from episodes if dialogues.by_character is missing
+  // 3. characters.cast (may have additional metadata like rank)
   const dialogueMap = new Map<string, { dialogue_lines: number; dialogue_words: number; dialogue_rank: number; scenes_count: number }>();
   
   // Step 1: Populate from dialogues.by_character (authoritative source for dialogue counts)
-  const dialoguesByChar = p.dialogues?.by_character;
+  let dialoguesByChar = p.dialogues?.by_character;
+  
+  // V48: Fallback - aggregate from episodes if dialogues.by_character is missing
+  if ((!dialoguesByChar || Object.keys(dialoguesByChar).length === 0) && Array.isArray(p.episodes) && p.episodes.length > 0) {
+    dialoguesByChar = {};
+    for (const ep of p.episodes) {
+      for (const scene of ep.scenes || []) {
+        const sceneNum = scene.scene_number ?? scene.number ?? 0;
+        for (const d of scene.dialogue || []) {
+          const charName = (d.character || '').toUpperCase().trim();
+          if (!charName) continue;
+          if (!dialoguesByChar[charName]) {
+            dialoguesByChar[charName] = { lines: 0, words: 0, scenes_count: 0, _scenes: new Set() };
+          }
+          dialoguesByChar[charName].lines += 1;
+          dialoguesByChar[charName].words += (d.line || d.text || '').split(/\s+/).filter(Boolean).length;
+          (dialoguesByChar[charName]._scenes as Set<number>).add(sceneNum);
+        }
+      }
+    }
+    // Convert Set to count
+    for (const key of Object.keys(dialoguesByChar)) {
+      dialoguesByChar[key].scenes_count = (dialoguesByChar[key]._scenes as Set<number>).size;
+      delete dialoguesByChar[key]._scenes;
+    }
+  }
+  
   if (dialoguesByChar && typeof dialoguesByChar === 'object' && !Array.isArray(dialoguesByChar)) {
     for (const [charName, data] of Object.entries(dialoguesByChar)) {
       const d = data as Record<string, any>;
       const lines = typeof d === 'object' ? (d.lines ?? d.count ?? d.dialogue_lines ?? 0) : 0;
       const words = typeof d === 'object' ? (d.words ?? d.word_count ?? 0) : 0;
+      const scenesCount = typeof d === 'object' ? (d.scenes_count ?? 0) : 0;
       dialogueMap.set(charName.toUpperCase().trim(), {
         dialogue_lines: lines,
         dialogue_words: words,
         dialogue_rank: 999, // Will be overwritten by cast if available
-        scenes_count: 0, // Will be overwritten by cast if available
+        scenes_count: scenesCount,
       });
     }
   }
