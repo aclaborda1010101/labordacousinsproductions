@@ -3211,6 +3211,47 @@ export type Database = {
           },
         ]
       }
+      location_spatial_refs: {
+        Row: {
+          angle: string
+          created_at: string
+          id: string
+          image_url: string | null
+          location_id: string
+          slot_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          angle: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          location_id: string
+          slot_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          angle?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          location_id?: string
+          slot_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_spatial_refs_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           accepted_run_id: string | null
