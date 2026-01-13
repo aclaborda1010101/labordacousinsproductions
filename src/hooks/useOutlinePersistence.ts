@@ -17,7 +17,7 @@ export interface PersistedOutline {
   outline_json: Record<string, unknown>;
   quality: string;
   qc_issues: string[];
-  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed' | 'timeout' | 'failed';
+  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed' | 'timeout' | 'failed' | 'stalled';
   idea?: string;
   genre?: string;
   tone?: string;
@@ -25,6 +25,8 @@ export interface PersistedOutline {
   episode_count?: number;
   target_duration?: number;
   error_message?: string;
+  error_code?: string | null;     // V11: Error classification code
+  error_detail?: string | null;   // V11: Detailed error message
   stage?: string | null;       // 'summarize' | 'outline' | 'merge' | 'done'
   substage?: string | null;    // V9: 'arc' | 'episodes_1' | 'episodes_2' | 'qc' etc
   progress?: number | null;    // 0-100 progress indicator

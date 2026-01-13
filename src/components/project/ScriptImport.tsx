@@ -779,12 +779,54 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setGeneratingOutline(true);
         if (!outlineStartTime) setOutlineStartTime(Date.now());
       }
-    } else if (status === 'completed' || status === 'approved' || status === 'error' || status === 'failed') {
+    } else if (status === 'completed' || status === 'approved' || status === 'error' || status === 'failed' || status === 'stalled' || status === 'timeout') {
       if (generatingOutline) {
         setGeneratingOutline(false);
       }
     }
   }, [outlinePersistence.savedOutline?.status]);
+
+  // V11: Zombie outline detection - check if heartbeat is stale
+  const isZombieOutline = useMemo(() => {
+    const saved = outlinePersistence.savedOutline;
+    if (!saved) return false;
+    
+    // Only check for zombie if status is generating/queued
+    if (saved.status !== 'generating' && saved.status !== 'queued') return false;
+    
+    const heartbeat = saved.heartbeat_at;
+    if (!heartbeat) return true; // No heartbeat = zombie
+    
+    const heartbeatAge = Date.now() - new Date(heartbeat).getTime();
+    const ZOMBIE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+    
+    return heartbeatAge > ZOMBIE_THRESHOLD_MS;
+  }, [outlinePersistence.savedOutline]);
+  
+  // V11: Reset zombie outline to allow retry
+  const handleResetZombieOutline = async () => {
+    const saved = outlinePersistence.savedOutline;
+    if (!saved) return;
+    
+    try {
+      const { error } = await supabase
+        .from('project_outlines')
+        .update({ 
+          status: 'stalled', 
+          error_code: 'WORKER_TIMEOUT',
+          error_detail: 'Marcado como atascado por el usuario'
+        })
+        .eq('id', saved.id);
+      
+      if (error) throw error;
+      
+      toast.info('Outline marcado como atascado. Puedes reintentar la generación.');
+      outlinePersistence.refreshOutline();
+    } catch (err: any) {
+      console.error('[ScriptImport] Error resetting zombie outline:', err);
+      toast.error('Error al resetear el outline');
+    }
+  };
 
   // V10.3: Fallback to load outline from persistence when completed but lightOutline is empty
   useEffect(() => {
@@ -4387,8 +4429,128 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           )}
 
+          {/* V11: Zombie Outline Warning - when heartbeat is stale but status is still generating */}
+          {isZombieOutline && !pipelineRunning && (
+            <Card className="border-2 border-destructive/50 bg-destructive/5">
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <AlertTriangle className="h-8 w-8 text-destructive flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-destructive">
+                        Generación atascada
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        El proceso de outline no ha respondido en más de 5 minutos. 
+                        Esto puede ocurrir por un timeout del servidor o un error de red.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Show last known progress */}
+                  {outlinePersistence.savedOutline?.progress && (
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        Último progreso: <span className="font-mono font-medium">{outlinePersistence.savedOutline.progress}%</span>
+                        {outlinePersistence.savedOutline.substage && (
+                          <> • Etapa: <span className="font-medium">{outlinePersistence.savedOutline.substage}</span></>
+                        )}
+                      </p>
+                    </div>
+                  )}
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="destructive"
+                      onClick={handleResetZombieOutline}
+                      className="flex-1"
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Marcar como fallido y reintentar
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        outlinePersistence.refreshOutline();
+                        toast.info('Verificando estado...');
+                      }}
+                    >
+                      Verificar
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* V11: Stalled/Failed Outline Recovery Card */}
+          {(outlinePersistence.savedOutline?.status === 'stalled' || 
+            outlinePersistence.savedOutline?.status === 'timeout' ||
+            (outlinePersistence.savedOutline?.status === 'failed' && outlinePersistence.savedOutline?.error_code)) && 
+           !generatingOutline && !pipelineRunning && !lightOutline && (
+            <Card className="border-2 border-orange-500/50 bg-orange-500/5">
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <AlertTriangle className="h-8 w-8 text-orange-500 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-orange-600 dark:text-orange-400">
+                        {outlinePersistence.savedOutline.status === 'stalled' 
+                          ? 'Generación interrumpida'
+                          : outlinePersistence.savedOutline.status === 'timeout'
+                            ? 'Timeout del servidor'
+                            : 'Error en la generación'}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {outlinePersistence.savedOutline.error_detail || 
+                          'El proceso anterior no completó correctamente. Puedes reintentar la generación.'}
+                      </p>
+                      {outlinePersistence.savedOutline.error_code && (
+                        <Badge variant="outline" className="mt-2 text-xs">
+                          {outlinePersistence.savedOutline.error_code}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Show last known progress if available */}
+                  {(outlinePersistence.savedOutline?.progress ?? 0) > 0 && (
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                        <span>Progreso alcanzado</span>
+                        <span className="font-mono">{outlinePersistence.savedOutline.progress}%</span>
+                      </div>
+                      <Progress value={outlinePersistence.savedOutline.progress ?? 0} className="h-2" />
+                    </div>
+                  )}
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={generateLightOutline}
+                      disabled={!ideaText.trim() || ideaText.trim().length < 30}
+                      className="flex-1"
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Reintentar generación
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={async () => {
+                        await outlinePersistence.deleteOutline?.();
+                        toast.info('Outline eliminado. Puedes empezar de nuevo.');
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Descartar
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* V7.0: Outline Generation Progress Card with stage-aware progress */}
-          {generatingOutline && !pipelineRunning && (() => {
+          {generatingOutline && !pipelineRunning && !isZombieOutline && (() => {
             const stageInfo = getStageInfo(outlinePersistence.savedOutline?.stage);
             const derivedProgress = deriveProgress(
               outlinePersistence.savedOutline?.stage,
