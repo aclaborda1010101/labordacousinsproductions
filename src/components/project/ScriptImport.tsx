@@ -120,6 +120,7 @@ import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
 import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
 import { getStageInfo, deriveProgress } from '@/lib/outlineStages';
 import OutlineStatusPanel from './OutlineStatusPanel';
+import { ScriptGenerationOverlay } from './ScriptGenerationOverlay';
 import {
   hydrateCharacters,
   hydrateLocations,
@@ -307,6 +308,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Outline generation progress tracking (V4.0 - Polling UI)
   const [outlineStartTime, setOutlineStartTime] = useState<number | null>(null);
   const [outlineElapsedSeconds, setOutlineElapsedSeconds] = useState(0);
+  
+  // Script generation elapsed timer
+  const [scriptStartTime, setScriptStartTime] = useState<number | null>(null);
+  const [scriptElapsedSeconds, setScriptElapsedSeconds] = useState(0);
   
   // Episode view mode: summary vs full screenplay
   const [episodeViewMode, setEpisodeViewMode] = useState<Record<number, 'summary' | 'full'>>({});
@@ -1159,6 +1164,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }, 1000);
     return () => clearInterval(interval);
   }, [generatingOutline, outlineStartTime]);
+
+  // Script generation elapsed timer (V47: Full-screen overlay support)
+  useEffect(() => {
+    if (!pipelineRunning || !scriptStartTime) {
+      if (!pipelineRunning) setScriptElapsedSeconds(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setScriptElapsedSeconds(Math.floor((Date.now() - scriptStartTime) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [pipelineRunning, scriptStartTime]);
 
   const updatePipelineStep = (stepId: string, status: PipelineStep['status'], label?: string) => {
     setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status, label: label || s.label } : s));
@@ -2250,6 +2267,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setPipelineRunning(true);
     setPipelineProgress(10);
     setGeneratedEpisodesList([]);
+    setScriptStartTime(Date.now()); // V47: Track start time for overlay timer
 
     const controller = new AbortController();
     setCancelController(controller);
@@ -2751,6 +2769,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setEpisodeStartedAtMs(null);
       setCancelController(null);
       setBackgroundGeneration(false);
+      setScriptStartTime(null); // V47: Reset timer
       clearPipelineState(); // Clear localStorage on completion
     }
   };
@@ -2765,6 +2784,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setCurrentEpisodeGenerating(null);
     setEpisodeStartedAtMs(null);
     setBackgroundGeneration(false);
+    setScriptStartTime(null); // V47: Reset timer
     clearPipelineState();
     toast.info('Generación cancelada. Los episodios ya generados se han conservado.');
   };
@@ -3821,6 +3841,22 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   ) || [];
 
   return (
+    <>
+      {/* V47: Full-screen Script Generation Overlay */}
+      {pipelineRunning && !backgroundGeneration && (
+        <ScriptGenerationOverlay
+          progress={pipelineProgress}
+          currentEpisode={currentEpisodeGenerating}
+          totalEpisodes={totalEpisodesToGenerate}
+          generatedEpisodes={generatedEpisodesList}
+          estimatedRemainingMs={getEstimatedRemainingMs()}
+          elapsedSeconds={scriptElapsedSeconds}
+          currentStepLabel={currentStepLabel}
+          onContinueInBackground={() => setBackgroundGeneration(true)}
+          onCancel={cancelGeneration}
+        />
+      )}
+      
     <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Hollywood Workflow Progress Indicator */}
       {(generatedScript || lightOutline || pipelineRunning) && (
@@ -7730,6 +7766,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         }}
       />
     </div>
+    </>
   );
 }
 
