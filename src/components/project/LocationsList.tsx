@@ -34,6 +34,9 @@ import {
   RefreshCw,
   Sparkles,
   Layers,
+  Upload,
+  X,
+  ImageIcon,
 } from 'lucide-react';
 import MultiAnglePreview, { AngleVariant } from './MultiAnglePreview';
 
@@ -107,6 +110,11 @@ export default function LocationsList({ projectId }: LocationsListProps) {
     hasDay: true,
     hasNight: true,
   });
+
+  // Reference image upload states
+  const [referenceFile, setReferenceFile] = useState<File | null>(null);
+  const [referencePreview, setReferencePreviewUrl] = useState<string | null>(null);
+  const [uploadingReferenceId, setUploadingReferenceId] = useState<string | null>(null);
 
   const fetchLocations = async () => {
     const { data } = await supabase
@@ -223,6 +231,8 @@ export default function LocationsList({ projectId }: LocationsListProps) {
 
   const resetForm = () => {
     setFormData({ name: '', description: '', hasDay: true, hasNight: true });
+    setReferenceFile(null);
+    setReferencePreviewUrl(null);
   };
 
   const handleAddLocation = async () => {
@@ -232,22 +242,80 @@ export default function LocationsList({ projectId }: LocationsListProps) {
     }
 
     setSaving(true);
+    
+    let primaryReferenceUrl: string | null = null;
+    
+    // Upload reference image if provided
+    if (referenceFile) {
+      try {
+        const fileExt = referenceFile.name.split('.').pop() || 'jpg';
+        const fileName = `locations/${projectId}/${Date.now()}_ref.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('renders')
+          .upload(fileName, referenceFile, { upsert: true });
+        
+        if (uploadError) throw uploadError;
+        
+        const { data: urlData } = supabase.storage.from('renders').getPublicUrl(fileName);
+        primaryReferenceUrl = urlData.publicUrl;
+      } catch (err) {
+        console.error('Error uploading reference:', err);
+        toast.error('Error al subir imagen de referencia');
+      }
+    }
+    
     const { error } = await supabase.from('locations').insert({
       project_id: projectId,
       name: formData.name.trim(),
       description: formData.description || null,
       variants: { day: formData.hasDay, night: formData.hasNight },
+      primary_reference_url: primaryReferenceUrl,
+      reference_status: primaryReferenceUrl ? 'uploaded' : 'none',
     });
 
     if (error) {
       toast.error('Error al añadir localización');
     } else {
-      toast.success('Localización añadida');
+      toast.success(primaryReferenceUrl 
+        ? 'Localización añadida con referencia' 
+        : 'Localización añadida');
       resetForm();
       setShowAddDialog(false);
       fetchLocations();
     }
     setSaving(false);
+  };
+
+  // Upload reference for existing location
+  const handleUploadReference = async (locationId: string, file?: File) => {
+    if (!file) return;
+    
+    setUploadingReferenceId(locationId);
+    
+    try {
+      const fileExt = file.name.split('.').pop() || 'jpg';
+      const fileName = `locations/${projectId}/${locationId}_ref_${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('renders')
+        .upload(fileName, file, { upsert: true });
+      
+      if (uploadError) throw uploadError;
+      
+      const { data: urlData } = supabase.storage.from('renders').getPublicUrl(fileName);
+      
+      await supabase.from('locations').update({
+        primary_reference_url: urlData.publicUrl,
+        reference_status: 'uploaded',
+      }).eq('id', locationId);
+      
+      toast.success('Referencia subida. La próxima generación usará esta imagen como base.');
+      fetchLocations();
+    } catch (err) {
+      console.error('Error uploading reference:', err);
+      toast.error('Error al subir referencia');
+    } finally {
+      setUploadingReferenceId(null);
+    }
   };
 
   const handleDeleteLocation = async (id: string) => {
@@ -1036,7 +1104,12 @@ export default function LocationsList({ projectId }: LocationsListProps) {
               onToggleExpand={() => setExpandedId(expandedId === location.id ? null : location.id)}
               onPrimaryAction={() => handlePrimaryAction(location)}
               badges={
-                <div className="flex gap-1">
+                <div className="flex gap-1 items-center">
+                  {location.primary_reference_url && (
+                    <span title="Tiene referencia">
+                      <ImageIcon className="w-3 h-3 text-green-500" />
+                    </span>
+                  )}
                   {location.variants?.day && <Sun className="w-3 h-3 text-yellow-500" />}
                   {location.variants?.night && <Moon className="w-3 h-3 text-blue-400" />}
                 </div>
@@ -1089,6 +1162,63 @@ export default function LocationsList({ projectId }: LocationsListProps) {
                       <Moon className="w-4 h-4 text-blue-400" />
                       <span className="text-sm">{location.variants?.night ? 'Noche disponible' : 'Sin noche'}</span>
                     </div>
+                  </div>
+
+                  {/* Reference image section */}
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Imagen de Referencia</Label>
+                    {location.primary_reference_url ? (
+                      <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg border border-green-500/30">
+                        <img 
+                          src={location.primary_reference_url} 
+                          alt="Referencia" 
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                            ✓ Referencia configurada
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            La IA usará esta imagen como base
+                          </p>
+                        </div>
+                        <label className="cursor-pointer">
+                          <Button variant="outline" size="sm" asChild>
+                            <span>
+                              <RefreshCw className="w-4 h-4 mr-1" />
+                              Cambiar
+                            </span>
+                          </Button>
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            className="hidden"
+                            onChange={(e) => handleUploadReference(location.id, e.target.files?.[0])}
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer flex items-center gap-3 p-3 bg-muted/50 rounded-lg border border-dashed hover:bg-muted transition-colors">
+                        {uploadingReferenceId === location.id ? (
+                          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                        ) : (
+                          <Upload className="w-5 h-5 text-muted-foreground" />
+                        )}
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">Subir foto de referencia</p>
+                          <p className="text-xs text-muted-foreground">
+                            Opcional: la IA estilizará tu foto según el proyecto
+                          </p>
+                        </div>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden"
+                          disabled={uploadingReferenceId === location.id}
+                          onChange={(e) => handleUploadReference(location.id, e.target.files?.[0])}
+                        />
+                      </label>
+                    )}
                   </div>
 
                   {/* Quick actions */}
@@ -1182,6 +1312,57 @@ export default function LocationsList({ projectId }: LocationsListProps) {
                   <span className="text-sm">Noche</span>
                 </label>
               </div>
+            </div>
+            
+            {/* Reference image upload */}
+            <div className="space-y-2">
+              <Label>Imagen de Referencia (opcional)</Label>
+              <div className="flex items-center gap-3">
+                {referencePreview ? (
+                  <div className="relative">
+                    <img 
+                      src={referencePreview} 
+                      alt="Preview" 
+                      className="w-24 h-24 object-cover rounded-lg border"
+                    />
+                    <Button 
+                      variant="destructive" 
+                      size="icon" 
+                      className="absolute -top-2 -right-2 h-6 w-6"
+                      onClick={() => { 
+                        setReferenceFile(null); 
+                        setReferencePreviewUrl(null); 
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer border-2 border-dashed rounded-lg p-4 hover:bg-muted/50 transition-colors flex-1">
+                    <div className="flex flex-col items-center gap-2">
+                      <Upload className="w-6 h-6 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground text-center">
+                        Subir foto de referencia
+                      </span>
+                    </div>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setReferenceFile(file);
+                          setReferencePreviewUrl(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                La IA usará esta imagen como base y la estilizará según el proyecto
+              </p>
             </div>
           </div>
           <DialogFooter>
