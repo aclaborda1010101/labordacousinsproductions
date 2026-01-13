@@ -2049,30 +2049,75 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
   // Pre-flight check: ensure Bible has entities before generating
   const ensureBibleMaterialized = async (): Promise<boolean> => {
-    const [charsCheck, locsCheck] = await Promise.all([
-      supabase.from('characters').select('id').eq('project_id', projectId).limit(1),
-      supabase.from('locations').select('id').eq('project_id', projectId).limit(1),
-    ]);
+    setMaterializingEntities(true);
+    try {
+      const [charsCheck, locsCheck] = await Promise.all([
+        supabase.from('characters').select('id').eq('project_id', projectId).limit(1),
+        supabase.from('locations').select('id').eq('project_id', projectId).limit(1),
+      ]);
 
-    const hasChars = (charsCheck.data?.length ?? 0) > 0;
-    const hasLocs = (locsCheck.data?.length ?? 0) > 0;
+      const hasChars = (charsCheck.data?.length ?? 0) > 0;
+      const hasLocs = (locsCheck.data?.length ?? 0) > 0;
 
-    if (hasChars && hasLocs) return true;
+      if (hasChars && hasLocs) return true;
 
-    toast.info('Sincronizando personajes y locaciones del outline...');
+      toast.info('Sincronizando personajes y locaciones del outline...');
 
-    const { error } = await supabase.functions.invoke('materialize-entities', {
-      body: { projectId, source: 'outline' }
-    });
+      const { error } = await supabase.functions.invoke('materialize-entities', {
+        body: { projectId, source: 'outline' }
+      });
 
-    if (error) {
-      toast.error('No se pudo sincronizar la Bible. Reintenta.');
-      return false;
+      if (error) {
+        toast.error('No se pudo sincronizar la Bible. Reintenta.');
+        return false;
+      }
+
+      toast.success('Bible sincronizada ✓');
+      return true;
+    } finally {
+      setMaterializingEntities(false);
     }
-
-    toast.success('Bible sincronizada ✓');
-    return true;
   };
+
+  // Auto-materialize Bible on page load if outline has data but Bible is empty
+  useEffect(() => {
+    const autoMaterializeIfNeeded = async () => {
+      if (!projectId || !lightOutline) return;
+      
+      // Check if outline has entities worth syncing
+      const outlineHasChars = (lightOutline.main_characters?.length ?? 0) > 0;
+      const outlineHasLocs = (lightOutline.main_locations?.length ?? 0) > 0;
+      
+      if (!outlineHasChars && !outlineHasLocs) return;
+      
+      // Quick check: do we have characters/locations in DB?
+      const [charsCheck, locsCheck] = await Promise.all([
+        supabase.from('characters').select('id').eq('project_id', projectId).limit(1),
+        supabase.from('locations').select('id').eq('project_id', projectId).limit(1),
+      ]);
+      
+      const hasChars = (charsCheck.data?.length ?? 0) > 0;
+      const hasLocs = (locsCheck.data?.length ?? 0) > 0;
+      
+      // If outline has data but Bible is empty, sync silently
+      if (!hasChars && !hasLocs) {
+        console.log('[AutoMaterialize] Bible empty but outline has entities, syncing in background...');
+        setMaterializingEntities(true);
+        try {
+          await supabase.functions.invoke('materialize-entities', {
+            body: { projectId, source: 'outline' }
+          });
+          console.log('[AutoMaterialize] Sync completed successfully');
+        } catch (err) {
+          console.error('[AutoMaterialize] Sync failed:', err);
+        } finally {
+          setMaterializingEntities(false);
+        }
+      }
+    };
+    
+    autoMaterializeIfNeeded();
+  }, [projectId, lightOutline]);
 
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
   const approveAndGenerateEpisodes = async () => {
@@ -5582,36 +5627,67 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   )}
 
                   {/* Density: Targets vs Achieved (or just Extracted Metrics if no density) */}
-                  {(generatedScript.density_targets || generatedScript.counts || breakdownPro?.counts) && (
+                  {(generatedScript.density_targets || generatedScript.counts || breakdownPro?.counts || lightOutline) && (
                     <div className="space-y-3">
                       <Label className="text-xs text-muted-foreground uppercase flex items-center gap-2">
                         <Settings2 className="w-3 h-3" />
-                        {generatedScript.density_targets ? 'Densidad Narrativa' : 'Métricas Extraídas'}
+                        {generatedScript.density_targets ? 'Densidad Narrativa' : (breakdownPro?.counts || generatedScript.counts) ? 'Métricas Extraídas' : 'Métricas del Outline'}
                       </Label>
                       <div className="grid gap-2 grid-cols-2 md:grid-cols-5">
                         <DensityCompareCard 
                           label="Protagonistas" 
-                          achieved={breakdownPro?.counts?.protagonists || generatedScript.counts?.protagonists || generatedScript.density_achieved?.protagonists || 0} 
+                          achieved={
+                            breakdownPro?.counts?.protagonists || 
+                            generatedScript.counts?.protagonists || 
+                            generatedScript.density_achieved?.protagonists || 
+                            lightOutline?.main_characters?.filter((c: any) => c.role?.toLowerCase().includes('protagonist')).length || 
+                            0
+                          } 
                           target={generatedScript.density_targets?.protagonists_min}
                         />
                         <DensityCompareCard 
                           label="Personajes" 
-                          achieved={breakdownPro?.counts?.characters_total || breakdownPro?.counts?.characters || generatedScript.counts?.characters_total || generatedScript.main_characters?.length || 0} 
+                          achieved={
+                            breakdownPro?.counts?.characters_total || 
+                            breakdownPro?.counts?.characters || 
+                            generatedScript.counts?.characters_total || 
+                            generatedScript.main_characters?.length || 
+                            ((lightOutline?.main_characters?.length || 0) + (lightOutline?.supporting_characters?.length || 0)) ||
+                            0
+                          } 
                           target={generatedScript.density_targets?.characters_min}
                         />
                         <DensityCompareCard 
                           label="Secundarios" 
-                          achieved={breakdownPro?.counts?.supporting || generatedScript.counts?.supporting || generatedScript.density_achieved?.supporting || 0} 
+                          achieved={
+                            breakdownPro?.counts?.supporting || 
+                            generatedScript.counts?.supporting || 
+                            generatedScript.density_achieved?.supporting || 
+                            lightOutline?.main_characters?.filter((c: any) => !c.role?.toLowerCase().includes('protagonist')).length ||
+                            0
+                          } 
                           target={generatedScript.density_targets?.supporting_min}
                         />
                         <DensityCompareCard 
                           label="Localizaciones" 
-                          achieved={breakdownPro?.counts?.locations || generatedScript.counts?.locations || generatedScript.density_achieved?.locations || 0} 
+                          achieved={
+                            breakdownPro?.counts?.locations || 
+                            generatedScript.counts?.locations || 
+                            generatedScript.density_achieved?.locations || 
+                            lightOutline?.main_locations?.length ||
+                            0
+                          } 
                           target={generatedScript.density_targets?.locations_min}
                         />
                         <DensityCompareCard 
                           label="Escenas Totales" 
-                          achieved={breakdownPro?.counts?.scenes || generatedScript.counts?.total_scenes || generatedScript.density_achieved?.total_scenes || 0} 
+                          achieved={
+                            breakdownPro?.counts?.scenes || 
+                            generatedScript.counts?.total_scenes || 
+                            generatedScript.density_achieved?.total_scenes || 
+                            lightOutline?.episode_beats?.reduce((sum: number, ep: any) => sum + (ep.turning_points?.length || 0), 0) ||
+                            0
+                          } 
                           target={generatedScript.density_targets?.scenes_per_episode ? (generatedScript.density_targets.scenes_per_episode * (generatedScript.episodes?.length || 1)) : generatedScript.density_targets?.scenes_target}
                         />
                       </div>
@@ -6093,6 +6169,47 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </div>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* Bible Empty State - Sync from Outline */}
+              {lightOutline && (!generatedScript?.characters?.length && !generatedScript?.locations?.length) && (
+                ((lightOutline.main_characters?.length || 0) > 0 || (lightOutline.main_locations?.length || 0) > 0) && (
+                  <Card className="border-amber-500/50 bg-amber-500/5">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-amber-500/20 rounded-lg">
+                            <AlertTriangle className="w-5 h-5 text-amber-500" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-base">Bible vacía</CardTitle>
+                            <CardDescription>
+                              Hay {lightOutline.main_characters?.length || 0} personajes y {lightOutline.main_locations?.length || 0} locaciones en el outline listos para sincronizar.
+                            </CardDescription>
+                          </div>
+                        </div>
+                        <Button 
+                          variant="gold" 
+                          onClick={async () => {
+                            const synced = await ensureBibleMaterialized();
+                            if (synced) {
+                              // Force a small delay and suggest refresh
+                              toast.success('Bible sincronizada. Recarga la página para ver las entidades.');
+                            }
+                          }}
+                          disabled={materializingEntities}
+                        >
+                          {materializingEntities ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Download className="w-4 h-4 mr-2" />
+                          )}
+                          Sincronizar ahora
+                        </Button>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                )
               )}
 
               {/* BREAKDOWN - Import Entities */}
