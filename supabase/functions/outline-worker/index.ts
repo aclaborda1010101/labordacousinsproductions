@@ -23,6 +23,7 @@ import { MODEL_CONFIG } from "../_shared/model-config.ts";
 import { STRUCTURED_SUMMARIZE_V11, OUTLINE_CORE_V11 } from "../_shared/production-prompts.ts";
 import { runStructuralQC as runStructuralQCV11, QCResult as QCResultV11 } from "../_shared/qc-validators.ts";
 import { TURNING_POINT_SCHEMA, SETPIECE_SCHEMA, THREAD_USAGE_SCHEMA } from "../_shared/outline-schemas-v11.ts";
+import { normalizeOutlineV11 } from "../_shared/normalize-outline-v11.ts";
 // Model configuration
 const FAST_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;       // gpt-5-mini
 const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD; // gpt-5.2
@@ -1141,8 +1142,8 @@ async function stageMerge(
     heartbeat_at: new Date().toISOString()
   });
 
-  // Normalize final output
-  const normalized = {
+  // Normalize final output (basic fields)
+  const basicNormalized = {
     ...outlineJson,
     title: outlineJson.title || 'Sin título',
     logline: outlineJson.logline || '',
@@ -1159,6 +1160,10 @@ async function stageMerge(
     world_rules: Array.isArray(outlineJson.world_rules) ? outlineJson.world_rules : [],
     narrative_mode: outline.narrative_mode || 'serie_adictiva'
   };
+
+  // CRITICAL: Normalize turning_points from strings to objects BEFORE QC
+  const normalized = normalizeOutlineV11(basicNormalized);
+  console.log(`[WORKER] Normalized turning_points for ${normalized.episode_beats?.length || 0} episodes`);
 
   // Run V11 QC (replaces old combined QC)
   const expectedEpisodes = outline.episode_count || 6;
