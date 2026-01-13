@@ -63,6 +63,9 @@ const BLOCKER_MESSAGES: Record<string, string> = {
   // Episodes
   'EPISODES:episode_beats_missing': 'No hay episodios definidos',
   
+  // Outline incomplete (pipeline didn't finish)
+  'OUTLINE_INCOMPLETE:no_episodes_generated': '⚠️ El outline no tiene episodios. Regenera el outline para continuar.',
+  
   // Title/cast
   'TITLE:missing': 'Falta el título del proyecto',
   
@@ -89,6 +92,19 @@ export function humanizeBlocker(code: string): string {
   }
   
   // Pattern matching for dynamic blockers
+  
+  // OUTLINE_INCOMPLETE - pipeline didn't complete all episodes
+  if (code.startsWith('OUTLINE_INCOMPLETE:')) {
+    const episodesMatch = code.match(/OUTLINE_INCOMPLETE:(\d+)\/(\d+)_episodes/);
+    if (episodesMatch) {
+      return `⚠️ Outline incompleto: solo ${episodesMatch[1]} de ${episodesMatch[2]} episodios generados. Regenera el outline.`;
+    }
+    // Generic fallback for no episodes
+    if (code.includes('no_episodes')) {
+      return '⚠️ El outline no tiene episodios. Regenera el outline para continuar.';
+    }
+  }
+  
   if (code.startsWith('EPISODES:')) {
     const match = code.match(/EPISODES:(\d+)\/(\d+)/);
     if (match) {
@@ -221,7 +237,11 @@ export function groupBlockers(blockers: string[]): Record<string, string[]> {
   };
   
   for (const blocker of blockers) {
-    if (blocker.includes('SEASON_ARC:')) {
+    if (blocker.includes('OUTLINE_INCOMPLETE:')) {
+      // OUTLINE_INCOMPLETE goes first and as its own category
+      groups['Outline Incompleto'] = groups['Outline Incompleto'] || [];
+      groups['Outline Incompleto'].push(humanizeBlocker(blocker));
+    } else if (blocker.includes('SEASON_ARC:')) {
       groups['Arco de Temporada'].push(humanizeBlocker(blocker));
     } else if (blocker.match(/EP\d+/) || blocker.includes('EPISODES:')) {
       groups['Episodios'].push(humanizeBlocker(blocker));
