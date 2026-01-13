@@ -27,6 +27,7 @@ import { ProductionReviewModal } from './ProductionReviewModal';
 import { ProductionProposal } from '@/types/production';
 import { StoryboardPanelView } from './StoryboardPanelView';
 import { TechnicalDocEditor } from './TechnicalDocEditor';
+import { KeyframesPanel } from './KeyframesPanel';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -107,6 +108,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [hasBreakdown, setHasBreakdown] = useState(false);
   const [generatingShotsFor, setGeneratingShotsFor] = useState<string | null>(null);
   const [scriptRawText, setScriptRawText] = useState<string>('');
+  const [technicalDocStatus, setTechnicalDocStatus] = useState<Record<string, 'draft' | 'approved' | 'locked' | null>>({});
   
   // Production Proposal flow state
   const [productionProposals, setProductionProposals] = useState<Map<string, ProductionProposal>>(new Map());
@@ -165,6 +167,24 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         setRenders(prev => ({ ...prev, ...rendersByShot }));
       }
     }
+    
+    // Fetch technical doc status for keyframes tab
+    fetchTechnicalDocStatus(sceneId);
+  };
+
+  const fetchTechnicalDocStatus = async (sceneId: string) => {
+    const { data } = await supabase
+      .from('scene_technical_docs')
+      .select('status')
+      .eq('scene_id', sceneId)
+      .order('version', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    setTechnicalDocStatus(prev => ({
+      ...prev,
+      [sceneId]: (data?.status as 'draft' | 'approved' | 'locked') || null
+    }));
   };
 
   useEffect(() => { 
@@ -1228,6 +1248,10 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                       <Badge variant="secondary" className="ml-1 text-xs">{shots[scene.id].length}</Badge>
                                     )}
                                   </TabsTrigger>
+                                  <TabsTrigger value="keyframes" className="gap-2">
+                                    <ImageIcon className="w-4 h-4" />
+                                    Keyframes
+                                  </TabsTrigger>
                                 </TabsList>
 
                                 {/* STORYBOARD TAB */}
@@ -1409,6 +1433,20 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                     <Sparkles className="w-4 h-4 text-primary mt-0.5" />
                                     <div className="text-xs"><p className="font-medium text-foreground">{t.scenes.sosTip}</p><p className="text-muted-foreground">{t.scenes.sosTipDesc}</p></div>
                                   </div>
+                                </TabsContent>
+
+                                {/* KEYFRAMES TAB */}
+                                <TabsContent value="keyframes" className="space-y-4">
+                                  <KeyframesPanel
+                                    sceneId={scene.id}
+                                    projectId={projectId}
+                                    sceneSlugline={scene.slugline}
+                                    sceneSummary={scene.summary || undefined}
+                                    technicalDocStatus={technicalDocStatus[scene.id] || null}
+                                    characters={characters.filter(c => scene.character_ids?.includes(c.id))}
+                                    location={locations.find(l => l.id === scene.location_id)}
+                                    visualStyle={visualStyle || undefined}
+                                  />
                                 </TabsContent>
                               </Tabs>
                             </div>
