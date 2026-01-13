@@ -557,41 +557,76 @@ serve(async (req) => {
       });
     }
 
-    // Parse request
-    const { outline_id, enrich_mode = 'all' } = await req.json();
+    // Parse request - support outline_id OR project_id (fallback)
+    const body = await req.json().catch(() => ({}));
+    const outline_id = body.outline_id ?? null;
+    const project_id = body.project_id ?? null;
+    const enrich_mode = body.enrich_mode ?? 'all';
 
-    if (!outline_id) {
-      return new Response(JSON.stringify({ error: 'Missing outline_id' }), {
+    let outlineRecord = null;
+
+    if (outline_id) {
+      // Preferred: use outline_id directly
+      const { data, error } = await supabase
+        .from('project_outlines')
+        .select('*')
+        .eq('id', outline_id)
+        .single();
+
+      if (error || !data) {
+        console.error('[outline-enrich] Outline not found:', { outline_id, error });
+        return new Response(JSON.stringify({ 
+          error: 'Outline not found', 
+          outline_id,
+          detail: error?.message 
+        }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      outlineRecord = data;
+    } else if (project_id) {
+      // Fallback: get latest outline for project
+      const { data, error } = await supabase
+        .from('project_outlines')
+        .select('*')
+        .eq('project_id', project_id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) {
+        console.error('[outline-enrich] Outline not found for project:', { project_id, error });
+        return new Response(JSON.stringify({ 
+          error: 'Outline not found for project',
+          project_id 
+        }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      outlineRecord = data;
+    } else {
+      return new Response(JSON.stringify({ error: 'Missing outline_id or project_id' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    // Load outline
-    const { data: outlineRecord, error: loadError } = await supabase
-      .from('script_outlines')
-      .select('*')
-      .eq('id', outline_id)
-      .single();
-
-    if (loadError || !outlineRecord) {
-      return new Response(JSON.stringify({ error: 'Outline not found' }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
+    // Use actual outline_id from record for all updates
+    const actualOutlineId = outlineRecord.id;
 
     const outline = outlineRecord.outline_json as any;
     
     // Update status to enriching
     await supabase
-      .from('script_outlines')
+      .from('project_outlines')
       .update({ 
         status: 'enriching',
         stage: 'enriching',
         progress: 10
       })
-      .eq('id', outline_id);
+      .eq('id', actualOutlineId);
 
     // Track what we need to enrich (using V11 validators)
     const outlineNeedsFactions = needsFactions(outline);
@@ -610,7 +645,7 @@ serve(async (req) => {
     if ((enrich_mode === 'all' || enrich_mode === 'factions') && outlineNeedsFactions) {
       console.log('[outline-enrich] Generating factions...');
       
-      await supabase.from('script_outlines').update({ progress: 25 }).eq('id', outline_id);
+      await supabase.from('project_outlines').update({ progress: 25 }).eq('id', actualOutlineId);
 
       const factionsPrompt = buildFactionsPrompt(outline);
       const factionsResult = await callLovableAI(
@@ -634,7 +669,7 @@ serve(async (req) => {
     if ((enrich_mode === 'all' || enrich_mode === 'entity_rules') && outlineNeedsEntityRules) {
       console.log('[outline-enrich] Generating entity rules...');
       
-      await supabase.from('script_outlines').update({ progress: 45 }).eq('id', outline_id);
+      await supabase.from('project_outlines').update({ progress: 45 }).eq('id', actualOutlineId);
 
       const entityRulesPrompt = buildEntityRulesPrompt(outline);
       const entityRulesResult = await callLovableAI(
@@ -658,7 +693,7 @@ serve(async (req) => {
     if ((enrich_mode === 'all' || enrich_mode === 'arc') && outlineNeedsArc5Hitos) {
       console.log('[outline-enrich] Completing 5-hitos season arc...');
       
-      await supabase.from('script_outlines').update({ progress: 60 }).eq('id', outline_id);
+      await supabase.from('project_outlines').update({ progress: 60 }).eq('id', actualOutlineId);
 
       const arcPrompt = buildSeasonArc5HitosPrompt(outline);
       const arcResult = await callLovableAI(
@@ -685,7 +720,7 @@ serve(async (req) => {
     if ((enrich_mode === 'all' || enrich_mode === 'setpieces') && outlineNeedsSetpieces) {
       console.log('[outline-enrich] Generating setpieces...');
       
-      await supabase.from('script_outlines').update({ progress: 70 }).eq('id', outline_id);
+      await supabase.from('project_outlines').update({ progress: 70 }).eq('id', actualOutlineId);
 
       const setpiecesPrompt = buildSetpiecesPrompt(outline);
       const setpiecesResult = await callLovableAI(
@@ -715,10 +750,10 @@ serve(async (req) => {
     if ((enrich_mode === 'all' || enrich_mode === 'threads') && outlineNeedsThreads) {
       console.log('[outline-enrich] Generating narrative threads (V11)...');
       
-      await supabase.from('script_outlines').update({ 
+      await supabase.from('project_outlines').update({ 
         progress: 80,
         stage: 'threads'
-      }).eq('id', outline_id);
+      }).eq('id', actualOutlineId);
 
       // Use V11 centralized prompt
       const threadsResult = await callLovableAI(
@@ -754,7 +789,7 @@ serve(async (req) => {
     const qualityLevel = enrichedOutline.threads?.length >= 5 ? 'threaded' : 'enriched';
     
     const { error: saveError } = await supabase
-      .from('script_outlines')
+      .from('project_outlines')
       .update({
         outline_json: enrichedOutline,
         quality: qualityLevel,
@@ -763,7 +798,7 @@ serve(async (req) => {
         progress: 100,
         updated_at: new Date().toISOString()
       })
-      .eq('id', outline_id);
+      .eq('id', actualOutlineId);
 
     if (saveError) {
       console.error('[outline-enrich] Save error:', saveError);
