@@ -133,12 +133,12 @@ export default function SceneEditDialog({
 
       if (error) throw error;
 
-      toast.success('Escena actualizada');
+      toast.success('Secuencia actualizada');
       onSaved();
       onOpenChange(false);
     } catch (err) {
       console.error('Error saving scene:', err);
-      toast.error('Error al guardar la escena');
+      toast.error('Error al guardar la secuencia');
     } finally {
       setSaving(false);
     }
@@ -150,9 +150,9 @@ export default function SceneEditDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Editar Escena {scene.scene_no}</DialogTitle>
+          <DialogTitle>Editar Secuencia {scene.scene_no}</DialogTitle>
           <DialogDescription>
-            Episodio {scene.episode_no} • Escena {scene.scene_no}
+            Episodio {scene.episode_no} • Secuencia {scene.scene_no}
           </DialogDescription>
         </DialogHeader>
 

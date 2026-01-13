@@ -99,7 +99,7 @@ const MENU_STRUCTURE = [
   { 
     id: 'scenes', 
     path: '/scenes', 
-    label: 'Escenas', 
+    label: 'Secuencias', 
     icon: Clapperboard, 
     requiresBible: true 
   },

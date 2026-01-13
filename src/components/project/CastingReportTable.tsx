@@ -66,7 +66,7 @@ function getConfidence(c: AnyObj): { level: "high" | "medium" | "low"; reason: s
   const hasDialogueBlock = !!c.has_dialogue_block || hasDialogue;
   
   if (hasDialogueBlock && hasScenes) {
-    return { level: "high", reason: `Diálogo: ${getDialogueLines(c)} líneas, ${getScenesCount(c)} escenas` };
+    return { level: "high", reason: `Diálogo: ${getDialogueLines(c)} líneas, ${getScenesCount(c)} secuencias` };
   }
   if (hasDialogue || hasSlugline) {
     return { level: "medium", reason: hasDialogue ? "Detectado en diálogo" : "Detectado en acción" };
@@ -80,7 +80,7 @@ function analyzeScriptCompleteness(payload: AnyObj): { level: ScriptCompleteness
   const chars = hydrateCharacters(payload);
   
   if (scenes.length === 0) {
-    return { level: "empty", details: "Sin escenas detectadas" };
+    return { level: "empty", details: "Sin secuencias detectadas" };
   }
   
   // Check for real sluglines (not placeholders)
@@ -201,7 +201,7 @@ export const CastingReportTable = forwardRef<HTMLDivElement, CastingReportTableP
   }, [scriptParsedJson, q, hideVoices, hideFeaturedExtras]);
 
   const exportCSV = () => {
-    const header = "Rank,Personaje,Líneas,%Total,Escenas,Rol,Confianza\n";
+    const header = "Rank,Personaje,Líneas,%Total,Secuencias,Rol,Confianza\n";
     const csv = rows.map(r => 
       `${r.rank},"${r.name}",${r.lines},${totalLines > 0 ? ((r.lines / totalLines) * 100).toFixed(1) : 0}%,${r.scenes},${r.role},${r.confidence}`
     ).join("\n");
@@ -237,14 +237,14 @@ export const CastingReportTable = forwardRef<HTMLDivElement, CastingReportTableP
             <AlertDescription className="text-amber-700 dark:text-amber-300 space-y-3">
               <p className="text-sm">
                 <strong>¿Por qué ves estimaciones?</strong> Tu guion actual contiene descripciones generales 
-                de escenas (outline), pero no tiene los diálogos escritos línea por línea.
+                de secuencias (outline), pero no tiene los diálogos escritos línea por línea.
               </p>
               <div>
                 <p className="text-sm font-medium mb-1">¿Qué significan los datos?</p>
                 <ul className="list-disc list-inside text-xs space-y-0.5 ml-1 text-amber-600 dark:text-amber-400">
                   <li><strong>Líneas = 0:</strong> El personaje aparece pero no tiene diálogos escritos</li>
                   <li><strong>% = 0%:</strong> Sin diálogos, no hay peso calculable</li>
-                  <li><strong>Escenas:</strong> Este dato SÍ es preciso (detectado del outline)</li>
+                  <li><strong>Secuencias:</strong> Este dato SÍ es preciso (detectado del outline)</li>
                   <li><strong>Rol:</strong> Estimado por frecuencia, puede cambiar con diálogos reales</li>
                 </ul>
               </div>
@@ -330,7 +330,7 @@ export const CastingReportTable = forwardRef<HTMLDivElement, CastingReportTableP
                 <TableHead>Personaje</TableHead>
                 <TableHead className="w-24 text-center">Líneas</TableHead>
                 <TableHead className="w-20 text-center">%</TableHead>
-                <TableHead className="w-24 text-center">Escenas</TableHead>
+                <TableHead className="w-24 text-center">Secuencias</TableHead>
                 <TableHead className="w-40">Rol</TableHead>
                 <TableHead className="w-16 text-center">
                   <Tooltip>

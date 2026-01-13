@@ -32,7 +32,7 @@ const STEPS: StepConfig[] = [
   { key: 'script', label: 'Guion', icon: <FileText className="w-4 h-4" />, path: 'script' },
   { key: 'characters', label: 'Personajes', icon: <Users className="w-4 h-4" />, path: 'characters' },
   { key: 'locations', label: 'Localizaciones', icon: <MapPin className="w-4 h-4" />, path: 'locations' },
-  { key: 'scenes', label: 'Escenas', icon: <Film className="w-4 h-4" />, path: 'scenes' },
+  { key: 'scenes', label: 'Secuencias', icon: <Film className="w-4 h-4" />, path: 'scenes' },
 ];
 
 interface NextStepNavigatorProps {
