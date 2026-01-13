@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef, useRef } from 'react';
+import { useState, useEffect, forwardRef, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { invokeWithTimeout, InvokeFunctionError } from '@/lib/supabaseFetchWithTimeout';
@@ -30,6 +30,8 @@ import { toast } from 'sonner';
 
 import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
 import { CastingReportTable } from './CastingReportTable';
+import OutlineWizardV11 from './OutlineWizardV11';
+import ThreadsDisplay from './ThreadsDisplay';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { 
   FileText, 
@@ -83,6 +85,7 @@ import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, QualityTier, QUALITY_TIERS } from '@/lib/autoTargets';
+import { type QCStatus, STAGE_CONFIG } from '@/lib/qcUtils';
 
 // Helper to migrate legacy quality tier values to new system
 function migrateQualityTier(tier: string): QualityTier {
@@ -311,6 +314,140 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
   const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
+  
+  // V11: QC Status for visual gating
+  const qcStatus = useMemo<QCStatus | null>(() => {
+    if (!lightOutline) return null;
+    
+    // Calculate pipeline stage
+    const getPipelineStageLocal = (): 'light' | 'operational' | 'threaded' | 'showrunner' => {
+      const quality = outlinePersistence.savedOutline?.quality;
+      if (quality === 'showrunner') return 'showrunner';
+      
+      const threads = lightOutline.threads as unknown[];
+      const episodes = lightOutline.episode_beats as Array<Record<string, unknown>>;
+      
+      const hasValidThreads = Array.isArray(threads) && threads.length >= 5 && threads.length <= 8;
+      const hasAllThreadUsage = Array.isArray(episodes) && episodes.every((ep: any) => {
+        const tu = ep.thread_usage as Record<string, unknown>;
+        return tu?.A && typeof tu?.crossover_event === 'string' && (tu.crossover_event as string).length >= 12;
+      });
+      
+      if (hasValidThreads && hasAllThreadUsage) return 'threaded';
+      
+      // Check operational
+      const factions = lightOutline.factions as unknown[];
+      const hasFactions = Array.isArray(factions) && factions.length >= 2;
+      
+      const arc = lightOutline.season_arc as Record<string, unknown> || {};
+      const has5Hitos = Boolean(
+        arc.inciting_incident && arc.first_turn && arc.midpoint_reversal &&
+        arc.all_is_lost && arc.final_choice
+      );
+      
+      const hasSetpieces = Array.isArray(episodes) && episodes.every((ep: any) => {
+        const sp = ep?.setpiece;
+        return sp?.stakes && sp?.participants?.length > 0;
+      });
+      
+      if (hasFactions && has5Hitos && hasSetpieces) return 'operational';
+      
+      return 'light';
+    };
+    
+    // Calculate blockers (simplified client-side version)
+    const calculateBlockers = (): string[] => {
+      const blockers: string[] = [];
+      const arc = lightOutline.season_arc as Record<string, unknown> || {};
+      const episodes = lightOutline.episode_beats as Array<Record<string, unknown>> || [];
+      const expectedEps = episodesCount || episodes.length || 6;
+      
+      // Season arc hitos
+      if (!arc.inciting_incident) blockers.push('SEASON_ARC:inciting_incident_missing');
+      if (!arc.first_turn) blockers.push('SEASON_ARC:first_turn_missing');
+      if (!arc.midpoint_reversal) blockers.push('SEASON_ARC:midpoint_reversal_missing');
+      if (!arc.all_is_lost) blockers.push('SEASON_ARC:all_is_lost_missing');
+      if (!arc.final_choice) blockers.push('SEASON_ARC:final_choice_missing');
+      
+      // Episodes count
+      if (episodes.length !== expectedEps) {
+        blockers.push(`EPISODES:${episodes.length}/${expectedEps}`);
+      }
+      
+      // Per-episode checks
+      episodes.forEach((ep: any, idx: number) => {
+        const epN = ep.episode ?? idx + 1;
+        
+        // Turning points
+        const tps = ep.turning_points;
+        if (!Array.isArray(tps) || tps.length < 4) {
+          blockers.push(`EP${epN}:turning_points_${Array.isArray(tps) ? tps.length : 0}/4`);
+        } else {
+          tps.forEach((tp: any, j: number) => {
+            if (typeof tp === 'string') {
+              blockers.push(`EP${epN}_TP${j + 1}:is_string_must_be_object`);
+            }
+          });
+        }
+        
+        // Setpiece
+        const sp = ep.setpiece;
+        if (!sp?.stakes || !sp?.participants?.length) {
+          blockers.push(`EP${epN}:setpiece_invalid`);
+        }
+        
+        // Cliffhanger
+        if (typeof ep.cliffhanger !== 'string' || ep.cliffhanger.length < 12) {
+          blockers.push(`EP${epN}:cliffhanger_missing`);
+        }
+        
+        // Thread usage
+        const tu = ep.thread_usage;
+        if (!tu?.A || typeof tu?.crossover_event !== 'string' || tu.crossover_event.length < 12) {
+          blockers.push(`EP${epN}:thread_usage_invalid`);
+        }
+      });
+      
+      return blockers;
+    };
+    
+    // Calculate warnings
+    const calculateWarnings = (): string[] => {
+      const warnings: string[] = [];
+      const threads = lightOutline.threads as unknown[];
+      const factions = lightOutline.factions as unknown[];
+      
+      if (!Array.isArray(threads) || threads.length < 5) {
+        warnings.push('threads:needs_5-8');
+      }
+      if (!Array.isArray(factions) || factions.length < 2) {
+        warnings.push('factions:less_than_2');
+      }
+      
+      return warnings;
+    };
+    
+    const pipelineStage = getPipelineStageLocal();
+    const blockers = calculateBlockers();
+    const warnings = calculateWarnings();
+    
+    // Calculate score
+    let score = 100;
+    score -= blockers.length * 5;
+    score -= warnings.length * 2;
+    score = Math.max(0, Math.min(100, score));
+    
+    // Can generate episodes only if threaded/showrunner AND no blockers
+    const canGenerateEpisodes = (pipelineStage === 'threaded' || pipelineStage === 'showrunner') && blockers.length === 0;
+    
+    return {
+      pipelineStage,
+      blockers,
+      warnings,
+      score,
+      canGenerateEpisodes,
+    };
+  }, [lightOutline, outlinePersistence.savedOutline?.quality, episodesCount]);
 
   // File upload for import tab
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -3926,6 +4063,60 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     ))}
                   </div>
                 </div>
+                
+                {/* V11: Threads Display */}
+                {lightOutline?.threads?.length > 0 && (
+                  <ThreadsDisplay 
+                    threads={lightOutline.threads} 
+                    episodeBeats={lightOutline.episode_beats}
+                  />
+                )}
+
+                {/* V11: Outline Wizard with QC Gating */}
+                <OutlineWizardV11
+                  outline={lightOutline}
+                  qcStatus={qcStatus}
+                  isEnriching={enrichingOutline}
+                  isUpgrading={upgradingOutline}
+                  isPipelineRunning={pipelineRunning}
+                  onEnrich={async () => {
+                    if (!outlinePersistence.savedOutline?.id) return;
+                    setEnrichingOutline(true);
+                    try {
+                      const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                        outline_id: outlinePersistence.savedOutline.id
+                      });
+                      if (error) throw error;
+                      await outlinePersistence.refreshOutline();
+                      if (data?.outline) setLightOutline(data.outline);
+                      toast.success('Outline enriquecido con facciones, reglas y setpieces');
+                    } catch (err) {
+                      toast.error('Error al enriquecer: ' + (err as Error).message);
+                    } finally {
+                      setEnrichingOutline(false);
+                    }
+                  }}
+                  onThreads={async () => {
+                    if (!outlinePersistence.savedOutline?.id) return;
+                    setEnrichingOutline(true);
+                    try {
+                      const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                        outline_id: outlinePersistence.savedOutline.id,
+                        enrich_mode: 'threads'
+                      });
+                      if (error) throw error;
+                      await outlinePersistence.refreshOutline();
+                      if (data?.outline) setLightOutline(data.outline);
+                      toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
+                    } catch (err) {
+                      toast.error('Error al generar threads: ' + (err as Error).message);
+                    } finally {
+                      setEnrichingOutline(false);
+                    }
+                  }}
+                  onShowrunner={handleUpgradeToShowrunner}
+                  onGenerateEpisodes={approveAndGenerateEpisodes}
+                />
 
                 {/* Time Warning */}
                 <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
@@ -3943,17 +4134,26 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Legacy Action Buttons (hidden by default, wizard handles this) */}
                 <div className="flex flex-wrap gap-3 pt-4 border-t">
                   <Button 
                     variant="gold" 
                     size="lg"
                     className="flex-1 min-w-[200px]"
                     onClick={approveAndGenerateEpisodes}
-                    disabled={pipelineRunning || upgradingOutline}
+                    disabled={pipelineRunning || upgradingOutline || !qcStatus?.canGenerateEpisodes}
                   >
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    ✅ Aprobar y Generar Episodios
+                    {qcStatus?.canGenerateEpisodes ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        ✅ Aprobar y Generar Episodios
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-4 h-4 mr-2" />
+                        🔒 Completa el outline primero
+                      </>
+                    )}
                   </Button>
                   
                   {/* Showrunner Upgrade Button - Only show if not already showrunner */}

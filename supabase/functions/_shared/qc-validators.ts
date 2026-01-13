@@ -113,6 +113,67 @@ export function needsSetpieces(outline: Record<string, unknown> | null): boolean
 }
 
 // ============================================================================
+// PIPELINE STAGE DETECTOR (for V11 UI)
+// ============================================================================
+
+export type PipelineStage = 'light' | 'operational' | 'threaded' | 'showrunner';
+
+/**
+ * Determine the current pipeline stage of an outline
+ * Used by frontend to show correct badge and suggest next action
+ */
+export function getPipelineStage(outline: Record<string, unknown> | null): PipelineStage {
+  if (!outline) return 'light';
+  
+  // Check for showrunner quality marker
+  const meta = outline.meta as Record<string, unknown> | undefined;
+  const quality = meta?.quality ?? outline.quality;
+  if (quality === 'showrunner') return 'showrunner';
+  
+  // Check for threaded: needs 5-8 threads AND thread_usage in all episodes
+  const threads = outline.threads as unknown[];
+  const episodes = outline.episode_beats as Array<Record<string, unknown>>;
+  
+  const hasValidThreads = Array.isArray(threads) && threads.length >= 5 && threads.length <= 8;
+  const hasAllThreadUsage = Array.isArray(episodes) && episodes.every((ep) => {
+    const tu = ep.thread_usage as Record<string, unknown>;
+    return tu?.A && typeof tu?.crossover_event === 'string' && (tu.crossover_event as string).length >= 12;
+  });
+  
+  if (hasValidThreads && hasAllThreadUsage) {
+    return 'threaded';
+  }
+  
+  // Check for operational: factions >= 2 AND 5 hitos AND setpieces valid
+  const factions = outline.factions as unknown[];
+  const hasFactions = Array.isArray(factions) && factions.length >= 2;
+  const has5Hitos = !needs5Hitos(outline);
+  const hasSetpieces = !needsSetpieces(outline);
+  
+  // Also check entity_rules if entities are detected
+  const hasEntityRules = !needsEntityRules(outline);
+  
+  if (hasFactions && has5Hitos && hasSetpieces && hasEntityRules) {
+    return 'operational';
+  }
+  
+  return 'light';
+}
+
+/**
+ * Quick check if outline can generate episodes (for frontend gating)
+ */
+export function canGenerateEpisodes(outline: Record<string, unknown> | null, expectedEpisodes: number): boolean {
+  if (!outline) return false;
+  
+  const stage = getPipelineStage(outline);
+  if (stage !== 'threaded' && stage !== 'showrunner') return false;
+  
+  const qc = runStructuralQC(outline, expectedEpisodes);
+  return qc.passed;
+}
+
+// ============================================================================
 // GENERIC PHRASE DETECTOR (anti-vagueness)
 // ============================================================================
 
