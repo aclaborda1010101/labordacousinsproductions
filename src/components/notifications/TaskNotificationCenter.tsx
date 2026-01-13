@@ -100,9 +100,17 @@ function TaskItem({ task, onRemove, onCancel }: { task: BackgroundTask; onRemove
             <div className="mt-2">
               <Progress value={task.progress} className="h-1.5" />
               <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-muted-foreground">
-                  {task.progress}% completado
-                </p>
+                <div className="flex flex-col">
+                  <p className="text-xs text-muted-foreground">
+                    {task.progress}% completado
+                  </p>
+                  {/* V49: Show ETA for script generation tasks */}
+                  {task.type === 'script_generation' && task.metadata?.totalEpisodes && (
+                    <p className="text-[10px] text-primary/70 font-medium">
+                      {task.metadata.totalEpisodes} {task.metadata.totalEpisodes === 1 ? 'episodio' : 'episodios'} • {task.metadata.qualityTier || 'profesional'}
+                    </p>
+                  )}
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -132,12 +140,18 @@ function TaskItem({ task, onRemove, onCancel }: { task: BackgroundTask; onRemove
           )}
           
           {task.status === 'completed' && (
-            <p className="text-xs text-green-600 mt-1">
-              Completado {formatDistanceToNow(new Date(task.completedAt || task.updatedAt), { 
+            <div className="text-xs text-green-600 mt-1">
+              <span>Completado {formatDistanceToNow(new Date(task.completedAt || task.updatedAt), { 
                 addSuffix: true, 
                 locale: es 
-              })}
-            </p>
+              })}</span>
+              {/* V49: Show script generation results */}
+              {task.type === 'script_generation' && task.result?.scenesCount && (
+                <span className="ml-1 text-green-500/80">
+                  • {task.result.episodesGenerated}/{task.result.totalEpisodes} eps, {task.result.scenesCount} escenas
+                </span>
+              )}
+            </div>
           )}
           
           {task.description && expanded && (

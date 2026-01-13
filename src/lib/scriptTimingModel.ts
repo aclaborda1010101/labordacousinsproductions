@@ -143,5 +143,71 @@ export function formatDurationMs(ms: number): string {
   return `~${hours}h ${remMin}m`;
 }
 
+/**
+ * Estimate total script generation time for the full pipeline.
+ * Includes episodes + dialogues + teasers + save overhead.
+ */
+export function estimateFullScriptMs(
+  model: ScriptTimingModelV2,
+  params: {
+    episodesCount: number;
+    batchesPerEpisode: number;
+    complexity: ScriptTimingComplexity;
+  }
+): number {
+  const { episodesCount, batchesPerEpisode, complexity } = params;
+  const perBatchMs = estimateBatchMs(model, complexity);
+  const totalBatches = episodesCount * batchesPerEpisode;
+  
+  // Episode generation: ~75% of total time
+  const episodesMs = totalBatches * perBatchMs;
+  
+  // Dialogue generation: ~15% of total time (1 call per episode)
+  const dialoguesMs = episodesCount * 8000; // ~8s per episode for dialogues
+  
+  // Teasers + save: ~10% overhead
+  const overheadMs = 5000;
+  
+  return episodesMs + dialoguesMs + overheadMs;
+}
+
+/**
+ * Calculate estimated remaining time based on current progress.
+ */
+export function estimateRemainingMs(
+  model: ScriptTimingModelV2,
+  params: {
+    totalBatches: number;
+    completedBatches: number;
+    complexity: ScriptTimingComplexity;
+    currentBatchStartedAt?: number;
+    phase: 'episodes' | 'dialogues' | 'teasers' | 'save';
+  }
+): number {
+  const { totalBatches, completedBatches, complexity, currentBatchStartedAt, phase } = params;
+  const perBatchMs = estimateBatchMs(model, complexity);
+  
+  if (phase === 'save') return 2000;
+  if (phase === 'teasers') return 4000;
+  if (phase === 'dialogues') return 8000;
+  
+  // Episodes phase
+  const remainingBatches = Math.max(0, totalBatches - completedBatches);
+  const remainingBatchesMs = remainingBatches * perBatchMs;
+  
+  // Account for current batch progress
+  const elapsedCurrent = currentBatchStartedAt 
+    ? Math.max(0, Date.now() - currentBatchStartedAt) 
+    : 0;
+  const remainingCurrent = Math.max(0, perBatchMs - elapsedCurrent);
+  
+  // Add phases after episodes
+  const dialoguesMs = Math.ceil(totalBatches / 3) * 8000; // Approx episodes
+  const teasersMs = 4000;
+  const saveMs = 2000;
+  
+  return remainingCurrent + (remainingBatches > 0 ? remainingBatchesMs - perBatchMs : 0) + dialoguesMs + teasersMs + saveMs;
+}
+
 // Export V2 as V1 for backwards compat
 export type ScriptTimingModelV1 = ScriptTimingModelV2;
