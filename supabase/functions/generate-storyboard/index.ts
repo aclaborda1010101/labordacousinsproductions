@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { buildTokenLimit } from "../_shared/model-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -328,7 +329,7 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
           { role: "user", content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 12000,
+        ...buildTokenLimit("openai/gpt-5.2", 12000),
         response_format: { type: "json_object" },
       }),
     });
