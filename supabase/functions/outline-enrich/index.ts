@@ -40,6 +40,9 @@ async function callLovableAI(
     throw new Error("LOVABLE_API_KEY not configured");
   }
 
+  // Use max_completion_tokens for OpenAI models (GPT-5.x)
+  const tokenField = model.startsWith('openai/') ? 'max_completion_tokens' : 'max_tokens';
+  
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -48,7 +51,7 @@ async function callLovableAI(
     },
     body: JSON.stringify({
       model,
-      max_tokens: maxTokens,
+      [tokenField]: maxTokens,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }

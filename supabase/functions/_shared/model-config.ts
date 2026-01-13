@@ -194,3 +194,45 @@ export function getRetryChunkSize(originalSize: number, attempt: number): number
   }
   return originalSize;
 }
+
+// =============================================================================
+// TOKEN FIELD HELPER (OpenAI vs otros proveedores)
+// =============================================================================
+
+/**
+ * Returns the correct token limit field name based on model provider.
+ * OpenAI GPT-5.x models require "max_completion_tokens" (NOT max_tokens).
+ * Other providers (Gemini, Claude) still use "max_tokens".
+ */
+export function getMaxTokensField(model: string): 'max_completion_tokens' | 'max_tokens' {
+  if (model.startsWith('openai/')) {
+    return 'max_completion_tokens';
+  }
+  return 'max_tokens';
+}
+
+/**
+ * Build the token limit object for AI request body.
+ * Use this instead of hardcoding max_tokens to ensure compatibility.
+ * 
+ * @example
+ * const payload = {
+ *   model,
+ *   messages,
+ *   ...buildTokenLimit(model, 4000),
+ * };
+ */
+export function buildTokenLimit(model: string, maxTokens: number): Record<string, number> {
+  const field = getMaxTokensField(model);
+  return { [field]: maxTokens };
+}
+
+/**
+ * Runtime guard - throws if max_tokens is used with OpenAI model.
+ * Add this before fetch() calls during development to catch misconfigurations.
+ */
+export function validateTokenPayload(model: string, payload: any): void {
+  if (model.startsWith('openai/') && payload.max_tokens !== undefined) {
+    throw new Error(`FATAL: OpenAI model "${model}" requires max_completion_tokens, not max_tokens. Fix the API call.`);
+  }
+}
