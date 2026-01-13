@@ -991,6 +991,19 @@ serve(async (req) => {
       );
     }
 
+    // V11.1: Hard fail if projectId is missing - prevents silent Bible injection failures
+    if (!projectId) {
+      clearTimeout(timeoutId);
+      console.error('[generate-script] CRITICAL: projectId is undefined - Bible cannot be injected');
+      return new Response(
+        JSON.stringify({ 
+          error: 'PROJECT_ID_MISSING', 
+          message: 'projectId es requerido para inyección de Bible. Los scripts sin Bible tienen calidad degradada.'
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const config = TIER_CONFIGS[qualityTier as QualityTier] || TIER_CONFIGS.profesional;
     
     console.log('[generate-script] v3.1 CANONICAL ROUTER + BIBLE:', {
@@ -1267,7 +1280,14 @@ IDIOMA: ${language}
         console.log('[generate-script] Script QC:', getQCSummary(scriptQC));
         
         if (!scriptQC.passed) {
-          console.warn('[generate-script] Script QC FAILED:', scriptQC.blockers);
+          // V11.1: QC failure is a WARNING not a blocker - we still return the script
+          // The frontend should mark it as 'degraded' and offer repair options
+          console.warn('[generate-script] Script QC FAILED (proceeding with degraded quality):', {
+            score: scriptQC.score,
+            blockers: scriptQC.blockers,
+            threads_coverage: scriptQC.threads_coverage?.coverage_percent || 0,
+            missing_threads: scriptQC.threads_coverage?.missing || []
+          });
         }
       } catch (qcError) {
         console.warn('[generate-script] Script QC failed to run:', qcError);
