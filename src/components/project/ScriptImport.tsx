@@ -360,7 +360,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const blockers: string[] = [];
       const arc = lightOutline.season_arc as Record<string, unknown> || {};
       const episodes = lightOutline.episode_beats as Array<Record<string, unknown>> || [];
-      const expectedEps = episodesCount || episodes.length || 6;
+      // Use outline's episode_count as source of truth, fallback to actual episodes length
+      const outlineEpisodeCount = lightOutline.episode_count as number | undefined;
+      const expectedEps = outlineEpisodeCount || episodes.length;
       
       // Season arc hitos
       if (!arc.inciting_incident) blockers.push('SEASON_ARC:inciting_incident_missing');
@@ -369,9 +371,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (!arc.all_is_lost) blockers.push('SEASON_ARC:all_is_lost_missing');
       if (!arc.final_choice) blockers.push('SEASON_ARC:final_choice_missing');
       
-      // Episodes count
-      if (episodes.length !== expectedEps) {
-        blockers.push(`EPISODES:${episodes.length}/${expectedEps}`);
+      // Episodes count - only block if explicitly defined and mismatched
+      if (outlineEpisodeCount && episodes.length !== outlineEpisodeCount) {
+        blockers.push(`EPISODES:${episodes.length}/${outlineEpisodeCount}`);
       }
       
       // Per-episode checks
