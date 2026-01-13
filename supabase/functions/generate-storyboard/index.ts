@@ -395,12 +395,15 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
       characters_present: panel.characters_present?.map(c => c.character_id) || [],
       props_present: panel.props_present?.map(p => p.prop_id) || [],
       staging: {
+        schema_version: "1.0",
         movement_arrows: panel.movement_arrows || [],
         spatial_info: panel.spatial_info || {},
       },
       continuity: {
+        schema_version: "1.0",
         visual_dna_lock_ids: character_refs.map(c => c.id),
         must_match_previous: idx > 0,
+        axis_locked: panel.spatial_info?.axis_locked || false,
       },
       image_url: null,
       approved: false,

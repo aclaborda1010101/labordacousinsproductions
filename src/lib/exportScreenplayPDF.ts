@@ -509,7 +509,7 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: Export
     
     if (scenesArray.length === 0) {
       // No scenes - write placeholder
-      writeAction('(Episodio sin escenas generadas - regenere el contenido)');
+      writeAction('(Episodio sin secuencias generadas - regenere el contenido)');
     }
     
     for (const scene of scenesArray) {
@@ -544,7 +544,7 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: Export
         
         // Total scene duration
         currentY += LINE_HEIGHT / 2;
-        writeLine(`DURACIÓN ESCENA: ${runningTime}s`, MARGIN_LEFT, { bold: true, fontSize: 10 });
+        writeLine(`DURACIÓN SECUENCIA: ${runningTime}s`, MARGIN_LEFT, { bold: true, fontSize: 10 });
       } else {
         // Fallback: standard screenplay format (action + dialogue)
         const actionText = scene.action || scene.description || scene.summary || '';
@@ -596,7 +596,7 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: Export
       const totalDialogueLines = chars.reduce((sum: number, c: any) => sum + getDialogueLines(c), 0);
       doc.setFont('Courier', 'normal');
       doc.setFontSize(11);
-      writeLine(`Total Personajes: ${chars.length} | Escenas: ${scenes.length} | Localizaciones: ${locs.length} | Líneas de Diálogo: ${totalDialogueLines}`, MARGIN_LEFT, { fontSize: 11 });
+      writeLine(`Total Personajes: ${chars.length} | Secuencias: ${scenes.length} | Localizaciones: ${locs.length} | Líneas de Diálogo: ${totalDialogueLines}`, MARGIN_LEFT, { fontSize: 11 });
       currentY += LINE_HEIGHT;
       
       // Separator
@@ -617,7 +617,7 @@ export function exportScreenplayPDF(screenplay: ScreenplayData, options?: Export
       xPos += colWidths.role;
       doc.text('LÍNEAS', xPos, currentY);
       xPos += colWidths.lines;
-      doc.text('ESCENAS', xPos, currentY);
+      doc.text('SECUENCIAS', xPos, currentY);
       xPos += colWidths.scenes;
       doc.text('CONFIANZA', xPos, currentY);
       currentY += LINE_HEIGHT;

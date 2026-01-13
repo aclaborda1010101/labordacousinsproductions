@@ -48,6 +48,7 @@ export function StoryboardPanelView({
   const [generating, setGenerating] = useState(false);
   const [editingPanel, setEditingPanel] = useState<string | null>(null);
   const [allApproved, setAllApproved] = useState(false);
+  const [selectedStyle, setSelectedStyle] = useState<'GRID_SHEET_V1' | 'TECH_PAGE_V1'>('GRID_SHEET_V1');
 
   // Fetch existing panels
   useEffect(() => {
@@ -79,22 +80,24 @@ export function StoryboardPanelView({
   const generateStoryboard = async () => {
     setGenerating(true);
     try {
+      const panelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
       const { data, error } = await supabase.functions.invoke('generate-storyboard', {
         body: {
           scene_id: sceneId,
           project_id: projectId,
           scene_text: sceneText,
           visual_style: visualStyle,
+          storyboard_style: selectedStyle,
           character_refs: characterRefs,
           location_ref: locationRef,
-          panel_count: 8,
+          panel_count: panelCount,
         },
       });
 
       if (error) throw error;
       if (!data?.success) throw new Error(data?.error || 'Generation failed');
 
-      toast.success(`Generados ${data.panels?.length || 0} paneles de storyboard`);
+      toast.success(`Generados ${data.panels?.length || 0} paneles (${selectedStyle === 'GRID_SHEET_V1' ? 'Lámina' : 'Técnico'})`);
       await fetchPanels();
     } catch (err) {
       console.error('Error generating storyboard:', err);
@@ -223,21 +226,18 @@ export function StoryboardPanelView({
           </Badge>
         </div>
         <div className="flex items-center gap-2">
-          {/* Style Selector - only one option active for now */}
-          <Select defaultValue="pencil_storyboard" disabled>
-            <SelectTrigger className="w-44 h-8 text-xs">
+          {/* Style Selector - GRID_SHEET vs TECH_PAGE */}
+          <Select value={selectedStyle} onValueChange={(v) => setSelectedStyle(v as 'GRID_SHEET_V1' | 'TECH_PAGE_V1')}>
+            <SelectTrigger className="w-52 h-8 text-xs">
               <Pencil className="w-3 h-3 mr-1" />
               <SelectValue placeholder="Estilo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="pencil_storyboard">
-                Storyboard clásico (lápiz)
+              <SelectItem value="GRID_SHEET_V1">
+                🎨 Lámina multipanel (6-9)
               </SelectItem>
-              <SelectItem value="concept_art" disabled>
-                Concept art (próximamente)
-              </SelectItem>
-              <SelectItem value="animatic" disabled>
-                Animatic (próximamente)
+              <SelectItem value="TECH_PAGE_V1">
+                📋 Hoja técnica (4-6)
               </SelectItem>
             </SelectContent>
           </Select>

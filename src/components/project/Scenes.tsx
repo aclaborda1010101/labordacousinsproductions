@@ -32,6 +32,7 @@ import { KeyframesPanel } from './KeyframesPanel';
 import { SceneScreenplayView } from './SceneScreenplayView';
 import { ScenePipelineStepper } from './ScenePipelineStepper';
 import { PipelineGateOverlay } from './PipelineGateOverlay';
+import { CameraPlanTab } from './CameraPlanTab';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -380,7 +381,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
     const scenesToDuplicate = scenesByEpisode[fromEp] || [];
     if (scenesToDuplicate.length === 0) {
-      toast.error('El episodio origen no tiene escenas');
+      toast.error('El episodio origen no tiene secuencias');
       return;
     }
 
@@ -434,7 +435,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         nextSceneNo++;
       }
 
-      toast.success(`${scenesToDuplicate.length} escenas duplicadas al Episodio ${toEp}`);
+      toast.success(`${scenesToDuplicate.length} secuencias duplicadas al Episodio ${toEp}`);
       setShowDuplicateDialog(false);
       setExpandedEpisodes(prev => new Set(prev).add(toEp));
       fetchScenes();
@@ -579,7 +580,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
         }
       }
 
-      toast.success(`${updatedCount} escenas sincronizadas. Generando propuestas de producción...`);
+      toast.success(`${updatedCount} secuencias sincronizadas. Generando propuestas de producción...`);
       await fetchScenes();
 
       // GENERATE PRODUCTION PROPOSALS using shot-suggest (NOT inserting shots yet)
@@ -1158,7 +1159,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
             <p className="text-muted-foreground mb-4">{t.scenes.noScenes}</p>
             <Button variant="gold" onClick={() => setShowAIDialog(true)}>
               <Wand2 className="w-4 h-4 mr-2" />
-              Generar escenas con IA
+              Generar secuencias con IA
             </Button>
           </div>
         ) : (
@@ -1200,7 +1201,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                           {isTeaser ? `🎬 ${teaserLabel}` : `Episodio ${episodeNo}`}
                         </h3>
                         <p className="text-sm text-muted-foreground">
-                          {episodeScenes.length} escenas • {episodeScenes.reduce((sum, s) => sum + (shots[s.id]?.length || 0), 0)} shots
+                          {episodeScenes.length} secuencias • {episodeScenes.reduce((sum, s) => sum + (shots[s.id]?.length || 0), 0)} shots
                         </p>
                       </div>
                       {/* Duration counter */}
@@ -1236,8 +1237,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                   <div className="p-4 space-y-3 bg-muted/10">
                     {episodeScenes.length === 0 ? (
                       <div className="text-center py-6 text-muted-foreground">
-                        <p className="mb-2">No hay escenas en este episodio</p>
-                        <p className="text-xs">Importa un guión o añade escenas manualmente</p>
+                        <p className="mb-2">No hay secuencias en este episodio</p>
+                        <p className="text-xs">Importa un guión o añade secuencias manualmente</p>
                       </div>
                     ) : (
                       episodeScenes.map(scene => (
@@ -1287,6 +1288,26 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                       >
                                         <FileText className="w-4 h-4" />
                                         Doc. Técnico
+                                        {!storyboardApproved[scene.id] && (
+                                          <Lock className="w-3 h-3 text-muted-foreground ml-1" />
+                                        )}
+                                      </TabsTrigger>
+                                    </TooltipTrigger>
+                                    {!storyboardApproved[scene.id] && (
+                                      <TooltipContent>
+                                        <p>Primero aprueba el Storyboard</p>
+                                      </TooltipContent>
+                                    )}
+                                  </Tooltip>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <TabsTrigger 
+                                        value="camera_plan" 
+                                        className="gap-2"
+                                        disabled={!storyboardApproved[scene.id]}
+                                      >
+                                        <Video className="w-4 h-4" />
+                                        Camera Plan
                                         {!storyboardApproved[scene.id] && (
                                           <Lock className="w-3 h-3 text-muted-foreground ml-1" />
                                         )}
@@ -1353,6 +1374,26 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                       return loc ? { name: loc.name, image_url: (loc.reference_urls as any)?.[0] } : undefined;
                                     })() : undefined}
                                   />
+                                </TabsContent>
+
+                                {/* CAMERA PLAN TAB - NEW */}
+                                <TabsContent value="camera_plan" className="space-y-4">
+                                  {!storyboardApproved[scene.id] ? (
+                                    <PipelineGateOverlay
+                                      message="Primero aprueba al menos 1 panel del Storyboard para desbloquear el Camera Plan"
+                                      action="Ir a Storyboard"
+                                      onAction={() => setActiveSceneTab(prev => ({...prev, [scene.id]: 'storyboard'}))}
+                                    />
+                                  ) : (
+                                    <CameraPlanTab
+                                      sceneId={scene.id}
+                                      projectId={projectId}
+                                      sceneSlugline={scene.slugline}
+                                      onApproved={() => {
+                                        fetchTechnicalDocStatus(scene.id);
+                                      }}
+                                    />
+                                  )}
                                 </TabsContent>
 
                                 {/* TECHNICAL DOC TAB */}

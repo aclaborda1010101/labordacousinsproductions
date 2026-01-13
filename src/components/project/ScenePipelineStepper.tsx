@@ -114,6 +114,15 @@ export function ScenePipelineStepper({ sceneId, projectId }: ScenePipelineSteppe
         : `${status.storyboard.approved}/${status.storyboard.total} aprobados`,
     },
     {
+      id: 'camera_plan',
+      label: 'Camera Plan',
+      emoji: '🎥',
+      status: status.storyboard.status !== 'done' ? 'locked' : 'pending',
+      detail: status.storyboard.status !== 'done' 
+        ? 'Requiere Storyboard' 
+        : 'Lista de planos',
+    },
+    {
       id: 'technical',
       label: 'Técnico',
       emoji: '📋',

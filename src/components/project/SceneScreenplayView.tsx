@@ -75,7 +75,7 @@ export function SceneScreenplayView({
           
           if (scene) {
             setSceneData({
-              slugline: scene.slugline || slugline || `ESCENA ${sceneNo}`,
+              slugline: scene.slugline || slugline || `SECUENCIA ${sceneNo}`,
               action: scene.action || scene.description || '',
               summary: scene.summary || scene.action_summary || '',
               dialogues: (scene.dialogue || scene.dialogues || []).map((d: any) => ({
@@ -104,7 +104,7 @@ export function SceneScreenplayView({
         if (sceneRow) {
           const parsedJson = sceneRow.parsed_json as any;
           setSceneData({
-            slugline: sceneRow.slugline || `ESCENA ${sceneNo}`,
+            slugline: sceneRow.slugline || `SECUENCIA ${sceneNo}`,
             action: parsedJson?.action || '',
             summary: sceneRow.summary || '',
             dialogues: (parsedJson?.dialogue || []).map((d: any) => ({
@@ -159,7 +159,7 @@ export function SceneScreenplayView({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Film className="w-5 h-5 text-primary" />
-            Guion de la Escena
+            Guion de la Secuencia
           </CardTitle>
           <div className="flex gap-2">
             {sceneData.mood && (
@@ -243,7 +243,7 @@ export function SceneScreenplayView({
             {/* Footer info */}
             <div className="pt-4 border-t border-border mt-6">
               <p className="text-xs text-muted-foreground text-center">
-                Vista de solo lectura • Ep. {episodeNo} - Escena {sceneNo}
+                Vista de solo lectura • Ep. {episodeNo} - Secuencia {sceneNo}
               </p>
             </div>
           </div>
