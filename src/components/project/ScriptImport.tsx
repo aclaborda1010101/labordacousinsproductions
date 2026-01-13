@@ -2047,6 +2047,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
+  // Pre-flight check: ensure Bible has entities before generating
+  const ensureBibleMaterialized = async (): Promise<boolean> => {
+    const [charsCheck, locsCheck] = await Promise.all([
+      supabase.from('characters').select('id').eq('project_id', projectId).limit(1),
+      supabase.from('locations').select('id').eq('project_id', projectId).limit(1),
+    ]);
+
+    const hasChars = (charsCheck.data?.length ?? 0) > 0;
+    const hasLocs = (locsCheck.data?.length ?? 0) > 0;
+
+    if (hasChars && hasLocs) return true;
+
+    toast.info('Sincronizando personajes y locaciones del outline...');
+
+    const { error } = await supabase.functions.invoke('materialize-entities', {
+      body: { projectId, source: 'outline' }
+    });
+
+    if (error) {
+      toast.error('No se pudo sincronizar la Bible. Reintenta.');
+      return false;
+    }
+
+    toast.success('Bible sincronizada ✓');
+    return true;
+  };
+
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
   const approveAndGenerateEpisodes = async () => {
     if (!lightOutline) return;
@@ -2060,6 +2087,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     // Refresh token to maximize validity for the pipeline
     await supabase.auth.refreshSession();
     console.log('[ScriptImport] Session refreshed before starting pipeline');
+
+    // PRE-FLIGHT: Ensure Bible has characters/locations before generating
+    const bibleReady = await ensureBibleMaterialized();
+    if (!bibleReady) {
+      toast.warning('No se pudo preparar la Bible. Intenta sincronizar manualmente.');
+      return;
+    }
 
     setOutlineApproved(true);
     updatePipelineStep('approval', 'success');
@@ -2202,6 +2236,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
             if (error) {
               console.error(`Error in ${batchLabel}:`, error);
+              
+              // Handle BIBLE_EMPTY recoverable error
+              const errorMsg = error?.message || '';
+              if (errorMsg.includes('BIBLE_EMPTY') || error?.code === 'BIBLE_EMPTY') {
+                toast.error('Faltan personajes/locaciones en la Bible.', {
+                  action: {
+                    label: 'Sincronizar ahora',
+                    onClick: async () => {
+                      await ensureBibleMaterialized();
+                    }
+                  },
+                  duration: 10000
+                });
+                // Break the episode loop - don't retry this error
+                episodeError = 'BIBLE_EMPTY';
+                break;
+              }
+              
               episodeError = error.message;
               toast.error(`Error en ${batchLabel}: ${error.message}`);
               break;
