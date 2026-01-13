@@ -8,10 +8,11 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2, Zap, Eye } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2, Zap, Eye, Layout, FileText, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
 import ShotEditor from './ShotEditor';
 import ShotSuggestionPanel from './ShotSuggestionPanel';
@@ -24,6 +25,8 @@ import SceneEditDialog from './SceneEditDialog';
 import { extractSceneContent, suggestShotCount } from '@/lib/sceneNormalizer';
 import { ProductionReviewModal } from './ProductionReviewModal';
 import { ProductionProposal } from '@/types/production';
+import { StoryboardPanelView } from './StoryboardPanelView';
+import { TechnicalDocEditor } from './TechnicalDocEditor';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -1207,178 +1210,207 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                           </div>
 
                           {expandedScenes.has(scene.id) && (
-                            <div className="border-t border-border bg-muted/20 p-4 space-y-3">
-                              <div className="flex items-center justify-between gap-2">
-                                <span className="text-sm font-medium text-foreground">{t.scenes.shots}</span>
-                                <div className="flex gap-2">
-                                  <Button 
-                                    size="sm" 
-                                    variant="gold"
-                                    onClick={() => generateShotsForScene(scene)}
-                                    disabled={generatingShotsFor === scene.id}
-                                  >
-                                    {generatingShotsFor === scene.id ? (
-                                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                                    ) : (
-                                      <Zap className="w-3 h-3 mr-1" />
+                            <div className="border-t border-border bg-muted/20 p-4">
+                              <Tabs defaultValue="shots" className="w-full">
+                                <TabsList className="mb-4">
+                                  <TabsTrigger value="storyboard" className="gap-2">
+                                    <Layout className="w-4 h-4" />
+                                    Storyboard
+                                  </TabsTrigger>
+                                  <TabsTrigger value="technical" className="gap-2">
+                                    <FileText className="w-4 h-4" />
+                                    Doc. Técnico
+                                  </TabsTrigger>
+                                  <TabsTrigger value="shots" className="gap-2">
+                                    <Camera className="w-4 h-4" />
+                                    Shots
+                                    {shots[scene.id]?.length > 0 && (
+                                      <Badge variant="secondary" className="ml-1 text-xs">{shots[scene.id].length}</Badge>
                                     )}
-                                    Generar Shots
-                                  </Button>
-                                  <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}>
-                                    <Plus className="w-3 h-3 mr-1" />{t.scenes.addShot}
-                                  </Button>
-                                </div>
-                              </div>
+                                  </TabsTrigger>
+                                </TabsList>
 
-                              {/* Scene content preview */}
-                              {scriptRawText && (
-                                <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
-                                  {(() => {
-                                    const content = extractSceneContent(scriptRawText, scene.scene_no, scene.slugline);
-                                    if (content.dialogues.length > 0 || content.actions.length > 0) {
-                                      return (
-                                        <div className="space-y-1">
-                                          {content.dialogues.length > 0 && (
-                                            <span className="flex gap-2">
-                                              <strong>Diálogos:</strong> 
-                                              {content.dialogues.slice(0, 3).map((d, i) => (
-                                                <span key={i} className="text-foreground">{d.character}</span>
-                                              ))}
-                                              {content.dialogues.length > 3 && <span>+{content.dialogues.length - 3} más</span>}
-                                            </span>
-                                          )}
-                                          {content.mood !== 'neutral' && (
-                                            <span className="text-primary capitalize">Mood: {content.mood}</span>
-                                          )}
-                                        </div>
-                                      );
-                                    }
-                                    return <span className="opacity-50">Sin contenido extraído del guión</span>;
-                                  })()}
-                                </div>
-                              )}
+                                {/* STORYBOARD TAB */}
+                                <TabsContent value="storyboard" className="space-y-4">
+                                  <StoryboardPanelView
+                                    sceneId={scene.id}
+                                    projectId={projectId}
+                                    sceneText={scene.summary || scene.slugline}
+                                    visualStyle={visualStyle || undefined}
+                                    characterRefs={scene.character_ids?.map(cid => {
+                                      const char = characters.find(c => c.id === cid);
+                                      return char ? { name: char.name, image_url: (char.turnaround_urls as string[])?.[0] } : { name: cid };
+                                    })}
+                                    locationRef={scene.location_id ? (() => {
+                                      const loc = locations.find(l => l.id === scene.location_id);
+                                      return loc ? { name: loc.name, image_url: (loc.reference_urls as any)?.[0] } : undefined;
+                                    })() : undefined}
+                                  />
+                                </TabsContent>
 
-                              {!shots[scene.id] || shots[scene.id].length === 0 ? (
-                                <p className="text-sm text-muted-foreground text-center py-4">{t.scenes.noShots}</p>
-                              ) : (
-                                <div className="grid gap-2">
-                                  {shots[scene.id].map(shot => {
-                                    const render = getShotRender(shot.id);
-                                    const hasMedia = render?.video_url;
-                                    // Check for video: mp4, webm, or video in path, or Kling/Veo engines
-                                    const isVideoEngine = render?.engine?.toLowerCase() === 'kling' || render?.engine?.toLowerCase() === 'veo';
-                                    const isVideo = hasMedia && (
-                                      render.video_url?.endsWith('.mp4') || 
-                                      render.video_url?.endsWith('.webm') || 
-                                      render.video_url?.includes('video') ||
-                                      render.video_url?.includes('.mp4') ||
-                                      isVideoEngine
-                                    );
-                                    const isImage = hasMedia && !isVideo;
-                                    
-                                    return (
-                                      <div key={shot.id} className={cn("rounded-lg border transition-all overflow-hidden", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
-                                        <div className="flex items-center gap-3 p-3">
-                                          {/* Thumbnail preview */}
-                                          {hasMedia ? (
-                                            <div className="w-16 h-12 rounded bg-black flex items-center justify-center overflow-hidden shrink-0">
-                                              {isVideo ? (
-                                                <video
-                                                  src={render.video_url!}
-                                                  className="w-full h-full object-cover"
-                                                  muted
-                                                  preload="metadata"
-                                                />
-                                              ) : (
-                                                <img
-                                                  src={render.video_url!}
-                                                  alt={`Shot ${shot.shot_no}`}
-                                                  className="w-full h-full object-cover"
-                                                />
+                                {/* TECHNICAL DOC TAB */}
+                                <TabsContent value="technical" className="space-y-4">
+                                  <TechnicalDocEditor
+                                    sceneId={scene.id}
+                                    projectId={projectId}
+                                    sceneSlugline={scene.slugline}
+                                    visualStyle={visualStyle || undefined}
+                                    charactersInScene={scene.character_ids?.map(cid => {
+                                      const char = characters.find(c => c.id === cid);
+                                      return char?.name || cid;
+                                    })}
+                                  />
+                                </TabsContent>
+
+                                {/* SHOTS TAB - Original content */}
+                                <TabsContent value="shots" className="space-y-3">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className="text-sm font-medium text-foreground">{t.scenes.shots}</span>
+                                    <div className="flex gap-2">
+                                      <Button 
+                                        size="sm" 
+                                        variant="gold"
+                                        onClick={() => generateShotsForScene(scene)}
+                                        disabled={generatingShotsFor === scene.id}
+                                      >
+                                        {generatingShotsFor === scene.id ? (
+                                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                        ) : (
+                                          <Zap className="w-3 h-3 mr-1" />
+                                        )}
+                                        Generar Shots
+                                      </Button>
+                                      <Button size="sm" variant="outline" onClick={() => addShot(scene.id, scene.quality_mode)}>
+                                        <Plus className="w-3 h-3 mr-1" />{t.scenes.addShot}
+                                      </Button>
+                                    </div>
+                                  </div>
+
+                                  {/* Scene content preview */}
+                                  {scriptRawText && (
+                                    <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
+                                      {(() => {
+                                        const content = extractSceneContent(scriptRawText, scene.scene_no, scene.slugline);
+                                        if (content.dialogues.length > 0 || content.actions.length > 0) {
+                                          return (
+                                            <div className="space-y-1">
+                                              {content.dialogues.length > 0 && (
+                                                <span className="flex gap-2">
+                                                  <strong>Diálogos:</strong> 
+                                                  {content.dialogues.slice(0, 3).map((d, i) => (
+                                                    <span key={i} className="text-foreground">{d.character}</span>
+                                                  ))}
+                                                  {content.dialogues.length > 3 && <span>+{content.dialogues.length - 3} más</span>}
+                                                </span>
+                                              )}
+                                              {content.mood !== 'neutral' && (
+                                                <span className="text-primary capitalize">Mood: {content.mood}</span>
                                               )}
                                             </div>
-                                          ) : (
-                                            <div className="w-16 h-12 rounded bg-muted flex items-center justify-center text-sm font-mono shrink-0">
-                                              <span className="text-muted-foreground">{shot.shot_no}</span>
-                                            </div>
-                                          )}
-                                          
-                                          <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                              <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
-                                              <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
-                                              <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
-                                              {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
-                                              {render && (
-                                                <Badge 
-                                                  variant={render.status === 'succeeded' ? 'default' : 'secondary'}
-                                                  className={cn("text-xs", render.status === 'succeeded' ? "bg-green-600" : render.status === 'failed' && "bg-amber-600")}
-                                                >
-                                                  <Video className="w-3 h-3 mr-1" />
-                                                  {render.status === 'failed' ? 'Fallback' : render.engine?.toUpperCase()}
-                                                </Badge>
-                                              )}
-                                            </div>
-                                            {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
-                                          </div>
-                                          
-                                          <Button
-                                            size="sm"
-                                            variant={render ? "outline" : "gold"}
-                                            className="h-8"
-                                            onClick={() => openShotEditor(shot, scene)}
-                                          >
-                                            <Settings className="w-3 h-3 mr-1" />
-                                            {render ? 'Editar' : 'Configurar'}
-                                          </Button>
-                                          
-                                          <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}><Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} /></button>
-                                          <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
-                                        </div>
+                                          );
+                                        }
+                                        return <span className="opacity-50">Sin contenido extraído del guión</span>;
+                                      })()}
+                                    </div>
+                                  )}
+
+                                  {!shots[scene.id] || shots[scene.id].length === 0 ? (
+                                    <p className="text-sm text-muted-foreground text-center py-4">{t.scenes.noShots}</p>
+                                  ) : (
+                                    <div className="grid gap-2">
+                                      {shots[scene.id].map(shot => {
+                                        const render = getShotRender(shot.id);
+                                        const hasMedia = render?.video_url;
+                                        const isVideoEngine = render?.engine?.toLowerCase() === 'kling' || render?.engine?.toLowerCase() === 'veo';
+                                        const isVideo = hasMedia && (
+                                          render.video_url?.endsWith('.mp4') || 
+                                          render.video_url?.endsWith('.webm') || 
+                                          render.video_url?.includes('video') ||
+                                          render.video_url?.includes('.mp4') ||
+                                          isVideoEngine
+                                        );
                                         
-                                        {/* Expanded media preview */}
-                                        {hasMedia && (
-                                          <div className="border-t border-border bg-black/50 p-2">
-                                            {isVideo ? (
-                                              <video
-                                                src={render.video_url!}
-                                                controls
-                                                className="w-full max-h-48 rounded object-contain"
-                                                preload="metadata"
-                                              />
-                                            ) : (
-                                              <img
-                                                src={render.video_url!}
-                                                alt={`Shot ${shot.shot_no} keyframe`}
-                                                className="w-full max-h-48 rounded object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                                onClick={() => window.open(render.video_url!, '_blank')}
-                                              />
+                                        return (
+                                          <div key={shot.id} className={cn("rounded-lg border transition-all overflow-hidden", shot.hero ? "bg-gradient-to-r from-primary/5 to-amber-500/5 border-primary/30" : "bg-card border-border")}>
+                                            <div className="flex items-center gap-3 p-3">
+                                              {hasMedia ? (
+                                                <div className="w-16 h-12 rounded bg-black flex items-center justify-center overflow-hidden shrink-0">
+                                                  {isVideo ? (
+                                                    <video src={render.video_url!} className="w-full h-full object-cover" muted preload="metadata" />
+                                                  ) : (
+                                                    <img src={render.video_url!} alt={`Shot ${shot.shot_no}`} className="w-full h-full object-cover" />
+                                                  )}
+                                                </div>
+                                              ) : (
+                                                <div className="w-16 h-12 rounded bg-muted flex items-center justify-center text-sm font-mono shrink-0">
+                                                  <span className="text-muted-foreground">{shot.shot_no}</span>
+                                                </div>
+                                              )}
+                                              
+                                              <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                  <span className="font-medium text-foreground capitalize">{shot.shot_type}</span>
+                                                  <span className="text-xs text-muted-foreground">{shot.duration_target}s</span>
+                                                  <Badge variant={shot.effective_mode === 'ULTRA' ? 'ultra' : 'cine'} className="text-xs">{shot.effective_mode}</Badge>
+                                                  {shot.hero && <Badge variant="hero" className="text-xs">HERO</Badge>}
+                                                  {render && (
+                                                    <Badge 
+                                                      variant={render.status === 'succeeded' ? 'default' : 'secondary'}
+                                                      className={cn("text-xs", render.status === 'succeeded' ? "bg-green-600" : render.status === 'failed' && "bg-amber-600")}
+                                                    >
+                                                      <Video className="w-3 h-3 mr-1" />
+                                                      {render.status === 'failed' ? 'Fallback' : render.engine?.toUpperCase()}
+                                                    </Badge>
+                                                  )}
+                                                </div>
+                                                {shot.dialogue_text && <p className="text-sm text-muted-foreground truncate mt-0.5">{shot.dialogue_text}</p>}
+                                              </div>
+                                              
+                                              <Button size="sm" variant={render ? "outline" : "gold"} className="h-8" onClick={() => openShotEditor(shot, scene)}>
+                                                <Settings className="w-3 h-3 mr-1" />
+                                                {render ? 'Editar' : 'Configurar'}
+                                              </Button>
+                                              
+                                              <button onClick={() => toggleHeroShot(shot.id, scene.id, shot.hero, scene.quality_mode)} className={cn("p-2 rounded-lg transition-all", shot.hero ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-primary")}>
+                                                <Star className="w-4 h-4" fill={shot.hero ? 'currentColor' : 'none'} />
+                                              </button>
+                                              <Button variant="ghost" size="icon" onClick={() => deleteShot(shot.id, scene.id)}><Trash2 className="w-4 h-4" /></Button>
+                                            </div>
+                                            
+                                            {hasMedia && (
+                                              <div className="border-t border-border bg-black/50 p-2">
+                                                {isVideo ? (
+                                                  <video src={render.video_url!} controls className="w-full max-h-48 rounded object-contain" preload="metadata" />
+                                                ) : (
+                                                  <img src={render.video_url!} alt={`Shot ${shot.shot_no} keyframe`} className="w-full max-h-48 rounded object-contain cursor-pointer hover:opacity-90 transition-opacity" onClick={() => window.open(render.video_url!, '_blank')} />
+                                                )}
+                                              </div>
                                             )}
                                           </div>
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              )}
+                                        );
+                                      })}
+                                    </div>
+                                  )}
 
-                              {/* Shot Suggestion Panel */}
-                              <ShotSuggestionPanel
-                                sceneId={scene.id}
-                                sceneSlugline={scene.slugline}
-                                sceneSummary={scene.summary || undefined}
-                                sceneTimeOfDay={scene.time_of_day || undefined}
-                                characters={characters.filter(c => scene.character_ids?.includes(c.id))}
-                                location={locations.find(l => l.id === scene.location_id)}
-                                qualityMode={scene.quality_mode}
-                                existingShotCount={shots[scene.id]?.length || 0}
-                                onShotsAdded={() => fetchShots(scene.id)}
-                              />
+                                  {/* Shot Suggestion Panel */}
+                                  <ShotSuggestionPanel
+                                    sceneId={scene.id}
+                                    sceneSlugline={scene.slugline}
+                                    sceneSummary={scene.summary || undefined}
+                                    sceneTimeOfDay={scene.time_of_day || undefined}
+                                    characters={characters.filter(c => scene.character_ids?.includes(c.id))}
+                                    location={locations.find(l => l.id === scene.location_id)}
+                                    qualityMode={scene.quality_mode}
+                                    existingShotCount={shots[scene.id]?.length || 0}
+                                    onShotsAdded={() => fetchShots(scene.id)}
+                                  />
 
-                              <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
-                                <Sparkles className="w-4 h-4 text-primary mt-0.5" />
-                                <div className="text-xs"><p className="font-medium text-foreground">{t.scenes.sosTip}</p><p className="text-muted-foreground">{t.scenes.sosTipDesc}</p></div>
-                              </div>
+                                  <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                                    <Sparkles className="w-4 h-4 text-primary mt-0.5" />
+                                    <div className="text-xs"><p className="font-medium text-foreground">{t.scenes.sosTip}</p><p className="text-muted-foreground">{t.scenes.sosTipDesc}</p></div>
+                                  </div>
+                                </TabsContent>
+                              </Tabs>
                             </div>
                           )}
                         </div>
