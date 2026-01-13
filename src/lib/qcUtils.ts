@@ -66,6 +66,10 @@ const BLOCKER_MESSAGES: Record<string, string> = {
   // Outline incomplete (pipeline didn't finish)
   'OUTLINE_INCOMPLETE:no_episodes_generated': '⚠️ El outline no tiene episodios. Regenera el outline para continuar.',
   
+  // Script extraction issues (NO_DIALOGUES)
+  'NO_DIALOGUES:extraction_failed': '⚠️ El PDF tiene escenas pero no se detectaron diálogos. Revisa el formato o pega el texto directamente.',
+  'NO_DIALOGUES_DETECTED': '⚠️ Se detectaron escenas pero ningún diálogo. El formato del PDF puede estar corrupto.',
+  
   // Title/cast
   'TITLE:missing': 'Falta el título del proyecto',
   
@@ -92,6 +96,11 @@ export function humanizeBlocker(code: string): string {
   }
   
   // Pattern matching for dynamic blockers
+  
+  // NO_DIALOGUES - extraction failed to find dialogues
+  if (code.startsWith('NO_DIALOGUES')) {
+    return '⚠️ El PDF tiene escenas pero no se detectaron diálogos. Revisa el formato o pega el texto directamente.';
+  }
   
   // OUTLINE_INCOMPLETE - pipeline didn't complete all episodes
   if (code.startsWith('OUTLINE_INCOMPLETE:')) {

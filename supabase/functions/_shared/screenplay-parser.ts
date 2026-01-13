@@ -63,6 +63,7 @@ export interface ParseStats {
   transitions_found: number;
   sections_found: number;
   dialogue_lines_found: number;
+  dialogue_blocks_found: number; // Character + dialogue pairs
 }
 
 export interface ParseResult {
@@ -89,11 +90,20 @@ export function parseScreenplayText(text: string): ParseResult {
     transitions_found: 0,
     sections_found: 0,
     dialogue_lines_found: 0,
+    dialogue_blocks_found: 0,
   };
   
   // Metadata extraction (primeras ~50 líneas)
   const metadata = extractMetadata(rawLines.slice(0, 50));
   metadata.total_lines = rawLines.length;
+  
+  // =========================================================================
+  // INDUSTRIAL DIALOGUE DETECTION: Track context to detect dialogue after
+  // character cues, even in PDFs with broken indentation
+  // =========================================================================
+  let lastWasCharacterCue = false;
+  let pendingCharacterCue = false;
+  let linesAfterCharacterCue = 0;
   
   for (let i = 0; i < rawLines.length; i++) {
     const line = rawLines[i];
@@ -126,17 +136,98 @@ export function parseScreenplayText(text: string): ParseResult {
         start_line: i,
         end_line: i,
       };
+      
+      // Reset dialogue detection state on new scene
+      lastWasCharacterCue = false;
+      pendingCharacterCue = false;
+      linesAfterCharacterCue = 0;
     } else if (currentBlock) {
       currentBlock.lines.push(line);
       
-      // Track other elements for stats
-      if (TRANSITION_RE.test(trimmed)) stats.transitions_found++;
-      if (CHARACTER_CUE_RE.test(trimmed)) stats.character_cues_found++;
-      if (SECTION_RE.test(trimmed)) stats.sections_found++;
+      // Track transitions
+      if (TRANSITION_RE.test(trimmed)) {
+        stats.transitions_found++;
+        lastWasCharacterCue = false;
+        pendingCharacterCue = false;
+        continue;
+      }
       
-      // Count dialogue lines (indented, not all-caps, follows character cue)
-      if (trimmed.length > 0 && line.match(/^\s{3,}/) && !/^[A-Z\s]+$/.test(trimmed)) {
-        stats.dialogue_lines_found++;
+      // Track sections
+      if (SECTION_RE.test(trimmed)) {
+        stats.sections_found++;
+        lastWasCharacterCue = false;
+        pendingCharacterCue = false;
+        continue;
+      }
+      
+      // =====================================================================
+      // DIALOGUE DETECTION LOGIC (Context-Aware)
+      // =====================================================================
+      
+      // Check for character cue
+      const isCharacterCue = CHARACTER_CUE_RE.test(trimmed) && 
+        !TRANSITION_RE.test(trimmed) && 
+        !SHOT_RE.test(trimmed) &&
+        !SECTION_RE.test(trimmed);
+      
+      if (isCharacterCue) {
+        stats.character_cues_found++;
+        lastWasCharacterCue = true;
+        pendingCharacterCue = true;
+        linesAfterCharacterCue = 0;
+        continue;
+      }
+      
+      // Check for parenthetical (doesn't break dialogue sequence)
+      const isParenthetical = PARENTHETICAL_RE.test(trimmed);
+      if (isParenthetical && pendingCharacterCue) {
+        // Parenthetical after character cue - dialogue still expected
+        linesAfterCharacterCue++;
+        continue;
+      }
+      
+      // =====================================================================
+      // DIALOGUE LINE DETECTION
+      // Method 1: Traditional indentation check (for well-formatted PDFs)
+      // Method 2: Context-based (line after character cue)
+      // =====================================================================
+      
+      if (trimmed.length > 0) {
+        // Skip empty lines
+        const isIndented = /^\s{3,}/.test(line);
+        const isAllCaps = /^[A-Z\s\d.,!?'"()\-:;]+$/.test(trimmed);
+        const isLikelyAction = trimmed.length > 100; // Long lines are usually action
+        
+        // Method 1: Traditional indentation-based detection
+        const isDialogueByIndent = isIndented && !isAllCaps && trimmed.length > 0;
+        
+        // Method 2: Context-based detection (line after character cue)
+        // Valid for up to 3 lines after character cue (char, paren, dialogue, maybe continuation)
+        const isDialogueByContext = pendingCharacterCue && 
+          linesAfterCharacterCue < 5 && 
+          !isAllCaps && 
+          !isLikelyAction &&
+          !SLUGLINE_RE.test(trimmed);
+        
+        if (isDialogueByIndent || isDialogueByContext) {
+          stats.dialogue_lines_found++;
+          
+          // Count dialogue block only on first dialogue line after character cue
+          if (pendingCharacterCue && linesAfterCharacterCue === 0) {
+            stats.dialogue_blocks_found++;
+          }
+        }
+        
+        // Track lines after character cue
+        if (pendingCharacterCue) {
+          linesAfterCharacterCue++;
+          // Reset after 5 lines or on action-like line
+          if (linesAfterCharacterCue >= 5 || isLikelyAction || isAllCaps) {
+            pendingCharacterCue = false;
+          }
+        }
+        
+        // A new character cue or slugline resets the state (handled above)
       }
     } else {
       orphan_lines.push(line);
@@ -419,6 +510,19 @@ export function diagnoseParseResult(result: ParseResult): ParseDiagnostics {
     issues.push(`LOW_CHARACTER_CUE_DENSITY:${cueRatio.toFixed(1)}`);
   }
   
+  // CRITICAL: Check for missing dialogues (scenes exist but no dialogues detected)
+  if (result.scene_blocks.length > 0 && result.parse_stats.dialogue_lines_found === 0) {
+    issues.push('NO_DIALOGUES_DETECTED');
+    suggestions.push('Se detectaron escenas pero ningún diálogo. El formato del PDF puede estar corrupto o no es un guion con diálogos.');
+  }
+  
+  // Check dialogue block ratio (should have roughly as many dialogue blocks as character cues)
+  const dialogueBlockRatio = result.parse_stats.dialogue_blocks_found / Math.max(result.parse_stats.character_cues_found, 1);
+  if (result.parse_stats.character_cues_found > 0 && dialogueBlockRatio < 0.5) {
+    issues.push(`LOW_DIALOGUE_BLOCK_RATIO:${(dialogueBlockRatio * 100).toFixed(0)}%`);
+    suggestions.push('Muchos personajes sin diálogos detectados; posible problema de formato');
+  }
+  
   // Check orphan lines
   const orphanRatio = result.orphan_lines.length / Math.max(result.metadata.total_lines, 1);
   if (orphanRatio > 0.3) {
@@ -431,7 +535,11 @@ export function diagnoseParseResult(result: ParseResult): ParseDiagnostics {
   if (issues.length >= 2) confidence = 'low';
   else if (issues.length === 1) confidence = 'medium';
   
-  const is_valid_screenplay = result.scene_blocks.length >= 5 && result.parse_stats.character_cues_found >= 3;
+  // CRITICAL: No dialogues = invalid screenplay for production
+  const hasDialogues = result.parse_stats.dialogue_lines_found > 0 || result.parse_stats.dialogue_blocks_found > 0;
+  const is_valid_screenplay = result.scene_blocks.length >= 5 && 
+    result.parse_stats.character_cues_found >= 3 &&
+    (hasDialogues || result.scene_blocks.length === 0); // Allow if no scenes (not a screenplay)
   
   return {
     is_valid_screenplay,
