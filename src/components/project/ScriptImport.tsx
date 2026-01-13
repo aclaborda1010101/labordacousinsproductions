@@ -2687,7 +2687,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
       // Save to DB
       updatePipelineStep('save', 'running');
-      const screenplayText = JSON.stringify(completeScreenplay, null, 2);
+      // CRITICAL: raw_text must be screenplay text, NOT JSON
+      // parsed_json stores the structured data
+      const { renderScreenplayFromScenes } = await import('@/lib/renderScreenplayText');
+      const screenplayText = renderScreenplayFromScenes(completeScreenplay);
 
       let savedScript;
       let saveError;

@@ -1194,6 +1194,31 @@ serve(async (req) => {
     let userPrompt: string;
 
     // =======================================================================
+    // V11.2: ADAPT_FROM_SOURCE DETECTION
+    // If outline.idea contains a screenplay with sluglines/dialogue, adapt it
+    // instead of generating from scratch
+    // =======================================================================
+    const sourceText = outline?.idea?.trim() || '';
+    const hasScreenplayMarkers = 
+      sourceText && 
+      /^(INT\.|EXT\.)/m.test(sourceText) && 
+      /\n[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ0-9 '.()-]{2,40}\n/m.test(sourceText);
+    
+    const generationMode = hasScreenplayMarkers ? 'ADAPT_FROM_SOURCE' : 'GENERATE_FROM_BEATS';
+    
+    // Count expected scenes from source for QC
+    const expectedScenesFromSource = hasScreenplayMarkers 
+      ? (sourceText.match(/^(INT\.|EXT\.)/gmi)?.length || 0)
+      : 0;
+    
+    console.log('[generate-script] Generation mode:', {
+      mode: generationMode,
+      sourceLength: sourceText.length,
+      hasScreenplayMarkers,
+      expectedScenesFromSource
+    });
+
+    // =======================================================================
     // V11 CONTRACT EXTRACTION - Extract structural contracts from outline
     // =======================================================================
     let episodeContract: EpisodeContract | null = null;
@@ -1258,14 +1283,66 @@ serve(async (req) => {
       }
       
       // =====================================================================
-      // V11: Build IMPERATIVE prompt with structural contracts
+      // V11.2: Build ADAPT or GENERATE prompt based on mode
       // =====================================================================
       const contractBlock = episodeContract 
         ? formatContractForPrompt(episodeContract)
         : '';
       
+      // Build script source block if adapting from source
+      let scriptSourceBlock = '';
+      if (generationMode === 'ADAPT_FROM_SOURCE') {
+        scriptSourceBlock = `
+═══════════════════════════════════════════════════════════════
+📜 GUION FUENTE (ADAPTAR - NO INVENTAR)
+═══════════════════════════════════════════════════════════════
+${sourceText}
+
+⚠️ INSTRUCCIONES DE ADAPTACIÓN:
+- EXTRAE sluglines, personajes, diálogos del texto fuente
+- NO inventes contenido nuevo - solo estructura lo existente
+- Cada escena debe mapearse 1:1 con las del fuente
+- Copia diálogos textualmente
+- Condensa acciones pero mantén fidelidad
+- Genera raw_content con el texto original de cada escena
+═══════════════════════════════════════════════════════════════
+`;
+      }
+      
+      const modeInstructions = generationMode === 'ADAPT_FROM_SOURCE'
+        ? `ADAPTA las ${expectedScenesFromSource} escenas del GUION FUENTE a formato V3 SCHEMA`
+        : `GENERA ${scenesPerBatch} ESCENAS EN FORMATO V3 SCHEMA`;
+      
+      const modeRules = generationMode === 'ADAPT_FROM_SOURCE'
+        ? `
+═══════════════════════════════════════════════════════════════
+⚠️ REGLAS DE ADAPTACIÓN (NO NEGOCIABLES)
+═══════════════════════════════════════════════════════════════
+1. EXTRAE cada escena del guion fuente - NO inventes nuevas
+2. COPIA los diálogos textualmente del fuente
+3. GENERA raw_content con el texto cinematográfico de cada escena
+4. IDENTIFICA personajes por sus líneas de diálogo
+5. Si el guion fuente menciona personajes/locaciones, úsalos
+6. Si algo no está en el fuente → NO lo añadas
+7. Cada scene DEBE tener dialogue[] y characters_present[] poblados`
+        : `
+═══════════════════════════════════════════════════════════════
+⚠️ REGLAS CRÍTICAS (NO NEGOCIABLES)
+═══════════════════════════════════════════════════════════════
+1. EJECUTA los turning points del contrato - NO los resumas ni omitas
+2. USA SOLO personajes del STORY_BIBLE o del contrato estructural
+3. USA SOLO locaciones del STORY_BIBLE o del contrato estructural
+4. CADA thread del contrato debe avanzar con escenas concretas
+5. El SETPIECE debe dramatizarse completamente
+6. Si necesitas entidad nueva → añádela a "new_entities_requested", NO la uses
+7. Si algo no está claro → añádelo a "uncertainties"
+
+GENERA exactamente ${scenesPerBatch} escenas con V3 schema completo.`;
+      
       userPrompt = `
 ${contextBlock}
+
+${scriptSourceBlock}
 
 ${contractBlock}
 
@@ -1273,7 +1350,7 @@ ${contractBlock}
 📝 INSTRUCCIONES DE GENERACIÓN
 ═══════════════════════════════════════════════════════════════
 
-GENERA ${scenesPerBatch} ESCENAS EN FORMATO V3 SCHEMA
+${modeInstructions}
 
 ${outlineContext ? `=== CONTEXTO DEL OUTLINE ===${outlineContext}` : ''}
 
@@ -1294,18 +1371,7 @@ IDIOMA: ${language}
 GÉNERO: ${genre || outline.genre || bible.project?.genre || 'Drama'}
 TONO: ${tone || outline.tone || bible.project?.tone || 'Cinematic'}
 
-═══════════════════════════════════════════════════════════════
-⚠️ REGLAS CRÍTICAS (NO NEGOCIABLES)
-═══════════════════════════════════════════════════════════════
-1. EJECUTA los turning points del contrato - NO los resumas ni omitas
-2. USA SOLO personajes del STORY_BIBLE o del contrato estructural
-3. USA SOLO locaciones del STORY_BIBLE o del contrato estructural
-4. CADA thread del contrato debe avanzar con escenas concretas
-5. El SETPIECE debe dramatizarse completamente
-6. Si necesitas entidad nueva → añádela a "new_entities_requested", NO la uses
-7. Si algo no está claro → añádelo a "uncertainties"
-
-GENERA exactamente ${scenesPerBatch} escenas con V3 schema completo.`;
+${modeRules}`;
 
     } else if (scenePrompt) {
       // SINGLE SCENE MODE
@@ -1410,6 +1476,31 @@ IDIOMA: ${language}
         { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+    
+    // =========================================================================
+    // V11.2: ADAPT_FROM_SOURCE QC - Must not return 0 scenes when adapting
+    // =========================================================================
+    if (generationMode === 'ADAPT_FROM_SOURCE' && expectedScenesFromSource >= 2 && scenes.length === 0) {
+      console.error('[generate-script] ADAPT_FAILED_NO_SCENES:', {
+        mode: generationMode,
+        expectedFromSource: expectedScenesFromSource,
+        gotScenes: 0
+      });
+      
+      return new Response(
+        JSON.stringify({
+          error: 'ADAPT_FAILED_NO_SCENES',
+          code: 'ADAPT_FAILED_NO_SCENES',
+          message: 'Se detectó guion fuente con escenas pero la adaptación falló. El LLM no extrajo las escenas.',
+          expectedScenes: expectedScenesFromSource,
+          gotScenes: 0,
+          hint: 'Verifica que el outline.idea tenga formato de guion válido (INT./EXT. + diálogos)',
+          actionable: true,
+          suggestedAction: 'retry_with_deterministic_parser'
+        }),
+        { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Determine if this is a degraded result
     const isDegraded = parseWarnings.length > 0 || placeholderScenes.length > 0;
@@ -1461,6 +1552,8 @@ IDIOMA: ${language}
           provider: config.provider,
           model: config.apiModel,
           schemaVersion: '3.2',
+          generationMode,
+          expectedScenesFromSource: generationMode === 'ADAPT_FROM_SOURCE' ? expectedScenesFromSource : undefined,
           bibleInjected: !!projectId,
           bibleCharacters: filteredBible.characters.length,
           bibleLocations: filteredBible.locations.length,
