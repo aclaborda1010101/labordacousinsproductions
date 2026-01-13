@@ -277,3 +277,15 @@ verify_jwt = false
 [functions.generate-angle-variants]
 # Gateway JWT disabled; function enforces auth internally
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TECHNICAL DOCUMENT PIPELINE (V3.5 - Storyboard → Technical Doc → Keyframes)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.generate-storyboard]
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
+
+[functions.generate-technical-doc]
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
