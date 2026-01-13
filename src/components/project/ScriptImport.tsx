@@ -2994,11 +2994,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           .eq('episode_no', episodeNumber);
       }
 
-      // Create scenes from the script data
+      // V11.1: Create scenes from the script data
+      // Always use array index for scene_no to guarantee uniqueness
+      // (scene.scene_number from script can be duplicated or incorrect)
       const scenesToInsert = episode.scenes.map((scene: any, idx: number) => ({
         project_id: projectId,
         episode_no: episodeNumber,
-        scene_no: scene.scene_number || idx + 1,
+        scene_no: idx + 1,
         slugline: scene.slugline || `ESCENA ${idx + 1}`,
         summary: scene.summary || scene.action || null,
         time_of_day: extractTimeOfDay(scene.slugline),
