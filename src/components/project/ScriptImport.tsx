@@ -109,12 +109,14 @@ import { getSceneSlugline } from '@/lib/sceneNormalizer';
 import {
   estimateEpisodeMs,
   estimateBatchMs,
+  estimateFullScriptMs,
   formatDurationMs,
   loadScriptTimingModel,
   saveScriptTimingModel,
   updateBatchTiming,
   updateOutlineTiming,
 } from '@/lib/scriptTimingModel';
+import { useBackgroundTasks } from '@/contexts/BackgroundTasksContext';
 import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
 import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
 import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
@@ -288,6 +290,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   ]);
   const [currentStepLabel, setCurrentStepLabel] = useState<string>('');
   const [backgroundGeneration, setBackgroundGeneration] = useState(false);
+  
+  // Background task tracking for global progress visibility
+  const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
+  const [scriptTaskId, setScriptTaskId] = useState<string | null>(null);
 
   // Timing model (aprende tiempos reales para estimar ETA)
   const [timingModel, setTimingModel] = useState(() => loadScriptTimingModel());
@@ -2312,6 +2318,28 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     
     const totalBatches = totalEpisodes * BATCHES_PER_EPISODE;
     let completedBatches = 0;
+    
+    // V49: Register background task for global progress tracking
+    const estimatedMs = estimateFullScriptMs(timingModel, {
+      episodesCount: totalEpisodes,
+      batchesPerEpisode: BATCHES_PER_EPISODE,
+      complexity,
+    });
+    const taskId = addTask({
+      type: 'script_generation',
+      title: `Generando guion (${totalEpisodes} ${totalEpisodes === 1 ? 'episodio' : 'episodios'})`,
+      description: `Tier: ${qualityTier} | ETA: ${formatDurationMs(estimatedMs)}`,
+      projectId,
+      metadata: {
+        totalEpisodes,
+        totalBatches,
+        estimatedMs,
+        batchesPerEpisode: BATCHES_PER_EPISODE,
+        complexity,
+        qualityTier,
+      },
+    });
+    setScriptTaskId(taskId);
 
     try {
       const episodes: any[] = [];
@@ -2445,6 +2473,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               completedBatches++;
               const progress = 10 + Math.round((completedBatches / totalBatches) * 75);
               setPipelineProgress(progress);
+              
+              // V49: Update background task progress with ETA
+              if (taskId) {
+                const remainingBatches = totalBatches - completedBatches;
+                const remainingMs = remainingBatches * estimateBatchMs(timingModel, complexity) + 15000; // +dialogues+teasers+save
+                updateTask(taskId, { 
+                  progress, 
+                  description: `Episodio ${epNum}/${totalEpisodes} | Restante: ${formatDurationMs(remainingMs)}`
+                });
+              }
 
               console.log(`[${batchLabel}] ✓ ${data.scenes.length} scenes in ${batchDurationMs}ms`);
             } else {
@@ -2797,11 +2835,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const successCount = episodes.filter(ep => !ep.error).length;
       toast.success(`¡Guion generado! ${successCount}/${totalEpisodes} episodios completados.`);
       setActiveTab('summary');
+      
+      // V49: Complete background task
+      if (taskId) {
+        completeTask(taskId, { 
+          episodesGenerated: successCount, 
+          totalEpisodes,
+          scenesCount: episodes.reduce((sum, ep) => sum + (ep.scenes?.length || 0), 0),
+        });
+        setScriptTaskId(null);
+      }
 
     } catch (error: any) {
       console.error('Pipeline error:', error);
       toast.error(error.message || 'Error en la generación');
       updatePipelineStep('episodes', 'error');
+      
+      // V49: Fail background task
+      if (taskId) {
+        failTask(taskId, error.message || 'Error en la generación');
+        setScriptTaskId(null);
+      }
     } finally {
       setPipelineRunning(false);
       setCurrentEpisodeGenerating(null);
@@ -2825,6 +2879,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setBackgroundGeneration(false);
     setScriptStartTime(null); // V47: Reset timer
     clearPipelineState();
+    
+    // V49: Cancel background task
+    if (scriptTaskId) {
+      failTask(scriptTaskId, 'Cancelado por el usuario');
+      setScriptTaskId(null);
+    }
+    
     toast.info('Generación cancelada. Los episodios ya generados se han conservado.');
   };
 
