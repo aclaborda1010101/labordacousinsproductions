@@ -5060,7 +5060,9 @@ export type Database = {
       }
       storyboard_panels: {
         Row: {
+          action_beat_ref: string | null
           approved: boolean | null
+          characters_present: string[] | null
           created_at: string | null
           id: string
           image_prompt: string | null
@@ -5069,12 +5071,15 @@ export type Database = {
           panel_intent: string | null
           panel_no: number
           project_id: string
+          props_present: string[] | null
           scene_id: string
           shot_hint: string | null
           updated_at: string | null
         }
         Insert: {
+          action_beat_ref?: string | null
           approved?: boolean | null
+          characters_present?: string[] | null
           created_at?: string | null
           id?: string
           image_prompt?: string | null
@@ -5083,12 +5088,15 @@ export type Database = {
           panel_intent?: string | null
           panel_no: number
           project_id: string
+          props_present?: string[] | null
           scene_id: string
           shot_hint?: string | null
           updated_at?: string | null
         }
         Update: {
+          action_beat_ref?: string | null
           approved?: boolean | null
+          characters_present?: string[] | null
           created_at?: string | null
           id?: string
           image_prompt?: string | null
@@ -5097,6 +5105,7 @@ export type Database = {
           panel_intent?: string | null
           panel_no?: number
           project_id?: string
+          props_present?: string[] | null
           scene_id?: string
           shot_hint?: string | null
           updated_at?: string | null
@@ -5111,6 +5120,54 @@ export type Database = {
           },
           {
             foreignKeyName: "storyboard_panels_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      storyboards: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          scene_id: string
+          status: string
+          style_id: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          scene_id: string
+          status?: string
+          style_id?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          scene_id?: string
+          status?: string
+          style_id?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storyboards_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "storyboards_scene_id_fkey"
             columns: ["scene_id"]
             isOneToOne: false
             referencedRelation: "scenes"

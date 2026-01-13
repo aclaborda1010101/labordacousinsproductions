@@ -11,17 +11,52 @@ interface StoryboardRequest {
   project_id: string;
   scene_text: string;
   visual_style?: string;
-  character_refs?: { name: string; image_url?: string }[];
-  location_ref?: { name: string; image_url?: string };
+  character_refs?: { id: string; name: string; image_url?: string }[];
+  location_ref?: { id: string; name: string; image_url?: string };
   panel_count?: number;
+  beats?: { beat_id: string; description: string }[];
+  dialogue_blocks?: { line_id: string; speaker_id: string; text: string }[];
 }
 
 interface StoryboardPanel {
+  panel_id: string;
   panel_no: number;
-  panel_intent: string;
+  intent: string;
   shot_hint: string;
+  action_beat_ref?: string;
+  characters_present: string[];
+  props_present: string[];
   image_prompt: string;
 }
+
+// DIRECTOR (IA 2) PROMPT - Official from pipeline spec
+const DIRECTOR_SYSTEM_PROMPT = `ROLE: DIRECTOR
+
+You create professional storyboards for film production. Your storyboard will guide the DoP and keyframe generation.
+
+STYLE: Pencil sketch, grayscale, rough storyboard look, like film storyboard sheets. Classic Hollywood pre-production aesthetic.
+
+OUTPUT FORMAT: JSON array of 6-12 panels.
+
+For each panel, provide:
+- panel_id: Sequential identifier (P1, P2, P3...)
+- panel_no: Panel number (1, 2, 3...)
+- intent: What story/emotional beat this panel captures (1 sentence)
+- shot_hint: Camera suggestion (PG = Plan General/Wide, PM = Plano Medio/Medium, PP = Primer Plano/Close-up, INSERT, OTS)
+- action_beat_ref: Reference to beat_id if applicable
+- characters_present: Array of character IDs present in this panel
+- props_present: Array of prop IDs visible in this panel
+- image_prompt: Detailed visual description for grayscale pencil sketch generation
+
+CRITICAL RULES:
+1. Maintain strict continuity: same characters, same props, same time of day across all panels
+2. Cover the full emotional arc: establishing shot at start, key dialogue moments, reactions, closing beat
+3. Be specific about screen direction (left/right) for characters
+4. Include character positions, blocking, eyelines
+5. NO lens/lighting/focus technical specs - that's for the DoP in Paso 3
+6. The image_prompt MUST describe a GRAYSCALE PENCIL SKETCH, not a photorealistic image
+
+Return ONLY a valid JSON array, no explanations.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -39,10 +74,12 @@ serve(async (req) => {
       scene_id, 
       project_id, 
       scene_text, 
-      visual_style = "cinematic realism",
+      visual_style = "pencil_storyboard_grayscale",
       character_refs = [],
       location_ref,
-      panel_count = 8
+      panel_count = 8,
+      beats = [],
+      dialogue_blocks = [],
     }: StoryboardRequest = await req.json();
 
     if (!scene_id || !project_id || !scene_text) {
@@ -54,50 +91,49 @@ serve(async (req) => {
 
     console.log(`[generate-storyboard] Generating ${panel_count} panels for scene ${scene_id}`);
 
-    // Build character context
+    // Build context from characters and location
     const characterContext = character_refs.length > 0
-      ? `Characters in scene:\n${character_refs.map(c => `- ${c.name}${c.image_url ? ' (reference available)' : ''}`).join('\n')}`
-      : '';
+      ? `Characters in scene:\n${character_refs.map(c => `- ${c.name} (ID: ${c.id})${c.image_url ? ' [reference available]' : ''}`).join('\n')}`
+      : 'No characters specified';
 
-    // Build location context
     const locationContext = location_ref
-      ? `Location: ${location_ref.name}${location_ref.image_url ? ' (reference available)' : ''}`
+      ? `Location: ${location_ref.name} (ID: ${location_ref.id})${location_ref.image_url ? ' [reference available]' : ''}`
+      : 'Location not specified';
+
+    const beatsContext = beats.length > 0
+      ? `Scene beats:\n${beats.map(b => `- ${b.beat_id}: ${b.description}`).join('\n')}`
       : '';
 
-    // Director prompt for storyboard generation
-    const systemPrompt = `You are a professional storyboard artist and film director. Your task is to break down a scene into ${panel_count} storyboard panels that will guide keyframe generation for AI video production.
-
-For each panel, provide:
-1. panel_intent: What story/emotional beat this panel captures (1 sentence)
-2. shot_hint: Camera suggestion (e.g., "WIDE establishing", "OTS A favoring character", "INSERT on object", "CU reaction")
-3. image_prompt: A detailed visual description for image generation (include: framing, composition, character positions, lighting mood, key props)
-
-Visual Style: ${visual_style}
-${characterContext}
-${locationContext}
-
-IMPORTANT:
-- Distribute panels to cover the full emotional arc of the scene
-- Include establishing shot at start, key dialogue moments, reactions, and a closing beat
-- Be specific about screen direction (left/right) for characters
-- Include lighting and mood descriptions
-- Reference specific props or set elements that should be visible`;
+    const dialogueContext = dialogue_blocks.length > 0
+      ? `Key dialogue:\n${dialogue_blocks.slice(0, 10).map(d => `- ${d.speaker_id}: "${d.text}"`).join('\n')}`
+      : '';
 
     const userPrompt = `Create a ${panel_count}-panel storyboard for this scene:
 
+SCENE TEXT:
 ${scene_text}
 
-Return ONLY a JSON array of panels with this exact structure:
-[
-  {
-    "panel_no": 1,
-    "panel_intent": "Establish the space and tension",
-    "shot_hint": "WIDE master shot",
-    "image_prompt": "Wide shot of dimly lit kitchen, two figures standing at opposite ends of a wooden table, warm practical light from ceiling lamp, tension in their body language, ${visual_style}"
-  }
-]`;
+${characterContext}
 
-    // Call Lovable AI for panel generation
+${locationContext}
+
+${beatsContext}
+
+${dialogueContext}
+
+STYLE: Pencil storyboard grayscale - rough sketch look like classic film storyboard sheets.
+
+Return a JSON array with ${panel_count} panels. Each panel must include:
+- panel_id (P1, P2...)
+- panel_no (1, 2...)
+- intent (what this moment conveys)
+- shot_hint (PG/PM/PP/INSERT/OTS)
+- action_beat_ref (reference to beat if applicable)
+- characters_present (array of character IDs)
+- props_present (array of prop IDs)
+- image_prompt (detailed description for pencil sketch image generation - MUST describe grayscale pencil sketch aesthetic)`;
+
+    // Call Lovable AI for panel generation (using gemini for reasoning)
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -107,11 +143,11 @@ Return ONLY a JSON array of panels with this exact structure:
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: DIRECTOR_SYSTEM_PROMPT },
           { role: "user", content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 4000,
+        max_tokens: 8000,
       }),
     });
 
@@ -127,7 +163,6 @@ Return ONLY a JSON array of panels with this exact structure:
     // Parse JSON from response
     let panels: StoryboardPanel[] = [];
     try {
-      // Extract JSON array from response
       const jsonMatch = content.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         panels = JSON.parse(jsonMatch[0]);
@@ -141,20 +176,41 @@ Return ONLY a JSON array of panels with this exact structure:
 
     console.log(`[generate-storyboard] Generated ${panels.length} panels`);
 
+    // Upsert storyboards wrapper table (status management)
+    const { data: storyboardRecord, error: storyboardError } = await supabase
+      .from("storyboards")
+      .upsert({
+        project_id,
+        scene_id,
+        status: "draft",
+        style_id: visual_style,
+        version: 1,
+      }, { onConflict: "project_id,scene_id" })
+      .select()
+      .single();
+
+    if (storyboardError) {
+      console.error("[generate-storyboard] Storyboard upsert error:", storyboardError);
+      // Continue even if wrapper fails - panels are more important
+    }
+
     // Delete existing panels for this scene
     await supabase
       .from("storyboard_panels")
       .delete()
       .eq("scene_id", scene_id);
 
-    // Insert new panels
+    // Insert new panels with all new fields
     const panelsToInsert = panels.map((panel, idx) => ({
       scene_id,
       project_id,
       panel_no: panel.panel_no || idx + 1,
-      panel_intent: panel.panel_intent,
+      panel_intent: panel.intent,
       shot_hint: panel.shot_hint,
       image_prompt: panel.image_prompt,
+      action_beat_ref: panel.action_beat_ref || null,
+      characters_present: panel.characters_present || [],
+      props_present: panel.props_present || [],
       image_url: null,
       approved: false,
     }));
@@ -171,14 +227,59 @@ Return ONLY a JSON array of panels with this exact structure:
 
     console.log(`[generate-storyboard] Inserted ${insertedPanels?.length} panels`);
 
-    // Optionally generate images for each panel (can be done async)
-    // For now, return panels without images - images can be generated separately
+    // Generate grayscale pencil sketch images for each panel using NanoBanana Pro 3
+    const generatedPanels = [];
+    for (const panel of insertedPanels || []) {
+      try {
+        // Enhance prompt for grayscale pencil sketch style
+        const sketchPrompt = `Grayscale pencil sketch storyboard panel. Film production storyboard style. Rough sketch lines, hand-drawn aesthetic. ${panel.image_prompt}. Pencil on paper texture, black and white, no color, cinematic framing.`;
+        
+        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${lovableApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-pro-image-preview",
+            prompt: sketchPrompt,
+            n: 1,
+            size: "1536x1024",
+          }),
+        });
+
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          const imageUrl = imageData.data?.[0]?.url;
+          
+          if (imageUrl) {
+            // Update panel with image
+            await supabase
+              .from("storyboard_panels")
+              .update({ image_url: imageUrl })
+              .eq("id", panel.id);
+            
+            generatedPanels.push({ ...panel, image_url: imageUrl });
+            console.log(`[generate-storyboard] Generated image for panel ${panel.panel_no}`);
+          } else {
+            generatedPanels.push(panel);
+          }
+        } else {
+          console.error(`[generate-storyboard] Image generation failed for panel ${panel.panel_no}`);
+          generatedPanels.push(panel);
+        }
+      } catch (imgError) {
+        console.error(`[generate-storyboard] Image error for panel ${panel.panel_no}:`, imgError);
+        generatedPanels.push(panel);
+      }
+    }
 
     return new Response(
       JSON.stringify({
         success: true,
-        panels: insertedPanels,
-        message: `Generated ${insertedPanels?.length} storyboard panels`,
+        storyboard_id: storyboardRecord?.id,
+        panels: generatedPanels,
+        message: `Generated ${generatedPanels.length} storyboard panels with pencil sketch style`,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
