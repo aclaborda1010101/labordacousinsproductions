@@ -954,7 +954,7 @@ async function updateOutlineRecord(
   supabaseClient: any,
   outlineId: string,
   updates: {
-    status?: 'generating' | 'draft' | 'approved' | 'rejected' | 'error';
+    status?: 'generating' | 'draft' | 'completed' | 'approved' | 'rejected' | 'error';
     outline_json?: any;
     quality?: string;
     qc_issues?: string[];
@@ -1631,12 +1631,12 @@ episode_beats debe tener EXACTAMENTE ${expectedEpisodes} elementos (1..${expecte
     // =======================================================================
     if (outlineRecordId) {
       await updateOutlineRecord(auth.supabase, outlineRecordId, {
-        status: 'draft',
+        status: 'completed',
         outline_json: outline,
         quality: outlineQuality,
         qc_issues: [...qcIssues, ...parseWarnings]
       });
-      console.log('[OUTLINE] Updated outline record to draft status:', outlineRecordId);
+      console.log('[OUTLINE] Updated outline record to completed status:', outlineRecordId);
     }
 
     // Always return 200 with success indicator

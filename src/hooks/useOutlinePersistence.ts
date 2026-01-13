@@ -351,7 +351,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     format?: string;
     episodeCount?: number;
     targetDuration?: number;
-    status?: 'generating' | 'draft' | 'approved' | 'rejected' | 'error';
+    status?: 'generating' | 'draft' | 'completed' | 'approved' | 'rejected' | 'error';
   }): Promise<{ success: boolean; id?: string; error?: string }> => {
     if (!projectId) {
       return { success: false, error: 'No project ID' };
