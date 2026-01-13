@@ -3193,7 +3193,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const parsed = script.parsed_json as Record<string, unknown>;
       if (parsed.episodes || parsed.screenplay || parsed.title) {
         // V48: Recalculate dialogue metrics if missing (legacy scripts)
-        if (Array.isArray(parsed.episodes) && !((parsed.dialogues as any)?.by_character)) {
+        const hasDialoguesMap = parsed.dialogues && typeof parsed.dialogues === 'object' && 
+          (parsed.dialogues as any).by_character && 
+          Object.keys((parsed.dialogues as any).by_character).length > 0;
+        
+        if (Array.isArray(parsed.episodes) && parsed.episodes.length > 0 && !hasDialoguesMap) {
           const { aggregateDialogueMetrics } = await import('@/lib/breakdown/hydrate');
           const { byCharacter, totalLines } = aggregateDialogueMetrics(parsed.episodes as any[]);
           
@@ -3202,6 +3206,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             dialoguesByCharacter[name] = { lines: data.lines, words: data.words, scenes_count: data.scenes.size };
           }
           parsed.dialogues = { by_character: dialoguesByCharacter, total_lines: totalLines };
+          
+          // V48: Enrich characters array with dialogue metrics
+          const rawChars = Array.isArray(parsed.characters) 
+            ? parsed.characters 
+            : (parsed.characters as any)?.cast || [];
+          
+          if (rawChars.length > 0) {
+            const enrichedCharacters = rawChars.map((c: any) => {
+              const nameKey = (c.name || c.canonical_name || '').toUpperCase().trim();
+              const metrics = byCharacter[nameKey];
+              return {
+                ...c,
+                dialogue_lines: metrics?.lines || 0,
+                dialogue_words: metrics?.words || 0,
+                scenes_count: metrics?.scenes?.size || 0,
+              };
+            });
+            parsed.characters = { cast: enrichedCharacters };
+          }
         }
         setGeneratedScript(parsed);
         setActiveTab('summary');
