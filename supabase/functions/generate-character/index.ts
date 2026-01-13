@@ -500,18 +500,30 @@ function buildIdentityLock(visualDNA: VisualDNA, characterName?: string): string
 // ============================================
 
 function buildStyleBlock(styleConfig: StyleConfig | null): string {
-  if (!styleConfig) return '';
+  if (!styleConfig) {
+    console.log('[buildStyleBlock] No styleConfig provided');
+    return '';
+  }
+  
+  console.log(`[buildStyleBlock] Building style block from config...`);
+  console.log(`[buildStyleBlock] typeof styleConfig: ${typeof styleConfig}`);
+  console.log(`[buildStyleBlock] promptModifiers: ${JSON.stringify(styleConfig.promptModifiers)?.slice(0, 200)}`);
+  console.log(`[buildStyleBlock] customAnalysis?.prompt_modifiers: ${JSON.stringify(styleConfig.customAnalysis?.prompt_modifiers)?.slice(0, 200)}`);
   
   const parts: string[] = [];
   
   // PRIORITY 1: Check for promptModifiers array (Visual Bible presets)
   // This is the primary style definition from preset selection or image analysis
   if (styleConfig.promptModifiers && Array.isArray(styleConfig.promptModifiers) && styleConfig.promptModifiers.length > 0) {
+    console.log(`[buildStyleBlock] ✓ Found promptModifiers: ${styleConfig.promptModifiers.length} items`);
     parts.push(`VISUAL STYLE (MANDATORY): ${styleConfig.promptModifiers.join(', ')}`);
+  } else {
+    console.log(`[buildStyleBlock] ✗ No promptModifiers array found`);
   }
   
   // PRIORITY 2: Check customAnalysis from image analysis
   if (styleConfig.customAnalysis?.prompt_modifiers && Array.isArray(styleConfig.customAnalysis.prompt_modifiers)) {
+    console.log(`[buildStyleBlock] ✓ Found customAnalysis.prompt_modifiers: ${styleConfig.customAnalysis.prompt_modifiers.length} items`);
     const modifiers = styleConfig.customAnalysis.prompt_modifiers.filter(
       (m: string) => !parts.some(p => p.includes(m))
     );
@@ -568,7 +580,12 @@ function buildStyleBlock(styleConfig: StyleConfig | null): string {
     }
   }
   
-  if (parts.length === 0) return '';
+  console.log(`[buildStyleBlock] Generated ${parts.length} style parts`);
+  
+  if (parts.length === 0) {
+    console.warn('[buildStyleBlock] WARNING: No style parts generated - output will be empty');
+    return '';
+  }
   
   return `
 PROJECT VISUAL STYLE (MANDATORY - DO NOT DEVIATE):
@@ -775,7 +792,10 @@ function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | nul
   };
   const angle = angleInstructions[viewAngle] || angleInstructions.front;
 
-  return `SAME PERSON from reference image, professional portrait closeup, ${angle}.
+  // V11.1: Add STYLE_CONSISTENCY_BLOCK to closeups (was missing before)
+  return `${STYLE_CONSISTENCY_BLOCK}
+
+SAME PERSON from reference image, professional portrait closeup, ${angle}.
 
 ${identityLock}
 
@@ -1733,8 +1753,23 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     console.error('Style pack fetch error:', styleError);
   }
   
-  const styleConfig: StyleConfig | null = stylePack?.style_config || null;
+  // V11.1: Ensure style_config is properly parsed (might come as string from DB)
+  let styleConfig: StyleConfig | null = null;
+  if (stylePack?.style_config) {
+    styleConfig = typeof stylePack.style_config === 'string' 
+      ? JSON.parse(stylePack.style_config) 
+      : stylePack.style_config;
+  }
   console.log(`Style config loaded: ${styleConfig ? 'YES' : 'NO (will use defaults)'}`);
+  
+  // V11.1: Diagnostic logging for style injection debugging
+  if (styleConfig) {
+    console.log(`[STYLE DEBUG] typeof styleConfig: ${typeof styleConfig}`);
+    console.log(`[STYLE DEBUG] promptModifiers: ${styleConfig.promptModifiers?.length || 0} items`);
+    console.log(`[STYLE DEBUG] customAnalysis.prompt_modifiers: ${styleConfig.customAnalysis?.prompt_modifiers?.length || 0} items`);
+    console.log(`[STYLE DEBUG] negativeModifiers: ${styleConfig.negativeModifiers?.length || 0} items`);
+  }
+  
   console.log(`Wardrobe lock loaded: ${wardrobeLock ? 'YES' : 'NO (will use fallback)'}`);
 
 
