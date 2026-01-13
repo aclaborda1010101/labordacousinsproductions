@@ -729,6 +729,50 @@ async function callLovableAI(
 }
 
 // =============================================================================
+// AUTO-MATERIALIZATION HELPERS
+// =============================================================================
+type BibleEmptyReason = 'NO_CHARACTERS' | 'NO_LOCATIONS' | 'NO_BOTH';
+
+function getBibleEmptyReason(charsLen: number, locsLen: number): BibleEmptyReason | null {
+  if (charsLen === 0 && locsLen === 0) return 'NO_BOTH';
+  if (charsLen === 0) return 'NO_CHARACTERS';
+  if (locsLen === 0) return 'NO_LOCATIONS';
+  return null;
+}
+
+async function callMaterializeEntities(projectId: string): Promise<{ success: boolean; message: string }> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+  if (!supabaseUrl || !serviceKey) {
+    throw new Error('MATERIALIZE_MISSING_ENV');
+  }
+
+  const res = await fetch(`${supabaseUrl}/functions/v1/materialize-entities`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${serviceKey}`,
+    },
+    body: JSON.stringify({
+      projectId,
+      source: 'outline',
+    }),
+  });
+
+  const text = await res.text();
+  let json: any = null;
+  try { json = text ? JSON.parse(text) : null; } catch { /* ignore */ }
+
+  if (!res.ok) {
+    const msg = json?.error || json?.message || text || `HTTP_${res.status}`;
+    return { success: false, message: msg };
+  }
+  
+  return { success: true, message: json?.message || 'Materialized' };
+}
+
+// =============================================================================
 // LOG BIBLE INJECTION EVENT
 // =============================================================================
 async function logBibleInjection(
@@ -1027,6 +1071,66 @@ serve(async (req) => {
     
     if (projectId) {
       bible = await fetchProjectBible(projectId);
+      
+      // =========================================================================
+      // AUTO-MATERIALIZATION GATE: If Bible is empty, try to materialize from outline
+      // =========================================================================
+      const emptyReason = getBibleEmptyReason(bible.characters.length, bible.locations.length);
+      let materializeAttempted = false;
+      
+      if (emptyReason) {
+        materializeAttempted = true;
+        console.log('[generate-script] Bible empty, attempting auto-materialization...', { 
+          emptyReason, 
+          charactersCount: bible.characters.length, 
+          locationsCount: bible.locations.length 
+        });
+
+        try {
+          const matResult = await callMaterializeEntities(projectId);
+          console.log('[generate-script] Auto-materialization result:', matResult);
+
+          if (matResult.success) {
+            // Re-fetch Bible after materialization
+            bible = await fetchProjectBible(projectId);
+            console.log('[generate-script] Bible re-fetched:', {
+              charactersCount: bible.characters.length,
+              locationsCount: bible.locations.length
+            });
+          }
+        } catch (matErr) {
+          console.error('[generate-script] Auto-materialization failed:', matErr);
+        }
+      }
+
+      // HARD GATE: If still empty after auto-materialization, return actionable error
+      const finalEmptyReason = getBibleEmptyReason(bible.characters.length, bible.locations.length);
+      if (finalEmptyReason) {
+        clearTimeout(timeoutId);
+        
+        // Release lock if acquired
+        if (lockAcquired && projectIdForLock) {
+          try {
+            await auth.supabase.rpc('release_project_lock', { p_project_id: projectIdForLock });
+          } catch { /* ignore */ }
+        }
+        
+        return new Response(JSON.stringify({
+          error: 'BIBLE_EMPTY',
+          code: 'BIBLE_EMPTY',
+          reason: finalEmptyReason,
+          message: 'No hay suficientes entidades materializadas para generar el guión. Sincroniza el outline primero.',
+          action: {
+            type: 'materialize-entities',
+            payload: { projectId, source: 'outline' }
+          },
+          debug: {
+            charactersCount: bible.characters.length,
+            locationsCount: bible.locations.length,
+            autoMaterializeAttempted: materializeAttempted
+          }
+        }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
       
       // Filter to relevant entities
       filteredBible = filterBibleToRelevant(bible, outline, episodeNumber);

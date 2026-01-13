@@ -1032,6 +1032,10 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           // Handle specific recoverable errors
           if (errorCode === 'PROJECT_ID_MISSING') {
             toast.error('Error interno: falta projectId. Recarga la página.');
+          } else if (errorCode === 'BIBLE_EMPTY' || response.status === 422) {
+            toast.error('Faltan personajes/locaciones en la Bible. Sincroniza el outline primero.', {
+              duration: 10000
+            });
           } else if (errorCode === 'PROJECT_BUSY' || response.status === 409) {
             const retryAfter = errorData.retry_after_seconds || 30;
             toast.warning(`Proyecto ocupado. Espera ${retryAfter}s e inténtalo de nuevo.`, {
