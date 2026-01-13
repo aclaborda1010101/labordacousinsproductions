@@ -279,3 +279,31 @@ export const extractWriters = (payload: any): string[] => {
     []
   );
 };
+
+// =============================================================================
+// V1 EXTRACTION PIPELINE - Thread hydration
+// =============================================================================
+
+export const hydrateThreads = (raw: any): any[] => {
+  const p = getBreakdownPayload(raw);
+  if (!p) return [];
+  return pickArray(p.threads);
+};
+
+export const hydrateThreadMap = (raw: any): any[] => {
+  const p = getBreakdownPayload(raw);
+  if (!p) return [];
+  return pickArray(p.thread_map);
+};
+
+// Helper to check if extraction has valid threads
+export const hasValidThreads = (raw: any): boolean => {
+  const threads = hydrateThreads(raw);
+  if (threads.length < 3) return false;
+  
+  // Check if threads have evidence
+  const threadsWithEvidence = threads.filter((t: any) => 
+    Array.isArray(t.evidence_scenes) && t.evidence_scenes.length >= 2
+  );
+  return threadsWithEvidence.length >= 3;
+};
