@@ -5873,20 +5873,23 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <div className="flex gap-2 flex-wrap">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span>
-                        <Button 
-                          onClick={exportCompletePDF} 
-                          variant="outline"
-                          disabled={!isScriptComplete}
-                        >
-                          <FileDown className="w-4 h-4 mr-2" />
-                          Exportar PDF
-                        </Button>
-                      </span>
+                      <Button 
+                        onClick={exportCompletePDF} 
+                        variant="outline"
+                        className="border-primary/30 hover:bg-primary/10"
+                      >
+                        <FileDown className="w-4 h-4 mr-2" />
+                        Exportar PDF
+                        {!isScriptComplete && (
+                          <Badge variant="outline" className="ml-2 text-xs bg-amber-500/10 text-amber-600 border-amber-500/30">
+                            Parcial
+                          </Badge>
+                        )}
+                      </Button>
                     </TooltipTrigger>
                     {!isScriptComplete && (
                       <TooltipContent>
-                        <p>Genera los diálogos primero para exportar el PDF completo</p>
+                        <p>Exportará outline sin diálogos completos</p>
                       </TooltipContent>
                     )}
                   </Tooltip>

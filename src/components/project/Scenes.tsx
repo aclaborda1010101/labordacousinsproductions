@@ -8,11 +8,12 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2, Zap, Eye, Layout, FileText, Image as ImageIcon } from 'lucide-react';
+import { Plus, Clapperboard, Loader2, Trash2, ChevronDown, ChevronRight, Star, Sparkles, Lock, Wand2, FileDown, Video, Film, Copy, Clock, Settings, Play, Camera, RefreshCw, Palette, AlertTriangle, Edit2, Zap, Eye, Layout, FileText, Image as ImageIcon, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
 import ShotEditor from './ShotEditor';
 import ShotSuggestionPanel from './ShotSuggestionPanel';
@@ -28,6 +29,7 @@ import { ProductionProposal } from '@/types/production';
 import { StoryboardPanelView } from './StoryboardPanelView';
 import { TechnicalDocEditor } from './TechnicalDocEditor';
 import { KeyframesPanel } from './KeyframesPanel';
+import { SceneScreenplayView } from './SceneScreenplayView';
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -1231,8 +1233,13 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
 
                           {expandedScenes.has(scene.id) && (
                             <div className="border-t border-border bg-muted/20 p-4">
-                              <Tabs defaultValue="shots" className="w-full">
+                              <Tabs defaultValue="screenplay" className="w-full">
                                 <TabsList className="mb-4">
+                                  {/* P0: Tab Guion - Vista de guion por escena */}
+                                  <TabsTrigger value="screenplay" className="gap-2">
+                                    <BookOpen className="w-4 h-4" />
+                                    Guion
+                                  </TabsTrigger>
                                   <TabsTrigger value="storyboard" className="gap-2">
                                     <Layout className="w-4 h-4" />
                                     Storyboard
@@ -1253,6 +1260,16 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                     Keyframes
                                   </TabsTrigger>
                                 </TabsList>
+
+                                {/* SCREENPLAY TAB - P0: Vista de guion derivada */}
+                                <TabsContent value="screenplay" className="space-y-4">
+                                  <SceneScreenplayView
+                                    projectId={projectId}
+                                    episodeNo={scene.episode_no}
+                                    sceneNo={scene.scene_no}
+                                    slugline={scene.slugline}
+                                  />
+                                </TabsContent>
 
                                 {/* STORYBOARD TAB */}
                                 <TabsContent value="storyboard" className="space-y-4">
