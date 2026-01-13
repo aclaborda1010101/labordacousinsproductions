@@ -32,6 +32,41 @@ interface LocationGenerationRequest {
 // Use Gemini 3 Pro Image for locations - best available for cinematic environments
 const IMAGE_MODEL = 'google/gemini-3-pro-image-preview';
 
+// Supported image formats for Gemini
+const SUPPORTED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+
+// Convert image URL to base64 data URL
+async function urlToBase64(url: string): Promise<string | null> {
+  try {
+    // Check if format is supported
+    const urlLower = url.toLowerCase();
+    const isSupported = SUPPORTED_EXTENSIONS.some(ext => urlLower.includes(ext));
+    
+    if (!isSupported) {
+      console.log(`[generate-location] Skipping unsupported format: ${url}`);
+      return null;
+    }
+    
+    console.log(`[generate-location] Converting to base64: ${url.substring(0, 80)}...`);
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`[generate-location] Failed to fetch image: ${response.status}`);
+      return null;
+    }
+    
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    
+    // Return as data URL
+    return `data:${contentType};base64,${base64}`;
+  } catch (error) {
+    console.error(`[generate-location] Error converting URL to base64:`, error);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -198,12 +233,27 @@ serve(async (req) => {
     let prompt: string;
     let messageContent: any;
     
+    // Convert reference URLs to base64 for API compatibility
+    const base64References: string[] = [];
     if (mode === 'stylize_from_reference' && allReferenceUrls.length > 0) {
+      console.log(`[generate-location] Converting ${allReferenceUrls.length} reference URLs to base64...`);
+      
+      for (const url of allReferenceUrls) {
+        const base64 = await urlToBase64(url);
+        if (base64) {
+          base64References.push(base64);
+        }
+      }
+      
+      console.log(`[generate-location] Successfully converted ${base64References.length}/${allReferenceUrls.length} references`);
+    }
+    
+    if (mode === 'stylize_from_reference' && base64References.length > 0) {
       // Multimodal: Use all reference photos for comprehensive spatial understanding
-      const hasMultipleRefs = allReferenceUrls.length > 1;
+      const hasMultipleRefs = base64References.length > 1;
       
       prompt = hasMultipleRefs 
-        ? `You have been given ${allReferenceUrls.length} reference photos of the same location from different angles (360° coverage). Use ALL of them to understand the complete 3D space, then generate a ${viewDesc} view.
+        ? `You have been given ${base64References.length} reference photos of the same location from different angles (360° coverage). Use ALL of them to understand the complete 3D space, then generate a ${viewDesc} view.
 
 SPATIAL UNDERSTANDING:
 - Analyze all reference images to build a mental 3D model of this space
@@ -247,19 +297,19 @@ View: ${viewDesc}
 
 CRITICAL: The output must look like a stylized illustration of this EXACT space, not a generic location. Preserve all unique architectural and decorative elements visible in the reference.`;
 
-      // Build multimodal content with all reference images
+      // Build multimodal content with all reference images as base64
       messageContent = [
         {
           type: 'text',
           text: prompt
         },
-        ...allReferenceUrls.map(url => ({
+        ...base64References.map(base64Url => ({
           type: 'image_url',
-          image_url: { url }
+          image_url: { url: base64Url }
         }))
       ];
       
-      console.log(`[generate-location] Using multimodal with ${allReferenceUrls.length} references`);
+      console.log(`[generate-location] Using multimodal with ${base64References.length} base64 references`);
     } else {
       // Text-only generation
       prompt = `Cinematic film still, location scouting photograph.
