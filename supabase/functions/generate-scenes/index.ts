@@ -7,6 +7,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// BATCH CONFIGURATION - Generate in small batches for JSON reliability
+// ═══════════════════════════════════════════════════════════════════════════
+const SCENES_PER_BATCH = 3;
+const MAX_RETRIES = 2;
+
 interface GenerateScenesRequest {
   projectId: string;
   episodeNo: number;
@@ -33,6 +39,190 @@ interface GenerateScenesRequest {
     }>;
   };
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TOOL CALLING SCHEMA - Force structured JSON output
+// ═══════════════════════════════════════════════════════════════════════════
+const SCENE_TOOL_SCHEMA = {
+  type: "function",
+  function: {
+    name: "generate_scenes",
+    description: "Generate cinematographic scenes with shots for video production",
+    parameters: {
+      type: "object",
+      properties: {
+        scenes: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              scene_no: { type: "number", description: "Scene number in episode" },
+              slugline: { type: "string", description: "Scene header like INT. LOCATION - DAY" },
+              summary: { type: "string", description: "What happens in this scene" },
+              time_of_day: { type: "string", enum: ["DAY", "NIGHT"] },
+              character_names: { type: "array", items: { type: "string" } },
+              location_name: { type: "string" },
+              mood: { type: "string" },
+              scene_setup: {
+                type: "object",
+                properties: {
+                  camera_package: {
+                    type: "object",
+                    properties: {
+                      body: { type: "string" },
+                      codec: { type: "string" },
+                      fps: { type: "number" },
+                      shutter_angle: { type: "number" },
+                      iso_target: { type: "number" }
+                    }
+                  },
+                  lens_set: {
+                    type: "object",
+                    properties: {
+                      family: { type: "string" },
+                      look: { type: "string" },
+                      available_focals: { type: "array", items: { type: "number" } }
+                    }
+                  },
+                  lighting_plan: {
+                    type: "object",
+                    properties: {
+                      key_style: { type: "string" },
+                      color_temp_base_k: { type: "number" },
+                      contrast_ratio: { type: "string" }
+                    }
+                  }
+                }
+              },
+              shots: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    shot_id: { type: "string" },
+                    shot_no: { type: "number" },
+                    shot_type: { type: "string" },
+                    coverage_type: { type: "string" },
+                    story_purpose: { type: "string" },
+                    camera_variation: {
+                      type: "object",
+                      properties: {
+                        focal_mm: { type: "number" },
+                        aperture: { type: "string" },
+                        movement: { type: "string" },
+                        height: { type: "string" },
+                        stabilization: { type: "string" },
+                        camera_body: { type: "string" },
+                        lens_model: { type: "string" }
+                      }
+                    },
+                    blocking: {
+                      type: "object",
+                      properties: {
+                        subject_positions: { type: "string" },
+                        screen_direction: { type: "string" },
+                        action: { type: "string" },
+                        timing_breakdown: { type: "string" }
+                      }
+                    },
+                    dialogue: { type: ["string", "null"] },
+                    duration_sec: { type: "number" },
+                    lighting: {
+                      type: "object",
+                      properties: {
+                        style: { type: "string" },
+                        color_temp: { type: "string" },
+                        key_light_direction: { type: "string" }
+                      }
+                    },
+                    sound_design: {
+                      type: "object",
+                      properties: {
+                        room_tone: { type: "string" },
+                        ambience: { type: "array", items: { type: "string" } },
+                        foley: { type: "array", items: { type: "string" } }
+                      }
+                    },
+                    transition: {
+                      type: "object",
+                      properties: {
+                        type: { type: "string" },
+                        to_next: { type: "string" },
+                        bridge_audio: { type: "string" }
+                      }
+                    },
+                    edit_intent: {
+                      type: "object",
+                      properties: {
+                        expected_cut: { type: "string" },
+                        hold_ms: { type: "number" },
+                        rhythm_note: { type: "string" },
+                        viewer_notice: { type: "string" },
+                        intention: { type: "string" }
+                      }
+                    },
+                    ai_risks: { type: "array", items: { type: "string" } },
+                    risk_mitigation: { type: "string" },
+                    keyframe_hints: {
+                      type: "object",
+                      properties: {
+                        start_frame: { type: "string" },
+                        end_frame: { type: "string" },
+                        mid_frames: { type: "array", items: { type: "string" } }
+                      }
+                    },
+                    continuity: {
+                      type: "object",
+                      properties: {
+                        wardrobe_notes: { type: "string" },
+                        props_in_frame: { type: "array", items: { type: "string" } },
+                        match_to_previous: { type: "string" }
+                      }
+                    },
+                    hero: { type: "boolean" }
+                  },
+                  required: ["shot_no", "shot_type", "duration_sec"]
+                }
+              }
+            },
+            required: ["scene_no", "slugline", "summary", "time_of_day", "character_names", "location_name", "mood"]
+          }
+        }
+      },
+      required: ["scenes"]
+    }
+  }
+};
+
+const OUTLINE_TOOL_SCHEMA = {
+  type: "function",
+  function: {
+    name: "generate_scene_outlines",
+    description: "Generate scene outlines without detailed shots",
+    parameters: {
+      type: "object",
+      properties: {
+        scenes: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              scene_no: { type: "number" },
+              slugline: { type: "string" },
+              summary: { type: "string" },
+              time_of_day: { type: "string", enum: ["DAY", "NIGHT"] },
+              character_names: { type: "array", items: { type: "string" } },
+              location_name: { type: "string" },
+              mood: { type: "string" }
+            },
+            required: ["scene_no", "slugline", "summary", "time_of_day", "character_names", "location_name", "mood"]
+          }
+        }
+      },
+      required: ["scenes"]
+    }
+  }
+};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // NARRATIVE MODE PROMPTS
@@ -89,218 +279,127 @@ ESTRUCTURA DE CADA ESCENA:
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// SCENE GENERATOR + CINEMATOGRAPHER ENGINE v4
-// Now includes full shot details with technical specs
+// SCENE GENERATOR SYSTEM PROMPT (simplified for tool calling)
 // ═══════════════════════════════════════════════════════════════════════════
 
 const SCENE_GENERATION_PROMPT = `Eres SHOWRUNNER + DOP con 30 años en Hollywood.
-
 TU MISIÓN: Generar escenas COMPLETAS con planos profesionales listos para producción.
-
-═══════════════════════════════════════════════════════
-ESTRUCTURA DE CADA ESCENA
-═══════════════════════════════════════════════════════
 
 Cada escena DEBE incluir:
 1. Información básica (slugline, summary, mood)
-2. Diálogos completos distribuidos
-3. SCENE_SETUP con configuración técnica constante
-4. SHOTS[] con detalles cinematográficos y transiciones
+2. scene_setup con configuración técnica
+3. shots[] con detalles cinematográficos
 
-═══════════════════════════════════════════════════════
-SCENE_SETUP (CONSTANTES DE ESCENA - NO cambian entre shots)
-═══════════════════════════════════════════════════════
+REGLAS CRÍTICAS:
+- CADA ESCENA tiene 4-8 planos que cubren TODA la acción
+- Los diálogos se DISTRIBUYEN entre planos
+- Planos "hero" (emocionales) marcar como hero: true
+- La secuencia de planos respeta el eje de 180°
+- USA LA FUNCIÓN generate_scenes PARA RESPONDER`;
 
-camera_package:
-  - body: ARRI_Alexa35 | RED_V_Raptor | Sony_Venice2
-  - codec: ARRIRAW | R3D | ProRes4444
-  - fps: 24 | 25
-  - shutter_angle: 180
-  - iso_target: 800 | 1600
+const OUTLINE_SYSTEM_PROMPT = `Eres SHOWRUNNER profesional.
+Tu salida DEBE usar la función generate_scene_outlines.
 
-lens_set:
-  - family: ARRI_Signature_Prime | Zeiss_Supreme | Cooke_S7
-  - look: Vintage_Organic | Modern_Clinical | Anamorphic_Cinematic
-  - available_focals: [24, 35, 50, 85, 135]
+Campos obligatorios por escena:
+- scene_no (number)
+- slugline (string) 
+- summary (string)
+- time_of_day ("DAY" | "NIGHT")
+- character_names (string[])
+- location_name (string)
+- mood (string)`;
 
-lighting_plan:
-  - key_style: Natural_Window | Soft_Diffused | Hard_Dramatic | Neon_Practical
-  - color_temp_base_k: 3200 | 4500 | 5600
-  - contrast_ratio: "4:1" | "2:1" | "8:1"
-
-audio_plan:
-  - room_tone: "habitación silenciosa" | "ciudad de fondo" | "naturaleza"
-  - ambience_layers: ["aire acondicionado", "tráfico lejano"]
+// ═══════════════════════════════════════════════════════════════════════════
+// HELPER: Call AI with tool calling for structured output
+// ═══════════════════════════════════════════════════════════════════════════
+async function callAIWithTool(
+  apiKey: string,
+  systemPrompt: string,
+  userPrompt: string,
+  tool: any,
+  model: string = 'google/gemini-2.5-flash',
+  maxTokens: number = 8000
+): Promise<{ ok: boolean; scenes: any[] | null; rawResponse?: string; error?: string }> {
   
-axis_180_reference:
-  - line_description: "Línea imaginaria entre personajes principales"
-  - screen_left: "Personaje A"
-  - screen_right: "Personaje B"
-
-═══════════════════════════════════════════════════════
-SHOTS[] - CADA PLANO INCLUYE TODOS ESTOS CAMPOS:
-═══════════════════════════════════════════════════════
-
-shot_id: "S01", "S02"...
-shot_no: 1, 2, 3...
-shot_type: Wide | Medium | CloseUp | OTS | Insert | Establishing | TwoShot | ReactionShot
-coverage_type: Master | Single | Two-Shot | OTS_A | OTS_B | Insert | Reaction
-story_purpose: establish_geography | reveal_information | build_tension | emotional_connection | dialogue_focus | transition
-
-camera_variation:
-  - focal_mm: 24 | 35 | 50 | 85 | 135
-  - aperture: "T2.0" | "T2.8" | "T4.0"
-  - movement: Static | Pan | Dolly_In | Dolly_Out | Crane_Up | Steadicam | Tracking
-  - height: EyeLevel | LowAngle | HighAngle | GroundLevel | Overhead
-  - stabilization: Tripod | Steadicam | Handheld_Controlled | Gimbal
-  - camera_body: ARRI_Alexa35 | RED_V_Raptor | Sony_Venice2
-  - lens_model: ARRI_Signature_Prime | Zeiss_Supreme | Cooke_S7
-
-blocking:
-  - subject_positions: "A izquierda frame, B derecha, 2m separación"
-  - screen_direction: "A mira derecha, B mira izquierda"
-  - action: "Descripción de lo que pasa"
-  - timing_breakdown: "sec 0-1: entrada; sec 1-2: reacción; sec 2-3: diálogo"
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 min timeout per batch
   
-dialogue: (línea de diálogo que cubre este plano, o null)
+  try {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0, // Deterministic for JSON reliability
+        max_tokens: maxTokens,
+        tools: [tool],
+        tool_choice: { type: "function", function: { name: tool.function.name } },
+      }),
+      signal: controller.signal,
+    });
 
-duration_sec: 3-8 segundos por plano
+    clearTimeout(timeoutId);
 
-lighting:
-  - style: Naturalistic_Daylight | Soft_Key | Hard_Dramatic | Noir_Contrast
-  - color_temp: Daylight_5600K | Tungsten_3200K | Mixed
-  - key_light_direction: Left | Right | Front | Back
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[generate-scenes] AI API error:', response.status, errorText);
+      
+      return {
+        ok: false,
+        scenes: null,
+        error: response.status === 429 ? 'RATE_LIMIT' : 
+               response.status === 402 ? 'PAYMENT_REQUIRED' : 
+               `API_ERROR_${response.status}`,
+        rawResponse: errorText.substring(0, 1000),
+      };
+    }
 
-sound_design:
-  - room_tone: "descripción del tono ambiente"
-  - ambience: ["elemento1", "elemento2"]
-  - foley: ["acción1", "acción2"]
-
-transition:
-  - type: CUT | DISSOLVE | MATCH_CUT | J_CUT | L_CUT
-  - to_next: "hard_cut" | "audio_prelap" | "visual_match"
-  - bridge_audio: room_tone | dialogue_prelap | SFX_lead_in
-
-edit_intent:
-  - expected_cut: hard | soft | match_cut
-  - hold_ms: 0-800 (milisegundos extra para "respirar")
-  - rhythm_note: "Corte rápido" | "Hold para emoción"
-  - viewer_notice: "¿Qué debe notar el espectador?"
-  - intention: "¿Qué siente/aprende el espectador?"
-
-ai_risks: [Identity_Drift, Hand_Deform, Spatial_Jump, Face_Morph]
-risk_mitigation: "Evitar manos, usar misma ref"
-
-keyframe_hints:
-  - start_frame: "Descripción exacta del frame inicial"
-  - end_frame: "Descripción exacta del frame final"
-  - mid_frames: ["Descripción de frames intermedios si hay movimiento significativo"]
-
-continuity:
-  - wardrobe_notes: "Descripción del vestuario en este plano"
-  - props_in_frame: ["prop1", "prop2"]
-  - match_to_previous: "Notas de raccord con plano anterior"
-
-hero: true/false (planos emocionales clave)
-
-═══════════════════════════════════════════════════════
-REGLAS CRÍTICAS
-═══════════════════════════════════════════════════════
-
-1. CADA ESCENA tiene 4-8 planos que cubren TODA la acción y diálogo
-2. Los diálogos se DISTRIBUYEN entre planos (no todo en uno)
-3. TODAS las transiciones entre planos están definidas
-4. El shot_type y coverage_type deben tener sentido narrativo
-5. Planos "hero" (emocionales) marcar como hero: true
-6. La secuencia de planos respeta el eje de 180°
-7. FORMATO: Solo JSON válido sin markdown
-8. CADA shot tiene TODOS los campos requeridos
-
-═══════════════════════════════════════════════════════
-FORMATO DE SALIDA (ARRAY DE ESCENAS)
-═══════════════════════════════════════════════════════
-
-[
-  {
-    "scene_no": 1,
-    "slugline": "INT. LOCATION - DAY/NIGHT",
-    "summary": "Descripción de lo que pasa",
-    "time_of_day": "DAY" | "NIGHT",
-    "character_names": ["Personaje1", "Personaje2"],
-    "location_name": "Nombre del lugar",
-    "mood": "tense" | "romantic" | "action" | "dramatic",
+    const aiData = await response.json();
     
-    "scene_setup": {
-      "camera_package": { "body": "...", "codec": "...", "fps": 24, "shutter_angle": 180, "iso_target": 800 },
-      "lens_set": { "family": "...", "look": "...", "available_focals": [35, 50, 85] },
-      "lighting_plan": { "key_style": "...", "color_temp_base_k": 5600, "contrast_ratio": "4:1" },
-      "audio_plan": { "room_tone": "...", "ambience_layers": ["..."] },
-      "axis_180_reference": { "line_description": "...", "screen_left": "A", "screen_right": "B" }
-    },
-    
-    "shots": [
-      {
-        "shot_id": "S01",
-        "shot_no": 1,
-        "shot_type": "Wide",
-        "coverage_type": "Master",
-        "story_purpose": "establish_geography",
-        "camera_variation": {
-          "focal_mm": 35,
-          "aperture": "T2.8",
-          "movement": "Static",
-          "height": "EyeLevel",
-          "stabilization": "Tripod",
-          "camera_body": "ARRI_Alexa35",
-          "lens_model": "ARRI_Signature_Prime"
-        },
-        "blocking": {
-          "subject_positions": "A izquierda, B derecha",
-          "screen_direction": "A mira derecha",
-          "action": "Ambos personajes entran a la habitación",
-          "timing_breakdown": "sec 0-1: entrada; sec 1-2: posicionamiento; sec 2-4: establecimiento"
-        },
-        "dialogue": null,
-        "duration_sec": 4,
-        "lighting": {
-          "style": "Naturalistic_Daylight",
-          "color_temp": "Daylight_5600K",
-          "key_light_direction": "Left"
-        },
-        "sound_design": {
-          "room_tone": "Silencio tenso",
-          "ambience": ["aire acondicionado sutil"],
-          "foley": ["pasos sobre madera", "puerta cerrándose"]
-        },
-        "transition": {
-          "type": "CUT",
-          "to_next": "hard_cut",
-          "bridge_audio": "room_tone"
-        },
-        "edit_intent": {
-          "expected_cut": "hard",
-          "hold_ms": 200,
-          "rhythm_note": "Establecer espacio",
-          "viewer_notice": "La tensión entre los personajes",
-          "intention": "El espectador siente la incomodidad del momento"
-        },
-        "ai_risks": ["Spatial_Jump"],
-        "risk_mitigation": "Usar establishing con personajes pequeños en frame",
-        "keyframe_hints": {
-          "start_frame": "Puerta cerrada, habitación vacía",
-          "end_frame": "Ambos personajes en sus posiciones finales",
-          "mid_frames": ["Puerta abriéndose", "Personajes entrando"]
-        },
-        "continuity": {
-          "wardrobe_notes": "A con traje azul, B con vestido rojo",
-          "props_in_frame": ["mesa central", "lámpara"],
-          "match_to_previous": "Primera escena, no hay referencia anterior"
-        },
-        "hero": false
+    // Extract from tool call
+    const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+    if (toolCall?.function?.arguments) {
+      try {
+        const args = JSON.parse(toolCall.function.arguments);
+        if (Array.isArray(args.scenes) && args.scenes.length > 0) {
+          return { ok: true, scenes: args.scenes };
+        }
+      } catch (e) {
+        console.error('[generate-scenes] Tool call parse error:', e);
       }
-    ]
+    }
+    
+    // Fallback: try to parse from content (some models don't use tool_calls properly)
+    const content = aiData.choices?.[0]?.message?.content;
+    if (content) {
+      const parsed = parseJsonSafe<any>(content, 'generate-scenes-fallback');
+      if (parsed.ok) {
+        const scenes = Array.isArray(parsed.json) ? parsed.json : parsed.json?.scenes;
+        if (Array.isArray(scenes) && scenes.length > 0) {
+          console.log('[generate-scenes] Extracted scenes from content fallback');
+          return { ok: true, scenes };
+        }
+      }
+      return { ok: false, scenes: null, rawResponse: content.substring(0, 2000), error: 'PARSE_FAILED' };
+    }
+    
+    return { ok: false, scenes: null, error: 'NO_CONTENT' };
+    
+  } catch (fetchError: unknown) {
+    clearTimeout(timeoutId);
+    if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+      return { ok: false, scenes: null, error: 'TIMEOUT' };
+    }
+    throw fetchError;
   }
-]`;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -364,7 +463,7 @@ serve(async (req) => {
     }
 
     const contentType = isTeaser ? `teaser ${teaserType}` : `episode ${episodeNo}`;
-    console.log(`Generating complete scenes with shots for project ${projectId}, ${contentType}, mode: ${narrativeMode}`);
+    console.log(`[generate-scenes] Generating for project ${projectId}, ${contentType}, mode: ${narrativeMode}, scenes: ${sceneCount}`);
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -374,7 +473,7 @@ serve(async (req) => {
       .select('id, name, role, bio')
       .eq('project_id', projectId);
 
-    console.log(`Found ${characters?.length || 0} characters`);
+    console.log(`[generate-scenes] Found ${characters?.length || 0} characters`);
 
     // Fetch locations from bible
     const { data: locations } = await supabase
@@ -382,16 +481,15 @@ serve(async (req) => {
       .select('id, name, description')
       .eq('project_id', projectId);
 
-    console.log(`Found ${locations?.length || 0} locations`);
+    console.log(`[generate-scenes] Found ${locations?.length || 0} locations`);
 
-    // Fetch style pack for visual consistency (REQUIRED - style_config is the source of truth)
+    // Fetch style pack for visual consistency
     const { data: stylePack } = await supabase
       .from('style_packs')
       .select('*')
       .eq('project_id', projectId)
       .maybeSingle();
 
-    // Parse style_config if exists
     const styleConfig = stylePack?.style_config as {
       presetId?: string;
       camera?: { body: string; lens: string; focalLength: string; aperture: string };
@@ -400,489 +498,339 @@ serve(async (req) => {
       negativeModifiers?: string[];
     } | null;
 
-    // Get micro_shot_duration from request or project default (1-3 seconds)
-    const microShotDuration = body.microShotDuration || 2;
-
     // Build context for AI
     const characterList = characters?.map(c => `- ${c.name} (${c.role || 'character'}): ${c.bio || 'No description'}`).join('\n') || 'No characters defined';
     const locationList = locations?.map(l => `- ${l.name}: ${l.description || 'No description'}`).join('\n') || 'No locations defined';
 
-    // Get narrative mode prompt
     const narrativeModePrompt = NARRATIVE_MODE_PROMPTS[narrativeMode] || NARRATIVE_MODE_PROMPTS.SERIE_ADICTIVA;
 
-    // Build user prompt based on content type
-    let userPrompt: string;
+    // Determine tool and prompts based on mode
+    const tool = generateFullShots ? SCENE_TOOL_SCHEMA : OUTLINE_TOOL_SCHEMA;
+    const systemPrompt = generateFullShots 
+      ? `${SCENE_GENERATION_PROMPT}\n\n${narrativeModePrompt}`
+      : OUTLINE_SYSTEM_PROMPT;
     
-    if (isTeaser && teaserData) {
-      // TEASER MODE - convert teaser shots to scenes
-      const teaserShots = teaserData.scenes.map((shot, idx) => ({
-        shot_no: idx + 1,
-        shot_type: shot.shot_type,
-        duration_sec: shot.duration_sec,
-        description: shot.description,
-        character: shot.character,
-        dialogue: shot.dialogue_snippet,
-        visual_hook: shot.visual_hook,
-        sound_design: shot.sound_design
-      }));
-      
-      userPrompt = `Genera 1 escena COMPLETA para TEASER ${teaserType}.
+    const maxTokensPerBatch = generateFullShots ? 8000 : 2000;
 
-TÍTULO: ${teaserData.title}
-LOGLINE: ${teaserData.logline}
-MÚSICA: ${teaserData.music_cue}
-${teaserData.voiceover_text ? `VOICE OVER: ${teaserData.voiceover_text}` : ''}
+    // Map character names to IDs for later use
+    const characterMap = new Map(characters?.map(c => [c.name.toLowerCase(), c.id]) || []);
+    const locationMap = new Map(locations?.map(l => [l.name.toLowerCase(), l.id]) || []);
 
-SECUENCIA DE PLANOS DEL TEASER:
-${JSON.stringify(teaserShots, null, 2)}
+    // ═══════════════════════════════════════════════════════════════════════════
+    // BATCH GENERATION - Generate scenes in small batches for reliability
+    // ═══════════════════════════════════════════════════════════════════════════
+    
+    const allGeneratedScenes: any[] = [];
+    const totalBatches = Math.ceil(sceneCount / SCENES_PER_BATCH);
+    const failedBatches: number[] = [];
+
+    console.log(`[generate-scenes] Processing ${totalBatches} batches of ${SCENES_PER_BATCH} scenes each`);
+
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+      const startScene = batchIndex * SCENES_PER_BATCH + 1;
+      const endScene = Math.min((batchIndex + 1) * SCENES_PER_BATCH, sceneCount);
+      const batchSize = endScene - startScene + 1;
+
+      console.log(`[generate-scenes] Batch ${batchIndex + 1}/${totalBatches}: scenes ${startScene}-${endScene}`);
+
+      const batchPrompt = `CONTEXTO DEL PROYECTO:
 
 PERSONAJES DISPONIBLES:
 ${characterList}
 
-LOCALIZACIONES DISPONIBLES:
+LOCACIONES DISPONIBLES:
 ${locationList}
 
-ESTILO VISUAL (CANON - NO MODIFICAR):
-- Preset: ${styleConfig?.presetId || 'custom'}
-- Camera Body: ${styleConfig?.camera?.body || 'ARRI Alexa Mini'}
-- Lens: ${styleConfig?.camera?.lens || 'Zeiss Supreme Prime'}
-- Focal Length: ${styleConfig?.camera?.focalLength || '35mm'}
-- Aperture: ${styleConfig?.camera?.aperture || 'f/2.8'}
-- Lighting: ${styleConfig?.style?.lighting || 'natural'}
-- Mood: ${styleConfig?.style?.mood || 'dramatic'}
-- Contrast: ${styleConfig?.style?.contrast || 'medium'}
-- Color Palette: ${styleConfig?.style?.colorPalette?.join(', ') || 'natural'}
-- Aspect Ratio: ${stylePack?.aspect_ratio || '16:9'}
-- Micro-shot Duration: ${microShotDuration}s
+${styleConfig ? `ESTILO VISUAL: ${styleConfig.style?.mood || 'Cinematográfico'}, Iluminación: ${styleConfig.style?.lighting || 'Natural'}` : ''}
 
-PROMPT MODIFIERS A INCLUIR SIEMPRE:
-${styleConfig?.promptModifiers?.join('\n') || 'cinematic, professional'}
-
-EVITAR SIEMPRE:
-${styleConfig?.negativeModifiers?.join('\n') || 'amateur, low quality'}
-
-REQUISITOS:
-1. Crea UNA escena contenedora tipo "TEASER SEQUENCE"
-2. CADA plano del teaser se convierte en un shot de producción
-3. Incluye configuración técnica profesional (cámara, lentes, iluminación)
-4. Las TRANSICIONES son RÁPIDAS estilo tráiler (cortes dinámicos)
-5. Marca shots emocionales como "hero": true
-6. El ritmo es de TRÁILER: rápido, impactante, cinematográfico
-7. CADA shot debe tener TODOS los campos: camera_variation, blocking, lighting, sound_design, edit_intent, keyframe_hints, continuity
-
-Retorna SOLO JSON válido con la estructura de escenas.`;
-    } else {
-      // EPISODE MODE - normal scene generation with narrative mode
-      if (generateFullShots) {
-        userPrompt = `${narrativeModePrompt}
-
-═══════════════════════════════════════════════════════
-GENERA ${sceneCount} ESCENAS COMPLETAS PARA EPISODIO ${episodeNo}
-═══════════════════════════════════════════════════════
-
-SINOPSIS:
+SINOPSIS DEL EPISODIO ${episodeNo}:
 ${synopsis}
 
-PERSONAJES DISPONIBLES:
-${characterList}
+GENERA ESCENAS ${startScene} a ${endScene} (de ${sceneCount} total).
+${generateFullShots ? 'Incluye scene_setup y shots[] completos para cada escena.' : 'Solo outline básico.'}
+Usa SOLO personajes y locaciones del contexto.`;
 
-LOCALIZACIONES DISPONIBLES:
-${locationList}
+      let batchResult = await callAIWithTool(
+        LOVABLE_API_KEY,
+        systemPrompt,
+        batchPrompt,
+        tool,
+        'google/gemini-2.5-flash',
+        maxTokensPerBatch
+      );
 
-ESTILO VISUAL (CANON - NO MODIFICAR):
-- Preset: ${styleConfig?.presetId || 'custom'}
-- Camera Body: ${styleConfig?.camera?.body || 'ARRI Alexa Mini'}
-- Lens: ${styleConfig?.camera?.lens || 'Zeiss Supreme Prime'}
-- Focal Length: ${styleConfig?.camera?.focalLength || '35mm'}
-- Aperture: ${styleConfig?.camera?.aperture || 'f/2.8'}
-- Lighting: ${styleConfig?.style?.lighting || 'natural'}
-- Mood: ${styleConfig?.style?.mood || 'dramatic'}
-- Contrast: ${styleConfig?.style?.contrast || 'medium'}
-- Color Palette: ${styleConfig?.style?.colorPalette?.join(', ') || 'natural'}
-- Aspect Ratio: ${stylePack?.aspect_ratio || '16:9'}
-- Micro-shot Duration: ${microShotDuration}s
-
-PROMPT MODIFIERS A INCLUIR SIEMPRE:
-${styleConfig?.promptModifiers?.join('\n') || 'cinematic, professional'}
-
-EVITAR SIEMPRE:
-${styleConfig?.negativeModifiers?.join('\n') || 'amateur, low quality'}
-
-REQUISITOS CRÍTICOS:
-1. Cada escena tiene 4-8 planos que cubren TODA la acción
-2. Los DIÁLOGOS se distribuyen entre los planos
-3. Las TRANSICIONES están definidas entre planos
-4. Usa SOLO los personajes y localizaciones proporcionados
-5. Marca planos emocionales como "hero": true
-6. La secuencia respeta continuidad cinematográfica
-7. CADA shot debe incluir TODOS los campos:
-   - camera_variation (focal_mm, aperture, movement, height, stabilization, camera_body, lens_model)
-   - blocking (subject_positions, screen_direction, action, timing_breakdown)
-   - lighting (style, color_temp, key_light_direction)
-   - sound_design (room_tone, ambience, foley)
-   - edit_intent (expected_cut, hold_ms, rhythm_note, viewer_notice, intention)
-   - keyframe_hints (start_frame, end_frame, mid_frames)
-   - continuity (wardrobe_notes, props_in_frame, match_to_previous)
-
-Retorna SOLO JSON válido, sin texto adicional.`;
-      } else {
-        userPrompt = `${narrativeModePrompt}
-
-═══════════════════════════════════════════════════════
-GENERA ${sceneCount} ESCENAS (SIN PLANOS) PARA EPISODIO ${episodeNo}
-═══════════════════════════════════════════════════════
-
-SINOPSIS:
-${synopsis}
-
-PERSONAJES DISPONIBLES:
-${characterList}
-
-LOCALIZACIONES DISPONIBLES:
-${locationList}
-
-REQUISITOS CRÍTICOS:
-1. Usa SOLO los personajes y localizaciones proporcionados
-2. Devuelve SOLO JSON válido (sin markdown, sin texto extra)
-3. FORMATO: Array de escenas
-4. NO incluyas "scene_setup" ni "shots"
-5. Campos requeridos por escena:
-   - scene_no (number)
-   - slugline (string)
-   - summary (string)
-   - time_of_day ("DAY" | "NIGHT")
-   - character_names (string[])
-   - location_name (string)
-   - mood (string)
-
-Retorna SOLO JSON válido.`;
-      }
-    }
-
-    const outlineSystemPrompt = `Eres SHOWRUNNER profesional.
-Devuelve SOLO JSON válido (sin markdown, sin texto extra).
-
-Tu salida DEBE ser un array JSON [] de escenas.
-NO incluyas "scene_setup" ni "shots".
-
-Campos por escena (obligatorios):
-- scene_no (number)
-- slugline (string)
-- summary (string)
-- time_of_day ("DAY" | "NIGHT")
-- character_names (string[])
-- location_name (string)
-- mood (string)`;
-
-    const systemPrompt = generateFullShots ? SCENE_GENERATION_PROMPT : outlineSystemPrompt;
-    const maxTokens = generateFullShots ? 16000 : 3500;
-
-    console.log(`Calling AI for ${generateFullShots ? 'FULL scenes + shots' : 'scene outline'} generation...`);
-
-    // Use AbortController with 150 second timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 150000);
-
-    try {
-      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ],
-          temperature: 0.7,
-          max_tokens: maxTokens,
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('AI API error:', response.status, errorText);
+      // Retry with fallback model if failed
+      if (!batchResult.ok && batchResult.error !== 'RATE_LIMIT' && batchResult.error !== 'PAYMENT_REQUIRED') {
+        console.log(`[generate-scenes] Batch ${batchIndex + 1} failed with ${batchResult.error}, retrying with gpt-5-mini...`);
         
-        if (response.status === 429) {
-          return new Response(JSON.stringify({ error: 'Límite de peticiones excedido. Inténtalo más tarde.' }), {
-            status: 429,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-        if (response.status === 402) {
-          return new Response(JSON.stringify({ error: 'Se requieren créditos adicionales.' }), {
-            status: 402,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-        throw new Error('Failed to generate scenes');
+        batchResult = await callAIWithTool(
+          LOVABLE_API_KEY,
+          systemPrompt,
+          batchPrompt,
+          tool,
+          'openai/gpt-5-mini',
+          maxTokensPerBatch
+        );
       }
 
-      const aiData = await response.json();
-      const scenesTextRaw = aiData.choices?.[0]?.message?.content ?? '';
-
-      const parsed = parseJsonSafe<any>(scenesTextRaw, 'generate-scenes');
-
-      if (parsed.degraded) {
-        console.warn('[generate-scenes] Degraded JSON parse:', parsed.warnings, parsed.rawSnippetHash);
-      }
-
-      let generatedScenes: any[] | null = null;
-      if (Array.isArray(parsed.json)) {
-        generatedScenes = parsed.json;
-      } else if (parsed.json && typeof parsed.json === 'object' && Array.isArray((parsed.json as any).scenes)) {
-        generatedScenes = (parsed.json as any).scenes;
-      }
-
-      if (!parsed.ok || !generatedScenes || generatedScenes.length === 0) {
-        console.error('[generate-scenes] Invalid JSON response from AI', {
-          ok: parsed.ok,
-          warnings: parsed.warnings,
-          rawSnippetHash: parsed.rawSnippetHash,
-        });
-
-        return new Response(JSON.stringify({
-          error: 'Invalid JSON response from AI',
-          warnings: parsed.warnings,
-          rawSnippetHash: parsed.rawSnippetHash,
+      // Handle rate limit / payment errors globally
+      if (batchResult.error === 'RATE_LIMIT') {
+        return new Response(JSON.stringify({ 
+          error: 'RATE_LIMIT_EXCEEDED',
+          message: 'Límite de peticiones excedido. Inténtalo más tarde.',
+          partialScenes: allGeneratedScenes.length,
         }), {
-          status: 502,
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      if (batchResult.error === 'PAYMENT_REQUIRED') {
+        return new Response(JSON.stringify({ 
+          error: 'PAYMENT_REQUIRED',
+          message: 'Se requieren créditos adicionales.',
+          partialScenes: allGeneratedScenes.length,
+        }), {
+          status: 402,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
-      console.log(`AI response parsed successfully. Scenes: ${generatedScenes.length}`);
-
-      // Map character names to IDs
-      const characterMap = new Map(characters?.map(c => [c.name.toLowerCase(), c.id]) || []);
-      const locationMap = new Map(locations?.map(l => [l.name.toLowerCase(), l.id]) || []);
-
-      // Insert scenes and shots into database
-      const insertedScenes = [];
-      let totalShotsInserted = 0;
-
-      for (const scene of generatedScenes) {
-        // Find character IDs
-        const characterIds = (scene.character_names || [])
-          .map((name: string) => characterMap.get(name.toLowerCase()))
-          .filter(Boolean);
-
-        // Find location ID
-        const locationId = locationMap.get((scene.location_name || '').toLowerCase()) || null;
-
-        // Insert scene with setup metadata
-        const sceneSlugline = isTeaser 
-          ? `TEASER ${teaserType} - ${scene.slugline || 'PROMOTIONAL SEQUENCE'}` 
-          : scene.slugline;
-
-        // Use upsert to handle duplicates (e.g., regenerating teasers)
-        const sceneData = {
-          project_id: projectId,
-          episode_no: episodeNo,
-          scene_no: scene.scene_no || 1,
-          slugline: sceneSlugline,
-          summary: scene.summary || (isTeaser ? `Teaser promocional ${teaserType}: ${teaserData?.logline || ''}` : ''),
-          time_of_day: scene.time_of_day,
-          character_ids: characterIds,
-          location_id: locationId,
-          mood: { primary: typeof scene.mood === 'string' ? scene.mood : (isTeaser ? 'cinematic' : 'dramatic') },
-          quality_mode: isTeaser ? 'ULTRA' : 'CINE',
-          parsed_json: {
-            scene_setup: scene.scene_setup || null,
-            generated_with: 'cinematographer_engine_v4',
-            narrative_mode: narrativeMode,
-            is_teaser: isTeaser || false,
-            teaser_type: teaserType || null,
-            teaser_metadata: isTeaser ? {
-              title: teaserData?.title,
-              logline: teaserData?.logline,
-              music_cue: teaserData?.music_cue,
-              voiceover_text: teaserData?.voiceover_text
-            } : null
-          }
-        };
-
-        // First try to get existing scene
-        const { data: existingScene } = await supabase
-          .from('scenes')
-          .select('id')
-          .eq('project_id', projectId)
-          .eq('episode_no', episodeNo)
-          .eq('scene_no', scene.scene_no || 1)
-          .maybeSingle();
-
-        let insertedScene;
-        let sceneError;
-
-        if (existingScene) {
-          // Update existing scene
-          const { data, error } = await supabase
-            .from('scenes')
-            .update(sceneData)
-            .eq('id', existingScene.id)
-            .select()
-            .single();
-          insertedScene = data;
-          sceneError = error;
-          
-          // Delete existing shots for regeneration
-          if (!sceneError) {
-            await supabase.from('shots').delete().eq('scene_id', existingScene.id);
-          }
-        } else {
-          // Insert new scene
-          const { data, error } = await supabase
-            .from('scenes')
-            .insert(sceneData)
-            .select()
-            .single();
-          insertedScene = data;
-          sceneError = error;
+      if (batchResult.ok && batchResult.scenes) {
+        // Renumber scenes to be sequential
+        const renumberedScenes = batchResult.scenes.map((scene: any, idx: number) => ({
+          ...scene,
+          scene_no: startScene + idx
+        }));
+        allGeneratedScenes.push(...renumberedScenes);
+        console.log(`[generate-scenes] Batch ${batchIndex + 1} success: ${renumberedScenes.length} scenes`);
+      } else {
+        console.error(`[generate-scenes] Batch ${batchIndex + 1} failed after retry:`, batchResult.error);
+        
+        // Log raw response for debugging
+        if (batchResult.rawResponse) {
+          console.error(`[generate-scenes] Raw response snippet:`, batchResult.rawResponse.substring(0, 500));
         }
-
-        if (sceneError) {
-          console.error('Error upserting scene:', sceneError);
-          continue;
-        }
-
-        const sceneLabel = isTeaser ? `teaser ${teaserType}` : `scene ${scene.scene_no}`;
-        console.log(`Inserted ${sceneLabel}: ${sceneSlugline}`);
-
-        // Insert shots with full cinematographic data
-        if (scene.shots && insertedScene) {
-          for (const shot of scene.shots) {
-            // Build camera JSON from variation
-            const cameraData = shot.camera_variation ? {
-              focal_mm: shot.camera_variation.focal_mm,
-              aperture: shot.camera_variation.aperture,
-              movement: shot.camera_variation.movement,
-              height: shot.camera_variation.height,
-              stabilization: shot.camera_variation.stabilization,
-              camera_body: shot.camera_variation.camera_body,
-              lens_model: shot.camera_variation.lens_model
-            } : null;
-
-            // Build blocking JSON
-            const blockingData = shot.blocking ? {
-              subject_positions: shot.blocking.subject_positions,
-              screen_direction: shot.blocking.screen_direction,
-              action: shot.blocking.action,
-              timing_breakdown: shot.blocking.timing_breakdown
-            } : null;
-
-            // Build lighting JSON
-            const lightingData = shot.lighting ? {
-              style: shot.lighting.style,
-              color_temp: shot.lighting.color_temp,
-              key_light_direction: shot.lighting.key_light_direction
-            } : null;
-
-            // Build sound design JSON
-            const soundDesignData = shot.sound_design ? {
-              room_tone: shot.sound_design.room_tone,
-              ambience: shot.sound_design.ambience,
-              foley: shot.sound_design.foley
-            } : null;
-
-            // Build edit intent JSON
-            const editIntentData = shot.edit_intent ? {
-              expected_cut: shot.edit_intent.expected_cut,
-              hold_ms: shot.edit_intent.hold_ms,
-              rhythm_note: shot.edit_intent.rhythm_note,
-              viewer_notice: shot.edit_intent.viewer_notice,
-              intention: shot.edit_intent.intention
-            } : null;
-
-            // Build keyframe hints JSON
-            const keyframeHintsData = shot.keyframe_hints ? {
-              start_frame: shot.keyframe_hints.start_frame,
-              end_frame: shot.keyframe_hints.end_frame,
-              mid_frames: shot.keyframe_hints.mid_frames
-            } : null;
-
-            // Build continuity JSON
-            const continuityData = shot.continuity ? {
-              wardrobe_notes: shot.continuity.wardrobe_notes,
-              props_in_frame: shot.continuity.props_in_frame,
-              match_to_previous: shot.continuity.match_to_previous
-            } : null;
-
-            const { error: shotError } = await supabase
-              .from('shots')
-              .insert({
-                scene_id: insertedScene.id,
-                shot_no: shot.shot_no || parseInt(shot.shot_id?.replace('S', '') || '1'),
-                shot_type: shot.shot_type?.toLowerCase() || 'medium',
-                dialogue_text: shot.dialogue || null,
-                duration_target: shot.duration_sec || 4,
-                hero: shot.hero || isTeaser || false,
-                effective_mode: (shot.hero || isTeaser) ? 'ULTRA' : 'CINE',
-                camera: cameraData,
-                blocking: blockingData,
-                coverage_type: shot.coverage_type || null,
-                story_purpose: shot.story_purpose || null,
-                transition_in: shot.transition?.type || (isTeaser ? 'MATCH_CUT' : 'CUT'),
-                transition_out: shot.transition?.to_next || (isTeaser ? 'visual_match' : 'hard_cut'),
-                edit_intent: editIntentData,
-                ai_risk: shot.ai_risks || [],
-                continuity_notes: continuityData ? JSON.stringify(continuityData) : (shot.risk_mitigation || null),
-                lighting: lightingData,
-                sound_plan: soundDesignData, // Using sound_plan column for sound_design data
-                keyframe_hints: keyframeHintsData,
-              });
-
-            if (shotError) {
-              console.error('Error inserting shot:', shotError);
-            } else {
-              totalShotsInserted++;
-            }
-          }
-        }
-
-        insertedScenes.push(insertedScene);
+        
+        failedBatches.push(batchIndex + 1);
       }
+    }
 
-      const contentLabel = isTeaser ? `teaser ${teaserType}` : 'scenes';
-      console.log(`Successfully generated ${insertedScenes.length} ${contentLabel} with ${totalShotsInserted} shots`);
-
+    // Check if we have any scenes at all
+    if (allGeneratedScenes.length === 0) {
       return new Response(JSON.stringify({
-        success: true,
-        scenesGenerated: insertedScenes.length,
-        shotsGenerated: totalShotsInserted,
-        scenes: insertedScenes,
-        narrativeMode,
-        isTeaser: isTeaser || false,
-        teaserType: teaserType || null,
-        message: isTeaser 
-          ? `Teaser ${teaserType} generado con ${totalShotsInserted} planos` 
-          : `${insertedScenes.length} escenas con ${totalShotsInserted} planos generados automáticamente (modo: ${narrativeMode})`
+        error: 'GENERATION_FAILED',
+        message: 'No se pudieron generar escenas. Intenta con menos escenas o vuelve a intentar.',
+        failedBatches,
+        actionable: true,
+        suggestedAction: 'retry_with_fewer_scenes',
       }), {
+        status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-
-    } catch (fetchError: unknown) {
-      clearTimeout(timeoutId);
-      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-        console.error('Request timed out after 150 seconds');
-        return new Response(JSON.stringify({ 
-          error: 'La generación tardó demasiado. Intenta con menos escenas o vuelve a intentar.' 
-        }), {
-          status: 504,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      throw fetchError;
     }
 
+    console.log(`[generate-scenes] Total scenes generated: ${allGeneratedScenes.length}/${sceneCount}`);
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // INSERT SCENES AND SHOTS INTO DATABASE
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    const insertedScenes = [];
+    let totalShotsInserted = 0;
+
+    for (const scene of allGeneratedScenes) {
+      // Find character IDs
+      const characterIds = (scene.character_names || [])
+        .map((name: string) => characterMap.get(name.toLowerCase()))
+        .filter(Boolean);
+
+      // Find location ID
+      const locationId = locationMap.get((scene.location_name || '').toLowerCase()) || null;
+
+      // Insert scene with setup metadata
+      const sceneSlugline = isTeaser 
+        ? `TEASER ${teaserType} - ${scene.slugline || 'PROMOTIONAL SEQUENCE'}` 
+        : scene.slugline;
+
+      const sceneData = {
+        project_id: projectId,
+        episode_no: episodeNo,
+        scene_no: scene.scene_no || 1,
+        slugline: sceneSlugline,
+        summary: scene.summary || (isTeaser ? `Teaser promocional ${teaserType}: ${teaserData?.logline || ''}` : ''),
+        time_of_day: scene.time_of_day,
+        character_ids: characterIds,
+        location_id: locationId,
+        mood: { primary: typeof scene.mood === 'string' ? scene.mood : (isTeaser ? 'cinematic' : 'dramatic') },
+        quality_mode: isTeaser ? 'ULTRA' : 'CINE',
+        parsed_json: {
+          scene_setup: scene.scene_setup || null,
+          generated_with: 'cinematographer_engine_v5_tool_calling',
+          narrative_mode: narrativeMode,
+          is_teaser: isTeaser || false,
+          teaser_type: teaserType || null,
+        }
+      };
+
+      // First try to get existing scene
+      const { data: existingScene } = await supabase
+        .from('scenes')
+        .select('id')
+        .eq('project_id', projectId)
+        .eq('episode_no', episodeNo)
+        .eq('scene_no', scene.scene_no || 1)
+        .maybeSingle();
+
+      let insertedScene;
+      let sceneError;
+
+      if (existingScene) {
+        // Update existing scene
+        const { data, error } = await supabase
+          .from('scenes')
+          .update(sceneData)
+          .eq('id', existingScene.id)
+          .select()
+          .single();
+        insertedScene = data;
+        sceneError = error;
+        
+        // Delete existing shots for regeneration
+        if (!sceneError) {
+          await supabase.from('shots').delete().eq('scene_id', existingScene.id);
+        }
+      } else {
+        // Insert new scene
+        const { data, error } = await supabase
+          .from('scenes')
+          .insert(sceneData)
+          .select()
+          .single();
+        insertedScene = data;
+        sceneError = error;
+      }
+
+      if (sceneError) {
+        console.error('[generate-scenes] Error upserting scene:', sceneError);
+        continue;
+      }
+
+      console.log(`[generate-scenes] Inserted scene ${scene.scene_no}: ${sceneSlugline}`);
+
+      // Insert shots with full cinematographic data
+      if (scene.shots && insertedScene) {
+        for (const shot of scene.shots) {
+          const cameraData = shot.camera_variation ? {
+            focal_mm: shot.camera_variation.focal_mm,
+            aperture: shot.camera_variation.aperture,
+            movement: shot.camera_variation.movement,
+            height: shot.camera_variation.height,
+            stabilization: shot.camera_variation.stabilization,
+            camera_body: shot.camera_variation.camera_body,
+            lens_model: shot.camera_variation.lens_model
+          } : null;
+
+          const blockingData = shot.blocking ? {
+            subject_positions: shot.blocking.subject_positions,
+            screen_direction: shot.blocking.screen_direction,
+            action: shot.blocking.action,
+            timing_breakdown: shot.blocking.timing_breakdown
+          } : null;
+
+          const lightingData = shot.lighting ? {
+            style: shot.lighting.style,
+            color_temp: shot.lighting.color_temp,
+            key_light_direction: shot.lighting.key_light_direction
+          } : null;
+
+          const soundDesignData = shot.sound_design ? {
+            room_tone: shot.sound_design.room_tone,
+            ambience: shot.sound_design.ambience,
+            foley: shot.sound_design.foley
+          } : null;
+
+          const editIntentData = shot.edit_intent ? {
+            expected_cut: shot.edit_intent.expected_cut,
+            hold_ms: shot.edit_intent.hold_ms,
+            rhythm_note: shot.edit_intent.rhythm_note,
+            viewer_notice: shot.edit_intent.viewer_notice,
+            intention: shot.edit_intent.intention
+          } : null;
+
+          const keyframeHintsData = shot.keyframe_hints ? {
+            start_frame: shot.keyframe_hints.start_frame,
+            end_frame: shot.keyframe_hints.end_frame,
+            mid_frames: shot.keyframe_hints.mid_frames
+          } : null;
+
+          const continuityData = shot.continuity ? {
+            wardrobe_notes: shot.continuity.wardrobe_notes,
+            props_in_frame: shot.continuity.props_in_frame,
+            match_to_previous: shot.continuity.match_to_previous
+          } : null;
+
+          const { error: shotError } = await supabase
+            .from('shots')
+            .insert({
+              scene_id: insertedScene.id,
+              shot_no: shot.shot_no || parseInt(shot.shot_id?.replace('S', '') || '1'),
+              shot_type: shot.shot_type?.toLowerCase() || 'medium',
+              dialogue_text: shot.dialogue || null,
+              duration_target: shot.duration_sec || 4,
+              hero: shot.hero || isTeaser || false,
+              effective_mode: (shot.hero || isTeaser) ? 'ULTRA' : 'CINE',
+              camera: cameraData,
+              blocking: blockingData,
+              coverage_type: shot.coverage_type || null,
+              story_purpose: shot.story_purpose || null,
+              transition_in: shot.transition?.type || (isTeaser ? 'MATCH_CUT' : 'CUT'),
+              transition_out: shot.transition?.to_next || (isTeaser ? 'visual_match' : 'hard_cut'),
+              edit_intent: editIntentData,
+              ai_risk: shot.ai_risks || [],
+              continuity_notes: continuityData ? JSON.stringify(continuityData) : (shot.risk_mitigation || null),
+              lighting: lightingData,
+              sound_plan: soundDesignData,
+              keyframe_hints: keyframeHintsData,
+            });
+
+          if (shotError) {
+            console.error('[generate-scenes] Error inserting shot:', shotError);
+          } else {
+            totalShotsInserted++;
+          }
+        }
+      }
+
+      insertedScenes.push(insertedScene);
+    }
+
+    const contentLabel = isTeaser ? `teaser ${teaserType}` : 'scenes';
+    console.log(`[generate-scenes] Successfully generated ${insertedScenes.length} ${contentLabel} with ${totalShotsInserted} shots`);
+
+    return new Response(JSON.stringify({
+      success: true,
+      scenesGenerated: insertedScenes.length,
+      scenesRequested: sceneCount,
+      shotsGenerated: totalShotsInserted,
+      scenes: insertedScenes,
+      narrativeMode,
+      isTeaser: isTeaser || false,
+      teaserType: teaserType || null,
+      failedBatches: failedBatches.length > 0 ? failedBatches : undefined,
+      message: isTeaser 
+        ? `Teaser ${teaserType} generado con ${totalShotsInserted} planos` 
+        : `${insertedScenes.length} escenas con ${totalShotsInserted} planos generados (modo: ${narrativeMode})`
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+
   } catch (error) {
-    console.error('Error generating scenes:', error);
+    console.error('[generate-scenes] Error:', error);
     return new Response(JSON.stringify({ 
-      error: error instanceof Error ? error.message : 'Error desconocido' 
+      error: 'INTERNAL_ERROR',
+      message: error instanceof Error ? error.message : 'Error desconocido',
+      actionable: true,
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
