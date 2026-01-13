@@ -1345,20 +1345,46 @@ serve(async (req) => {
   } catch (err: any) {
     console.error('[WORKER ERROR]', err);
 
-    // Update outline with error if we have an ID
+    // CRITICAL: Always update outline with error status if we have an ID
+    // This ensures the UI can detect failure and offer retry options
     if (outlineId) {
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-      );
-      
-      const isTimeout = err.message?.includes('AI_TIMEOUT');
-      await updateOutline(supabase, outlineId, {
-        status: isTimeout ? 'timeout' : 'failed',
-        error_code: isTimeout ? 'STAGE_TIMEOUT' : 'WORKER_ERROR',
-        error_detail: err.message || 'Unknown error',
-        heartbeat_at: new Date().toISOString()
-      });
+      try {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        );
+        
+        // Classify error type for better debugging
+        const isTimeout = err.message?.includes('AI_TIMEOUT') || err.message?.includes('AbortError');
+        const isRateLimit = err.status === 429 || err.message?.includes('429');
+        const isPayment = err.status === 402 || err.message?.includes('402');
+        
+        let errorCode = 'WORKER_ERROR';
+        let status = 'failed';
+        
+        if (isTimeout) {
+          errorCode = 'STAGE_TIMEOUT';
+          status = 'timeout';
+        } else if (isRateLimit) {
+          errorCode = 'RATE_LIMIT';
+          status = 'failed';
+        } else if (isPayment) {
+          errorCode = 'PAYMENT_REQUIRED';
+          status = 'failed';
+        }
+        
+        await updateOutline(supabase, outlineId, {
+          status,
+          error_code: errorCode,
+          error_detail: (err.message || 'Unknown error').substring(0, 500),
+          heartbeat_at: new Date().toISOString()
+        });
+        
+        console.log(`[WORKER] Updated outline ${outlineId} with status=${status}, error_code=${errorCode}`);
+      } catch (updateErr) {
+        // Last resort: log the error but don't throw - we're already in error handling
+        console.error('[WORKER] Failed to update outline status after error:', updateErr);
+      }
     }
 
     // Return structured error
