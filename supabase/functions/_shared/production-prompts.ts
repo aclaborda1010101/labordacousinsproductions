@@ -686,3 +686,162 @@ export const CHUNK_EXTRACTION_TOOL_SCHEMA = {
   },
   required: ['job_id', 'chunk_id', 'characters', 'locations', 'scenes']
 };
+
+// =============================================================================
+// V11: STRUCTURED SUMMARIZE (preserves structure, no embellishment)
+// =============================================================================
+export const STRUCTURED_SUMMARIZE_V11 = {
+  name: "STRUCTURED_SUMMARIZE_V11",
+  model: "openai/gpt-5-mini",
+  maxTokens: 4000,
+  
+  system: `Eres un compresor estructural. No embelleces: preservas información útil para generar un outline.
+
+REGLAS DURAS:
+- No inventes nada.
+- No generalices (no sustituyas nombres por "la entidad", etc.).
+- Conserva nombres propios, relaciones causales, reglas del mundo, conflictos, misterios y revelaciones.
+- Devuelve SOLO JSON válido. Sin markdown. Sin texto fuera del JSON.
+- Mantén el mismo idioma del input.`,
+
+  buildUserPrompt: (inputText: string) => `INPUT_TEXT (${inputText.length} chars):
+${inputText}
+
+Devuelve SOLO JSON:
+{
+  "entities": [{"name":"","type":"","notes":""}],
+  "characters": [{"name":"","role":"","traits":[],"wants":"","needs":"","flaw":""}],
+  "factions": [{"name":"","objective":"","method":"","resources":[]}],
+  "locations": [{"name":"","function":""}],
+  "timeline": [{"marker":"","event":""}],
+  "world_rules": [{"entity":"","rule":"","effect":""}],
+  "mysteries": [],
+  "reveals": [],
+  "stakes": {"personal":"","global":""},
+  "summary": "max 3500 chars"
+}
+
+RESTRICCIONES:
+- Si falta info, usa strings vacíos, no inventes.
+- "summary" debe ser un resumen operativo, no literario.`
+};
+
+// =============================================================================
+// V11: OUTLINE CORE (from structured_summary)
+// =============================================================================
+export const OUTLINE_CORE_V11 = {
+  name: "OUTLINE_CORE_V11",
+  model: "openai/gpt-5.2",
+  maxTokens: 6000,
+  
+  system: `Eres showrunner técnico. Tu salida debe servir para producir episodios sin alucinación.
+
+REGLAS DURAS:
+1) season_arc DEBE incluir: inciting_incident, first_turn, midpoint_reversal, all_is_lost, final_choice.
+2) Cada episodio DEBE incluir:
+   - central_conflict (quién vs quién/qué)
+   - turning_points: EXACTAMENTE 4 o más, cada TP es OBJETO con agent+event+consequence
+   - setpiece (name + stakes + participants)
+   - cliffhanger (gancho concreto)
+   - thread_usage (A obligatorio + crossover_event obligatorio)
+3) PROHIBIDO texto genérico. Cada punto es un HECHO OBSERVABLE (agente + verbo + cambio).
+4) Devuelve SOLO JSON válido. Sin markdown. Sin texto fuera del JSON.
+5) turning_points son OBJETOS {agent, event, consequence}, NUNCA strings.`,
+
+  buildUserPrompt: (params: {
+    episode_count: number;
+    episode_minutes: number;
+    genre: string;
+    tone: string;
+    structured_summary_json: unknown;
+  }) => `CONFIG:
+{ "episode_count": ${params.episode_count}, "episode_minutes": ${params.episode_minutes}, "genre": "${params.genre}", "tone": "${params.tone}" }
+
+STRUCTURED_SUMMARY_JSON:
+${JSON.stringify(params.structured_summary_json, null, 2)}
+
+Devuelve SOLO JSON con esta forma (campos mínimos):
+{
+  "title": "",
+  "logline": "",
+  "genre": "${params.genre}",
+  "tone": "${params.tone}",
+  "season_arc": {
+    "inciting_incident": "Evento detonante ep1 (quién hace qué)",
+    "first_turn": "Punto sin retorno (quién decide qué)",
+    "midpoint_reversal": "Giro que redefine todo (EVENTO CONCRETO)",
+    "all_is_lost": "Crisis máxima (qué pierde quién)",
+    "final_choice": "Decisión irreversible del protagonista"
+  },
+  "main_characters": [...],
+  "main_locations": [...],
+  "world_rules": [...],
+  "factions": [],
+  "entity_rules": [],
+  "threads": [],
+  "episode_beats": [
+    {
+      "episode": 1,
+      "title": "",
+      "central_conflict": "Quién vs quién/qué",
+      "turning_points": [
+        {"agent":"QUIÉN","event":"QUÉ hace","consequence":"QUÉ cambia"},
+        {"agent":"...","event":"...","consequence":"..."},
+        {"agent":"...","event":"...","consequence":"..."},
+        {"agent":"...","event":"...","consequence":"..."}
+      ],
+      "setpiece": {"name":"","participants":[""],"stakes":""},
+      "cliffhanger": "",
+      "thread_usage": {"A":"","crossover_event":""}
+    }
+  ]
+}
+
+REGLAS FINALES:
+- episode_beats.length DEBE ser ${params.episode_count}
+- turning_points mínimo 4 por episodio, OBJETOS con agent/event/consequence
+- Si un dato no está en el summary, deja string vacío, NO inventes.`
+};
+
+// =============================================================================
+// V11: THREADS ENRICH (surgical, returns episode_beats_patch)
+// =============================================================================
+export const THREADS_ENRICH_V11 = {
+  name: "THREADS_ENRICH_V11",
+  model: "openai/gpt-5.2",
+  maxTokens: 4000,
+  
+  system: `Eres un arquitecto de tramas. No reescribes episodios ni season_arc: SOLO añades threads y asignación por episodio.
+
+REGLAS:
+- 5 a 8 threads máximo.
+- Cada thread: question + engine + stake + 3-7 milestones (hechos) + end_state.
+- Para cada episodio:
+  - thread_usage.A obligatorio
+  - crossover_event obligatorio: hecho observable donde chocan tramas
+- Devuelve SOLO JSON válido. Sin markdown. Sin texto fuera del JSON.`,
+
+  buildUserPrompt: (outlineJson: unknown) => `OUTLINE_JSON:
+${JSON.stringify(outlineJson, null, 2)}
+
+Devuelve SOLO:
+{
+  "threads": [
+    {
+      "id": "T_MAIN",
+      "type": "main|subplot|relationship|ethical|mystery|procedural|myth|entity",
+      "question": "Pregunta dramática",
+      "engine": "Mecánica: investigar, cazar, etc.",
+      "stake": "Pérdida concreta si falla",
+      "milestones": ["Hito 1", "Hito 2", "Hito 3"],
+      "end_state": "Estado final"
+    }
+  ],
+  "episode_beats_patch": [
+    { "episode": 1, "thread_usage": { "A": "T_MAIN", "B": "", "C": "", "crossover_event": "Hecho observable" } }
+  ]
+}
+
+IMPORTANTE: devuelve "episode_beats_patch" (NO "episode_thread_usage").
+NO modifiques nada más del outline.`
+};

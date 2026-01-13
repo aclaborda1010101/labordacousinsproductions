@@ -10,6 +10,9 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import { THREADS_ENRICH_V11 } from '../_shared/production-prompts.ts';
+import { needsThreads, needsFactions, needsEntityRules, needs5Hitos, needsSetpieces } from '../_shared/qc-validators.ts';
+import { THREAD_SCHEMA, THREADS_ENRICH_RESPONSE_SCHEMA } from '../_shared/outline-schemas-v11.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -587,15 +590,13 @@ serve(async (req) => {
       })
       .eq('id', outline_id);
 
-    // Track what we need to enrich
-    const needsFactions = !outline.factions || outline.factions.length === 0;
-    const needsEntityRules = !outline.entity_rules || outline.entity_rules.length === 0;
-    const needsSetpieces = !outline.episode_beats?.every((ep: any) => ep.setpiece);
-    const needsArc5Hitos = !outline.season_arc?.inciting_incident || 
-                           !outline.season_arc?.all_is_lost || 
-                           !outline.season_arc?.final_choice;
-    const needsThreads = !outline.threads || outline.threads.length < 5;
-    const needsThreadUsage = !outline.episode_beats?.every((ep: any) => ep.thread_usage?.A && ep.thread_usage?.crossover_event);
+    // Track what we need to enrich (using V11 validators)
+    const outlineNeedsFactions = needsFactions(outline);
+    const outlineNeedsEntityRules = needsEntityRules(outline);
+    const outlineNeedsSetpieces = needsSetpieces(outline);
+    const outlineNeedsArc5Hitos = needs5Hitos(outline);
+    const outlineNeedsThreads = needsThreads(outline);
+    const outlineNeedsThreadUsage = !outline.episode_beats?.every((ep: any) => ep.thread_usage?.A && ep.thread_usage?.crossover_event);
 
     let enrichedOutline = { ...outline };
     let progress = 20;
@@ -603,7 +604,7 @@ serve(async (req) => {
     // ========================================================================
     // ENRICH FACTIONS
     // ========================================================================
-    if ((enrich_mode === 'all' || enrich_mode === 'factions') && needsFactions) {
+    if ((enrich_mode === 'all' || enrich_mode === 'factions') && outlineNeedsFactions) {
       console.log('[outline-enrich] Generating factions...');
       
       await supabase.from('script_outlines').update({ progress: 25 }).eq('id', outline_id);
@@ -627,7 +628,7 @@ serve(async (req) => {
     // ========================================================================
     // ENRICH ENTITY RULES
     // ========================================================================
-    if ((enrich_mode === 'all' || enrich_mode === 'entity_rules') && needsEntityRules) {
+    if ((enrich_mode === 'all' || enrich_mode === 'entity_rules') && outlineNeedsEntityRules) {
       console.log('[outline-enrich] Generating entity rules...');
       
       await supabase.from('script_outlines').update({ progress: 45 }).eq('id', outline_id);
@@ -651,7 +652,7 @@ serve(async (req) => {
     // ========================================================================
     // ENRICH SEASON ARC (5 HITOS)
     // ========================================================================
-    if ((enrich_mode === 'all' || enrich_mode === 'arc') && needsArc5Hitos) {
+    if ((enrich_mode === 'all' || enrich_mode === 'arc') && outlineNeedsArc5Hitos) {
       console.log('[outline-enrich] Completing 5-hitos season arc...');
       
       await supabase.from('script_outlines').update({ progress: 60 }).eq('id', outline_id);
@@ -678,7 +679,7 @@ serve(async (req) => {
     // ========================================================================
     // ENRICH SETPIECES PER EPISODE
     // ========================================================================
-    if ((enrich_mode === 'all' || enrich_mode === 'setpieces') && needsSetpieces) {
+    if ((enrich_mode === 'all' || enrich_mode === 'setpieces') && outlineNeedsSetpieces) {
       console.log('[outline-enrich] Generating setpieces...');
       
       await supabase.from('script_outlines').update({ progress: 70 }).eq('id', outline_id);
@@ -706,54 +707,39 @@ serve(async (req) => {
     }
 
     // ========================================================================
-    // V11: ENRICH THREADS (NARRATIVE LANES)
+    // V11: ENRICH THREADS (NARRATIVE LANES) - Using centralized prompt
     // ========================================================================
-    if ((enrich_mode === 'all' || enrich_mode === 'threads') && needsThreads) {
-      console.log('[outline-enrich] Generating narrative threads...');
+    if ((enrich_mode === 'all' || enrich_mode === 'threads') && outlineNeedsThreads) {
+      console.log('[outline-enrich] Generating narrative threads (V11)...');
       
       await supabase.from('script_outlines').update({ 
         progress: 80,
         stage: 'threads'
       }).eq('id', outline_id);
 
-      const threadsPrompt = buildThreadsPrompt(enrichedOutline);
+      // Use V11 centralized prompt
       const threadsResult = await callLovableAI(
-        QUALITY_MODEL,
-        'You are a narrative architect. Create 5-8 dramatic threads that organize the story. Return ONLY valid JSON.',
-        threadsPrompt,
+        THREADS_ENRICH_V11.model,
+        THREADS_ENRICH_V11.system,
+        THREADS_ENRICH_V11.buildUserPrompt(enrichedOutline),
         'generate_threads',
-        THREADS_SCHEMA
+        THREADS_ENRICH_RESPONSE_SCHEMA,
+        THREADS_ENRICH_V11.maxTokens
       );
 
       if (threadsResult?.threads && threadsResult.threads.length >= 3) {
         enrichedOutline.threads = threadsResult.threads;
         console.log(`[outline-enrich] Generated ${threadsResult.threads.length} threads`);
         
-        // Now generate thread_usage for each episode
-        if (needsThreadUsage || enrich_mode === 'threads') {
-          console.log('[outline-enrich] Assigning threads to episodes...');
-          
-          await supabase.from('script_outlines').update({ progress: 90 }).eq('id', outline_id);
-          
-          const threadUsagePrompt = buildThreadUsagePrompt(enrichedOutline, threadsResult.threads);
-          const threadUsageResult = await callLovableAI(
-            QUALITY_MODEL,
-            'You are a narrative architect. Assign threads to each episode with crossover events. Return ONLY valid JSON.',
-            threadUsagePrompt,
-            'generate_thread_usage',
-            THREAD_USAGE_SCHEMA
-          );
-
-          if (threadUsageResult?.episode_thread_usage) {
-            // Merge thread_usage into episode_beats
-            enrichedOutline.episode_beats = (enrichedOutline.episode_beats || []).map((ep: any) => {
-              const usageData = threadUsageResult.episode_thread_usage.find(
-                (u: any) => u.episode === ep.episode
-              );
-              return usageData ? { ...ep, thread_usage: usageData.thread_usage } : ep;
-            });
-            console.log(`[outline-enrich] Added thread_usage to ${threadUsageResult.episode_thread_usage.length} episodes`);
-          }
+        // V11: Merge episode_beats_patch (not episode_thread_usage)
+        if (threadsResult.episode_beats_patch) {
+          enrichedOutline.episode_beats = (enrichedOutline.episode_beats || []).map((ep: any) => {
+            const patch = threadsResult.episode_beats_patch.find(
+              (p: any) => p.episode === ep.episode
+            );
+            return patch ? { ...ep, thread_usage: patch.thread_usage } : ep;
+          });
+          console.log(`[outline-enrich] Patched thread_usage on ${threadsResult.episode_beats_patch.length} episodes`);
         }
       }
       progress = 95;

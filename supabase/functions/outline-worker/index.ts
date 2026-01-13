@@ -20,7 +20,9 @@ import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-
 import { corsHeaders } from "../_shared/v3-enterprise.ts";
 import { parseJsonSafe } from "../_shared/llmJson.ts";
 import { MODEL_CONFIG } from "../_shared/model-config.ts";
-
+import { STRUCTURED_SUMMARIZE_V11, OUTLINE_CORE_V11 } from "../_shared/production-prompts.ts";
+import { runStructuralQC as runStructuralQCV11, QCResult as QCResultV11 } from "../_shared/qc-validators.ts";
+import { TURNING_POINT_SCHEMA, SETPIECE_SCHEMA, THREAD_USAGE_SCHEMA } from "../_shared/outline-schemas-v11.ts";
 // Model configuration
 const FAST_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;       // gpt-5-mini
 const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD; // gpt-5.2
@@ -343,7 +345,7 @@ const PART_A_TOOL_SCHEMA = {
   required: ['title', 'logline', 'season_arc', 'cast', 'locations']
 };
 
-// PART_B/C: Episodes with turning points and setpieces
+// PART_B/C: Episodes with turning points, setpieces and thread_usage (V11)
 const EPISODES_TOOL_SCHEMA = {
   type: 'object',
   properties: {
@@ -351,6 +353,7 @@ const EPISODES_TOOL_SCHEMA = {
       type: 'array',
       items: {
         type: 'object',
+        additionalProperties: false,
         properties: {
           episode: { type: 'number' },
           title: { type: 'string' },
@@ -358,31 +361,14 @@ const EPISODES_TOOL_SCHEMA = {
           central_conflict: { type: 'string' },
           turning_points: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                tp: { type: 'number' },
-                event: { type: 'string' },
-                agent: { type: 'string' },
-                consequence: { type: 'string' }
-              },
-              required: ['tp', 'event', 'agent', 'consequence']
-            }
+            items: TURNING_POINT_SCHEMA,
+            minItems: 4
           },
           cliffhanger: { type: 'string' },
-          // Setpiece enrichment field
-          setpiece: {
-            type: 'object',
-            properties: {
-              name: { type: 'string', description: 'Setpiece name (e.g., "Laboratory Chase")' },
-              location: { type: 'string', description: 'Where it happens' },
-              participants: { type: 'array', items: { type: 'string' }, description: 'Characters involved' },
-              stakes: { type: 'string', description: 'What is lost if it fails' }
-            },
-            required: ['name', 'stakes']
-          }
+          setpiece: SETPIECE_SCHEMA,
+          thread_usage: THREAD_USAGE_SCHEMA
         },
-        required: ['episode', 'title', 'central_conflict', 'turning_points', 'cliffhanger']
+        required: ['episode', 'title', 'central_conflict', 'turning_points', 'cliffhanger', 'setpiece', 'thread_usage']
       }
     }
   },
@@ -818,7 +804,7 @@ async function stageOutlineFanOut(
 }
 
 // ============================================================================
-// MERGE FUNCTION: Combine all parts into final outline
+// MERGE FUNCTION: Combine all parts into final outline (V11 - preserve TP objects)
 // ============================================================================
 function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
   const partA = parts.part_a || {};
@@ -828,21 +814,53 @@ function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
   // Combine episodes
   const allEpisodes = [...episodesB, ...episodesC];
   
-  // Normalize episodes to standard format
+  // Normalize episodes to V11 format (PRESERVE TP OBJECTS)
   const normalizedEpisodes = allEpisodes.map((ep: any, i: number) => {
-    // Convert turning_points from objects to strings if needed
+    // V11: Keep turning_points as objects, don't convert to strings
     const tps = Array.isArray(ep.turning_points) 
-      ? ep.turning_points.map((tp: any) => {
-          if (typeof tp === 'string') return tp;
-          return `${tp.event || 'Evento'} (${tp.agent || 'Agente'}) → ${tp.consequence || 'Consecuencia'}`;
+      ? ep.turning_points.map((tp: any, j: number) => {
+          if (typeof tp === 'object' && tp !== null) {
+            return {
+              tp: tp.tp || j + 1,
+              agent: tp.agent || 'Agente',
+              event: tp.event || 'Evento',
+              consequence: tp.consequence || 'Consecuencia'
+            };
+          }
+          // Convert legacy string TPs to objects
+          return {
+            tp: j + 1,
+            agent: 'Por definir',
+            event: typeof tp === 'string' ? tp : 'Evento',
+            consequence: 'Por definir'
+          };
         })
-      : ['TP1', 'TP2', 'TP3', 'TP4'];
+      : [
+          { tp: 1, agent: 'Por definir', event: 'TP1', consequence: 'Por definir' },
+          { tp: 2, agent: 'Por definir', event: 'TP2', consequence: 'Por definir' },
+          { tp: 3, agent: 'Por definir', event: 'TP3', consequence: 'Por definir' },
+          { tp: 4, agent: 'Por definir', event: 'TP4', consequence: 'Por definir' }
+        ];
+    
+    // V11: Include setpiece and thread_usage
+    const setpiece = ep.setpiece || {
+      name: 'Por definir',
+      participants: [],
+      stakes: 'Por definir'
+    };
+    
+    const thread_usage = ep.thread_usage || {
+      A: '',
+      crossover_event: 'Por definir'
+    };
     
     return {
       episode: ep.episode || i + 1,
       title: ep.title || `Episodio ${i + 1}`,
       central_conflict: ep.central_conflict || ep.central_question || 'Por definir',
       turning_points: tps,
+      setpiece,
+      thread_usage,
       summary: ep.summary || '',
       cliffhanger: ep.cliffhanger || 'Por definir'
     };
@@ -850,11 +868,19 @@ function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
   
   // Ensure correct number of episodes
   while (normalizedEpisodes.length < expectedEpisodes) {
+    const epNum = normalizedEpisodes.length + 1;
     normalizedEpisodes.push({
-      episode: normalizedEpisodes.length + 1,
-      title: `Episodio ${normalizedEpisodes.length + 1}`,
+      episode: epNum,
+      title: `Episodio ${epNum}`,
       central_conflict: 'Por definir',
-      turning_points: ['TP1', 'TP2', 'TP3', 'TP4'],
+      turning_points: [
+        { tp: 1, agent: 'Por definir', event: 'TP1', consequence: 'Por definir' },
+        { tp: 2, agent: 'Por definir', event: 'TP2', consequence: 'Por definir' },
+        { tp: 3, agent: 'Por definir', event: 'TP3', consequence: 'Por definir' },
+        { tp: 4, agent: 'Por definir', event: 'TP4', consequence: 'Por definir' }
+      ],
+      setpiece: { name: 'Por definir', participants: [], stakes: 'Por definir' },
+      thread_usage: { A: '', crossover_event: 'Por definir' },
       summary: 'Por generar',
       cliffhanger: 'Por definir'
     });
@@ -875,7 +901,7 @@ function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
     description: loc.function || ''
   }));
   
-  // Build complete outline
+  // Build complete outline with V11 fields
   return {
     title: partA.title || 'Sin título',
     logline: partA.logline || '',
@@ -884,6 +910,9 @@ function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
     synopsis: partA.synopsis || partA.logline || '',
     season_arc: partA.season_arc || {},
     world_rules: Array.isArray(partA.world_rules) ? partA.world_rules : [],
+    factions: Array.isArray(partA.factions) ? partA.factions : [],
+    entity_rules: Array.isArray(partA.entity_rules) ? partA.entity_rules : [],
+    threads: [],
     main_characters: mainCharacters,
     main_locations: mainLocations,
     main_props: [],
@@ -1131,17 +1160,19 @@ async function stageMerge(
     narrative_mode: outline.narrative_mode || 'serie_adictiva'
   };
 
-  // Run combined QC (structural + semantic)
+  // Run V11 QC (replaces old combined QC)
   const expectedEpisodes = outline.episode_count || 6;
-  const qcResult = await runCombinedQC(supabase, outline.id, normalized, expectedEpisodes);
+  const qcResult = runStructuralQCV11(normalized, expectedEpisodes);
 
   // Add QC status to outline
   normalized.qc_status = qcResult.quality;
-  normalized.qc_warnings = qcResult.issues.length > 0 ? qcResult.issues : undefined;
+  normalized.qc_warnings = qcResult.blockers.length > 0 || qcResult.warnings.length > 0 
+    ? [...qcResult.blockers.map((b: string) => `BLOCKER:${b}`), ...qcResult.warnings.map((w: string) => `WARN:${w}`)] 
+    : undefined;
   normalized.qc_score = qcResult.score;
 
-  // Determine final status based on QC
-  const finalStatus = qcResult.quality === 'rejected' ? 'failed' : 'completed';
+  // Determine final status based on V11 QC
+  const finalStatus = qcResult.passed ? 'completed' : 'failed';
   
   // Mark as completed with quality rating
   await updateOutline(supabase, outline.id, {
@@ -1150,12 +1181,14 @@ async function stageMerge(
     substage: null,
     progress: 100,
     quality: qcResult.quality,
-    qc_issues: qcResult.issues.length > 0 ? qcResult.issues : null,
+    qc_issues: [...qcResult.blockers, ...qcResult.warnings].length > 0 
+      ? [...qcResult.blockers, ...qcResult.warnings] 
+      : null,
     outline_json: normalized,
     completed_at: new Date().toISOString(),
     heartbeat_at: new Date().toISOString(),
-    error_code: qcResult.quality === 'rejected' ? 'QC_REJECTED' : null,
-    error_detail: qcResult.quality === 'rejected' ? 'Outline failed structural quality checks' : null
+    error_code: qcResult.passed ? null : 'QC_BLOCKED',
+    error_detail: qcResult.passed ? null : `${qcResult.blockers.length} blockers, score ${qcResult.score}`
   });
 
   console.log(`[WORKER] ${finalStatus}: ${normalized.title} | ${normalized.episode_beats.length} episodes | Quality: ${qcResult.quality} (score: ${qcResult.score})`);
