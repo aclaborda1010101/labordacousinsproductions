@@ -111,6 +111,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [generatingShotsFor, setGeneratingShotsFor] = useState<string | null>(null);
   const [scriptRawText, setScriptRawText] = useState<string>('');
   const [technicalDocStatus, setTechnicalDocStatus] = useState<Record<string, 'draft' | 'approved' | 'locked' | null>>({});
+  const [storyboardApproved, setStoryboardApproved] = useState<Record<string, boolean>>({});
   
   // Production Proposal flow state
   const [productionProposals, setProductionProposals] = useState<Map<string, ProductionProposal>>(new Map());
@@ -286,10 +287,33 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     setExpandedEpisodes(newExpanded);
   };
 
+  // Fetch storyboard approval status for a scene
+  const fetchStoryboardStatus = async (sceneId: string) => {
+    const { data } = await supabase
+      .from('storyboard_panels')
+      .select('id')
+      .eq('scene_id', sceneId)
+      .eq('approved', true)
+      .limit(1)
+      .maybeSingle();
+    
+    setStoryboardApproved(prev => ({
+      ...prev,
+      [sceneId]: !!data
+    }));
+  };
+
   const toggleScene = (sceneId: string) => {
     const newExpanded = new Set(expandedScenes);
-    if (newExpanded.has(sceneId)) { newExpanded.delete(sceneId); } 
-    else { newExpanded.add(sceneId); if (!shots[sceneId]) fetchShots(sceneId); }
+    if (newExpanded.has(sceneId)) { 
+      newExpanded.delete(sceneId); 
+    } else { 
+      newExpanded.add(sceneId); 
+      if (!shots[sceneId]) fetchShots(sceneId);
+      // Fetch pipeline status when expanding
+      fetchStoryboardStatus(sceneId);
+      fetchTechnicalDocStatus(sceneId);
+    }
     setExpandedScenes(newExpanded);
   };
 
@@ -1244,10 +1268,26 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                     <Layout className="w-4 h-4" />
                                     Storyboard
                                   </TabsTrigger>
-                                  <TabsTrigger value="technical" className="gap-2">
-                                    <FileText className="w-4 h-4" />
-                                    Doc. Técnico
-                                  </TabsTrigger>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <TabsTrigger 
+                                        value="technical" 
+                                        className="gap-2"
+                                        disabled={!storyboardApproved[scene.id]}
+                                      >
+                                        <FileText className="w-4 h-4" />
+                                        Doc. Técnico
+                                        {!storyboardApproved[scene.id] && (
+                                          <Lock className="w-3 h-3 text-muted-foreground ml-1" />
+                                        )}
+                                      </TabsTrigger>
+                                    </TooltipTrigger>
+                                    {!storyboardApproved[scene.id] && (
+                                      <TooltipContent>
+                                        <p>Primero aprueba el Storyboard</p>
+                                      </TooltipContent>
+                                    )}
+                                  </Tooltip>
                                   <TabsTrigger value="shots" className="gap-2">
                                     <Camera className="w-4 h-4" />
                                     Shots
@@ -1255,10 +1295,26 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                       <Badge variant="secondary" className="ml-1 text-xs">{shots[scene.id].length}</Badge>
                                     )}
                                   </TabsTrigger>
-                                  <TabsTrigger value="keyframes" className="gap-2">
-                                    <ImageIcon className="w-4 h-4" />
-                                    Keyframes
-                                  </TabsTrigger>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <TabsTrigger 
+                                        value="keyframes" 
+                                        className="gap-2"
+                                        disabled={technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked'}
+                                      >
+                                        <ImageIcon className="w-4 h-4" />
+                                        Keyframes
+                                        {technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked' && (
+                                          <Lock className="w-3 h-3 text-muted-foreground ml-1" />
+                                        )}
+                                      </TabsTrigger>
+                                    </TooltipTrigger>
+                                    {technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked' && (
+                                      <TooltipContent>
+                                        <p>Primero aprueba el Documento Técnico</p>
+                                      </TooltipContent>
+                                    )}
+                                  </Tooltip>
                                 </TabsList>
 
                                 {/* SCREENPLAY TAB - P0: Vista de guion derivada */}
