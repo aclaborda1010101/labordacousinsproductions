@@ -158,10 +158,49 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
   // Form state
   const [ideaText, setIdeaText] = useState('');
-  const [format, setFormat] = useState<'film' | 'series'>('series');
-  const [episodesCount, setEpisodesCount] = useState(6);
-  const [episodeDurationMin, setEpisodeDurationMin] = useState(45);
-  const [filmDurationMin, setFilmDurationMin] = useState(100);
+  const [format, setFormatState] = useState<'film' | 'series'>('series');
+  const [episodesCount, setEpisodesCountState] = useState(6);
+  const [episodeDurationMin, setEpisodeDurationMinState] = useState(45);
+  const [filmDurationMin, setFilmDurationMinState] = useState(100);
+
+  // Handlers that persist config changes to the projects table
+  const handleFormatChange = async (newFormat: 'film' | 'series') => {
+    setFormatState(newFormat);
+    await supabase
+      .from('projects')
+      .update({ format: newFormat })
+      .eq('id', projectId);
+  };
+
+  const handleEpisodesCountChange = async (count: number) => {
+    setEpisodesCountState(count);
+    await supabase
+      .from('projects')
+      .update({ episodes_count: count })
+      .eq('id', projectId);
+  };
+
+  const handleEpisodeDurationChange = async (duration: number) => {
+    setEpisodeDurationMinState(duration);
+    await supabase
+      .from('projects')
+      .update({ target_duration_min: duration })
+      .eq('id', projectId);
+  };
+
+  const handleFilmDurationChange = async (duration: number) => {
+    setFilmDurationMinState(duration);
+    await supabase
+      .from('projects')
+      .update({ target_duration_min: duration })
+      .eq('id', projectId);
+  };
+
+  // Aliases for backward compatibility with internal state setters
+  const setFormat = setFormatState;
+  const setEpisodesCount = setEpisodesCountState;
+  const setEpisodeDurationMin = setEpisodeDurationMinState;
+  const setFilmDurationMin = setFilmDurationMinState;
   const [genre, setGenre] = useState('drama');
   const [tone, setTone] = useState('Cinematográfico realista');
   const [language, setLanguage] = useState('es-ES');
@@ -709,30 +748,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         
         // V8.0: Draft with stage=none means never started or failed to start - show recovery card
         if (dbOutline.status === 'draft' && (!dbOutline.stage || dbOutline.stage === 'none')) {
-          // Restore form fields but not lightOutline - this triggers recovery card
+          // Restore ONLY narrative fields - NOT config (format, episodes, duration) which comes from projects table
           if (dbOutline.idea) setIdeaText(dbOutline.idea);
-          if (dbOutline.format) setFormat(dbOutline.format as 'film' | 'series');
           if (dbOutline.genre) setGenre(dbOutline.genre);
           if (dbOutline.tone) setTone(dbOutline.tone);
-          if (dbOutline.episode_count) setEpisodesCount(dbOutline.episode_count);
           // Don't set lightOutline - let recovery card show
           return;
         }
         
         // Normal case: completed or approved outline
+        // Restore ONLY narrative fields - config comes from projects table (already loaded)
         setLightOutline(dbOutline.outline_json);
         if (dbOutline.idea) setIdeaText(dbOutline.idea);
-        if (dbOutline.format) setFormat(dbOutline.format as 'film' | 'series');
         if (dbOutline.genre) setGenre(dbOutline.genre);
         if (dbOutline.tone) setTone(dbOutline.tone);
-        if (dbOutline.episode_count) setEpisodesCount(dbOutline.episode_count);
-        if (dbOutline.target_duration) {
-          if (dbOutline.format === 'film') {
-            setFilmDurationMin(dbOutline.target_duration);
-          } else {
-            setEpisodeDurationMin(dbOutline.target_duration);
-          }
-        }
         
         if (dbOutline.status === 'approved') {
           setOutlineApproved(true);
@@ -759,23 +788,23 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         }
       }
       
-      // Restore form draft (ideaText + config) for PRO mode regeneration
+      // Restore form draft - ONLY narrative/creative fields, NOT config (format, episodes, duration)
+      // Config comes from projects table which is the source of truth
       try {
         const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
         if (savedDraft) {
           const draft = JSON.parse(savedDraft);
           if (draft.ideaText && !ideaText) setIdeaText(draft.ideaText);
-          if (draft.format) setFormat(draft.format);
+          // Restore creative/narrative fields only
           if (draft.genre) setGenre(draft.genre);
           if (draft.tone) setTone(draft.tone);
           if (draft.references) setReferences(draft.references);
           if (draft.narrativeMode) setNarrativeMode(draft.narrativeMode);
           if (draft.qualityTier) setQualityTier(migrateQualityTier(draft.qualityTier));
-          if (typeof draft.episodesCount === 'number') setEpisodesCount(draft.episodesCount);
-          if (typeof draft.episodeDurationMin === 'number') setEpisodeDurationMin(draft.episodeDurationMin);
-          if (typeof draft.filmDurationMin === 'number') setFilmDurationMin(draft.filmDurationMin);
           if (draft.complexity) setComplexity(draft.complexity);
           if (typeof draft.disableDensity === 'boolean') setDisableDensity(draft.disableDensity);
+          // DO NOT restore: format, episodesCount, episodeDurationMin, filmDurationMin
+          // These come from the projects table (lines 1031-1039)
         }
       } catch (e) {
         console.warn('[ScriptImport] Error loading draft:', e);
@@ -5257,7 +5286,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Formato</Label>
-                    <Select value={format} onValueChange={(v: 'film' | 'series') => setFormat(v)}>
+                    <Select value={format} onValueChange={(v: 'film' | 'series') => handleFormatChange(v)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="series">Serie</SelectItem>
@@ -5270,7 +5299,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     <>
                       <div className="space-y-2">
                         <Label>Nº Episodios</Label>
-                        <Select value={String(episodesCount)} onValueChange={(v) => setEpisodesCount(Number(v))}>
+                        <Select value={String(episodesCount)} onValueChange={(v) => handleEpisodesCountChange(Number(v))}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
                             {[3, 4, 6, 8, 10, 12].map(n => (
@@ -5287,7 +5316,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                             min={5} 
                             max={180} 
                             value={episodeDurationMin} 
-                            onChange={(e) => setEpisodeDurationMin(parseInt(e.target.value) || 30)} 
+                            onChange={(e) => handleEpisodeDurationChange(parseInt(e.target.value) || 30)} 
                             className="w-20"
                           />
                           <span className="text-sm text-muted-foreground">min</span>
@@ -5303,7 +5332,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           min={10} 
                           max={300} 
                           value={filmDurationMin} 
-                          onChange={(e) => setFilmDurationMin(parseInt(e.target.value) || 90)} 
+                          onChange={(e) => handleFilmDurationChange(parseInt(e.target.value) || 90)} 
                           className="w-20"
                         />
                         <span className="text-sm text-muted-foreground">min</span>
