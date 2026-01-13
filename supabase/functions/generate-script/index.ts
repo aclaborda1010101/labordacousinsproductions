@@ -322,10 +322,11 @@ async function fetchProjectBible(projectId: string): Promise<BibleContext> {
   const fetchErrors: string[] = [];
   
   // Parallel fetch with allSettled for robustness
+  // DEFENSIVE: Only select columns that are guaranteed to exist
   const [projectResult, charactersResult, locationsResult] = await Promise.allSettled([
     supabase
       .from('projects')
-      .select('id, title, logline, genre, tone, narrative_framework, global_visual_dna, style_pack')
+      .select('id, title, format, episodes_count, target_duration_min, master_language, creative_mode, visual_style, logline, genre, tone, narrative_framework, global_visual_dna, style_pack')
       .eq('id', projectId)
       .single(),
     supabase
@@ -334,7 +335,7 @@ async function fetchProjectBible(projectId: string): Promise<BibleContext> {
       .eq('project_id', projectId),
     supabase
       .from('locations')
-      .select('id, name, canon_level, visual_dna, description, narrative_role, profile_json')
+      .select('id, name, canon_level, visual_dna, description, profile_json, narrative_role')
       .eq('project_id', projectId)
   ]);
   
