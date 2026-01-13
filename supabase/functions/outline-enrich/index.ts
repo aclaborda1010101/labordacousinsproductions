@@ -13,6 +13,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { THREADS_ENRICH_V11 } from '../_shared/production-prompts.ts';
 import { needsThreads, needsFactions, needsEntityRules, needs5Hitos, needsSetpieces } from '../_shared/qc-validators.ts';
 import { THREAD_SCHEMA, THREADS_ENRICH_RESPONSE_SCHEMA } from '../_shared/outline-schemas-v11.ts';
+import { normalizeOutlineV11 } from '../_shared/normalize-outline-v11.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -786,12 +787,16 @@ serve(async (req) => {
     // ========================================================================
     // SAVE ENRICHED OUTLINE
     // ========================================================================
-    const qualityLevel = enrichedOutline.threads?.length >= 5 ? 'threaded' : 'enriched';
+    // CRITICAL: Normalize turning_points from strings to objects BEFORE saving
+    const normalizedOutline = normalizeOutlineV11(enrichedOutline);
+    console.log(`[outline-enrich] Normalized turning_points for ${normalizedOutline.episode_beats?.length || 0} episodes`);
+    
+    const qualityLevel = normalizedOutline.threads?.length >= 5 ? 'threaded' : 'enriched';
     
     const { error: saveError } = await supabase
       .from('project_outlines')
       .update({
-        outline_json: enrichedOutline,
+        outline_json: normalizedOutline,
         quality: qualityLevel,
         status: 'completed',
         stage: 'done',
