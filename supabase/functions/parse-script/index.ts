@@ -728,6 +728,27 @@ serve(async (req) => {
       issues: diagnostics.issues,
     });
     
+    // V11.1: Enhanced diagnostic for character cue detection
+    const scenesWithCues = parseResult.scene_blocks.filter(b => b.character_cues.length > 0).length;
+    const scenesWithoutCues = parseResult.scene_blocks.filter(b => b.character_cues.length === 0).length;
+    console.log("[parse-script] Character cue detection diagnosis:", {
+      total_scenes: parseResult.scene_blocks.length,
+      scenes_with_cues: scenesWithCues,
+      scenes_without_cues: scenesWithoutCues,
+      total_character_cues: parseResult.parse_stats.character_cues_found,
+      total_dialogue_lines: parseResult.parse_stats.dialogue_lines_found,
+      cue_to_dialogue_ratio: parseResult.parse_stats.character_cues_found > 0 
+        ? (parseResult.parse_stats.dialogue_lines_found / parseResult.parse_stats.character_cues_found).toFixed(2)
+        : 'N/A (no cues)',
+    });
+    
+    // V11.1: NEW QC WARNING - Dialogues detected but no character cues
+    if (parseResult.parse_stats.dialogue_lines_found > 10 && parseResult.parse_stats.character_cues_found === 0) {
+      console.warn("[parse-script] QC WARNING: Dialogues detected but NO character cues. Possible format issue.");
+      diagnostics.issues.push('CHARACTER_CUES_NOT_DETECTED');
+      diagnostics.suggestions.push('El guion tiene diálogos pero no se detectaron los nombres de personajes. Verifica el formato.');
+    }
+    
     // STEP B: QC GATING - Block if extraction failed critically
     // (scenes detected but no dialogues = PDF format issue, not a valid screenplay)
     if (parseResult.scene_blocks.length > 0 && parseResult.parse_stats.dialogue_lines_found === 0) {
@@ -883,6 +904,27 @@ serve(async (req) => {
         // Character candidates (deterministic from SceneBlocks)
         character_candidates: characterCandidates,
         character_cues_by_scene: characterCuesByScene,
+        
+        // V11.1: Detailed speaker metrics for debugging
+        character_metrics: {
+          unique_speakers: characterCandidates.length,
+          total_cues: parseResult.parse_stats.character_cues_found,
+          scenes_with_speakers: Object.keys(characterCuesByScene).filter(k => characterCuesByScene[k].length > 0).length,
+          // Top speakers by dialogue
+          top_speakers: parseResult.scene_blocks.flatMap(b => b.character_cues)
+            .reduce((acc, cue) => {
+              const existing = acc.find(a => a.name === cue.name);
+              if (existing) {
+                existing.dialogue_lines += cue.dialogue_lines;
+                existing.dialogue_words += cue.dialogue_words;
+              } else {
+                acc.push({ name: cue.name, dialogue_lines: cue.dialogue_lines, dialogue_words: cue.dialogue_words });
+              }
+              return acc;
+            }, [] as { name: string; dialogue_lines: number; dialogue_words: number }[])
+            .sort((a, b) => b.dialogue_words - a.dialogue_words)
+            .slice(0, 10),
+        },
         
         // Scene headings for location derivation
         scene_headings_raw: sceneHeadings,

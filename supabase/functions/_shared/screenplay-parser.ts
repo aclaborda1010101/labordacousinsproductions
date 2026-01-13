@@ -19,7 +19,8 @@ export const SLUGLINE_RE = /^(?:\d+\s*[.\):\-–—]?\s*)?(?<prefix>INT\.\/EXT\.
 
 export const TRANSITION_RE = /^(CUT TO:|SMASH CUT TO:|DISSOLVE TO:|FADE IN:|FADE OUT\.|FADE TO BLACK\.|MATCH CUT TO:|WIPE TO:|IRIS IN:|IRIS OUT:|CORTE A:|FUNDIDO A:?|ENCADENADO:?)$/i;
 
-export const CHARACTER_CUE_RE = /^(?<name>[A-ZÁÉÍÓÚÑÜ][A-ZÁÉÍÓÚÑÜ0-9 .'\-()]{1,40})(?<cont>\s*\(CONT'?D?\))?(?<paren>\s*\((?:O\.S\.|O\.C\.|V\.O\.|V\.O|OS|OC|VO|PRELAP|LAP|FILTERED|ON RADIO|ON PHONE|WHISPER|SHOUT|YELL|FUERA DE CUADRO|VOZ EN OFF)\))?$/;
+// V11.1: Expanded to accept mixed case, more special characters, and more delivery tags
+export const CHARACTER_CUE_RE = /^(?<name>[A-ZÁÉÍÓÚÑÜÇa-záéíóúñüç][A-ZÁÉÍÓÚÑÜÇa-záéíóúñüç0-9 .'\-()]{1,40})(?<cont>\s*\(CONT'?D?\))?(?<paren>\s*\((?:O\.S\.|O\.C\.|V\.O\.|V\.O|OS|OC|VO|PRELAP|LAP|FILTERED|ON RADIO|ON PHONE|ON SCREEN|WHISPER|SHOUT|YELL|SCREAM|QUIETLY|ANGRILY|SINGING|READING|THINKING|FUERA DE CUADRO|VOZ EN OFF|F\.C\.|FC)\))?$/i;
 
 export const PARENTHETICAL_RE = /^\(([^)]{1,60})\)$/;
 
@@ -376,7 +377,73 @@ function extractCharacterCuesFromLines(
     });
   }
   
+  // V11.1: If regex found nothing but there's content, try fallback heuristics
+  if (cues.length === 0 && lines.length > 3) {
+    const fallbackCues = detectFallbackCues(lines, blockStartLine);
+    if (fallbackCues.length > 0) {
+      console.log(`[extractCharacterCues] Fallback found ${fallbackCues.length} cues`);
+      return fallbackCues;
+    }
+  }
+  
   return cues;
+}
+
+// V11.1: Fallback heuristic for cue detection when regex fails
+// Detects patterns like "NOMBRE:" or lines that are entirely uppercase and short
+function detectFallbackCues(lines: string[], blockStartLine: number): CharacterCue[] {
+  const fallbackCues: CharacterCue[] = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Pattern 1: "NOMBRE:" format (common in some scripts)
+    const colonMatch = /^([A-ZÁÉÍÓÚÑÜÇ][A-ZÁÉÍÓÚÑÜÇ\s]{1,25}):\s*$/.exec(line);
+    if (colonMatch) {
+      const name = canonicalizeName(colonMatch[1]);
+      if (name.length >= 2 && name.length <= 40) {
+        const { dialogueLines, dialogueWords } = countDialogueAfterCue(lines, i);
+        fallbackCues.push({
+          name,
+          is_continued: false,
+          delivery_tag: null,
+          line_number: blockStartLine + i,
+          dialogue_lines: dialogueLines,
+          dialogue_words: dialogueWords,
+        });
+      }
+    }
+    
+    // Pattern 2: Short uppercase line followed by non-uppercase dialogue
+    // (typical screenplay format but with slight variations)
+    if (line.length >= 2 && line.length <= 30 && 
+        /^[A-ZÁÉÍÓÚÑÜÇ][A-ZÁÉÍÓÚÑÜÇ0-9\s'\-\.]+$/.test(line) &&
+        !TRANSITION_RE.test(line) && !SHOT_RE.test(line) && !SECTION_RE.test(line)) {
+      // Check if next non-empty line is dialogue (not uppercase, not slugline)
+      const nextLine = lines[i + 1]?.trim();
+      if (nextLine && nextLine.length > 0 && 
+          !/^[A-Z]{2,}/.test(nextLine) && // Not all uppercase
+          !SLUGLINE_RE.test(nextLine)) {
+        const name = canonicalizeName(line);
+        const { dialogueLines, dialogueWords } = countDialogueAfterCue(lines, i);
+        if (dialogueLines > 0 && name.length >= 2) {
+          // Avoid duplicates
+          if (!fallbackCues.some(c => c.name === name && c.line_number === blockStartLine + i)) {
+            fallbackCues.push({
+              name,
+              is_continued: false,
+              delivery_tag: null,
+              line_number: blockStartLine + i,
+              dialogue_lines: dialogueLines,
+              dialogue_words: dialogueWords,
+            });
+          }
+        }
+      }
+    }
+  }
+  
+  return fallbackCues;
 }
 
 function countDialogueAfterCue(lines: string[], cueIndex: number): { dialogueLines: number; dialogueWords: number } {
