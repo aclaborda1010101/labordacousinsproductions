@@ -153,12 +153,14 @@ serve(async (req) => {
     let negativeModifiers = '';
     let isAnimatedStyle = false;
     let stylePresetId = '';
+    let colorPalette: string[] = [];
+    let styleAnchorImageUrl: string | null = null;
     
     if (projectId) {
       const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
       
-      // Query style_packs with actual schema (no is_active column)
+      // Query style_packs with actual schema
       const { data: stylePack, error: styleError } = await supabaseAdmin
         .from('style_packs')
         .select('style_config, visual_preset, lens_style, grain_level, color_palette')
@@ -167,6 +169,21 @@ serve(async (req) => {
       
       if (styleError) {
         console.log(`[generate-location] Style pack query error (non-fatal):`, styleError.message);
+      }
+      
+      // Load style anchor location for inter-location coherence
+      const { data: anchorLocation } = await supabaseAdmin
+        .from('locations')
+        .select('id, name, hero_image_url')
+        .eq('project_id', projectId)
+        .not('hero_image_url', 'is', null)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      
+      if (anchorLocation?.hero_image_url && locationId !== anchorLocation.id) {
+        styleAnchorImageUrl = anchorLocation.hero_image_url;
+        console.log(`[generate-location] ✓ Using style anchor from location: ${anchorLocation.name}`);
       }
       
       if (stylePack) {
@@ -184,6 +201,13 @@ serve(async (req) => {
         const promptMods: string[] = Array.isArray(styleConfig.promptModifiers) ? styleConfig.promptModifiers : [];
         const negativeMods: string[] = Array.isArray(styleConfig.negativeModifiers) ? styleConfig.negativeModifiers : [];
         
+        // Extract color palette
+        if (styleConfig.style?.colorPalette && Array.isArray(styleConfig.style.colorPalette)) {
+          colorPalette = styleConfig.style.colorPalette;
+        } else if (stylePack.color_palette && Array.isArray(stylePack.color_palette)) {
+          colorPalette = stylePack.color_palette;
+        }
+        
         // Detect if this is an animated/3D style (not photorealistic)
         const animatedPresets = ['pixar', 'anime', 'ghibli', 'disney', '3d', 'cartoon', 'stylized', 'illustrated'];
         isAnimatedStyle = animatedPresets.some(p => 
@@ -191,41 +215,52 @@ serve(async (req) => {
           promptMods.some(m => m.toLowerCase().includes(p))
         );
         
-        console.log(`[generate-location] Style preset: ${stylePresetId}, isAnimated: ${isAnimatedStyle}`);
+        console.log(`[generate-location] Style preset: ${stylePresetId}, isAnimated: ${isAnimatedStyle}, palette: ${colorPalette.length} colors`);
         
-        // Build comprehensive style lock block
-        const styleParts: string[] = [];
+        // Build EXPLICIT style modifiers from promptModifiers array
+        const explicitStyleModifiers = promptMods.length > 0 
+          ? promptMods.join(', ')
+          : isAnimatedStyle 
+            ? `${stylePresetId} style 3D animation, stylized 3D render, soft global illumination, warm color palette, subsurface scattering, expressive lighting`
+            : '';
         
-        if (stylePresetId) {
-          styleParts.push(`Visual Style: ${stylePresetId.toUpperCase()}`);
-        }
-        if (promptMods.length > 0) {
-          styleParts.push(...promptMods);
-        }
-        if (stylePack.lens_style) {
-          styleParts.push(`Lens: ${stylePack.lens_style}`);
-        }
-        if (stylePack.color_palette) {
-          styleParts.push(`Color palette: ${JSON.stringify(stylePack.color_palette)}`);
-        }
-        
-        if (styleParts.length > 0 || isAnimatedStyle) {
-          styleLockBlock = `
+        // Build comprehensive VISUAL DNA LOCK block
+        styleLockBlock = `
 
-=== STYLE TRANSFER RULES (MANDATORY) ===
+=== VISUAL DNA LOCK (MANDATORY - DO NOT DEVIATE) ===
 ${isAnimatedStyle ? `
-CRITICAL: This is a ${stylePresetId.toUpperCase() || 'STYLIZED/ANIMATED'} production.
-- The reference photos are ONLY for LAYOUT, ARCHITECTURE, and SPATIAL ARRANGEMENT
-- You MUST render in ${stylePresetId || 'stylized animated'} visual style
-- ABSOLUTELY NO photorealism, no live-action look, no photographic textures
-- Use soft GI lighting, stylized materials, characteristic ${stylePresetId} rendering
+** CRITICAL STYLE ENFORCEMENT **
+MANDATORY RENDERING STYLE: ${stylePresetId.toUpperCase() || 'STYLIZED 3D ANIMATION'}
+${explicitStyleModifiers}
+
+This is a ${stylePresetId.toUpperCase() || 'STYLIZED ANIMATED'} production - ALL locations must share this visual DNA.
 ` : ''}
-${styleParts.join('\n')}
-=== END STYLE TRANSFER RULES ===`;
-        }
+=== LAYOUT INSTRUCTIONS (FROM REFERENCE PHOTOS) ===
+- Copy EXACTLY: room layout, furniture positions, architectural elements, window/door placement
+- Preserve proportions, spatial relationships, and object arrangements
+- This is the SPATIAL BLUEPRINT - use references for GEOMETRY ONLY
+
+=== STYLE INSTRUCTIONS (FROM PROJECT VISUAL BIBLE) ===
+${stylePresetId ? `- Render as: ${stylePresetId} style` : ''}
+${explicitStyleModifiers ? `- Apply: ${explicitStyleModifiers}` : ''}
+${colorPalette.length > 0 ? `- COLOR PALETTE (USE THESE EXACT HUES): ${colorPalette.join(', ')}` : ''}
+${styleConfig.style?.lighting ? `- LIGHTING: ${styleConfig.style.lighting}` : isAnimatedStyle ? '- LIGHTING: soft global illumination, warm practical lights, characteristic animated film look' : ''}
+${styleConfig.style?.mood ? `- MOOD: ${styleConfig.style.mood}` : ''}
+
+=== ABSOLUTELY PROHIBITED ===
+${isAnimatedStyle ? `- NO photorealistic textures or materials
+- NO live-action film look
+- NO photographic rendering
+- NO 2D flat illustration style (unless specified)
+- NO anime style (unless project is anime)` : ''}
+
+=== END VISUAL DNA LOCK ===`;
         
+        // Build negative prompt from negativeModifiers
         if (negativeMods.length > 0) {
           negativeModifiers = negativeMods.join(', ');
+        } else if (isAnimatedStyle) {
+          negativeModifiers = 'photorealistic, photo, photograph, live-action, real life, DSLR, camera photo, 2D flat, anime unless specified';
         }
       } else {
         console.log(`[generate-location] No style pack found for project ${projectId}`);
@@ -297,68 +332,92 @@ ${styleParts.join('\n')}
       console.log(`[generate-location] Successfully converted ${base64References.length}/${allReferenceUrls.length} references`);
     }
     
+    // Convert style anchor to base64 if available (for inter-location coherence)
+    let styleAnchorBase64: string | null = null;
+    if (styleAnchorImageUrl) {
+      styleAnchorBase64 = await urlToBase64(styleAnchorImageUrl);
+      if (styleAnchorBase64) {
+        console.log(`[generate-location] ✓ Style anchor converted to base64`);
+      }
+    }
+    
     if (mode === 'stylize_from_reference' && base64References.length > 0) {
       // Multimodal: Use all reference photos for comprehensive spatial understanding
       const hasMultipleRefs = base64References.length > 1;
       
+      // Determine style description
+      const styleDescription = isAnimatedStyle 
+        ? `${stylePresetId.toUpperCase() || 'STYLIZED 3D ANIMATION'} style - NOT photorealistic`
+        : 'cinematic film style';
+      
       prompt = hasMultipleRefs 
-        ? `You have been given ${base64References.length} reference photos of the same location from different angles (360° coverage). Use ALL of them to understand the complete 3D space, then generate a ${viewDesc} view.
+        ? `You have been given ${base64References.length} LAYOUT REFERENCE photos of the same location from different angles (360° coverage).
 
-SPATIAL UNDERSTANDING:
-- Analyze all reference images to build a mental 3D model of this space
-- Understand how walls, furniture, and objects connect across views
-- Maintain architectural consistency and proportions from all angles
+IMPORTANT: These reference photos are ONLY for understanding the PHYSICAL SPACE:
+- Room layout and dimensions
+- Furniture positions and arrangements  
+- Architectural elements (windows, doors, walls)
+- Object placements and proportions
+
+DO NOT copy the photographic style of the references. Instead, you MUST render in: ${styleDescription}
 
 GENERATE THIS VIEW: ${viewDesc}
-- Camera position for this specific view type
-- Use information from ALL reference photos to ensure accuracy
-- The output should feel like a new camera angle of the SAME real space
-
-APPLY STYLE:
-- Convert to the project's visual style (cartoon/3D/anime if animated project)
-- Apply consistent lighting: ${timeDesc}
-- Weather conditions: ${weatherDesc}
+- New camera position for this specific view type
+- Use spatial information from ALL reference photos
+- Output must feel like a new camera angle of the SAME physical space
 ${styleLockBlock}
+
+APPLY LIGHTING:
+- ${timeDesc}
+- ${weatherDesc}
 ${styleContext}
 
 Location: ${locationName}
 Description: ${locationDescription || locationName}
 
-CRITICAL: The generated view must be architecturally consistent with ALL provided reference photos. This is the same physical space viewed from a different angle.`
-        : `Transform this reference photo into the project's art style while maintaining the exact composition, layout, architecture, and spatial arrangement.
+CRITICAL: Architecturally consistent with references, but rendered in ${styleDescription}.`
+        : `Transform this reference photo into ${styleDescription} while maintaining the exact spatial layout.
 
-KEEP EXACTLY:
-- The room layout and furniture positions
+FROM THE REFERENCE - COPY EXACTLY:
+- Room layout and furniture positions
 - Architectural elements (windows, doors, walls)
-- The perspective and camera angle
+- Perspective and camera angle
 - Key objects and their placement
 
-APPLY STYLE:
-- Convert to the project's visual style (cartoon/3D/anime if animated project)
-- Apply consistent lighting: ${timeDesc}
-- Weather conditions: ${weatherDesc}
+FROM THE PROJECT VISUAL BIBLE - APPLY:
 ${styleLockBlock}
+
+LIGHTING: ${timeDesc}
+WEATHER: ${weatherDesc}
 ${styleContext}
 
 Location: ${locationName}
 Description: ${locationDescription || locationName}
 View: ${viewDesc}
 
-CRITICAL: The output must look like a stylized illustration of this EXACT space, not a generic location. Preserve all unique architectural and decorative elements visible in the reference.`;
+CRITICAL: Output must be this EXACT space rendered in ${styleDescription}. Preserve all spatial elements but transform the visual style completely.`;
 
       // Build multimodal content with all reference images as base64
-      messageContent = [
-        {
-          type: 'text',
-          text: prompt
-        },
-        ...base64References.map(base64Url => ({
+      const imageContents = base64References.map(base64Url => ({
+        type: 'image_url',
+        image_url: { url: base64Url }
+      }));
+      
+      // Add style anchor if available (for visual coherence with other locations)
+      if (styleAnchorBase64) {
+        imageContents.push({
           type: 'image_url',
-          image_url: { url: base64Url }
-        }))
+          image_url: { url: styleAnchorBase64 }
+        });
+        prompt += `\n\nSTYLE REFERENCE: The last image is an APPROVED location from this same project. Match its visual style, color palette, and rendering quality exactly for production coherence.`;
+      }
+      
+      messageContent = [
+        { type: 'text', text: prompt },
+        ...imageContents
       ];
       
-      console.log(`[generate-location] Using multimodal with ${base64References.length} base64 references`);
+      console.log(`[generate-location] Using multimodal with ${base64References.length} layout refs${styleAnchorBase64 ? ' + 1 style anchor' : ''}`);
     } else {
       // Text-only generation - adapt base prompt to style
       const baseStyle = isAnimatedStyle 
