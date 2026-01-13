@@ -158,7 +158,7 @@ Return a JSON object with this exact structure:
         }
       ],
       response_format: { type: "json_object" },
-      max_tokens: 2000,
+      max_tokens: 2000, // Gemini uses max_tokens (not OpenAI)
     }),
   });
 

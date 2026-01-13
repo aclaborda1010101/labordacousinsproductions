@@ -344,6 +344,7 @@ async function extractTextWithAI(pdfBytes: Uint8Array, config: ProcessingConfig)
           }
         ],
         temperature: 0.0, // Zero temperature for pure extraction
+        // Gemini models use max_tokens (not max_completion_tokens like OpenAI)
         max_tokens: config.maxTokens
       }),
       signal: controller.signal

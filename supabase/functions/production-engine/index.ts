@@ -156,7 +156,7 @@ Generate appropriate UI blocks based on this command. If the command involves cr
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userMessage }
           ],
-          max_tokens: 2000,
+          max_completion_tokens: 2000,
           temperature: 0.7,
         }),
       });
