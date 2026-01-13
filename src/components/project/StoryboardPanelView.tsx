@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Film, 
   Wand2, 
@@ -15,7 +16,9 @@ import {
   ChevronUp,
   ChevronDown,
   Trash2,
-  Plus
+  Plus,
+  Pencil,
+  Info
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -211,7 +214,7 @@ export function StoryboardPanelView({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Film className="w-5 h-5 text-primary" />
           <h3 className="font-semibold">Storyboard</h3>
@@ -219,7 +222,26 @@ export function StoryboardPanelView({
             {panels.length} paneles
           </Badge>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          {/* Style Selector - only one option active for now */}
+          <Select defaultValue="pencil_storyboard" disabled>
+            <SelectTrigger className="w-44 h-8 text-xs">
+              <Pencil className="w-3 h-3 mr-1" />
+              <SelectValue placeholder="Estilo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pencil_storyboard">
+                Storyboard clásico (lápiz)
+              </SelectItem>
+              <SelectItem value="concept_art" disabled>
+                Concept art (próximamente)
+              </SelectItem>
+              <SelectItem value="animatic" disabled>
+                Animatic (próximamente)
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          
           {panels.length === 0 ? (
             <Button onClick={generateStoryboard} disabled={generating}>
               {generating ? (
@@ -390,6 +412,15 @@ export function StoryboardPanelView({
           </span>
         </div>
       )}
+
+      {/* Pedagogical Message */}
+      <div className="flex items-center justify-center gap-2 py-3 px-4 bg-muted/50 rounded-lg border border-border/50">
+        <Info className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+        <p className="text-xs text-muted-foreground text-center">
+          El storyboard es una herramienta de planificación cinematográfica. 
+          No representa el resultado visual final.
+        </p>
+      </div>
     </div>
   );
 }
