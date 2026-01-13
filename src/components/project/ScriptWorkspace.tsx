@@ -1005,6 +1005,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
+          projectId, // P0 FIX: Required for Bible injection
           idea: ideaText,
           genre: '',
           tone: '',
@@ -1012,15 +1013,39 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           episodesCount: projectFormat === 'film' ? 1 : episodesCount,
           episodeDurationMin,
           language: masterLanguage === 'es' ? 'es-ES' : masterLanguage, // Use project language
-          stream: true,
+          stream: false, // V3.1: Backend returns JSON, not SSE stream
           outline: responseData?.outline,
         }),
         signal: streamAbortRef.current.signal,
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || `Error ${response.status}`);
+        // P0 FIX: Parse structured error responses
+        let errorMessage = `Error ${response.status}`;
+        let errorCode = 'UNKNOWN';
+        
+        try {
+          const errorData = await response.json();
+          errorCode = errorData.error || errorData.code || 'UNKNOWN';
+          errorMessage = errorData.message || errorMessage;
+          
+          // Handle specific recoverable errors
+          if (errorCode === 'PROJECT_ID_MISSING') {
+            toast.error('Error interno: falta projectId. Recarga la página.');
+          } else if (errorCode === 'PROJECT_BUSY' || response.status === 409) {
+            const retryAfter = errorData.retry_after_seconds || 30;
+            toast.warning(`Proyecto ocupado. Espera ${retryAfter}s e inténtalo de nuevo.`, {
+              duration: 8000,
+            });
+          } else {
+            toast.error(errorMessage);
+          }
+        } catch {
+          errorMessage = await response.text() || errorMessage;
+          toast.error(errorMessage);
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const contentType = response.headers.get('Content-Type') || '';

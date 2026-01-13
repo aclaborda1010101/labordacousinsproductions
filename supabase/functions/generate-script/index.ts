@@ -1254,8 +1254,60 @@ IDIOMA: ${language}
     // Enforce V3 schema compliance + mark Bible sources
     const v3Result = enforceV3Schema(result, config, bibleCharNames);
 
+    // =========================================================================
+    // P0 FIX: ANTI-PLACEHOLDER QC - Detect and flag placeholder scenes
+    // =========================================================================
+    const isPlaceholderScene = (scene: any): boolean => {
+      const slugline = (scene.slugline || '').toLowerCase();
+      const actionSummary = (scene.action_summary || '').toLowerCase();
+      const hasNoCharacters = !scene.characters_present || scene.characters_present.length === 0;
+      const hasNoDialogue = !scene.dialogue || scene.dialogue.length === 0;
+      
+      return (
+        slugline.includes('ubicación') ||
+        slugline.includes('location') ||
+        actionSummary === 'por generar' ||
+        actionSummary.includes('placeholder') ||
+        (hasNoCharacters && hasNoDialogue && !scene.raw_content?.trim())
+      );
+    };
+    
+    const scenes = v3Result.scenes || [];
+    const placeholderScenes = scenes.filter(isPlaceholderScene);
+    const placeholderRatio = scenes.length > 0 ? placeholderScenes.length / scenes.length : 0;
+    
+    // If more than 50% are placeholders, mark as degraded with specific code
+    if (placeholderRatio > 0.5) {
+      console.warn('[generate-script] PLACEHOLDER_DETECTED:', {
+        total: scenes.length,
+        placeholders: placeholderScenes.length,
+        ratio: placeholderRatio.toFixed(2),
+        examples: placeholderScenes.slice(0, 3).map((s: any) => s.slugline)
+      });
+      
+      // Return 422 to indicate the content is degraded but saved
+      return new Response(
+        JSON.stringify({
+          ...v3Result,
+          _meta: {
+            qualityTier,
+            schemaVersion: '3.2',
+            resultQuality: 'PLACEHOLDER_DEGRADED',
+            placeholderCount: placeholderScenes.length,
+            totalScenes: scenes.length,
+            placeholderRatio: placeholderRatio.toFixed(2)
+          },
+          error: 'PLACEHOLDER_SCRIPT',
+          message: 'El script generado contiene demasiados placeholders. Verifica que el outline tenga suficiente detalle.',
+          actionable: true,
+          suggestedAction: 'regenerate_with_detailed_outline'
+        }),
+        { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Determine if this is a degraded result
-    const isDegraded = parseWarnings.length > 0;
+    const isDegraded = parseWarnings.length > 0 || placeholderScenes.length > 0;
     const resultQuality = isDegraded ? 'DEGRADED' : 'FULL';
 
     console.log('[generate-script] Generated:', {
@@ -1264,6 +1316,7 @@ IDIOMA: ${language}
       locationsIntroduced: v3Result.locations_introduced?.length || 0,
       uncertainties: v3Result.uncertainties?.length || 0,
       newEntitiesRequested: v3Result.new_entities_requested?.length || 0,
+      placeholderScenes: placeholderScenes.length,
       qualityTier,
       resultQuality,
       parseWarnings: parseWarnings.length > 0 ? parseWarnings.join(', ') : 'none'

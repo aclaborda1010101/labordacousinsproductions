@@ -313,6 +313,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // Dynamic batch configuration
   const [batchConfig, setBatchConfig] = useState<BatchConfig | null>(null);
+  
+  // P1 FIX: Entity materialization state (sync outline to Bible)
+  const [materializingEntities, setMaterializingEntities] = useState(false);
 
   // Episode regeneration state
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
@@ -4038,9 +4041,39 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
                 {/* Characters (with role + description) */}
                 <div>
-                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Personajes ({lightOutline.main_characters?.length || 0})
-                  </Label>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-xs uppercase text-muted-foreground">
+                      Personajes ({lightOutline.main_characters?.length || 0})
+                    </Label>
+                    {/* P1 FIX: Materialize Bible Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={materializingEntities || pipelineRunning}
+                      onClick={async () => {
+                        setMaterializingEntities(true);
+                        try {
+                          const { data, error } = await supabase.functions.invoke('materialize-entities', {
+                            body: { projectId, source: 'outline' }
+                          });
+                          if (error) throw error;
+                          toast.success(data?.message || 'Personajes y locaciones sincronizados a la Bible');
+                        } catch (err: any) {
+                          console.error('[materialize-entities]', err);
+                          toast.error('Error al sincronizar: ' + (err.message || 'Error desconocido'));
+                        } finally {
+                          setMaterializingEntities(false);
+                        }
+                      }}
+                    >
+                      {materializingEntities ? (
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      ) : (
+                        <Users className="h-3 w-3 mr-1" />
+                      )}
+                      Sincronizar a Bible
+                    </Button>
+                  </div>
                   <div className="grid gap-2 md:grid-cols-2">
                     {lightOutline.main_characters?.map((char: any, i: number) => {
                       const role = char.role || '';

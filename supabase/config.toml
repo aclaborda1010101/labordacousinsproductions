@@ -289,3 +289,11 @@ verify_jwt = false
 [functions.generate-technical-doc]
 # Gateway JWT disabled; function enforces auth internally
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENTITY MATERIALIZATION (V3.6 - Outline → Bible Hydration)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.materialize-entities]
+# Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
+verify_jwt = false
