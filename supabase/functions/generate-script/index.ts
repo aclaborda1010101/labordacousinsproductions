@@ -1199,16 +1199,17 @@ serve(async (req) => {
     // instead of generating from scratch
     // =======================================================================
     const sourceText = outline?.idea?.trim() || '';
+    // V11.2 FIX: Detect sluglines with or without markdown bold (**INT. or INT.)
     const hasScreenplayMarkers = 
       sourceText && 
-      /^(INT\.|EXT\.)/m.test(sourceText) && 
-      /\n[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ0-9 '.()-]{2,40}\n/m.test(sourceText);
+      /^(\*{0,2})(INT\.|EXT\.)/m.test(sourceText) && 
+      /\n(\*{0,2})?[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ0-9 '.():-]{2,40}(\*{0,2})?\n/m.test(sourceText);
     
     const generationMode = hasScreenplayMarkers ? 'ADAPT_FROM_SOURCE' : 'GENERATE_FROM_BEATS';
     
-    // Count expected scenes from source for QC
+    // Count expected scenes from source for QC - handle **INT. or INT.
     const expectedScenesFromSource = hasScreenplayMarkers 
-      ? (sourceText.match(/^(INT\.|EXT\.)/gmi)?.length || 0)
+      ? (sourceText.match(/^(\*{0,2})(INT\.|EXT\.)/gmi)?.length || 0)
       : 0;
     
     console.log('[generate-script] Generation mode:', {

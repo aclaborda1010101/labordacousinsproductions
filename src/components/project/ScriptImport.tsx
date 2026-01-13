@@ -2345,7 +2345,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               // V11.1: CRITICAL - projectId MUST be passed for Bible injection
               return await invokeAuthedFunction('generate-script', {
                 projectId,  // ← P0 FIX: Required for Bible fetch
-                outline: lightOutline,
+                outline: { ...lightOutline, idea: ideaText },  // ← V11.2: Include ideaText for ADAPT_FROM_SOURCE mode
                 episodeNumber: epNum,
                 language,
                 batchIndex: batchIdx,
