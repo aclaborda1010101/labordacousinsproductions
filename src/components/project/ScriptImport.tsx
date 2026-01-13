@@ -2154,7 +2154,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 throw new Error('Aborted');
               }
               // V3.0: Call generate-script canonical router instead of legacy batch function
+              // V11.1: CRITICAL - projectId MUST be passed for Bible injection
               return await invokeAuthedFunction('generate-script', {
+                projectId,  // ← P0 FIX: Required for Bible fetch
                 outline: lightOutline,
                 episodeNumber: epNum,
                 language,
@@ -2252,6 +2254,46 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         episodes.push(episode);
         setGeneratedEpisodesList([...episodes]);
+
+        // V11.1: Incremental persistence - save after each episode to prevent data loss
+        try {
+          const partialScreenplay = {
+            title: lightOutline.title,
+            logline: lightOutline.logline,
+            episodes: episodes.slice(), // Copy current episodes
+            partial: true,
+            last_saved_at: new Date().toISOString(),
+            completed_episodes: episodes.length,
+            total_episodes: totalEpisodes,
+          };
+          
+          if (currentScriptId) {
+            await supabase.from('scripts')
+              .update({
+                parsed_json: partialScreenplay as any,
+                status: 'generating',
+              })
+              .eq('id', currentScriptId);
+            console.log(`[ScriptImport] Incremental save: ${episodes.length}/${totalEpisodes} episodes (update)`);
+          } else {
+            const { data: inserted } = await supabase.from('scripts')
+              .insert({
+                project_id: projectId,
+                parsed_json: partialScreenplay as any,
+                status: 'generating',
+                version: 1
+              })
+              .select()
+              .single();
+            
+            if (inserted?.id) {
+              setCurrentScriptId(inserted.id);
+              console.log(`[ScriptImport] Incremental save: ${episodes.length}/${totalEpisodes} episodes (new: ${inserted.id})`);
+            }
+          }
+        } catch (saveErr) {
+          console.warn('[ScriptImport] Incremental save failed (non-blocking):', saveErr);
+        }
 
         // Update localStorage state for background recovery
         // Use batch-based progress for accurate calculation
