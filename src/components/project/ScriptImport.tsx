@@ -119,6 +119,7 @@ import { retryWithBackoff, isRetryableError } from '@/lib/retryWithBackoff';
 import { saveDraft, loadDraft, deleteDraft } from '@/lib/draftPersistence';
 import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
 import { getStageInfo, deriveProgress } from '@/lib/outlineStages';
+import OutlineStatusPanel from './OutlineStatusPanel';
 import {
   hydrateCharacters,
   hydrateLocations,
@@ -5239,6 +5240,32 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </div>
                     )}
                     
+                    {/* V12.0: Outline Status Panel (compact mode) */}
+                    <OutlineStatusPanel
+                      outline={outlinePersistence.savedOutline}
+                      projectId={projectId}
+                      isPolling={outlinePersistence.isPolling}
+                      isStuck={outlinePersistence.isStuck}
+                      stuckSince={outlinePersistence.stuckSince}
+                      onRefresh={outlinePersistence.refreshOutline}
+                      onContinueInBackground={() => {
+                        // Close overlay but keep polling
+                        setGeneratingOutline(false);
+                        setOutlineStartTime(null);
+                        toast.info('Generación continúa en segundo plano', {
+                          description: 'Recibirás una notificación cuando termine.',
+                          duration: 5000,
+                        });
+                      }}
+                      onForceUnlockSuccess={() => {
+                        // Refresh state after unlock
+                        outlinePersistence.refreshOutline();
+                        setGeneratingOutline(false);
+                        setOutlineStartTime(null);
+                      }}
+                      compact
+                    />
+                    
                     {/* Background notice */}
                     <div className="p-2 bg-amber-500/10 rounded border border-amber-500/20">
                       <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center justify-center gap-2">
@@ -5247,8 +5274,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       </p>
                     </div>
                     
-                    {/* Cancel button */}
-                    <div className="flex justify-center">
+                    {/* V12.0: Improved action buttons */}
+                    <div className="flex justify-center gap-2">
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => {
+                          setGeneratingOutline(false);
+                          setOutlineStartTime(null);
+                          toast.info('Generación continúa en segundo plano');
+                        }}
+                      >
+                        <Rocket className="h-4 w-4 mr-2" />
+                        Continuar en segundo plano
+                      </Button>
                       <Button 
                         variant="outline" 
                         size="sm"

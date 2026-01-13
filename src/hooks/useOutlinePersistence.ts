@@ -142,11 +142,12 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
   }, [loadOutline, stopPolling]);
 
   // Start polling for outline completion with backoff
+  // V12.0: Improved terminal detection + adaptive polling for faster closure
   const startPolling = useCallback((outlineId: string, options: PollOptions = {}) => {
     const {
       onComplete,
       onError,
-      maxPollDuration = 4 * 60 * 1000, // 4 minutes default (V5: reduced from 10)
+      maxPollDuration = 4 * 60 * 1000, // 4 minutes default
     } = options;
 
     // Stop any existing polling
@@ -155,11 +156,19 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     setIsPolling(true);
     pollStartTimeRef.current = Date.now();
     let attempt = 0;
+    let highProgressSince: number | null = null; // Track when we hit high progress
 
     console.log('[useOutlinePersistence] Starting polling for outline:', outlineId);
 
-    // V5: Backoff suave: 1.5s -> 2s -> 2.5s -> ... -> 5s cap
-    const getBackoffDelay = (att: number) => Math.min(1500 + att * 500, 5000);
+    // V12.0: Adaptive backoff - faster when progress is high
+    const getBackoffDelay = (att: number, progress: number | null) => {
+      // Fast polling when progress >= 90%
+      if (progress != null && progress >= 90) {
+        return Math.min(1000 + att * 200, 2000); // 1s -> 1.2s -> 1.4s -> cap at 2s
+      }
+      // Normal backoff otherwise
+      return Math.min(1500 + att * 500, 5000);
+    };
 
     const poll = async () => {
       try {
@@ -181,14 +190,13 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
 
         if (fetchError) {
           console.error('[useOutlinePersistence] Polling error:', fetchError);
-          // Schedule next poll with backoff
-          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
+          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt, null));
           return;
         }
 
         if (!data) {
           console.warn('[useOutlinePersistence] Outline not found during polling');
-          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
+          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt, null));
           return;
         }
 
@@ -198,7 +206,10 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           qc_issues: Array.isArray(data.qc_issues) ? data.qc_issues as string[] : [],
           status: data.status as PersistedOutline['status'],
           stage: data.stage ?? null,
+          substage: data.substage ?? null,
           progress: data.progress ?? null,
+          heartbeat_at: data.heartbeat_at ?? null,
+          completed_at: data.completed_at ?? null,
           error_message: (data.status === 'error' && Array.isArray(data.qc_issues) && data.qc_issues.length > 0) 
             ? String(data.qc_issues[0]) 
             : undefined,
@@ -206,16 +217,19 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
 
         setSavedOutline(outline);
 
-        // V9: Stuck detection using heartbeat_at (more reliable than updated_at)
+        // V12.0: Track when we first hit high progress
+        if (data.progress != null && data.progress >= 90 && !highProgressSince) {
+          highProgressSince = Date.now();
+          console.log('[useOutlinePersistence] High progress detected, entering fast-poll mode');
+        }
+
+        // V12.0: Stuck detection using heartbeat_at
         const heartbeatAt = data.heartbeat_at;
         const currentUpdatedAt = data.updated_at;
-        
-        // Use heartbeat_at if available, otherwise fall back to updated_at
         const lastActivityAt = heartbeatAt || currentUpdatedAt;
         const lastActivityTime = new Date(lastActivityAt).getTime();
         const timeSinceActivity = (Date.now() - lastActivityTime) / 1000;
         
-        // If no activity for 30+ seconds while generating, consider potentially stuck
         const isActivityStale = timeSinceActivity > 30;
         
         if (isActivityStale && data.status === 'generating') {
@@ -223,56 +237,72 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
             setStuckSince(new Date());
             console.log('[useOutlinePersistence] No heartbeat for 30s, monitoring...');
           } else {
-            // Check if we've been stuck longer than stage timeout
             const stuckDuration = (Date.now() - stuckSince.getTime()) / 1000;
             const stageTimeout = getStageTimeout(data.stage);
             if (stageTimeout > 0 && stuckDuration > stageTimeout) {
-              console.warn('[useOutlinePersistence] Stuck detected:', data.stage, 'duration:', stuckDuration, 'no heartbeat for:', timeSinceActivity);
+              console.warn('[useOutlinePersistence] Stuck detected:', data.stage, 'duration:', stuckDuration);
               setIsStuck(true);
             }
           }
         } else if (currentUpdatedAt !== lastUpdatedRef.current) {
-          // Progress detected - reset stuck state
           lastUpdatedRef.current = currentUpdatedAt;
           setStuckSince(null);
           setIsStuck(false);
         }
 
-        // V6: Robust completion check with defensive fallback
-        // 1. status is 'completed' or 'approved'
-        // 2. OR stage=done + progress=100 + has valid content (defensive fallback)
-        // 3. OR has valid content (title) AND quality is not 'generating'
+        // V12.0: ROBUST terminal detection - multiple conditions for immediate closure
         const hasValidContent = !!(data.outline_json as any)?.title;
         const qualityDone = data.quality && data.quality !== 'generating';
-        const stageDone = data.stage === 'done' && data.progress === 100;
-        const isComplete = 
+        const stageDone = data.stage === 'done';
+        const progressComplete = data.progress != null && data.progress >= 99;
+        
+        // Terminal statuses - IMMEDIATE completion
+        const isTerminalStatus = 
           data.status === 'completed' || 
           data.status === 'approved' ||
+          data.status === 'failed' ||
+          data.status === 'error' ||
+          data.status === 'timeout' ||
+          data.status === 'stalled';
+        
+        // Pragmatic completion - stage done OR high progress with content
+        const isPragmaticComplete = 
+          (stageDone && progressComplete) ||
           (stageDone && hasValidContent) ||
-          (hasValidContent && qualityDone);
+          (progressComplete && hasValidContent && qualityDone);
+
+        // V12.0: Grace period completion - if at 100% for >10 seconds, consider done
+        const highProgressDuration = highProgressSince ? (Date.now() - highProgressSince) / 1000 : 0;
+        const isGracePeriodComplete = data.progress === 100 && highProgressDuration > 10 && hasValidContent;
+
+        const isComplete = isTerminalStatus || isPragmaticComplete || isGracePeriodComplete;
 
         if (isComplete) {
-          console.log('[useOutlinePersistence] Outline generation completed:', data.id, 'status:', data.status);
-          stopPolling();
-          onComplete?.(outline);
-        } else if (data.status === 'error' || data.quality === 'error') {
-          console.error('[useOutlinePersistence] Outline generation failed:', outline.error_message);
-          stopPolling();
-          onError?.(outline.error_message || 'Error en la generación');
+          const isError = data.status === 'error' || data.status === 'failed' || data.status === 'timeout' || data.quality === 'error';
+          
+          if (isError) {
+            console.error('[useOutlinePersistence] Outline generation failed:', outline.error_message);
+            stopPolling();
+            onError?.(outline.error_message || 'Error en la generación');
+          } else {
+            console.log('[useOutlinePersistence] Outline generation completed:', data.id, 'status:', data.status, 'via:', 
+              isTerminalStatus ? 'terminal_status' : isPragmaticComplete ? 'pragmatic' : 'grace_period');
+            stopPolling();
+            onComplete?.(outline);
+          }
         } else {
-          // Still generating - schedule next poll with backoff
-          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
+          // Still generating - schedule next poll with adaptive backoff
+          pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt, data.progress));
         }
       } catch (e) {
         console.error('[useOutlinePersistence] Poll error:', e);
-        // Schedule next poll with backoff
-        pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt));
+        pollIntervalRef.current = setTimeout(poll, getBackoffDelay(attempt, null));
       }
     };
 
     // Initial poll
     poll();
-  }, [stopPolling]);
+  }, [stopPolling, stuckSince]);
 
   // Create a new outline in 'generating' state (returns immediately)
   const createGeneratingOutline = useCallback(async (params: {
