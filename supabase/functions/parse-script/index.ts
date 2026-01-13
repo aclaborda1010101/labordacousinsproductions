@@ -13,6 +13,16 @@ import {
   corsHeaders,
   V3AuthContext
 } from "../_shared/v3-enterprise.ts";
+import {
+  parseScreenplayText,
+  diagnoseParseResult,
+  extractCharactersFromBlock,
+  chunkBySceneBlocks,
+  SceneBlock,
+  ParseResult,
+  ParseDiagnostics,
+  Chunk
+} from "../_shared/screenplay-parser.ts";
 
 // =============================================================================
 // FORENSIC SCRIPT ANALYST v3.0 - SYSTEM PROMPT
@@ -699,89 +709,197 @@ serve(async (req) => {
     }
 
     // =============================================================================
-    // CAMBIO B: EXTRACT CHARACTER CANDIDATES + SCENE HEADINGS (Heuristic, no AI)
-    // This ensures we ALWAYS have this data even if AI analysis fails
+    // INDUSTRIAL EXTRACTION V3.0: DETERMINISTIC PARSER + QC GATING
+    // SceneBlock[] is the SOURCE OF TRUTH - AI only enriches
     // =============================================================================
-    const characterCandidates = extractCharacterCandidates(textToProcess);
-    const sceneHeadings = extractSceneHeadings(textToProcess);
     
-    console.log("[parse-script] Heuristic extraction complete:", {
-      character_candidates: characterCandidates.length,
-      scene_headings: sceneHeadings.length,
+    // STEP A: Deterministic parsing with screenplay-parser.ts
+    console.log("[parse-script] STEP A: Running deterministic parser (screenplay-parser.ts)...");
+    const parseResult: ParseResult = parseScreenplayText(textToProcess);
+    const diagnostics: ParseDiagnostics = diagnoseParseResult(parseResult);
+    
+    console.log("[parse-script] Deterministic parse complete:", {
+      scene_blocks: parseResult.scene_blocks.length,
+      character_cues: parseResult.parse_stats.character_cues_found,
+      dialogue_lines: parseResult.parse_stats.dialogue_lines_found,
+      dialogue_blocks: parseResult.parse_stats.dialogue_blocks_found,
+      is_valid: diagnostics.is_valid_screenplay,
+      confidence: diagnostics.confidence,
+      issues: diagnostics.issues,
+    });
+    
+    // STEP B: QC GATING - Block if extraction failed critically
+    // (scenes detected but no dialogues = PDF format issue, not a valid screenplay)
+    if (parseResult.scene_blocks.length > 0 && parseResult.parse_stats.dialogue_lines_found === 0) {
+      console.warn("[parse-script] QC GATE FAILED: Scenes detected but no dialogues");
+      
+      // Still return data for debugging, but mark as failed
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "NO_DIALOGUES_DETECTED",
+          message: "Se detectaron escenas pero ningún diálogo. El formato del PDF puede estar corrupto o necesita revisión manual.",
+          // Include parse data for debugging
+          scene_blocks: parseResult.scene_blocks,
+          parse_stats: parseResult.parse_stats,
+          diagnostics,
+          // Suggestions for user
+          suggestions: [
+            "Copia y pega el texto del guion directamente en vez de subir el PDF",
+            "Verifica que el PDF no sea una imagen escaneada",
+            "El guion debe tener formato estándar con nombres de personajes en mayúsculas"
+          ],
+          rawText: textToProcess.substring(0, 5000)
+        }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    // STEP C: Extract character candidates from SceneBlocks (deterministic)
+    const characterCandidates: string[] = [];
+    const characterCuesByScene: Record<string, string[]> = {};
+    
+    for (const block of parseResult.scene_blocks) {
+      const cues = extractCharactersFromBlock(block);
+      const names = cues.map(c => c.name);
+      characterCuesByScene[block.scene_id] = names;
+      for (const name of names) {
+        if (!characterCandidates.includes(name)) {
+          characterCandidates.push(name);
+        }
+      }
+    }
+    
+    // Extract scene headings from blocks (deterministic)
+    const sceneHeadings = parseResult.scene_blocks.map(b => b.slugline_raw);
+    
+    console.log("[parse-script] Character extraction from SceneBlocks:", {
+      unique_characters: characterCandidates.length,
+      scenes_with_characters: Object.keys(characterCuesByScene).length,
     });
 
     // =============================================================================
-    // FORENSIC ANALYSIS v2.0 - WITH CHUNKING FOR LONG SCRIPTS
+    // STEP D: AI ENRICHMENT (optional) - Only for aliases, visual DNA, props
+    // AI NEVER reconstructs what the parser already extracted
     // =============================================================================
-    console.log("[parse-script] Running Forensic Analysis v2.0...");
-    console.log(`[parse-script] Text to analyze: ${textToProcess.length} chars`);
+    console.log("[parse-script] STEP D: Running AI enrichment...");
     
-    let analysisResult: Record<string, unknown>;
+    let aiEnrichment: Record<string, unknown> = {};
     
-    // Check if we need to chunk the analysis
-    if (textToProcess.length > MAX_CHARS_FOR_SINGLE_ANALYSIS) {
-      console.log("[parse-script] Script is too long, using chunked analysis...");
-      analysisResult = await analyzeInChunks(textToProcess, LOVABLE_API_KEY);
-    } else {
-      // Single-pass analysis for shorter scripts
-      analysisResult = await analyzeScript(textToProcess, LOVABLE_API_KEY);
+    // Only run AI analysis if we have valid screenplay data
+    if (diagnostics.is_valid_screenplay) {
+      try {
+        // Check if we need to chunk the analysis
+        if (textToProcess.length > MAX_CHARS_FOR_SINGLE_ANALYSIS) {
+          console.log("[parse-script] Script is too long, using chunked AI analysis...");
+          aiEnrichment = await analyzeInChunks(textToProcess, LOVABLE_API_KEY);
+        } else {
+          // Single-pass analysis for shorter scripts
+          aiEnrichment = await analyzeScript(textToProcess, LOVABLE_API_KEY);
+        }
+      } catch (aiError) {
+        console.warn("[parse-script] AI enrichment failed (non-blocking):", aiError);
+        aiEnrichment = { 
+          ai_error: aiError instanceof Error ? aiError.message : "Unknown error",
+          ai_skipped: true 
+        };
+      }
     }
 
     // =============================================================================
-    // CAMBIO A: ALWAYS persist scene headings for location derivation
+    // STEP E: BUILD FINAL RESPONSE - SceneBlock[] as primary source
     // =============================================================================
-    // Ensure scenes object exists with headings
-    if (!analysisResult.scenes) {
-      analysisResult.scenes = { list: [], total: 0 };
-    }
     
-    const existingScenes = (analysisResult.scenes as Record<string, unknown>)?.list as unknown[];
-    if (!existingScenes || existingScenes.length === 0) {
-      // Fallback: create minimal scene entries from extracted headings
-      (analysisResult.scenes as Record<string, unknown>).list = sceneHeadings.map((heading, idx) => ({
-        number: idx + 1,
-        heading: heading,
-        _source: 'heuristic_extraction'
-      }));
-      (analysisResult.scenes as Record<string, unknown>).total = sceneHeadings.length;
-      console.log(`[parse-script] Rebuilt scenes from ${sceneHeadings.length} extracted headings`);
-    }
-
     // Add analysis metadata
     const analysisMetadata = {
-      parser_version: "2.1", // Updated version
+      parser_version: "3.0-industrial", // V3.0 Industrial with SceneBlock[]
       extraction_timestamp: new Date().toISOString(),
       source_type: sourceType,
       extraction_stats: extractionStats,
-      total_confidence_score: calculateAverageConfidence(analysisResult),
+      deterministic_parser: {
+        version: "1.0",
+        scene_blocks_count: parseResult.scene_blocks.length,
+        dialogue_lines_found: parseResult.parse_stats.dialogue_lines_found,
+        dialogue_blocks_found: parseResult.parse_stats.dialogue_blocks_found,
+        character_cues_found: parseResult.parse_stats.character_cues_found,
+      },
+      diagnostics: {
+        is_valid_screenplay: diagnostics.is_valid_screenplay,
+        confidence: diagnostics.confidence,
+        issues: diagnostics.issues,
+        suggestions: diagnostics.suggestions,
+      },
+      total_confidence_score: diagnostics.is_valid_screenplay ? 0.9 : 0.5,
       chunked: textToProcess.length > MAX_CHARS_FOR_SINGLE_ANALYSIS,
-      heuristic_extraction: {
-        character_candidates_count: characterCandidates.length,
-        scene_headings_count: sceneHeadings.length,
-      }
     };
-    analysisResult.analysis_metadata = analysisMetadata;
     
-    // CAMBIO B: Always include character_candidates for downstream processing
-    analysisResult.character_candidates = characterCandidates;
+    // Build scenes from SceneBlocks (source of truth) + AI enrichment
+    const aiScenes = (aiEnrichment.scenes as Record<string, unknown>)?.list as unknown[] | undefined;
+    const mergedScenes = parseResult.scene_blocks.map((block, idx) => {
+      const aiScene = aiScenes?.find((s: any) => s.scene_number === idx + 1) as Record<string, unknown> | undefined;
+      return {
+        scene_number: idx + 1,
+        scene_id: block.scene_id,
+        heading: block.slugline_raw,
+        location_type: block.int_ext,
+        place_main: block.place_main,
+        place_sub: block.place_sub,
+        time_of_day: block.time_of_day,
+        characters_in_scene: characterCuesByScene[block.scene_id] || [],
+        line_range: { start: block.start_line, end: block.end_line },
+        _source: 'deterministic_parser',
+        // AI enrichment (if available)
+        ...(aiScene ? {
+          action_summary: aiScene.action_summary,
+          technical_metadata: aiScene.technical_metadata,
+          standardized_location: aiScene.standardized_location,
+        } : {}),
+      };
+    });
     
-    // Also include raw scene headings for location derivation
-    analysisResult.scene_headings_raw = sceneHeadings;
-
-    const scenes = (analysisResult.scenes as Record<string, unknown>)?.list as unknown[] | undefined;
-    const canonSuggestions = analysisResult.canon_suggestions as unknown[] | undefined;
-    
-    console.log("[parse-script] Forensic analysis complete:", {
-      scenes: scenes?.length || 0,
-      character_candidates: characterCandidates.length,
-      canonSuggestions: canonSuggestions?.length || 0,
-      avgConfidence: analysisMetadata.total_confidence_score
+    console.log("[parse-script] Industrial extraction complete:", {
+      scene_blocks: parseResult.scene_blocks.length,
+      merged_scenes: mergedScenes.length,
+      characters: characterCandidates.length,
+      ai_enriched: !aiEnrichment.ai_skipped,
     });
 
     return new Response(
       JSON.stringify({
         success: true,
-        ...analysisResult,
+        
+        // PRIMARY SOURCE OF TRUTH: Deterministic SceneBlock[]
+        scene_blocks: parseResult.scene_blocks,
+        parse_stats: parseResult.parse_stats,
+        metadata: parseResult.metadata,
+        diagnostics,
+        
+        // Merged scenes (SceneBlock + AI enrichment)
+        scenes: {
+          list: mergedScenes,
+          total: mergedScenes.length,
+        },
+        
+        // Character candidates (deterministic from SceneBlocks)
+        character_candidates: characterCandidates,
+        character_cues_by_scene: characterCuesByScene,
+        
+        // Scene headings for location derivation
+        scene_headings_raw: sceneHeadings,
+        
+        // AI enrichment (for visual DNA, props, etc.)
+        ai_enrichment: {
+          characters: aiEnrichment.characters,
+          locations: aiEnrichment.locations,
+          canon_suggestions: aiEnrichment.canon_suggestions,
+          extraction_quality: aiEnrichment.extraction_quality,
+          project_metadata: aiEnrichment.project_metadata,
+        },
+        
+        // Metadata
+        analysis_metadata: analysisMetadata,
+        
+        // Raw text sample for debugging
         rawText: textToProcess.substring(0, 5000)
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
