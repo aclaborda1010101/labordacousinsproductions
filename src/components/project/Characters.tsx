@@ -410,46 +410,77 @@ export default function Characters({ projectId }: CharactersProps) {
     setAutoGenerating(character.id);
     
     try {
-      // Phase 1: Generate Visual DNA if not exists
-      updateTask(taskId, { progress: 5, description: 'Generando Visual DNA...' });
+      // Phase 1: Generate Visual DNA ONLY if not exists (V50: protect user-uploaded references)
+      updateTask(taskId, { progress: 5, description: 'Verificando Visual DNA...' });
       
-      const visualDNAResponse = await supabase.functions.invoke('generate-visual-dna', {
-        body: {
-          characterId: character.id,
-          characterName: character.name,
+      // V50: Check if Visual DNA already exists (from reference upload or previous generation)
+      const { data: existingDNA } = await supabase
+        .from('character_visual_dna')
+        .select('id, visual_dna')
+        .eq('character_id', character.id)
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (!existingDNA?.visual_dna) {
+        // Only generate if doesn't exist
+        updateTask(taskId, { progress: 5, description: 'Generando Visual DNA...' });
+        
+        const visualDNAResponse = await supabase.functions.invoke('generate-visual-dna', {
+          body: {
+            characterId: character.id,
+            characterName: character.name,
+          }
+        });
+        
+        if (visualDNAResponse.error) {
+          console.warn('Visual DNA generation error:', visualDNAResponse.error);
+        } else if (visualDNAResponse.data?.visualDNA) {
+          // Save Visual DNA
+          await supabase
+            .from('character_visual_dna')
+            .upsert({
+              character_id: character.id,
+              visual_dna: visualDNAResponse.data.visualDNA,
+              version: 1,
+              version_name: 'Auto-Generated',
+              is_active: true,
+              continuity_lock: {
+                never_change: [],
+                allowed_variants: [],
+                must_avoid: [],
+                version_notes: 'Generated via auto-generate'
+              }
+            }, { 
+              onConflict: 'character_id,version',
+              ignoreDuplicates: false 
+            });
         }
-      });
-      
-      if (visualDNAResponse.error) {
-        console.warn('Visual DNA generation error:', visualDNAResponse.error);
-      } else if (visualDNAResponse.data?.visualDNA) {
-        // Save Visual DNA
-        await supabase
-          .from('character_visual_dna')
-          .upsert({
-            character_id: character.id,
-            visual_dna: visualDNAResponse.data.visualDNA,
-            version: 1,
-            version_name: 'Auto-Generated',
-            is_active: true,
-            continuity_lock: {
-              never_change: [],
-              allowed_variants: [],
-              must_avoid: [],
-              version_notes: 'Generated via auto-generate'
-            }
-          }, { 
-            onConflict: 'character_id,version',
-            ignoreDuplicates: false 
-          });
+      } else {
+        console.log(`Visual DNA ya existe para ${character.name}, respetando configuración existente`);
       }
       
-      // Generate all 12 slots sequentially with progress updates
+      // Generate slots - but SKIP already completed ones (V50)
       const totalSlots = GENERATABLE_SLOTS.length;
+      let generatedCount = 0;
       
       for (let i = 0; i < totalSlots; i++) {
         const slot = GENERATABLE_SLOTS[i];
         const progressPercent = Math.round(5 + ((i + 1) / totalSlots) * 90); // 5% to 95%
+        
+        // V50: Check if slot already has valid content
+        const { data: existingSlot } = await supabase
+          .from('character_pack_slots')
+          .select('id, status, image_url')
+          .eq('character_id', character.id)
+          .eq('slot_type', slot.type)
+          .maybeSingle();
+        
+        // Skip slots that are uploaded, generated, approved, or needs_review with image
+        const protectedStatuses = ['uploaded', 'generated', 'approved', 'needs_review'];
+        if (existingSlot?.status && protectedStatuses.includes(existingSlot.status) && existingSlot.image_url) {
+          console.log(`Slot ${slot.type} ya completado (${existingSlot.status}), saltando...`);
+          continue;
+        }
         
         updateTask(taskId, { 
           progress: progressPercent, 
@@ -465,6 +496,7 @@ export default function Characters({ projectId }: CharactersProps) {
           null, 
           i
         );
+        generatedCount++;
       }
       
       // Final: Update completeness
@@ -564,6 +596,14 @@ export default function Characters({ projectId }: CharactersProps) {
 
   // Auto-generate ALL characters in parallel with concurrency limit
   const autoGenerateAllCharacters = async () => {
+    // V50: Check for characters with uploaded reference images
+    const { data: uploadedSlots } = await supabase
+      .from('character_pack_slots')
+      .select('character_id')
+      .eq('status', 'uploaded');
+    
+    const charactersWithUploads = new Set(uploadedSlots?.map(s => s.character_id) || []);
+    
     const charactersToGenerate = characters.filter(c => 
       c.character_role && (!c.pack_completeness_score || c.pack_completeness_score < 50)
     );
@@ -573,7 +613,17 @@ export default function Characters({ projectId }: CharactersProps) {
       return;
     }
 
-    if (!confirm(`¿Generar packs para ${charactersToGenerate.length} personajes en paralelo?`)) {
+    // V50: Warn about characters with existing work
+    const withManualWork = charactersToGenerate.filter(c => charactersWithUploads.has(c.id));
+    let confirmMessage = `¿Generar packs para ${charactersToGenerate.length} personajes en paralelo?`;
+    
+    if (withManualWork.length > 0) {
+      const names = withManualWork.slice(0, 3).map(c => c.name).join(', ');
+      const moreText = withManualWork.length > 3 ? ` y ${withManualWork.length - 3} más` : '';
+      confirmMessage = `${withManualWork.length} personaje(s) tienen fotos de referencia subidas (${names}${moreText}).\n\nSus imágenes existentes se respetarán.\n\n¿Continuar con ${charactersToGenerate.length} personajes?`;
+    }
+
+    if (!confirm(confirmMessage)) {
       return;
     }
 
