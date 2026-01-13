@@ -12,90 +12,164 @@ interface StoryboardRequest {
   scene_text: string;
   scene_slugline?: string;
   visual_style?: string;
+  storyboard_style?: 'GRID_SHEET_V1' | 'TECH_PAGE_V1';
   character_refs?: { id: string; name: string; image_url?: string }[];
   location_ref?: { id: string; name: string; image_url?: string; interior_exterior?: string; time_of_day?: string };
   panel_count?: number;
   beats?: { beat_id: string; description: string }[];
   dialogue_blocks?: { line_id: string; speaker_id: string; text: string }[];
+  show_movement_arrows?: boolean;
+  aspect_ratio?: string;
 }
 
 interface StoryboardPanel {
   panel_id: string;
   panel_no: number;
-  intent: string;
+  panel_intent: string;
   shot_hint: string;
-  action_beat_ref?: string;
-  characters_present: string[];
-  props_present: string[];
-  image_prompt: string;
-  staging?: {
-    location_zone?: string;
-    action_beat?: string;
-    movement_arrows?: { type: string; target?: string; direction: string; intensity?: string }[];
+  action_beat?: string;
+  characters_present: Array<{ character_id: string; importance: string }>;
+  props_present: Array<{ prop_id: string; importance: string }>;
+  movement_arrows?: Array<{ type: string; direction: string; intensity?: string }>;
+  spatial_info?: {
+    camera_relative_position?: string;
+    subject_direction?: string;
+    axis_locked?: boolean;
   };
 }
 
 // =============================================================================
-// PROFESSIONAL STORYBOARD ARTIST SYSTEM PROMPT
+// STORYBOARD PLAN PROMPT - GPT-5.2 (JSON ONLY)
 // =============================================================================
-// This prompt enforces the MANDATORY visual style: pencil/charcoal sketch,
-// black and white only, rough storyboard look with movement arrows.
-// NOT concept art, NOT illustration, NOT beautiful renders.
-// =============================================================================
-const STORYBOARD_ARTIST_SYSTEM_PROMPT = `ROLE: PROFESSIONAL FILM STORYBOARD ARTIST
+const STORYBOARD_PLAN_PROMPT_GRID = `ROLE: Senior Film Storyboard Director
 
-You are a storyboard artist working in pre-production for a film or TV production.
-Your storyboards will be used by the Director and DoP to plan camera setups.
+You are designing a PROFESSIONAL FILM STORYBOARD as STRUCTURED DATA.
+You DO NOT generate images.
+You DO NOT describe camera lenses or lighting.
+You DO NOT invent characters, props, or locations outside the provided list.
+
+STYLE: GRID_SHEET_V1 - Multipanel sheet (6-9 panels) for visual production planning.
+
+HARD RULES:
+1. Storyboard panels define WHAT IS SEEN and WHERE it is seen from.
+2. Use classic film grammar: PG (Wide), PM (Medium), PMC (Medium-Close), PP (Close-up), OTS, 2SHOT, INSERT, POV.
+3. Maintain spatial continuity and 180° axis consistency.
+4. Output ONLY valid JSON matching the schema.
+5. No prose. No markdown. No commentary.
+
+OUTPUT JSON SCHEMA:
+{
+  "panels": [
+    {
+      "panel_id": "P1",
+      "panel_no": 1,
+      "panel_intent": "Establish scene geography and character entrance",
+      "shot_hint": "PG",
+      "action_beat": "Description of action in this panel",
+      "characters_present": [{"character_id": "id", "importance": "primary|secondary"}],
+      "props_present": [{"prop_id": "id", "importance": "primary|secondary"}],
+      "movement_arrows": [{"type": "subject|camera", "direction": "left|right|towards|away", "intensity": "low|medium|high"}],
+      "spatial_info": {
+        "camera_relative_position": "behind|front|left|right|above",
+        "subject_direction": "towards_camera|away_from_camera|lateral",
+        "axis_locked": true
+      }
+    }
+  ]
+}`;
+
+const STORYBOARD_PLAN_PROMPT_TECH = `ROLE: Senior Film Storyboard Director
+
+You are designing a TECHNICAL STORYBOARD PAGE as STRUCTURED DATA.
+This style emphasizes shot_label and blocking references over visual storytelling.
+
+STYLE: TECH_PAGE_V1 - Technical page with shot list + blocking diagram (4-6 panels).
+
+HARD RULES:
+1. Each panel represents a distinct camera setup.
+2. Include blocking_ref for scenes with character movement or multiple subjects.
+3. Emphasize shot_label with technical descriptors.
+4. Output ONLY valid JSON matching the schema.
+5. No prose. No markdown. No commentary.
+
+OUTPUT JSON SCHEMA:
+{
+  "panels": [
+    {
+      "panel_id": "P1",
+      "panel_no": 1,
+      "panel_intent": "Technical description of shot purpose",
+      "shot_hint": "PM",
+      "shot_label": "PMC lateral driver, weapons foreground",
+      "blocking_ref": "B1",
+      "action_beat": "Action description",
+      "characters_present": [{"character_id": "id", "importance": "primary"}],
+      "props_present": [{"prop_id": "id", "importance": "primary"}],
+      "spatial_info": {
+        "camera_relative_position": "lateral",
+        "axis_locked": true
+      }
+    }
+  ]
+}`;
+
+// =============================================================================
+// IMAGE GENERATION PROMPTS - NanoBanana Pro 3
+// =============================================================================
+const GRID_SHEET_IMAGE_PROMPT = `Generate a PROFESSIONAL BLACK AND WHITE STORYBOARD SHEET.
 
 STYLE (MANDATORY - NO EXCEPTIONS):
-- Rough pencil / charcoal sketches ONLY
-- Black and white / grayscale ONLY
-- Loose expressive lines, visible construction marks
-- Sketch-like quality, NOT polished illustration
-- Hand-drawn aesthetic like real film production storyboards
-- No color whatsoever
-- No realistic rendering
-- No illustration polish
-- No cinematic lighting effects in the image
-- No text overlays or captions inside the image
+- White paper background with clean margins
+- Crisp black ink linework with soft graphite shading (grey pencil)
+- NO color at all - strictly B&W/grayscale
+- NO painterly strokes, NO comic style
+- NO photorealism, NO CGI render look
+- Clean rectangular panels with uniform black borders
+- Film storyboard aesthetic (European cinema production)
+- Scanned storyboard sheet look
 
-VISUAL COMMUNICATION REQUIREMENTS:
-- Clear framing and composition
-- Camera angle implied by perspective
-- Character placement and blocking (positions in frame)
-- Movement arrows for camera moves (PAN →, TRACK ↓, DOLLY IN ↗)
-- Movement arrows for character actions (walking, gesturing)
-- Depth staging (foreground/midground/background)
-- Eyelines and screen direction consistency (180° rule)
+LAYOUT:
+- Multi-panel grid (exactly {{N_PANELS}} panels)
+- 16:9 frames inside each panel
+- Panel labels P1, P2, P3... in bottom-right corner
+- Title area top-left: {{PROJECT_TITLE}} - Sec. {{SCENE_CODE}}
 
-This is a TECHNICAL STORYBOARD for film production, NOT concept art.
-The storyboard is a planning tool, not the final visual product.
+CHARACTER CONSISTENCY:
+Use the provided character references EXACTLY.
+No variation in face, hair, clothing, or proportions.
+Simplify to sketch level but KEEP RECOGNIZABLE.
 
-OUTPUT FORMAT: JSON array of 6-12 panels.
+CONTENT:
+{{PANEL_DESCRIPTIONS}}
 
-For each panel, provide:
-- panel_id: Sequential identifier (P1, P2, P3...)
-- panel_no: Panel number (1, 2, 3...)
-- intent: What story/emotional beat this panel captures (1 sentence)
-- shot_hint: Camera suggestion (PG = Wide/Establishing, PM = Medium, PMC = Medium Close, PP = Close-up, INSERT, OTS)
-- action_beat_ref: Reference to beat_id if applicable
-- characters_present: Array of character IDs present in this panel
-- props_present: Array of prop IDs visible in this panel
-- image_prompt: Detailed visual description for GRAYSCALE PENCIL SKETCH generation (include "rough pencil storyboard sketch, black and white, charcoal lines")
-- staging: Object with { location_zone, action_beat, movement_arrows[] }
+NEGATIVE PROMPT:
+color, CGI, 3D render, anime, comic book, messy sketch, exaggerated style, UI overlay, photographs, digital art, concept art, illustration`;
 
-CRITICAL:
-1. ALWAYS maintain character identity from the provided Visual DNA
-2. Use the character's age, body type, hair, and recognizable features
-3. Simplify to storyboard sketch level but KEEP RECOGNIZABLE
-4. Never redesign or reinvent characters
-5. Include movement arrows in image_prompt when camera or characters move
+const TECH_PAGE_IMAGE_PROMPT = `Generate a FILM SHOOTING TECH STORYBOARD PAGE in Spanish.
 
-Return ONLY a valid JSON array, no explanations.`;
+STYLE (MANDATORY):
+- White paper background
+- Clean typed black text (sans-serif font)
+- ONE storyboard frame (ink + pencil sketch) in top-right
+- Numbered shot list on the left side (01, 02, 03...)
+- Top-view blocking diagram at bottom with:
+  - Circles with initials for characters
+  - Blue arrows for movement
+  - Camera position triangles
+- Professional shooting plan aesthetic
+- Clean, minimal, technical
+
+LAYOUT:
+Header line: {{SEC_CODE}}    {{LOCATION_CODE}}    {{SET_CODE}}    {{TIME_CONTEXT}}
+Subheader: {{SCENE_LOGLINE}}
+Shot list: {{SHOT_LIST}}
+Blocking diagram: {{BLOCKING_SPEC}}
+
+NEGATIVE PROMPT:
+illustration art, comic style, colors except blue arrows, decorative fonts, cinematic lighting effects, photographs, 3D render`;
 
 // =============================================================================
 // CHARACTER VISUAL DNA INJECTION
-// Ensures storyboard respects approved character designs
 // =============================================================================
 async function buildCharacterDNAContext(
   supabaseClient: any,
@@ -109,16 +183,9 @@ async function buildCharacterDNAContext(
 
   for (const char of characterRefs) {
     try {
-      // Fetch character with visual DNA
       const { data: charData } = await supabaseClient
         .from("characters")
-        .select(`
-          name,
-          bio,
-          visual_dna,
-          character_role,
-          profile_json
-        `)
+        .select(`name, bio, visual_dna, character_role, profile_json`)
         .eq("id", char.id)
         .single();
 
@@ -126,7 +193,6 @@ async function buildCharacterDNAContext(
         const visualDna = charData.visual_dna as Record<string, any> | null;
         const profile = charData.profile_json as Record<string, any> | null;
 
-        // Build detailed character description for storyboard artist
         let description = `${charData.name} (ID: ${char.id})`;
 
         if (visualDna) {
@@ -143,7 +209,6 @@ async function buildCharacterDNAContext(
             description += `\n  - Distinctive features: ${face.distinctive_features.join(", ")}`;
           }
         } else if (profile) {
-          // Fallback to profile_json if no visual_dna
           description += `\n  - Profile: ${profile.appearance || charData.bio || "No detailed profile"}`;
         } else if (charData.bio) {
           description += `\n  - Bio: ${charData.bio}`;
@@ -183,11 +248,14 @@ serve(async (req) => {
       scene_text,
       scene_slugline = "",
       visual_style = "pencil_storyboard",
+      storyboard_style = "GRID_SHEET_V1",
       character_refs = [],
       location_ref,
-      panel_count = 8,
+      panel_count,
       beats = [],
       dialogue_blocks = [],
+      show_movement_arrows = true,
+      aspect_ratio = "16:9",
     }: StoryboardRequest = await req.json();
 
     if (!scene_id || !project_id || !scene_text) {
@@ -197,8 +265,11 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[generate-storyboard] Generating ${panel_count} panels for scene ${scene_id}`);
-    console.log(`[generate-storyboard] Style: ${visual_style} (forcing pencil sketch B&W)`);
+    // Determine panel count based on style
+    const defaultPanelCount = storyboard_style === 'GRID_SHEET_V1' ? 8 : 5;
+    const targetPanelCount = panel_count || defaultPanelCount;
+
+    console.log(`[generate-storyboard] Style: ${storyboard_style}, Panels: ${targetPanelCount}`);
 
     // Build character context WITH Visual DNA
     const characterContext = await buildCharacterDNAContext(supabase, character_refs);
@@ -216,13 +287,17 @@ serve(async (req) => {
       ? `Scene Beats:\n${beats.map(b => `- ${b.beat_id}: ${b.description}`).join("\n")}`
       : "";
 
-    // Build dialogue context (first 10 lines)
+    // Build dialogue context
     const dialogueContext = dialogue_blocks.length > 0
       ? `Key Dialogue:\n${dialogue_blocks.slice(0, 10).map(d => `- ${d.speaker_id}: "${d.text}"`).join("\n")}`
       : "";
 
-    // Build the user prompt with ALL context
-    const userPrompt = `Create a ${panel_count}-panel storyboard for this film scene.
+    // Select appropriate system prompt based on style
+    const systemPrompt = storyboard_style === 'GRID_SHEET_V1' 
+      ? STORYBOARD_PLAN_PROMPT_GRID 
+      : STORYBOARD_PLAN_PROMPT_TECH;
+
+    const userPrompt = `Create a ${targetPanelCount}-panel storyboard for this film scene.
 
 SCENE: ${scene_slugline || "Untitled Scene"}
 ${scene_text}
@@ -235,17 +310,9 @@ ${beatsContext}
 
 ${dialogueContext}
 
-MANDATORY STYLE:
-- Rough pencil storyboard sketch
-- Black and white / grayscale only
-- Charcoal/pencil lines, visible construction
-- Include movement arrows (→ ↓ ↗) for camera or character movement
-- NOT color, NOT realistic, NOT illustrative, NOT polished
+${show_movement_arrows ? "Include movement_arrows for camera and subject movement." : ""}
 
-Each panel's image_prompt MUST explicitly include:
-"Rough pencil storyboard sketch, black and white, charcoal lines on paper, hand-drawn production storyboard style"
-
-Return a JSON array with ${panel_count} panels.`;
+Return a JSON object with a "panels" array containing ${targetPanelCount} panels.`;
 
     // Call Lovable AI for panel structure generation
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -257,11 +324,12 @@ Return a JSON array with ${panel_count} panels.`;
       body: JSON.stringify({
         model: "openai/gpt-5.2",
         messages: [
-          { role: "system", content: STORYBOARD_ARTIST_SYSTEM_PROMPT },
+          { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
         temperature: 0.7,
         max_tokens: 12000,
+        response_format: { type: "json_object" },
       }),
     });
 
@@ -275,19 +343,20 @@ Return a JSON array with ${panel_count} panels.`;
     const content = aiData.choices?.[0]?.message?.content || "";
     
     // Parse JSON from response
-    let panels: StoryboardPanel[] = [];
+    let panelsData: { panels: StoryboardPanel[] };
     try {
-      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        panels = JSON.parse(jsonMatch[0]);
+        panelsData = JSON.parse(jsonMatch[0]);
       } else {
-        throw new Error("No JSON array found in response");
+        throw new Error("No JSON object found in response");
       }
     } catch (parseError) {
       console.error("[generate-storyboard] Parse error:", parseError, "Content:", content.substring(0, 500));
       throw new Error("Failed to parse storyboard panels from AI response");
     }
 
+    const panels = panelsData.panels || [];
     console.log(`[generate-storyboard] Generated ${panels.length} panels structure`);
 
     // Upsert storyboards wrapper table
@@ -297,7 +366,7 @@ Return a JSON array with ${panel_count} panels.`;
         project_id,
         scene_id,
         status: "draft",
-        style_id: "pencil_storyboard", // Always force pencil style
+        style_id: storyboard_style,
         version: 1,
       }, { onConflict: "project_id,scene_id" })
       .select()
@@ -319,13 +388,16 @@ Return a JSON array with ${panel_count} panels.`;
       project_id,
       panel_no: panel.panel_no || idx + 1,
       panel_code: panel.panel_id || `P${idx + 1}`,
-      panel_intent: panel.intent,
+      panel_intent: panel.panel_intent,
       shot_hint: panel.shot_hint,
-      image_prompt: panel.image_prompt,
-      action_beat_ref: panel.action_beat_ref || null,
-      characters_present: panel.characters_present || [],
-      props_present: panel.props_present || [],
-      staging: panel.staging || {},
+      image_prompt: buildImagePrompt(panel, storyboard_style, character_refs),
+      action_beat_ref: panel.action_beat || null,
+      characters_present: panel.characters_present?.map(c => c.character_id) || [],
+      props_present: panel.props_present?.map(p => p.prop_id) || [],
+      staging: {
+        movement_arrows: panel.movement_arrows || [],
+        spatial_info: panel.spatial_info || {},
+      },
       continuity: {
         visual_dna_lock_ids: character_refs.map(c => c.id),
         must_match_previous: idx > 0,
@@ -350,18 +422,9 @@ Return a JSON array with ${panel_count} panels.`;
     const generatedPanels = [];
     for (const panel of insertedPanels || []) {
       try {
-        // Build the DEFINITIVE pencil sketch prompt
-        // This is the professional storyboard look: rough, B&W, with arrows
-        const sketchPrompt = `Rough pencil storyboard sketch for film production.
-Style: Hand-drawn charcoal/pencil on paper, black and white only, grayscale.
-Loose expressive lines, visible construction marks, sketch quality.
-Classic Hollywood storyboard aesthetic from pre-production.
-
-Scene content: ${panel.image_prompt}
-
-Include visual movement arrows if the scene involves camera or character movement.
-NO color. NO realistic rendering. NO polish. NO text labels.
-This is a WORKING storyboard, not concept art.`;
+        const imagePrompt = storyboard_style === 'GRID_SHEET_V1'
+          ? buildGridSheetImagePrompt(panel)
+          : buildTechPageImagePrompt(panel);
         
         const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
           method: "POST",
@@ -371,9 +434,9 @@ This is a WORKING storyboard, not concept art.`;
           },
           body: JSON.stringify({
             model: "google/gemini-3-pro-image-preview",
-            prompt: sketchPrompt,
+            prompt: imagePrompt,
             n: 1,
-            size: "1536x1024", // 16:9-ish aspect
+            size: "1536x1024",
           }),
         });
 
@@ -388,7 +451,7 @@ This is a WORKING storyboard, not concept art.`;
               .eq("id", panel.id);
             
             generatedPanels.push({ ...panel, image_url: imageUrl });
-            console.log(`[generate-storyboard] Generated pencil sketch for panel ${panel.panel_no}`);
+            console.log(`[generate-storyboard] Generated image for panel ${panel.panel_no}`);
           } else {
             generatedPanels.push(panel);
           }
@@ -407,9 +470,9 @@ This is a WORKING storyboard, not concept art.`;
       JSON.stringify({
         success: true,
         storyboard_id: storyboardRecord?.id,
+        storyboard_style,
         panels: generatedPanels,
-        style: "pencil_storyboard",
-        message: `Generated ${generatedPanels.length} storyboard panels in pencil sketch style (B&W)`,
+        message: `Generated ${generatedPanels.length} storyboard panels (${storyboard_style})`,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
@@ -425,3 +488,51 @@ This is a WORKING storyboard, not concept art.`;
     );
   }
 });
+
+// =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
+function buildImagePrompt(
+  panel: StoryboardPanel,
+  style: string,
+  characterRefs: { id: string; name: string; image_url?: string }[]
+): string {
+  const charNames = characterRefs.map(c => c.name).join(", ");
+  const arrows = panel.movement_arrows?.map(a => `${a.type} movement ${a.direction}`).join(", ") || "";
+  
+  return `${panel.panel_intent}. Shot: ${panel.shot_hint}. Characters: ${charNames || "none"}. ${arrows ? `Movement: ${arrows}.` : ""}`;
+}
+
+function buildGridSheetImagePrompt(panel: any): string {
+  const staging = panel.staging as Record<string, any> || {};
+  const arrows = staging.movement_arrows || [];
+  const arrowsText = arrows.length > 0 
+    ? `Include visual movement arrows: ${arrows.map((a: any) => `${a.type} ${a.direction}`).join(", ")}.`
+    : "";
+
+  return `Rough pencil storyboard sketch for film production.
+Style: Hand-drawn charcoal/pencil on paper, black and white only, grayscale.
+Loose expressive lines, visible construction marks, sketch quality.
+Classic Hollywood storyboard aesthetic from pre-production.
+
+Panel ${panel.panel_no}: ${panel.shot_hint} shot.
+${panel.panel_intent}
+
+${arrowsText}
+
+NO color. NO realistic rendering. NO polish. NO text labels.
+This is a WORKING storyboard, not concept art.`;
+}
+
+function buildTechPageImagePrompt(panel: any): string {
+  return `Technical storyboard frame for film production shooting plan.
+Style: Clean pencil sketch with technical precision, black and white, grayscale.
+One single frame showing the camera angle and composition.
+
+Shot ${panel.panel_no}: ${panel.shot_hint}
+${panel.panel_intent}
+
+Simple, professional, production-ready storyboard frame.
+NO color. NO decorative elements.`;
+}
