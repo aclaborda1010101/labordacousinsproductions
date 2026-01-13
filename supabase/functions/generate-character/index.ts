@@ -597,8 +597,54 @@ ${parts.join('\n')}
 // REFERENCE-BASED PROMPT BUILDERS
 // ============================================
 
-// CRITICAL STYLE CONSISTENCY block - used in all generation prompts
-const STYLE_CONSISTENCY_BLOCK = `
+// V11.2: STYLE BLOCK BUILDER - Decides whether to use reference style or project style
+// When Visual Bible is configured, project style takes priority over reference image style
+function buildStyleConsistencyBlock(styleConfig: StyleConfig | null, canonAnchorSource: string): string {
+  const hasProjectStyle = styleConfig && (
+    (styleConfig.promptModifiers && styleConfig.promptModifiers.length > 0) ||
+    (styleConfig.customAnalysis?.prompt_modifiers && styleConfig.customAnalysis.prompt_modifiers.length > 0)
+  );
+  
+  if (hasProjectStyle) {
+    // V11.2: PROJECT STYLE MODE - Reference is for IDENTITY ONLY, style comes from Visual Bible
+    console.log(`[STYLE MODE] Using PROJECT STYLE (Visual Bible) - reference is for identity only`);
+    return `
+=== STYLE TRANSFER RULES (MANDATORY - VISUAL BIBLE) ===
+PRIORITY: The PROJECT'S VISUAL STYLE takes precedence over the reference image's style.
+
+IDENTITY vs STYLE:
+- The reference image is ONLY for IDENTITY/LIKENESS (face features, body proportions, distinctive traits)
+- The OUTPUT STYLE must match the PROJECT'S VISUAL BIBLE (see VISUAL STYLE section below)
+- You MAY and SHOULD transform a photographic reference into the project's art style (anime, 3D, illustration, etc.)
+
+STYLE TRANSFER INSTRUCTIONS:
+- Apply the project's visual style to the character while preserving their identity
+- If project style is anime/cartoon: render character as anime/cartoon while keeping face structure, proportions, distinctive features
+- If project style is 3D/Pixar: render as 3D stylized while keeping identity
+- If project style is photorealistic: maintain photorealism
+- ALWAYS apply the project's lighting, color palette, and art style
+
+WHAT TO PRESERVE FROM REFERENCE (IDENTITY):
+- Face shape, proportions, bone structure
+- Hair color, length, texture (adapt to style)
+- Skin tone (adapt to style's color palette)
+- Age indicators, distinctive marks
+- Body type and proportions
+
+WHAT TO ADAPT TO PROJECT STYLE:
+- Rendering technique (photorealistic -> anime/3D/etc.)
+- Line work and shading
+- Color saturation and palette
+- Lighting style
+- Texture handling
+
+BACKGROUND: Use NEUTRAL BACKGROUND (studio grey/white) - no scene elements
+=== END STYLE TRANSFER RULES ===
+`;
+  } else {
+    // V11.2: REFERENCE STYLE MODE - Copy style from reference (legacy behavior)
+    console.log(`[STYLE MODE] Using REFERENCE STYLE - no Visual Bible configured`);
+    return `
 === CRITICAL STYLE RULES (MANDATORY) ===
 - Match EXACTLY the visual style of the reference image
 - If reference is cartoon/anime, output MUST be cartoon/anime
@@ -609,8 +655,10 @@ const STYLE_CONSISTENCY_BLOCK = `
 - Use NEUTRAL BACKGROUND (studio grey/white) - no scene elements
 === END STYLE RULES ===
 `;
+  }
+}
 
-function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string): string {
+function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string, canonAnchorSource: string = 'unknown'): string {
   const angleInstructions: Record<string, string> = {
     'front': 'front view, facing camera directly, standing straight, arms at sides',
     'front_34': '3/4 front view, 45 degrees from front, standing straight, arms at sides',
@@ -624,6 +672,9 @@ function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleCon
   const physical = visualDNA.physical_identity;
   const styleBlock = buildStyleBlock(styleConfig);
   
+  // V11.2: Use dynamic style consistency block
+  const styleConsistencyBlock = buildStyleConsistencyBlock(styleConfig, canonAnchorSource);
+  
   // Build detailed identity lock
   const identityLock = buildIdentityLock(visualDNA, characterName);
   
@@ -632,7 +683,7 @@ function buildTurnaroundPrompt(visualDNA: VisualDNA, viewAngle: string, styleCon
     ? formatWardrobeLock(wardrobeLock)
     : (visualDNA.default_outfit?.description || 'Casual outfit as shown in reference');
 
-  return `${STYLE_CONSISTENCY_BLOCK}
+  return `${styleConsistencyBlock}
 
 SAME PERSON from reference image, ${angle}.
 
@@ -666,7 +717,7 @@ TECHNICAL SPECS:
 AVOID: Changing art style, adding background props, scene decorations, seasonal elements`;
 }
 
-function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string): string {
+function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, styleConfig: StyleConfig | null, wardrobeLock?: WardrobeLock | null, characterName?: string, canonAnchorSource: string = 'unknown'): string {
   const expressionInstructions: Record<string, string> = {
     'neutral': 'neutral, calm expression, relaxed face',
     'happy': 'smiling, happy expression, genuine joy, natural smile',
@@ -691,19 +742,8 @@ function buildExpressionPrompt(visualDNA: VisualDNA, expressionName: string, sty
     ? `Visible clothing: ${wardrobeLock.top}`
     : '';
 
-  // CRITICAL STYLE CONSISTENCY - Prevents style drift between generations
-  const styleConsistency = `
-=== CRITICAL STYLE RULES (MANDATORY) ===
-- Match EXACTLY the visual style of the reference image
-- If reference is cartoon/anime, output MUST be cartoon/anime
-- If reference is photorealistic, output MUST be photorealistic
-- DO NOT switch between styles (cartoon <-> photorealistic <-> 3D render)
-- Maintain the SAME art style, line work, and shading technique
-- Keep SAME color palette and lighting style as reference
-- Use NEUTRAL BACKGROUND (no Christmas trees, no decorations, no scene elements)
-- Background should be simple, clean, matching the reference style
-=== END STYLE RULES ===
-`;
+  // V11.2: Use dynamic style consistency block
+  const styleConsistency = buildStyleConsistencyBlock(styleConfig, canonAnchorSource);
 
   return `${styleConsistency}
 
@@ -780,7 +820,7 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, viewAngle: string = 'front', characterName?: string): string {
+function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, viewAngle: string = 'front', characterName?: string, canonAnchorSource: string = 'unknown'): string {
   const styleBlock = buildStyleBlock(styleConfig);
   
   // Build detailed identity lock
@@ -792,8 +832,10 @@ function buildCloseupPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | nul
   };
   const angle = angleInstructions[viewAngle] || angleInstructions.front;
 
-  // V11.1: Add STYLE_CONSISTENCY_BLOCK to closeups (was missing before)
-  return `${STYLE_CONSISTENCY_BLOCK}
+  // V11.2: Use dynamic style consistency block
+  const styleConsistencyBlock = buildStyleConsistencyBlock(styleConfig, canonAnchorSource);
+  
+  return `${styleConsistencyBlock}
 
 SAME PERSON from reference image, professional portrait closeup, ${angle}.
 
@@ -830,8 +872,8 @@ TECHNICAL SPECS:
 - 8K resolution`;
 }
 
-function buildBaseLookPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, characterName?: string): string {
-  return buildCloseupPrompt(visualDNA, styleConfig, 'front', characterName);
+function buildBaseLookPrompt(visualDNA: VisualDNA, styleConfig: StyleConfig | null, characterName?: string, canonAnchorSource: string = 'unknown'): string {
+  return buildCloseupPrompt(visualDNA, styleConfig, 'front', characterName, canonAnchorSource);
 }
 
 // ============================================
@@ -2005,31 +2047,31 @@ async function handleSlotGeneration(request: SlotGenerateRequest, auth: V3AuthCo
     } else if (isCloseup) {
       const angle = request.viewAngle || extractViewAngle(request.slotType);
       console.log(`[CLOSEUP] Slot: ${request.slotType} -> Angle: ${angle}`);
-      prompt = buildCloseupPrompt(visualDNA, styleConfig, angle, request.characterName);
+      prompt = buildCloseupPrompt(visualDNA, styleConfig, angle, request.characterName, canonAnchorSource);
     } else if (isTurnaround) {
       const angle = request.viewAngle || extractViewAngle(request.slotType);
       console.log(`[TURNAROUND] Slot: ${request.slotType} -> Angle: ${angle}`);
-      prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig, wardrobeLock, request.characterName);
+      prompt = buildTurnaroundPrompt(visualDNA, angle, styleConfig, wardrobeLock, request.characterName, canonAnchorSource);
     } else if (isExpression) {
       const expression = request.expressionName || extractExpression(request.slotType);
       console.log(`[EXPRESSION] Slot: ${request.slotType} -> Expression: ${expression}`);
-      prompt = buildExpressionPrompt(visualDNA, expression, styleConfig, wardrobeLock, request.characterName);
+      prompt = buildExpressionPrompt(visualDNA, expression, styleConfig, wardrobeLock, request.characterName, canonAnchorSource);
     } else if (isOutfit) {
       prompt = buildOutfitPrompt(visualDNA, request.outfitDescription || 'casual outfit', styleConfig);
     } else if (isReference || request.slotType === 'closeup' || request.slotType === 'anchor_closeup') {
       prompt = isAnimalOrCreature 
         ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', request.slotType, styleConfig)
-        : buildCloseupPrompt(visualDNA, styleConfig, 'front', request.characterName);
+        : buildCloseupPrompt(visualDNA, styleConfig, 'front', request.characterName, canonAnchorSource);
     } else if (request.slotType === 'base_look') {
       prompt = isAnimalOrCreature 
         ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', 'base_look', styleConfig)
-        : buildBaseLookPrompt(visualDNA, styleConfig, request.characterName);
+        : buildBaseLookPrompt(visualDNA, styleConfig, request.characterName, canonAnchorSource);
     } else {
       // Default fallback
       console.log(`[FALLBACK] Unknown slot type: ${request.slotType}, using closeup`);
       prompt = isAnimalOrCreature 
         ? buildAnimalPrompt(request.characterName, request.characterBio, 'front', request.slotType, styleConfig)
-        : buildCloseupPrompt(visualDNA, styleConfig, 'front', request.characterName);
+        : buildCloseupPrompt(visualDNA, styleConfig, 'front', request.characterName, canonAnchorSource);
     }
     
     const result = await generateImageWithFallback(prompt, primaryAnchor.image_url);
