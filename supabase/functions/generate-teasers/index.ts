@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import { logGenerationCost, extractAnthropicTokens, extractUserId } from "../_shared/cost-logging.ts";
+import { logGenerationCost, extractUserId } from "../_shared/cost-logging.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -55,6 +55,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const requestId = crypto.randomUUID().slice(0, 8);
+  const startTime = Date.now();
+
   try {
     // Internal JWT validation
     const authHeader = req.headers.get('Authorization');
@@ -80,20 +83,42 @@ serve(async (req) => {
       );
     }
 
-    console.log('[TEASERS] Authenticated user:', user.id);
+    console.log(`[TEASERS][${requestId}] Authenticated user:`, user.id);
 
     const { projectId, screenplay, language = 'es-ES' } = await req.json() as TeaserRequest;
 
-    if (!screenplay || !screenplay.title) {
-      throw new Error('Screenplay data required');
+    // =========================================================================
+    // INPUT VALIDATION - Prevent 400 errors from missing data
+    // =========================================================================
+    const missingFields: string[] = [];
+    if (!screenplay) missingFields.push('screenplay');
+    if (!screenplay?.title) missingFields.push('screenplay.title');
+    if (!screenplay?.logline && !screenplay?.synopsis) {
+      missingFields.push('screenplay.logline o screenplay.synopsis');
     }
 
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY not configured');
+    if (missingFields.length > 0) {
+      console.warn(`[TEASERS][${requestId}] Missing input:`, missingFields);
+      return new Response(
+        JSON.stringify({
+          error: 'MISSING_INPUT',
+          missing: missingFields,
+          detail: 'Completa el guión antes de generar teasers',
+          requestId
+        }),
+        { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    console.log(`[TEASERS] Generating for project ${projectId}: ${screenplay.title}`);
+    // =========================================================================
+    // LOVABLE AI GATEWAY - Migrated from Anthropic
+    // =========================================================================
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY not configured');
+    }
+
+    console.log(`[TEASERS][${requestId}] Generating for project ${projectId}: ${screenplay.title}`);
 
     // Extract key moments from episodes for teaser material
     const keyMoments: string[] = [];
@@ -125,10 +150,31 @@ REGLAS CRÍTICAS:
 
 Responde usando la herramienta generate_teasers.`;
 
-    const tools = [{
+    const userPrompt = `Genera dos teasers cinematográficos para esta serie/película:
+
+TÍTULO: ${screenplay.title}
+LOGLINE: ${screenplay.logline || 'N/A'}
+SINOPSIS: ${screenplay.synopsis || 'N/A'}
+GÉNERO: ${screenplay.genre || 'Drama'}
+TONO: ${screenplay.tone || 'Cinematográfico'}
+PERSONAJES: ${characterList}
+
+MOMENTOS CLAVE DISPONIBLES:
+${keyMoments.slice(0, 15).join('\n')}
+
+IDIOMA: ${language}
+
+GENERA:
+1. TEASER 60s: Más narrativo, con build-up emocional
+2. TEASER 30s: Más punchy, solo los mejores momentos
+
+Los tiempos de cada plano DEBEN sumar exactamente 60s y 30s respectivamente.`;
+
+    // Tool schema in OpenAI format
+    const toolSchema = {
       name: "generate_teasers",
       description: "Genera dos teasers cinematográficos: uno de 60 segundos y otro de 30 segundos",
-      input_schema: {
+      parameters: {
         type: "object",
         properties: {
           teaser60: {
@@ -189,109 +235,140 @@ Responde usando la herramienta generate_teasers.`;
         },
         required: ["teaser60", "teaser30"]
       }
-    }];
+    };
 
-    const userPrompt = `Genera dos teasers cinematográficos para esta serie/película:
+    console.log(`[TEASERS][${requestId}] Calling Lovable AI Gateway...`);
 
-TÍTULO: ${screenplay.title}
-LOGLINE: ${screenplay.logline || 'N/A'}
-SINOPSIS: ${screenplay.synopsis || 'N/A'}
-GÉNERO: ${screenplay.genre || 'Drama'}
-TONO: ${screenplay.tone || 'Cinematográfico'}
-PERSONAJES: ${characterList}
-
-MOMENTOS CLAVE DISPONIBLES:
-${keyMoments.slice(0, 15).join('\n')}
-
-IDIOMA: ${language}
-
-GENERA:
-1. TEASER 60s: Más narrativo, con build-up emocional
-2. TEASER 30s: Más punchy, solo los mejores momentos
-
-Los tiempos de cada plano DEBEN sumar exactamente 60s y 30s respectivamente.`;
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
-        system: systemPrompt,
-        tools,
-        tool_choice: { type: "tool", name: "generate_teasers" },
+        model: 'google/gemini-3-flash-preview',
+        max_completion_tokens: 4000,
         messages: [
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
-        ]
+        ],
+        tools: [{ type: 'function', function: toolSchema }],
+        tool_choice: { type: 'function', function: { name: 'generate_teasers' } }
       })
     });
 
+    // =========================================================================
+    // ERROR HANDLING - Surface actual error messages
+    // =========================================================================
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[TEASERS] API error:', response.status, errorText);
-      throw new Error(`API error: ${response.status}`);
+      console.error(`[TEASERS][${requestId}] AI Gateway error:`, response.status, errorText.slice(0, 500));
+
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({
+            error: 'RATE_LIMITED',
+            detail: 'Demasiadas peticiones, intenta en unos segundos',
+            requestId
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({
+            error: 'CREDITS_EXHAUSTED',
+            detail: 'Añade créditos a tu workspace de Lovable',
+            requestId
+          }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          error: 'AI_GATEWAY_ERROR',
+          status: response.status,
+          detail: errorText.slice(0, 500),
+          requestId
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const data = await response.json();
-    
-    // Extract token usage for cost tracking
-    const { inputTokens, outputTokens } = extractAnthropicTokens(data);
-    
-    const toolUseBlock = data.content?.find((block: any) => block.type === 'tool_use');
 
-    if (!toolUseBlock?.input) {
+    // =========================================================================
+    // PARSE RESPONSE - OpenAI format (from Lovable Gateway)
+    // =========================================================================
+    const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
+    
+    if (!toolCall?.function?.arguments) {
+      console.error(`[TEASERS][${requestId}] No tool call in response`);
       throw new Error('No teaser content generated');
+    }
+
+    let parsedArgs;
+    try {
+      parsedArgs = JSON.parse(toolCall.function.arguments);
+    } catch (parseErr) {
+      console.error(`[TEASERS][${requestId}] Failed to parse tool args:`, toolCall.function.arguments.slice(0, 200));
+      throw new Error('Failed to parse teaser response');
     }
 
     const teasers: TeaserResult = {
       teaser60: {
         duration_sec: 60,
-        ...toolUseBlock.input.teaser60
+        ...parsedArgs.teaser60
       },
       teaser30: {
         duration_sec: 30,
-        ...toolUseBlock.input.teaser30
+        ...parsedArgs.teaser30
       }
     };
 
-    console.log(`[TEASERS] Generated: 60s (${teasers.teaser60.scenes.length} shots), 30s (${teasers.teaser30.scenes.length} shots)`);
-    console.log(`[TEASERS] Token usage: ${inputTokens} in / ${outputTokens} out`);
+    // Extract token usage from Lovable Gateway response
+    const inputTokens = data?.usage?.prompt_tokens || 0;
+    const outputTokens = data?.usage?.completion_tokens || 0;
 
-    // Log generation cost with token counts
+    console.log(`[TEASERS][${requestId}] Generated: 60s (${teasers.teaser60.scenes?.length || 0} shots), 30s (${teasers.teaser30.scenes?.length || 0} shots)`);
+    console.log(`[TEASERS][${requestId}] Token usage: ${inputTokens} in / ${outputTokens} out`);
+
+    // Log generation cost
     const userId = extractUserId(req.headers.get('authorization'));
     if (userId) {
       await logGenerationCost({
         userId,
         projectId,
         slotType: 'teasers',
-        engine: 'anthropic',
-        model: 'claude-sonnet-4-20250514',
-        durationMs: Date.now() - Date.now(), // Minimal since we don't track start time here
+        engine: 'lovable',
+        model: 'google/gemini-3-flash-preview',
+        durationMs: Date.now() - startTime,
         success: true,
         inputTokens,
         outputTokens,
         totalTokens: inputTokens + outputTokens,
         category: 'script',
         metadata: {
-          teaser60Shots: teasers.teaser60.scenes.length,
-          teaser30Shots: teasers.teaser30.scenes.length
+          teaser60Shots: teasers.teaser60.scenes?.length || 0,
+          teaser30Shots: teasers.teaser30.scenes?.length || 0
         }
       });
     }
 
     return new Response(
-      JSON.stringify({ success: true, teasers, tokenUsage: { input: inputTokens, output: outputTokens } }),
+      JSON.stringify({ success: true, teasers, tokenUsage: { input: inputTokens, output: outputTokens }, requestId }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('[TEASERS ERROR]', error);
+    console.error(`[TEASERS][${requestId}] ERROR:`, error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        requestId 
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

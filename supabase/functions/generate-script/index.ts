@@ -672,7 +672,7 @@ async function callLovableAI(
     body: JSON.stringify({
       model: config.apiModel,
       max_completion_tokens: config.maxTokens,
-      temperature: config.temperature,
+      // Note: temperature removed - Lovable AI Gateway OpenAI models use default only
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
