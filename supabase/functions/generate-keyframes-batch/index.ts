@@ -1,5 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { 
+  generateImageWithNanoBanana, 
+  editImageWithNanoBanana 
+} from "../_shared/image-generator.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,8 +33,110 @@ interface ShotData {
   frame_config?: any;
 }
 
-// KEYFRAME EXECUTOR (IA 4) - Official from pipeline spec
-// This prompt is for image generation, NOT for LLM reasoning
+// ============================================================================
+// STRICT CONTINUITY EDIT PROMPT - For K1/K2 frames (Δt ≤ 1s)
+// Used when editing from previous frame to prevent AI hallucination
+// ============================================================================
+const buildInterframeEditPrompt = (
+  frameType: 'mid' | 'end',
+  shot: ShotData,
+  sceneContext: string
+): string => {
+  const cameraMove = shot.camera_path?.type || 'static';
+  
+  return `
+═══════════════════════════════════════════════════════════════════════════════
+EDIT MODE: STRICT CONTINUITY (Δt = 1 second)
+═══════════════════════════════════════════════════════════════════════════════
+
+EDIT the existing storyboard keyframe image.
+Time step: +1 second. Maintain STRICT continuity.
+
+CONTEXT: ${sceneContext}
+Frame position: ${frameType} (${frameType === 'mid' ? 'middle' : 'final'} frame of shot)
+
+═══════════════════════════════════════════════════════════════════════════════
+ALLOWED CHANGES ONLY (micro-movement for 1 second):
+═══════════════════════════════════════════════════════════════════════════════
+• Minimal natural movement (small head turn, slight hand shift, a tiny step)
+• Very slight camera motion: ${cameraMove !== 'static' ? `subtle ${cameraMove}` : 'none'}
+• Micro expression change if dialogue is happening
+• Natural eye blink or gaze shift
+
+═══════════════════════════════════════════════════════════════════════════════
+FORBIDDEN CHANGES (ABSOLUTE - ZERO TOLERANCE):
+═══════════════════════════════════════════════════════════════════════════════
+• do NOT change art style (must remain EXACTLY same style as source)
+• do NOT switch to photorealism or 3D render
+• do NOT add or remove characters
+• do NOT change any animal species (dog STAYS dog, cat STAYS cat)
+• do NOT change wardrobe, props, background elements
+• do NOT change lighting direction or color temperature
+• do NOT change framing or shot type beyond micro camera motion
+• do NOT smooth skin or add airbrushed effects
+• do NOT add text, watermarks, or new props
+
+═══════════════════════════════════════════════════════════════════════════════
+CONTINUITY LOCKS (MUST MATCH SOURCE IMAGE EXACTLY):
+═══════════════════════════════════════════════════════════════════════════════
+• All character identities (faces, hair color, age)
+• All wardrobe items (colors, textures, patterns)
+• All props in scene (positions, types, colors)
+• Lighting setup (direction, color, intensity)
+• Background/set design
+• Art style and rendering technique
+
+Keep all identities EXACTLY the same as the source image.
+This is frame continuity, NOT a new generation.
+`.trim();
+};
+
+// ============================================================================
+// TRANSITION EDIT PROMPT - For K1/K2 when Δt > 1s (more movement allowed)
+// ============================================================================
+const buildTransitionEditPrompt = (
+  frameType: 'mid' | 'end',
+  shot: ShotData,
+  sceneContext: string
+): string => {
+  const cameraMove = shot.camera_path?.type || 'static';
+  const duration = shot.duration_target || 5;
+  
+  return `
+═══════════════════════════════════════════════════════════════════════════════
+EDIT MODE: TRANSITION CONTINUITY (Δt > 1 second)
+═══════════════════════════════════════════════════════════════════════════════
+
+EDIT the existing keyframe image for a ${frameType} frame.
+This is ${Math.round(duration / 2)}s from start. Natural movement allowed.
+
+CONTEXT: ${sceneContext}
+Camera movement: ${cameraMove}
+
+ALLOWED CHANGES:
+• Natural body movement (walking, gesturing, turning)
+• Camera position change per ${cameraMove} movement
+• Expression changes appropriate for scene
+• Character repositioning within the set
+
+MANDATORY CONTINUITY (NEVER CHANGE):
+• Art style (SAME style as source - no switching to photorealism)
+• Character identities (faces, hair, age)
+• Wardrobe (exact same clothes)
+• Props (same items, though positions can shift)
+• Lighting type (same setup, angle may shift with camera)
+• Background/location (same set)
+
+FORBIDDEN:
+• Style changes (pencil→photo, cartoon→realistic)
+• Adding/removing characters
+• Changing animal species
+• Wardrobe changes
+• Adding new props not in source
+`.trim();
+};
+
+// KEYFRAME EXECUTOR - For K0 (initial frame) generation
 const buildKeyframePrompt = (
   shot: ShotData,
   frameType: 'start' | 'mid' | 'end',
@@ -68,7 +174,6 @@ const buildKeyframePrompt = (
 
   // Focus info
   const focus = shot.focus_config || {};
-  const focusMode = focus.mode || 'follow';
   
   // Constraints for enforcement
   const constraints = shot.constraints || {};
@@ -137,7 +242,9 @@ const buildNegativePrompt = (constraints?: any): string => {
     'overly bright eyes', 'CGI render', 'wax figure', 'stock photo',
     'text', 'watermark', 'logo', 'extra people', 'deformed hands', 'extra fingers',
     'jpeg artifacts', 'low quality', 'blurry', 'amateur photography',
-    'centered composition without purpose', 'flat lighting', 'video game graphics'
+    'centered composition without purpose', 'flat lighting', 'video game graphics',
+    // Anti-style-drift negatives
+    'photorealistic when source is stylized', 'style change', 'render style mismatch'
   ];
   
   const constraintNegatives = constraints?.negatives || [];
@@ -145,6 +252,88 @@ const buildNegativePrompt = (constraints?: any): string => {
   
   return [...baseNegatives, ...constraintNegatives, ...mustNotDo].join(', ');
 };
+
+// Generate deterministic seed from shot ID and frame type
+const generateSeed = (shotId: string, frameType: string): number => {
+  let hash = 0;
+  const str = `${shotId}-${frameType}`;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash % 999999);
+};
+
+// Fetch character identity anchors for a scene
+async function getCharacterAnchors(
+  supabase: any, 
+  sceneId: string
+): Promise<string[]> {
+  try {
+    // Get characters from scene (via storyboard or scene_characters)
+    const { data: panels } = await supabase
+      .from('storyboard_panels')
+      .select('characters_in_panel')
+      .eq('scene_id', sceneId)
+      .limit(5);
+    
+    // Extract unique character IDs
+    const characterIds = new Set<string>();
+    for (const panel of panels || []) {
+      const chars = panel.characters_in_panel || [];
+      for (const char of chars) {
+        if (typeof char === 'string') {
+          characterIds.add(char);
+        } else if (char?.id) {
+          characterIds.add(char.id);
+        }
+      }
+    }
+    
+    if (characterIds.size === 0) return [];
+    
+    // Fetch approved slots for these characters
+    const { data: slots } = await supabase
+      .from('character_pack_slots')
+      .select('image_url')
+      .in('character_id', Array.from(characterIds))
+      .in('slot_type', ['ref_closeup_front', 'closeup_profile', 'identity_primary'])
+      .in('status', ['accepted', 'uploaded', 'generated'])
+      .not('image_url', 'is', null)
+      .limit(6);
+    
+    return (slots || [])
+      .map((s: any) => s.image_url)
+      .filter((url: string) => url && url.startsWith('http'));
+  } catch (error) {
+    console.error('[getCharacterAnchors] Error:', error);
+    return [];
+  }
+}
+
+// Fetch storyboard panel images for style reference
+async function getStoryboardRefs(
+  supabase: any,
+  sceneId: string
+): Promise<string[]> {
+  try {
+    const { data: panels } = await supabase
+      .from('storyboard_panels')
+      .select('image_url')
+      .eq('scene_id', sceneId)
+      .not('image_url', 'is', null)
+      .order('panel_order', { ascending: true })
+      .limit(2);
+    
+    return (panels || [])
+      .map((p: any) => p.image_url)
+      .filter((url: string) => url && url.startsWith('http'));
+  } catch (error) {
+    console.error('[getStoryboardRefs] Error:', error);
+    return [];
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -155,6 +344,10 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+    
+    if (!lovableApiKey) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
     
     const supabase = createClient(supabaseUrl, supabaseKey);
     
@@ -217,6 +410,11 @@ serve(async (req) => {
 
     console.log(`[generate-keyframes-batch] Processing ${shots.length} shots for scene ${scene_id}`);
 
+    // Fetch identity anchors and storyboard refs for the scene
+    const characterAnchors = await getCharacterAnchors(supabase, scene_id);
+    const storyboardRefs = await getStoryboardRefs(supabase, scene_id);
+    console.log(`[generate-keyframes-batch] Found ${characterAnchors.length} character anchors, ${storyboardRefs.length} storyboard refs`);
+
     const generatedKeyframes: any[] = [];
     const errors: string[] = [];
 
@@ -225,58 +423,100 @@ serve(async (req) => {
       const shotData = shot as ShotData;
       const duration = shotData.duration_target || 5;
       
-      // Determine which frames to generate based on camera movement and focus events
+      // Determine if strict continuity applies (Δt ≤ 1s between frames)
+      // For 3 frames in a shot, if duration <= 3s, then Δt ≤ 1.5s → use strict mode
+      const isStrictContinuity = duration <= 3;
+      
+      // Determine which frames to generate
       const frameTypes: Array<{ type: 'start' | 'mid' | 'end'; timestamp: number }> = [
         { type: 'start', timestamp: 0 },
         { type: 'mid', timestamp: duration / 2 },
         { type: 'end', timestamp: duration }
       ];
-
-      // If there's complex camera movement or focus events, we might need more frames
-      // For now, stick with 3 frames per shot
       
       let previousFrameUrl: string | null = null;
-      let previousFrameDescription: string | undefined;
 
       for (const frame of frameTypes) {
         try {
-          // Build the prompt for this keyframe
-          const prompt = buildKeyframePrompt(
-            shotData, 
-            frame.type, 
-            sceneContext,
-            previousFrameDescription
-          );
+          let imageUrl: string | undefined;
+          const seed = generateSeed(shotData.id, frame.type);
+
+          // ================================================================
+          // CORRELATIVE KEYFRAME PIPELINE
+          // K0: Generate from scratch (with refs)
+          // K1/K2: Edit from previous frame (strict continuity)
+          // ================================================================
           
-          const negativePrompt = buildNegativePrompt(shotData.constraints);
-
-          console.log(`[generate-keyframes-batch] Generating ${frame.type} frame for shot ${shotData.shot_no}`);
-
-          // Generate image using NanoBanana Pro 3
-          const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${lovableApiKey}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "google/gemini-3-pro-image-preview",
-              prompt: prompt,
-              negative_prompt: negativePrompt,
-              n: 1,
-              size: "1920x1080", // 16:9 cinematic
-            }),
-          });
-
-          if (!imageResponse.ok) {
-            const errorText = await imageResponse.text();
-            console.error(`[generate-keyframes-batch] Image generation failed:`, errorText);
-            errors.push(`Shot ${shotData.shot_no} ${frame.type}: Image generation failed`);
-            continue;
+          if (frame.type === 'start') {
+            // K0: Generate initial frame (staging)
+            console.log(`[generate-keyframes-batch] K0 (start) - GENERATE for shot ${shotData.shot_no}`);
+            
+            const prompt = buildKeyframePrompt(shotData, frame.type, sceneContext);
+            const negativePrompt = buildNegativePrompt(shotData.constraints);
+            
+            // Combine all references: storyboard + character anchors
+            const allRefs = [...storyboardRefs, ...characterAnchors].slice(0, 6);
+            
+            const result = await generateImageWithNanoBanana({
+              lovableApiKey,
+              promptText: prompt + `\n\nNEGATIVE: ${negativePrompt}`,
+              referenceImageUrls: allRefs,
+              seed,
+              label: `keyframe_k0_shot${shotData.shot_no}`,
+            });
+            
+            if (!result.success || !result.imageUrl) {
+              throw new Error(result.error || 'K0 generation failed');
+            }
+            
+            imageUrl = result.imageUrl;
+            
+          } else if (previousFrameUrl) {
+            // K1/K2: Edit from previous frame
+            const editPrompt = isStrictContinuity 
+              ? buildInterframeEditPrompt(frame.type as 'mid' | 'end', shotData, sceneContext)
+              : buildTransitionEditPrompt(frame.type as 'mid' | 'end', shotData, sceneContext);
+            
+            console.log(`[generate-keyframes-batch] ${frame.type.toUpperCase()} - EDIT (${isStrictContinuity ? 'strict' : 'transition'}) for shot ${shotData.shot_no}`);
+            
+            const result = await editImageWithNanoBanana({
+              lovableApiKey,
+              sourceImageUrl: previousFrameUrl,
+              editInstruction: editPrompt,
+              identityAnchorUrls: characterAnchors.slice(0, 4),
+              seed,
+              label: `keyframe_${frame.type}_shot${shotData.shot_no}`,
+            });
+            
+            if (!result.success || !result.imageUrl) {
+              throw new Error(result.error || `${frame.type} edit failed`);
+            }
+            
+            imageUrl = result.imageUrl;
+            
+          } else {
+            // Fallback: No previous frame available, generate instead
+            console.log(`[generate-keyframes-batch] ${frame.type.toUpperCase()} - FALLBACK GENERATE (no previous) for shot ${shotData.shot_no}`);
+            
+            const prompt = buildKeyframePrompt(shotData, frame.type, sceneContext);
+            const negativePrompt = buildNegativePrompt(shotData.constraints);
+            
+            const allRefs = [...storyboardRefs, ...characterAnchors].slice(0, 6);
+            
+            const result = await generateImageWithNanoBanana({
+              lovableApiKey,
+              promptText: prompt + `\n\nNEGATIVE: ${negativePrompt}`,
+              referenceImageUrls: allRefs,
+              seed,
+              label: `keyframe_${frame.type}_fallback_shot${shotData.shot_no}`,
+            });
+            
+            if (!result.success || !result.imageUrl) {
+              throw new Error(result.error || `${frame.type} fallback generation failed`);
+            }
+            
+            imageUrl = result.imageUrl;
           }
-
-          const imageData = await imageResponse.json();
-          const imageUrl = imageData.data?.[0]?.url;
 
           if (!imageUrl) {
             errors.push(`Shot ${shotData.shot_no} ${frame.type}: No image URL returned`);
@@ -290,6 +530,11 @@ serve(async (req) => {
             .eq("shot_id", shotData.id)
             .eq("frame_type", frame.type);
 
+          // Build prompt for storage (documentation)
+          const storedPrompt = frame.type === 'start'
+            ? buildKeyframePrompt(shotData, frame.type, sceneContext)
+            : `[EDIT from ${frame.type === 'mid' ? 'K0' : 'K1'}] ${isStrictContinuity ? 'Strict' : 'Transition'} continuity mode`;
+
           // Insert new keyframe
           const { data: insertedKeyframe, error: insertError } = await supabase
             .from("keyframes")
@@ -299,12 +544,17 @@ serve(async (req) => {
               frame_type: frame.type,
               timestamp_sec: frame.timestamp,
               approved: false,
-              prompt_text: prompt,
+              prompt_text: storedPrompt,
+              seed,
               meta_json: {
                 camera: shotData.camera,
                 lighting: shotData.lighting,
                 focus: shotData.focus_config,
                 constraints: shotData.constraints,
+                generation_mode: frame.type === 'start' ? 'generate' : 'edit',
+                continuity_mode: isStrictContinuity ? 'strict' : 'transition',
+                source_frame: frame.type === 'start' ? null : (frame.type === 'mid' ? 'start' : 'mid'),
+                character_anchors_count: characterAnchors.length,
               },
             })
             .select()
@@ -318,11 +568,10 @@ serve(async (req) => {
 
           generatedKeyframes.push(insertedKeyframe);
           
-          // Store for continuity
+          // Store for next frame's continuity
           previousFrameUrl = imageUrl;
-          previousFrameDescription = `Previous ${frame.type} frame established lighting, wardrobe, and positioning`;
 
-          console.log(`[generate-keyframes-batch] Generated ${frame.type} keyframe for shot ${shotData.shot_no}`);
+          console.log(`[generate-keyframes-batch] Generated ${frame.type} keyframe for shot ${shotData.shot_no} (mode: ${frame.type === 'start' ? 'generate' : 'edit'})`);
 
         } catch (frameError) {
           console.error(`[generate-keyframes-batch] Error for shot ${shotData.shot_no} ${frame.type}:`, frameError);
@@ -331,7 +580,7 @@ serve(async (req) => {
       }
     }
 
-    const successMessage = `Generated ${generatedKeyframes.length} keyframes for ${shots.length} shots`;
+    const successMessage = `Generated ${generatedKeyframes.length} keyframes for ${shots.length} shots (correlative pipeline)`;
     console.log(`[generate-keyframes-batch] ${successMessage}`);
 
     return new Response(
@@ -344,6 +593,7 @@ serve(async (req) => {
           shots_processed: shots.length,
           keyframes_generated: generatedKeyframes.length,
           errors_count: errors.length,
+          pipeline: 'correlative_edit',
         }
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
