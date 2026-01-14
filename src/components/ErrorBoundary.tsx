@@ -1,7 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Bug, Sparkles } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -13,23 +13,46 @@ interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
+  isNoOutlineError: boolean;
+}
+
+// Helper to detect NO_OUTLINE_FOUND errors
+function isNoOutlineFoundError(error: Error | null): boolean {
+  if (!error) return false;
+  const msg = error.message?.toLowerCase() || '';
+  const stack = error.stack?.toLowerCase() || '';
+  return (
+    msg.includes('no_outline_found') ||
+    msg.includes('no se encontró un outline') ||
+    stack.includes('no_outline_found') ||
+    (error as any)?.suggestedAction === 'generate_outline'
+  );
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
-    errorInfo: null
+    errorInfo: null,
+    isNoOutlineError: false,
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error, errorInfo: null };
+    return { 
+      hasError: true, 
+      error, 
+      errorInfo: null,
+      isNoOutlineError: isNoOutlineFoundError(error),
+    };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
     
-    this.setState({ errorInfo });
+    this.setState({ 
+      errorInfo,
+      isNoOutlineError: isNoOutlineFoundError(error),
+    });
     
     // Call optional error handler
     this.props.onError?.(error, errorInfo);
@@ -39,11 +62,22 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   private handleRetry = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null });
+    this.setState({ hasError: false, error: null, errorInfo: null, isNoOutlineError: false });
   };
 
   private handleGoHome = () => {
     window.location.href = '/';
+  };
+
+  private handleGoToScript = () => {
+    // Navigate to current project's script page to generate outline
+    const path = window.location.pathname;
+    const projectMatch = path.match(/\/projects\/([^/]+)/);
+    if (projectMatch) {
+      window.location.href = `/projects/${projectMatch[1]}/script`;
+    } else {
+      window.location.href = '/projects';
+    }
   };
 
   private handleReportBug = () => {
@@ -67,6 +101,60 @@ Time: ${new Date().toISOString()}
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
+      }
+
+      // Special handling for NO_OUTLINE_FOUND errors
+      if (this.state.isNoOutlineError) {
+        return (
+          <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+            <Card className="max-w-lg w-full">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-amber-500" />
+                </div>
+                <CardTitle>Necesitas un Outline</CardTitle>
+                <CardDescription>
+                  Para continuar, primero debes generar un outline desde tu idea. 
+                  Esto creará la estructura narrativa de tu proyecto.
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-2">
+                  <Button onClick={this.handleGoToScript} className="w-full">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Ir a Generar Outline
+                  </Button>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={this.handleRetry}
+                      className="flex-1"
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Reintentar
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      onClick={this.handleGoHome}
+                      className="flex-1"
+                    >
+                      <Home className="h-4 w-4 mr-2" />
+                      Inicio
+                    </Button>
+                  </div>
+                </div>
+
+                <p className="text-xs text-center text-muted-foreground">
+                  Escribe tu idea en la pestaña "Guion" y pulsa "Generar Outline".
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        );
       }
 
       return (
