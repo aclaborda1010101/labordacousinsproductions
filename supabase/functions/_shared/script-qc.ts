@@ -1,15 +1,17 @@
 /**
- * SCRIPT QC V11.1 - Structural Validation of Generated Scripts
+ * SCRIPT QC V11.2 - Structural Validation of Generated Scripts
  * 
  * Validates that a generated script adheres to its episode contract.
  * This is POST-GENERATION validation - the script must have executed
  * all structural contracts from the outline.
  * 
  * V11.1: Added density validation post-generation
+ * V11.2: Added batch-level validation and repair prompt generation
  */
 
 import type { EpisodeContract, TurningPointContract, ThreadContract } from "./episode-contracts.ts";
 import { validateScriptDensity, type DensityProfile, type PostScriptDensityResult } from "./density-validator.ts";
+import type { BatchPlan, BatchResult } from "./batch-planner.ts";
 
 // ============================================================================
 // QC RESULT TYPES
@@ -61,6 +63,169 @@ export interface ScriptQCResult {
   
   blockers: string[];
   warnings: string[];
+}
+
+// ============================================================================
+// BATCH-LEVEL VALIDATION (V11.2)
+// ============================================================================
+
+export interface BatchValidationResult {
+  passed: boolean;
+  blockers: string[];
+  warnings: string[];
+  canRepair: boolean;           // If failed, can we try repair?
+  repairPriority: string[];     // What to prioritize in repair
+}
+
+/**
+ * Validate a batch result against its assigned plan.
+ * This is the HARD CONSTRAINT check - batch MUST fulfill its contract.
+ */
+export function validateBatchAgainstPlan(
+  batchResult: BatchResult | Record<string, unknown>,
+  plan: BatchPlan
+): BatchValidationResult {
+  const blockers: string[] = [];
+  const warnings: string[] = [];
+  const repairPriority: string[] = [];
+  
+  // Extract declared coverage from batch result
+  const declaredThreads = (batchResult.threads_advanced as string[]) || [];
+  const declaredTPs = (batchResult.turning_points_executed as string[]) || [];
+  const declaredChars = (batchResult.characters_appeared as string[]) || [];
+  const scenes = (batchResult.scenes as any[]) || [];
+  
+  // 1. Check threads coverage
+  if (plan.requiredThreads.length > 0) {
+    const coveredThreads = plan.requiredThreads.filter(t => 
+      declaredThreads.some(dt => 
+        dt.toLowerCase().includes(t.toLowerCase()) || 
+        t.toLowerCase().includes(dt.toLowerCase())
+      )
+    );
+    
+    if (coveredThreads.length === 0) {
+      blockers.push(`BATCH_CONTRACT: Ningún thread cubierto (requeridos: ${plan.requiredThreads.join(', ')})`);
+      repairPriority.push(`thread:${plan.requiredThreads[0]}`);
+    } else if (coveredThreads.length < plan.requiredThreads.length) {
+      warnings.push(`THREADS: ${coveredThreads.length}/${plan.requiredThreads.length} cubiertos`);
+    }
+  }
+  
+  // 2. Check turning points coverage
+  if (plan.requiredTurningPoints.length > 0) {
+    const coveredTPs = plan.requiredTurningPoints.filter(tp =>
+      declaredTPs.some(dtp => 
+        dtp.toLowerCase().includes(tp.toLowerCase()) || 
+        tp.toLowerCase().includes(dtp.toLowerCase())
+      )
+    );
+    
+    if (coveredTPs.length === 0) {
+      blockers.push(`BATCH_CONTRACT: Ningún TP ejecutado (requeridos: ${plan.requiredTurningPoints.join(', ')})`);
+      repairPriority.push(`tp:${plan.requiredTurningPoints[0]}`);
+    } else if (coveredTPs.length < plan.requiredTurningPoints.length) {
+      warnings.push(`TPS: ${coveredTPs.length}/${plan.requiredTurningPoints.length} ejecutados`);
+    }
+  }
+  
+  // 3. Check characters coverage (warning only, not blocker)
+  if (plan.requiredCharacters.length > 0) {
+    const coveredChars = plan.requiredCharacters.filter(c =>
+      declaredChars.some(dc => dc.toLowerCase() === c.toLowerCase()) ||
+      scenes.some((s: any) => 
+        s.characters_present?.some((cp: any) => 
+          (cp.name || cp).toLowerCase() === c.toLowerCase()
+        )
+      )
+    );
+    
+    if (coveredChars.length < plan.requiredCharacters.length) {
+      const missing = plan.requiredCharacters.filter(c => 
+        !coveredChars.map(cc => cc.toLowerCase()).includes(c.toLowerCase())
+      );
+      warnings.push(`PERSONAJES: Faltan ${missing.join(', ')}`);
+    }
+  }
+  
+  // 4. Check cliffhanger if required (last batch)
+  if (plan.mustIncludeCliffhanger && scenes.length > 0) {
+    const lastScene = scenes[scenes.length - 1];
+    const hasCliffhangerMarker = 
+      lastScene?.conflict?.toLowerCase().includes('cliffhanger') ||
+      lastScene?.mood?.toLowerCase().includes('suspense') ||
+      lastScene?.raw_content?.toLowerCase().includes('continuará') ||
+      lastScene?.raw_content?.toLowerCase().includes('to be continued');
+    
+    if (!hasCliffhangerMarker) {
+      warnings.push('CLIFFHANGER: No detectado en última escena del episodio');
+    }
+  }
+  
+  // 5. Check scene count
+  if (scenes.length < plan.sceneCount - 1) {
+    warnings.push(`ESCENAS: Solo ${scenes.length}/${plan.sceneCount} generadas`);
+  }
+  
+  // Determine if repair is possible
+  const canRepair = blockers.length > 0 && blockers.length <= 2;
+  
+  return {
+    passed: blockers.length === 0,
+    blockers,
+    warnings,
+    canRepair,
+    repairPriority
+  };
+}
+
+/**
+ * Build a repair prompt for a batch that failed contract validation.
+ */
+export function buildRepairPrompt(
+  failedBatch: BatchResult | Record<string, unknown>,
+  plan: BatchPlan,
+  blockers: string[]
+): string {
+  const scenes = (failedBatch.scenes as any[]) || [];
+  const scenesSummary = scenes.slice(0, 4).map((s: any) => 
+    `  - ${s.slugline || 'Sin slugline'}: ${(s.action_summary || '').slice(0, 100)}`
+  ).join('\n') || '  (sin escenas)';
+  
+  return `
+═══════════════════════════════════════════════════════════════
+🔧 REPAIR MODE - REESCRIBIR BATCH FALLIDO
+═══════════════════════════════════════════════════════════════
+
+El batch anterior FALLÓ el contrato. Debes REESCRIBIRLO.
+
+❌ FALLOS DETECTADOS:
+${blockers.map(b => `   • ${b}`).join('\n')}
+
+📝 ESCENAS A REESCRIBIR (mantener continuidad):
+${scenesSummary}
+
+🎯 OBJETIVO DE LA REESCRITURA:
+- Mantener mismos personajes y localizaciones
+- Mantener continuidad de acciones ya establecidas
+${plan.requiredThreads.length > 0 ? `- INSERTAR beat del thread: ${plan.requiredThreads[0]}` : ''}
+${plan.requiredTurningPoints.length > 0 ? `- EJECUTAR turning point: ${plan.requiredTurningPoints[0]}` : ''}
+
+📋 INSTRUCCIONES:
+1. NO añadas escenas nuevas - reescribe las ${scenes.length || 4} existentes
+2. Mantén sluglines y localizaciones similares
+3. Introduce un beat explícito del thread requerido en acción o diálogo
+4. Cierra con consecuencia ligada al turning point
+5. Declara cumplimiento en JSON final
+
+📤 Devuelve JSON con:
+- scenes: [...escenas reescritas con thread/TP integrados...]
+- threads_advanced: [...]
+- turning_points_executed: [...]
+- characters_appeared: [...]
+
+⚠️ NO justifiques, NO expliques. Solo reescribe.
+═══════════════════════════════════════════════════════════════`;
 }
 
 // ============================================================================

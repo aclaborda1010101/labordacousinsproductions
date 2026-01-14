@@ -3,7 +3,17 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, AuthContext } from "../_shared/auth.ts";
 import { parseJsonSafe, parseToolCallArgs, parseAnthropicToolUse, ParseResult } from "../_shared/llmJson.ts";
 import { extractEpisodeContract, formatContractForPrompt, type EpisodeContract } from "../_shared/episode-contracts.ts";
-import { validateScriptAgainstContract, getQCSummary, type ScriptQCResult } from "../_shared/script-qc.ts";
+import { validateScriptAgainstContract, getQCSummary, validateBatchAgainstPlan, buildRepairPrompt, type ScriptQCResult, type BatchValidationResult } from "../_shared/script-qc.ts";
+import { validateDensity, getDensityProfile } from "../_shared/density-validator.ts";
+import { 
+  buildBatchPlan, 
+  buildStateBlock, 
+  buildBatchContractBlock, 
+  updateGenerationState, 
+  createInitialState,
+  type BatchPlan, 
+  type GenerationState 
+} from "../_shared/batch-planner.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -920,6 +930,13 @@ interface GenerateScriptRequest {
   isLastBatch?: boolean;
   narrativeMode?: string;
   stream?: boolean;
+  // V11.2: State tracking for batch-aware generation
+  generationState?: GenerationState;
+  // V11.2: Batch plan for this specific batch
+  currentBatchPlan?: BatchPlan;
+  // V11.2: Is this a repair attempt?
+  isRepairAttempt?: boolean;
+  repairBlockers?: string[];
 }
 
 serve(async (req) => {
