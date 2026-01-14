@@ -309,6 +309,10 @@ export function StoryboardPanelView({
     toast.info('Generación cancelada');
   };
 
+  // ================================================================
+  // PANEL GENERATION ACTIONS - 3 Types: Identity Fix, Staging, Full
+  // ================================================================
+
   const generatePanelImage = async (panel: StoryboardPanel, forceMode?: 'STRICT' | 'SAFE') => {
     try {
       // Check for canvas format mismatch (validation)
@@ -335,7 +339,7 @@ export function StoryboardPanelView({
         body: {
           panelId: panel.id,
           prompt: panel.image_prompt,
-          forceMode,  // NEW: Pass mode to edge function
+          forceMode,  // Pass mode to edge function
         },
       });
 
@@ -347,6 +351,64 @@ export function StoryboardPanelView({
     } catch (err) {
       console.error('Error generating panel image:', err);
       toast.error('Error al generar imagen');
+    }
+  };
+
+  /**
+   * Identity Fix (Paso B) - Only fixes face/hair without changing composition
+   * Used when: identity_qc fails (FACE_DRIFT, HAIR_DRIFT, AGE_SHIFT)
+   */
+  const runIdentityFix = async (panel: StoryboardPanel) => {
+    try {
+      toast.info(`Corrigiendo identidad para panel ${panel.panel_no}...`);
+      
+      const { data, error } = await supabase.functions.invoke('identity-fix-panel', {
+        body: { panelId: panel.id },
+      });
+
+      if (error) throw error;
+      if (!data?.success) {
+        if (data?.needsStaging) {
+          toast.warning('No hay imagen de staging. Ejecutando regeneración completa...');
+          await generatePanelImage(panel, 'STRICT');
+          return;
+        }
+        throw new Error(data?.error || 'Identity fix failed');
+      }
+
+      toast.success(`Identidad corregida para panel ${panel.panel_no}`);
+      await fetchPanels();
+    } catch (err) {
+      console.error('Error in identity fix:', err);
+      toast.error('Error al corregir identidad');
+    }
+  };
+
+  /**
+   * Staging Regeneration (Paso A) - Regenerates composition without face detail
+   * Used when: STYLE_MIX detected or composition needs changes
+   */
+  const runStagingRegen = async (panel: StoryboardPanel) => {
+    try {
+      toast.info(`Regenerando plano para panel ${panel.panel_no}...`);
+      
+      // Use STRICT mode which regenerates staging then applies identity fix
+      const { data, error } = await supabase.functions.invoke('regenerate-storyboard-panel', {
+        body: {
+          panelId: panel.id,
+          forceMode: 'STRICT',
+          regenerateStaging: true,  // Signal to regenerate Paso A
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Staging regen failed');
+
+      toast.success(`Plano regenerado para panel ${panel.panel_no}`);
+      await fetchPanels();
+    } catch (err) {
+      console.error('Error in staging regen:', err);
+      toast.error('Error al regenerar plano');
     }
   };
 
@@ -739,48 +801,98 @@ export function StoryboardPanelView({
                     </p>
                   )}
 
-                  {/* Phase 4: Action buttons based on status with mode options */}
-                  {(getPanelImageStatus(panel) === 'error' || 
-                    getPanelImageStatus(panel) === 'failed_safe' ||
-                    (panel as any).identity_qc?.needs_regen) ? (
-                    <div className="flex gap-1">
+                  {/* Phase 4: Action buttons based on status - 3 types */}
+                  {(() => {
+                    const status = getPanelImageStatus(panel);
+                    const identityQc = (panel as any).identity_qc as IdentityQC | undefined;
+                    const hasIdentityIssues = identityQc?.needs_regen || 
+                      Object.values(identityQc?.characters || {}).some(c => c.issues?.length > 0);
+                    const hasStagingImage = !!(panel as any).staging_image_url;
+                    const isError = status === 'error' || status === 'failed_safe';
+
+                    // Case 1: Has staging but identity failed → Show Identity Fix
+                    if (hasStagingImage && hasIdentityIssues && !isError) {
+                      return (
+                        <div className="flex gap-1">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => runIdentityFix(panel)}
+                            title="Solo corrige cara y pelo sin cambiar composición"
+                          >
+                            <RefreshCw className="w-3 h-3 mr-1" />
+                            Corregir Identidad
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => runStagingRegen(panel)}
+                            title="Regenera todo el plano"
+                          >
+                            <RefreshCw className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      );
+                    }
+
+                    // Case 2: Error or failed_safe → Show 3 options
+                    if (isError || hasIdentityIssues) {
+                      return (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => runIdentityFix(panel)}
+                              title="Solo corrige cara y pelo"
+                            >
+                              Identidad
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => runStagingRegen(panel)}
+                              title="Regenera composición"
+                            >
+                              Plano
+                            </Button>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => generatePanelImage(panel, 'SAFE')}
+                            title="Regeneración completa en modo seguro"
+                          >
+                            <RefreshCw className="w-3 h-3 mr-1" />
+                            Regen Completo
+                          </Button>
+                        </div>
+                      );
+                    }
+
+                    // Case 3: Normal state → Approval button
+                    return (
                       <Button
-                        variant="destructive"
+                        variant={panel.approved ? 'default' : 'outline'}
                         size="sm"
-                        className="flex-1"
-                        onClick={() => generatePanelImage(panel, 'SAFE')}
-                        title="Prioriza obtener una imagen válida, relajando restricciones no críticas"
+                        className="w-full"
+                        onClick={() => toggleApproval(panel)}
                       >
-                        <RefreshCw className="w-3 h-3 mr-1" />
-                        Modo Seguro
+                        {panel.approved ? (
+                          <>
+                            <Check className="w-3 h-3 mr-1" />
+                            Aprobado
+                          </>
+                        ) : (
+                          'Aprobar'
+                        )}
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => generatePanelImage(panel, 'STRICT')}
-                        title="Mantiene composición pero fuerza corrección de identidad/estilo"
-                      >
-                        <RefreshCw className="w-3 h-3 mr-1" />
-                        Estricto
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      variant={panel.approved ? 'default' : 'outline'}
-                      size="sm"
-                      className="w-full"
-                      onClick={() => toggleApproval(panel)}
-                    >
-                      {panel.approved ? (
-                        <>
-                          <Check className="w-3 h-3 mr-1" />
-                          Aprobado
-                        </>
-                      ) : (
-                        'Aprobar'
-                      )}
-                    </Button>
-                  )}
+                    );
+                  })()}
                 </CardContent>
               </Card>
             ))}
