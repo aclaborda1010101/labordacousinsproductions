@@ -22,7 +22,8 @@ import {
   Info,
   Loader2,
   AlertCircle,
-  Download
+  Download,
+  Lock
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -30,6 +31,11 @@ import type { StoryboardPanel } from '@/types/technical-doc';
 import { StoryboardGenerationOverlay } from './StoryboardGenerationOverlay';
 import { useStoryboardProgress } from '@/hooks/useStoryboardProgress';
 import { exportStoryboardVisualPDF } from '@/lib/exportStoryboardVisualPDF';
+
+interface CanvasFormat {
+  aspect_ratio: string;
+  orientation: string;
+}
 
 interface StoryboardPanelViewProps {
   sceneId: string;
@@ -59,6 +65,7 @@ export function StoryboardPanelView({
   const [selectedStyle, setSelectedStyle] = useState<'GRID_SHEET_V1' | 'TECH_PAGE_V1'>('GRID_SHEET_V1');
   const [exporting, setExporting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{ url: string; panelNo: number } | null>(null);
+  const [canvasFormat, setCanvasFormat] = useState<CanvasFormat | null>(null);
 
   // Progress tracking hook
   const expectedPanelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
@@ -135,6 +142,31 @@ export function StoryboardPanelView({
   useEffect(() => {
     fetchPanels();
   }, [sceneId]);
+
+  // Fetch canvas format from style_packs
+  useEffect(() => {
+    const fetchCanvasFormat = async () => {
+      const { data } = await supabase
+        .from('style_packs')
+        .select('canvas_format, aspect_ratio')
+        .eq('project_id', projectId)
+        .single();
+      
+      if (data) {
+        const canvasData = data.canvas_format as unknown as CanvasFormat | null;
+        if (canvasData && canvasData.aspect_ratio) {
+          setCanvasFormat(canvasData);
+        } else if (data.aspect_ratio) {
+          const ar = data.aspect_ratio as string;
+          setCanvasFormat({ 
+            aspect_ratio: ar, 
+            orientation: ar === '9:16' || ar === '4:5' ? 'vertical' : 'horizontal' 
+          });
+        }
+      }
+    };
+    fetchCanvasFormat();
+  }, [projectId]);
 
   const fetchPanels = async () => {
     setLoading(true);
@@ -251,6 +283,22 @@ export function StoryboardPanelView({
 
   const generatePanelImage = async (panel: StoryboardPanel) => {
     try {
+      // Check for canvas format mismatch (validation)
+      const panelCanvasFormat = (panel as any).canvas_format as CanvasFormat | null;
+      if (panelCanvasFormat && canvasFormat) {
+        const panelAspect = panelCanvasFormat.aspect_ratio;
+        const currentAspect = canvasFormat.aspect_ratio;
+        
+        if (panelAspect !== currentAspect) {
+          const proceed = window.confirm(
+            `⚠️ ADVERTENCIA: Este panel fue creado en ${panelAspect} pero el proyecto ahora usa ${currentAspect}.\n\n` +
+            `Regenerar creará una imagen con diferente composición.\n\n` +
+            `¿Continuar de todas formas?`
+          );
+          if (!proceed) return;
+        }
+      }
+
       toast.info(`Generando imagen para panel ${panel.panel_no}...`);
       
       // Use dedicated regenerate-storyboard-panel function
@@ -366,6 +414,7 @@ export function StoryboardPanelView({
           shot_hint: p.shot_hint,
           image_url: p.image_url,
         })),
+        canvasFormat: canvasFormat || undefined,
       });
       
       toast.success('Storyboard exportado como PDF');
@@ -417,6 +466,12 @@ export function StoryboardPanelView({
           <Badge variant={panels.length > 0 ? 'secondary' : 'outline'}>
             {panels.length} paneles
           </Badge>
+          {canvasFormat && (
+            <Badge variant="outline" className="border-amber-500/50 text-amber-400 bg-amber-500/10">
+              <Lock className="w-3 h-3 mr-1" />
+              {canvasFormat.aspect_ratio} bloqueado
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {/* Style Selector - GRID_SHEET vs TECH_PAGE */}
