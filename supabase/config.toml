@@ -302,3 +302,15 @@ verify_jwt = false
 [functions.materialize-entities]
 # Gateway JWT disabled; function enforces auth internally via requireAuthOrDemo
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DENSITY VALIDATION (V3.7 - Narrative Density Gate)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.density-precheck]
+# Validates outline density before script generation
+verify_jwt = false
+
+[functions.outline-patch]
+# Auto-repairs outlines to meet density requirements
+verify_jwt = false

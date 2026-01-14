@@ -1,0 +1,582 @@
+/**
+ * DENSITY VALIDATOR V1.0
+ * Validates that outlines meet minimum narrative density requirements
+ * before script generation can proceed.
+ * 
+ * The Density System ensures scripts are RICHER than outlines, not poorer.
+ */
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export interface DensityProfile {
+  min_characters_total: number;
+  min_supporting_characters: number;
+  min_antagonists: number;
+  min_locations: number;
+  min_scenes_per_episode: number;
+  min_threads_total: number;
+  min_secondary_threads: number;
+}
+
+export interface OutlineCounts {
+  characters_total: number;
+  supporting_characters: number;
+  antagonists: number;
+  protagonists: number;
+  locations: number;
+  episodes: number;
+  scenes_per_episode: number[];
+  threads_total: number;
+  primary_threads: number;
+  secondary_threads: number;
+  average_turning_points_per_episode: number;
+}
+
+export interface RequiredFix {
+  type: 'ADD_CHARACTER' | 'ADD_LOCATION' | 'ADD_THREAD' | 'ADD_SCENE_PLAN' | 'ADD_ANTAGONIST';
+  id: string;
+  title: string;
+  why_needed: string;
+  where_to_apply: string;
+  acceptance_test: string;
+}
+
+export interface DensityCoverage {
+  characters_missing: string[];
+  locations_missing: string[];
+  threads_missing: string[];
+  episode_scene_plan_missing: number[];
+}
+
+export interface DensityCheckResult {
+  status: 'PASS' | 'FAIL';
+  density_profile: DensityProfile;
+  outline_counts: OutlineCounts;
+  coverage: DensityCoverage;
+  required_fixes: RequiredFix[];
+  acceptance_tests: string[];
+  human_summary: string;
+  score: number; // 0-100
+}
+
+// ============================================================================
+// DEFAULT PROFILES
+// ============================================================================
+
+export const DENSITY_PROFILES: Record<string, DensityProfile> = {
+  serie_drama: {
+    min_characters_total: 8,
+    min_supporting_characters: 3,
+    min_antagonists: 1,
+    min_locations: 6,
+    min_scenes_per_episode: 8,
+    min_threads_total: 5,
+    min_secondary_threads: 2
+  },
+  serie_adictiva: {
+    min_characters_total: 10,
+    min_supporting_characters: 4,
+    min_antagonists: 2,
+    min_locations: 8,
+    min_scenes_per_episode: 10,
+    min_threads_total: 6,
+    min_secondary_threads: 3
+  },
+  pelicula_90min: {
+    min_characters_total: 6,
+    min_supporting_characters: 2,
+    min_antagonists: 1,
+    min_locations: 5,
+    min_scenes_per_episode: 25, // Total scenes for film
+    min_threads_total: 3,
+    min_secondary_threads: 1
+  },
+  corto: {
+    min_characters_total: 3,
+    min_supporting_characters: 1,
+    min_antagonists: 0,
+    min_locations: 2,
+    min_scenes_per_episode: 5,
+    min_threads_total: 1,
+    min_secondary_threads: 0
+  },
+  piloto: {
+    min_characters_total: 6,
+    min_supporting_characters: 2,
+    min_antagonists: 1,
+    min_locations: 4,
+    min_scenes_per_episode: 12,
+    min_threads_total: 4,
+    min_secondary_threads: 2
+  }
+};
+
+// ============================================================================
+// OUTLINE COUNTS EXTRACTION
+// ============================================================================
+
+export function extractOutlineCounts(outline: Record<string, unknown>): OutlineCounts {
+  const counts: OutlineCounts = {
+    characters_total: 0,
+    supporting_characters: 0,
+    antagonists: 0,
+    protagonists: 0,
+    locations: 0,
+    episodes: 0,
+    scenes_per_episode: [],
+    threads_total: 0,
+    primary_threads: 0,
+    secondary_threads: 0,
+    average_turning_points_per_episode: 0
+  };
+
+  // Extract characters
+  const mainChars = (outline.main_characters || outline.characters || []) as any[];
+  counts.characters_total = mainChars.length;
+  
+  for (const char of mainChars) {
+    const role = (char.role || char.character_role || '').toLowerCase();
+    if (role.includes('protag') || role === 'main' || role === 'principal') {
+      counts.protagonists++;
+    } else if (role.includes('antag') || role.includes('villain') || role.includes('opponent')) {
+      counts.antagonists++;
+    } else {
+      counts.supporting_characters++;
+    }
+  }
+
+  // Extract locations
+  const locations = (outline.main_locations || outline.locations || []) as any[];
+  counts.locations = locations.length;
+
+  // Extract episodes and scenes
+  const episodeBeats = (outline.episode_beats || []) as any[];
+  counts.episodes = episodeBeats.length;
+  
+  let totalTurningPoints = 0;
+  for (const ep of episodeBeats) {
+    // Estimate scenes per episode from turning_points, beats, or setpieces
+    const tps = (ep.turning_points || []).length;
+    totalTurningPoints += tps;
+    
+    // Each turning point usually needs 1-2 scenes + setup/resolution
+    const estimatedScenes = Math.max(
+      tps * 2,
+      (ep.beats || []).length,
+      8 // Minimum reasonable estimate
+    );
+    counts.scenes_per_episode.push(estimatedScenes);
+  }
+  
+  counts.average_turning_points_per_episode = counts.episodes > 0 
+    ? Math.round(totalTurningPoints / counts.episodes) 
+    : 0;
+
+  // Extract threads
+  const threads = (outline.threads || outline.subplots || []) as any[];
+  counts.threads_total = threads.length;
+  
+  for (const thread of threads) {
+    const threadType = (thread.type || thread.category || 'secondary').toLowerCase();
+    if (threadType === 'primary' || threadType === 'main' || threadType === 'a') {
+      counts.primary_threads++;
+    } else {
+      counts.secondary_threads++;
+    }
+  }
+
+  // Also count threads from thread_usage if available
+  if (outline.thread_usage && typeof outline.thread_usage === 'object') {
+    const threadUsage = outline.thread_usage as Record<string, any>;
+    const uniqueThreads = new Set<string>();
+    
+    for (const [epKey, usage] of Object.entries(threadUsage)) {
+      if (usage.primary_thread) uniqueThreads.add(usage.primary_thread);
+      if (usage.secondary_threads) {
+        for (const t of usage.secondary_threads) {
+          uniqueThreads.add(t);
+        }
+      }
+    }
+    
+    // Use the higher count
+    if (uniqueThreads.size > counts.threads_total) {
+      counts.threads_total = uniqueThreads.size;
+      counts.primary_threads = 1; // At least one primary
+      counts.secondary_threads = uniqueThreads.size - 1;
+    }
+  }
+
+  return counts;
+}
+
+// ============================================================================
+// GENERATE REQUIRED FIXES
+// ============================================================================
+
+export function generateRequiredFixes(
+  counts: OutlineCounts,
+  profile: DensityProfile
+): RequiredFix[] {
+  const fixes: RequiredFix[] = [];
+
+  // Characters fixes
+  const charDeficit = profile.min_characters_total - counts.characters_total;
+  if (charDeficit > 0) {
+    fixes.push({
+      type: 'ADD_CHARACTER',
+      id: `add_chars_${charDeficit}`,
+      title: `Añadir ${charDeficit} personaje(s)`,
+      why_needed: `El perfil de densidad requiere ${profile.min_characters_total} personajes, tienes ${counts.characters_total}`,
+      where_to_apply: 'global',
+      acceptance_test: `main_characters.length >= ${profile.min_characters_total}`
+    });
+  }
+
+  // Supporting characters
+  const supportingDeficit = profile.min_supporting_characters - counts.supporting_characters;
+  if (supportingDeficit > 0) {
+    fixes.push({
+      type: 'ADD_CHARACTER',
+      id: `add_supporting_${supportingDeficit}`,
+      title: `Añadir ${supportingDeficit} personaje(s) secundario(s)`,
+      why_needed: `Necesitas personajes que creen fricción, apoyo o contraste con los protagonistas`,
+      where_to_apply: 'global',
+      acceptance_test: `supporting_characters >= ${profile.min_supporting_characters}`
+    });
+  }
+
+  // Antagonists
+  const antagDeficit = profile.min_antagonists - counts.antagonists;
+  if (antagDeficit > 0) {
+    fixes.push({
+      type: 'ADD_ANTAGONIST',
+      id: `add_antag_${antagDeficit}`,
+      title: `Añadir ${antagDeficit} antagonista(s)`,
+      why_needed: `Sin antagonista claro, el conflicto narrativo es débil`,
+      where_to_apply: 'global',
+      acceptance_test: `antagonists >= ${profile.min_antagonists}`
+    });
+  }
+
+  // Locations
+  const locDeficit = profile.min_locations - counts.locations;
+  if (locDeficit > 0) {
+    fixes.push({
+      type: 'ADD_LOCATION',
+      id: `add_locs_${locDeficit}`,
+      title: `Añadir ${locDeficit} localización(es)`,
+      why_needed: `Más localizaciones = más variedad visual y oportunidades de conflicto`,
+      where_to_apply: 'global',
+      acceptance_test: `main_locations.length >= ${profile.min_locations}`
+    });
+  }
+
+  // Threads
+  const threadDeficit = profile.min_threads_total - counts.threads_total;
+  if (threadDeficit > 0) {
+    fixes.push({
+      type: 'ADD_THREAD',
+      id: `add_threads_${threadDeficit}`,
+      title: `Añadir ${threadDeficit} trama(s)`,
+      why_needed: `Las tramas secundarias dan profundidad y permiten cruces narrativos`,
+      where_to_apply: 'global',
+      acceptance_test: `threads.length >= ${profile.min_threads_total}`
+    });
+  }
+
+  // Secondary threads
+  const secThreadDeficit = profile.min_secondary_threads - counts.secondary_threads;
+  if (secThreadDeficit > 0 && threadDeficit <= 0) {
+    fixes.push({
+      type: 'ADD_THREAD',
+      id: `add_secondary_${secThreadDeficit}`,
+      title: `Añadir ${secThreadDeficit} trama(s) secundaria(s)`,
+      why_needed: `Las tramas secundarias evitan un guion plano y predecible`,
+      where_to_apply: 'global',
+      acceptance_test: `secondary_threads >= ${profile.min_secondary_threads}`
+    });
+  }
+
+  // Scenes per episode
+  const episodesWithLowScenes: number[] = [];
+  counts.scenes_per_episode.forEach((sceneCount, idx) => {
+    if (sceneCount < profile.min_scenes_per_episode) {
+      episodesWithLowScenes.push(idx + 1);
+    }
+  });
+
+  if (episodesWithLowScenes.length > 0) {
+    fixes.push({
+      type: 'ADD_SCENE_PLAN',
+      id: `add_scenes_${episodesWithLowScenes.join('_')}`,
+      title: `Añadir turning points/beats en episodios ${episodesWithLowScenes.join(', ')}`,
+      why_needed: `Cada episodio necesita ≥${profile.min_scenes_per_episode} escenas para mantener ritmo`,
+      where_to_apply: `episodes: ${episodesWithLowScenes.join(', ')}`,
+      acceptance_test: `all episodes have >= ${profile.min_scenes_per_episode} estimated scenes`
+    });
+  }
+
+  return fixes;
+}
+
+// ============================================================================
+// BUILD COVERAGE OBJECT
+// ============================================================================
+
+function buildCoverage(
+  counts: OutlineCounts,
+  profile: DensityProfile
+): DensityCoverage {
+  const coverage: DensityCoverage = {
+    characters_missing: [],
+    locations_missing: [],
+    threads_missing: [],
+    episode_scene_plan_missing: []
+  };
+
+  if (counts.characters_total < profile.min_characters_total) {
+    const deficit = profile.min_characters_total - counts.characters_total;
+    coverage.characters_missing.push(`${deficit} personajes para llegar a ${profile.min_characters_total}`);
+  }
+
+  if (counts.locations < profile.min_locations) {
+    const deficit = profile.min_locations - counts.locations;
+    coverage.locations_missing.push(`${deficit} localizaciones para llegar a ${profile.min_locations}`);
+  }
+
+  if (counts.threads_total < profile.min_threads_total) {
+    const deficit = profile.min_threads_total - counts.threads_total;
+    coverage.threads_missing.push(`${deficit} tramas para llegar a ${profile.min_threads_total}`);
+  }
+
+  counts.scenes_per_episode.forEach((sceneCount, idx) => {
+    if (sceneCount < profile.min_scenes_per_episode) {
+      coverage.episode_scene_plan_missing.push(idx + 1);
+    }
+  });
+
+  return coverage;
+}
+
+// ============================================================================
+// CALCULATE DENSITY SCORE
+// ============================================================================
+
+function calculateDensityScore(
+  counts: OutlineCounts,
+  profile: DensityProfile
+): number {
+  let score = 100;
+  const weights = {
+    characters: 20,
+    supporting: 10,
+    antagonists: 15,
+    locations: 15,
+    threads: 20,
+    secondary_threads: 10,
+    scenes: 10
+  };
+
+  // Characters
+  if (counts.characters_total < profile.min_characters_total) {
+    const ratio = counts.characters_total / profile.min_characters_total;
+    score -= weights.characters * (1 - ratio);
+  }
+
+  // Supporting
+  if (counts.supporting_characters < profile.min_supporting_characters) {
+    const ratio = profile.min_supporting_characters > 0 
+      ? counts.supporting_characters / profile.min_supporting_characters 
+      : 1;
+    score -= weights.supporting * (1 - ratio);
+  }
+
+  // Antagonists
+  if (counts.antagonists < profile.min_antagonists) {
+    const ratio = profile.min_antagonists > 0 
+      ? counts.antagonists / profile.min_antagonists 
+      : 1;
+    score -= weights.antagonists * (1 - ratio);
+  }
+
+  // Locations
+  if (counts.locations < profile.min_locations) {
+    const ratio = counts.locations / profile.min_locations;
+    score -= weights.locations * (1 - ratio);
+  }
+
+  // Threads
+  if (counts.threads_total < profile.min_threads_total) {
+    const ratio = profile.min_threads_total > 0 
+      ? counts.threads_total / profile.min_threads_total 
+      : 1;
+    score -= weights.threads * (1 - ratio);
+  }
+
+  // Secondary threads
+  if (counts.secondary_threads < profile.min_secondary_threads) {
+    const ratio = profile.min_secondary_threads > 0 
+      ? counts.secondary_threads / profile.min_secondary_threads 
+      : 1;
+    score -= weights.secondary_threads * (1 - ratio);
+  }
+
+  // Scenes per episode
+  const episodesWithLowScenes = counts.scenes_per_episode.filter(
+    s => s < profile.min_scenes_per_episode
+  ).length;
+  if (episodesWithLowScenes > 0 && counts.episodes > 0) {
+    const ratio = 1 - (episodesWithLowScenes / counts.episodes);
+    score -= weights.scenes * (1 - ratio);
+  }
+
+  return Math.max(0, Math.round(score));
+}
+
+// ============================================================================
+// MAIN VALIDATION FUNCTION
+// ============================================================================
+
+export function validateDensity(
+  outline: Record<string, unknown>,
+  profile: DensityProfile
+): DensityCheckResult {
+  const counts = extractOutlineCounts(outline);
+  const fixes = generateRequiredFixes(counts, profile);
+  const coverage = buildCoverage(counts, profile);
+  const score = calculateDensityScore(counts, profile);
+  
+  const status: 'PASS' | 'FAIL' = fixes.length === 0 ? 'PASS' : 'FAIL';
+  
+  // Build human-readable summary
+  const summaryParts: string[] = [];
+  if (fixes.length === 0) {
+    summaryParts.push('✅ El outline cumple todos los mínimos de densidad narrativa.');
+  } else {
+    summaryParts.push(`❌ Faltan ${fixes.length} elemento(s) para cumplir densidad:`);
+    fixes.forEach(fix => {
+      summaryParts.push(`  • ${fix.title}`);
+    });
+  }
+
+  // Build acceptance tests
+  const acceptanceTests = [
+    `characters_total >= ${profile.min_characters_total}`,
+    `supporting_characters >= ${profile.min_supporting_characters}`,
+    `antagonists >= ${profile.min_antagonists}`,
+    `locations >= ${profile.min_locations}`,
+    `threads_total >= ${profile.min_threads_total}`,
+    `secondary_threads >= ${profile.min_secondary_threads}`,
+    `all_episodes_scenes >= ${profile.min_scenes_per_episode}`
+  ];
+
+  return {
+    status,
+    density_profile: profile,
+    outline_counts: counts,
+    coverage,
+    required_fixes: fixes,
+    acceptance_tests: acceptanceTests,
+    human_summary: summaryParts.join('\n'),
+    score
+  };
+}
+
+// ============================================================================
+// GET PROFILE BY NAME OR FORMAT
+// ============================================================================
+
+export function getDensityProfile(
+  formatOrName: string,
+  overrides?: Partial<DensityProfile>
+): DensityProfile {
+  const normalizedName = formatOrName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+  
+  const baseProfile = DENSITY_PROFILES[normalizedName] 
+    || DENSITY_PROFILES.serie_drama; // Default
+
+  if (!overrides) return baseProfile;
+
+  return {
+    ...baseProfile,
+    ...overrides
+  };
+}
+
+// ============================================================================
+// POST-SCRIPT DENSITY VALIDATION
+// ============================================================================
+
+export interface PostScriptDensityResult {
+  passed: boolean;
+  gaps: string[];
+  score: number;
+}
+
+export function validateScriptDensity(
+  script: Record<string, unknown>,
+  profile: DensityProfile
+): PostScriptDensityResult {
+  const gaps: string[] = [];
+  let score = 100;
+
+  const scenes = (script.scenes || []) as any[];
+  const charactersIntroduced = (script.characters_introduced || []) as any[];
+  const locationsIntroduced = (script.locations_introduced || []) as any[];
+
+  // Count unique characters across all scenes
+  const uniqueChars = new Set<string>();
+  for (const scene of scenes) {
+    const charsPresent = (scene.characters_present || []) as any[];
+    for (const char of charsPresent) {
+      const name = (char.name || char).toString().toLowerCase();
+      if (name && name !== 'unknown') {
+        uniqueChars.add(name);
+      }
+    }
+  }
+
+  // Count unique locations
+  const uniqueLocs = new Set<string>();
+  for (const scene of scenes) {
+    const loc = (scene.standardized_location || scene.slugline || '').toLowerCase();
+    if (loc) {
+      uniqueLocs.add(loc.split('-')[0].trim()); // Normalize
+    }
+  }
+
+  // Validate minimums
+  if (uniqueChars.size < profile.min_characters_total) {
+    gaps.push(`PERSONAJES: ${uniqueChars.size}/${profile.min_characters_total}`);
+    score -= 20;
+  }
+
+  if (uniqueLocs.size < profile.min_locations) {
+    gaps.push(`LOCALIZACIONES: ${uniqueLocs.size}/${profile.min_locations}`);
+    score -= 15;
+  }
+
+  if (scenes.length < profile.min_scenes_per_episode) {
+    gaps.push(`ESCENAS: ${scenes.length}/${profile.min_scenes_per_episode}`);
+    score -= 25;
+  }
+
+  // Check for scene quality (each should have conflict)
+  const scenesWithConflict = scenes.filter(s => 
+    s.conflict && s.conflict !== 'Por definir' && s.conflict.length > 10
+  ).length;
+  
+  if (scenesWithConflict < scenes.length * 0.8) {
+    gaps.push(`CONFLICTOS: ${scenesWithConflict}/${scenes.length} escenas tienen conflicto definido`);
+    score -= 10;
+  }
+
+  return {
+    passed: gaps.length === 0,
+    gaps,
+    score: Math.max(0, score)
+  };
+}

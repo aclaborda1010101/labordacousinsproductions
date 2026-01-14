@@ -1,12 +1,15 @@
 /**
- * SCRIPT QC V11 - Structural Validation of Generated Scripts
+ * SCRIPT QC V11.1 - Structural Validation of Generated Scripts
  * 
  * Validates that a generated script adheres to its episode contract.
  * This is POST-GENERATION validation - the script must have executed
  * all structural contracts from the outline.
+ * 
+ * V11.1: Added density validation post-generation
  */
 
 import type { EpisodeContract, TurningPointContract, ThreadContract } from "./episode-contracts.ts";
+import { validateScriptDensity, type DensityProfile, type PostScriptDensityResult } from "./density-validator.ts";
 
 // ============================================================================
 // QC RESULT TYPES
@@ -52,6 +55,9 @@ export interface ScriptQCResult {
   };
   
   faction_violations: string[];
+  
+  // V11.1: Density validation
+  density_check?: PostScriptDensityResult;
   
   blockers: string[];
   warnings: string[];
@@ -472,6 +478,32 @@ export function validateScriptAgainstContract(
     blockers,
     warnings
   };
+}
+
+// ============================================================================
+// V11.1: DENSITY VALIDATION POST-SCRIPT
+// ============================================================================
+
+/**
+ * Validate a generated script against density requirements.
+ * This is called AFTER generation to ensure the script didn't "shrink" the outline.
+ */
+export function validateScriptDensityPost(
+  script: Record<string, unknown>,
+  densityProfile?: DensityProfile
+): PostScriptDensityResult {
+  // Use default profile if none provided
+  const profile: DensityProfile = densityProfile || {
+    min_characters_total: 6,
+    min_supporting_characters: 2,
+    min_antagonists: 1,
+    min_locations: 4,
+    min_scenes_per_episode: 8,
+    min_threads_total: 3,
+    min_secondary_threads: 1
+  };
+
+  return validateScriptDensity(script, profile);
 }
 
 /**
