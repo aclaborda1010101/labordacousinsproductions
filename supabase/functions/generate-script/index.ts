@@ -661,7 +661,7 @@ function buildFallbackScriptResult(episodeNumber?: number, scenesPerBatch: numbe
 }
 
 // =============================================================================
-// LOVABLE AI GATEWAY CALLER WITH HARDENED PARSING
+// LOVABLE AI GATEWAY CALLER WITH HARDENED PARSING + MULTI-STRATEGY FALLBACK
 // =============================================================================
 async function callLovableAI(
   systemPrompt: string,
@@ -683,7 +683,6 @@ async function callLovableAI(
     body: JSON.stringify({
       model: config.apiModel,
       max_completion_tokens: config.maxTokens,
-      // Note: temperature removed - Lovable AI Gateway OpenAI models use default only
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
@@ -709,33 +708,78 @@ async function callLovableAI(
   }
 
   const data = await response.json();
+  const parseWarnings: string[] = [];
+  
+  // STRATEGY 1: Tool call arguments (expected path)
   const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
-  
-  // Use hardened parsing
-  const parseResult = parseToolCallArgs(toolCall, V3_OUTPUT_SCHEMA.name, 'lovable.generate_script');
-  
-  if (parseResult.ok && parseResult.json) {
-    return { result: parseResult.json, parseWarnings: parseResult.warnings };
+  if (toolCall) {
+    const parseResult = parseToolCallArgs(toolCall, V3_OUTPUT_SCHEMA.name, 'lovable.generate_script');
+    if (parseResult.ok && parseResult.json) {
+      return { result: parseResult.json, parseWarnings: parseResult.warnings };
+    }
+    parseWarnings.push(...parseResult.warnings);
+  } else {
+    parseWarnings.push('NO_TOOL_CALL_IN_RESPONSE');
   }
   
-  // Try fallback from content
+  // STRATEGY 2: Parse from message content
   const content = data?.choices?.[0]?.message?.content;
   if (content) {
+    console.log('[generate-script] Trying content fallback, first 500 chars:', content.substring(0, 500));
+    
+    // Try direct parse with cleanLLMArtifacts via parseJsonSafe
     const contentResult = parseJsonSafe(content, 'lovable.content_fallback');
     if (contentResult.ok && contentResult.json) {
+      parseWarnings.push('CONTENT_FALLBACK_USED');
       return { 
         result: contentResult.json, 
-        parseWarnings: [...parseResult.warnings, ...contentResult.warnings] 
+        parseWarnings: [...parseWarnings, ...contentResult.warnings] 
       };
     }
+    
+    // STRATEGY 3: Extract scenes array with regex
+    try {
+      const scenesMatch = content.match(/["']?scenes["']?\s*:\s*(\[\s*\{[\s\S]*?\}\s*\])/);
+      if (scenesMatch) {
+        const scenesJson = scenesMatch[1];
+        const scenes = JSON.parse(scenesJson);
+        if (Array.isArray(scenes) && scenes.length > 0) {
+          parseWarnings.push('REGEX_SCENES_EXTRACTED');
+          console.log(`[generate-script] Regex extracted ${scenes.length} scenes`);
+          return {
+            result: { scenes, synopsis: '', characters_introduced: [], locations_introduced: [] },
+            parseWarnings
+          };
+        }
+      }
+    } catch (regexErr) {
+      parseWarnings.push('REGEX_EXTRACTION_FAILED');
+      console.warn('[generate-script] Regex extraction failed:', regexErr);
+    }
+    
+    // STRATEGY 4: Extract JSON block from markdown
+    try {
+      const jsonBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonBlockMatch) {
+        const jsonContent = jsonBlockMatch[1].trim();
+        const parsed = JSON.parse(jsonContent);
+        parseWarnings.push('MARKDOWN_JSON_EXTRACTED');
+        return { result: parsed, parseWarnings };
+      }
+    } catch (mdErr) {
+      parseWarnings.push('MARKDOWN_EXTRACTION_FAILED');
+    }
+  } else {
+    parseWarnings.push('NO_CONTENT_IN_RESPONSE');
   }
   
-  // Return degraded fallback
-  console.warn('[generate-script] Lovable AI parse failed, using fallback');
-  return { 
-    result: buildFallbackScriptResult(episodeNumber, scenesPerBatch), 
-    parseWarnings: [...parseResult.warnings, 'LOVABLE_PARSE_FAILED'] 
-  };
+  // Log full raw response for debugging (truncated)
+  const rawResponseStr = JSON.stringify(data).substring(0, 2000);
+  console.error('[generate-script] ALL PARSE STRATEGIES FAILED');
+  console.error('[generate-script] Raw response (truncated):', rawResponseStr);
+  
+  // THROW instead of returning empty fallback - let caller handle retry
+  throw new Error(`PARSE_FAILED: Could not extract valid screenplay from LLM response. Warnings: ${parseWarnings.join(', ')}`);
 }
 
 // =============================================================================
