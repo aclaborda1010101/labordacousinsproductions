@@ -1408,6 +1408,9 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                       const loc = locations.find(l => l.id === scene.location_id);
                                       return loc ? { name: loc.name, image_url: (loc.reference_urls as any)?.[0] } : undefined;
                                     })() : undefined}
+                                    onApproved={() => {
+                                      fetchStoryboardStatus(scene.id);
+                                    }}
                                   />
                                 </TabsContent>
 
