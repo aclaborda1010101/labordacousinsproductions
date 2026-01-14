@@ -70,11 +70,15 @@ const buildKeyframePrompt = (
   const focus = shot.focus_config || {};
   const focusMode = focus.mode || 'follow';
   
-  // Constraints for negative prompt
+  // Constraints for enforcement
   const constraints = shot.constraints || {};
   
+  // Build CONSTRAINT BLOCK for must_keep enforcement (prepended to prompt)
+  const constraintBlock = buildConstraintBlock(constraints);
+  
   // Build the prompt
-  let prompt = `Cinematic ${shotSize} shot, ${focalMm}mm lens, ${aspectRatio} aspect ratio. `;
+  let prompt = constraintBlock; // Start with enforcement block
+  prompt += `Cinematic ${shotSize} shot, ${focalMm}mm lens, ${aspectRatio} aspect ratio. `;
   prompt += `${composition}. `;
   prompt += `${sceneContext}. `;
   prompt += `${subjectsDesc}. `;
@@ -112,6 +116,21 @@ const buildKeyframePrompt = (
   return prompt;
 };
 
+// BUILD CONSTRAINT BLOCK - Injects must_keep as mandatory instructions
+const buildConstraintBlock = (constraints: any): string => {
+  const mustKeep = constraints?.must_keep || [];
+  if (mustKeep.length === 0) return '';
+  
+  return `
+═══════════════════════════════════════════════════════════════════════════════
+CONTINUITY LOCKS - MANDATORY (DO NOT DEVIATE)
+═══════════════════════════════════════════════════════════════════════════════
+${mustKeep.map((lock: string) => `• MAINTAIN EXACTLY: ${lock.replace(/_/g, ' ')}`).join('\n')}
+═══════════════════════════════════════════════════════════════════════════════
+
+`;
+};
+
 const buildNegativePrompt = (constraints?: any): string => {
   const baseNegatives = [
     'smooth plastic skin', 'poreless skin', 'airbrushed face', 'perfectly symmetrical face',
@@ -122,7 +141,7 @@ const buildNegativePrompt = (constraints?: any): string => {
   ];
   
   const constraintNegatives = constraints?.negatives || [];
-  const mustNotDo = constraints?.must_not?.map((m: string) => m.replace('_', ' ')) || [];
+  const mustNotDo = constraints?.must_not?.map((m: string) => m.replace(/_/g, ' ')) || [];
   
   return [...baseNegatives, ...constraintNegatives, ...mustNotDo].join(', ');
 };

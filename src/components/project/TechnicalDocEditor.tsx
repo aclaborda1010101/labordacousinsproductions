@@ -22,7 +22,10 @@ import {
   Shield,
   RefreshCw,
   Settings,
-  ChevronRight
+  ChevronRight,
+  Image,
+  AlertTriangle,
+  CheckCircle2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -79,8 +82,10 @@ export function TechnicalDocEditor({
   const [technicalDoc, setTechnicalDoc] = useState<SceneTechnicalDoc | null>(null);
   const [shots, setShots] = useState<any[]>([]);
   const [panels, setPanels] = useState<StoryboardPanel[]>([]);
+  const [keyframes, setKeyframes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [generatingKeyframes, setGeneratingKeyframes] = useState(false);
   const [selectedShotId, setSelectedShotId] = useState<string | null>(null);
   const [editorMode, setEditorMode] = useState<'assisted' | 'pro'>(mode);
 
@@ -119,6 +124,16 @@ export function TechnicalDocEditor({
         .order('panel_no', { ascending: true });
 
       setPanels((panelsData || []) as unknown as StoryboardPanel[]);
+
+      // Fetch keyframes for QC status display
+      if (shotsData && shotsData.length > 0) {
+        const shotIds = shotsData.map((s: any) => s.id);
+        const { data: keyframesData } = await supabase
+          .from('keyframes')
+          .select('id, shot_id, frame_type, qc_status, constraint_qc')
+          .in('shot_id', shotIds);
+        setKeyframes(keyframesData || []);
+      }
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -210,6 +225,51 @@ export function TechnicalDocEditor({
     toast.success('Documento técnico bloqueado para producción');
   };
 
+  // REGENERATE KEYFRAMES - Deterministic execution from existing Technical Doc
+  const regenerateKeyframes = async () => {
+    if (!technicalDoc || (technicalDoc.status !== 'approved' && technicalDoc.status !== 'locked')) {
+      toast.error('El Documento Técnico debe estar aprobado o bloqueado');
+      return;
+    }
+
+    setGeneratingKeyframes(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-keyframes-batch', {
+        body: {
+          scene_id: sceneId,
+          project_id: projectId,
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Keyframe generation failed');
+
+      toast.success(`Generados ${data.stats?.keyframes_generated || 0} keyframes desde Doc Técnico`);
+      await fetchData();
+    } catch (err) {
+      console.error('Error generating keyframes:', err);
+      toast.error('Error al generar keyframes');
+    } finally {
+      setGeneratingKeyframes(false);
+    }
+  };
+
+  // Helper: Get QC status for a shot based on its keyframes
+  const getShotQCStatus = (shotId: string): 'none' | 'pending' | 'passed' | 'failed' => {
+    const shotKeyframes = keyframes.filter(kf => kf.shot_id === shotId);
+    if (shotKeyframes.length === 0) return 'none';
+    
+    const hasFailures = shotKeyframes.some(kf => 
+      kf.qc_status === 'constraint_fail' || kf.qc_status === 'identity_fail'
+    );
+    if (hasFailures) return 'failed';
+    
+    const allPassed = shotKeyframes.every(kf => kf.qc_status === 'passed');
+    if (allPassed) return 'passed';
+    
+    return 'pending';
+  };
+
   const selectedShot = shots.find(s => s.id === selectedShotId);
 
   if (loading) {
@@ -267,10 +327,20 @@ export function TechnicalDocEditor({
             </Button>
           ) : (
             <>
-              <Button variant="outline" size="sm" onClick={generateTechnicalDoc} disabled={generating}>
-                <RefreshCw className={`w-4 h-4 mr-2 ${generating ? 'animate-spin' : ''}`} />
-                Regenerar
+              {/* Reinterpretar Storyboard - calls LLM to regenerate doc */}
+              <Button variant="ghost" size="sm" onClick={generateTechnicalDoc} disabled={generating || technicalDoc.status === 'locked'}>
+                <Wand2 className={`w-4 h-4 mr-2 ${generating ? 'animate-spin' : ''}`} />
+                Reinterpretar Storyboard
               </Button>
+              
+              {/* Regenerar Keyframes - deterministic from existing doc */}
+              {(technicalDoc.status === 'approved' || technicalDoc.status === 'locked') && (
+                <Button variant="outline" size="sm" onClick={regenerateKeyframes} disabled={generatingKeyframes}>
+                  <Image className={`w-4 h-4 mr-2 ${generatingKeyframes ? 'animate-spin' : ''}`} />
+                  Regenerar Keyframes
+                </Button>
+              )}
+              
               {technicalDoc.status === 'draft' && (
                 <Button size="sm" onClick={approveTechnicalDoc}>
                   <Check className="w-4 h-4 mr-2" />
@@ -325,7 +395,19 @@ export function TechnicalDocEditor({
                         </Badge>
                         <span className="text-sm font-medium">{shot.shot_type}</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex items-center gap-1">
+                        {/* QC Status Badge */}
+                        {getShotQCStatus(shot.id) === 'passed' && (
+                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                        )}
+                        {getShotQCStatus(shot.id) === 'failed' && (
+                          <AlertTriangle className="w-4 h-4 text-destructive" />
+                        )}
+                        {getShotQCStatus(shot.id) === 'pending' && (
+                          <Clock className="w-4 h-4 text-yellow-500" />
+                        )}
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      </div>
                     </div>
                     <div className="flex gap-1 mt-2">
                       {shot.camera?.id && (

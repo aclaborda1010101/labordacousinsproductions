@@ -2952,6 +2952,7 @@ export type Database = {
         Row: {
           approved: boolean | null
           chain_role: string | null
+          constraint_qc: Json | null
           created_at: string
           determinism: Json | null
           frame_geometry: Json | null
@@ -2963,6 +2964,7 @@ export type Database = {
           negative_constraints: Json | null
           pose_data: Json | null
           prompt_text: string | null
+          qc_status: string | null
           run_id: string | null
           seed: number | null
           shot_id: string
@@ -2973,6 +2975,7 @@ export type Database = {
         Insert: {
           approved?: boolean | null
           chain_role?: string | null
+          constraint_qc?: Json | null
           created_at?: string
           determinism?: Json | null
           frame_geometry?: Json | null
@@ -2984,6 +2987,7 @@ export type Database = {
           negative_constraints?: Json | null
           pose_data?: Json | null
           prompt_text?: string | null
+          qc_status?: string | null
           run_id?: string | null
           seed?: number | null
           shot_id: string
@@ -2994,6 +2998,7 @@ export type Database = {
         Update: {
           approved?: boolean | null
           chain_role?: string | null
+          constraint_qc?: Json | null
           created_at?: string
           determinism?: Json | null
           frame_geometry?: Json | null
@@ -3005,6 +3010,7 @@ export type Database = {
           negative_constraints?: Json | null
           pose_data?: Json | null
           prompt_text?: string | null
+          qc_status?: string | null
           run_id?: string | null
           seed?: number | null
           shot_id?: string
