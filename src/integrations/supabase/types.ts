@@ -5027,6 +5027,7 @@ export type Database = {
           estimated_cost: Json | null
           fields_json: Json | null
           focus_config: Json | null
+          frame_config: Json | null
           hero: boolean | null
           id: string
           keyframe_hints: Json | null
@@ -5073,6 +5074,7 @@ export type Database = {
           estimated_cost?: Json | null
           fields_json?: Json | null
           focus_config?: Json | null
+          frame_config?: Json | null
           hero?: boolean | null
           id?: string
           keyframe_hints?: Json | null
@@ -5119,6 +5121,7 @@ export type Database = {
           estimated_cost?: Json | null
           fields_json?: Json | null
           focus_config?: Json | null
+          frame_config?: Json | null
           hero?: boolean | null
           id?: string
           keyframe_hints?: Json | null
