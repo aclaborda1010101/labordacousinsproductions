@@ -287,6 +287,10 @@ verify_jwt = false
 # Gateway JWT disabled; function enforces auth internally
 verify_jwt = false
 
+[functions.regenerate-storyboard-panel]
+# Single panel image regeneration - Gateway JWT disabled
+verify_jwt = false
+
 [functions.generate-technical-doc]
 # Gateway JWT disabled; function enforces auth internally
 verify_jwt = false
