@@ -834,261 +834,16 @@ CRITICAL OUTPUT RULES FOR characters_present:
     });
 
     // ========================================================================
-    // PHASE 4: Generate Images with Lock-based Prompts
+    // PHASE 4: Return immediately (images rendered by render-storyboard-batch)
     // ========================================================================
+    // NOTE: Image generation has been moved to render-storyboard-batch
+    // to avoid Edge Function timeouts. The frontend calls that function
+    // in a loop after this function returns.
 
-    const generatedPanels = [];
-    const panelsToProcess = insertedPanels || [];
-    console.log(`[SB] entering_image_loop`, { toProcess: panelsToProcess.length });
-
-    for (const panel of panelsToProcess) {
-      const panelNo = panel.panel_no;
-      try {
-        // Mark panel as generating
-        await supabase
-          .from("storyboard_panels")
-          .update({ image_status: 'generating' })
-          .eq("id", panel.id);
-
-        // Calculate deterministic seed
-        const seed = generateSeed(scene_id, storyboard_style, panelNo);
-        console.log(`[SB] generating_panel`, { no: panelNo, id: panel.id, seed });
-
-        // Get character names for present characters
-        const presentCharNames = castLocks
-          .filter(c => panel.characters_present.includes(c.id))
-          .map(c => c.name);
-
-        // Check for missing DNA
-        const presentCharsWithMissingDna = castLocks
-          .filter(c => panel.characters_present.includes(c.id))
-          .filter(c => !validateCharacterDNA(c).valid);
-
-        // Build panel spec for prompt builder
-        const panelSpec: PanelSpec = {
-          panel_code: panel.panel_code,
-          shot_hint: panel.shot_hint,
-          panel_intent: panel.panel_intent,
-          action: panel.action_beat_ref || panel.panel_intent,
-          dialogue_snippet: panel.dialogue_snippet,
-          characters_present: presentCharNames,
-          props_present: panel.props_present || [],
-          staging: {
-            spatial_info: panel.staging?.spatial_info || '',
-            movement_arrows: panel.staging?.movement_arrows || [],
-            axis_180: panel.staging?.axis_180 || { enabled: false, screen_direction: 'left_to_right' },
-          },
-          continuity: {
-            must_match_previous: panel.continuity?.must_match_previous || [],
-            do_not_change: panel.continuity?.do_not_change || [],
-          },
-        };
-
-        // Build complete image prompt using the prompt builder v2.0
-        // Uses Character Pack Data for enhanced identity enforcement
-        const imagePrompt = buildStoryboardImagePrompt({
-          storyboard_style,
-          style_pack_lock: stylePackLock,
-          location_lock: locationLock,
-          cast: castLocks,
-          characters_present_ids: panel.characters_present,
-          panel_spec: panelSpec,
-          character_pack_data: characterPackData, // v2.0 enhanced data
-        });
-
-        // If characters have missing DNA, add warning
-        if (presentCharsWithMissingDna.length > 0) {
-          const warningMsg = `WARNING: Missing DNA for: ${presentCharsWithMissingDna.map(c => c.name).join(', ')}`;
-          await supabase
-            .from("storyboard_panels")
-            .update({ image_error: warningMsg })
-            .eq("id", panel.id);
-        }
-
-        // ========================================================================
-        // PACK-FIRST: Query slots aprobados directamente de character_pack_slots
-        // ========================================================================
-        const referenceImageUrls: string[] = [];
-        const charIds = panel.characters_present.filter((id: string) => isUuid(id));
-
-        if (charIds.length > 0) {
-          // Query pack slots aprobados con orden de prioridad
-          const { data: slots } = await supabase
-            .from("character_pack_slots")
-            .select("character_id, slot_type, image_url, status")
-            .in("character_id", charIds)
-            .in("status", ["accepted", "uploaded", "generated"])
-            .not("image_url", "is", null);
-
-          // Orden de prioridad para refs de identidad
-          const slotPriority = [
-            "ref_closeup_front",
-            "identity_primary",
-            "closeup_front",
-            "ref_profile",
-            "closeup_profile",
-            "turn_side",
-            "turn_front_34",
-            "expr_neutral",
-          ];
-
-          // Agrupar por personaje
-          const slotsByChar = new Map<string, typeof slots>();
-          for (const s of (slots || [])) {
-            if (!s.image_url) continue;
-            if (!slotsByChar.has(s.character_id)) slotsByChar.set(s.character_id, []);
-            slotsByChar.get(s.character_id)!.push(s);
-          }
-
-          // Tomar máx 3 refs por personaje, ordenados por prioridad
-          for (const charId of charIds) {
-            const charSlots = slotsByChar.get(charId) || [];
-            charSlots.sort((a: any, b: any) => 
-              slotPriority.indexOf(a.slot_type) - slotPriority.indexOf(b.slot_type)
-            );
-            
-            const topSlots = charSlots.slice(0, 3);
-            for (const s of topSlots) {
-              referenceImageUrls.push(s.image_url);
-            }
-          }
-        }
-
-        // Location reference (max 1)
-        if (locationLock?.reference_images?.length) {
-          referenceImageUrls.push(locationLock.reference_images[0]);
-        }
-
-        // Hard cap total
-        const finalRefs = referenceImageUrls.slice(0, 10);
-
-        console.log(`[SB] panel_${panelNo}_refs`, { 
-          char_ids: charIds,
-          ref_count: finalRefs.length,
-          first_host: finalRefs[0] ? new URL(finalRefs[0]).host : 'none'
-        });
-
-        // Guardrail: si hay personajes pero no refs, marcar como identity_unlocked
-        if (charIds.length > 0 && finalRefs.length === 0) {
-          console.warn(`[SB] panel_${panelNo}_identity_unlocked`, { 
-            chars: charIds,
-            reason: "no_approved_pack_slots"
-          });
-        }
-
-        // Generate image with NanoBanana + multimodal refs (pack-first)
-        const imageResult = await generateImageWithNanoBanana({
-          lovableApiKey: lovableApiKey!,
-          promptText: imagePrompt,
-          referenceImageUrls: finalRefs,  // PACK-FIRST: Use slots directly
-          label: `storyboard_panel_${panelNo}`,
-          seed,
-          supabase,
-          projectId: project_id,
-        });
-
-        console.log(`[SB] image_result`, { 
-          no: panelNo, 
-          success: imageResult.success, 
-          hasUrl: !!imageResult.imageUrl,
-          hasBase64: !!imageResult.imageBase64,
-          error: imageResult.error?.slice(0, 200)
-        });
-
-        if (imageResult.success && (imageResult.imageUrl || imageResult.imageBase64)) {
-          let finalImageUrl = imageResult.imageUrl;
-
-          // Upload base64 to Supabase Storage if needed
-          if (imageResult.imageBase64 && !imageResult.imageUrl?.startsWith("http")) {
-            const binaryData = Uint8Array.from(
-              atob(imageResult.imageBase64),
-              (c) => c.charCodeAt(0)
-            );
-            const fileName = `storyboard/${panel.id}.png`;
-            console.log(`[SB] uploading_panel`, { no: panelNo, fileName });
-
-            const { data: uploadData, error: uploadError } = await supabase.storage
-              .from("project-assets")
-              .upload(fileName, binaryData, {
-                contentType: "image/png",
-                upsert: true,
-              });
-
-            if (!uploadError && uploadData) {
-              const { data: publicUrl } = supabase.storage
-                .from("project-assets")
-                .getPublicUrl(fileName);
-              finalImageUrl = publicUrl.publicUrl;
-              console.log(`[SB] uploaded_ok`, { no: panelNo, url: finalImageUrl?.slice(0, 80) });
-            } else {
-              console.error(`[SB] upload_error`, { no: panelNo, error: uploadError });
-              await supabase
-                .from("storyboard_panels")
-                .update({ 
-                  image_status: 'error',
-                  image_error: `Storage upload failed: ${uploadError?.message || 'Unknown'}`
-                })
-                .eq("id", panel.id);
-              generatedPanels.push({ ...panel, image_error: uploadError?.message });
-              continue;
-            }
-          }
-
-          if (finalImageUrl) {
-            // Keep any DNA warnings, just update URL and status
-            const currentError = presentCharsWithMissingDna.length > 0
-              ? `WARNING: Missing DNA for: ${presentCharsWithMissingDna.map(c => c.name).join(', ')}`
-              : null;
-
-            await supabase
-              .from("storyboard_panels")
-              .update({ 
-                image_url: finalImageUrl,
-                image_prompt: imagePrompt.substring(0, 2000), // Store prompt for debugging
-                image_status: 'success',
-                image_error: currentError,
-              })
-              .eq("id", panel.id);
-
-            generatedPanels.push({ ...panel, image_url: finalImageUrl, image_error: currentError });
-            console.log(`[SB] panel_complete`, { no: panelNo, seed });
-          } else {
-            await supabase
-              .from("storyboard_panels")
-              .update({ image_status: 'error', image_error: 'No final URL generated' })
-              .eq("id", panel.id);
-            generatedPanels.push({ ...panel, image_error: 'No final URL' });
-          }
-        } else {
-          const errMsg = imageResult.error?.slice(0, 500) || 'Image generation failed';
-          console.error(`[SB] image_failed`, { no: panelNo, error: errMsg });
-          await supabase
-            .from("storyboard_panels")
-            .update({ image_status: 'error', image_error: errMsg })
-            .eq("id", panel.id);
-          generatedPanels.push({ ...panel, image_error: errMsg });
-        }
-      } catch (imgError) {
-        const errMsg = imgError instanceof Error ? imgError.message : String(imgError);
-        console.error(`[SB] panel_error`, { no: panelNo, id: panel.id, error: errMsg.slice(0, 500) });
-        
-        await supabase
-          .from("storyboard_panels")
-          .update({ 
-            image_status: 'error',
-            image_error: errMsg.slice(0, 500)
-          })
-          .eq("id", panel.id);
-        
-        generatedPanels.push({ ...panel, image_error: errMsg });
-      }
-    }
-
-    console.log(`[SB] loop_complete`, { 
-      generated: generatedPanels.length,
-      withImages: generatedPanels.filter((p: any) => p.image_url).length,
-      withErrors: generatedPanels.filter((p: any) => p.image_error).length,
-      withWarnings: generatedPanels.filter((p: any) => p.image_error?.startsWith('WARNING')).length,
+    console.log(`[SB] plan_complete`, { 
+      panels_created: insertedPanels?.length || 0,
+      style: storyboard_style,
+      images_pending: true,
     });
 
     return new Response(
@@ -1096,9 +851,11 @@ CRITICAL OUTPUT RULES FOR characters_present:
         success: true,
         storyboard_id: storyboardRecord?.id,
         storyboard_style,
-        panels: generatedPanels,
+        panels_created: insertedPanels?.length || 0,
+        panels: insertedPanels,
+        images_pending: true,
         dna_warnings: dnaWarnings,
-        message: `Generated ${generatedPanels.length} storyboard panels (${storyboard_style})`,
+        message: `Created ${insertedPanels?.length || 0} panels. Use render-storyboard-batch to generate images.`,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

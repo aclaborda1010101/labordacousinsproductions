@@ -161,12 +161,16 @@ export function StoryboardPanelView({
   const generateStoryboard = async () => {
     setGenerating(true);
     setShowOverlay(true);
+    
     try {
       const panelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
       
-      // Fire and forget - don't await the full response since it times out
-      // The edge function will continue running and we'll poll for progress
-      supabase.functions.invoke('generate-storyboard', {
+      // ================================================================
+      // FASE 1: Create panel structure (fast, ~10s)
+      // ================================================================
+      toast.info('Fase 1: Planificando paneles...');
+      
+      const { data: planData, error: planError } = await supabase.functions.invoke('generate-storyboard', {
         body: {
           scene_id: sceneId,
           project_id: projectId,
@@ -177,24 +181,61 @@ export function StoryboardPanelView({
           location_ref: locationRef,
           panel_count: panelCount,
         },
-      }).then(({ data, error }) => {
-        if (error) {
-          console.warn('Storyboard generation response error (may be timeout, generation continues in background):', error);
-        } else if (data?.success) {
-          toast.success(`Generación completada: ${data.panels?.length || 0} paneles`);
-        }
-      }).catch(err => {
-        // Timeout errors are expected - the function continues running
-        console.warn('Storyboard invoke error (likely timeout, generation continues):', err);
       });
 
-      toast.info('Generación iniciada. El progreso se mostrará en tiempo real...');
+      if (planError) {
+        throw new Error(`Plan error: ${planError.message}`);
+      }
       
-      // Start polling immediately - don't wait for invoke response
-      // The useStoryboardProgress hook will track real-time status
+      if (!planData?.success) {
+        throw new Error(planData?.error || 'Planning failed');
+      }
+
+      const panelsCreated = planData.panels_created || planData.panels?.length || 0;
+      toast.success(`${panelsCreated} paneles creados. Generando imágenes...`);
+      
+      // Refresh to show new panels (without images yet)
+      await fetchPanels();
+
+      // ================================================================
+      // FASE 2: Render images in batches (2 per call, ~40s each)
+      // ================================================================
+      const maxBatches = 20; // Safety limit (20 batches × 2 = 40 panels max)
+      
+      for (let i = 0; i < maxBatches; i++) {
+        const { data: batchData, error: batchError } = await supabase.functions.invoke('render-storyboard-batch', {
+          body: { 
+            scene_id: sceneId, 
+            batch_size: 2,
+            retry_errors: true,
+          },
+        });
+
+        if (batchError) {
+          console.warn(`Batch ${i + 1} error (retrying):`, batchError);
+          // Don't break - wait and retry
+          await new Promise(r => setTimeout(r, 1500));
+          continue;
+        }
+
+        // Refresh panels to show progress
+        await fetchPanels();
+
+        // Check if complete
+        if (!batchData || batchData.processed === 0 || batchData.complete) {
+          console.log(`Batch loop complete at iteration ${i + 1}`, batchData);
+          break;
+        }
+
+        // Brief pause between batches
+        await new Promise(r => setTimeout(r, 500));
+      }
+
+      // Final success message will be shown by the useEffect that monitors panelStatuses
+      
     } catch (err) {
-      console.error('Error starting storyboard generation:', err);
-      toast.error('Error al iniciar generación');
+      console.error('Error in storyboard generation:', err);
+      toast.error(`Error: ${err instanceof Error ? err.message : 'Unknown'}`);
       setGenerating(false);
       setShowOverlay(false);
     }
