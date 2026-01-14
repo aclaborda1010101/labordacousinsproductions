@@ -279,9 +279,59 @@ const EXTENDED_NEGATIVE_BLOCK = `NEGATIVE (NEVER GENERATE):
 - invented characters not in cast list
 - background characters with detailed faces (should be silhouettes)
 - single-panel cinematic frame when sheet format is requested
-- decorative borders or poster-style composition
-- different label typography between panels
-- color accents or highlights`;
+- decorative borders or poster-style composition`;
+
+// ============================================================================
+// CLOSE-UP IDENTITY REINFORCEMENT (for PP/PMC/ECU shots)
+// ============================================================================
+
+/**
+ * Returns extra identity enforcement for close-up shots where face is dominant.
+ */
+export function getCloseupIdentityReinforcement(
+  shotHint: string, 
+  charNames: string[]
+): string {
+  const upper = (shotHint || '').toUpperCase();
+  const isCloseup = ['PP', 'PMC', 'CLOSE', 'ECU', 'CU', 'BCU', 'XCU'].some(t => upper.includes(t));
+  
+  if (!isCloseup || charNames.length === 0) return '';
+  
+  return `
+═══════════════════════════════════════════════════════════════════════════════
+⚠️ CLOSE-UP IDENTITY RULES (CRITICAL FOR ${shotHint.toUpperCase()}) ⚠️
+═══════════════════════════════════════════════════════════════════════════════
+
+This is a ${shotHint.toUpperCase()} shot - the face occupies MOST of the frame.
+IDENTITY ACCURACY IS CRITICAL. Any drift will be immediately visible.
+
+For ${charNames.join(', ')}:
+
+1. FACE MUST MATCH REFERENCE EXACTLY:
+   - Same nose shape, lip thickness, eye spacing
+   - Same jawline and cheekbone structure
+   - Same brow shape and forehead proportion
+
+2. HAIR MUST MATCH REFERENCE EXACTLY:
+   - Same hairline position and shape
+   - Same volume, texture, and length
+   - Same color (in grayscale value)
+
+3. AGE MUST BE IDENTICAL TO REFERENCE:
+   - A child cannot look older or younger
+   - Proportions must be age-appropriate
+   - No wrinkles if young, proper aging if old
+
+4. IF UNCERTAIN:
+   - SIMPLIFY the drawing
+   - Use fewer details rather than wrong details
+   - Favor silhouette over invented features
+
+═══════════════════════════════════════════════════════════════════════════════
+DO NOT create a generic person that "looks similar".
+The reference images ARE the character - match them EXACTLY.
+═══════════════════════════════════════════════════════════════════════════════`;
+}
 
 // ============================================================================
 // CHARACTER PACK LOCK BUILDER (v2.0)
@@ -463,12 +513,19 @@ MovementArrows: ${movementArrowsText}`;
   // 7. EXTENDED NEGATIVE (v3.0)
   const negativeBlock = EXTENDED_NEGATIVE_BLOCK;
 
+  // 8. CLOSE-UP IDENTITY REINFORCEMENT (for PP/PMC shots)
+  const closeupReinforcement = getCloseupIdentityReinforcement(
+    panel_spec.shot_hint,
+    panel_spec.characters_present
+  );
+
   // Concatenate in strict priority order (CANVAS LOCK FIRST)
   return [
     canvasLockBlock,      // HIGHEST PRIORITY - CANVAS LOCK (v4.0)
     formatContractBlock,  // FORMAT CONTRACT
     packFirstBlock,       // PACK-FIRST CANON
     identityLockBlock,    // IDENTITY LOCK (multimodal)
+    closeupReinforcement, // CLOSE-UP IDENTITY REINFORCEMENT (if applicable)
     stylePackBlock,
     storyboardStyleBlock,
     locationBlock,
