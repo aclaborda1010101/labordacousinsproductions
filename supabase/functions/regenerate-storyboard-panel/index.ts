@@ -13,6 +13,11 @@ import {
   buildStyleExclusionBlock,
 } from "../_shared/storyboard-prompt-builder.ts";
 import { generateSeed } from "../_shared/storyboard-serializer.ts";
+import {
+  chooseGenerationMode,
+  getModeBlock,
+  type GenerationMode,
+} from "../_shared/storyboard-style-presets.ts";
 
 // ============================================================================
 // IDENTITY REGEN BLOCK - Phase 2: Clean Prompt with Correction Instructions
@@ -48,6 +53,7 @@ const REGEN_POLICY = {
   escalateRefsOnRegen: true,
   cleanPromptOnRegen: true,
   forceIdentityBlockOnRegen: true,
+  timeoutMs: 120000, // 120 seconds
 };
 
 const corsHeaders = {
@@ -60,6 +66,7 @@ interface RegenerateRequest {
   prompt?: string;
   seed?: number;
   storyboard_style?: 'GRID_SHEET_V1' | 'TECH_PAGE_V1';
+  forceMode?: 'STRICT' | 'SAFE';  // Phase 4: Allow UI to force mode
 }
 
 // Helpers for ID validation and key normalization
@@ -386,6 +393,27 @@ serve(async (req) => {
       }
     }
 
+    // ================================================================
+    // Phase 2: Determine Generation Mode (NORMAL, STRICT, SAFE)
+    // ================================================================
+    const panelState = {
+      image_status: panel.image_status,
+      failure_reason: (panel as any).failure_reason,
+      regen_count: regenCount,
+      identity_qc: identityQc ? {
+        issues: identityIssues,
+        needs_regen: (identityQc as any).needs_regen,
+      } : undefined,
+      style_qc: (panel as any).style_qc,
+    };
+    
+    const mode: GenerationMode = chooseGenerationMode(panelState, {
+      forceStrict: body.forceMode === 'STRICT',
+      forceSafe: body.forceMode === 'SAFE',
+    });
+    
+    console.log(`[regenerate-panel] Mode: ${mode}, forceMode: ${body.forceMode || 'none'}`);
+
     // Build CLEAN prompt using the same builder (with style_preset_id)
     let promptText = buildStoryboardImagePrompt({
       storyboard_style: storyboardStyle,
@@ -400,14 +428,21 @@ serve(async (req) => {
       style_preset_id: stylePresetId,  // CRITICAL: Use parent storyboard's preset
     });
     
-    // Phase 2: Prepend IDENTITY_REGEN_BLOCK if this is a regen with identity issues
+    // Phase 2: Prepend mode block (SAFE or STRICT)
+    const modeBlock = getModeBlock(mode);
+    if (modeBlock) {
+      promptText = modeBlock + '\n\n' + promptText;
+      console.log(`[regenerate-panel] Prepended ${mode} mode block`);
+    }
+    
+    // Also add IDENTITY_REGEN_BLOCK if this is a regen with identity issues
     if (regenCount > 0 && identityIssues.length > 0 && REGEN_POLICY.forceIdentityBlockOnRegen) {
       const charNames = characterPackData.map(c => c.name);
       promptText = IDENTITY_REGEN_BLOCK(identityIssues, charNames, regenCount) + '\n\n' + promptText;
       console.log(`[regenerate-panel] Added IDENTITY_REGEN_BLOCK for ${charNames.join(', ')}`);
     }
     
-    console.log(`[regenerate-panel] Built CLEAN prompt (${promptText.length} chars) style=${stylePresetId}`);
+    console.log(`[regenerate-panel] Built CLEAN prompt (${promptText.length} chars) style=${stylePresetId} mode=${mode}`);
 
     // Phase 1: Save recovery data BEFORE generation attempt
     const recoveryData = {
@@ -415,7 +450,8 @@ serve(async (req) => {
       character_refs: cleanCharIds,
       canvas_format: canvasFormat,
       identity_issues: identityIssues,
-      regen_count: regenCount,
+      regen_count: regenCount + 1,
+      generation_mode: mode,
     };
     
     await supabase
@@ -423,6 +459,8 @@ serve(async (req) => {
       .update({ 
         image_status: 'generating',
         image_error: null,
+        generation_started_at: new Date().toISOString(),
+        generation_mode: mode,
         last_prompt: promptText.substring(0, 3000),
         last_style_preset_id: stylePresetId,
         last_character_refs: cleanCharIds,

@@ -309,7 +309,7 @@ export function StoryboardPanelView({
     toast.info('Generación cancelada');
   };
 
-  const generatePanelImage = async (panel: StoryboardPanel) => {
+  const generatePanelImage = async (panel: StoryboardPanel, forceMode?: 'STRICT' | 'SAFE') => {
     try {
       // Check for canvas format mismatch (validation)
       const panelCanvasFormat = (panel as any).canvas_format as CanvasFormat | null;
@@ -327,13 +327,15 @@ export function StoryboardPanelView({
         }
       }
 
-      toast.info(`Generando imagen para panel ${panel.panel_no}...`);
+      const modeLabel = forceMode === 'SAFE' ? ' (Modo Seguro)' : forceMode === 'STRICT' ? ' (Modo Estricto)' : '';
+      toast.info(`Generando imagen para panel ${panel.panel_no}${modeLabel}...`);
       
-      // Use dedicated regenerate-storyboard-panel function
+      // Use dedicated regenerate-storyboard-panel function with optional mode
       const { data, error } = await supabase.functions.invoke('regenerate-storyboard-panel', {
         body: {
           panelId: panel.id,
           prompt: panel.image_prompt,
+          forceMode,  // NEW: Pass mode to edge function
         },
       });
 
@@ -600,13 +602,24 @@ export function StoryboardPanelView({
                     {getPanelImageStatus(panel) === 'failed_safe' && (
                       <Badge variant="destructive" className="text-xs">
                         <AlertCircle className="w-3 h-3 mr-1" />
-                        Intervención requerida
+                        {(() => {
+                          const failureReason = (panel as any).failure_reason;
+                          if (failureReason === 'TIMEOUT') return 'Timeout';
+                          if (failureReason === 'STUCK_GENERATING') return 'Atascado';
+                          return 'Intervención requerida';
+                        })()}
                       </Badge>
                     )}
                     {getPanelImageStatus(panel) === 'error' && (
                       <Badge variant="destructive" className="text-xs">
                         <AlertCircle className="w-3 h-3 mr-1" />
                         Error
+                      </Badge>
+                    )}
+                    {/* Show generation mode badge if in SAFE mode */}
+                    {(panel as any).generation_mode === 'SAFE' && (
+                      <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400 bg-amber-500/10">
+                        Modo Seguro
                       </Badge>
                     )}
                     </div>
@@ -726,19 +739,31 @@ export function StoryboardPanelView({
                     </p>
                   )}
 
-                  {/* Phase 4: Action buttons based on status */}
+                  {/* Phase 4: Action buttons based on status with mode options */}
                   {(getPanelImageStatus(panel) === 'error' || 
                     getPanelImageStatus(panel) === 'failed_safe' ||
                     (panel as any).identity_qc?.needs_regen) ? (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => generatePanelImage(panel)}
-                    >
-                      <RefreshCw className="w-3 h-3 mr-1" />
-                      Regenerar con corrección
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => generatePanelImage(panel, 'SAFE')}
+                        title="Prioriza obtener una imagen válida, relajando restricciones no críticas"
+                      >
+                        <RefreshCw className="w-3 h-3 mr-1" />
+                        Modo Seguro
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => generatePanelImage(panel, 'STRICT')}
+                        title="Mantiene composición pero fuerza corrección de identidad/estilo"
+                      >
+                        <RefreshCw className="w-3 h-3 mr-1" />
+                        Estricto
+                      </Button>
+                    </div>
                   ) : (
                     <Button
                       variant={panel.approved ? 'default' : 'outline'}

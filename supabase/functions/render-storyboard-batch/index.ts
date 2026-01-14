@@ -26,11 +26,49 @@ import {
   type PanelSpec,
   type CanvasFormat,
 } from "../_shared/storyboard-prompt-builder.ts";
+import {
+  chooseGenerationMode,
+  getModeBlock,
+  type GenerationMode,
+} from "../_shared/storyboard-style-presets.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// ============================================================================
+// STUCK PANEL CLEANUP (Phase 5: Clean orphaned states)
+// ============================================================================
+
+const STUCK_TIMEOUT_MS = 3 * 60 * 1000; // 3 minutes
+
+async function cleanupStuckPanels(supabase: any, sceneId: string): Promise<number> {
+  const stuckThreshold = new Date(Date.now() - STUCK_TIMEOUT_MS).toISOString();
+  
+  const { data: stuckPanels, error } = await supabase
+    .from("storyboard_panels")
+    .update({ 
+      image_status: "failed_safe",
+      failure_reason: "STUCK_GENERATING",
+      image_error: "Generation timed out (stuck in generating state)",
+    })
+    .eq("scene_id", sceneId)
+    .eq("image_status", "generating")
+    .lt("generation_started_at", stuckThreshold)
+    .select("id");
+
+  if (error) {
+    console.warn("[batch] Stuck cleanup error:", error.message);
+    return 0;
+  }
+  
+  const cleanedCount = stuckPanels?.length || 0;
+  if (cleanedCount > 0) {
+    console.log(`[batch] Cleaned ${cleanedCount} stuck panels`);
+  }
+  return cleanedCount;
+}
 
 interface BatchRequest {
   scene_id: string;
@@ -296,14 +334,36 @@ serve(async (req) => {
 
     let processed = 0;
 
+    // Phase 5: Clean up stuck panels before processing new ones
+    await cleanupStuckPanels(supabase, scene_id);
+
     for (const panel of panels) {
       const panelNo = panel.panel_no;
 
       try {
-        // Mark as generating
+        // ================================================================
+        // Phase 1: Determine generation mode based on panel state
+        // ================================================================
+        const panelState = {
+          image_status: panel.image_status,
+          failure_reason: panel.failure_reason,
+          regen_count: panel.regen_count || 0,
+          identity_qc: panel.identity_qc,
+          style_qc: panel.style_qc,
+        };
+        const mode: GenerationMode = chooseGenerationMode(panelState);
+        
+        console.log(`[batch] panel_${panelNo} mode=${mode} regen_count=${panelState.regen_count}`);
+
+        // Mark as generating with mode tracking
         await supabase
           .from("storyboard_panels")
-          .update({ image_status: "generating", image_error: null })
+          .update({ 
+            image_status: "generating", 
+            image_error: null,
+            generation_started_at: new Date().toISOString(),
+            generation_mode: mode,
+          })
           .eq("id", panel.id);
 
         // Calculate deterministic seed
@@ -336,7 +396,7 @@ serve(async (req) => {
         };
 
         // Build image prompt (v4.0: with panel_count and canvas_format)
-        const imagePrompt = buildStoryboardImagePrompt({
+        let imagePrompt = buildStoryboardImagePrompt({
           storyboard_style: storyboardStyle,
           style_pack_lock: stylePackLock,
           location_lock: locationLock,
@@ -345,8 +405,15 @@ serve(async (req) => {
           panel_spec: panelSpec,
           character_pack_data: characterPackData,
           panel_count: panelCount,
-          canvas_format: canvasFormat,  // NEW: Pass canvas format for consistent framing
+          canvas_format: canvasFormat,
         });
+        
+        // Phase 3: Prepend mode block if STRICT or SAFE
+        const modeBlock = getModeBlock(mode);
+        if (modeBlock) {
+          imagePrompt = modeBlock + '\n\n' + imagePrompt;
+          console.log(`[batch] panel_${panelNo} prepended ${mode} mode block`);
+        }
 
         // ================================================================
         // PACK-FIRST: Get reference images from character_pack_slots
@@ -501,14 +568,47 @@ serve(async (req) => {
             }
           }
         } else {
+          // Image generation failed - determine if we should go to failed_safe
           const errMsg = imageResult.error?.slice(0, 500) || "Image generation failed";
-          await supabase.from("storyboard_panels").update({ image_status: "error", image_error: errMsg }).eq("id", panel.id);
+          const regenCount = (panel.regen_count || 0) + 1;
+          
+          // Phase 1: Transition to failed_safe after 2 attempts
+          if (regenCount >= 2) {
+            await supabase
+              .from("storyboard_panels")
+              .update({ 
+                image_status: "failed_safe",
+                image_error: errMsg,
+                failure_reason: "NO_IMAGE_RETURNED",
+                regen_count: regenCount,
+              })
+              .eq("id", panel.id);
+            console.log(`[batch] panel_${panelNo} moved to failed_safe after ${regenCount} attempts`);
+          } else {
+            await supabase
+              .from("storyboard_panels")
+              .update({ 
+                image_status: "error", 
+                image_error: errMsg,
+                regen_count: regenCount,
+              })
+              .eq("id", panel.id);
+          }
         }
       } catch (imgError) {
         const errMsg = imgError instanceof Error ? imgError.message : String(imgError);
+        const regenCount = (panel.regen_count || 0) + 1;
+        
+        // Phase 1: Transition to failed_safe after repeated failures
+        const newStatus = regenCount >= 2 ? "failed_safe" : "error";
         await supabase
           .from("storyboard_panels")
-          .update({ image_status: "error", image_error: errMsg.slice(0, 500) })
+          .update({ 
+            image_status: newStatus, 
+            image_error: errMsg.slice(0, 500),
+            failure_reason: newStatus === "failed_safe" ? "GENERATION_ERROR" : null,
+            regen_count: regenCount,
+          })
           .eq("id", panel.id);
       }
 
