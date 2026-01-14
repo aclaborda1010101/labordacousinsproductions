@@ -5173,7 +5173,9 @@ export type Database = {
           continuity: Json | null
           created_at: string | null
           id: string
+          image_error: string | null
           image_prompt: string | null
+          image_status: string | null
           image_url: string | null
           notes: string | null
           panel_code: string | null
@@ -5193,7 +5195,9 @@ export type Database = {
           continuity?: Json | null
           created_at?: string | null
           id?: string
+          image_error?: string | null
           image_prompt?: string | null
+          image_status?: string | null
           image_url?: string | null
           notes?: string | null
           panel_code?: string | null
@@ -5213,7 +5217,9 @@ export type Database = {
           continuity?: Json | null
           created_at?: string | null
           id?: string
+          image_error?: string | null
           image_prompt?: string | null
+          image_status?: string | null
           image_url?: string | null
           notes?: string | null
           panel_code?: string | null

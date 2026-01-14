@@ -415,21 +415,36 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
       throw insertError;
     }
 
-    console.log(`[generate-storyboard] Inserted ${insertedPanels?.length} panels`);
+    console.log(`[SB] after_db_insert`, { 
+      count: insertedPanels?.length, 
+      panelIds: insertedPanels?.map(p => p.id).slice(0, 3) 
+    });
 
     // Generate deterministic PANEL_LIST for consistent image generation
+    console.log(`[SB] before_serialize`, { panelCount: panels.length });
     const panelListText = serializePanelList(panels);
-    console.log(`[generate-storyboard] Serialized PANEL_LIST:\n${panelListText}`);
+    console.log(`[SB] after_serialize`, { lines: panelListText.split("\n").length });
 
     // Generate grayscale pencil sketch images for each panel using NanoBanana
     const generatedPanels = [];
-    for (const panel of insertedPanels || []) {
+    const panelsToProcess = insertedPanels || [];
+    console.log(`[SB] entering_image_loop`, { toProcess: panelsToProcess.length });
+
+    for (const panel of panelsToProcess) {
+      const panelNo = panel.panel_no;
       try {
+        // Mark panel as generating
+        await supabase
+          .from("storyboard_panels")
+          .update({ image_status: 'generating' })
+          .eq("id", panel.id);
+
         // Calculate deterministic seed for this panel
-        const seed = generateSeed(scene_id, storyboard_style, panel.panel_no);
+        const seed = generateSeed(scene_id, storyboard_style, panelNo);
+        console.log(`[SB] generating_panel`, { no: panelNo, id: panel.id, seed });
         
         // Build image prompt with frozen PANEL_LIST context
-        const panelContext = panelListText.split("\n").find(l => l.startsWith(`P${panel.panel_no} `)) || "";
+        const panelContext = panelListText.split("\n").find(l => l.startsWith(`P${panelNo} `)) || "";
         const imagePrompt = storyboard_style === 'GRID_SHEET_V1'
           ? buildGridSheetImagePrompt(panel, panelContext)
           : buildTechPageImagePrompt(panel, panelContext);
@@ -437,10 +452,18 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
         const imageResult = await generateImageWithNanoBanana({
           lovableApiKey: lovableApiKey!,
           promptText: imagePrompt,
-          label: `storyboard_panel_${panel.panel_no}`,
+          label: `storyboard_panel_${panelNo}`,
           seed,
           supabase,
           projectId: project_id,
+        });
+
+        console.log(`[SB] image_result`, { 
+          no: panelNo, 
+          success: imageResult.success, 
+          hasUrl: !!imageResult.imageUrl,
+          hasBase64: !!imageResult.imageBase64,
+          error: imageResult.error?.slice(0, 200)
         });
 
         if (imageResult.success && (imageResult.imageUrl || imageResult.imageBase64)) {
@@ -453,6 +476,7 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
               (c) => c.charCodeAt(0)
             );
             const fileName = `storyboard/${panel.id}.png`;
+            console.log(`[SB] uploading_panel`, { no: panelNo, fileName });
 
             const { data: uploadData, error: uploadError } = await supabase.storage
               .from("project-assets")
@@ -466,34 +490,73 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
                 .from("project-assets")
                 .getPublicUrl(fileName);
               finalImageUrl = publicUrl.publicUrl;
+              console.log(`[SB] uploaded_ok`, { no: panelNo, url: finalImageUrl?.slice(0, 80) });
             } else {
-              console.error(`[generate-storyboard] Storage upload failed:`, uploadError);
+              console.error(`[SB] upload_error`, { no: panelNo, error: uploadError });
+              // Mark as error but continue
+              await supabase
+                .from("storyboard_panels")
+                .update({ 
+                  image_status: 'error',
+                  image_error: `Storage upload failed: ${uploadError?.message || 'Unknown'}`
+                })
+                .eq("id", panel.id);
+              generatedPanels.push({ ...panel, image_error: uploadError?.message });
+              continue;
             }
           }
 
           if (finalImageUrl) {
             await supabase
               .from("storyboard_panels")
-              .update({ image_url: finalImageUrl })
+              .update({ 
+                image_url: finalImageUrl,
+                image_status: 'success',
+                image_error: null
+              })
               .eq("id", panel.id);
 
             generatedPanels.push({ ...panel, image_url: finalImageUrl });
-            console.log(`[generate-storyboard] Generated image for panel ${panel.panel_no} (seed: ${seed})`);
+            console.log(`[SB] panel_complete`, { no: panelNo, seed });
           } else {
-            generatedPanels.push(panel);
+            await supabase
+              .from("storyboard_panels")
+              .update({ image_status: 'error', image_error: 'No final URL generated' })
+              .eq("id", panel.id);
+            generatedPanels.push({ ...panel, image_error: 'No final URL' });
           }
         } else {
-          console.error(
-            `[generate-storyboard] Image failed for panel ${panel.panel_no}:`,
-            imageResult.error
-          );
-          generatedPanels.push(panel);
+          const errMsg = imageResult.error?.slice(0, 500) || 'Image generation failed';
+          console.error(`[SB] image_failed`, { no: panelNo, error: errMsg });
+          await supabase
+            .from("storyboard_panels")
+            .update({ image_status: 'error', image_error: errMsg })
+            .eq("id", panel.id);
+          generatedPanels.push({ ...panel, image_error: errMsg });
         }
       } catch (imgError) {
-        console.error(`[generate-storyboard] Image error for panel ${panel.panel_no}:`, imgError);
-        generatedPanels.push(panel);
+        const errMsg = imgError instanceof Error ? imgError.message : String(imgError);
+        console.error(`[SB] panel_error`, { no: panelNo, id: panel.id, error: errMsg.slice(0, 500) });
+        
+        // Save error to panel for diagnosis
+        await supabase
+          .from("storyboard_panels")
+          .update({ 
+            image_status: 'error',
+            image_error: errMsg.slice(0, 500)
+          })
+          .eq("id", panel.id);
+        
+        generatedPanels.push({ ...panel, image_error: errMsg });
+        // continue - don't break the loop
       }
     }
+
+    console.log(`[SB] loop_complete`, { 
+      generated: generatedPanels.length,
+      withImages: generatedPanels.filter(p => p.image_url).length,
+      withErrors: generatedPanels.filter(p => p.image_error).length
+    });
 
     return new Response(
       JSON.stringify({
