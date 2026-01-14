@@ -238,11 +238,12 @@ async function buildCharacterPackData(
       charData = fetchedChar;
 
       // Get reference images (frontal and profile) from pack slots
+      // FIX: Use charId (resolved) instead of char.id (may be undefined)
       const { data: packSlots } = await supabase
         .from('character_pack_slots')
         .select('slot_type, image_url, status')
-        .eq('character_id', char.id)
-        .in('status', ['accepted', 'generated'])
+        .eq('character_id', charId)
+        .in('status', ['accepted', 'generated', 'uploaded'])
         .in('slot_type', ['ref_closeup_front', 'closeup_front', 'closeup_profile', 'turn_side', 'identity_primary']);
 
       // Extract DNA fields
@@ -525,9 +526,13 @@ serve(async (req) => {
     // PHASE 2: Generate Panel Structure with GPT-5.2
     // ========================================================================
 
-    // Build cast list for planner
+    // Helper: normalize key for matching
+    const cleanKey = (s: string) =>
+      s.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+
+    // Build cast list for planner with explicit keys for resolution
     const castListText = castLocks.map(c => 
-      `- ID: ${c.id} | Name: ${c.name} | DNA: ${c.visual_dna_lock.text.substring(0, 100)}...`
+      `- KEY: "${cleanKey(c.name)}" | ID: ${c.id} | Name: ${c.name}`
     ).join('\n');
 
     // Build scene context
@@ -539,11 +544,23 @@ serve(async (req) => {
         : '',
     };
 
+    // Build cast keys instruction for planner
+    const castKeysInstruction = `
+═══════════════════════════════════════════════════════════════
+CRITICAL OUTPUT RULES FOR characters_present:
+═══════════════════════════════════════════════════════════════
+- Use ONLY keys or IDs from the cast list above.
+- Valid keys: ${castLocks.map(c => `"${cleanKey(c.name)}"`).join(', ')}
+- NEVER output "undefined", "null", or empty strings.
+- If no characters appear in a panel, use an empty array [].
+- Do NOT invent characters - use ONLY those listed above.
+═══════════════════════════════════════════════════════════════`;
+
     const userPrompt = buildStoryboardPlannerUserPrompt({
       storyboard_style,
       panel_count: targetPanelCount,
       style_pack_lock_text: stylePackLock.text,
-      cast_list: castListText || 'No characters specified',
+      cast_list: castListText ? `${castListText}\n${castKeysInstruction}` : 'No characters specified',
       location_lock_text: locationLock?.visual_lock.text || 'Location not specified',
       slugline: sceneContext.slugline,
       scene_summary: sceneContext.scene_summary,
@@ -588,6 +605,80 @@ serve(async (req) => {
     console.log(`[generate-storyboard] Generated ${panels.length} panels structure`);
 
     // ========================================================================
+    // PHASE 2.5: ROBUST CHARACTER RESOLUTION (Post-Planner Normalization)
+    // ========================================================================
+    
+    // Helpers for ID validation
+    const isUuid = (s?: string) =>
+      !!s && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+
+    const isBadToken = (s?: string) => {
+      const v = (s || "").trim().toLowerCase();
+      return !v || v === "undefined" || v === "null" || v === "none" || v === "n/a";
+    };
+
+    // Build cast index for resolution (by key, name, and ID)
+    const castIndex = new Map<string, { id: string; name: string }>();
+    for (const c of castLocks) {
+      const key = cleanKey(c.name);
+      castIndex.set(c.id, { id: c.id, name: c.name });              // by ID
+      castIndex.set(key, { id: c.id, name: c.name });               // by normalized key
+      castIndex.set(c.name.toLowerCase(), { id: c.id, name: c.name }); // by exact name lowercase
+    }
+    // Also index from characterPackData
+    for (const c of characterPackData) {
+      const key = cleanKey(c.name);
+      if (!castIndex.has(c.id)) castIndex.set(c.id, { id: c.id, name: c.name });
+      if (!castIndex.has(key)) castIndex.set(key, { id: c.id, name: c.name });
+    }
+
+    console.log(`[SB] cast_index_built`, { keys: [...castIndex.keys()].slice(0, 15) });
+
+    // Normalize characters_present in each panel (resolve names/keys to IDs)
+    for (const panel of panels) {
+      const raw = Array.isArray(panel.characters_present) ? panel.characters_present : [];
+      const keysField = Array.isArray((panel as any).characters_present_keys) 
+        ? (panel as any).characters_present_keys 
+        : [];
+
+      // Merge both fields and extract tokens
+      const merged = [...raw, ...keysField]
+        .map((x: any) => typeof x === 'string' ? x.trim() : x?.character_id?.trim?.())
+        .filter((x: any) => typeof x === 'string' && !isBadToken(x));
+
+      const resolvedIds: string[] = [];
+      for (const token of merged) {
+        // If already a valid UUID in our cast, use it
+        if (isUuid(token) && castIndex.has(token)) {
+          resolvedIds.push(token);
+          continue;
+        }
+        // Try to resolve by key/name
+        const hit = castIndex.get(cleanKey(token)) || castIndex.get(token.toLowerCase());
+        if (hit) {
+          resolvedIds.push(hit.id);
+          console.log(`[SB] char_resolved: "${token}" -> ${hit.id} (${hit.name})`);
+        }
+      }
+
+      // Deduplicate and assign back
+      panel.characters_present = [...new Set(resolvedIds)];
+
+      // Warning if we couldn't resolve any but had tokens
+      if (panel.characters_present.length === 0 && merged.length > 0) {
+        console.warn(`[SB] char_resolve_failed`, { 
+          panel: panel.panel_no || panel.panel_id,
+          raw_tokens: merged.slice(0, 5),
+          available_keys: [...castIndex.keys()].slice(0, 10)
+        });
+      }
+    }
+
+    console.log(`[SB] post_normalize`, { 
+      panels: panels.map((p: any) => ({ no: p.panel_no || p.panel_id, chars: p.characters_present }))
+    });
+
+    // ========================================================================
     // PHASE 3: Persist Panels to Database
     // ========================================================================
 
@@ -614,10 +705,11 @@ serve(async (req) => {
       .delete()
       .eq("scene_id", scene_id);
 
-    // Normalize characters_present to array of IDs
+    // Normalize characters_present to array of IDs (already normalized above, just extract)
     const normalizeCharacters = (chars: any[]): string[] => {
       if (!chars || chars.length === 0) return [];
-      return chars.map(c => typeof c === 'string' ? c : c.character_id).filter(Boolean);
+      // Already normalized to string IDs by Phase 2.5
+      return chars.filter((c: any) => typeof c === 'string' && isUuid(c));
     };
 
     // Insert new panels with full v1.0 SPEC compliance
@@ -758,37 +850,81 @@ serve(async (req) => {
         }
 
         // ========================================================================
-        // RESOLVE REFERENCE IMAGE URLs FOR MULTIMODAL INPUT (v2.1)
+        // PACK-FIRST: Query slots aprobados directamente de character_pack_slots
         // ========================================================================
         const referenceImageUrls: string[] = [];
+        const charIds = panel.characters_present.filter((id: string) => isUuid(id));
 
-        // Get references for characters present in this panel (max 2 per char)
-        const presentCharPacks = characterPackData.filter(c => 
-          panel.characters_present.includes(c.id)
-        );
+        if (charIds.length > 0) {
+          // Query pack slots aprobados con orden de prioridad
+          const { data: slots } = await supabase
+            .from("character_pack_slots")
+            .select("character_id, slot_type, image_url, status")
+            .in("character_id", charIds)
+            .in("status", ["accepted", "uploaded", "generated"])
+            .not("image_url", "is", null);
 
-        for (const char of presentCharPacks) {
-          // Priority: frontal > profile (max 2 per character)
-          if (char.reference_frontal) referenceImageUrls.push(char.reference_frontal);
-          if (char.reference_profile) referenceImageUrls.push(char.reference_profile);
+          // Orden de prioridad para refs de identidad
+          const slotPriority = [
+            "ref_closeup_front",
+            "identity_primary",
+            "closeup_front",
+            "ref_profile",
+            "closeup_profile",
+            "turn_side",
+            "turn_front_34",
+            "expr_neutral",
+          ];
+
+          // Agrupar por personaje
+          const slotsByChar = new Map<string, typeof slots>();
+          for (const s of (slots || [])) {
+            if (!s.image_url) continue;
+            if (!slotsByChar.has(s.character_id)) slotsByChar.set(s.character_id, []);
+            slotsByChar.get(s.character_id)!.push(s);
+          }
+
+          // Tomar máx 3 refs por personaje, ordenados por prioridad
+          for (const charId of charIds) {
+            const charSlots = slotsByChar.get(charId) || [];
+            charSlots.sort((a: any, b: any) => 
+              slotPriority.indexOf(a.slot_type) - slotPriority.indexOf(b.slot_type)
+            );
+            
+            const topSlots = charSlots.slice(0, 3);
+            for (const s of topSlots) {
+              referenceImageUrls.push(s.image_url);
+            }
+          }
         }
 
-        // Also add location reference if available (max 1)
+        // Location reference (max 1)
         if (locationLock?.reference_images?.length) {
           referenceImageUrls.push(locationLock.reference_images[0]);
         }
 
+        // Hard cap total
+        const finalRefs = referenceImageUrls.slice(0, 10);
+
         console.log(`[SB] panel_${panelNo}_refs`, { 
-          char_refs: referenceImageUrls.length,
-          chars: presentCharPacks.map(c => c.name).join(','),
-          first_url_host: referenceImageUrls[0] ? new URL(referenceImageUrls[0]).host : 'none'
+          char_ids: charIds,
+          ref_count: finalRefs.length,
+          first_host: finalRefs[0] ? new URL(finalRefs[0]).host : 'none'
         });
 
-        // Generate image with NanoBanana + multimodal refs
+        // Guardrail: si hay personajes pero no refs, marcar como identity_unlocked
+        if (charIds.length > 0 && finalRefs.length === 0) {
+          console.warn(`[SB] panel_${panelNo}_identity_unlocked`, { 
+            chars: charIds,
+            reason: "no_approved_pack_slots"
+          });
+        }
+
+        // Generate image with NanoBanana + multimodal refs (pack-first)
         const imageResult = await generateImageWithNanoBanana({
           lovableApiKey: lovableApiKey!,
           promptText: imagePrompt,
-          referenceImageUrls,  // NEW: Pass actual image references
+          referenceImageUrls: finalRefs,  // PACK-FIRST: Use slots directly
           label: `storyboard_panel_${panelNo}`,
           seed,
           supabase,
