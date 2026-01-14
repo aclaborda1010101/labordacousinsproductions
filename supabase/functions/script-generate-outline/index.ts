@@ -1,3 +1,4 @@
+// Deploy timestamp: 2026-01-14T10:05:00Z - force clean deploy
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { logGenerationCost, extractAnthropicTokens, extractUserId } from "../_shared/cost-logging.ts";
 
