@@ -16,17 +16,29 @@ interface State {
   isNoOutlineError: boolean;
 }
 
-// Helper to detect NO_OUTLINE_FOUND errors
+// Helper to detect NO_OUTLINE_FOUND errors - checks all possible formats
 function isNoOutlineFoundError(error: Error | null): boolean {
   if (!error) return false;
+  
   const msg = error.message?.toLowerCase() || '';
   const stack = error.stack?.toLowerCase() || '';
-  return (
-    msg.includes('no_outline_found') ||
-    msg.includes('no se encontró un outline') ||
-    stack.includes('no_outline_found') ||
-    (error as any)?.suggestedAction === 'generate_outline'
-  );
+  const errorStr = JSON.stringify(error).toLowerCase();
+  
+  // Check direct message/stack
+  if (msg.includes('no_outline_found') || msg.includes('no se encontró un outline')) return true;
+  if (stack.includes('no_outline_found')) return true;
+  
+  // Check suggestedAction property
+  if ((error as any)?.suggestedAction === 'generate_outline') return true;
+  
+  // Check nested context from Supabase function errors
+  const context = (error as any)?.context;
+  if (context?.status === 404 && context?.bodyJson?.error === 'NO_OUTLINE_FOUND') return true;
+  
+  // Check if stringified error contains the pattern
+  if (errorStr.includes('no_outline_found')) return true;
+  
+  return false;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
