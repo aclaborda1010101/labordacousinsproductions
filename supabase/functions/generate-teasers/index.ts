@@ -136,7 +136,12 @@ serve(async (req) => {
       });
     }
 
-    const characterList = screenplay.characters?.map((c: any) => c.name).join(', ') || '';
+    // Safely extract character list - handle both array and object formats
+    const characterList = Array.isArray(screenplay.characters) 
+      ? screenplay.characters.map((c: any) => c.name || c).join(', ')
+      : typeof screenplay.characters === 'object' && screenplay.characters
+        ? Object.values(screenplay.characters).map((c: any) => typeof c === 'string' ? c : c?.name || '').filter(Boolean).join(', ')
+        : '';
 
     const systemPrompt = `Eres un editor de tráilers profesional de Hollywood. 
 Tu trabajo es crear teasers cinematográficos que enganchen al espectador.
