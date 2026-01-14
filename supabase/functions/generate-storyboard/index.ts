@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { buildTokenLimit } from "../_shared/model-config.ts";
 import { generateImageWithNanoBanana } from "../_shared/image-generator.ts";
+import { aiFetch } from "../_shared/ai-fetch.ts";
+import { serializePanelList, generateSeed } from "../_shared/storyboard-serializer.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -316,33 +318,25 @@ ${show_movement_arrows ? "Include movement_arrows for camera and subject movemen
 
 Return a JSON object with a "panels" array containing ${targetPanelCount} panels.`;
 
-    // Call Lovable AI for panel structure generation
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${lovableApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    // Call Lovable AI for panel structure generation using aiFetch envelope
+    const aiData = await aiFetch({
+      url: "https://ai.gateway.lovable.dev/v1/chat/completions",
+      apiKey: lovableApiKey!,
+      payload: {
         model: "openai/gpt-5.2",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
-        temperature: 0.7,
         ...buildTokenLimit("openai/gpt-5.2", 12000),
         response_format: { type: "json_object" },
-      }),
+      },
+      label: "storyboard_plan",
+      supabase,
+      projectId: project_id,
     });
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error("[generate-storyboard] AI error:", errorText);
-      throw new Error(`AI generation failed: ${aiResponse.status}`);
-    }
-
-    const aiData = await aiResponse.json();
-    const content = aiData.choices?.[0]?.message?.content || "";
+    const content = (aiData.choices as Array<{ message?: { content?: string } }>)?.[0]?.message?.content || "";
     
     // Parse JSON from response
     let panelsData: { panels: StoryboardPanel[] };
@@ -423,18 +417,30 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
 
     console.log(`[generate-storyboard] Inserted ${insertedPanels?.length} panels`);
 
+    // Generate deterministic PANEL_LIST for consistent image generation
+    const panelListText = serializePanelList(panels);
+    console.log(`[generate-storyboard] Serialized PANEL_LIST:\n${panelListText}`);
+
     // Generate grayscale pencil sketch images for each panel using NanoBanana
     const generatedPanels = [];
     for (const panel of insertedPanels || []) {
       try {
+        // Calculate deterministic seed for this panel
+        const seed = generateSeed(scene_id, storyboard_style, panel.panel_no);
+        
+        // Build image prompt with frozen PANEL_LIST context
+        const panelContext = panelListText.split("\n").find(l => l.startsWith(`P${panel.panel_no} `)) || "";
         const imagePrompt = storyboard_style === 'GRID_SHEET_V1'
-          ? buildGridSheetImagePrompt(panel)
-          : buildTechPageImagePrompt(panel);
+          ? buildGridSheetImagePrompt(panel, panelContext)
+          : buildTechPageImagePrompt(panel, panelContext);
 
         const imageResult = await generateImageWithNanoBanana({
           lovableApiKey: lovableApiKey!,
           promptText: imagePrompt,
           label: `storyboard_panel_${panel.panel_no}`,
+          seed,
+          supabase,
+          projectId: project_id,
         });
 
         if (imageResult.success && (imageResult.imageUrl || imageResult.imageBase64)) {
@@ -472,7 +478,7 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
               .eq("id", panel.id);
 
             generatedPanels.push({ ...panel, image_url: finalImageUrl });
-            console.log(`[generate-storyboard] Generated image for panel ${panel.panel_no}`);
+            console.log(`[generate-storyboard] Generated image for panel ${panel.panel_no} (seed: ${seed})`);
           } else {
             generatedPanels.push(panel);
           }
@@ -527,7 +533,7 @@ function buildImagePrompt(
   return `${panel.panel_intent}. Shot: ${panel.shot_hint}. Characters: ${charNames || "none"}. ${arrows ? `Movement: ${arrows}.` : ""}`;
 }
 
-function buildGridSheetImagePrompt(panel: any): string {
+function buildGridSheetImagePrompt(panel: any, panelContext: string): string {
   const staging = panel.staging as Record<string, any> || {};
   const arrows = staging.movement_arrows || [];
   const arrowsText = arrows.length > 0 
@@ -542,19 +548,25 @@ Classic Hollywood storyboard aesthetic from pre-production.
 Panel ${panel.panel_no}: ${panel.shot_hint} shot.
 ${panel.panel_intent}
 
+FROZEN CONTEXT (render exactly):
+${panelContext}
+
 ${arrowsText}
 
 NO color. NO realistic rendering. NO polish. NO text labels.
 This is a WORKING storyboard, not concept art.`;
 }
 
-function buildTechPageImagePrompt(panel: any): string {
+function buildTechPageImagePrompt(panel: any, panelContext: string): string {
   return `Technical storyboard frame for film production shooting plan.
 Style: Clean pencil sketch with technical precision, black and white, grayscale.
 One single frame showing the camera angle and composition.
 
 Shot ${panel.panel_no}: ${panel.shot_hint}
 ${panel.panel_intent}
+
+FROZEN CONTEXT (render exactly):
+${panelContext}
 
 Simple, professional, production-ready storyboard frame.
 NO color. NO decorative elements.`;

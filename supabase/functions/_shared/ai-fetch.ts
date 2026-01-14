@@ -1,12 +1,32 @@
 /**
  * AI Request Envelope - Centralized logging and error handling for all AI calls
+ * 
+ * Features:
+ * - Sanitizes undefined values (common cause of 400 errors)
+ * - Logs request_id, duration, payload/response previews
+ * - Optionally persists to generation_run_logs for full observability
  */
+
+import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 export interface AiFetchOptions {
   url: string;
   apiKey: string;
   payload: Record<string, unknown>;
   label: string;
+  // Optional: for persisting logs to database
+  supabase?: SupabaseClient;
+  projectId?: string;
+  userId?: string;
+}
+
+/**
+ * Extract provider from model string (e.g., "openai/gpt-5.2" -> "openai")
+ */
+function extractProvider(model: unknown): string {
+  if (typeof model !== "string") return "unknown";
+  const parts = model.split("/");
+  return parts[0] || "unknown";
 }
 
 export async function aiFetch({
@@ -14,6 +34,9 @@ export async function aiFetch({
   apiKey,
   payload,
   label,
+  supabase,
+  projectId,
+  userId,
 }: AiFetchOptions): Promise<Record<string, unknown>> {
   const requestId = crypto.randomUUID();
 
@@ -36,6 +59,7 @@ export async function aiFetch({
   const text = await res.text();
   const durationMs = Date.now() - startedAt;
 
+  // Console logging for immediate visibility
   console.log("AI_RUN", {
     requestId,
     label,
@@ -45,6 +69,32 @@ export async function aiFetch({
     payloadPreview: JSON.stringify(safePayload).slice(0, 800),
     responsePreview: text.slice(0, 800),
   });
+
+  // Persist to generation_run_logs if supabase client provided
+  if (supabase && projectId) {
+    try {
+      await supabase.from("generation_run_logs").insert({
+        id: requestId,
+        user_id: userId || "00000000-0000-0000-0000-000000000000",
+        project_id: projectId,
+        function_name: label,
+        status: res.ok ? "success" : "error",
+        provider: extractProvider(safePayload.model),
+        model: typeof safePayload.model === "string" ? safePayload.model : null,
+        error_code: res.ok ? null : String(res.status),
+        error_message: res.ok ? null : text.slice(0, 1000),
+        metadata: {
+          durationMs,
+          payloadPreview: JSON.stringify(safePayload).slice(0, 500),
+          responsePreview: res.ok ? text.slice(0, 500) : null,
+        },
+        finished_at: new Date().toISOString(),
+      });
+    } catch (logError) {
+      // Don't fail the main request if logging fails
+      console.error("AI_RUN_LOG_ERROR", { requestId, error: logError });
+    }
+  }
 
   if (!res.ok) {
     throw new Error(`${label} failed (${res.status}): ${text}`);
