@@ -65,7 +65,7 @@ function json(data: unknown, status = 200) {
 
 /**
  * Build a MINIMAL motion-focused prompt for video generation
- * ANTI-HALLUCINATION: Only describe movement, NOT characters or scenery
+ * ANTI-HALLUCINATION v3: Only describe movement, NOT characters or scenery
  * Characters and scenery are already defined in the keyframes
  */
 function buildMicroShotPrompt(
@@ -74,14 +74,16 @@ function buildMicroShotPrompt(
   _keyframeInitial: Keyframe | null,
   _keyframeFinal: Keyframe | null
 ): string {
-  // ============= ANTI-HALLUCINATION PROMPT =============
+  // ============= ANTI-HALLUCINATION PROMPT v3 =============
   // RULE: NEVER describe characters physically (they're in keyframes)
   // RULE: NEVER describe scenery/decorado (it's in keyframes)
   // ONLY: Camera movement + minimal physical action
+  // HARD LINES: Added to prevent drift in Kling/Veo/Runway
   
   const lines: string[] = [
     'Use the provided start and end images as ground truth.',
     'Create only subtle natural motion connecting them.',
+    'No scene changes. No style changes.',  // HARD LINE anti-drift
     'Keep identity, wardrobe, props, lighting and storyboard style unchanged.',
     'No new objects. No new characters. No text overlays.',
     ''
@@ -111,6 +113,10 @@ function buildMicroShotPrompt(
   // Continuity enforcement
   lines.push('');
   lines.push('CONTINUITY: Match start/end keyframes exactly. No drift in character appearance, wardrobe, or props.');
+  
+  // REDUNDANCIA ÚTIL: repetir ground truth al final para reforzar
+  lines.push('');
+  lines.push('Use start and end images as ground truth.');
 
   return lines.join('\n');
 }

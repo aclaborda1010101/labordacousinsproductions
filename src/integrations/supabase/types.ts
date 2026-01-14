@@ -2959,6 +2959,9 @@ export type Database = {
           frame_type: string | null
           id: string
           identity_anchors: Json | null
+          identity_fix_attempts: number | null
+          identity_fix_engine_model: string | null
+          identity_fix_latency_ms: number | null
           identity_score: number | null
           identity_status: string | null
           image_url: string | null
@@ -2986,6 +2989,9 @@ export type Database = {
           frame_type?: string | null
           id?: string
           identity_anchors?: Json | null
+          identity_fix_attempts?: number | null
+          identity_fix_engine_model?: string | null
+          identity_fix_latency_ms?: number | null
           identity_score?: number | null
           identity_status?: string | null
           image_url?: string | null
@@ -3013,6 +3019,9 @@ export type Database = {
           frame_type?: string | null
           id?: string
           identity_anchors?: Json | null
+          identity_fix_attempts?: number | null
+          identity_fix_engine_model?: string | null
+          identity_fix_latency_ms?: number | null
           identity_score?: number | null
           identity_status?: string | null
           image_url?: string | null
