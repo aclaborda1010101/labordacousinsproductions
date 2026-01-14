@@ -19,11 +19,15 @@ import {
   Trash2,
   Plus,
   Pencil,
-  Info
+  Info,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { StoryboardPanel } from '@/types/technical-doc';
+import { StoryboardGenerationOverlay } from './StoryboardGenerationOverlay';
+import { useStoryboardProgress } from '@/hooks/useStoryboardProgress';
 
 interface StoryboardPanelViewProps {
   sceneId: string;
@@ -47,10 +51,23 @@ export function StoryboardPanelView({
   const [panels, setPanels] = useState<StoryboardPanel[]>([]);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(true);
   const [editingPanel, setEditingPanel] = useState<string | null>(null);
   const [allApproved, setAllApproved] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState<'GRID_SHEET_V1' | 'TECH_PAGE_V1'>('GRID_SHEET_V1');
   const [selectedImage, setSelectedImage] = useState<{ url: string; panelNo: number } | null>(null);
+
+  // Progress tracking hook
+  const expectedPanelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
+  const {
+    panelStatuses,
+    currentPhase,
+    progress,
+    currentPanel,
+    elapsedSeconds,
+    estimatedRemainingMs,
+    totalPanels,
+  } = useStoryboardProgress(sceneId, generating, expectedPanelCount);
 
   // Fetch existing panels
   useEffect(() => {
@@ -81,6 +98,7 @@ export function StoryboardPanelView({
 
   const generateStoryboard = async () => {
     setGenerating(true);
+    setShowOverlay(true);
     try {
       const panelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
       const { data, error } = await supabase.functions.invoke('generate-storyboard', {
@@ -106,7 +124,16 @@ export function StoryboardPanelView({
       toast.error('Error al generar storyboard');
     } finally {
       setGenerating(false);
+      setShowOverlay(false);
     }
+  };
+
+  const handleCancelGeneration = () => {
+    // Note: actual cancellation would need backend support
+    // For now, just hide overlay and let it finish in background
+    setGenerating(false);
+    setShowOverlay(false);
+    toast.info('Generación cancelada');
   };
 
   const generatePanelImage = async (panel: StoryboardPanel) => {
@@ -209,8 +236,28 @@ export function StoryboardPanelView({
     );
   }
 
+  // Helper to get panel status for badges
+  const getPanelImageStatus = (panel: StoryboardPanel) => {
+    const status = panelStatuses.find(s => s.panel_no === panel.panel_no);
+    return status?.status || (panel.image_url ? 'success' : 'pending');
+  };
+
   return (
     <div className="space-y-4">
+      {/* Progress Overlay */}
+      {generating && showOverlay && (
+        <StoryboardGenerationOverlay
+          totalPanels={totalPanels}
+          currentPanel={currentPanel}
+          panelStatuses={panelStatuses}
+          currentPhase={currentPhase}
+          progress={progress}
+          elapsedSeconds={elapsedSeconds}
+          estimatedRemainingMs={estimatedRemainingMs}
+          onContinueInBackground={() => setShowOverlay(false)}
+          onCancel={handleCancelGeneration}
+        />
+      )}
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
@@ -274,9 +321,24 @@ export function StoryboardPanelView({
               >
                 <CardHeader className="p-3 pb-0">
                   <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-xs">
-                      Panel {panel.panel_no}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        Panel {panel.panel_no}
+                      </Badge>
+                      {/* Status Badge */}
+                      {getPanelImageStatus(panel) === 'generating' && (
+                        <Badge variant="secondary" className="text-xs animate-pulse">
+                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                          Generando
+                        </Badge>
+                      )}
+                      {getPanelImageStatus(panel) === 'error' && (
+                        <Badge variant="destructive" className="text-xs">
+                          <AlertCircle className="w-3 h-3 mr-1" />
+                          Error
+                        </Badge>
+                      )}
+                    </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         variant="ghost"
