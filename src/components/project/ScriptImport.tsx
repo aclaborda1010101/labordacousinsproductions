@@ -2662,6 +2662,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   break;
                 }
                 
+                // Handle PARSE_FAILED - show actionable error and allow retry
+                if (errorMsg.includes('PARSE_FAILED') || errorMsg.includes('Cannot coerce')) {
+                  toast.error('Error al procesar respuesta del modelo AI', {
+                    description: 'El modelo devolvió una respuesta mal formada. Reintentando...',
+                    duration: 5000
+                  });
+                  // Continue to retry logic below
+                }
+                
                 // For other errors, increment attempt and maybe retry
                 batchAttempts[batchIdx]++;
                 episodeState = {
@@ -3108,12 +3117,30 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     } catch (error: any) {
       console.error('Pipeline error:', error);
-      toast.error(error.message || 'Error en la generación');
+      
+      // Show actionable error message based on error type
+      const errorMsg = error?.message || 'Error en la generación';
+      
+      if (errorMsg.includes('PARSE_FAILED') || errorMsg.includes('Cannot coerce')) {
+        toast.error('Error al procesar respuesta del AI', {
+          description: 'El modelo no devolvió un guion válido. Intenta regenerar.',
+          action: {
+            label: 'Regenerar',
+            onClick: () => approveAndGenerateEpisodes()
+          },
+          duration: 15000
+        });
+      } else if (errorMsg.includes('GATE_FAILED')) {
+        // Already handled by DensityGateModal
+      } else {
+        toast.error(errorMsg);
+      }
+      
       updatePipelineStep('episodes', 'error');
       
       // V49: Fail background task
       if (taskId) {
-        failTask(taskId, error.message || 'Error en la generación');
+        failTask(taskId, errorMsg);
         setScriptTaskId(null);
       }
     } finally {
