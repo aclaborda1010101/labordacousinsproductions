@@ -179,22 +179,21 @@ serve(async (req) => {
       }
     }
 
-    // Build panels summary for the prompt
-    const panelsSummary = panels.map(p => {
-      const chars = (p.characters_present || [])
-        .map((cid: string) => characterNames[cid] || cid)
-        .join(", ");
-      const props = (p.props_present || []).join(", ");
-      const staging = p.staging as Record<string, unknown> | null;
-      const actionBeat = staging?.action_beat || p.action_beat_ref || "";
+    // Build COMPACT panels summary for the prompt (avoid "prompt too long")
+    const panelsCompact = panels.map((p: any) => ({
+      panel_no: p.panel_no,
+      panel_code: p.panel_code || `P${p.panel_no}`,
+      shot_hint: p.shot_hint || 'PM',
+      intent: p.panel_intent || '',
+      chars: (p.characters_present || []).map((cid: string) => characterNames[cid] || cid),
+      props: p.props_present || [],
+      staging: p.staging ? {
+        axis_180: (p.staging as any).axis_180 ?? null,
+        movement: (p.staging as any).movement_arrows ?? null,
+      } : null,
+    }));
 
-      return `Panel ${p.panel_no} (${p.panel_code || `P${p.panel_no}`}):
-  - Shot hint: ${p.shot_hint}
-  - Intent: ${p.panel_intent}
-  - Characters: ${chars || "none"}
-  - Props: ${props || "none"}
-  - Action: ${actionBeat}`;
-    }).join("\n\n");
+    const panelsSummary = JSON.stringify(panelsCompact, null, 2);
 
     const userPrompt = `Create a CAMERA PLAN for this scene.
 
@@ -203,7 +202,7 @@ LOCATION: ${locationInfo}
 TIME: ${sceneData?.interior_exterior || "INT"} / ${sceneData?.time_of_day || "DÍA"}
 SUMMARY: ${sceneData?.summary || "No summary available"}
 
-APPROVED STORYBOARD PANELS:
+APPROVED STORYBOARD PANELS (compact JSON):
 ${panelsSummary}
 
 Generate:
@@ -213,33 +212,71 @@ Generate:
 
 Return ONLY valid JSON.`;
 
-    // Call Lovable AI with GPT-5.2 for complex reasoning
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${lovableApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    // ==========================================================================
+    // ROBUST AI CALLER with full logging + fallback
+    // ==========================================================================
+    const doAIFetch = async (payload: any, label: string) => {
+      const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${lovableApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const raw = await res.text();
+      console.log(`[CAMPLAN] ${label} status`, res.status);
+      console.log(`[CAMPLAN] ${label} body_head`, raw.slice(0, 1200));
+
+      if (!res.ok) {
+        return { ok: false as const, status: res.status, raw };
+      }
+
+      try {
+        const data = JSON.parse(raw);
+        return { ok: true as const, data };
+      } catch {
+        return { ok: false as const, status: 500, raw: `Non-JSON: ${raw.slice(0, 1200)}` };
+      }
+    };
+
+    // Attempt A: with response_format (preferred for structured JSON)
+    const payloadA = {
+      model: "openai/gpt-5.2",
+      temperature: 0.3,
+      max_completion_tokens: 8000,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: CAMERA_PLAN_SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+    };
+
+    let aiResult = await doAIFetch(payloadA, "payloadA");
+
+    // Fallback B: without response_format (ultra-compatible)
+    if (!aiResult.ok) {
+      console.log("[CAMPLAN] payloadA failed, trying payloadB fallback");
+      const payloadB = {
         model: "openai/gpt-5.2",
+        temperature: 0.3,
+        max_completion_tokens: 8000,
         messages: [
           { role: "system", content: CAMERA_PLAN_SYSTEM_PROMPT },
-          { role: "user", content: userPrompt }
+          { role: "user", content: userPrompt + "\n\nReturn ONLY valid JSON. No markdown, no explanations." },
         ],
-        temperature: 0.4,
-        max_completion_tokens: 8000,
-        response_format: { type: "json_object" },
-      }),
-    });
+      };
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error("[generate-camera-plan] AI error:", errorText);
-      throw new Error(`AI generation failed: ${aiResponse.status}`);
+      aiResult = await doAIFetch(payloadB, "payloadB");
     }
 
-    const aiData = await aiResponse.json();
-    const content = aiData.choices?.[0]?.message?.content || "";
+    // If both failed, throw with REAL error details
+    if (!aiResult.ok) {
+      throw new Error(`AI generation failed: status=${aiResult.status} body=${aiResult.raw.slice(0, 600)}`);
+    }
+
+    const content = aiResult.data?.choices?.[0]?.message?.content || "";
 
     // Parse the camera plan
     let cameraPlan: {
