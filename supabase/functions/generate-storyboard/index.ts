@@ -152,6 +152,15 @@ async function buildCastLocks(
         referenceImages.push(char.image_url);
       }
 
+      // HARDENING: Only push if ID is a valid UUID
+      const isValidUuid = (s?: string) =>
+        !!s && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+
+      if (!isValidUuid(char.id)) {
+        console.warn(`[SB] cast_lock_skip_invalid`, { name: char.name, id: char.id });
+        continue;
+      }
+
       locks.push({
         id: char.id,
         name: charData?.name || char.name,
@@ -163,6 +172,16 @@ async function buildCastLocks(
       });
     } catch (err) {
       console.log(`[generate-storyboard] Could not fetch DNA for ${char.name}:`, err);
+      
+      // HARDENING: Only push if ID is valid
+      const isValidUuid = (s?: string) =>
+        !!s && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+      
+      if (!isValidUuid(char.id)) {
+        console.warn(`[SB] cast_lock_fallback_skip_invalid`, { name: char.name, id: char.id });
+        continue;
+      }
+
       locks.push({
         id: char.id,
         name: char.name,
@@ -617,22 +636,41 @@ CRITICAL OUTPUT RULES FOR characters_present:
       return !v || v === "undefined" || v === "null" || v === "none" || v === "n/a";
     };
 
-    // Build cast index for resolution (by key, name, and ID)
-    const castIndex = new Map<string, { id: string; name: string }>();
-    for (const c of castLocks) {
-      const key = cleanKey(c.name);
-      castIndex.set(c.id, { id: c.id, name: c.name });              // by ID
-      castIndex.set(key, { id: c.id, name: c.name });               // by normalized key
-      castIndex.set(c.name.toLowerCase(), { id: c.id, name: c.name }); // by exact name lowercase
-    }
-    // Also index from characterPackData
-    for (const c of characterPackData) {
-      const key = cleanKey(c.name);
-      if (!castIndex.has(c.id)) castIndex.set(c.id, { id: c.id, name: c.name });
-      if (!castIndex.has(key)) castIndex.set(key, { id: c.id, name: c.name });
+    // =========================================================================
+    // HARDENED CAST INDEX - Never insert undefined/invalid IDs
+    // =========================================================================
+    type CastHit = { id: string; name: string; key: string };
+    const castIndex = new Map<string, CastHit>();
+
+    const addToIndex = (id: any, name: any) => {
+      // CRITICAL: Skip if not a valid UUID
+      if (!isUuid(id)) return;
+      if (!name || typeof name !== "string") return;
+      
+      const key = cleanKey(name);
+      const hit: CastHit = { id, name, key };
+      
+      // Multiple keys for flexible lookup
+      castIndex.set(id, hit);                    // by UUID
+      castIndex.set(key, hit);                   // by normalized key
+      castIndex.set(name.toLowerCase(), hit);   // by exact lowercase name
+    };
+
+    // ✅ PRIORITY 1: characterPackData (IDs are properly resolved in buildCharacterPackData)
+    for (const c of (characterPackData || [])) {
+      addToIndex(c.id, c.name);
     }
 
-    console.log(`[SB] cast_index_built`, { keys: [...castIndex.keys()].slice(0, 15) });
+    // ✅ PRIORITY 2: castLocks (only if ID is valid UUID - already filtered above)
+    for (const c of (castLocks || [])) {
+      addToIndex(c.id, c.name);
+    }
+
+    console.log("[SB] cast_index_built", {
+      key_count: castIndex.size,
+      sample_keys: [...castIndex.keys()].filter(k => k && k !== "undefined").slice(0, 12),
+      valid_ids: [...new Set([...castIndex.values()].map(v => v.id))].length,
+    });
 
     // Normalize characters_present in each panel (resolve names/keys to IDs)
     for (const panel of panels) {
@@ -655,27 +693,33 @@ CRITICAL OUTPUT RULES FOR characters_present:
         }
         // Try to resolve by key/name
         const hit = castIndex.get(cleanKey(token)) || castIndex.get(token.toLowerCase());
-        if (hit) {
+        if (hit && isUuid(hit.id)) {  // CRITICAL: Validate UUID before pushing
           resolvedIds.push(hit.id);
-          console.log(`[SB] char_resolved: "${token}" -> ${hit.id} (${hit.name})`);
+          console.log(`[SB] char_resolved`, { token, id: hit.id, name: hit.name });
+        } else if (hit) {
+          console.warn(`[SB] char_resolve_invalid_uuid`, { token, hitId: hit.id, hitName: hit.name });
         }
       }
 
-      // Deduplicate and assign back
-      panel.characters_present = [...new Set(resolvedIds)];
+      // Deduplicate and assign back (only valid UUIDs)
+      panel.characters_present = [...new Set(resolvedIds)].filter(id => isUuid(id));
 
       // Warning if we couldn't resolve any but had tokens
       if (panel.characters_present.length === 0 && merged.length > 0) {
         console.warn(`[SB] char_resolve_failed`, { 
           panel: panel.panel_no || panel.panel_id,
           raw_tokens: merged.slice(0, 5),
-          available_keys: [...castIndex.keys()].slice(0, 10)
+          available_keys: [...castIndex.keys()].filter(k => k !== "undefined").slice(0, 10)
         });
       }
     }
 
     console.log(`[SB] post_normalize`, { 
-      panels: panels.map((p: any) => ({ no: p.panel_no || p.panel_id, chars: p.characters_present }))
+      panels: panels.map((p: any) => ({ 
+        no: p.panel_no || p.panel_id, 
+        chars: p.characters_present.filter((c: string) => isUuid(c)),
+        raw_count: p.characters_present.length
+      }))
     });
 
     // ========================================================================
