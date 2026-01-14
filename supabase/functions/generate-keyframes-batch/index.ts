@@ -34,22 +34,92 @@ interface ShotData {
 }
 
 // ============================================================================
+// STYLE PROFILES - Global visual style lock for all keyframes
+// ============================================================================
+type StyleProfile = 'DISNEY_PIXAR_3D' | 'STORYBOARD_PENCIL' | 'REALISTIC';
+
+const STYLE_PROFILES: Record<StyleProfile, {
+  lock: string;
+  negative: string;
+  bannedWords: string[];
+}> = {
+  DISNEY_PIXAR_3D: {
+    lock: `
+═══════════════════════════════════════════════════════════════
+STYLE LOCK (MANDATORY - DISNEY/PIXAR 3D ANIMATION)
+═══════════════════════════════════════════════════════════════
+3D animated family film look, Disney-Pixar inspired.
+Soft global illumination, clean stylized materials.
+Slightly exaggerated facial features, big expressive eyes.
+Smooth skin shading, no pores, no photoreal micro-textures.
+Warm, colorful, cinematic animation lighting.
+16:9 composition. Character proportions: stylized, not realistic.
+═══════════════════════════════════════════════════════════════`,
+    negative: `NO photorealism, NO DSLR, NO live-action, NO film grain, NO real actors,
+NO skin pores, NO realistic fabric micro-detail, NO photography terms,
+NO cinematic still, NO naturalistic, NO real skin texture, NO visible pores`,
+    bannedWords: [
+      'DSLR', 'cinematic still', 'naturalistic', 'film grain', 
+      'photoreal', 'photorealistic', 'live-action', 'real actors', 'pores',
+      'realistic lighting', 'natural skin texture', 'visible pores',
+      'professional photography', 'real fabric', 'skin texture'
+    ]
+  },
+  STORYBOARD_PENCIL: {
+    lock: `
+═══════════════════════════════════════════════════════════════
+STYLE LOCK (STORYBOARD - PENCIL SKETCH)
+═══════════════════════════════════════════════════════════════
+Black and white pencil storyboard style.
+Clean line art, cross-hatching for shadows, minimal detail.
+Technical drawing style, clear composition guides.
+Professional storyboard look for pre-production.
+═══════════════════════════════════════════════════════════════`,
+    negative: `NO color, NO photorealism, NO 3D render, NO shading, NO realistic textures`,
+    bannedWords: ['photorealistic', 'realistic', 'color', '3D', 'render']
+  },
+  REALISTIC: {
+    lock: '', // No style lock for realistic mode
+    negative: '',
+    bannedWords: []
+  }
+};
+
+// Sanitize prompt by removing banned words for the given style
+function sanitizePromptForStyle(prompt: string, styleProfile: StyleProfile): string {
+  const profile = STYLE_PROFILES[styleProfile];
+  if (!profile?.bannedWords?.length) return prompt;
+  
+  let sanitized = prompt;
+  for (const word of profile.bannedWords) {
+    // Case-insensitive replacement
+    sanitized = sanitized.replace(new RegExp(word, 'gi'), '');
+  }
+  // Clean up multiple spaces
+  return sanitized.replace(/\s+/g, ' ').trim();
+}
+
+// ============================================================================
 // STRICT CONTINUITY EDIT PROMPT - For K1/K2 frames (Δt ≤ 1s)
 // Used when editing from previous frame to prevent AI hallucination
 // ============================================================================
 const buildInterframeEditPrompt = (
   frameType: 'mid' | 'end',
   shot: ShotData,
-  sceneContext: string
+  sceneContext: string,
+  styleProfile: StyleProfile = 'DISNEY_PIXAR_3D'
 ): string => {
   const cameraMove = shot.camera_path?.type || 'static';
+  const style = STYLE_PROFILES[styleProfile];
   
   return `
+${style.lock}
+
 ═══════════════════════════════════════════════════════════════════════════════
 EDIT MODE: STRICT CONTINUITY (Δt = 1 second)
 ═══════════════════════════════════════════════════════════════════════════════
 
-EDIT the existing storyboard keyframe image.
+EDIT the existing keyframe image.
 Time step: +1 second. Maintain STRICT continuity.
 
 CONTEXT: ${sceneContext}
@@ -66,14 +136,13 @@ ALLOWED CHANGES ONLY (micro-movement for 1 second):
 ═══════════════════════════════════════════════════════════════════════════════
 FORBIDDEN CHANGES (ABSOLUTE - ZERO TOLERANCE):
 ═══════════════════════════════════════════════════════════════════════════════
-• do NOT change art style (must remain EXACTLY same style as source)
-• do NOT switch to photorealism or 3D render
+• do NOT change art style (must remain Disney-Pixar 3D animation)
+• do NOT switch to photorealism - STRICTLY FORBIDDEN
 • do NOT add or remove characters
 • do NOT change any animal species (dog STAYS dog, cat STAYS cat)
 • do NOT change wardrobe, props, background elements
 • do NOT change lighting direction or color temperature
 • do NOT change framing or shot type beyond micro camera motion
-• do NOT smooth skin or add airbrushed effects
 • do NOT add text, watermarks, or new props
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -84,10 +153,12 @@ CONTINUITY LOCKS (MUST MATCH SOURCE IMAGE EXACTLY):
 • All props in scene (positions, types, colors)
 • Lighting setup (direction, color, intensity)
 • Background/set design
-• Art style and rendering technique
+• Art style: Disney-Pixar 3D animated look
 
 Keep all identities EXACTLY the same as the source image.
 This is frame continuity, NOT a new generation.
+
+NEGATIVE: ${style.negative}
 `.trim();
 };
 
@@ -97,12 +168,16 @@ This is frame continuity, NOT a new generation.
 const buildTransitionEditPrompt = (
   frameType: 'mid' | 'end',
   shot: ShotData,
-  sceneContext: string
+  sceneContext: string,
+  styleProfile: StyleProfile = 'DISNEY_PIXAR_3D'
 ): string => {
   const cameraMove = shot.camera_path?.type || 'static';
   const duration = shot.duration_target || 5;
+  const style = STYLE_PROFILES[styleProfile];
   
   return `
+${style.lock}
+
 ═══════════════════════════════════════════════════════════════════════════════
 EDIT MODE: TRANSITION CONTINUITY (Δt > 1 second)
 ═══════════════════════════════════════════════════════════════════════════════
@@ -120,7 +195,7 @@ ALLOWED CHANGES:
 • Character repositioning within the set
 
 MANDATORY CONTINUITY (NEVER CHANGE):
-• Art style (SAME style as source - no switching to photorealism)
+• Art style: Disney-Pixar 3D animated look (no photorealism!)
 • Character identities (faces, hair, age)
 • Wardrobe (exact same clothes)
 • Props (same items, though positions can shift)
@@ -128,11 +203,14 @@ MANDATORY CONTINUITY (NEVER CHANGE):
 • Background/location (same set)
 
 FORBIDDEN:
-• Style changes (pencil→photo, cartoon→realistic)
+• Switching to photorealism - STRICTLY FORBIDDEN
+• Style changes (animation→photo, cartoon→realistic)
 • Adding/removing characters
 • Changing animal species
 • Wardrobe changes
 • Adding new props not in source
+
+NEGATIVE: ${style.negative}
 `.trim();
 };
 
@@ -141,20 +219,24 @@ const buildKeyframePrompt = (
   shot: ShotData,
   frameType: 'start' | 'mid' | 'end',
   sceneContext: string,
+  styleProfile: StyleProfile = 'DISNEY_PIXAR_3D',
   previousFrameDescription?: string
 ): string => {
   const timing = shot.timing_config || { start_s: 0, end_s: 5 };
   const duration = timing.end_s - timing.start_s;
   const timestamp = frameType === 'start' ? 0 : frameType === 'mid' ? duration / 2 : duration;
+  const style = STYLE_PROFILES[styleProfile];
 
   // Camera info
   const camera = shot.camera || {};
   const focalMm = camera.focal_mm || 50;
   const cameraMove = shot.camera_path?.type || 'static';
   
-  // Lighting info
+  // Lighting info (sanitize for animated style)
   const lighting = shot.lighting || {};
-  const lightingLook = lighting.look || 'natural soft lighting';
+  const lightingLook = styleProfile === 'DISNEY_PIXAR_3D' 
+    ? 'soft animated lighting, warm and colorful'
+    : (lighting.look || 'natural soft lighting');
   
   // Blocking info
   const blocking = shot.blocking || { subjects: [], props: [] };
@@ -178,12 +260,15 @@ const buildKeyframePrompt = (
   // Constraints for enforcement
   const constraints = shot.constraints || {};
   
-  // Build CONSTRAINT BLOCK for must_keep enforcement (prepended to prompt)
-  const constraintBlock = buildConstraintBlock(constraints);
+  // Build prompt with STYLE LOCK first (mandatory)
+  let prompt = style.lock + '\n\n';
   
-  // Build the prompt
-  let prompt = constraintBlock; // Start with enforcement block
-  prompt += `Cinematic ${shotSize} shot, ${focalMm}mm lens, ${aspectRatio} aspect ratio. `;
+  // Then constraint block
+  const constraintBlock = buildConstraintBlock(constraints);
+  prompt += constraintBlock;
+  
+  // Technical specs (NO photorealistic vocabulary)
+  prompt += `${shotSize} shot, ${focalMm}mm lens perspective, ${aspectRatio} aspect ratio. `;
   prompt += `${composition}. `;
   prompt += `${sceneContext}. `;
   prompt += `${subjectsDesc}. `;
@@ -214,11 +299,19 @@ const buildKeyframePrompt = (
     prompt += `Maintaining continuity: ${previousFrameDescription}. `;
   }
 
-  // Quality markers
-  prompt += `Professional cinematography, film grain, natural skin texture with visible pores, realistic lighting with proper falloff, asymmetric composition. `;
-  prompt += `Ultra high resolution, cinematic color grading. `;
+  // Quality markers FOR ANIMATED STYLE (no photorealistic terms)
+  if (styleProfile === 'DISNEY_PIXAR_3D') {
+    prompt += `Ultra high quality 3D animation render, Disney-Pixar level detail, smooth stylized materials. `;
+    prompt += `Clean character silhouettes, expressive faces, warm cinematic animation lighting. `;
+  } else {
+    prompt += `Ultra high resolution, professional cinematography. `;
+  }
 
-  return prompt;
+  // Add negative block
+  prompt += `\n\nNEGATIVE: ${style.negative}`;
+
+  // Sanitize to remove any banned words that slipped through
+  return sanitizePromptForStyle(prompt, styleProfile);
 };
 
 // BUILD CONSTRAINT BLOCK - Injects must_keep as mandatory instructions
@@ -377,16 +470,20 @@ serve(async (req) => {
       );
     }
 
-    // Fetch scene for context
+    // Fetch scene for context + style_profile
     const { data: sceneData } = await supabase
       .from("scenes")
-      .select("slugline, summary, description")
+      .select("slugline, summary, description, style_profile")
       .eq("id", scene_id)
       .single();
 
     const sceneContext = sceneData 
       ? `${sceneData.slugline || ''} - ${sceneData.summary || sceneData.description || ''}`
       : 'Scene context unavailable';
+    
+    // Get style profile from scene (defaults to DISNEY_PIXAR_3D)
+    const styleProfile: StyleProfile = (sceneData?.style_profile as StyleProfile) || 'DISNEY_PIXAR_3D';
+    console.log(`[generate-keyframes-batch] Using style profile: ${styleProfile}`);
 
     // Fetch shots
     let shotsQuery = supabase
@@ -448,21 +545,20 @@ serve(async (req) => {
           // ================================================================
           
           if (frame.type === 'start') {
-            // K0: Generate initial frame (staging)
-            console.log(`[generate-keyframes-batch] K0 (start) - GENERATE for shot ${shotData.shot_no}`);
+            // K0: Generate initial frame (staging) with STYLE LOCK
+            console.log(`[generate-keyframes-batch] K0 (start) - GENERATE for shot ${shotData.shot_no} [style: ${styleProfile}]`);
             
-            const prompt = buildKeyframePrompt(shotData, frame.type, sceneContext);
-            const negativePrompt = buildNegativePrompt(shotData.constraints);
+            const prompt = buildKeyframePrompt(shotData, frame.type, sceneContext, styleProfile);
             
             // Combine all references: storyboard + character anchors
             const allRefs = [...storyboardRefs, ...characterAnchors].slice(0, 6);
             
             const result = await generateImageWithNanoBanana({
               lovableApiKey,
-              promptText: prompt + `\n\nNEGATIVE: ${negativePrompt}`,
+              promptText: prompt, // negative already included in buildKeyframePrompt
               referenceImageUrls: allRefs,
               seed,
-              label: `keyframe_k0_shot${shotData.shot_no}`,
+              label: `keyframe_k0_shot${shotData.shot_no}_${styleProfile}`,
             });
             
             if (!result.success || !result.imageUrl) {
@@ -472,10 +568,10 @@ serve(async (req) => {
             imageUrl = result.imageUrl;
             
           } else if (previousFrameUrl) {
-            // K1/K2: Edit from previous frame
+            // K1/K2: Edit from previous frame with STYLE LOCK
             const editPrompt = isStrictContinuity 
-              ? buildInterframeEditPrompt(frame.type as 'mid' | 'end', shotData, sceneContext)
-              : buildTransitionEditPrompt(frame.type as 'mid' | 'end', shotData, sceneContext);
+              ? buildInterframeEditPrompt(frame.type as 'mid' | 'end', shotData, sceneContext, styleProfile)
+              : buildTransitionEditPrompt(frame.type as 'mid' | 'end', shotData, sceneContext, styleProfile);
             
             console.log(`[generate-keyframes-batch] ${frame.type.toUpperCase()} - EDIT (${isStrictContinuity ? 'strict' : 'transition'}) for shot ${shotData.shot_no}`);
             
@@ -495,20 +591,19 @@ serve(async (req) => {
             imageUrl = result.imageUrl;
             
           } else {
-            // Fallback: No previous frame available, generate instead
-            console.log(`[generate-keyframes-batch] ${frame.type.toUpperCase()} - FALLBACK GENERATE (no previous) for shot ${shotData.shot_no}`);
+            // Fallback: No previous frame available, generate instead with STYLE LOCK
+            console.log(`[generate-keyframes-batch] ${frame.type.toUpperCase()} - FALLBACK GENERATE (no previous) for shot ${shotData.shot_no} [style: ${styleProfile}]`);
             
-            const prompt = buildKeyframePrompt(shotData, frame.type, sceneContext);
-            const negativePrompt = buildNegativePrompt(shotData.constraints);
+            const prompt = buildKeyframePrompt(shotData, frame.type, sceneContext, styleProfile);
             
             const allRefs = [...storyboardRefs, ...characterAnchors].slice(0, 6);
             
             const result = await generateImageWithNanoBanana({
               lovableApiKey,
-              promptText: prompt + `\n\nNEGATIVE: ${negativePrompt}`,
+              promptText: prompt, // negative already included
               referenceImageUrls: allRefs,
               seed,
-              label: `keyframe_${frame.type}_fallback_shot${shotData.shot_no}`,
+              label: `keyframe_${frame.type}_fallback_shot${shotData.shot_no}_${styleProfile}`,
             });
             
             if (!result.success || !result.imageUrl) {
@@ -555,6 +650,7 @@ serve(async (req) => {
                 continuity_mode: isStrictContinuity ? 'strict' : 'transition',
                 source_frame: frame.type === 'start' ? null : (frame.type === 'mid' ? 'start' : 'mid'),
                 character_anchors_count: characterAnchors.length,
+                style_profile: styleProfile,
               },
             })
             .select()
