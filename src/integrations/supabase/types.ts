@@ -3848,6 +3848,7 @@ export type Database = {
           id: string
           idea: string | null
           input_chars: number | null
+          narrative_mode: string | null
           outline_json: Json
           outline_parts: Json | null
           progress: number | null
@@ -3876,6 +3877,7 @@ export type Database = {
           id?: string
           idea?: string | null
           input_chars?: number | null
+          narrative_mode?: string | null
           outline_json: Json
           outline_parts?: Json | null
           progress?: number | null
@@ -3904,6 +3906,7 @@ export type Database = {
           id?: string
           idea?: string | null
           input_chars?: number | null
+          narrative_mode?: string | null
           outline_json?: Json
           outline_parts?: Json | null
           progress?: number | null
