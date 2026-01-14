@@ -21,75 +21,119 @@ interface RegenerateRequest {
   storyboard_style?: 'GRID_SHEET_V1' | 'TECH_PAGE_V1';
 }
 
+// Helpers for ID validation and key normalization
+const isUuid = (s?: string) =>
+  !!s && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+
+const isBadToken = (s?: string) => {
+  const v = (s || "").trim().toLowerCase();
+  return !v || v === "undefined" || v === "null" || v === "none" || v === "n/a";
+};
+
 /**
- * Resolves character pack data with reference images for multimodal input
+ * PACK-FIRST: Resolves character references directly from character_pack_slots
+ * Returns both pack data and prioritized reference URLs for multimodal input
  */
 async function resolveCharacterPackRefs(
   supabase: any,
   characterIds: string[],
   projectId: string
 ): Promise<{ packData: CharacterPackLockData[]; referenceUrls: string[] }> {
-  if (!characterIds || characterIds.length === 0) {
+  // Filter to valid UUIDs only
+  const validIds = characterIds.filter(id => isUuid(id) && !isBadToken(id));
+  
+  if (validIds.length === 0) {
+    console.log(`[regenerate-panel] No valid character IDs to resolve`);
     return { packData: [], referenceUrls: [] };
   }
+
+  console.log(`[regenerate-panel] Resolving refs for ${validIds.length} characters`);
 
   const packData: CharacterPackLockData[] = [];
   const referenceUrls: string[] = [];
 
-  for (const charId of characterIds) {
-    try {
-      // Get character + active visual DNA
-      const { data: charData } = await supabase
-        .from('characters')
-        .select(`
-          id, name, character_role, visual_dna,
-          character_visual_dna!character_visual_dna_character_id_fkey(
-            visual_dna, is_active
-          )
-        `)
-        .eq('id', charId)
-        .single();
+  // Slot priority order for identity refs
+  const slotPriority = [
+    "ref_closeup_front",
+    "identity_primary",
+    "closeup_front",
+    "ref_profile",
+    "closeup_profile",
+    "turn_side",
+    "turn_front_34",
+    "expr_neutral",
+  ];
 
-      // Get reference images from pack slots
-      const { data: packSlots } = await supabase
-        .from('character_pack_slots')
-        .select('slot_type, image_url, status')
-        .eq('character_id', charId)
-        .in('status', ['accepted', 'generated'])
-        .in('slot_type', ['ref_closeup_front', 'closeup_front', 'closeup_profile', 'turn_side', 'identity_primary']);
+  // Query all pack slots for all characters at once (more efficient)
+  const { data: allSlots } = await supabase
+    .from('character_pack_slots')
+    .select('character_id, slot_type, image_url, status')
+    .in('character_id', validIds)
+    .in('status', ['accepted', 'uploaded', 'generated'])
+    .not('image_url', 'is', null);
 
-      const frontalSlot = packSlots?.find((s: any) => 
-        ['ref_closeup_front', 'closeup_front', 'identity_primary'].includes(s.slot_type)
-      );
-      const profileSlot = packSlots?.find((s: any) => 
-        ['closeup_profile', 'turn_side'].includes(s.slot_type)
-      );
+  // Group slots by character
+  const slotsByChar = new Map<string, any[]>();
+  for (const s of (allSlots || [])) {
+    if (!s.image_url) continue;
+    if (!slotsByChar.has(s.character_id)) slotsByChar.set(s.character_id, []);
+    slotsByChar.get(s.character_id)!.push(s);
+  }
 
-      const data: CharacterPackLockData = {
-        id: charId,
-        name: charData?.name || charId,
-        role: charData?.character_role,
-        reference_frontal: frontalSlot?.image_url,
-        reference_profile: profileSlot?.image_url,
-        has_approved_pack: frontalSlot?.status === 'accepted',
-      };
+  // Get character names for pack data
+  const { data: characters } = await supabase
+    .from('characters')
+    .select('id, name, character_role')
+    .in('id', validIds);
 
-      packData.push(data);
+  const charMap = new Map<string, any>();
+  for (const c of (characters || [])) {
+    charMap.set(c.id, c);
+  }
 
-      // Collect reference URLs for multimodal input (max 2 per character)
-      if (data.reference_frontal) referenceUrls.push(data.reference_frontal);
-      if (data.reference_profile) referenceUrls.push(data.reference_profile);
-    } catch (err) {
-      console.log(`[regenerate-panel] Could not fetch pack for ${charId}:`, err);
-      packData.push({
-        id: charId,
-        name: charId,
-        has_approved_pack: false,
-      });
+  // Build pack data and collect refs for each character
+  for (const charId of validIds) {
+    const charInfo = charMap.get(charId);
+    const charSlots = slotsByChar.get(charId) || [];
+    
+    // Sort by priority
+    charSlots.sort((a: any, b: any) => 
+      slotPriority.indexOf(a.slot_type) - slotPriority.indexOf(b.slot_type)
+    );
+
+    const frontalSlot = charSlots.find((s: any) => 
+      ['ref_closeup_front', 'closeup_front', 'identity_primary'].includes(s.slot_type)
+    );
+    const profileSlot = charSlots.find((s: any) => 
+      ['closeup_profile', 'turn_side', 'ref_profile'].includes(s.slot_type)
+    );
+
+    packData.push({
+      id: charId,
+      name: charInfo?.name || charId,
+      role: charInfo?.character_role,
+      reference_frontal: frontalSlot?.image_url,
+      reference_profile: profileSlot?.image_url,
+      has_approved_pack: frontalSlot?.status === 'accepted',
+    });
+
+    // Collect top 3 refs per character (prioritized)
+    const topSlots = charSlots.slice(0, 3);
+    for (const s of topSlots) {
+      referenceUrls.push(s.image_url);
     }
   }
 
-  return { packData, referenceUrls: referenceUrls.slice(0, 6) }; // Max 6 refs
+  // Hard cap at 10 refs total
+  const finalRefs = referenceUrls.slice(0, 10);
+  
+  console.log(`[regenerate-panel] Pack refs resolved`, {
+    char_count: validIds.length,
+    ref_count: finalRefs.length,
+    first_host: finalRefs[0] ? new URL(finalRefs[0]).host : 'none'
+  });
+
+  return { packData, referenceUrls: finalRefs };
 }
 
 serve(async (req) => {
@@ -262,22 +306,34 @@ serve(async (req) => {
       })
       .eq('id', panelId);
 
-    // 4) Resolve character reference images for multimodal input
-    const characterIds = (panel.characters_present || []).map((c: any) => 
+    // 4) Resolve character reference images for multimodal input (PACK-FIRST)
+    const rawCharIds = (panel.characters_present || []).map((c: any) => 
       typeof c === 'string' ? c : c.character_id
     );
     
+    // Filter out bad tokens before resolution
+    const cleanCharIds = rawCharIds.filter((id: string) => 
+      isUuid(id) && !isBadToken(id)
+    );
+
+    console.log(`[regenerate-panel] Character IDs`, {
+      raw: rawCharIds.slice(0, 5),
+      clean: cleanCharIds.slice(0, 5),
+      filtered_out: rawCharIds.length - cleanCharIds.length
+    });
+    
     const { packData, referenceUrls } = await resolveCharacterPackRefs(
       supabase, 
-      characterIds, 
+      cleanCharIds, 
       projectId
     );
 
-    console.log(`[regenerate-panel] Resolved refs`, { 
-      char_count: characterIds.length,
-      ref_count: referenceUrls.length,
-      first_host: referenceUrls[0] ? new URL(referenceUrls[0]).host : 'none'
-    });
+    // Guardrail: warn if we have character IDs but no refs
+    if (cleanCharIds.length > 0 && referenceUrls.length === 0) {
+      console.warn(`[regenerate-panel] IDENTITY_UNLOCKED: No pack refs found for characters`, {
+        char_ids: cleanCharIds
+      });
+    }
 
     // 5) Generate the image with deterministic seed + multimodal refs
     const seed = body.seed ?? generateSeed(sceneId, 'GRID_SHEET_V1', panel.panel_no);
