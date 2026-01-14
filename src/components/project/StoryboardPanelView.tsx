@@ -67,7 +67,42 @@ export function StoryboardPanelView({
     elapsedSeconds,
     estimatedRemainingMs,
     totalPanels,
+    panelsToRetry,
+    markAsRetried,
   } = useStoryboardProgress(sceneId, generating, expectedPanelCount);
+
+  // Auto-retry panels with errors after 30 seconds
+  useEffect(() => {
+    if (panelsToRetry.length === 0) return;
+
+    const retryPanel = async (panelStatus: typeof panelsToRetry[0]) => {
+      markAsRetried(panelStatus.panel_id);
+      console.log(`Auto-retrying panel ${panelStatus.panel_no} after 30s error`);
+      
+      try {
+        // Update status to generating
+        await supabase
+          .from('storyboard_panels')
+          .update({ image_status: 'generating', image_error: null })
+          .eq('id', panelStatus.panel_id);
+
+        const { data, error } = await supabase.functions.invoke('regenerate-storyboard-panel', {
+          body: { panelId: panelStatus.panel_id },
+        });
+
+        if (error) throw error;
+        if (!data?.success) throw new Error(data?.error || 'Retry failed');
+        
+        toast.success(`Panel ${panelStatus.panel_no} regenerado automáticamente`);
+      } catch (err) {
+        console.error(`Auto-retry failed for panel ${panelStatus.panel_no}:`, err);
+        toast.error(`Reintento automático falló para panel ${panelStatus.panel_no}`);
+      }
+    };
+
+    // Retry each panel that needs it (one at a time to avoid overload)
+    panelsToRetry.forEach(retryPanel);
+  }, [panelsToRetry, markAsRetried]);
 
   // Fetch existing panels
   useEffect(() => {
