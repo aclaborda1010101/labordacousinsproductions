@@ -446,6 +446,50 @@ serve(async (req) => {
               })
               .eq("id", panel.id);
             processed++;
+
+            // ================================================================
+            // IDENTITY QC: Verify character identity matches pack references
+            // ================================================================
+            if (presentCharIds.length > 0 && panel.shot_hint !== 'INSERT') {
+              try {
+                // Call qc-storyboard-identity function
+                const qcResponse = await fetch(
+                  `${supabaseUrl}/functions/v1/qc-storyboard-identity`,
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${supabaseKey}`,
+                    },
+                    body: JSON.stringify({
+                      panelId: panel.id,
+                      panelImageUrl: finalImageUrl,
+                      characterIds: presentCharIds,
+                      shotHint: panel.shot_hint || 'PM',
+                    }),
+                  }
+                );
+
+                const qcResult = await qcResponse.json();
+                
+                if (qcResult.needs_regen && (panel.regen_count || 0) < 2) {
+                  // Mark for regeneration
+                  console.log(`[batch] panel_${panelNo} identity QC failed (score=${qcResult.qc?.overall_score?.toFixed(2)}), marking for regen`);
+                  await supabase
+                    .from("storyboard_panels")
+                    .update({
+                      image_status: "pending_regen",
+                      regen_count: (panel.regen_count || 0) + 1,
+                    })
+                    .eq("id", panel.id);
+                } else if (qcResult.success) {
+                  console.log(`[batch] panel_${panelNo} identity QC passed (score=${qcResult.qc?.overall_score?.toFixed(2)})`);
+                }
+              } catch (qcErr) {
+                // QC is non-blocking - log and continue
+                console.warn(`[batch] panel_${panelNo} identity QC failed:`, qcErr);
+              }
+            }
           }
         } else {
           const errMsg = imageResult.error?.slice(0, 500) || "Image generation failed";

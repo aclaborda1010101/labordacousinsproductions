@@ -32,6 +32,17 @@ import { StoryboardGenerationOverlay } from './StoryboardGenerationOverlay';
 import { useStoryboardProgress } from '@/hooks/useStoryboardProgress';
 import { exportStoryboardVisualPDF } from '@/lib/exportStoryboardVisualPDF';
 
+// Identity QC types
+interface IdentityQC {
+  characters?: Record<string, {
+    identity_score: number;
+    issues: string[];
+    status: 'pass' | 'fail' | 'uncertain';
+  }>;
+  overall_score?: number;
+  needs_regen?: boolean;
+}
+
 interface CanvasFormat {
   aspect_ratio: string;
   orientation: string;
@@ -613,6 +624,35 @@ export function StoryboardPanelView({
                       </div>
                     )}
                   </div>
+
+                  {/* Identity QC Score Badge */}
+                  {(() => {
+                    const identityQc = (panel as any).identity_qc as IdentityQC | undefined;
+                    if (!identityQc?.overall_score) return null;
+                    const score = Math.round(identityQc.overall_score * 100);
+                    const issues = Object.values(identityQc.characters || {})
+                      .flatMap(c => c.issues || []);
+                    
+                    return (
+                      <div className="flex items-center gap-1 flex-wrap">
+                        <Badge 
+                          variant={identityQc.needs_regen ? 'destructive' : 'outline'}
+                          className={`text-xs ${!identityQc.needs_regen ? 'border-green-500/50 text-green-400' : ''}`}
+                        >
+                          ID: {score}%
+                        </Badge>
+                        {issues.slice(0, 2).map((issue, i) => (
+                          <Badge 
+                            key={i} 
+                            variant="outline" 
+                            className="text-[10px] bg-amber-500/10 text-amber-400 border-amber-500/30"
+                          >
+                            {issue.replace('_', ' ')}
+                          </Badge>
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {/* Shot Hint */}
                   <Badge variant="secondary" className="text-xs w-full justify-center">

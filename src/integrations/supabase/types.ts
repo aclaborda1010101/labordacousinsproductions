@@ -5253,6 +5253,7 @@ export type Database = {
           created_at: string | null
           dialogue_snippet: string | null
           id: string
+          identity_qc: Json | null
           image_error: string | null
           image_prompt: string | null
           image_status: string | null
@@ -5264,6 +5265,7 @@ export type Database = {
           panel_no: number
           project_id: string
           props_present: string[] | null
+          regen_count: number | null
           scene_id: string
           shot_hint: string | null
           staging: Json | null
@@ -5277,6 +5279,7 @@ export type Database = {
           created_at?: string | null
           dialogue_snippet?: string | null
           id?: string
+          identity_qc?: Json | null
           image_error?: string | null
           image_prompt?: string | null
           image_status?: string | null
@@ -5288,6 +5291,7 @@ export type Database = {
           panel_no: number
           project_id: string
           props_present?: string[] | null
+          regen_count?: number | null
           scene_id: string
           shot_hint?: string | null
           staging?: Json | null
@@ -5301,6 +5305,7 @@ export type Database = {
           created_at?: string | null
           dialogue_snippet?: string | null
           id?: string
+          identity_qc?: Json | null
           image_error?: string | null
           image_prompt?: string | null
           image_status?: string | null
@@ -5312,6 +5317,7 @@ export type Database = {
           panel_no?: number
           project_id?: string
           props_present?: string[] | null
+          regen_count?: number | null
           scene_id?: string
           shot_hint?: string | null
           staging?: Json | null
