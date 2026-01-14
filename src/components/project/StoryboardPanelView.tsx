@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { 
   Film, 
   Wand2, 
@@ -49,6 +50,7 @@ export function StoryboardPanelView({
   const [editingPanel, setEditingPanel] = useState<string | null>(null);
   const [allApproved, setAllApproved] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState<'GRID_SHEET_V1' | 'TECH_PAGE_V1'>('GRID_SHEET_V1');
+  const [selectedImage, setSelectedImage] = useState<{ url: string; panelNo: number } | null>(null);
 
   // Fetch existing panels
   useEffect(() => {
@@ -309,7 +311,13 @@ export function StoryboardPanelView({
                   {/* Image */}
                   <div 
                     className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden cursor-pointer"
-                    onClick={() => !panel.image_url && generatePanelImage(panel)}
+                    onClick={() => {
+                      if (panel.image_url) {
+                        setSelectedImage({ url: panel.image_url, panelNo: panel.panel_no });
+                      } else {
+                        generatePanelImage(panel);
+                      }
+                    }}
                   >
                     {panel.image_url ? (
                       <img 
@@ -414,6 +422,25 @@ export function StoryboardPanelView({
           No representa el resultado visual final.
         </p>
       </div>
+
+      {/* Modal para ver imagen en grande */}
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-4xl w-full p-2">
+          <DialogTitle className="sr-only">
+            Panel {selectedImage?.panelNo}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Vista ampliada del panel de storyboard
+          </DialogDescription>
+          {selectedImage && (
+            <img 
+              src={selectedImage.url} 
+              alt={`Panel ${selectedImage.panelNo} - Vista ampliada`}
+              className="w-full h-auto rounded-lg"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
