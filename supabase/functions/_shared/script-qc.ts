@@ -61,6 +61,9 @@ export interface ScriptQCResult {
   // V11.1: Density validation
   density_check?: PostScriptDensityResult;
   
+  // V11.3: Scene depth validation
+  scene_depth_issues: string[];
+  
   blockers: string[];
   warnings: string[];
 }
@@ -518,6 +521,61 @@ function validateFactionRules(
 }
 
 // ============================================================================
+// V11.3: SCENE DEPTH VALIDATION
+// ============================================================================
+
+const MINIMUM_RAW_CONTENT_LENGTH = 300; // ~6-8 lines of rich description
+const MINIMUM_ACTION_SUMMARY_LENGTH = 80; // At least 1-2 sentences
+
+/**
+ * Validate that scenes have sufficient depth (not just placeholders).
+ * Returns list of issues for scenes that are too shallow.
+ */
+function validateSceneDepth(script: Record<string, unknown>): string[] {
+  const issues: string[] = [];
+  const scenes = script.scenes as Array<Record<string, unknown>> || [];
+  
+  for (let i = 0; i < scenes.length; i++) {
+    const scene = scenes[i];
+    const sceneNum = scene.scene_number || (i + 1);
+    const rawContent = (scene.raw_content as string) || '';
+    const actionSummary = (scene.action_summary as string) || '';
+    const slugline = (scene.slugline as string) || '';
+    
+    // Check raw_content depth
+    if (rawContent.length < MINIMUM_RAW_CONTENT_LENGTH) {
+      issues.push(`Scene ${sceneNum} raw_content too shallow: ${rawContent.length}/${MINIMUM_RAW_CONTENT_LENGTH} chars`);
+    }
+    
+    // Check action_summary depth
+    if (actionSummary.length < MINIMUM_ACTION_SUMMARY_LENGTH) {
+      issues.push(`Scene ${sceneNum} action_summary too short: ${actionSummary.length}/${MINIMUM_ACTION_SUMMARY_LENGTH} chars`);
+    }
+    
+    // Check for vague placeholder patterns
+    const vaguePatterns = [
+      'por generar',
+      'placeholder',
+      'tbd',
+      'to be determined',
+      'pendiente',
+      'ver outline',
+      'según outline'
+    ];
+    
+    const combinedText = (slugline + ' ' + actionSummary + ' ' + rawContent).toLowerCase();
+    for (const pattern of vaguePatterns) {
+      if (combinedText.includes(pattern)) {
+        issues.push(`Scene ${sceneNum} contains placeholder pattern: "${pattern}"`);
+        break;
+      }
+    }
+  }
+  
+  return issues;
+}
+
+// ============================================================================
 // MAIN VALIDATION FUNCTION
 // ============================================================================
 
@@ -613,6 +671,23 @@ export function validateScriptAgainstContract(
     }
   }
   
+  // 9. V11.3: Validate scene depth
+  const sceneDepthIssues = validateSceneDepth(script);
+  if (sceneDepthIssues.length > 0) {
+    const shallowSceneCount = sceneDepthIssues.length;
+    const scenes = script.scenes as Array<Record<string, unknown>> || [];
+    const totalScenes = scenes.length || 1;
+    const shallowPercent = Math.round((shallowSceneCount / totalScenes) * 100);
+    
+    if (shallowPercent > 50) {
+      blockers.push(`SCENE_DEPTH: ${shallowPercent}% de escenas demasiado superficiales`);
+      score -= 20;
+    } else if (shallowPercent > 25) {
+      warnings.push(`SCENE_DEPTH: ${shallowSceneCount} escenas con descripción insuficiente`);
+      score -= 10;
+    }
+  }
+  
   // Clamp score
   score = Math.max(0, Math.min(100, score));
   
@@ -640,6 +715,7 @@ export function validateScriptAgainstContract(
     characters_coverage: charsCoverage,
     setpiece_executed: setpieceExec,
     faction_violations: factionViolations,
+    scene_depth_issues: sceneDepthIssues,
     blockers,
     warnings
   };
