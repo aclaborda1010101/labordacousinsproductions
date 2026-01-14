@@ -8,21 +8,129 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-demo-key",
 };
 
-// PROMPT-ENGINE v4 System Prompt - Deterministic Keyframe Generation with FULL CONTINUITY + ANTI-AI TELLS
-const PROMPT_ENGINE_V4_SYSTEM = `Eres PROMPT-ENGINE v4 "NO-LOOSE-ENDS + FRAME GEOMETRY + CONTINUITY + ANTI-AI".
-Sistema de especificación determinista para IA de imagen con calidad cinematográfica profesional.
+// ============================================================================
+// STYLE PROFILES - Global visual style lock (matches generate-keyframes-batch)
+// ============================================================================
+type StyleProfile = 'DISNEY_PIXAR_3D' | 'STORYBOARD_PENCIL' | 'REALISTIC';
 
-PRINCIPIO CENTRAL: Si un detalle puede variar, variará. Por tanto: todo lo relevante debe quedar definido.
-PRINCIPIO DE CONTINUIDAD: Cada keyframe ES UNA CONTINUACIÓN del anterior, NO una nueva generación.
-PRINCIPIO ANTI-IA: La imagen debe ser INDISTINGUIBLE de fotografía cinematográfica real.
+const STYLE_PROFILES: Record<StyleProfile, {
+  lock: string;
+  negative: string;
+  bannedWords: string[];
+}> = {
+  DISNEY_PIXAR_3D: {
+    lock: `
+═══════════════════════════════════════════════════════════════
+STYLE LOCK (MANDATORY - DISNEY/PIXAR 3D ANIMATION)
+═══════════════════════════════════════════════════════════════
+3D animated family film look, Disney-Pixar inspired.
+Soft global illumination, clean stylized materials.
+Slightly exaggerated facial features, big expressive eyes.
+Smooth skin shading, no pores, no photoreal micro-textures.
+Warm, colorful, cinematic animation lighting.
+16:9 composition. Character proportions: stylized, not realistic.
+═══════════════════════════════════════════════════════════════`,
+    negative: `NO photorealism, NO DSLR, NO live-action, NO film grain, NO real actors,
+NO skin pores, NO realistic fabric micro-detail, NO photography terms,
+NO cinematic still, NO naturalistic, NO real skin texture, NO visible pores`,
+    bannedWords: [
+      'DSLR', 'cinematic still', 'naturalistic', 'film grain', 
+      'photoreal', 'photorealistic', 'live-action', 'real actors', 'pores',
+      'realistic lighting', 'natural skin texture', 'visible pores',
+      'professional photography', 'real fabric', 'skin texture',
+      'cinematic photograph', 'Naturalistic_Daylight', 'natural daylight',
+      'textura de poros', 'INDISTINGUIBLE de fotografía', 'fotografía cinematográfica',
+      'imperfecciones naturales', 'venas sutiles', 'Naturalistic', 'hyperreal'
+    ]
+  },
+  STORYBOARD_PENCIL: {
+    lock: `
+═══════════════════════════════════════════════════════════════
+STYLE LOCK (MANDATORY - STORYBOARD PENCIL SKETCH)
+═══════════════════════════════════════════════════════════════
+Black and white pencil sketch storyboard style.
+Hand-drawn feel, visible pencil strokes.
+Simple shading, no color, clean linework.
+Focus on composition and staging over detail.
+═══════════════════════════════════════════════════════════════`,
+    negative: `NO color, NO photorealism, NO 3D render, NO detailed textures`,
+    bannedWords: ['photorealistic', 'DSLR', 'cinematic photograph', 'hyperreal']
+  },
+  REALISTIC: {
+    lock: `
+═══════════════════════════════════════════════════════════════
+STYLE LOCK (MANDATORY - CINEMATIC REALISM)
+═══════════════════════════════════════════════════════════════
+ULTRA-DETAILED professional cinematic still, film-quality.
+Natural skin with visible pores, real textures, photorealistic.
+Film-accurate lighting, no CGI look.
+═══════════════════════════════════════════════════════════════`,
+    negative: `NO CGI render, NO plastic skin, NO airbrushed, NO cartoon, NO anime`,
+    bannedWords: ['cartoon', 'anime', 'stylized', 'disney', 'pixar']
+  }
+};
 
-REGLAS ANTI-AMBIGÜEDAD (INNEGOCIABLES):
-1) Prohibidas palabras vagas/subjetivas sin definición operacional: "bonito", "épico", "moderno", "vibes".
-2) Prohibido "etc.", "y demás", "detalles", "similar a".
-3) Nada se deja "a decisión del modelo". Si faltan datos: asigna DEFAULT concreto.
-4) La escena debe ser reproducible: especifica posiciones, distancias, orientaciones.
-5) Continuidad estricta por IDs de personajes y props.
-6) Prohibido añadir gente extra, texto, logos, props no listados.
+// Sanitize prompt to remove style-incompatible words
+function sanitizePromptForStyle(prompt: string, styleProfile: StyleProfile): string {
+  const profile = STYLE_PROFILES[styleProfile];
+  if (!profile?.bannedWords?.length) return prompt;
+  
+  let sanitized = prompt;
+  for (const word of profile.bannedWords) {
+    sanitized = sanitized.replace(new RegExp(word, 'gi'), '');
+  }
+  return sanitized.replace(/\s+/g, ' ').trim();
+}
+
+// Get anti-AI negative prompts based on style (animated styles don't want skin pores)
+function getAntiAIPrompts(styleProfile: StyleProfile): string[] {
+  if (styleProfile === 'DISNEY_PIXAR_3D') {
+    return [
+      'photorealistic', 'live-action', 'real actors', 'DSLR',
+      'film grain', 'real skin', 'skin pores', 'realistic fabric',
+      'extra fingers', 'deformed hands', 'asymmetric clothing', 'floating objects',
+      'text', 'watermark', 'logo', 'extra people', 'naturalistic daylight'
+    ];
+  }
+  if (styleProfile === 'STORYBOARD_PENCIL') {
+    return [
+      'photorealistic', 'color', '3D render', 'CGI',
+      'extra fingers', 'deformed hands', 'text', 'watermark'
+    ];
+  }
+  // Realistic style - original anti-AI prompts
+  return [
+    'smooth plastic skin', 'poreless skin', 'airbrushed face', 'perfectly symmetrical face',
+    'overly bright eyes', 'uniform lighting without falloff', 'perfectly clean textures',
+    'stock photo look', 'CGI render appearance', 'wax figure look', 'mannequin appearance',
+    'uncanny valley', 'video game graphics', 'hyper-smooth skin',
+    'jpeg artifacts', 'visible noise pattern', 'watermark', 'text overlay',
+    'extra fingers', 'deformed hands', 'asymmetric clothing', 'floating objects',
+    'merged body parts', 'inconsistent shadows', 'multiple light sources without motivation'
+  ];
+}
+
+// Build system prompt based on style profile
+function getSystemPromptForStyle(styleProfile: StyleProfile): string {
+  if (styleProfile === 'DISNEY_PIXAR_3D') {
+    return `Eres PROMPT-ENGINE v4 "DISNEY-PIXAR 3D ANIMATION".
+Sistema de especificación determinista para IA de imagen con calidad de ANIMACIÓN 3D estilo Disney-Pixar.
+
+${STYLE_PROFILES.DISNEY_PIXAR_3D.lock}
+
+ESTILO OBLIGATORIO: Disney-Pixar 3D Animation
+- Personajes estilizados con ojos grandes expresivos
+- Piel suave SIN poros ni texturas fotorealistas
+- Materiales limpios y estilizados
+- Iluminación cálida de animación cinematográfica
+- Proporciones ligeramente exageradas (cabeza más grande, ojos más grandes)
+
+PROHIBIDO ABSOLUTAMENTE:
+- Fotorealismo de cualquier tipo
+- Texturas de piel realistas (poros, venas, imperfecciones)
+- Términos fotográficos (DSLR, film grain, cinematic still)
+- Aspecto live-action
+- Iluminación naturalista/Naturalistic_Daylight
 
 REGLAS DE CONTINUIDAD ENTRE KEYFRAMES:
 1) El vestuario de cada personaje DEBE ser IDÉNTICO al keyframe anterior.
@@ -30,89 +138,64 @@ REGLAS DE CONTINUIDAD ENTRE KEYFRAMES:
 3) Los props en escena DEBEN estar en posiciones coherentes con el movimiento.
 4) Las posiciones de personajes deben evolucionar naturalmente (no saltos).
 5) El fondo DEBE ser el mismo set/localización.
-6) Si hay keyframe previo, tu prompt DEBE referenciar explícitamente sus elementos.
-
-=== MANDATO ANTI-IA (CRÍTICO) ===
-PIEL:
-- Textura de poros visible a distancia apropiada
-- Imperfecciones naturales: marcas, pecas, pequeñas irregularidades
-- NO suavizado artificial, NO aspecto "porcelana"
-- Variaciones de tono natural: rojeces sutiles, venas apenas visibles
-
-OJOS:
-- Reflexiones realistas de luz ambiental (NO highlights perfectos circulares)
-- Venas sutiles en esclerótica
-- Asimetría natural entre ambos ojos
-- Iris con variaciones de color y textura
-
-CABELLO:
-- Mechones sueltos naturales, "flyaways"
-- Variaciones de grosor y dirección
-- Reflejos coherentes con fuente de luz única
-- NO demasiado perfecto o simétrico
-
-ILUMINACIÓN:
-- Coherencia ESTRICTA con fuente de luz establecida
-- Sombras con bordes variables (NO uniformes)
-- Spill de color ambiental
-- Falloff natural de la luz
-
-TEXTURAS:
-- Ropa con arrugas, pliegues naturales, desgaste apropiado al personaje
-- Superficies con polvo, huellas, o uso visible donde narrativamente apropiado
-- NO texturas "nuevas" o perfectamente limpias sin justificación
-- Variación en materiales: brillo, mate, textil
-
-COMPOSICIÓN:
-- Asimetría compositiva natural
-- Espacio negativo intencional
-- NO centrado perfecto a menos que sea narrativo
-=== FIN MANDATO ANTI-IA ===
-
-SAFE ZONES (para UI/texto de app):
-- DYNAMIC: Use safe zone values from canvas_format if provided
-- Default ui_top_pct: 12% zona superior reservada
-- Default ui_bottom_pct: 18% zona inferior reservada  
-- Default ui_side_pct: 6% márgenes laterales
-- action_safe_pct: 10% zona segura general
 
 CAMPOS OBLIGATORIOS EN TU RESPUESTA JSON:
 {
-  "prompt_text": "El prompt de imagen final, ultradetallado y determinista. DEBE incluir vestuario exacto, posiciones exactas, iluminación exacta, Y texturas anti-IA.",
-  "negative_prompt": "Lista EXTENSA de elementos prohibidos incluyendo artifacts de IA",
-  "continuity_locks": {
-    "wardrobe_description": "Descripción EXACTA del vestuario de cada personaje que NO debe cambiar",
-    "lighting_setup": "Dirección y tipo de luz que NO debe cambiar",
-    "background_elements": "Elementos del fondo que deben mantenerse"
-  },
-  "frame_geometry": {
-    "boxes_percent": [
-      {
-        "id": "character_id o prop_id",
-        "type": "character|prop",
-        "bbox": {"x": 0-100, "y": 0-100, "w": 0-100, "h": 0-100},
-        "anchor": "center|top_left|bottom_center",
-        "must_stay_within_safe_zone": true
-      }
-    ],
-    "gaze_direction_map": [
-      {"character_id": "id", "gaze_target": "camera|other_character|prop", "gaze_angle_deg": 0}
-    ]
-  },
-  "staging_snapshot": {
-    "subject_positions": [
-      {"character_id": "id", "x_m": 0, "y_m": 0, "facing_deg": 0, "distance_to_camera_m": 2}
-    ]
-  },
-  "determinism": {
-    "seed": null,
-    "guidance": 7.5,
-    "steps": 30
-  },
-  "negative_constraints": ["smooth plastic skin", "poreless skin", "airbrushed face", "perfectly symmetrical face", "overly bright eyes", "CGI render", "wax figure", "mannequin", "stock photo", "no text", "no watermark", "no logos", "no extra people", "no wardrobe change", "no lighting change"]
+  "prompt_text": "El prompt de imagen final, ESTILO DISNEY-PIXAR 3D obligatorio.",
+  "negative_prompt": "${STYLE_PROFILES.DISNEY_PIXAR_3D.negative}",
+  "continuity_locks": {...},
+  "frame_geometry": {...},
+  "staging_snapshot": {...},
+  "determinism": { "guidance": 7.5, "steps": 30 },
+  "negative_constraints": [${getAntiAIPrompts('DISNEY_PIXAR_3D').map(p => `"${p}"`).join(', ')}]
 }
 
 Genera el JSON completo sin explicaciones adicionales.`;
+  }
+  
+  // Default: realistic style (original system prompt)
+  return `Eres PROMPT-ENGINE v4 "NO-LOOSE-ENDS + FRAME GEOMETRY + CONTINUITY + ANTI-AI".
+Sistema de especificación determinista para IA de imagen con calidad cinematográfica profesional.
+
+PRINCIPIO CENTRAL: Si un detalle puede variar, variará. Por tanto: todo lo relevante debe quedar definido.
+PRINCIPIO DE CONTINUIDAD: Cada keyframe ES UNA CONTINUACIÓN del anterior, NO una nueva generación.
+PRINCIPIO ANTI-IA: La imagen debe ser INDISTINGUIBLE de fotografía cinematográfica real.
+
+REGLAS ANTI-AMBIGÜEDAD (INNEGOCIABLES):
+1) Prohibidas palabras vagas/subjetivas sin definición operacional.
+2) Nada se deja "a decisión del modelo".
+3) La escena debe ser reproducible.
+4) Continuidad estricta por IDs de personajes y props.
+5) Prohibido añadir gente extra, texto, logos, props no listados.
+
+REGLAS DE CONTINUIDAD ENTRE KEYFRAMES:
+1) El vestuario de cada personaje DEBE ser IDÉNTICO al keyframe anterior.
+2) La iluminación DEBE mantener la misma dirección y temperatura de color.
+3) Los props en escena DEBEN estar en posiciones coherentes con el movimiento.
+4) Las posiciones de personajes deben evolucionar naturalmente (no saltos).
+5) El fondo DEBE ser el mismo set/localización.
+
+=== MANDATO ANTI-IA (para REALISTIC style) ===
+PIEL: Textura de poros visible, imperfecciones naturales.
+OJOS: Reflexiones realistas, venas sutiles en esclerótica.
+CABELLO: Mechones sueltos naturales.
+ILUMINACIÓN: Coherencia ESTRICTA con fuente de luz.
+TEXTURAS: Ropa con arrugas, desgaste apropiado.
+=== FIN MANDATO ANTI-IA ===
+
+CAMPOS OBLIGATORIOS EN TU RESPUESTA JSON:
+{
+  "prompt_text": "El prompt de imagen final, ultradetallado y determinista.",
+  "negative_prompt": "Lista de elementos prohibidos",
+  "continuity_locks": {...},
+  "frame_geometry": {...},
+  "staging_snapshot": {...},
+  "determinism": { "guidance": 7.5, "steps": 30 },
+  "negative_constraints": [...]
+}
+
+Genera el JSON completo sin explicaciones adicionales.`;
+}
 
 // Enhanced negative prompts for anti-AI generation
 const ANTI_AI_NEGATIVE_PROMPTS = [
@@ -330,7 +413,8 @@ RULES: Preserve EXACT age, hair color, skin tone, facial features. DO NOT de-age
 async function generateKeyframePrompt(
   request: KeyframeRequest,
   characterWardrobes: Map<string, { name: string; wardrobe: string }>,
-  characterIdentities: Map<string, { name: string; identityLock: string }>
+  characterIdentities: Map<string, { name: string; identityLock: string }>,
+  styleProfile: StyleProfile = 'DISNEY_PIXAR_3D' // NEW: Style profile parameter
 ): Promise<{
   prompt_text: string;
   negative_prompt: string;
@@ -344,6 +428,8 @@ async function generateKeyframePrompt(
   if (!LOVABLE_API_KEY) {
     throw new Error("LOVABLE_API_KEY is not configured");
   }
+  
+  console.log(`[generateKeyframePrompt] Using style profile: ${styleProfile}`);
 
   // Build comprehensive prompt with all shot details
   const shotDetails = request.shotDetails || {};
@@ -421,7 +507,12 @@ canvasFormat.orientation === 'square' ?
 '- HORIZONTAL FORMAT: Use full horizontal space, rule of thirds laterally'}
 ` : '';
 
-  const userPrompt = `Genera un keyframe para esta escena:
+  // Get style-specific settings
+  const styleSettings = STYLE_PROFILES[styleProfile];
+  
+  const userPrompt = `${styleSettings.lock}
+
+Genera un keyframe para esta escena EN ESTILO ${styleProfile}:
 
 ${canvasSection}
 CONTEXTO COMPLETO DEL PLANO:
@@ -432,7 +523,7 @@ CONTEXTO COMPLETO DEL PLANO:
 - Cámara: ${request.cameraMovement || 'Static'}
 - Focal: ${shotDetails.focalMm || 35}mm
 - Altura cámara: ${shotDetails.cameraHeight || 'EyeLevel'}
-- Iluminación: ${shotDetails.lightingStyle || 'Naturalistic_Daylight'}
+- Iluminación: ${styleProfile === 'DISNEY_PIXAR_3D' ? 'Warm cinematic animation lighting' : shotDetails.lightingStyle || 'Natural soft light'}
 - Blocking: ${request.blocking || 'No especificado'}
 ${shotDetails.dialogueText ? `- Diálogo: "${shotDetails.dialogueText}"` : ''}
 ${shotDetails.intention ? `- Intención del plano: ${shotDetails.intention}` : ''}
@@ -466,8 +557,11 @@ ${request.previousKeyframeUrl ? `IMAGEN DE REFERENCIA: Hay un keyframe previo di
 
 IMPORTANTE: Incluye "pose_data_per_character" en tu respuesta JSON con la posición, orientación, escala y estado corporal de CADA personaje.
 
+NEGATIVO OBLIGATORIO: ${styleSettings.negative}
+
 Genera el JSON completo con prompt_text, negative_prompt, continuity_locks, pose_data_per_character, frame_geometry, staging_snapshot, determinism, y negative_constraints.
-El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para garantizar continuidad.`;
+El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para garantizar continuidad.
+${styleProfile === 'DISNEY_PIXAR_3D' ? 'El prompt_text DEBE especificar estilo Disney-Pixar 3D Animation al inicio.' : ''}`;
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -478,7 +572,7 @@ El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para
     body: JSON.stringify({
       model: "google/gemini-2.5-flash",
       messages: [
-        { role: "system", content: PROMPT_ENGINE_V4_SYSTEM },
+        { role: "system", content: getSystemPromptForStyle(styleProfile) },
         { role: "user", content: userPrompt }
       ],
       response_format: { type: "json_object" }
@@ -527,18 +621,22 @@ El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para
 // ============================================================================
 function buildInterframeEditPrompt(
   previousFrameType: string,
-  request: KeyframeRequest
+  request: KeyframeRequest,
+  styleProfile: StyleProfile = 'DISNEY_PIXAR_3D' // NEW: Style profile parameter
 ): string {
   const shotDetails = request.shotDetails || {};
   const cameraMove = request.cameraMovement || 'static';
+  const styleSettings = STYLE_PROFILES[styleProfile];
   
   return `
+${styleSettings.lock}
+
 ═══════════════════════════════════════════════════════════════════════════════
-EDIT MODE: STRICT CONTINUITY (Δt = ${request.timestampSec}s from start)
+EDIT MODE: STRICT CONTINUITY (Δt = ${request.timestampSec}s from start) - ${styleProfile}
 ═══════════════════════════════════════════════════════════════════════════════
 
 EDIT the existing keyframe image. This is ${request.frameType} frame.
-Time step from previous: ~1 second. Maintain STRICT continuity.
+Time step from previous: ~1 second. Maintain STRICT continuity IN ${styleProfile} STYLE.
 
 CONTEXT: ${request.sceneDescription}
 Shot type: ${request.shotType}
@@ -555,25 +653,27 @@ ALLOWED CHANGES ONLY (micro-movement for 1 second):
 ═══════════════════════════════════════════════════════════════════════════════
 FORBIDDEN CHANGES (ABSOLUTE - ZERO TOLERANCE):
 ═══════════════════════════════════════════════════════════════════════════════
-• do NOT change art style (must remain EXACTLY same style as source)
-• do NOT switch to photorealism or 3D render
+• do NOT change art style (must remain EXACTLY ${styleProfile})
+• ${styleProfile === 'DISNEY_PIXAR_3D' ? 'do NOT switch to photorealism or live-action' : 'do NOT switch to cartoon or anime'}
 • do NOT add or remove characters
 • do NOT change any animal species (dog STAYS dog, cat STAYS cat)
 • do NOT change wardrobe, props, background elements
 • do NOT change lighting direction or color temperature
 • do NOT change framing or shot type beyond micro camera motion
-• do NOT smooth skin or add airbrushed effects
+• ${styleProfile === 'DISNEY_PIXAR_3D' ? 'do NOT add realistic skin pores or textures' : 'do NOT smooth skin or add airbrushed effects'}
 • do NOT add text, watermarks, or new props
 
 ═══════════════════════════════════════════════════════════════════════════════
 CONTINUITY LOCKS (MUST MATCH SOURCE IMAGE EXACTLY):
 ═══════════════════════════════════════════════════════════════════════════════
+• Art style: ${styleProfile} (LOCKED)
 • All character identities (faces, hair color, age)
 • All wardrobe items (colors, textures, patterns)
 • All props in scene (positions, types, colors)
 • Lighting setup (direction, color, intensity)
 • Background/set design
-• Art style and rendering technique
+
+NEGATIVE: ${styleSettings.negative}
 
 Characters: ${request.characters.map(c => c.name).join(', ')}
 Keep all identities EXACTLY the same as the source image.
@@ -583,19 +683,31 @@ Keep all identities EXACTLY the same as the source image.
 async function generateWithLovableAI(
   prompt: string,
   negativePrompt: string,
-  referenceImageUrls: string[] = []
+  referenceImageUrls: string[] = [],
+  styleProfile: StyleProfile = 'DISNEY_PIXAR_3D' // NEW: Style profile parameter
 ): Promise<{ imageUrl: string; seed: number }> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) {
     throw new Error("LOVABLE_API_KEY is not configured");
   }
+  
+  const styleSettings = STYLE_PROFILES[styleProfile];
 
-  console.log(`[Lovable AI] Generating keyframe with ${IMAGE_MODEL}...`);
+  console.log(`[Lovable AI] Generating keyframe with ${IMAGE_MODEL} [style: ${styleProfile}]...`);
+  
+  // Sanitize prompt to remove banned words for this style
+  const sanitizedPrompt = sanitizePromptForStyle(prompt, styleProfile);
+  
+  // Build final prompt with style lock prefix
+  const finalPrompt = `${styleSettings.lock}\n\n${sanitizedPrompt}`;
+  const finalNegative = `${negativePrompt}. ${styleSettings.negative}`;
+  
+  console.log(`[Lovable AI] Prompt sanitized, banned words removed for ${styleProfile}`);
   
   // Build multimodal content if we have references
   type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
   const contentParts: ContentPart[] = [
-    { type: "text", text: `${prompt}\n\nNEGATIVE: ${negativePrompt}` }
+    { type: "text", text: `${finalPrompt}\n\nNEGATIVE: ${finalNegative}` }
   ];
   
   // Add reference images (max 6)
@@ -806,14 +918,18 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Get shot to verify project access
+    // Get shot to verify project access AND fetch style_profile from scene
     const { data: shot } = await supabase
       .from('shots')
-      .select('scene_id, scenes(project_id)')
+      .select('scene_id, scenes(project_id, style_profile)')
       .eq('id', request.shotId)
       .single();
     
     const projectId = (shot?.scenes as any)?.project_id;
+    const sceneStyleProfile = (shot?.scenes as any)?.style_profile as StyleProfile || 'DISNEY_PIXAR_3D';
+    
+    console.log(`[generate-keyframe] Using style profile from scene: ${sceneStyleProfile}`);
+    
     if (projectId) {
       await requireProjectAccess(supabase, userId, projectId);
     }
@@ -863,7 +979,7 @@ serve(async (req) => {
 
     // Step 1: Generate deterministic prompt with PROMPT-ENGINE v4
     console.log("Step 1: Generating prompt with PROMPT-ENGINE v4 (with identity + continuity)...");
-    const promptData = await generateKeyframePrompt(request, characterWardrobes, characterIdentities);
+    const promptData = await generateKeyframePrompt(request, characterWardrobes, characterIdentities, sceneStyleProfile);
     console.log("Prompt generated:", promptData.prompt_text.substring(0, 150) + "...");
     console.log("Continuity locks:", JSON.stringify(promptData.continuity_locks || {}));
 
@@ -902,7 +1018,8 @@ serve(async (req) => {
       
       const editPrompt = buildInterframeEditPrompt(
         request.frameType === 'intermediate' ? 'K0' : 'K1',
-        request
+        request,
+        sceneStyleProfile
       );
       
       const result = await editKeyframeWithLovableAI(
@@ -922,7 +1039,8 @@ serve(async (req) => {
       const result = await generateWithLovableAI(
         promptData.prompt_text,
         promptData.negative_prompt,
-        identityAnchors
+        identityAnchors,
+        sceneStyleProfile
       );
       
       generatedImageUrl = result.imageUrl;
