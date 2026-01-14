@@ -2256,9 +2256,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
       toast.info('Sincronizando personajes y locaciones del outline...');
 
-      const { error } = await supabase.functions.invoke('materialize-entities', {
+      const { data, error } = await supabase.functions.invoke('materialize-entities', {
         body: { projectId, source: 'outline' }
       });
+
+      // Handle NO_OUTLINE_FOUND gracefully - expected if no outline exists yet
+      if (data?.error === 'NO_OUTLINE_FOUND') {
+        toast.info('Genera un outline primero.');
+        return false;
+      }
 
       if (error) {
         toast.error('No se pudo sincronizar la Bible. Reintenta.');
@@ -4823,6 +4829,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           const { data, error } = await supabase.functions.invoke('materialize-entities', {
                             body: { projectId, source: 'outline' }
                           });
+                          
+                          // Handle NO_OUTLINE_FOUND gracefully
+                          if (data?.error === 'NO_OUTLINE_FOUND') {
+                            toast.info('Genera un outline primero antes de sincronizar.');
+                            return;
+                          }
+                          
                           if (error) throw error;
                           // Refresh Bible data after sync
                           await fetchBibleData();
