@@ -74,6 +74,30 @@ export function StoryboardPanelView({
     markAsRetried,
   } = useStoryboardProgress(sceneId, generating, expectedPanelCount);
 
+  // Auto-close overlay when generation completes
+  useEffect(() => {
+    if (!generating) return;
+    
+    // Check if all panels are complete (success or error)
+    const allComplete = panelStatuses.length > 0 && 
+      panelStatuses.every(s => s.status === 'success' || s.status === 'error');
+    
+    if (allComplete) {
+      const successCount = panelStatuses.filter(s => s.status === 'success').length;
+      const errorCount = panelStatuses.filter(s => s.status === 'error').length;
+      
+      setGenerating(false);
+      setShowOverlay(false);
+      fetchPanels(); // Refresh panels list
+      
+      if (errorCount === 0) {
+        toast.success(`¡Storyboard completo! ${successCount} paneles generados`);
+      } else {
+        toast.warning(`Storyboard generado: ${successCount} éxitos, ${errorCount} errores`);
+      }
+    }
+  }, [panelStatuses, generating]);
+
   // Auto-retry panels with errors after 30 seconds
   useEffect(() => {
     if (panelsToRetry.length === 0) return;
@@ -139,7 +163,10 @@ export function StoryboardPanelView({
     setShowOverlay(true);
     try {
       const panelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
-      const { data, error } = await supabase.functions.invoke('generate-storyboard', {
+      
+      // Fire and forget - don't await the full response since it times out
+      // The edge function will continue running and we'll poll for progress
+      supabase.functions.invoke('generate-storyboard', {
         body: {
           scene_id: sceneId,
           project_id: projectId,
@@ -150,17 +177,24 @@ export function StoryboardPanelView({
           location_ref: locationRef,
           panel_count: panelCount,
         },
+      }).then(({ data, error }) => {
+        if (error) {
+          console.warn('Storyboard generation response error (may be timeout, generation continues in background):', error);
+        } else if (data?.success) {
+          toast.success(`Generación completada: ${data.panels?.length || 0} paneles`);
+        }
+      }).catch(err => {
+        // Timeout errors are expected - the function continues running
+        console.warn('Storyboard invoke error (likely timeout, generation continues):', err);
       });
 
-      if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || 'Generation failed');
-
-      toast.success(`Generados ${data.panels?.length || 0} paneles (${selectedStyle === 'GRID_SHEET_V1' ? 'Lámina' : 'Técnico'})`);
-      await fetchPanels();
+      toast.info('Generación iniciada. El progreso se mostrará en tiempo real...');
+      
+      // Start polling immediately - don't wait for invoke response
+      // The useStoryboardProgress hook will track real-time status
     } catch (err) {
-      console.error('Error generating storyboard:', err);
-      toast.error('Error al generar storyboard');
-    } finally {
+      console.error('Error starting storyboard generation:', err);
+      toast.error('Error al iniciar generación');
       setGenerating(false);
       setShowOverlay(false);
     }
