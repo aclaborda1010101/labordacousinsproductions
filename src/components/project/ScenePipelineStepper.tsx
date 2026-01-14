@@ -13,7 +13,7 @@ interface PipelineStatus {
   screenplay: 'done';
   storyboard: { status: 'pending' | 'partial' | 'done'; approved: number; total: number };
   technical: { status: 'locked' | 'draft' | 'approved' | null };
-  keyframes: { status: 'pending' | 'partial' | 'done'; count: number; total: number };
+  shots: { status: 'pending' | 'partial' | 'done'; count: number };
   render: { status: 'pending' | 'partial' | 'done'; count: number; total: number };
 }
 
@@ -67,10 +67,9 @@ export function ScenePipelineStepper({ sceneId, projectId }: ScenePipelineSteppe
         technical: {
           status: techDoc?.status as 'draft' | 'approved' | 'locked' | null,
         },
-        keyframes: {
-          status: kfCount === 0 ? 'pending' : kfCount >= shotsCount ? 'done' : 'partial',
-          count: kfCount,
-          total: shotsCount,
+        shots: {
+          status: shotsCount === 0 ? 'pending' : 'done',
+          count: shotsCount,
         },
         render: {
           status: completedRenders === 0 ? 'pending' : completedRenders >= shotsCount ? 'done' : 'partial',
@@ -138,25 +137,25 @@ export function ScenePipelineStepper({ sceneId, projectId }: ScenePipelineSteppe
         : status.technical.status || 'Sin crear',
     },
     {
-      id: 'keyframes',
-      label: 'Keyframes',
-      emoji: '🖼️',
+      id: 'shots',
+      label: 'Shots',
+      emoji: '🎞️',
       status: (status.technical.status !== 'approved' && status.technical.status !== 'locked')
         ? 'locked'
-        : status.keyframes.status,
+        : status.shots.status,
       detail: (status.technical.status !== 'approved' && status.technical.status !== 'locked')
         ? 'Requiere Doc. Técnico'
-        : status.keyframes.total === 0
+        : status.shots.count === 0
           ? 'Sin shots'
-          : `${status.keyframes.count}/${status.keyframes.total}`,
+          : `${status.shots.count} shots`,
     },
     {
       id: 'render',
       label: 'Render',
       emoji: '🎬',
-      status: status.keyframes.status !== 'done' ? 'locked' : status.render.status,
-      detail: status.keyframes.status !== 'done'
-        ? 'Requiere Keyframes'
+      status: status.shots.status !== 'done' ? 'locked' : status.render.status,
+      detail: status.shots.status !== 'done'
+        ? 'Requiere Shots'
         : `${status.render.count}/${status.render.total}`,
     },
   ];

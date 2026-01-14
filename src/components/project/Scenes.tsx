@@ -1361,26 +1361,6 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                       <Badge variant="secondary" className="ml-1 text-xs">{shots[scene.id].length}</Badge>
                                     )}
                                   </TabsTrigger>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <TabsTrigger 
-                                        value="keyframes" 
-                                        className="gap-2"
-                                        disabled={technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked'}
-                                      >
-                                        <ImageIcon className="w-4 h-4" />
-                                        Keyframes
-                                        {technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked' && (
-                                          <Lock className="w-3 h-3 text-muted-foreground ml-1" />
-                                        )}
-                                      </TabsTrigger>
-                                    </TooltipTrigger>
-                                    {technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked' && (
-                                      <TooltipContent>
-                                        <p>Primero aprueba el Documento Técnico</p>
-                                      </TooltipContent>
-                                    )}
-                                  </Tooltip>
                                 </TabsList>
 
                                 {/* SCREENPLAY TAB - P0: Vista de guion derivada */}
@@ -1605,27 +1585,6 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                   </div>
                                 </TabsContent>
 
-                                {/* KEYFRAMES TAB */}
-                                <TabsContent value="keyframes" className="space-y-4">
-                                  {technicalDocStatus[scene.id] !== 'approved' && technicalDocStatus[scene.id] !== 'locked' ? (
-                                    <PipelineGateOverlay
-                                      message="Primero aprueba el Documento Técnico para desbloquear los Keyframes"
-                                      action="Ir a Doc. Técnico"
-                                      onAction={() => setActiveSceneTab(prev => ({...prev, [scene.id]: 'technical'}))}
-                                    />
-                                  ) : (
-                                    <KeyframesPanel
-                                      sceneId={scene.id}
-                                      projectId={projectId}
-                                      sceneSlugline={scene.slugline}
-                                      sceneSummary={scene.summary || undefined}
-                                      technicalDocStatus={technicalDocStatus[scene.id] || null}
-                                      characters={characters.filter(c => scene.character_ids?.includes(c.id))}
-                                      location={locations.find(l => l.id === scene.location_id)}
-                                      visualStyle={visualStyle || undefined}
-                                    />
-                                  )}
-                                </TabsContent>
                               </Tabs>
                             </div>
                           )}
