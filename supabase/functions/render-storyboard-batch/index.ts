@@ -63,8 +63,10 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Query pending/error panels
-    const statuses = retry_errors ? ["pending", "error"] : ["pending"];
+    // Query pending/error/pending_regen panels (Phase 1: process pending_regen for failed_safe recovery)
+    const statuses = retry_errors 
+      ? ["pending", "error", "pending_regen"]  // NEW: Include pending_regen for QC-failed panels
+      : ["pending"];
     const { data: panels, error: panelsErr } = await supabase
       .from("storyboard_panels")
       .select("*")
@@ -378,16 +380,23 @@ serve(async (req) => {
             slotsByChar.get(s.character_id)!.push(s);
           }
 
-          // Take max 2 refs per character (prioritized)
-          for (const charId of presentCharIds) {
-            const charSlots = slotsByChar.get(charId) || [];
-            charSlots.sort((a: any, b: any) => slotPriority.indexOf(a.slot_type) - slotPriority.indexOf(b.slot_type));
+        // Take max refs per character (prioritized) - MORE on regen attempts
+        const isRegen = (panel.regen_count || 0) > 0 || panel.image_status === 'pending_regen';
+        const maxRefsPerChar = isRegen ? 4 : 2;  // Phase 3: Escalate refs on regen
+        
+        for (const charId of presentCharIds) {
+          const charSlots = slotsByChar.get(charId) || [];
+          charSlots.sort((a: any, b: any) => slotPriority.indexOf(a.slot_type) - slotPriority.indexOf(b.slot_type));
 
-            const topSlots = charSlots.slice(0, 2);
-            for (const s of topSlots) {
-              referenceImageUrls.push(s.image_url);
-            }
+          const topSlots = charSlots.slice(0, maxRefsPerChar);
+          for (const s of topSlots) {
+            referenceImageUrls.push(s.image_url);
           }
+        }
+        
+        if (isRegen) {
+          console.log(`[batch] panel_${panelNo} is REGEN - using ${maxRefsPerChar} refs/char`);
+        }
         }
 
         // Location reference (max 1)
