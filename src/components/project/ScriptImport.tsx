@@ -5563,6 +5563,178 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           )}
 
+          {/* APPROVED OUTLINE WITHOUT SCRIPT - Show content + CTA to generate */}
+          {lightOutline && outlineApproved && !generatedScript && !pipelineRunning && (
+            <Card className="border-2 border-green-500/50 bg-green-500/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  Outline Aprobado
+                </CardTitle>
+                <CardDescription>
+                  Tu outline está listo. Ahora puedes generar el guion completo.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Title & Logline */}
+                <div className="p-4 bg-background rounded-lg border">
+                  <h3 className="font-bold text-xl mb-2">{lightOutline.title}</h3>
+                  <p className="text-muted-foreground italic">{lightOutline.logline}</p>
+                  <div className="flex gap-2 mt-3">
+                    {lightOutline.genre && <Badge variant="secondary">{lightOutline.genre}</Badge>}
+                    {lightOutline.tone && <Badge variant="outline">{lightOutline.tone}</Badge>}
+                  </div>
+                </div>
+
+                {/* Synopsis */}
+                {lightOutline.synopsis && (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground">Sinopsis</Label>
+                    <p className="text-sm mt-1">{lightOutline.synopsis}</p>
+                  </div>
+                )}
+
+                {/* Characters */}
+                <div>
+                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                    Personajes ({lightOutline.main_characters?.length || 0})
+                  </Label>
+                  <div className="grid gap-2 md:grid-cols-2">
+                    {lightOutline.main_characters?.map((char: any, i: number) => {
+                      const role = char.role || '';
+                      const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
+                      return (
+                        <div key={i} className="p-2 bg-muted/30 rounded border">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant={variant}>{char.name}</Badge>
+                            {role && <span className="text-xs text-muted-foreground">{role}</span>}
+                          </div>
+                          {char.description && (
+                            <p className="text-xs text-muted-foreground mt-1">{char.description}</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Locations */}
+                <div>
+                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                    Localizaciones ({lightOutline.main_locations?.length || 0})
+                  </Label>
+                  <div className="grid gap-2 md:grid-cols-2">
+                    {lightOutline.main_locations?.map((loc: any, i: number) => (
+                      <div key={i} className="p-2 bg-muted/30 rounded border">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant="outline">{loc.name}</Badge>
+                          {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
+                        </div>
+                        {loc.description && (
+                          <p className="text-xs text-muted-foreground mt-1">{loc.description}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Episodes */}
+                <div>
+                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                    Episodios ({lightOutline.episode_beats?.length || 0})
+                  </Label>
+                  <div className="space-y-2">
+                    {lightOutline.episode_beats?.map((ep: any, idx: number) => (
+                      <div key={ep.episode || idx} className="p-2 bg-muted/30 rounded border">
+                        <span className="font-medium text-sm">Ep {ep.episode}: {ep.title}</span>
+                        {ep.summary && <p className="text-xs text-muted-foreground mt-1">{ep.summary}</p>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* V11 Wizard for approved outlines */}
+                {qcStatus && (
+                  <OutlineWizardV11
+                    outline={lightOutline}
+                    qcStatus={qcStatus}
+                    isEnriching={enrichingOutline}
+                    isUpgrading={upgradingOutline}
+                    isPipelineRunning={pipelineRunning}
+                    onEnrich={async () => {
+                      if (!outlinePersistence.savedOutline?.id) return;
+                      setEnrichingOutline(true);
+                      try {
+                        const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                          outline_id: outlinePersistence.savedOutline.id
+                        });
+                        if (error) throw error;
+                        await outlinePersistence.refreshOutline();
+                        if (data?.outline) setLightOutline(data.outline);
+                        toast.success('Outline enriquecido con facciones, reglas y setpieces');
+                      } catch (err) {
+                        toast.error('Error al enriquecer: ' + (err as Error).message);
+                      } finally {
+                        setEnrichingOutline(false);
+                      }
+                    }}
+                    onThreads={async () => {
+                      if (!outlinePersistence.savedOutline?.id) return;
+                      setEnrichingOutline(true);
+                      try {
+                        const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                          outline_id: outlinePersistence.savedOutline.id,
+                          enrich_mode: 'threads'
+                        });
+                        if (error) throw error;
+                        await outlinePersistence.refreshOutline();
+                        if (data?.outline) setLightOutline(data.outline);
+                        toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
+                      } catch (err) {
+                        toast.error('Error al generar threads: ' + (err as Error).message);
+                      } finally {
+                        setEnrichingOutline(false);
+                      }
+                    }}
+                    onShowrunner={handleUpgradeToShowrunner}
+                    onGenerateEpisodes={approveAndGenerateEpisodes}
+                  />
+                )}
+
+                {/* CTA Buttons */}
+                <div className="flex gap-3 flex-wrap pt-4 border-t">
+                  <Button 
+                    variant="gold" 
+                    size="lg"
+                    className="flex-1 min-w-[200px]"
+                    onClick={approveAndGenerateEpisodes}
+                    disabled={pipelineRunning || !qcStatus?.canGenerateEpisodes}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generar Guion Completo
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={async () => {
+                      if (outlinePersistence.savedOutline?.id) {
+                        await outlinePersistence.saveOutline({
+                          outline: lightOutline,
+                          quality: outlinePersistence.savedOutline.quality || 'light',
+                          status: 'completed'
+                        });
+                        setOutlineApproved(false);
+                        toast.info('Outline vuelto a estado de revisión');
+                      }
+                    }}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Volver a Revisar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* EPISODE GENERATION PROGRESS - Clean Commercial UI */}
           {pipelineRunning && (
             <Card className="border-2 border-blue-500/50 bg-blue-500/5">
