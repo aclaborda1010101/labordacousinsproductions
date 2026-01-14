@@ -450,7 +450,8 @@ REGLAS ABSOLUTAS:
 - midpoint_reversal OBLIGATORIO y debe ser un EVENTO CONCRETO con agente.
 - world_rules mínimo 2 reglas del mundo con efecto dramático.
 - cast mínimo 4 personajes, cada uno con WANT (lo que busca), NEED (lo que realmente necesita), FLAW (defecto dramático).
-- locations mínimo 3 con función dramática.
+- locations mínimo ${densityTargets?.locations_min || 8} con función dramática.
+- ⚠️ SI DEVUELVES MENOS DE ${densityTargets?.locations_min || 8} LOCALIZACIONES, SE RECHAZARÁ LA RESPUESTA.
 - Devuelve SOLO JSON válido.`;
 }
 
@@ -468,7 +469,7 @@ REGLAS ABSOLUTAS:
 // PROMPT BUILDERS
 // ============================================================================
 
-function buildPartAPrompt(summary: string, episodesCount: number, genre: string, tone: string): string {
+function buildPartAPrompt(summary: string, episodesCount: number, genre: string, tone: string, locationsMin: number = 8): string {
   return `SERIES_CONFIG:
 { "season_episodes": ${episodesCount}, "episode_minutes": 60, "max_episodes": ${MAX_EPISODES}, "tone": "${tone || 'cinematográfico realista'}", "genre": "${genre || 'Drama'}" }
 
@@ -481,7 +482,7 @@ TAREA: Devuelve SOLO la estructura de la temporada (NO los episodios aún):
 - season_arc con midpoint_reversal OBLIGATORIO y concreto (un EVENTO, no una sensación)
 - world_rules: mínimo 2 reglas del mundo con dramatic_effect
 - cast: mínimo 4 personajes con WANT/NEED/FLAW/function
-- locations: mínimo 3 con function dramática y visual_identity
+- locations: MÍNIMO ${locationsMin} con function dramática y visual_identity (⚠️ OBLIGATORIO)
 
 EJEMPLOS DE MIDPOINT INCORRECTO:
 ❌ "Todo cambia cuando descubren la verdad"
@@ -760,7 +761,9 @@ async function stageOutlineFanOut(
         heartbeat_at: new Date().toISOString()
       });
       
-      const partAPrompt = buildPartAPrompt(summaryText, episodesCount, genre, tone);
+const locationsMin = densityTargets?.locations_min || 8;
+      console.log(`[WORKER] Density targets - Locations min: ${locationsMin}`);
+      const partAPrompt = buildPartAPrompt(summaryText, episodesCount, genre, tone, locationsMin);
       const partASystem = buildPartASystem(genre, tone, densityTargets);  // V11.2: Use dynamic system prompt
       
       // V11.1: Use executeWithFallback for PART_A with specific timeout
