@@ -12,8 +12,10 @@ import {
 
 interface PanelStatus {
   panel_no: number;
-  status: 'pending' | 'generating' | 'success' | 'error';
+  panel_id?: string;
+  status: 'pending' | 'generating' | 'success' | 'error' | 'pending_regen' | 'failed_safe';
   error?: string;
+  regenCount?: number;
 }
 
 interface StoryboardGenerationOverlayProps {
@@ -56,7 +58,8 @@ export function StoryboardGenerationOverlay({
   onCancel
 }: StoryboardGenerationOverlayProps) {
   const completedCount = panelStatuses.filter(p => p.status === 'success').length;
-  const errorCount = panelStatuses.filter(p => p.status === 'error').length;
+  const errorCount = panelStatuses.filter(p => p.status === 'error' || p.status === 'failed_safe').length;
+  const pendingRegenCount = panelStatuses.filter(p => p.status === 'pending_regen').length;
   
   const getPhaseLabel = () => {
     switch (currentPhase) {
@@ -126,7 +129,8 @@ export function StoryboardGenerationOverlay({
                 const panelNo = i + 1;
                 const panelData = panelStatuses.find(p => p.panel_no === panelNo);
                 const isCompleted = panelData?.status === 'success';
-                const hasError = panelData?.status === 'error';
+                const hasError = panelData?.status === 'error' || panelData?.status === 'failed_safe';
+                const isPendingRegen = panelData?.status === 'pending_regen';
                 const isCurrentlyGenerating = currentPanel === panelNo || panelData?.status === 'generating';
                 
                 return (
@@ -136,10 +140,11 @@ export function StoryboardGenerationOverlay({
                       w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all
                       ${isCompleted ? 'bg-green-500 text-white' : ''}
                       ${hasError ? 'bg-destructive text-destructive-foreground' : ''}
+                      ${isPendingRegen ? 'bg-amber-500 text-white animate-pulse' : ''}
                       ${isCurrentlyGenerating ? 'bg-primary text-primary-foreground animate-pulse ring-2 ring-primary/30' : ''}
-                      ${!isCompleted && !isCurrentlyGenerating && !hasError ? 'bg-muted text-muted-foreground' : ''}
+                      ${!isCompleted && !isCurrentlyGenerating && !hasError && !isPendingRegen ? 'bg-muted text-muted-foreground' : ''}
                     `}
-                    title={hasError ? `Error: ${panelData?.error}` : undefined}
+                    title={hasError ? `Error: ${panelData?.error}` : isPendingRegen ? 'En cola para QC' : undefined}
                   >
                     {isCompleted ? (
                       <CheckCircle className="w-5 h-5" />
@@ -157,6 +162,11 @@ export function StoryboardGenerationOverlay({
             {errorCount > 0 && (
               <p className="text-xs text-center text-destructive">
                 {errorCount} panel(es) con error
+              </p>
+            )}
+            {pendingRegenCount > 0 && (
+              <p className="text-xs text-center text-amber-400">
+                {pendingRegenCount} panel(es) en cola de corrección
               </p>
             )}
           </div>

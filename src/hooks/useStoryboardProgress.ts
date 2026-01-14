@@ -4,9 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 interface PanelStatus {
   panel_no: number;
   panel_id: string;
-  status: 'pending' | 'generating' | 'success' | 'error';
+  status: 'pending' | 'generating' | 'success' | 'error' | 'pending_regen' | 'failed_safe';
   error?: string;
   errorSince?: number; // timestamp when error was first detected
+  regenCount?: number; // number of regeneration attempts
 }
 
 interface StoryboardProgress {
@@ -98,9 +99,10 @@ export function useStoryboardProgress(
         
         const now = Date.now();
 
-        // Map to status objects with error tracking
+        // Map to status objects with error tracking (Phase 1: include pending_regen and failed_safe)
         const statuses: PanelStatus[] = data.map(panel => {
           let status: PanelStatus['status'] = 'pending';
+          const panelData = panel as any;
           
           if (panel.image_status === 'success') {
             status = 'success';
@@ -109,6 +111,13 @@ export function useStoryboardProgress(
           } else if (panel.image_status === 'generating') {
             status = 'generating';
             errorTimestampsRef.current.delete(panel.id);
+          } else if (panel.image_status === 'pending_regen') {
+            // Phase 1: New status for QC-failed panels awaiting regen
+            status = 'pending_regen';
+            errorTimestampsRef.current.delete(panel.id);
+          } else if (panel.image_status === 'failed_safe') {
+            // Phase 1: Panel that exhausted regen attempts - needs manual intervention
+            status = 'failed_safe';
           } else if (panel.image_status === 'error') {
             status = 'error';
             // Track when error first occurred
@@ -123,6 +132,7 @@ export function useStoryboardProgress(
             status,
             error: panel.image_error || undefined,
             errorSince: errorTimestampsRef.current.get(panel.id),
+            regenCount: panelData.regen_count || 0,
           };
         });
 

@@ -584,19 +584,31 @@ export function StoryboardPanelView({
                       <Badge variant="outline" className="text-xs">
                         Panel {panel.panel_no}
                       </Badge>
-                      {/* Status Badge */}
-                      {getPanelImageStatus(panel) === 'generating' && (
-                        <Badge variant="secondary" className="text-xs animate-pulse">
-                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                          Generando
-                        </Badge>
-                      )}
-                      {getPanelImageStatus(panel) === 'error' && (
-                        <Badge variant="destructive" className="text-xs">
-                          <AlertCircle className="w-3 h-3 mr-1" />
-                          Error
-                        </Badge>
-                      )}
+                    {/* Status Badge - Phase 4: Enhanced status display */}
+                    {getPanelImageStatus(panel) === 'generating' && (
+                      <Badge variant="secondary" className="text-xs animate-pulse">
+                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        Generando
+                      </Badge>
+                    )}
+                    {getPanelImageStatus(panel) === 'pending_regen' && (
+                      <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400 bg-amber-500/10 animate-pulse">
+                        <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                        En cola QC
+                      </Badge>
+                    )}
+                    {getPanelImageStatus(panel) === 'failed_safe' && (
+                      <Badge variant="destructive" className="text-xs">
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                        Intervención requerida
+                      </Badge>
+                    )}
+                    {getPanelImageStatus(panel) === 'error' && (
+                      <Badge variant="destructive" className="text-xs">
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                        Error
+                      </Badge>
+                    )}
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
@@ -714,22 +726,36 @@ export function StoryboardPanelView({
                     </p>
                   )}
 
-                  {/* Approval Toggle */}
-                  <Button
-                    variant={panel.approved ? 'default' : 'outline'}
-                    size="sm"
-                    className="w-full"
-                    onClick={() => toggleApproval(panel)}
-                  >
-                    {panel.approved ? (
-                      <>
-                        <Check className="w-3 h-3 mr-1" />
-                        Aprobado
-                      </>
-                    ) : (
-                      'Aprobar'
-                    )}
-                  </Button>
+                  {/* Phase 4: Action buttons based on status */}
+                  {(getPanelImageStatus(panel) === 'error' || 
+                    getPanelImageStatus(panel) === 'failed_safe' ||
+                    (panel as any).identity_qc?.needs_regen) ? (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => generatePanelImage(panel)}
+                    >
+                      <RefreshCw className="w-3 h-3 mr-1" />
+                      Regenerar con corrección
+                    </Button>
+                  ) : (
+                    <Button
+                      variant={panel.approved ? 'default' : 'outline'}
+                      size="sm"
+                      className="w-full"
+                      onClick={() => toggleApproval(panel)}
+                    >
+                      {panel.approved ? (
+                        <>
+                          <Check className="w-3 h-3 mr-1" />
+                          Aprobado
+                        </>
+                      ) : (
+                        'Aprobar'
+                      )}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}

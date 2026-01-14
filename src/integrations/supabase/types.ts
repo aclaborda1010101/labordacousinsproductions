@@ -5258,6 +5258,9 @@ export type Database = {
           image_prompt: string | null
           image_status: string | null
           image_url: string | null
+          last_character_refs: Json | null
+          last_prompt: string | null
+          last_style_preset_id: string | null
           location_id: string | null
           notes: string | null
           panel_code: string | null
@@ -5265,6 +5268,7 @@ export type Database = {
           panel_no: number
           project_id: string
           props_present: string[] | null
+          recovery_data: Json | null
           regen_count: number | null
           scene_id: string
           shot_hint: string | null
@@ -5286,6 +5290,9 @@ export type Database = {
           image_prompt?: string | null
           image_status?: string | null
           image_url?: string | null
+          last_character_refs?: Json | null
+          last_prompt?: string | null
+          last_style_preset_id?: string | null
           location_id?: string | null
           notes?: string | null
           panel_code?: string | null
@@ -5293,6 +5300,7 @@ export type Database = {
           panel_no: number
           project_id: string
           props_present?: string[] | null
+          recovery_data?: Json | null
           regen_count?: number | null
           scene_id: string
           shot_hint?: string | null
@@ -5314,6 +5322,9 @@ export type Database = {
           image_prompt?: string | null
           image_status?: string | null
           image_url?: string | null
+          last_character_refs?: Json | null
+          last_prompt?: string | null
+          last_style_preset_id?: string | null
           location_id?: string | null
           notes?: string | null
           panel_code?: string | null
@@ -5321,6 +5332,7 @@ export type Database = {
           panel_no?: number
           project_id?: string
           props_present?: string[] | null
+          recovery_data?: Json | null
           regen_count?: number | null
           scene_id?: string
           shot_hint?: string | null

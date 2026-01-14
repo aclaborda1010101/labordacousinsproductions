@@ -6,9 +6,49 @@ import {
   getDefaultStylePackLock,
   type PanelSpec,
   type CharacterPackLockData,
+  type CharacterLock,
   type CanvasFormat,
+  type StoryboardStylePresetId,
+  getStoryboardStylePreset,
+  buildStyleExclusionBlock,
 } from "../_shared/storyboard-prompt-builder.ts";
 import { generateSeed } from "../_shared/storyboard-serializer.ts";
+
+// ============================================================================
+// IDENTITY REGEN BLOCK - Phase 2: Clean Prompt with Correction Instructions
+// ============================================================================
+
+const IDENTITY_REGEN_BLOCK = (issues: string[], charNames: string[], attemptNo: number) => `
+═══════════════════════════════════════════════════════════════════════════════
+⚠️ IDENTITY CORRECTION REQUIRED - REGENERATION ATTEMPT ${attemptNo}/2 ⚠️
+═══════════════════════════════════════════════════════════════════════════════
+
+Previous generation FAILED identity verification.
+
+ISSUES DETECTED:
+${issues.map(i => `- ${i}`).join('\n')}
+
+MANDATORY CORRECTIONS for ${charNames.join(', ')}:
+1. Match face EXACTLY to reference - same nose, eyes, jaw shape
+2. Do NOT change hairstyle, hair color, or hairline
+3. Do NOT change apparent age
+4. Keep same facial structure and proportions
+5. Wardrobe must match lock exactly
+
+The reference images ARE the ground truth.
+If uncertain, SIMPLIFY the drawing rather than invent features.
+═══════════════════════════════════════════════════════════════════════════════`;
+
+// ============================================================================
+// REGENERATION POLICY
+// ============================================================================
+
+const REGEN_POLICY = {
+  maxAttempts: 2,
+  escalateRefsOnRegen: true,
+  cleanPromptOnRegen: true,
+  forceIdentityBlockOnRegen: true,
+};
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -118,15 +158,15 @@ async function resolveCharacterPackRefs(
       has_approved_pack: frontalSlot?.status === 'accepted',
     });
 
-    // Collect top 3 refs per character (prioritized)
-    const topSlots = charSlots.slice(0, 3);
+    // Phase 3: Collect MORE refs for regen (passed via maxRefsPerChar param)
+    const topSlots = charSlots.slice(0, 6);  // Collect all available, filter later
     for (const s of topSlots) {
       referenceUrls.push(s.image_url);
     }
   }
 
-  // Hard cap at 10 refs total
-  const finalRefs = referenceUrls.slice(0, 10);
+  // Hard cap at 12 refs total (allows 4 per character for 3 chars)
+  const finalRefs = referenceUrls.slice(0, 12);
   
   console.log(`[regenerate-panel] Pack refs resolved`, {
     char_count: validIds.length,
@@ -260,105 +300,139 @@ serve(async (req) => {
       console.log("[regenerate-panel] canvas_format_fetch_error:", e);
     }
 
-    // ========== DETERMINISTIC PROMPT FALLBACK ==========
-    // 1) Start with explicit prompt or stored image_prompt
-    let promptText = (body.prompt || panel.image_prompt || "").trim();
+    // ========================================================================
+    // Phase 2: CLEAN PROMPT REBUILD (NEVER accumulate prompts on regen)
+    // ========================================================================
+    
+    // Get storyboard parent to read style_preset_id (CRITICAL for clean regen)
+    const { data: storyboard } = await supabase
+      .from('storyboards')
+      .select('style_preset_id, style_preset_lock')
+      .eq('scene_id', panel.scene_id)
+      .maybeSingle();
+    
+    const stylePresetId = (storyboard?.style_preset_id || 'sb_cinematic_narrative') as StoryboardStylePresetId;
+    const regenCount = (panel as any).regen_count || 0;
+    const identityQc = (panel as any).identity_qc as { issues?: string[]; characters?: Record<string, { issues: string[] }> } | null;
+    
+    // Extract identity issues from QC
+    const identityIssues: string[] = [];
+    if (identityQc?.characters) {
+      for (const char of Object.values(identityQc.characters)) {
+        if (char.issues) identityIssues.push(...char.issues);
+      }
+    }
+    
+    console.log(`[regenerate-panel] Style preset: ${stylePresetId}, regen_count: ${regenCount}, identity_issues: ${identityIssues.length}`);
+    
+    // ALWAYS rebuild prompt from scratch (Phase 2: Clean Prompt on Regeneration)
+    const storyboardStyle = body.storyboard_style || 'GRID_SHEET_V1';
+    
+    // Build minimal PanelSpec from available panel data
+    const panelSpec: PanelSpec = {
+      panel_code: panel.panel_code || `P${panel.panel_no}`,
+      shot_hint: panel.shot_hint || 'PM',
+      panel_intent: panel.panel_intent || '',
+      action: panel.panel_intent || 'Action',
+      dialogue_snippet: undefined,
+      characters_present: (panel.characters_present || []).map((c: any) => 
+        typeof c === 'string' ? c : c.character_id
+      ),
+      props_present: (panel.props_present || []).map((p: any) => 
+        typeof p === 'string' ? p : p.prop_id
+      ),
+      staging: panel.staging || {
+        spatial_info: '',
+        movement_arrows: [],
+        axis_180: { enabled: false, screen_direction: 'left_to_right' },
+      },
+      continuity: panel.continuity || {
+        must_match_previous: ['hair', 'wardrobe'],
+        do_not_change: ['age'],
+      },
+    };
 
-    // 2) If no prompt available, rebuild using panel data (same logic as generate-storyboard)
-    if (!promptText) {
-      console.log(`[regenerate-panel] No stored prompt, rebuilding from panel data`);
+    // Get character pack data for proper identity injection
+    const rawCharIds = (panel.characters_present || []).map((c: any) => 
+      typeof c === 'string' ? c : c.character_id
+    );
+    const cleanCharIds = rawCharIds.filter((id: string) => 
+      isUuid(id) && !isBadToken(id)
+    );
+    
+    // Fetch character data for pack lock
+    let characterPackData: CharacterPackLockData[] = [];
+    let castLocks: CharacterLock[] = [];
+    
+    if (cleanCharIds.length > 0) {
+      const { data: chars } = await supabase
+        .from('characters')
+        .select('id, name, character_role, visual_dna')
+        .in('id', cleanCharIds);
       
-      const storyboardStyle = body.storyboard_style || 'GRID_SHEET_V1';
-      
-      // Build minimal PanelSpec from available panel data
-      const panelSpec: PanelSpec = {
-        panel_code: panel.panel_code || `P${panel.panel_no}`,
-        shot_hint: panel.shot_hint || 'PM',
-        panel_intent: panel.panel_intent || '',
-        action: panel.panel_intent || 'Action',
-        dialogue_snippet: undefined,
-        characters_present: (panel.characters_present || []).map((c: any) => 
-          typeof c === 'string' ? c : c.character_id
-        ),
-        props_present: (panel.props_present || []).map((p: any) => 
-          typeof p === 'string' ? p : p.prop_id
-        ),
-        staging: panel.staging || {
-          spatial_info: '',
-          movement_arrows: [],
-          axis_180: { enabled: false, screen_direction: 'left_to_right' },
-        },
-        continuity: panel.continuity || {
-          must_match_previous: ['hair', 'wardrobe'],
-          do_not_change: ['age'],
-        },
-      };
-
-      // Build prompt using the same builder as generate-storyboard (v4.0: with canvas_format)
-      promptText = buildStoryboardImagePrompt({
-        storyboard_style: storyboardStyle,
-        style_pack_lock: getDefaultStylePackLock(),
-        location_lock: undefined,
-        cast: [],
-        characters_present_ids: panelSpec.characters_present,
-        panel_spec: panelSpec,
-        panel_count: panelCount,
-        canvas_format: canvasFormat,  // NEW: Pass canvas format for consistent framing
-      });
-      
-      console.log(`[regenerate-panel] Rebuilt prompt (${promptText.length} chars) panel_count=${panelCount}`);
+      for (const c of (chars || [])) {
+        characterPackData.push({
+          id: c.id,
+          name: c.name,
+          role: c.character_role,
+          has_approved_pack: true,
+        });
+        castLocks.push({
+          id: c.id,
+          name: c.name,
+          visual_dna_lock: { schema_version: '1.0', text: 'Use reference images' },
+          reference_images: [],
+        });
+      }
     }
 
-    // 3) ULTRA-MINIMAL FALLBACK if builders somehow returned empty (should never happen)
-    if (!promptText) {
-      promptText = [
-        "Professional pencil storyboard panel, grayscale, clean linework, no color.",
-        `Panel P${panel.panel_no}.`,
-        panel.shot_hint ? `Shot type: ${panel.shot_hint}.` : "",
-        panel.panel_intent ? `Intent: ${panel.panel_intent}.` : "",
-        panel.staging?.movement_arrows?.length 
-          ? `Movement: ${JSON.stringify(panel.staging.movement_arrows)}` 
-          : ""
-      ].filter(Boolean).join(" ");
-      
-      console.log(`[regenerate-panel] Using ultra-minimal fallback prompt`);
+    // Build CLEAN prompt using the same builder (with style_preset_id)
+    let promptText = buildStoryboardImagePrompt({
+      storyboard_style: storyboardStyle,
+      style_pack_lock: getDefaultStylePackLock(),
+      location_lock: undefined,
+      cast: castLocks,
+      characters_present_ids: cleanCharIds,
+      character_pack_data: characterPackData,
+      panel_spec: panelSpec,
+      panel_count: panelCount,
+      canvas_format: canvasFormat,
+      style_preset_id: stylePresetId,  // CRITICAL: Use parent storyboard's preset
+    });
+    
+    // Phase 2: Prepend IDENTITY_REGEN_BLOCK if this is a regen with identity issues
+    if (regenCount > 0 && identityIssues.length > 0 && REGEN_POLICY.forceIdentityBlockOnRegen) {
+      const charNames = characterPackData.map(c => c.name);
+      promptText = IDENTITY_REGEN_BLOCK(identityIssues, charNames, regenCount) + '\n\n' + promptText;
+      console.log(`[regenerate-panel] Added IDENTITY_REGEN_BLOCK for ${charNames.join(', ')}`);
     }
+    
+    console.log(`[regenerate-panel] Built CLEAN prompt (${promptText.length} chars) style=${stylePresetId}`);
 
-    // 4) Persist rebuilt prompt for future regenerations
-    if (!panel.image_prompt || panel.image_prompt.trim() !== promptText) {
-      await supabase
-        .from("storyboard_panels")
-        .update({ image_prompt: promptText.substring(0, 2000) })
-        .eq("id", panelId);
-    }
-
-    console.log(`[regenerate-panel] Panel ${panel.panel_no}, scene ${sceneId}, project ${projectId}`);
-
-    // 3) Mark panel as generating
+    // Phase 1: Save recovery data BEFORE generation attempt
+    const recoveryData = {
+      style_preset_id: stylePresetId,
+      character_refs: cleanCharIds,
+      canvas_format: canvasFormat,
+      identity_issues: identityIssues,
+      regen_count: regenCount,
+    };
+    
     await supabase
       .from('storyboard_panels')
       .update({ 
         image_status: 'generating',
-        image_error: null 
+        image_error: null,
+        last_prompt: promptText.substring(0, 3000),
+        last_style_preset_id: stylePresetId,
+        last_character_refs: cleanCharIds,
+        recovery_data: recoveryData,
       })
       .eq('id', panelId);
 
-    // 4) Resolve character reference images for multimodal input (PACK-FIRST)
-    const rawCharIds = (panel.characters_present || []).map((c: any) => 
-      typeof c === 'string' ? c : c.character_id
-    );
-    
-    // Filter out bad tokens before resolution
-    const cleanCharIds = rawCharIds.filter((id: string) => 
-      isUuid(id) && !isBadToken(id)
-    );
+    console.log(`[regenerate-panel] Panel ${panel.panel_no}, scene ${sceneId}, project ${projectId}`);
 
-    console.log(`[regenerate-panel] Character IDs`, {
-      raw: rawCharIds.slice(0, 5),
-      clean: cleanCharIds.slice(0, 5),
-      filtered_out: rawCharIds.length - cleanCharIds.length
-    });
-    
+    // Phase 3: Resolve character references (MORE refs on regen)
     const { packData, referenceUrls } = await resolveCharacterPackRefs(
       supabase, 
       cleanCharIds, 
