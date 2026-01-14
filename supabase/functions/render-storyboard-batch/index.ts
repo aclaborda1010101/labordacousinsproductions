@@ -19,6 +19,7 @@ import {
   buildVisualDNAText,
   getDefaultStylePackLock,
   validateCharacterDNA,
+  STAGING_PROMPT_BLOCK,
   type StylePackLock,
   type CharacterLock,
   type CharacterPackLockData,
@@ -476,128 +477,202 @@ serve(async (req) => {
 
         console.log(`[batch] panel_${panelNo} refs=${finalRefs.length} chars=${presentCharIds.length}`);
 
-        // Generate image
-        const imageResult = await generateImageWithNanoBanana({
+        // ================================================================
+        // PIPELINE DE 2 PASOS: STAGING (A) → IDENTITY FIX (B)
+        // ================================================================
+        
+        // ===================== PASO A: STAGING =====================
+        // Genera composición/plano sin cara final detallada
+        console.log(JSON.stringify({
+          event: "PIPELINE_STEP",
+          panel_id: panel.id,
+          panel_no: panelNo,
+          step: "STAGING_START",
+          refs_count: finalRefs.length,
+          chars_count: presentCharIds.length,
+        }));
+
+        // Build staging prompt (without character refs - only location)
+        const locationRefs = locationLock?.reference_images?.slice(0, 1) || [];
+        const stagingPrompt = STAGING_PROMPT_BLOCK + '\n\n' + imagePrompt;
+        
+        const stagingResult = await generateImageWithNanoBanana({
           lovableApiKey,
-          promptText: imagePrompt,
-          referenceImageUrls: finalRefs,
-          label: `storyboard_batch_p${panelNo}`,
+          promptText: stagingPrompt,
+          referenceImageUrls: locationRefs, // Solo location refs en staging
+          label: `staging_p${panelNo}`,
           seed,
           supabase,
           projectId,
         });
 
-        if (imageResult.success && (imageResult.imageUrl || imageResult.imageBase64)) {
-          let finalImageUrl = imageResult.imageUrl;
-
-          // Upload base64 to Storage if needed
-          if (imageResult.imageBase64 && !imageResult.imageUrl?.startsWith("http")) {
-            const binaryData = Uint8Array.from(atob(imageResult.imageBase64), (c) => c.charCodeAt(0));
-            const fileName = `storyboard/${panel.id}.png`;
-
-            const { data: uploadData, error: uploadError } = await supabase.storage
-              .from("project-assets")
-              .upload(fileName, binaryData, { contentType: "image/png", upsert: true });
-
-            if (!uploadError && uploadData) {
-              const { data: publicUrl } = supabase.storage.from("project-assets").getPublicUrl(fileName);
-              finalImageUrl = publicUrl.publicUrl;
-            } else {
-              await supabase
-                .from("storyboard_panels")
-                .update({ image_status: "error", image_error: `Storage: ${uploadError?.message}` })
-                .eq("id", panel.id);
-              continue;
-            }
-          }
-
-          if (finalImageUrl) {
-            await supabase
-              .from("storyboard_panels")
-              .update({
-                image_url: finalImageUrl,
-                image_prompt: imagePrompt.substring(0, 2000),
-                image_status: "success",
-                image_error: null,
-              })
-              .eq("id", panel.id);
-            processed++;
-
-            // ================================================================
-            // IDENTITY QC: Verify character identity matches pack references
-            // ================================================================
-            if (presentCharIds.length > 0 && panel.shot_hint !== 'INSERT') {
-              try {
-                // Call qc-storyboard-identity function
-                const qcResponse = await fetch(
-                  `${supabaseUrl}/functions/v1/qc-storyboard-identity`,
-                  {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${supabaseKey}`,
-                    },
-                    body: JSON.stringify({
-                      panelId: panel.id,
-                      panelImageUrl: finalImageUrl,
-                      characterIds: presentCharIds,
-                      shotHint: panel.shot_hint || 'PM',
-                    }),
-                  }
-                );
-
-                const qcResult = await qcResponse.json();
-                
-                if (qcResult.needs_regen && (panel.regen_count || 0) < 2) {
-                  // Mark for regeneration
-                  console.log(`[batch] panel_${panelNo} identity QC failed (score=${qcResult.qc?.overall_score?.toFixed(2)}), marking for regen`);
-                  await supabase
-                    .from("storyboard_panels")
-                    .update({
-                      image_status: "pending_regen",
-                      regen_count: (panel.regen_count || 0) + 1,
-                    })
-                    .eq("id", panel.id);
-                } else if (qcResult.success) {
-                  console.log(`[batch] panel_${panelNo} identity QC passed (score=${qcResult.qc?.overall_score?.toFixed(2)})`);
-                }
-              } catch (qcErr) {
-                // QC is non-blocking - log and continue
-                console.warn(`[batch] panel_${panelNo} identity QC failed:`, qcErr);
-              }
-            }
-          }
-        } else {
-          // Image generation failed - determine if we should go to failed_safe
-          const errMsg = imageResult.error?.slice(0, 500) || "Image generation failed";
+        if (!stagingResult.success || (!stagingResult.imageUrl && !stagingResult.imageBase64)) {
+          // Staging failed - mark as error
+          const errMsg = stagingResult.error?.slice(0, 500) || "Staging generation failed";
           const regenCount = (panel.regen_count || 0) + 1;
           
-          // Phase 1: Transition to failed_safe after 2 attempts
-          if (regenCount >= 2) {
-            await supabase
-              .from("storyboard_panels")
-              .update({ 
-                image_status: "failed_safe",
-                image_error: errMsg,
-                failure_reason: "NO_IMAGE_RETURNED",
-                regen_count: regenCount,
-              })
-              .eq("id", panel.id);
-            console.log(`[batch] panel_${panelNo} moved to failed_safe after ${regenCount} attempts`);
+          console.log(JSON.stringify({
+            event: "PIPELINE_STEP",
+            panel_id: panel.id,
+            step: "STAGING_FAILED",
+            error: errMsg,
+          }));
+          
+          await supabase
+            .from("storyboard_panels")
+            .update({ 
+              image_status: regenCount >= 2 ? "failed_safe" : "error",
+              staging_status: "failed",
+              pipeline_phase: "staging",
+              image_error: errMsg,
+              regen_count: regenCount,
+            })
+            .eq("id", panel.id);
+          continue;
+        }
+
+        // Upload staging image
+        let stagingImageUrl = stagingResult.imageUrl;
+        if (stagingResult.imageBase64 && !stagingResult.imageUrl?.startsWith("http")) {
+          const binaryData = Uint8Array.from(atob(stagingResult.imageBase64), (c) => c.charCodeAt(0));
+          const fileName = `storyboard/${panel.id}_staging.png`;
+
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from("project-assets")
+            .upload(fileName, binaryData, { contentType: "image/png", upsert: true });
+
+          if (!uploadError && uploadData) {
+            const { data: publicUrl } = supabase.storage.from("project-assets").getPublicUrl(fileName);
+            stagingImageUrl = publicUrl.publicUrl;
           } else {
             await supabase
               .from("storyboard_panels")
               .update({ 
                 image_status: "error", 
-                image_error: errMsg,
-                regen_count: regenCount,
+                staging_status: "failed",
+                image_error: `Staging upload: ${uploadError?.message}` 
+              })
+              .eq("id", panel.id);
+            continue;
+          }
+        }
+
+        // Save staging URL
+        await supabase
+          .from("storyboard_panels")
+          .update({
+            staging_image_url: stagingImageUrl,
+            staging_status: "success",
+            pipeline_phase: "identity_fix",
+            image_prompt: imagePrompt.substring(0, 2000),
+          })
+          .eq("id", panel.id);
+
+        console.log(JSON.stringify({
+          event: "PIPELINE_STEP",
+          panel_id: panel.id,
+          step: "STAGING_OK",
+          staging_url: stagingImageUrl,
+          duration_ms: Date.now() - (new Date(panel.generation_started_at || Date.now()).getTime()),
+        }));
+
+        // ===================== PASO B: IDENTITY FIX =====================
+        // Llama a identity-fix-panel para editar SOLO cara/pelo
+        
+        if (presentCharIds.length > 0 && panel.shot_hint !== 'INSERT') {
+          console.log(JSON.stringify({
+            event: "PIPELINE_STEP",
+            panel_id: panel.id,
+            step: "IDENTITY_FIX_START",
+            chars_count: presentCharIds.length,
+          }));
+
+          try {
+            const fixResponse = await fetch(
+              `${supabaseUrl}/functions/v1/identity-fix-panel`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${supabaseKey}`,
+                },
+                body: JSON.stringify({ panelId: panel.id }),
+              }
+            );
+
+            const fixResult = await fixResponse.json();
+            
+            if (fixResult.success) {
+              console.log(JSON.stringify({
+                event: "PIPELINE_STEP",
+                panel_id: panel.id,
+                step: "IDENTITY_FIX_OK",
+                image_url: fixResult.image_url,
+                anchors_used: fixResult.anchors_used,
+              }));
+              processed++;
+            } else {
+              // Identity fix failed - panel stays with staging only
+              console.log(JSON.stringify({
+                event: "PIPELINE_STEP",
+                panel_id: panel.id,
+                step: "IDENTITY_FIX_FAILED",
+                error: fixResult.error,
+              }));
+              
+              // Mark as needs_identity_fix (staging preserved)
+              await supabase
+                .from("storyboard_panels")
+                .update({
+                  image_status: "needs_identity_fix",
+                  identity_fix_status: "failed",
+                  image_url: stagingImageUrl, // Use staging as fallback visual
+                })
+                .eq("id", panel.id);
+            }
+          } catch (fixErr) {
+            console.error(`[batch] panel_${panelNo} identity fix error:`, fixErr);
+            // Non-blocking: use staging as final image
+            await supabase
+              .from("storyboard_panels")
+              .update({
+                image_status: "needs_identity_fix",
+                identity_fix_status: "failed",
+                image_url: stagingImageUrl,
               })
               .eq("id", panel.id);
           }
+        } else {
+          // No characters or INSERT shot - staging is final
+          await supabase
+            .from("storyboard_panels")
+            .update({
+              image_url: stagingImageUrl,
+              pipeline_phase: "complete",
+              identity_fix_status: "skipped",
+              image_status: "success",
+            })
+            .eq("id", panel.id);
+          processed++;
+          
+          console.log(JSON.stringify({
+            event: "PIPELINE_STEP",
+            panel_id: panel.id,
+            step: "STAGING_FINAL",
+            reason: presentCharIds.length === 0 ? "no_characters" : "insert_shot",
+          }));
         }
+
       } catch (imgError) {
         const errMsg = imgError instanceof Error ? imgError.message : String(imgError);
         const regenCount = (panel.regen_count || 0) + 1;
+        
+        console.error(JSON.stringify({
+          event: "PIPELINE_ERROR",
+          panel_id: panel.id,
+          error: errMsg,
+          regen_count: regenCount,
+        }));
         
         // Phase 1: Transition to failed_safe after repeated failures
         const newStatus = regenCount >= 2 ? "failed_safe" : "error";

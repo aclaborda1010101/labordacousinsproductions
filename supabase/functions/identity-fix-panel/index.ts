@@ -119,13 +119,20 @@ serve(async (req) => {
       throw new Error(`Panel not found: ${panelError?.message || "unknown"}`);
     }
 
-    // 2) Check if we have a staging image to edit
-    const stagingImage = panel.staging_image_url || panel.image_url;
-    if (!stagingImage && !body.forceRun) {
+    // 2) Check if we have a staging image to edit - NO FALLBACK to image_url
+    const stagingImage = panel.staging_image_url;
+    if (!stagingImage) {
+      console.log(JSON.stringify({
+        event: "IDENTITY_FIX_BLOCKED",
+        panel_id: panelId,
+        reason: "No staging_image_url",
+        has_image_url: !!panel.image_url,
+      }));
+      
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: "No staging image available. Run Paso A first.",
+          error: "No staging image available. Run Paso A (staging) first.",
           needsStaging: true 
         }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -252,29 +259,45 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[identity-fix] Found ${identityAnchorUrls.length} anchors for ${charNames}`);
+    console.log(JSON.stringify({
+      event: "IDENTITY_FIX_START",
+      panel_id: panelId,
+      staging_url: stagingImage,
+      anchors_count: identityAnchorUrls.length,
+      characters: charNames,
+      shot_type: shotType,
+    }));
 
     // 7) Build edit instruction and call editImageWithNanoBanana
     const editInstruction = IDENTITY_FIX_PROMPT(charNames, shotType);
 
+    const editStartTime = Date.now();
     const editResult = await editImageWithNanoBanana({
       lovableApiKey,
-      sourceImageUrl: stagingImage!,
+      sourceImageUrl: stagingImage,
       editInstruction,
       identityAnchorUrls,
       label: `identity_fix_p${panel.panel_no}`,
       supabase,
       projectId,
     });
+    const editDurationMs = Date.now() - editStartTime;
 
     if (!editResult.success || (!editResult.imageUrl && !editResult.imageBase64)) {
       const errMsg = editResult.error?.slice(0, 500) || "Identity fix failed";
-      console.error(`[identity-fix] Failed:`, errMsg);
+      
+      console.log(JSON.stringify({
+        event: "IDENTITY_FIX_FAILED",
+        panel_id: panelId,
+        error: errMsg,
+        duration_ms: editDurationMs,
+      }));
 
       await supabase
         .from("storyboard_panels")
         .update({
           identity_fix_status: "failed",
+          image_status: "needs_identity_fix",
           image_error: errMsg,
         })
         .eq("id", panelId);
@@ -321,7 +344,16 @@ serve(async (req) => {
       .eq("id", panelId);
 
     const duration = Date.now() - startTime;
-    console.log(`[identity-fix] Success for panel ${panel.panel_no} in ${duration}ms`);
+    
+    console.log(JSON.stringify({
+      event: "IDENTITY_FIX_OK",
+      panel_id: panelId,
+      image_url: finalImageUrl,
+      duration_ms: duration,
+      edit_duration_ms: editDurationMs,
+      characters: charNames,
+      anchors_used: identityAnchorUrls.length,
+    }));
 
     return new Response(
       JSON.stringify({
