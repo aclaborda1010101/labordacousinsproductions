@@ -42,9 +42,13 @@ export interface DensityGateResult {
   required_fixes?: Array<{
     type: string;
     title: string;
-    current: number;
-    required: number;
-    fix_hint: string;
+    current?: number;
+    required?: number;
+    fix_hint?: string;
+    // Backend alternative fields
+    why_needed?: string;
+    where_to_apply?: string;
+    acceptance_test?: string;
   }>;
   human_summary?: string;
   warnings?: string[];

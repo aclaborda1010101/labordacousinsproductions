@@ -1080,6 +1080,47 @@ serve(async (req) => {
     });
 
     // =========================================================================
+    // V11.2: DENSITY GATE (DEFENSE IN DEPTH)
+    // Only run if not a repair attempt (repair attempts focus on contract, not density)
+    // =========================================================================
+    const isRepairAttempt = request.isRepairAttempt || false;
+    
+    if (outline && !isRepairAttempt) {
+      const densityProfile = getDensityProfile(format || 'serie_drama');
+      const densityCheck = validateDensity(outline, densityProfile);
+      
+      if (densityCheck.status === 'FAIL') {
+        console.warn('[generate-script] DENSITY_GATE_FAILED:', {
+          score: densityCheck.score,
+          fixesCount: densityCheck.required_fixes?.length || 0
+        });
+        
+        // Release lock if acquired
+        if (lockAcquired && projectIdForLock) {
+          try {
+            await auth.supabase.rpc('release_project_lock', { p_project_id: projectIdForLock });
+          } catch { /* ignore */ }
+        }
+        
+        clearTimeout(timeoutId);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'DENSITY_GATE_FAILED',
+          code: 'DENSITY_INSUFFICIENT',
+          message: 'El outline no cumple mínimos de densidad narrativa',
+          // NORMALIZATION: Use both 'score' AND 'density_score' for compatibility
+          score: densityCheck.score,
+          density_score: densityCheck.score,
+          required_fixes: densityCheck.required_fixes,
+          human_summary: densityCheck.human_summary,
+        }), { 
+          status: 422, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+      }
+    }
+
+    // =========================================================================
     // FETCH PROJECT BIBLE (if projectId provided)
     // =========================================================================
     let bible: BibleContext = { project: null, characters: [], locations: [], fetchErrors: [] };
