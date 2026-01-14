@@ -81,9 +81,10 @@ serve(async (req) => {
     }
 
     // 2) Fetch scene using valid FK (panel.scene_id -> scenes.id)
+    // Only select columns that actually exist in the scenes table
     const { data: scene, error: sceneError } = await supabase
       .from('scenes')
-      .select('id, project_id, slugline, script_content, time_of_day, location_id')
+      .select('id, project_id, slugline, summary, scene_no, episode_no, time_of_day, location_id, mood')
       .eq('id', panel.scene_id)
       .single();
 
