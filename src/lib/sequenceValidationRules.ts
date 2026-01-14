@@ -502,6 +502,88 @@ export const KEYFRAMES_RULES: ValidationRule[] = [
       };
     },
   },
+  {
+    code: 'KF_003',
+    name: 'Continuidad de pose rota entre planos',
+    level: 'error',
+    phase: 'keyframes',
+    description: 'La pose de entrada de un plano debe coincidir con la pose de salida del plano anterior',
+    check: (data: { transitions: any[] }) => {
+      const violations = (data.transitions || []).filter(t => 
+        t.validation_status === 'error' && !t.override_reason
+      );
+      return {
+        passed: violations.length === 0,
+        message: `${violations.length} transición(es) con discontinuidad de pose`,
+        affectedItems: violations.map(t => `Shot ${t.to_shot_id?.slice(0, 8)}`),
+      };
+    },
+  },
+  {
+    code: 'KF_004',
+    name: 'Falta keyframe inicial (KF0) o final (KF1)',
+    level: 'error',
+    phase: 'keyframes',
+    description: 'Cada shot debe tener keyframes de inicio y final para definir la trayectoria',
+    check: (data: { shots: any[], keyframes: Record<string, any[]> }) => {
+      const incomplete: string[] = [];
+      
+      for (const shot of data.shots || []) {
+        const shotKeyframes = data.keyframes[shot.id] || [];
+        const hasInitial = shotKeyframes.some(kf => kf.frame_type === 'initial');
+        const hasFinal = shotKeyframes.some(kf => kf.frame_type === 'final');
+        
+        if (!hasInitial || !hasFinal) {
+          const missing = [];
+          if (!hasInitial) missing.push('KF0');
+          if (!hasFinal) missing.push('KF1');
+          incomplete.push(`Shot ${shot.shot_no}: falta ${missing.join(', ')}`);
+        }
+      }
+      
+      return {
+        passed: incomplete.length === 0,
+        message: `${incomplete.length} shot(s) sin keyframes KF0/KF1 completos`,
+        affectedItems: incomplete,
+      };
+    },
+  },
+  {
+    code: 'KF_005',
+    name: 'Keyframe sin pose_data',
+    level: 'warning',
+    phase: 'keyframes',
+    description: 'Los keyframes deben tener pose_data para validar continuidad',
+    check: (data: { keyframes: any[] }) => {
+      const missingPose = data.keyframes.filter(kf => 
+        kf.frame_type !== 'intermediate' && 
+        (!kf.pose_data || Object.keys(kf.pose_data).length === 0)
+      );
+      return {
+        passed: missingPose.length === 0,
+        message: `${missingPose.length} keyframe(s) sin pose_data definido`,
+        affectedItems: missingPose.map(kf => `${kf.frame_type} @ ${kf.timestamp_sec}s`),
+      };
+    },
+  },
+  {
+    code: 'KF_006',
+    name: 'Dirección de pantalla inconsistente',
+    level: 'warning',
+    phase: 'keyframes',
+    description: 'La dirección de movimiento en pantalla debe ser consistente entre planos consecutivos',
+    check: (data: { transitions: any[] }) => {
+      const directionBreaks = (data.transitions || []).filter(t => 
+        t.validation_status === 'warning' && 
+        t.screen_direction_lock === 'intentional_break'
+      );
+      return {
+        passed: directionBreaks.length === 0,
+        message: `${directionBreaks.length} cambio(s) de dirección en pantalla`,
+        affectedItems: directionBreaks.map(t => t.to_shot_id?.slice(0, 8)),
+      };
+    },
+  },
 ];
 
 // =============================================================================

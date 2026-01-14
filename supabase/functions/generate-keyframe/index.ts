@@ -149,6 +149,27 @@ interface PreviousKeyframeData {
   stagingSnapshot?: unknown;
 }
 
+// Pose data structure for motion continuity
+interface PoseData {
+  position: {
+    x_m: number;
+    y_m: number;
+    screen_pos: 'left' | 'center' | 'right' | 'off_left' | 'off_right';
+  };
+  orientation: {
+    facing_deg: number;
+    gaze_target: string;
+  };
+  scale: {
+    relative: number;
+    in_frame_pct: number;
+  };
+  body_state: {
+    posture: 'standing' | 'sitting' | 'crouching' | 'lying' | 'moving';
+    gesture: string;
+  };
+}
+
 interface KeyframeRequest {
   shotId: string;
   sceneDescription: string;
@@ -173,6 +194,8 @@ interface KeyframeRequest {
   shotDetails?: ShotDetails;
   previousKeyframeUrl?: string;
   previousKeyframeData?: PreviousKeyframeData;
+  // NEW: Previous shot's final pose for continuity lock
+  previousShotFinalPose?: Record<string, PoseData>;
   stylePack?: {
     description?: string;
     colorPalette?: string[];
@@ -354,6 +377,34 @@ REGLA CRÍTICA: Este keyframe es ${request.timestampSec}s después. Los personaj
 `;
   }
 
+  // NEW: Build CONTINUITY LOCK section for initial keyframes
+  let continuityLockSection = '';
+  if (request.frameType === 'initial' && request.previousShotFinalPose && Object.keys(request.previousShotFinalPose).length > 0) {
+    const poseLines = Object.entries(request.previousShotFinalPose).map(([charId, pose]) => {
+      return `${charId}:
+  - Screen position: ${pose.position?.screen_pos || 'center'}
+  - Facing: ${pose.orientation?.facing_deg || 0}° towards ${pose.orientation?.gaze_target || 'camera'}
+  - Frame occupancy: ${pose.scale?.in_frame_pct || 40}%
+  - Posture: ${pose.body_state?.posture || 'standing'}`;
+    }).join('\n');
+
+    continuityLockSection = `
+=== CONTINUITY LOCK (MANDATORY - INITIAL KEYFRAME) ===
+This keyframe MUST start with characters in EXACTLY these positions from the previous shot:
+
+${poseLines}
+
+RULES:
+1. NO "teleporting" - characters CANNOT jump positions between shots
+2. NO scale change without camera movement justification
+3. Screen direction MUST be preserved unless motivated by cut type
+4. entry_pose MUST match exit_pose of previous shot
+
+Generate pose_data_per_character that matches these constraints.
+=== END CONTINUITY LOCK ===
+`;
+  }
+
   // Build canvas format section with dynamic safe zones
   const canvasFormat = request.canvasFormat;
   const safeZones = canvasFormat?.safe_area || { top: 12, bottom: 18, left: 6, right: 6 };
@@ -405,13 +456,17 @@ ${request.stylePack ? `ESTILO VISUAL:
 
 ${continuitySection}
 
+${continuityLockSection}
+
 ${request.previousKeyframeUrl ? `IMAGEN DE REFERENCIA: Hay un keyframe previo disponible. DEBES mantener:
 - Mismo vestuario exacto para cada personaje (ver VESTUARIO BLOQUEADO)
 - Misma iluminación (dirección, color, intensidad)
 - Mismo set/decorado
 - Evolución natural de posiciones` : ''}
 
-Genera el JSON completo con prompt_text, negative_prompt, continuity_locks, frame_geometry, staging_snapshot, determinism, y negative_constraints.
+IMPORTANTE: Incluye "pose_data_per_character" en tu respuesta JSON con la posición, orientación, escala y estado corporal de CADA personaje.
+
+Genera el JSON completo con prompt_text, negative_prompt, continuity_locks, pose_data_per_character, frame_geometry, staging_snapshot, determinism, y negative_constraints.
 El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para garantizar continuidad.`;
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
