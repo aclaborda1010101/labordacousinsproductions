@@ -9,10 +9,14 @@ import {
   buildVisualDNAText,
   getDefaultStylePackLock,
   validateCharacterDNA,
+  validateCharacterPackForStoryboard,
+  buildCharacterPackLockBlock,
   STORYBOARD_PLANNER_SYSTEM_PROMPT,
+  STORYBOARD_ARTIST_SYSTEM_PROMPT,
   buildStoryboardPlannerUserPrompt,
   type StylePackLock,
   type CharacterLock,
+  type CharacterPackLockData,
   type LocationLock,
   type PanelSpec,
 } from "../_shared/storyboard-prompt-builder.ts";
@@ -95,7 +99,7 @@ interface StoryboardPanel {
 // ============================================================================
 
 /**
- * Builds Cast Locks with Visual DNA and reference images
+ * Builds Cast Locks with Visual DNA and reference images (legacy format)
  */
 async function buildCastLocks(
   supabase: any,
@@ -172,6 +176,116 @@ async function buildCastLocks(
   }
 
   return locks;
+}
+
+/**
+ * Builds Character Pack Data v2.0 with complete identity information
+ * This is the enhanced format that enforces strict identity rules
+ */
+async function buildCharacterPackData(
+  supabase: any,
+  characterRefs: { id: string; name: string; image_url?: string }[]
+): Promise<CharacterPackLockData[]> {
+  if (!characterRefs || characterRefs.length === 0) {
+    return [];
+  }
+
+  const packData: CharacterPackLockData[] = [];
+
+  for (const char of characterRefs) {
+    try {
+      // Get character + active visual DNA + role
+      const { data: charData } = await supabase
+        .from('characters')
+        .select(`
+          id, name, character_role, visual_dna, wardrobe_lock_json,
+          character_visual_dna!character_visual_dna_character_id_fkey(
+            visual_dna, continuity_lock, is_active
+          )
+        `)
+        .eq('id', char.id)
+        .single();
+
+      // Get reference images (frontal and profile) from pack slots
+      const { data: packSlots } = await supabase
+        .from('character_pack_slots')
+        .select('slot_type, image_url, status')
+        .eq('character_id', char.id)
+        .in('status', ['accepted', 'generated'])
+        .in('slot_type', ['ref_closeup_front', 'closeup_front', 'closeup_profile', 'turn_side', 'identity_primary']);
+
+      // Extract DNA fields
+      const activeDna = charData?.character_visual_dna?.find((d: any) => d.is_active);
+      const dna = activeDna?.visual_dna || charData?.visual_dna || {};
+      const physical = dna.physical_identity || {};
+      const hair = dna.hair?.head_hair || {};
+      const face = dna.face || {};
+      
+      // Get wardrobe from multiple sources (priority order)
+      const wardrobeLock = charData?.wardrobe_lock_json;
+      const continuityWardrobe = activeDna?.continuity_lock?.wardrobe;
+      const dnaWardrobe = dna.wardrobe;
+      
+      const wardrobeText = wardrobeLock?.primary_outfit 
+        || wardrobeLock?.default_outfit
+        || continuityWardrobe?.primary_outfit
+        || dnaWardrobe?.default_outfit
+        || dnaWardrobe?.primary_outfit
+        || null;
+
+      // Find reference images by type
+      const frontalSlot = packSlots?.find((s: any) => 
+        ['ref_closeup_front', 'closeup_front', 'identity_primary'].includes(s.slot_type)
+      );
+      const profileSlot = packSlots?.find((s: any) => 
+        ['closeup_profile', 'turn_side'].includes(s.slot_type)
+      );
+
+      // Build face description
+      let faceDesc: string | undefined;
+      if (face.shape || face.distinctive_features?.length) {
+        const parts: string[] = [];
+        if (face.shape) parts.push(`${face.shape} face`);
+        if (face.distinctive_features?.length) parts.push(face.distinctive_features.join(', '));
+        faceDesc = parts.join(', ');
+      }
+
+      // Build hair description
+      let hairDesc: string | undefined;
+      if (hair.color?.natural_base || hair.length?.type || hair.texture) {
+        const parts: string[] = [];
+        if (hair.color?.natural_base) parts.push(hair.color.natural_base);
+        if (hair.length?.type) parts.push(hair.length.type);
+        if (hair.texture) parts.push(hair.texture);
+        hairDesc = parts.join(' ');
+      }
+
+      packData.push({
+        id: char.id,
+        name: charData?.name || char.name,
+        role: charData?.character_role,
+        age: physical.age_exact_for_prompt || physical.age_range,
+        height: physical.height ? `${physical.height}cm` : undefined,
+        body_type: physical.body_type?.somatotype,
+        face_description: faceDesc,
+        hair_description: hairDesc,
+        wardrobe_lock: wardrobeText,
+        reference_frontal: frontalSlot?.image_url || char.image_url,
+        reference_profile: profileSlot?.image_url,
+        has_approved_pack: !!(frontalSlot?.status === 'accepted'),
+      });
+    } catch (err) {
+      console.log(`[generate-storyboard] Could not fetch pack data for ${char.name}:`, err);
+      packData.push({
+        id: char.id,
+        name: char.name,
+        reference_frontal: char.image_url,
+        has_approved_pack: false,
+      });
+    }
+  }
+
+  return packData;
 }
 
 /**
@@ -330,6 +444,23 @@ serve(async (req) => {
       castLocks = await buildCastLocks(supabase, character_refs);
     }
 
+    // Build Character Pack Data v2.0 (enhanced identity information)
+    const characterPackData = await buildCharacterPackData(supabase, character_refs);
+    
+    // Validate Character Pack for storyboard
+    const packValidation = validateCharacterPackForStoryboard(characterPackData);
+    const packWarnings = [...packValidation.warnings];
+    const packBlockers = [...packValidation.blockers];
+    
+    if (packBlockers.length > 0) {
+      console.warn(`[generate-storyboard] Character Pack BLOCKERS: ${packBlockers.join('; ')}`);
+      // Continue anyway but log prominently - could be made blocking in future
+    }
+    
+    if (packWarnings.length > 0) {
+      console.log(`[generate-storyboard] Character Pack Warnings: ${packWarnings.join('; ')}`);
+    }
+
     // Get Location Lock
     let locationLock: LocationLock | undefined;
     if (locks?.locations && locks.locations.length > 0) {
@@ -344,10 +475,10 @@ serve(async (req) => {
       locationLock = await getLocationLock(supabase, location_ref);
     }
 
-    console.log(`[generate-storyboard] Locks: StylePack=${!!stylePackLock.text}, Cast=${castLocks.length}, Location=${!!locationLock}`);
+    console.log(`[generate-storyboard] Locks: StylePack=${!!stylePackLock.text}, Cast=${castLocks.length}, CharacterPack=${characterPackData.length}, Location=${!!locationLock}`);
 
-    // Validate cast DNA and collect warnings
-    const dnaWarnings: string[] = [];
+    // Validate cast DNA and collect warnings (legacy)
+    const dnaWarnings: string[] = [...packWarnings];
     for (const char of castLocks) {
       const validation = validateCharacterDNA(char);
       if (validation.warning) {
@@ -356,7 +487,7 @@ serve(async (req) => {
     }
 
     if (dnaWarnings.length > 0) {
-      console.log(`[generate-storyboard] DNA Warnings: ${dnaWarnings.join('; ')}`);
+      console.log(`[generate-storyboard] All Warnings: ${dnaWarnings.join('; ')}`);
     }
 
     // ========================================================================
@@ -574,7 +705,8 @@ serve(async (req) => {
           },
         };
 
-        // Build complete image prompt using the prompt builder
+        // Build complete image prompt using the prompt builder v2.0
+        // Uses Character Pack Data for enhanced identity enforcement
         const imagePrompt = buildStoryboardImagePrompt({
           storyboard_style,
           style_pack_lock: stylePackLock,
@@ -582,6 +714,7 @@ serve(async (req) => {
           cast: castLocks,
           characters_present_ids: panel.characters_present,
           panel_spec: panelSpec,
+          character_pack_data: characterPackData, // v2.0 enhanced data
         });
 
         // If characters have missing DNA, add warning
