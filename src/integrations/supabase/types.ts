@@ -5252,6 +5252,10 @@ export type Database = {
           continuity: Json | null
           created_at: string | null
           dialogue_snippet: string | null
+          failure_reason: string | null
+          generation_mode: string | null
+          generation_started_at: string | null
+          generation_timeout_seconds: number | null
           id: string
           identity_qc: Json | null
           image_error: string | null
@@ -5284,6 +5288,10 @@ export type Database = {
           continuity?: Json | null
           created_at?: string | null
           dialogue_snippet?: string | null
+          failure_reason?: string | null
+          generation_mode?: string | null
+          generation_started_at?: string | null
+          generation_timeout_seconds?: number | null
           id?: string
           identity_qc?: Json | null
           image_error?: string | null
@@ -5316,6 +5324,10 @@ export type Database = {
           continuity?: Json | null
           created_at?: string | null
           dialogue_snippet?: string | null
+          failure_reason?: string | null
+          generation_mode?: string | null
+          generation_started_at?: string | null
+          generation_timeout_seconds?: number | null
           id?: string
           identity_qc?: Json | null
           image_error?: string | null

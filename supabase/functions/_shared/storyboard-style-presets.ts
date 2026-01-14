@@ -310,3 +310,133 @@ export const GLOBAL_STYLE_NEGATIVES = [
   'no AI artifacts',
   'no extra characters unless specified',
 ];
+
+// ============================================================================
+// GENERATION MODES (v2.0 - State Machine Support)
+// ============================================================================
+
+export type GenerationMode = 'NORMAL' | 'STRICT' | 'SAFE';
+
+export interface PanelStateForMode {
+  image_status?: string;
+  failure_reason?: string;
+  regen_count?: number;
+  identity_qc?: {
+    issues?: string[];
+    needs_regen?: boolean;
+  };
+  style_qc?: {
+    issues?: string[];
+    needs_regen?: boolean;
+  };
+}
+
+/**
+ * Choose generation mode based on panel history
+ * 
+ * - NORMAL: Standard generation (first attempt or successful history)
+ * - STRICT: After QA failure (fix identity/style without changing composition)
+ * - SAFE: After repeated failures or timeout (prioritize valid output)
+ */
+export function chooseGenerationMode(
+  panel: PanelStateForMode, 
+  opts?: { forceStrict?: boolean; forceSafe?: boolean }
+): GenerationMode {
+  // Force override options
+  if (opts?.forceSafe) return 'SAFE';
+  if (opts?.forceStrict) return 'STRICT';
+  
+  const status = panel.image_status;
+  const failureReason = panel.failure_reason;
+  const regenCount = panel.regen_count || 0;
+  
+  // If last run failed to return image or timed out: go SAFE
+  if (status === 'failed_safe' || 
+      failureReason === 'NO_IMAGE_RETURNED' ||
+      failureReason === 'TIMEOUT' ||
+      failureReason === 'STUCK_GENERATING') {
+    return 'SAFE';
+  }
+  
+  // If 2+ consecutive failures: go SAFE
+  if (regenCount >= 2 && (status === 'error' || status === 'pending_regen')) {
+    return 'SAFE';
+  }
+  
+  // If QA indicates style mixing but image exists: STRICT
+  const hasStyleMix = panel.style_qc?.issues?.includes('STYLE_MIX') ||
+                      panel.identity_qc?.issues?.includes('STYLE_MIX');
+  if (hasStyleMix) return 'STRICT';
+  
+  // If identity QC failed: STRICT
+  if (panel.identity_qc?.needs_regen) return 'STRICT';
+  
+  return 'NORMAL';
+}
+
+/**
+ * SAFE MODE Block - Prepend when generation has failed repeatedly
+ * Prioritizes returning a valid image over non-critical constraints
+ */
+export const SAFE_MODE_BLOCK = `
+═══════════════════════════════════════════════════════════════════════════════
+⚠️ SAFE MODE ACTIVATED - PRIORITY: VALID IMAGE ⚠️
+═══════════════════════════════════════════════════════════════════════════════
+
+Previous generation(s) FAILED to produce a valid image.
+
+OBJECTIVE: Return a VALID image for this panel AT ALL COSTS.
+
+PRIORITIES (in strict order):
+1. ✅ Generate a COMPLETE image - no blank/corrupted/partial output
+2. ✅ Keep the selected storyboard style CATEGORY (do not drift to different preset)
+3. ✅ Maintain character IDENTITY from reference images
+4. ✅ Respect 16:9 aspect ratio
+
+RELAXATIONS ALLOWED (if needed to avoid failure):
+- Reduce non-essential rendering complexity
+- Simplify extreme lighting, textures, or atmospheric effects
+- Simplify detailed backgrounds
+- Use simpler poses if complex blocking causes issues
+
+NEVER RELAX (even in safe mode):
+✗ Style preset category (technical/cinematic/artistic/previz)
+✗ Character identity (must match reference images)
+✗ Aspect ratio 16:9
+✗ No extra characters or props not in the brief
+
+IF A CONSTRAINT WOULD CAUSE GENERATION FAILURE → SIMPLIFY rather than fail.
+═══════════════════════════════════════════════════════════════════════════════
+`;
+
+/**
+ * STRICT MODE Block - Prepend when QA failed (identity/style drift)
+ * Keeps composition but enforces strict adherence to locks
+ */
+export const STRICT_MODE_BLOCK = `
+═══════════════════════════════════════════════════════════════════════════════
+⚠️ STRICT MODE - QA CORRECTION REQUIRED ⚠️
+═══════════════════════════════════════════════════════════════════════════════
+
+Previous generation FAILED quality control checks.
+
+CORRECTION RULES:
+1. Keep IDENTICAL composition and framing (same camera angle, same blocking)
+2. FIX identity to EXACTLY match reference images
+3. FIX style to EXACTLY match the style preset
+4. Do NOT change scene content, only fix compliance issues
+
+Match references EXACTLY. No creative interpretation.
+═══════════════════════════════════════════════════════════════════════════════
+`;
+
+/**
+ * Get mode block to prepend based on generation mode
+ */
+export function getModeBlock(mode: GenerationMode): string {
+  switch (mode) {
+    case 'SAFE': return SAFE_MODE_BLOCK;
+    case 'STRICT': return STRICT_MODE_BLOCK;
+    default: return '';
+  }
+}
