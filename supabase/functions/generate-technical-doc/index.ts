@@ -508,7 +508,7 @@ Return ONLY valid JSON matching the schema.`;
       
       return {
         scene_id,
-        project_id,
+        // Note: project_id is not a column in shots table - scene_id links to project via scenes
         shot_no: shot.shot_order || idx + 1,
         shot_type: shot.shot_type || "WIDE",
         camera: {
