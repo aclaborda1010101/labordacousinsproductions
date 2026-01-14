@@ -5314,6 +5314,7 @@ export type Database = {
         Row: {
           aspect_ratio: string | null
           camera_system: string | null
+          canvas_format: Json | null
           color_palette: Json | null
           created_at: string
           description: string | null
@@ -5336,6 +5337,7 @@ export type Database = {
         Insert: {
           aspect_ratio?: string | null
           camera_system?: string | null
+          canvas_format?: Json | null
           color_palette?: Json | null
           created_at?: string
           description?: string | null
@@ -5358,6 +5360,7 @@ export type Database = {
         Update: {
           aspect_ratio?: string | null
           camera_system?: string | null
+          canvas_format?: Json | null
           color_palette?: Json | null
           created_at?: string
           description?: string | null

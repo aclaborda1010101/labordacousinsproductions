@@ -69,6 +69,18 @@ export interface CharacterPackLockData {
   has_approved_pack: boolean;
 }
 
+// Canvas Format - Global video format configuration
+export interface CanvasFormat {
+  aspect_ratio: '16:9' | '9:16' | '1:1' | '4:5' | '3:4';
+  orientation: 'horizontal' | 'vertical' | 'square';
+  safe_area: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
+}
+
 export interface BuildStoryboardPromptOptions {
   storyboard_style: 'GRID_SHEET_V1' | 'TECH_PAGE_V1';
   style_pack_lock: StylePackLock;
@@ -80,6 +92,8 @@ export interface BuildStoryboardPromptOptions {
   character_pack_data?: CharacterPackLockData[];
   // v3.0: Panel count for sheet layout specification
   panel_count?: number;
+  // v4.0: Canvas Format (global video format)
+  canvas_format?: CanvasFormat;
 }
 
 // ============================================================================
@@ -124,15 +138,68 @@ PACK_FIRST_CANON (GLOBAL RULE)
 ═══════════════════════════════════════════════════════════════════════════════
 
 Canon priority for ANY downstream document or generation:
-1) FORMAT CONTRACT (layout + framing + labels)
-2) STYLE PACK (drawing style + paper + line weight)
-3) CHARACTER PACK (identity + wardrobe)
-4) LOCATION PACK (set dressing + environment anchors)
-5) CONTINUITY LOCKS (axis, props, wardrobe continuity)
-6) PANEL/SHOT DESCRIPTION (what happens)
+1) CANVAS FORMAT (aspect ratio + orientation + safe zones)
+2) FORMAT CONTRACT (layout + framing + labels)
+3) STYLE PACK (drawing style + paper + line weight)
+4) CHARACTER PACK (identity + wardrobe)
+5) LOCATION PACK (set dressing + environment anchors)
+6) CONTINUITY LOCKS (axis, props, wardrobe continuity)
+7) PANEL/SHOT DESCRIPTION (what happens)
 
 Any conflict must be resolved by higher priority. Never invent character identity if pack exists.
 ═══════════════════════════════════════════════════════════════════════════════`;
+
+// ============================================================================
+// CANVAS LOCK BUILDER (v4.0)
+// ============================================================================
+
+const DEFAULT_CANVAS_FORMAT: CanvasFormat = {
+  aspect_ratio: '16:9',
+  orientation: 'horizontal',
+  safe_area: { top: 5, bottom: 5, left: 5, right: 5 }
+};
+
+/**
+ * Builds the CANVAS_LOCK block for storyboard prompts.
+ * This ensures consistent framing across the entire pipeline.
+ */
+function buildCanvasLockBlock(canvasFormat: CanvasFormat = DEFAULT_CANVAS_FORMAT): string {
+  const orientationRules = canvasFormat.orientation === 'vertical' 
+    ? `VERTICAL FORMAT RULES:
+- More medium shots, less wide panoramas
+- Vertical subject alignment
+- Characters closer to camera
+- Action flows top-to-bottom, not left-to-right`
+    : canvasFormat.orientation === 'square'
+    ? `SQUARE FORMAT RULES:
+- Centered, compact composition
+- Balanced headroom and footroom
+- Symmetrical when appropriate`
+    : `HORIZONTAL FORMAT RULES:
+- Use full horizontal space
+- Rule of thirds applies laterally
+- Wide panoramas allowed
+- Action flows left-to-right`;
+
+  return `═══════════════════════════════════════════════════════════════════════════════
+CANVAS_LOCK (GLOBAL — NEVER OVERRIDE)
+═══════════════════════════════════════════════════════════════════════════════
+
+Target video format:
+- Aspect ratio: ${canvasFormat.aspect_ratio}
+- Orientation: ${canvasFormat.orientation}
+
+All storyboard panels MUST:
+- Be composed for this aspect ratio
+- Keep characters and action inside safe area (${canvasFormat.safe_area.top}% top, ${canvasFormat.safe_area.bottom}% bottom, ${canvasFormat.safe_area.left}% left, ${canvasFormat.safe_area.right}% right)
+- Avoid framing that would be cropped in final video
+- Respect ${canvasFormat.orientation} composition balance
+
+${orientationRules}
+
+This canvas applies to: Storyboard → Camera Plan → Keyframes → Video Render
+═══════════════════════════════════════════════════════════════════════════════`;
+}
 
 // ============================================================================
 // CONSTANTS - STYLE BLOCKS (v3.0 - IMPERATIVE WITH LAYOUT SPECIFICATION)
@@ -292,12 +359,16 @@ export function buildStoryboardImagePrompt(options: BuildStoryboardPromptOptions
     panel_spec,
     character_pack_data,
     panel_count,
+    canvas_format,
   } = options;
 
-  // 0. FORMAT CONTRACT (HIGHEST PRIORITY - FIRST BLOCK)
+  // 0. CANVAS LOCK (HIGHEST PRIORITY - FIRST BLOCK)
+  const canvasLockBlock = buildCanvasLockBlock(canvas_format || DEFAULT_CANVAS_FORMAT);
+
+  // 0.1 FORMAT CONTRACT (SECOND HIGHEST PRIORITY)
   const formatContractBlock = STORYBOARD_FORMAT_CONTRACT;
 
-  // 0.1 PACK-FIRST CANON (GLOBAL RULE)
+  // 0.2 PACK-FIRST CANON (GLOBAL RULE)
   const packFirstBlock = PACK_FIRST_CANON;
 
   // 0.2 IDENTITY LOCK (multimodal instruction)
@@ -392,9 +463,10 @@ MovementArrows: ${movementArrowsText}`;
   // 7. EXTENDED NEGATIVE (v3.0)
   const negativeBlock = EXTENDED_NEGATIVE_BLOCK;
 
-  // Concatenate in strict priority order (FORMAT CONTRACT FIRST)
+  // Concatenate in strict priority order (CANVAS LOCK FIRST)
   return [
-    formatContractBlock,  // HIGHEST PRIORITY - FORMAT CONTRACT
+    canvasLockBlock,      // HIGHEST PRIORITY - CANVAS LOCK (v4.0)
+    formatContractBlock,  // FORMAT CONTRACT
     packFirstBlock,       // PACK-FIRST CANON
     identityLockBlock,    // IDENTITY LOCK (multimodal)
     stylePackBlock,

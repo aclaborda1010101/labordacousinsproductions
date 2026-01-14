@@ -164,6 +164,7 @@ serve(async (req) => {
   try {
     if (req.method !== "POST") return json({ error: "Use POST" }, 405);
 
+    // aspectRatio now comes from style_pack canvas_format, passed by caller
     const { prompt, seconds = 8, aspectRatio = "16:9", negativePrompt, sampleCount = 1, seed, keyframeUrl } =
       await req.json();
 
@@ -172,6 +173,7 @@ serve(async (req) => {
     }
 
     console.log("Starting Veo generation with prompt:", prompt.substring(0, 100));
+    console.log("Canvas format (aspectRatio):", aspectRatio);
     console.log("Keyframe URL provided:", keyframeUrl ? "Yes" : "No (text-to-video mode)");
 
     const projectId = getEnv("GCP_PROJECT_ID");
