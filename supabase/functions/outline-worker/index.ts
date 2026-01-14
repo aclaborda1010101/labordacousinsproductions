@@ -24,6 +24,10 @@ import { STRUCTURED_SUMMARIZE_V11, OUTLINE_CORE_V11 } from "../_shared/productio
 import { runStructuralQC as runStructuralQCV11, QCResult as QCResultV11 } from "../_shared/qc-validators.ts";
 import { TURNING_POINT_SCHEMA, SETPIECE_SCHEMA, THREAD_USAGE_SCHEMA } from "../_shared/outline-schemas-v11.ts";
 import { normalizeOutlineV11 } from "../_shared/normalize-outline-v11.ts";
+// V12: Hollywood Architecture - FILM bifurcation
+import { buildFormatProfile, detectForbiddenWords, formatProfileSummary, FormatProfile } from "../_shared/format-profile.ts";
+import { detectGenericPhrases, analyzeForGenericLanguage, getAntiGenericPromptBlock } from "../_shared/anti-generic.ts";
+import { FILM_OUTLINE_SCHEMA, normalizeFilmOutline, filmOutlineToUniversalFormat, FilmOutline } from "../_shared/outline-schemas-film.ts";
 // Model configuration
 const FAST_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;       // gpt-5-mini
 const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD; // gpt-5.2
@@ -724,6 +728,88 @@ async function executeSubstepIfNeeded(
   
   await updateOutline(supabase, outline.id, { outline_parts: parts });
   return { data, skipped: false };
+}
+
+// ============================================================================
+// V12: FILM OUTLINE - Single-pass 3-act Hollywood structure
+// ============================================================================
+
+function buildFilmSystemPrompt(genre: string, tone: string, duration: number, densityTargets?: any): string {
+  const locMin = densityTargets?.locations_min || 5;
+  const charMin = densityTargets?.protagonists_min || 2;
+  return `Eres GUIONISTA DE CINE DE ESTUDIO (nivel A24 / Warner).
+Escribes películas que se ruedan, no pitches ni biblia de serie.
+
+FORMATO: LARGOMETRAJE | DURACIÓN: ${duration} min | GÉNERO: ${genre.toUpperCase()} | TONO: ${tone}
+
+⚠️ PROHIBICIONES ABSOLUTAS:
+- PROHIBIDO: episodios, temporadas, capítulos, cliffhangers
+- PROHIBIDO: "todo cambia", "se dan cuenta", "la tensión aumenta", "empiezan a..."
+
+CALIDAD HOLLYWOOD: Cada elemento = ACCIÓN OBSERVABLE + DECISIÓN IRREVERSIBLE + CONSECUENCIA
+
+DENSIDAD: Protagonistas min ${charMin} | Localizaciones min ${locMin}
+
+ESTRUCTURA 3 ACTOS:
+- ACTO I: Inciting Incident concreto + Decisión protagonista
+- ACTO II: MIDPOINT REVERSAL (evento visible por personaje identificable) + All-is-lost
+- ACTO III: Clímax con coste real + Resolución
+
+PERSONAJES: Cada uno con WANT/NEED/FLAW/DECISION_KEY
+
+Devuelve SOLO JSON válido.`;
+}
+
+function buildFilmUserPrompt(summary: string, duration: number): string {
+  return `FORMAT: FILM (${duration}min)
+INPUT: ${summary}
+
+TAREA: Outline completo con ACT_I, ACT_II, ACT_III, cast, locations, setpieces.
+⚠️ PROHIBIDO episodios/temporadas. Cada evento debe ser FILMABLE.`;
+}
+
+async function stageFilmOutline(
+  supabase: SupabaseClient,
+  outline: OutlineRecord,
+  summaryText: string,
+  formatProfile: FormatProfile
+): Promise<any> {
+  const genre = outline.genre || 'Drama';
+  const tone = outline.tone || 'Cinematográfico';
+  const duration = formatProfile.duration_minutes || 110;
+  
+  console.log(`[WORKER] FILM: Generating 3-act outline for ${duration}min ${genre}`);
+  
+  await updateOutline(supabase, outline.id, { 
+    stage: 'outline', substage: 'film_structure', progress: 40,
+    heartbeat_at: new Date().toISOString()
+  });
+  
+  const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+    supabase, outline.id,
+    buildFilmSystemPrompt(genre, tone, duration, outline.density_targets),
+    buildFilmUserPrompt(summaryText, duration),
+    QUALITY_MODEL, 6000, 'generate_film_outline', FILM_OUTLINE_SCHEMA, 'film_outline',
+    TIMEOUTS.OUTLINE_ARC_MS
+  );
+  
+  const parseResult = parseJsonSafe(toolArgs || content, 'film_outline');
+  if (!parseResult.json) throw new Error('FILM_OUTLINE failed to parse');
+  
+  const filmOutline = normalizeFilmOutline(parseResult.json);
+  if (!filmOutline) throw new Error('FILM_OUTLINE normalization failed');
+  
+  const violations = detectForbiddenWords(filmOutline, formatProfile.forbidden_words);
+  if (violations.length > 0) console.warn(`[WORKER] FILM: Forbidden words: ${violations.join(', ')}`);
+  
+  const universalOutline = filmOutlineToUniversalFormat(filmOutline);
+  
+  await updateOutline(supabase, outline.id, { 
+    outline_json: universalOutline, progress: 85, heartbeat_at: new Date().toISOString()
+  });
+  
+  console.log(`[WORKER] FILM: Outline generated - "${filmOutline.title}"`);
+  return universalOutline;
 }
 
 async function stageOutlineFanOut(
@@ -1453,9 +1539,30 @@ serve(async (req) => {
       summaryText = summaryResult.summary;
     }
 
-    // Stage B: Outline Fan-Out (PART_A, PART_B, PART_C, MERGE)
+    // V12: FILM/SERIES BIFURCATION
+    const formatProfile = buildFormatProfile({
+      format: outline.format,
+      target_duration_min: 110, // Default for film
+      episodes_count: outline.episode_count
+    });
+    console.log(`[WORKER] ${formatProfileSummary(formatProfile)}`);
+
+    // Stage B: Outline Generation (bifurcated by format)
     if (currentStage === 'none' || currentStage === 'summarize' || currentStage === 'outline') {
-      outlineJson = await stageOutlineFanOut(supabase, { ...outline, summary_text: summaryText }, summaryText!);
+      if (formatProfile.type === 'FILM') {
+        // FILM ROUTE: Single-pass 3-act structure (Hollywood prompts)
+        console.log(`[WORKER] === FILM MODE: Single-pass 3-act structure ===`);
+        outlineJson = await stageFilmOutline(
+          supabase, 
+          { ...outline, summary_text: summaryText }, 
+          summaryText!,
+          formatProfile
+        );
+      } else {
+        // SERIES/MINI ROUTE: Fan-out with episodes
+        console.log(`[WORKER] === SERIES MODE: Fan-out episodes ===`);
+        outlineJson = await stageOutlineFanOut(supabase, { ...outline, summary_text: summaryText }, summaryText!);
+      }
     }
 
     // Stage C: Final QC
