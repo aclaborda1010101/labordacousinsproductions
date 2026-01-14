@@ -1,6 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { generateImageWithNanoBanana } from "../_shared/image-generator.ts";
+import { 
+  buildStoryboardImagePrompt,
+  getDefaultStylePackLock,
+  type PanelSpec,
+} from "../_shared/storyboard-prompt-builder.ts";
+import { generateSeed } from "../_shared/storyboard-serializer.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,6 +17,7 @@ interface RegenerateRequest {
   panelId: string;
   prompt?: string;
   seed?: number;
+  storyboard_style?: 'GRID_SHEET_V1' | 'TECH_PAGE_V1';
 }
 
 serve(async (req) => {
@@ -101,10 +108,75 @@ serve(async (req) => {
 
     const projectId = scene.project_id;
     const sceneId = scene.id;
-    const prompt = body.prompt || panel.image_prompt;
 
-    if (!prompt) {
-      throw new Error('No prompt available for this panel');
+    // ========== DETERMINISTIC PROMPT FALLBACK ==========
+    // 1) Start with explicit prompt or stored image_prompt
+    let promptText = (body.prompt || panel.image_prompt || "").trim();
+
+    // 2) If no prompt available, rebuild using panel data (same logic as generate-storyboard)
+    if (!promptText) {
+      console.log(`[regenerate-panel] No stored prompt, rebuilding from panel data`);
+      
+      const storyboardStyle = body.storyboard_style || 'GRID_SHEET_V1';
+      
+      // Build minimal PanelSpec from available panel data
+      const panelSpec: PanelSpec = {
+        panel_code: panel.panel_code || `P${panel.panel_no}`,
+        shot_hint: panel.shot_hint || 'PM',
+        panel_intent: panel.panel_intent || '',
+        action: panel.panel_intent || 'Action',
+        dialogue_snippet: undefined,
+        characters_present: (panel.characters_present || []).map((c: any) => 
+          typeof c === 'string' ? c : c.character_id
+        ),
+        props_present: (panel.props_present || []).map((p: any) => 
+          typeof p === 'string' ? p : p.prop_id
+        ),
+        staging: panel.staging || {
+          spatial_info: '',
+          movement_arrows: [],
+          axis_180: { enabled: false, screen_direction: 'left_to_right' },
+        },
+        continuity: panel.continuity || {
+          must_match_previous: ['hair', 'wardrobe'],
+          do_not_change: ['age'],
+        },
+      };
+
+      // Build prompt using the same builder as generate-storyboard
+      promptText = buildStoryboardImagePrompt({
+        storyboard_style: storyboardStyle,
+        style_pack_lock: getDefaultStylePackLock(),
+        location_lock: undefined,
+        cast: [],
+        characters_present_ids: panelSpec.characters_present,
+        panel_spec: panelSpec,
+      });
+      
+      console.log(`[regenerate-panel] Rebuilt prompt (${promptText.length} chars)`);
+    }
+
+    // 3) ULTRA-MINIMAL FALLBACK if builders somehow returned empty (should never happen)
+    if (!promptText) {
+      promptText = [
+        "Professional pencil storyboard panel, grayscale, clean linework, no color.",
+        `Panel P${panel.panel_no}.`,
+        panel.shot_hint ? `Shot type: ${panel.shot_hint}.` : "",
+        panel.panel_intent ? `Intent: ${panel.panel_intent}.` : "",
+        panel.staging?.movement_arrows?.length 
+          ? `Movement: ${JSON.stringify(panel.staging.movement_arrows)}` 
+          : ""
+      ].filter(Boolean).join(" ");
+      
+      console.log(`[regenerate-panel] Using ultra-minimal fallback prompt`);
+    }
+
+    // 4) Persist rebuilt prompt for future regenerations
+    if (!panel.image_prompt || panel.image_prompt.trim() !== promptText) {
+      await supabase
+        .from("storyboard_panels")
+        .update({ image_prompt: promptText.substring(0, 2000) })
+        .eq("id", panelId);
     }
 
     console.log(`[regenerate-panel] Panel ${panel.panel_no}, scene ${sceneId}, project ${projectId}`);
@@ -118,15 +190,15 @@ serve(async (req) => {
       })
       .eq('id', panelId);
 
-    // 4) Generate the image
-    const seed = body.seed ?? Math.floor(Math.random() * 1000000);
+    // 4) Generate the image with deterministic seed
+    const seed = body.seed ?? generateSeed(sceneId, 'GRID_SHEET_V1', panel.panel_no);
     
     console.log(`[regenerate-panel] Generating image with seed ${seed}`);
 
     const imageResult = await generateImageWithNanoBanana({
       lovableApiKey,
       model: "google/gemini-3-pro-image-preview",
-      promptText: prompt,
+      promptText,
       seed,
       label: `storyboard_panel_${panel.panel_no}`,
       supabase,
