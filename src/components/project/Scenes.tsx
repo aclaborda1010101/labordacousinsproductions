@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { exportStoryboardPDF } from '@/lib/exportStoryboardPDF';
 import ShotEditor from './ShotEditor';
 import ShotSuggestionPanel from './ShotSuggestionPanel';
+import CameraPlanInstantiationPanel from './CameraPlanInstantiationPanel';
 import EpisodeRegenerateDialog from './EpisodeRegenerateDialog';
 import { ShortTemplatePanel } from './ShortTemplatePanel';
 import { useShortTemplate } from '@/hooks/useShortTemplate';
@@ -33,6 +34,17 @@ import { SceneScreenplayView } from './SceneScreenplayView';
 import { ScenePipelineStepper } from './ScenePipelineStepper';
 import { PipelineGateOverlay } from './PipelineGateOverlay';
 import { CameraPlanTab } from './CameraPlanTab';
+
+// Camera Plan shot type from scene_camera_plan.shots_list
+interface CameraPlanShot {
+  shot_no: number;
+  shot_type_hint: string;
+  shot_label: string;
+  blocking_ref?: string;
+  framing_hint?: string;
+  panel_ref?: string;
+  notes?: string;
+}
 
 interface ScenesProps { projectId: string; bibleReady: boolean; }
 type QualityMode = 'CINE' | 'ULTRA';
@@ -116,6 +128,8 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
   const [technicalDocStatus, setTechnicalDocStatus] = useState<Record<string, 'draft' | 'approved' | 'locked' | null>>({});
   const [storyboardApproved, setStoryboardApproved] = useState<Record<string, boolean>>({});
   const [activeSceneTab, setActiveSceneTab] = useState<Record<string, string>>({});
+  const [cameraPlanApproved, setCameraPlanApproved] = useState<Record<string, boolean>>({});
+  const [cameraPlanShots, setCameraPlanShots] = useState<Record<string, CameraPlanShot[]>>({});
   
   // Production Proposal flow state
   const [productionProposals, setProductionProposals] = useState<Map<string, ProductionProposal>>(new Map());
@@ -336,6 +350,34 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     }));
   };
 
+  // Fetch Camera Plan approval status and shots_list for a scene
+  const fetchCameraPlanStatus = async (sceneId: string) => {
+    const { data } = await supabase
+      .from('scene_camera_plan')
+      .select('status, shots_list')
+      .eq('scene_id', sceneId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    const isApproved = data?.status === 'approved';
+    setCameraPlanApproved(prev => ({
+      ...prev,
+      [sceneId]: isApproved
+    }));
+    
+    if (isApproved && data?.shots_list) {
+      // Parse shots_list - it could be JSON or already an array
+      const shotsList = Array.isArray(data.shots_list) 
+        ? data.shots_list 
+        : (typeof data.shots_list === 'object' ? [] : []);
+      setCameraPlanShots(prev => ({
+        ...prev,
+        [sceneId]: shotsList as unknown as CameraPlanShot[]
+      }));
+    }
+  };
+
   const toggleScene = (sceneId: string) => {
     const newExpanded = new Set(expandedScenes);
     if (newExpanded.has(sceneId)) { 
@@ -346,6 +388,7 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
       // Fetch pipeline status when expanding
       fetchStoryboardStatus(sceneId);
       fetchTechnicalDocStatus(sceneId);
+      fetchCameraPlanStatus(sceneId);
     }
     setExpandedScenes(newExpanded);
   };
@@ -1566,18 +1609,28 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                                     </div>
                                   )}
 
-                                  {/* Shot Suggestion Panel */}
-                                  <ShotSuggestionPanel
-                                    sceneId={scene.id}
-                                    sceneSlugline={scene.slugline}
-                                    sceneSummary={scene.summary || undefined}
-                                    sceneTimeOfDay={scene.time_of_day || undefined}
-                                    characters={characters.filter(c => scene.character_ids?.includes(c.id))}
-                                    location={locations.find(l => l.id === scene.location_id)}
-                                    qualityMode={scene.quality_mode}
-                                    existingShotCount={shots[scene.id]?.length || 0}
-                                    onShotsAdded={() => fetchShots(scene.id)}
-                                  />
+                                  {/* Conditional: Camera Plan Instantiation vs Shot Suggestion */}
+                                  {cameraPlanApproved[scene.id] && cameraPlanShots[scene.id]?.length > 0 ? (
+                                    <CameraPlanInstantiationPanel
+                                      sceneId={scene.id}
+                                      cameraPlanShots={cameraPlanShots[scene.id]}
+                                      existingShotCount={shots[scene.id]?.length || 0}
+                                      qualityMode={scene.quality_mode}
+                                      onShotsCreated={() => fetchShots(scene.id)}
+                                    />
+                                  ) : (
+                                    <ShotSuggestionPanel
+                                      sceneId={scene.id}
+                                      sceneSlugline={scene.slugline}
+                                      sceneSummary={scene.summary || undefined}
+                                      sceneTimeOfDay={scene.time_of_day || undefined}
+                                      characters={characters.filter(c => scene.character_ids?.includes(c.id))}
+                                      location={locations.find(l => l.id === scene.location_id)}
+                                      qualityMode={scene.quality_mode}
+                                      existingShotCount={shots[scene.id]?.length || 0}
+                                      onShotsAdded={() => fetchShots(scene.id)}
+                                    />
+                                  )}
 
                                   <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
                                     <Sparkles className="w-4 h-4 text-primary mt-0.5" />
