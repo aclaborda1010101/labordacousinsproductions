@@ -364,41 +364,61 @@ async function getCharacterAnchors(
   sceneId: string
 ): Promise<string[]> {
   try {
-    // Get characters from scene (via storyboard or scene_characters)
-    const { data: panels } = await supabase
+    // FIX: Use correct column name 'characters_present' instead of 'characters_in_panel'
+    const { data: panels, error: panelsError } = await supabase
       .from('storyboard_panels')
-      .select('characters_in_panel')
+      .select('characters_present')
       .eq('scene_id', sceneId)
       .limit(5);
+    
+    if (panelsError) {
+      console.error('[getCharacterAnchors] Error fetching panels:', panelsError);
+      return [];
+    }
     
     // Extract unique character IDs
     const characterIds = new Set<string>();
     for (const panel of panels || []) {
-      const chars = panel.characters_in_panel || [];
+      const chars = panel.characters_present || [];
       for (const char of chars) {
         if (typeof char === 'string') {
           characterIds.add(char);
         } else if (char?.id) {
           characterIds.add(char.id);
+        } else if (char?.character_id) {
+          characterIds.add(char.character_id);
         }
       }
     }
     
-    if (characterIds.size === 0) return [];
+    if (characterIds.size === 0) {
+      console.log('[getCharacterAnchors] No character IDs found in panels');
+      return [];
+    }
+    
+    console.log(`[getCharacterAnchors] Found ${characterIds.size} unique characters: ${Array.from(characterIds).join(', ')}`);
     
     // Fetch approved slots for these characters
-    const { data: slots } = await supabase
+    const { data: slots, error: slotsError } = await supabase
       .from('character_pack_slots')
-      .select('image_url')
+      .select('image_url, character_id, slot_type')
       .in('character_id', Array.from(characterIds))
       .in('slot_type', ['ref_closeup_front', 'closeup_profile', 'identity_primary'])
       .in('status', ['accepted', 'uploaded', 'generated'])
       .not('image_url', 'is', null)
       .limit(6);
     
-    return (slots || [])
+    if (slotsError) {
+      console.error('[getCharacterAnchors] Error fetching slots:', slotsError);
+      return [];
+    }
+    
+    const anchors = (slots || [])
       .map((s: any) => s.image_url)
       .filter((url: string) => url && url.startsWith('http'));
+    
+    console.log(`[getCharacterAnchors] Returning ${anchors.length} identity anchors`);
+    return anchors;
   } catch (error) {
     console.error('[getCharacterAnchors] Error:', error);
     return [];
@@ -411,17 +431,26 @@ async function getStoryboardRefs(
   sceneId: string
 ): Promise<string[]> {
   try {
-    const { data: panels } = await supabase
+    // FIX: Use correct column name 'panel_no' instead of 'panel_order'
+    const { data: panels, error } = await supabase
       .from('storyboard_panels')
       .select('image_url')
       .eq('scene_id', sceneId)
       .not('image_url', 'is', null)
-      .order('panel_order', { ascending: true })
+      .order('panel_no', { ascending: true })
       .limit(2);
     
-    return (panels || [])
+    if (error) {
+      console.error('[getStoryboardRefs] Error:', error);
+      return [];
+    }
+    
+    const refs = (panels || [])
       .map((p: any) => p.image_url)
       .filter((url: string) => url && url.startsWith('http'));
+    
+    console.log(`[getStoryboardRefs] Returning ${refs.length} storyboard refs`);
+    return refs;
   } catch (error) {
     console.error('[getStoryboardRefs] Error:', error);
     return [];
@@ -630,7 +659,7 @@ serve(async (req) => {
             ? buildKeyframePrompt(shotData, frame.type, sceneContext)
             : `[EDIT from ${frame.type === 'mid' ? 'K0' : 'K1'}] ${isStrictContinuity ? 'Strict' : 'Transition'} continuity mode`;
 
-          // Insert new keyframe
+          // Insert new keyframe - FIX: Use 'locks' column instead of 'meta_json' (which doesn't exist)
           const { data: insertedKeyframe, error: insertError } = await supabase
             .from("keyframes")
             .insert({
@@ -641,7 +670,7 @@ serve(async (req) => {
               approved: false,
               prompt_text: storedPrompt,
               seed,
-              meta_json: {
+              locks: {
                 camera: shotData.camera,
                 lighting: shotData.lighting,
                 focus: shotData.focus_config,
@@ -650,7 +679,9 @@ serve(async (req) => {
                 continuity_mode: isStrictContinuity ? 'strict' : 'transition',
                 source_frame: frame.type === 'start' ? null : (frame.type === 'mid' ? 'start' : 'mid'),
                 character_anchors_count: characterAnchors.length,
+                storyboard_refs_count: storyboardRefs.length,
                 style_profile: styleProfile,
+                correlative_source: previousFrameUrl ? 'previous_frame' : null,
               },
             })
             .select()
