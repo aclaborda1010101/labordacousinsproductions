@@ -396,6 +396,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [generationState, setGenerationState] = useState<GenerationState | null>(null);
   const [densityGateResult, setDensityGateResult] = useState<DensityGateResult | null>(null);
   const [showDensityGateModal, setShowDensityGateModal] = useState(false);
+  const [isPatchingOutline, setIsPatchingOutline] = useState(false);
   const [attemptsByBatch, setAttemptsByBatch] = useState<Record<number, number>>({});
   
   // V11: QC Status for visual gating
@@ -2179,6 +2180,23 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
+  // V11.2: Helper to normalize required_fixes from backend to frontend format
+  const normalizeRequiredFixes = (fixes: any[] | undefined): DensityGateResult['required_fixes'] => {
+    if (!fixes || !Array.isArray(fixes)) return [];
+    
+    return fixes.map(fix => ({
+      type: fix.type || 'UNKNOWN',
+      title: fix.title || 'Fix requerido',
+      current: fix.current ?? 0,
+      required: fix.required ?? 1,
+      fix_hint: fix.fix_hint || fix.why_needed || fix.acceptance_test || '',
+      // Keep backend fields for compatibility
+      why_needed: fix.why_needed,
+      where_to_apply: fix.where_to_apply,
+      acceptance_test: fix.acceptance_test,
+    }));
+  };
+
   // V11.2: DENSITY PRECHECK - Run before script generation
   const runDensityPrecheck = useCallback(async (): Promise<DensityGateResult | null> => {
     try {
@@ -2193,8 +2211,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         if (errorObj?.status === 422 || errorObj?.status === 404 || errorObj?.code?.includes('GATE_FAILED')) {
           return {
             status: 'FAIL',
-            density_score: errorObj.density_score || 0,
-            required_fixes: errorObj.required_fixes || [],
+            // NORMALIZATION: Backend uses 'score', frontend uses 'density_score'
+            density_score: errorObj.density_score ?? errorObj.score ?? 0,
+            required_fixes: normalizeRequiredFixes(errorObj.required_fixes),
             human_summary: errorObj.human_summary || errorObj.message || 'Densidad insuficiente',
           };
         }
@@ -2205,8 +2224,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const checkResult = data?.check_result;
       return {
         status: data?.ok_to_generate ? 'PASS' : 'FAIL',
-        density_score: checkResult?.score || 100,
-        required_fixes: checkResult?.required_fixes || [],
+        // NORMALIZATION: Backend uses 'score', frontend uses 'density_score'
+        density_score: checkResult?.density_score ?? checkResult?.score ?? 100,
+        required_fixes: normalizeRequiredFixes(checkResult?.required_fixes),
         human_summary: data?.human_summary || checkResult?.human_summary,
         warnings: data?.recommendations,
       };
@@ -2221,6 +2241,55 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       };
     }
   }, [projectId, format]);
+
+  // V11.2: Handle auto-patching of outline when density gate fails
+  const handleAutoPatching = async () => {
+    // Keep modal open with loading state - Adjustment #1
+    setIsPatchingOutline(true);
+    
+    try {
+      // Map frontend fix format to backend format if needed
+      const fixesForBackend = (densityGateResult?.required_fixes || []).map(fix => ({
+        type: fix.type,
+        id: `fix_${fix.type}_${Date.now()}`,
+        title: fix.title,
+        why_needed: fix.fix_hint || `Necesario para cumplir mínimo de ${fix.required || 1}`,
+        where_to_apply: 'global',
+        acceptance_test: `${fix.type} >= ${fix.required || 1}`
+      }));
+      
+      const { data, error } = await invokeAuthedFunction('outline-patch', {
+        projectId,
+        requiredFixes: fixesForBackend,
+        formatProfile: format === 'film' ? 'pelicula_90min' : 'serie_drama',
+      });
+      
+      if (error) throw error;
+      
+      // Reload outline from DB
+      if (outlinePersistence?.refreshOutline) {
+        await outlinePersistence.refreshOutline();
+      }
+      
+      // Re-check density
+      const newResult = await runDensityPrecheck();
+      
+      if (newResult?.status === 'PASS') {
+        toast.success(`Outline parcheado exitosamente (score: ${newResult.density_score})`);
+        setDensityGateResult(newResult);
+        setShowDensityGateModal(false); // Only close on PASS - Adjustment #1
+      } else {
+        toast.warning('El outline mejoró pero aún necesita más contenido');
+        setDensityGateResult(newResult);
+        // Modal stays open to show remaining fixes
+      }
+    } catch (err: any) {
+      console.error('[handleAutoPatching] Error:', err);
+      toast.error(err.message || 'Error parcheando outline');
+    } finally {
+      setIsPatchingOutline(false);
+    }
+  };
 
   // Fetch scenes count from DB
   const fetchScenesCount = async () => {
@@ -8099,6 +8168,84 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           });
         }}
       />
+
+      {/* DENSITY GATE MODAL - Blocks generation if density insufficient */}
+      <AlertDialog open={showDensityGateModal} onOpenChange={(open) => !isPatchingOutline && setShowDensityGateModal(open)}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-amber-600">
+              <AlertTriangle className="w-5 h-5" />
+              No se puede generar guion todavía
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-4">
+                {/* Score display */}
+                <div className="flex items-center justify-between">
+                  <span>Densidad narrativa:</span>
+                  <Badge variant={(densityGateResult?.density_score ?? 0) >= 60 ? 'secondary' : 'destructive'}>
+                    {densityGateResult?.density_score || 0}/100
+                  </Badge>
+                </div>
+                
+                {/* Required Fixes List */}
+                {densityGateResult?.required_fixes && densityGateResult.required_fixes.length > 0 && (
+                  <div className="bg-muted p-3 rounded-md space-y-2">
+                    <p className="font-medium text-sm">Elementos faltantes:</p>
+                    <ul className="text-sm space-y-1">
+                      {densityGateResult.required_fixes.map((fix, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <XCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                          <span>
+                            <strong>{fix.title}</strong>
+                            {fix.current !== undefined && fix.required !== undefined && (
+                              <span className="text-muted-foreground ml-1">({fix.current}/{fix.required})</span>
+                            )}
+                            {fix.fix_hint && <span className="text-muted-foreground ml-1">— {fix.fix_hint}</span>}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Human Summary */}
+                {densityGateResult?.human_summary && (
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">
+                    {densityGateResult.human_summary}
+                  </p>
+                )}
+                
+                {/* Patching indicator */}
+                {isPatchingOutline && (
+                  <div className="flex items-center gap-2 text-primary">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="text-sm">Parcheando outline...</span>
+                  </div>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowDensityGateModal(false)}
+              disabled={isPatchingOutline}
+            >
+              Editar manualmente
+            </Button>
+            <Button 
+              onClick={handleAutoPatching}
+              disabled={isPatchingOutline}
+            >
+              {isPatchingOutline ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Parcheando...</>
+              ) : (
+                <><Wand2 className="w-4 h-4 mr-2" />Auto-parchear outline</>
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
     </>
   );
