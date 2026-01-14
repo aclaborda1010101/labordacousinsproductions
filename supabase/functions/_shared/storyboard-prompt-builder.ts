@@ -208,6 +208,15 @@ PRIORITY ORDER (if any instruction conflicts):
 STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL DESCRIPTION
 ═══════════════════════════════════════════════════════════════`;
 
+  // 0.1 IDENTITY LOCK (NEW - multimodal instruction)
+  const identityLockBlock = `IDENTITY LOCK (HARD):
+Use the ATTACHED REFERENCE IMAGES as the ONLY identity source.
+The reference images are being sent as multimodal inputs - YOU CAN SEE THEM.
+Match face shape, hair, age, and proportions EXACTLY to the references.
+Do NOT create generic characters.
+If identity is unclear, simplify the drawing but KEEP THE SAME IDENTITY.
+Character Pack text descriptions are SECONDARY to the actual image references.`;
+
   // 1. STYLE_PACK_LOCK (global)
   const stylePackBlock = `STYLE_PACK_LOCK (GLOBAL - HIGHEST PRIORITY):
 ${style_pack_lock.text || DEFAULT_STORYBOARD_STYLE_PACK}`;
@@ -217,11 +226,11 @@ ${style_pack_lock.text || DEFAULT_STORYBOARD_STYLE_PACK}`;
     ? GRID_SHEET_STYLE_BLOCK
     : TECH_PAGE_STYLE_BLOCK;
 
-  // 3. LOCATION_LOCK
+  // 3. LOCATION_LOCK (references now sent as multimodal, not text URLs)
   const locationBlock = location_lock
     ? `LOCATION_LOCK:
 ${location_lock.visual_lock.text}
-Reference images: ${location_lock.reference_images.length > 0 ? location_lock.reference_images.join(', ') : 'none'}`
+Reference images: [attached as multimodal inputs]`
     : '';
 
   // 4. CHARACTER PACK LOCK (v2.0 - replaces old CAST_LOCK + DNA_LOCKS)
@@ -245,9 +254,10 @@ Reference images: ${location_lock.reference_images.length > 0 ? location_lock.re
         return `Character ${c.name} (${c.id}): DNA/REFS MISSING - render as SILHOUETTE/BACK VIEW only`;
       }
       
+      // Reference images now sent as multimodal inputs, not text URLs
       return `Character ${c.name} (${c.id}) MUST MATCH:
 ${c.visual_dna_lock?.text || 'Use reference images only'}
-Reference images: ${c.reference_images.length > 0 ? c.reference_images.join(', ') : 'none'}`;
+Reference images: [attached as multimodal inputs]`;
     }).join('\n\n');
 
     characterPackBlock = `CHARACTER PACK (ONLY THESE MAY APPEAR):
@@ -282,9 +292,10 @@ MovementArrows: ${movementArrowsText}`;
   // 7. EXTENDED NEGATIVE (v2.0)
   const negativeBlock = EXTENDED_NEGATIVE_BLOCK;
 
-  // Concatenate in priority order
+  // Concatenate in priority order (IDENTITY LOCK added after priority block)
   return [
     priorityBlock,
+    identityLockBlock,  // NEW - before style pack
     stylePackBlock,
     storyboardStyleBlock,
     locationBlock,

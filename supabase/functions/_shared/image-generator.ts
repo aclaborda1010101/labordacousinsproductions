@@ -6,6 +6,7 @@
  * - Deterministic generation with seed support
  * - Automatic persistence to generation_run_logs
  * - Extracts base64 or URL from response
+ * - MULTIMODAL REFERENCES: Can accept reference images for identity consistency
  */
 
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
@@ -23,6 +24,7 @@ export interface ImageGenerationOptions {
   lovableApiKey: string;
   model?: string;
   promptText: string;
+  referenceImageUrls?: string[];  // NEW: URLs of reference images for multimodal input
   label?: string;
   // For determinism
   seed?: number;
@@ -36,6 +38,7 @@ export async function generateImageWithNanoBanana({
   lovableApiKey,
   model = "google/gemini-3-pro-image-preview",
   promptText,
+  referenceImageUrls = [],  // NEW
   label = "image_gen",
   seed,
   supabase,
@@ -45,13 +48,39 @@ export async function generateImageWithNanoBanana({
   const requestId = crypto.randomUUID();
   
   try {
+    // Build multimodal content array
+    type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+    const contentParts: ContentPart[] = [
+      { type: "text", text: promptText },
+    ];
+    
+    // Add reference images (max 6 to avoid payload too large)
+    const validRefs = referenceImageUrls
+      .filter(url => url && url.startsWith('http'))
+      .slice(0, 6);
+    
+    for (const url of validRefs) {
+      contentParts.push({
+        type: "image_url",
+        image_url: { url }
+      });
+    }
+    
+    // Diagnostic logging
+    console.log(`[${label}] multimodal_refs`, { 
+      ref_count: validRefs.length, 
+      first_host: validRefs[0] ? new URL(validRefs[0]).host : 'none',
+      prompt_length: promptText.length,
+      payload_est_kb: Math.round((promptText.length + validRefs.length * 100) / 1024)
+    });
+
     const payload: Record<string, unknown> = {
       model,
       modalities: ["image", "text"],
       messages: [
         {
           role: "user",
-          content: promptText,
+          content: contentParts,  // NOW MULTIMODAL ARRAY
         },
       ],
     };

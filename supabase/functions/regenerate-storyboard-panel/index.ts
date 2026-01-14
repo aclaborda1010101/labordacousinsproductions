@@ -5,6 +5,7 @@ import {
   buildStoryboardImagePrompt,
   getDefaultStylePackLock,
   type PanelSpec,
+  type CharacterPackLockData,
 } from "../_shared/storyboard-prompt-builder.ts";
 import { generateSeed } from "../_shared/storyboard-serializer.ts";
 
@@ -18,6 +19,77 @@ interface RegenerateRequest {
   prompt?: string;
   seed?: number;
   storyboard_style?: 'GRID_SHEET_V1' | 'TECH_PAGE_V1';
+}
+
+/**
+ * Resolves character pack data with reference images for multimodal input
+ */
+async function resolveCharacterPackRefs(
+  supabase: any,
+  characterIds: string[],
+  projectId: string
+): Promise<{ packData: CharacterPackLockData[]; referenceUrls: string[] }> {
+  if (!characterIds || characterIds.length === 0) {
+    return { packData: [], referenceUrls: [] };
+  }
+
+  const packData: CharacterPackLockData[] = [];
+  const referenceUrls: string[] = [];
+
+  for (const charId of characterIds) {
+    try {
+      // Get character + active visual DNA
+      const { data: charData } = await supabase
+        .from('characters')
+        .select(`
+          id, name, character_role, visual_dna,
+          character_visual_dna!character_visual_dna_character_id_fkey(
+            visual_dna, is_active
+          )
+        `)
+        .eq('id', charId)
+        .single();
+
+      // Get reference images from pack slots
+      const { data: packSlots } = await supabase
+        .from('character_pack_slots')
+        .select('slot_type, image_url, status')
+        .eq('character_id', charId)
+        .in('status', ['accepted', 'generated'])
+        .in('slot_type', ['ref_closeup_front', 'closeup_front', 'closeup_profile', 'turn_side', 'identity_primary']);
+
+      const frontalSlot = packSlots?.find((s: any) => 
+        ['ref_closeup_front', 'closeup_front', 'identity_primary'].includes(s.slot_type)
+      );
+      const profileSlot = packSlots?.find((s: any) => 
+        ['closeup_profile', 'turn_side'].includes(s.slot_type)
+      );
+
+      const data: CharacterPackLockData = {
+        id: charId,
+        name: charData?.name || charId,
+        role: charData?.character_role,
+        reference_frontal: frontalSlot?.image_url,
+        reference_profile: profileSlot?.image_url,
+        has_approved_pack: frontalSlot?.status === 'accepted',
+      };
+
+      packData.push(data);
+
+      // Collect reference URLs for multimodal input (max 2 per character)
+      if (data.reference_frontal) referenceUrls.push(data.reference_frontal);
+      if (data.reference_profile) referenceUrls.push(data.reference_profile);
+    } catch (err) {
+      console.log(`[regenerate-panel] Could not fetch pack for ${charId}:`, err);
+      packData.push({
+        id: charId,
+        name: charId,
+        has_approved_pack: false,
+      });
+    }
+  }
+
+  return { packData, referenceUrls: referenceUrls.slice(0, 6) }; // Max 6 refs
 }
 
 serve(async (req) => {
@@ -190,15 +262,33 @@ serve(async (req) => {
       })
       .eq('id', panelId);
 
-    // 4) Generate the image with deterministic seed
+    // 4) Resolve character reference images for multimodal input
+    const characterIds = (panel.characters_present || []).map((c: any) => 
+      typeof c === 'string' ? c : c.character_id
+    );
+    
+    const { packData, referenceUrls } = await resolveCharacterPackRefs(
+      supabase, 
+      characterIds, 
+      projectId
+    );
+
+    console.log(`[regenerate-panel] Resolved refs`, { 
+      char_count: characterIds.length,
+      ref_count: referenceUrls.length,
+      first_host: referenceUrls[0] ? new URL(referenceUrls[0]).host : 'none'
+    });
+
+    // 5) Generate the image with deterministic seed + multimodal refs
     const seed = body.seed ?? generateSeed(sceneId, 'GRID_SHEET_V1', panel.panel_no);
     
-    console.log(`[regenerate-panel] Generating image with seed ${seed}`);
+    console.log(`[regenerate-panel] Generating image with seed ${seed}, refs: ${referenceUrls.length}`);
 
     const imageResult = await generateImageWithNanoBanana({
       lovableApiKey,
       model: "google/gemini-3-pro-image-preview",
       promptText,
+      referenceImageUrls: referenceUrls,  // NEW: Pass actual image references
       seed,
       label: `storyboard_panel_${panel.panel_no}`,
       supabase,
