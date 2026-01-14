@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { parseJsonSafe } from '../_shared/llmJson.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -215,26 +216,29 @@ IMPORTANTE:
       throw new Error('No content received from AI');
     }
 
-    // Parse JSON from response
+    // Parse JSON using robust parser that handles LLM artifacts
+    const parseResult = parseJsonSafe(content, 'script-doctor-analysis');
+    console.log('[script-doctor] Parse result - ok:', parseResult.ok, 'degraded:', parseResult.degraded, 'warnings:', parseResult.warnings);
+
     let analysisData;
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        analysisData = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
+    if (parseResult.ok && parseResult.json) {
+      analysisData = parseResult.json;
+      
+      if (parseResult.degraded) {
+        console.warn('[script-doctor] JSON parsed in degraded mode:', parseResult.warnings.join(', '));
       }
-    } catch (parseError) {
-      console.error('JSON parse error:', parseError);
-      // Return a structured fallback
+    } else {
+      // All parsing attempts failed - use structured fallback
+      console.error('[script-doctor] JSON parsing failed:', parseResult.warnings.join(', '));
       analysisData = {
         overall_assessment: {
           score: 70,
           summary: content.substring(0, 500),
           strengths: [],
-          critical_issues: []
+          critical_issues: ['El análisis se completó pero hubo un error de formato en la respuesta']
         },
         suggestions: [],
+        parsing_warnings: parseResult.warnings,
         raw_analysis: content
       };
     }
