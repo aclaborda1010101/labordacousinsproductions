@@ -2958,6 +2958,9 @@ export type Database = {
           frame_geometry: Json | null
           frame_type: string | null
           id: string
+          identity_anchors: Json | null
+          identity_score: number | null
+          identity_status: string | null
           image_url: string | null
           locks: Json | null
           micro_shot_id: string | null
@@ -2968,6 +2971,7 @@ export type Database = {
           run_id: string | null
           seed: number | null
           shot_id: string
+          staging_image_url: string | null
           staging_snapshot: Json | null
           timestamp_sec: number | null
           version: number | null
@@ -2981,6 +2985,9 @@ export type Database = {
           frame_geometry?: Json | null
           frame_type?: string | null
           id?: string
+          identity_anchors?: Json | null
+          identity_score?: number | null
+          identity_status?: string | null
           image_url?: string | null
           locks?: Json | null
           micro_shot_id?: string | null
@@ -2991,6 +2998,7 @@ export type Database = {
           run_id?: string | null
           seed?: number | null
           shot_id: string
+          staging_image_url?: string | null
           staging_snapshot?: Json | null
           timestamp_sec?: number | null
           version?: number | null
@@ -3004,6 +3012,9 @@ export type Database = {
           frame_geometry?: Json | null
           frame_type?: string | null
           id?: string
+          identity_anchors?: Json | null
+          identity_score?: number | null
+          identity_status?: string | null
           image_url?: string | null
           locks?: Json | null
           micro_shot_id?: string | null
@@ -3014,6 +3025,7 @@ export type Database = {
           run_id?: string | null
           seed?: number | null
           shot_id?: string
+          staging_image_url?: string | null
           staging_snapshot?: Json | null
           timestamp_sec?: number | null
           version?: number | null
@@ -3432,6 +3444,8 @@ export type Database = {
       }
       micro_shots: {
         Row: {
+          action_beat: string | null
+          camera_beat: string | null
           created_at: string
           duration_sec: number | null
           end_sec: number
@@ -3439,6 +3453,7 @@ export type Database = {
           id: string
           keyframe_final_id: string | null
           keyframe_initial_id: string | null
+          keyframe_pipeline_status: string | null
           motion_notes: string | null
           project_id: string
           prompt_text: string | null
@@ -3453,6 +3468,8 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          action_beat?: string | null
+          camera_beat?: string | null
           created_at?: string
           duration_sec?: number | null
           end_sec: number
@@ -3460,6 +3477,7 @@ export type Database = {
           id?: string
           keyframe_final_id?: string | null
           keyframe_initial_id?: string | null
+          keyframe_pipeline_status?: string | null
           motion_notes?: string | null
           project_id: string
           prompt_text?: string | null
@@ -3474,6 +3492,8 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          action_beat?: string | null
+          camera_beat?: string | null
           created_at?: string
           duration_sec?: number | null
           end_sec?: number
@@ -3481,6 +3501,7 @@ export type Database = {
           id?: string
           keyframe_final_id?: string | null
           keyframe_initial_id?: string | null
+          keyframe_pipeline_status?: string | null
           motion_notes?: string | null
           project_id?: string
           prompt_text?: string | null
@@ -5036,6 +5057,7 @@ export type Database = {
           frame_config: Json | null
           hero: boolean | null
           id: string
+          inherit_technical: boolean | null
           keyframe_hints: Json | null
           lighting: Json | null
           name: string | null
@@ -5047,6 +5069,8 @@ export type Database = {
           sound_plan: Json | null
           story_purpose: string | null
           storyboard_panel_id: string | null
+          technical_overrides: Json | null
+          technical_shot_idx: number | null
           timing_config: Json | null
           transition_in: string | null
           transition_out: string | null
@@ -5083,6 +5107,7 @@ export type Database = {
           frame_config?: Json | null
           hero?: boolean | null
           id?: string
+          inherit_technical?: boolean | null
           keyframe_hints?: Json | null
           lighting?: Json | null
           name?: string | null
@@ -5094,6 +5119,8 @@ export type Database = {
           sound_plan?: Json | null
           story_purpose?: string | null
           storyboard_panel_id?: string | null
+          technical_overrides?: Json | null
+          technical_shot_idx?: number | null
           timing_config?: Json | null
           transition_in?: string | null
           transition_out?: string | null
@@ -5130,6 +5157,7 @@ export type Database = {
           frame_config?: Json | null
           hero?: boolean | null
           id?: string
+          inherit_technical?: boolean | null
           keyframe_hints?: Json | null
           lighting?: Json | null
           name?: string | null
@@ -5141,6 +5169,8 @@ export type Database = {
           sound_plan?: Json | null
           story_purpose?: string | null
           storyboard_panel_id?: string | null
+          technical_overrides?: Json | null
+          technical_shot_idx?: number | null
           timing_config?: Json | null
           transition_in?: string | null
           transition_out?: string | null
@@ -6111,6 +6141,8 @@ export type Database = {
       subdivide_shot_into_microshots: {
         Args: { p_micro_duration?: number; p_shot_id: string }
         Returns: {
+          action_beat: string | null
+          camera_beat: string | null
           created_at: string
           duration_sec: number | null
           end_sec: number
@@ -6118,6 +6150,7 @@ export type Database = {
           id: string
           keyframe_final_id: string | null
           keyframe_initial_id: string | null
+          keyframe_pipeline_status: string | null
           motion_notes: string | null
           project_id: string
           prompt_text: string | null
