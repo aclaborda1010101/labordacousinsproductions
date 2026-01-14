@@ -549,8 +549,20 @@ serve(async (req) => {
     const cleanKey = (s: string) =>
       s.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
 
+    // Use characterPackData as source (has resolved IDs from buildCharacterPackData)
+    // Fall back to castLocks if characterPackData is empty
+    const castSource = characterPackData.length > 0 
+      ? characterPackData.filter(c => c.id && !c.id.startsWith('unknown_'))
+      : castLocks.filter(c => isUuid(c.id));
+
+    console.log(`[SB] cast_source_for_planner`, { 
+      source: characterPackData.length > 0 ? 'characterPackData' : 'castLocks',
+      count: castSource.length,
+      names: castSource.map(c => c.name)
+    });
+
     // Build cast list for planner with explicit keys for resolution
-    const castListText = castLocks.map(c => 
+    const castListText = castSource.map(c => 
       `- KEY: "${cleanKey(c.name)}" | ID: ${c.id} | Name: ${c.name}`
     ).join('\n');
 
@@ -569,7 +581,7 @@ serve(async (req) => {
 CRITICAL OUTPUT RULES FOR characters_present:
 ═══════════════════════════════════════════════════════════════
 - Use ONLY keys or IDs from the cast list above.
-- Valid keys: ${castLocks.map(c => `"${cleanKey(c.name)}"`).join(', ')}
+- Valid keys: ${castSource.map(c => `"${cleanKey(c.name)}"`).join(', ')}
 - NEVER output "undefined", "null", or empty strings.
 - If no characters appear in a panel, use an empty array [].
 - Do NOT invent characters - use ONLY those listed above.
