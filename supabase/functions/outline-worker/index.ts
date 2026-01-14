@@ -916,7 +916,9 @@ async function stageOutlineFanOut(
     part_c: parts.part_c?.data || parts.part_c
   };
   
-  const merged = mergeOutlineParts(partsData, episodesCount);
+  // V11.3: Pass user's original genre/tone to enforce them in final output
+  console.log(`[WORKER] Merging with USER values - Genre: ${genre}, Tone: ${tone}`);
+  const merged = mergeOutlineParts(partsData, episodesCount, genre, tone);
   
   // Save unified outline
   await updateOutline(supabase, outline.id, { 
@@ -932,7 +934,12 @@ async function stageOutlineFanOut(
 // ============================================================================
 // MERGE FUNCTION: Combine all parts into final outline (V11 - preserve TP objects)
 // ============================================================================
-function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
+function mergeOutlineParts(
+  parts: any, 
+  expectedEpisodes: number,
+  userGenre?: string,  // V11.3: User's original genre (priority over AI-generated)
+  userTone?: string    // V11.3: User's original tone (priority over AI-generated)
+): any {
   const partA = parts.part_a || {};
   const episodesB = parts.part_b?.episodes || [];
   const episodesC = parts.part_c?.episodes || [];
@@ -1031,8 +1038,9 @@ function mergeOutlineParts(parts: any, expectedEpisodes: number): any {
   return {
     title: partA.title || 'Sin título',
     logline: partA.logline || '',
-    genre: partA.genre || 'Drama',
-    tone: partA.tone || 'Cinematográfico',
+    // V11.3: FORCE user's genre/tone - never trust what the model generated
+    genre: userGenre || partA.genre || 'Drama',
+    tone: userTone || partA.tone || 'Cinematográfico',
     synopsis: partA.synopsis || partA.logline || '',
     season_arc: partA.season_arc || {},
     world_rules: Array.isArray(partA.world_rules) ? partA.world_rules : [],
