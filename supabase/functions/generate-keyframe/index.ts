@@ -34,13 +34,21 @@ Warm, colorful, cinematic animation lighting.
 NO skin pores, NO realistic fabric micro-detail, NO photography terms,
 NO cinematic still, NO naturalistic, NO real skin texture, NO visible pores`,
     bannedWords: [
+      // Core photorealistic terms
       'DSLR', 'cinematic still', 'naturalistic', 'film grain', 
       'photoreal', 'photorealistic', 'live-action', 'real actors', 'pores',
       'realistic lighting', 'natural skin texture', 'visible pores',
       'professional photography', 'real fabric', 'skin texture',
       'cinematic photograph', 'Naturalistic_Daylight', 'natural daylight',
       'textura de poros', 'INDISTINGUIBLE de fotografía', 'fotografía cinematográfica',
-      'imperfecciones naturales', 'venas sutiles', 'Naturalistic', 'hyperreal'
+      'imperfecciones naturales', 'venas sutiles', 'Naturalistic', 'hyperreal',
+      // LLM-generated photorealistic terms to block
+      'ULTRA-DETAILED', 'professional cinematic still', 'hyper-detailed',
+      'real skin', 'subsurface scattering realistic', 'commercial photography', 
+      'photo studio', 'realistic fabric texture', 'film-quality',
+      'INDISTINGUIBLE', 'naturalistic daylight', 'natural soft light',
+      'photograph', 'real-world', 'real world', 'realistic', 'photo-real',
+      'film photography', 'natural lighting', 'realistic render'
     ]
   },
   STORYBOARD_PENCIL: {
@@ -80,6 +88,93 @@ function sanitizePromptForStyle(prompt: string, styleProfile: StyleProfile): str
     sanitized = sanitized.replace(new RegExp(word, 'gi'), '');
   }
   return sanitized.replace(/\s+/g, ' ').trim();
+}
+
+// ============================================================================
+// DETERMINISTIC PROMPT BUILDER - Bypass LLM for animated styles
+// ============================================================================
+function buildDeterministicPromptForAnimatedStyle(
+  request: KeyframeRequest,
+  characterWardrobes: Map<string, { name: string; wardrobe: string }>,
+  characterIdentities: Map<string, { name: string; identityLock: string }>,
+  styleProfile: StyleProfile
+): {
+  prompt_text: string;
+  negative_prompt: string;
+  continuity_locks: Record<string, string>;
+  frame_geometry: Record<string, unknown>;
+  staging_snapshot: Record<string, unknown>;
+  determinism: Record<string, unknown>;
+  negative_constraints: string[];
+} {
+  const style = STYLE_PROFILES[styleProfile];
+  const shotDetails = request.shotDetails || {};
+  
+  // Animation-specific lighting (NEVER "Naturalistic Daylight")
+  const animationLighting = styleProfile === 'DISNEY_PIXAR_3D' 
+    ? 'warm cinematic animation lighting, soft global illumination, Disney-Pixar style rim lighting'
+    : 'simple even lighting, sketch-appropriate soft shadows';
+  
+  // Build wardrobe description
+  const wardrobeDesc = Array.from(characterWardrobes.values())
+    .map(w => `${w.name}: ${w.wardrobe}`)
+    .join('. ') || request.characters.map(c => `${c.name}: stylized outfit`).join('. ');
+  
+  // Build identity locks
+  const identityDesc = Array.from(characterIdentities.values())
+    .map(c => c.identityLock || `${c.name}: consistent stylized appearance`)
+    .join('\n');
+
+  // Deterministic prompt WITHOUT photorealistic vocabulary
+  const rawPrompt = `${style.lock}
+
+Disney-Pixar 3D Animation style frame. ${request.shotType}, ${shotDetails.focalMm || 35}mm lens perspective.
+
+SCENE: ${request.sceneDescription}
+
+CHARACTERS (stylized 3D, big expressive eyes, smooth skin without pores):
+${request.characters.map(c => `- ${c.name}${c.token ? ` [${c.token}]` : ''}`).join('\n')}
+
+WARDROBE (stylized materials, clean fabric):
+${wardrobeDesc}
+
+IDENTITY LOCKS:
+${identityDesc}
+
+LOCATION: ${request.location?.name || 'Stylized interior'}${request.location?.token ? ` [${request.location.token}]` : ''}
+
+TECHNICAL:
+- Lighting: ${animationLighting}
+- Camera: ${request.cameraMovement || 'static'}, ${shotDetails.cameraHeight || 'eye level'}
+- Focal: ${shotDetails.focalMm || 35}mm
+${shotDetails.dialogueText ? `- Action/Dialogue: "${shotDetails.dialogueText}"` : ''}
+${shotDetails.intention ? `- Shot intention: ${shotDetails.intention}` : ''}
+
+STYLE MANDATE: 3D animated family film aesthetic, exaggerated proportions, big expressive eyes, smooth skin shading without pores, warm colorful palette, stylized materials, soft global illumination.
+
+${style.lock}`;
+
+  console.log(`[buildDeterministicPromptForAnimatedStyle] Built prompt for ${styleProfile}, length: ${rawPrompt.length}`);
+
+  return {
+    prompt_text: sanitizePromptForStyle(rawPrompt, styleProfile),
+    negative_prompt: style.negative,
+    continuity_locks: {
+      wardrobe_description: wardrobeDesc,
+      lighting_setup: animationLighting,
+      background_elements: request.location?.name || 'Stylized interior set',
+      art_style: styleProfile
+    },
+    frame_geometry: {
+      shot_type: request.shotType,
+      focal_mm: shotDetails.focalMm || 35,
+      camera_height: shotDetails.cameraHeight || 'eye_level',
+      camera_movement: request.cameraMovement || 'static'
+    },
+    staging_snapshot: {},
+    determinism: { guidance: 7.5, steps: 30 },
+    negative_constraints: getAntiAIPrompts(styleProfile)
+  };
 }
 
 // Get anti-AI negative prompts based on style (animated styles don't want skin pores)
@@ -424,12 +519,21 @@ async function generateKeyframePrompt(
   determinism: Record<string, unknown>;
   negative_constraints: string[];
 }> {
+  // ══════════════════════════════════════════════════════════════════════════
+  // BYPASS: For animated styles, do NOT use LLM (prevents it ignoring style lock)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (styleProfile === 'DISNEY_PIXAR_3D' || styleProfile === 'STORYBOARD_PENCIL') {
+    console.log(`[generateKeyframePrompt] BYPASS MODE: Building deterministic prompt for ${styleProfile} (no LLM)`);
+    return buildDeterministicPromptForAnimatedStyle(request, characterWardrobes, characterIdentities, styleProfile);
+  }
+  
+  // For REALISTIC style, use the LLM-based flow
+  console.log(`[generateKeyframePrompt] LLM MODE: Using AI prompt generation for ${styleProfile}`);
+  
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) {
     throw new Error("LOVABLE_API_KEY is not configured");
   }
-  
-  console.log(`[generateKeyframePrompt] Using style profile: ${styleProfile}`);
 
   // Build comprehensive prompt with all shot details
   const shotDetails = request.shotDetails || {};
@@ -523,7 +627,7 @@ CONTEXTO COMPLETO DEL PLANO:
 - Cámara: ${request.cameraMovement || 'Static'}
 - Focal: ${shotDetails.focalMm || 35}mm
 - Altura cámara: ${shotDetails.cameraHeight || 'EyeLevel'}
-- Iluminación: ${styleProfile === 'DISNEY_PIXAR_3D' ? 'Warm cinematic animation lighting' : shotDetails.lightingStyle || 'Natural soft light'}
+- Iluminación: ${shotDetails.lightingStyle || 'Natural soft light'}
 - Blocking: ${request.blocking || 'No especificado'}
 ${shotDetails.dialogueText ? `- Diálogo: "${shotDetails.dialogueText}"` : ''}
 ${shotDetails.intention ? `- Intención del plano: ${shotDetails.intention}` : ''}
@@ -561,7 +665,7 @@ NEGATIVO OBLIGATORIO: ${styleSettings.negative}
 
 Genera el JSON completo con prompt_text, negative_prompt, continuity_locks, pose_data_per_character, frame_geometry, staging_snapshot, determinism, y negative_constraints.
 El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para garantizar continuidad.
-${styleProfile === 'DISNEY_PIXAR_3D' ? 'El prompt_text DEBE especificar estilo Disney-Pixar 3D Animation al inicio.' : ''}`;
+El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para garantizar continuidad.`;
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
