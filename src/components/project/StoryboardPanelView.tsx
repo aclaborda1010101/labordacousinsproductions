@@ -21,13 +21,15 @@ import {
   Pencil,
   Info,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { StoryboardPanel } from '@/types/technical-doc';
 import { StoryboardGenerationOverlay } from './StoryboardGenerationOverlay';
 import { useStoryboardProgress } from '@/hooks/useStoryboardProgress';
+import { exportStoryboardVisualPDF } from '@/lib/exportStoryboardVisualPDF';
 
 interface StoryboardPanelViewProps {
   sceneId: string;
@@ -55,6 +57,7 @@ export function StoryboardPanelView({
   const [editingPanel, setEditingPanel] = useState<string | null>(null);
   const [allApproved, setAllApproved] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState<'GRID_SHEET_V1' | 'TECH_PAGE_V1'>('GRID_SHEET_V1');
+  const [exporting, setExporting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{ url: string; panelNo: number } | null>(null);
 
   // Progress tracking hook
@@ -261,6 +264,44 @@ export function StoryboardPanelView({
     }
   };
 
+  const handleExportPDF = async () => {
+    if (panels.length === 0) {
+      toast.error('No hay paneles para exportar');
+      return;
+    }
+    
+    setExporting(true);
+    try {
+      // Fetch scene info for slugline and project title
+      const { data: scene } = await supabase
+        .from('scenes')
+        .select('slugline, scene_no, projects(title)')
+        .eq('id', sceneId)
+        .single();
+      
+      const projectData = scene?.projects as { title?: string } | null;
+      
+      await exportStoryboardVisualPDF({
+        projectTitle: projectData?.title || 'Proyecto',
+        sceneSlugline: scene?.slugline || '',
+        sceneNo: scene?.scene_no || 1,
+        panels: panels.map(p => ({
+          panel_no: p.panel_no,
+          panel_intent: p.panel_intent,
+          shot_hint: p.shot_hint,
+          image_url: p.image_url,
+        })),
+      });
+      
+      toast.success('Storyboard exportado como PDF');
+    } catch (err) {
+      console.error('Export error:', err);
+      toast.error('Error al exportar PDF');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -330,6 +371,19 @@ export function StoryboardPanelView({
             </Button>
           ) : (
             <>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleExportPDF} 
+                disabled={exporting || panels.length === 0}
+              >
+                {exporting ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4 mr-2" />
+                )}
+                Exportar PDF
+              </Button>
               <Button variant="outline" size="sm" onClick={generateStoryboard} disabled={generating}>
                 <RefreshCw className={`w-4 h-4 mr-2 ${generating ? 'animate-spin' : ''}`} />
                 Regenerar
