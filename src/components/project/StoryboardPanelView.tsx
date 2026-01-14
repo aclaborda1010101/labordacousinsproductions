@@ -111,23 +111,16 @@ export function StoryboardPanelView({
     try {
       toast.info(`Generando imagen para panel ${panel.panel_no}...`);
       
-      const { data, error } = await supabase.functions.invoke('generate-run', {
+      // Use dedicated regenerate-storyboard-panel function
+      const { data, error } = await supabase.functions.invoke('regenerate-storyboard-panel', {
         body: {
-          model: 'google/gemini-3-pro-image-preview',
+          panelId: panel.id,
           prompt: panel.image_prompt,
-          aspect_ratio: '16:9',
         },
       });
 
       if (error) throw error;
-
-      // Update panel with image URL
-      const { error: updateError } = await supabase
-        .from('storyboard_panels')
-        .update({ image_url: data.image_url })
-        .eq('id', panel.id);
-
-      if (updateError) throw updateError;
+      if (!data?.success) throw new Error(data?.error || 'Generation failed');
 
       toast.success(`Imagen generada para panel ${panel.panel_no}`);
       await fetchPanels();
