@@ -132,6 +132,7 @@ import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
 import { getStageInfo, deriveProgress } from '@/lib/outlineStages';
 import OutlineStatusPanel from './OutlineStatusPanel';
 import { ScriptGenerationOverlay } from './ScriptGenerationOverlay';
+import ProjectDataStatus from './ProjectDataStatus';
 import {
   hydrateCharacters,
   hydrateLocations,
@@ -971,21 +972,38 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
-  // V10.3: Fallback to load outline from persistence when completed but lightOutline is empty
+  // V10.3+: Fallback to load outline from persistence when completed/approved but lightOutline is empty
+  // This ensures that if the user refreshes or the polling callback misses setting state, we still recover
   useEffect(() => {
     const outline = outlinePersistence.savedOutline;
-    if (
-      outline?.status === 'completed' && 
-      outline?.outline_json && 
-      Object.keys(outline.outline_json).length > 0 &&
-      !lightOutline
-    ) {
-      console.log('[ScriptImport] Loading completed outline from persistence:', outline.id);
+    const status = outline?.status;
+    const isTerminalSuccess = status === 'completed' || status === 'approved';
+    const hasValidContent = outline?.outline_json && Object.keys(outline.outline_json).length > 0;
+    
+    if (isTerminalSuccess && hasValidContent && !lightOutline) {
+      console.log('[ScriptImport] Recovering outline from persistence:', outline.id, 'status:', status);
       setLightOutline(outline.outline_json);
-      updatePipelineStep('outline', 'success');
-      updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+      
+      // Restore idea/genre/tone from persisted outline if available
+      if (outline.idea && !ideaText) setIdeaText(outline.idea);
+      if (outline.genre) setGenre(outline.genre);
+      if (outline.tone) setTone(outline.tone);
+      
+      if (status === 'approved') {
+        setOutlineApproved(true);
+        updatePipelineStep('outline', 'success');
+        updatePipelineStep('approval', 'success');
+      } else {
+        updatePipelineStep('outline', 'success');
+        updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+      }
+      
+      // Only show toast if not loading (to avoid showing on initial load)
+      if (!outlinePersistence.isLoading) {
+        toast.success('Outline recuperado desde el servidor');
+      }
     }
-  }, [outlinePersistence.savedOutline, lightOutline]);
+  }, [outlinePersistence.savedOutline, outlinePersistence.isLoading, lightOutline, ideaText]);
 
   // Auto-save form draft for PRO mode (debounced)
   useEffect(() => {
@@ -4610,6 +4628,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         {/* GUION TAB - Merged Generate + Import */}
         <TabsContent value="generate" className="space-y-4">
+          {/* Project Data Status - Shows what's in backend */}
+          <ProjectDataStatus
+            hasOutline={!!outlinePersistence.savedOutline?.outline_json && Object.keys(outlinePersistence.savedOutline.outline_json).length > 0}
+            outlineStatus={outlinePersistence.savedOutline?.status}
+            hasScript={!!generatedScript || !!scriptText}
+            charactersCount={bibleCharacters.length}
+            locationsCount={bibleLocations.length}
+            isLoading={outlinePersistence.isLoading}
+            onRefresh={() => {
+              outlinePersistence.refreshOutline();
+              fetchBibleData();
+            }}
+            onGenerateOutline={ideaText.trim() ? generateLightOutline : undefined}
+          />
+          
           {/* Script Source Selector - Only show when no script exists */}
           {!lightOutline && !pipelineRunning && !generatedScript && (
             <div className="grid gap-4 md:grid-cols-2">
@@ -6302,15 +6335,50 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           {!generatedScript ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <BookOpen className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <h3 className="font-medium text-lg mb-2">No hay guion generado</h3>
-                <p className="text-muted-foreground mb-4">
-                  Genera o importa un guion desde la pestaña "Guion"
-                </p>
-                <Button variant="outline" onClick={() => setActiveTab('generate')}>
-                  <FileText className="w-4 h-4 mr-2" />
-                  Ir a Guion
-                </Button>
+                {lightOutline ? (
+                  <>
+                    {/* Has outline but no full script */}
+                    <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500/50" />
+                    <h3 className="font-medium text-lg mb-2">Outline Disponible</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Tienes un outline generado con {lightOutline.episode_beats?.length || 0} episodios.
+                      {!outlineApproved && ' Apruébalo para poder generar el guion completo.'}
+                    </p>
+                    {outlineApproved ? (
+                      <Button variant="default" onClick={() => setActiveTab('generate')}>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Generar Guion Completo
+                      </Button>
+                    ) : (
+                      <Button variant="outline" onClick={() => setActiveTab('generate')}>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Ir a Aprobar Outline
+                      </Button>
+                    )}
+                  </>
+                ) : outlinePersistence.isLoading ? (
+                  <>
+                    {/* Loading state */}
+                    <Loader2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground animate-spin" />
+                    <h3 className="font-medium text-lg mb-2">Cargando proyecto...</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Verificando datos del proyecto
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    {/* No outline, no script */}
+                    <BookOpen className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <h3 className="font-medium text-lg mb-2">No hay contenido todavía</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Empieza escribiendo tu idea y generando un outline desde la pestaña "Guion"
+                    </p>
+                    <Button variant="default" onClick={() => setActiveTab('generate')}>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Ir a Generar Outline
+                    </Button>
+                  </>
+                )}
               </CardContent>
             </Card>
           ) : (
