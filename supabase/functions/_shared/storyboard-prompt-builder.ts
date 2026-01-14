@@ -1,12 +1,28 @@
 /**
- * Storyboard Prompt Builder v2.0 - Professional Lock System
+ * Storyboard Prompt Builder v3.0 - Professional Lock System + Differentiated Styles
  * 
- * PRIORITY ORDER: STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL
+ * PRIORITY ORDER: STYLE PRESET > STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL
+ * 
+ * v3.0: Added 4 radically differentiated storyboard styles with hard exclusions
  * 
  * Builds image prompts by concatenating blocks in strict order:
- * SYSTEM_CONTEXT + STYLE_PACK_LOCK + STORYBOARD_STYLE_LOCK + LOCATION_LOCK + 
+ * CANVAS_LOCK + FORMAT_CONTRACT + STYLE_PRESET_LOCK + STYLE_PACK_LOCK + 
  * CHARACTER_PACK_LOCK + PANEL_SPEC + CONTINUITY_LOCK + EXTENDED_NEGATIVE
  */
+
+import {
+  type StoryboardStylePresetId,
+  getStoryboardStylePreset,
+  buildStyleExclusionBlock,
+  GLOBAL_STYLE_NEGATIVES,
+} from "./storyboard-style-presets.ts";
+
+// Re-export for use by other modules
+export { 
+  type StoryboardStylePresetId, 
+  getStoryboardStylePreset, 
+  buildStyleExclusionBlock 
+} from "./storyboard-style-presets.ts";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -94,6 +110,8 @@ export interface BuildStoryboardPromptOptions {
   panel_count?: number;
   // v4.0: Canvas Format (global video format)
   canvas_format?: CanvasFormat;
+  // v5.0: Style Preset (4 radically differentiated styles)
+  style_preset_id?: StoryboardStylePresetId;
 }
 
 // ============================================================================
@@ -410,6 +428,7 @@ export function buildStoryboardImagePrompt(options: BuildStoryboardPromptOptions
     character_pack_data,
     panel_count,
     canvas_format,
+    style_preset_id = 'sb_cinematic_narrative',
   } = options;
 
   // 0. CANVAS LOCK (HIGHEST PRIORITY - FIRST BLOCK)
@@ -421,7 +440,11 @@ export function buildStoryboardImagePrompt(options: BuildStoryboardPromptOptions
   // 0.2 PACK-FIRST CANON (GLOBAL RULE)
   const packFirstBlock = PACK_FIRST_CANON;
 
-  // 0.2 IDENTITY LOCK (multimodal instruction)
+  // 0.3 STYLE PRESET LOCK (v5.0 - RADICALLY DIFFERENTIATED STYLES)
+  // This block enforces one of 4 distinct visual languages with hard exclusions
+  const stylePresetLockBlock = buildStyleExclusionBlock(style_preset_id);
+
+  // 0.4 IDENTITY LOCK (multimodal instruction)
   const identityLockBlock = `IDENTITY LOCK (HARD):
 Use the ATTACHED REFERENCE IMAGES as the ONLY identity source.
 The reference images are being sent as multimodal inputs - YOU CAN SEE THEM.
@@ -430,11 +453,11 @@ Do NOT create generic characters.
 If identity is unclear, simplify the drawing but KEEP THE SAME IDENTITY.
 Character Pack text descriptions are SECONDARY to the actual image references.`;
 
-  // 1. STYLE_PACK_LOCK (global)
-  const stylePackBlock = `STYLE_PACK_LOCK (GLOBAL - HIGHEST PRIORITY):
+  // 1. STYLE_PACK_LOCK (global project style - secondary to preset)
+  const stylePackBlock = `STYLE_PACK_LOCK (PROJECT STYLE - SECONDARY TO PRESET):
 ${style_pack_lock.text || DEFAULT_STORYBOARD_STYLE_PACK}`;
 
-  // 2. STORYBOARD_STYLE_LOCK (with panel_count if provided)
+  // 2. STORYBOARD_STYLE_LOCK (layout format with panel_count)
   let storyboardStyleBlock = storyboard_style === 'GRID_SHEET_V1'
     ? GRID_SHEET_STYLE_BLOCK
     : TECH_PAGE_STYLE_BLOCK;
@@ -519,20 +542,25 @@ MovementArrows: ${movementArrowsText}`;
     panel_spec.characters_present
   );
 
-  // Concatenate in strict priority order (CANVAS LOCK FIRST)
+  // Add global style negatives to the negative block
+  const globalNegatives = GLOBAL_STYLE_NEGATIVES.join('\n- ');
+  const enhancedNegativeBlock = `${negativeBlock}\n\nGLOBAL NEGATIVES:\n- ${globalNegatives}`;
+
+  // Concatenate in strict priority order (CANVAS LOCK FIRST, then STYLE PRESET)
   return [
-    canvasLockBlock,      // HIGHEST PRIORITY - CANVAS LOCK (v4.0)
-    formatContractBlock,  // FORMAT CONTRACT
-    packFirstBlock,       // PACK-FIRST CANON
-    identityLockBlock,    // IDENTITY LOCK (multimodal)
-    closeupReinforcement, // CLOSE-UP IDENTITY REINFORCEMENT (if applicable)
+    canvasLockBlock,        // HIGHEST PRIORITY - CANVAS LOCK (v4.0)
+    formatContractBlock,    // FORMAT CONTRACT
+    packFirstBlock,         // PACK-FIRST CANON
+    stylePresetLockBlock,   // STYLE PRESET LOCK (v5.0 - DIFFERENTIATED STYLES)
+    identityLockBlock,      // IDENTITY LOCK (multimodal)
+    closeupReinforcement,   // CLOSE-UP IDENTITY REINFORCEMENT (if applicable)
     stylePackBlock,
     storyboardStyleBlock,
     locationBlock,
     characterPackBlock,
     panelBlock,
     continuityBlock,
-    negativeBlock,
+    enhancedNegativeBlock,
   ].filter(Boolean).join('\n\n');
 }
 
