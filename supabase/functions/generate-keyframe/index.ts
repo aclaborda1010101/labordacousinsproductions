@@ -522,9 +522,68 @@ El prompt_text DEBE ser ultra-específico sobre vestuario, posiciones y luz para
   }
 }
 
+// ============================================================================
+// STRICT CONTINUITY EDIT PROMPT - For editing from previous keyframe
+// ============================================================================
+function buildInterframeEditPrompt(
+  previousFrameType: string,
+  request: KeyframeRequest
+): string {
+  const shotDetails = request.shotDetails || {};
+  const cameraMove = request.cameraMovement || 'static';
+  
+  return `
+═══════════════════════════════════════════════════════════════════════════════
+EDIT MODE: STRICT CONTINUITY (Δt = ${request.timestampSec}s from start)
+═══════════════════════════════════════════════════════════════════════════════
+
+EDIT the existing keyframe image. This is ${request.frameType} frame.
+Time step from previous: ~1 second. Maintain STRICT continuity.
+
+CONTEXT: ${request.sceneDescription}
+Shot type: ${request.shotType}
+Camera: ${cameraMove}
+
+═══════════════════════════════════════════════════════════════════════════════
+ALLOWED CHANGES ONLY (micro-movement for 1 second):
+═══════════════════════════════════════════════════════════════════════════════
+• Minimal natural movement (small head turn, slight hand shift, a tiny step)
+• Very slight camera motion: ${cameraMove !== 'static' ? `subtle ${cameraMove}` : 'none'}
+• Micro expression change if dialogue is happening
+• Natural eye blink or gaze shift
+
+═══════════════════════════════════════════════════════════════════════════════
+FORBIDDEN CHANGES (ABSOLUTE - ZERO TOLERANCE):
+═══════════════════════════════════════════════════════════════════════════════
+• do NOT change art style (must remain EXACTLY same style as source)
+• do NOT switch to photorealism or 3D render
+• do NOT add or remove characters
+• do NOT change any animal species (dog STAYS dog, cat STAYS cat)
+• do NOT change wardrobe, props, background elements
+• do NOT change lighting direction or color temperature
+• do NOT change framing or shot type beyond micro camera motion
+• do NOT smooth skin or add airbrushed effects
+• do NOT add text, watermarks, or new props
+
+═══════════════════════════════════════════════════════════════════════════════
+CONTINUITY LOCKS (MUST MATCH SOURCE IMAGE EXACTLY):
+═══════════════════════════════════════════════════════════════════════════════
+• All character identities (faces, hair color, age)
+• All wardrobe items (colors, textures, patterns)
+• All props in scene (positions, types, colors)
+• Lighting setup (direction, color, intensity)
+• Background/set design
+• Art style and rendering technique
+
+Characters: ${request.characters.map(c => c.name).join(', ')}
+Keep all identities EXACTLY the same as the source image.
+`.trim();
+}
+
 async function generateWithLovableAI(
   prompt: string,
-  negativePrompt: string
+  negativePrompt: string,
+  referenceImageUrls: string[] = []
 ): Promise<{ imageUrl: string; seed: number }> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) {
@@ -532,6 +591,20 @@ async function generateWithLovableAI(
   }
 
   console.log(`[Lovable AI] Generating keyframe with ${IMAGE_MODEL}...`);
+  
+  // Build multimodal content if we have references
+  type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+  const contentParts: ContentPart[] = [
+    { type: "text", text: `${prompt}\n\nNEGATIVE: ${negativePrompt}` }
+  ];
+  
+  // Add reference images (max 6)
+  const validRefs = referenceImageUrls.filter(url => url && url.startsWith('http')).slice(0, 6);
+  for (const url of validRefs) {
+    contentParts.push({ type: "image_url", image_url: { url } });
+  }
+  
+  console.log(`[Lovable AI] Using ${validRefs.length} reference images`);
 
   // Generate image using Lovable AI Gateway
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -545,7 +618,7 @@ async function generateWithLovableAI(
       messages: [
         {
           role: 'user',
-          content: `${prompt}\n\nNEGATIVE: ${negativePrompt}`
+          content: contentParts
         }
       ],
       modalities: ['image', 'text']
@@ -577,6 +650,85 @@ async function generateWithLovableAI(
   }
 
   console.log('[Lovable AI] Keyframe generation complete, seed:', seed);
+  return { imageUrl, seed };
+}
+
+// ============================================================================
+// EDIT KEYFRAME - For K1/K2 frames using correlative pipeline
+// ============================================================================
+async function editKeyframeWithLovableAI(
+  previousFrameUrl: string,
+  editPrompt: string,
+  identityAnchors: string[] = []
+): Promise<{ imageUrl: string; seed: number }> {
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  if (!LOVABLE_API_KEY) {
+    throw new Error("LOVABLE_API_KEY is not configured");
+  }
+
+  console.log(`[Lovable AI] Editing keyframe with ${IMAGE_MODEL} (correlative mode)...`);
+  
+  // Build multimodal content: instruction + source + identity refs
+  type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+  const contentParts: ContentPart[] = [
+    { type: "text", text: editPrompt }
+  ];
+  
+  // Add source image to edit
+  if (previousFrameUrl && previousFrameUrl.startsWith('http')) {
+    contentParts.push({ type: "image_url", image_url: { url: previousFrameUrl } });
+  }
+  
+  // Add identity anchors (max 4)
+  const validAnchors = identityAnchors.filter(url => url && url.startsWith('http')).slice(0, 4);
+  for (const url of validAnchors) {
+    contentParts.push({ type: "image_url", image_url: { url } });
+  }
+  
+  console.log(`[Lovable AI] Edit mode: source + ${validAnchors.length} identity anchors`);
+
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: IMAGE_MODEL,
+      messages: [
+        {
+          role: 'user',
+          content: contentParts
+        }
+      ],
+      modalities: ['image', 'text']
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('[Lovable AI] Edit error:', response.status, errorText);
+    
+    if (response.status === 429) {
+      throw new Error('Rate limit exceeded. Please try again later.');
+    }
+    if (response.status === 402) {
+      throw new Error('Insufficient credits. Please add funds to your workspace.');
+    }
+    
+    throw new Error(`Lovable AI edit failed: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  const seed = Math.floor(Math.random() * 999999);
+
+  if (!imageUrl) {
+    console.error('[Lovable AI] No image in edit response:', JSON.stringify(data).substring(0, 500));
+    throw new Error('No image generated by Lovable AI edit');
+  }
+
+  console.log('[Lovable AI] Keyframe edit complete, seed:', seed);
   return { imageUrl, seed };
 }
 
@@ -715,12 +867,67 @@ serve(async (req) => {
     console.log("Prompt generated:", promptData.prompt_text.substring(0, 150) + "...");
     console.log("Continuity locks:", JSON.stringify(promptData.continuity_locks || {}));
 
-    // Step 2: Generate image with Lovable AI (Nano Banana Pro)
-    console.log("Step 2: Generating image with Lovable AI (gemini-3-pro-image-preview)...");
-    const { imageUrl: generatedImageUrl, seed } = await generateWithLovableAI(
-      promptData.prompt_text,
-      promptData.negative_prompt
-    );
+    // Fetch character identity anchors for generation
+    const identityAnchors: string[] = [];
+    if (characterIds.length > 0) {
+      const { data: slots } = await supabase
+        .from('character_pack_slots')
+        .select('image_url')
+        .in('character_id', characterIds)
+        .in('slot_type', ['ref_closeup_front', 'closeup_profile', 'identity_primary'])
+        .in('status', ['accepted', 'uploaded', 'generated'])
+        .not('image_url', 'is', null)
+        .limit(6);
+      
+      for (const slot of slots || []) {
+        if (slot.image_url && slot.image_url.startsWith('http')) {
+          identityAnchors.push(slot.image_url);
+        }
+      }
+      console.log(`Loaded ${identityAnchors.length} identity anchor images`);
+    }
+
+    // Step 2: Generate or Edit image based on correlative pipeline
+    let generatedImageUrl: string;
+    let seed: number;
+    
+    // Determine if we should use edit mode (correlative pipeline)
+    // Use edit mode when: not initial frame AND have previous keyframe
+    const shouldUseEditMode = request.frameType !== 'initial' && request.previousKeyframeUrl;
+    
+    if (shouldUseEditMode && request.previousKeyframeUrl) {
+      // CORRELATIVE MODE: Edit from previous keyframe
+      console.log("Step 2: EDIT mode (correlative pipeline) with Lovable AI...");
+      console.log("Source frame URL:", request.previousKeyframeUrl.substring(0, 80) + "...");
+      
+      const editPrompt = buildInterframeEditPrompt(
+        request.frameType === 'intermediate' ? 'K0' : 'K1',
+        request
+      );
+      
+      const result = await editKeyframeWithLovableAI(
+        request.previousKeyframeUrl,
+        editPrompt,
+        identityAnchors
+      );
+      
+      generatedImageUrl = result.imageUrl;
+      seed = result.seed;
+      
+      console.log("Edit complete (correlative mode)");
+    } else {
+      // GENERATE MODE: Create new keyframe (K0 or fallback)
+      console.log("Step 2: GENERATE mode with Lovable AI (gemini-3-pro-image-preview)...");
+      
+      const result = await generateWithLovableAI(
+        promptData.prompt_text,
+        promptData.negative_prompt,
+        identityAnchors
+      );
+      
+      generatedImageUrl = result.imageUrl;
+      seed = result.seed;
+    }
 
     // Step 3: Upload to storage
     console.log("Step 3: Uploading to storage...");
@@ -736,6 +943,9 @@ serve(async (req) => {
 
     // Step 4: Save keyframe to database with continuity data
     console.log("Step 4: Saving keyframe to database...");
+    // Determine generation mode for metadata
+    const generationMode = shouldUseEditMode ? 'edit' : 'generate';
+    
     const { data: keyframe, error: dbError } = await supabase
       .from('keyframes')
       .insert({
@@ -755,7 +965,10 @@ serve(async (req) => {
           characters: request.characters.map(c => c.id),
           location: request.location?.id,
           shot_details: request.shotDetails,
-          engine: IMAGE_MODEL
+          engine: IMAGE_MODEL,
+          generation_mode: generationMode,
+          correlative_source: shouldUseEditMode ? request.previousKeyframeUrl : null,
+          identity_anchors_count: identityAnchors.length,
         }
       })
       .select()
