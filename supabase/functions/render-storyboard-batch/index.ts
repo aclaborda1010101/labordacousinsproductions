@@ -104,6 +104,15 @@ serve(async (req) => {
     const projectId = panels[0].project_id;
     const storyboardStyle = panels[0].storyboard_style || "GRID_SHEET_V1";
 
+    // Get total panel count for format contract (layout specification)
+    const { count: totalPanelCount } = await supabase
+      .from("storyboard_panels")
+      .select("*", { count: "exact", head: true })
+      .eq("scene_id", scene_id);
+
+    const panelCount = totalPanelCount || 8;
+    console.log(`[batch] scene=${scene_id} panel_count=${panelCount} style=${storyboardStyle}`);
+
     // ========================================================================
     // Build Locks (cached per batch - same scene = same locks)
     // ========================================================================
@@ -282,7 +291,7 @@ serve(async (req) => {
           },
         };
 
-        // Build image prompt
+        // Build image prompt (v3.0: with panel_count for format contract)
         const imagePrompt = buildStoryboardImagePrompt({
           storyboard_style: storyboardStyle,
           style_pack_lock: stylePackLock,
@@ -291,6 +300,7 @@ serve(async (req) => {
           characters_present_ids: presentCharIds,
           panel_spec: panelSpec,
           character_pack_data: characterPackData,
+          panel_count: panelCount,  // NEW: Inject panel count for layout specification
         });
 
         // ================================================================

@@ -78,26 +78,113 @@ export interface BuildStoryboardPromptOptions {
   panel_spec: PanelSpec;
   // v2.0: Enhanced Character Pack Data
   character_pack_data?: CharacterPackLockData[];
+  // v3.0: Panel count for sheet layout specification
+  panel_count?: number;
 }
 
 // ============================================================================
-// CONSTANTS - STYLE BLOCKS
+// STORYBOARD FORMAT CONTRACT (HIGHEST PRIORITY — NEVER VIOLATE)
 // ============================================================================
 
-const GRID_SHEET_STYLE_BLOCK = `STORYBOARD_STYLE_LOCK: GRID_SHEET_V1
-- Output: professional pencil storyboard, grayscale, clean linework, consistent line weight
-- Paper: subtle off-white texture, light grain, no heavy stains
-- Readability: clear silhouettes, correct perspective, no warped anatomy
-- Lighting: simple value structure (3-5 tones), avoid full rendering
-- Annotations: hand-drawn arrows for movement and camera
-- Labels: panel code (P1, P2...), shot type (PG, PM, PMC, 2SHOT)
-- No color. Grayscale pencil only.`;
+const STORYBOARD_FORMAT_CONTRACT = `═══════════════════════════════════════════════════════════════════════════════
+STORYBOARD FORMAT CONTRACT (HIGHEST PRIORITY — NEVER VIOLATE)
+═══════════════════════════════════════════════════════════════════════════════
 
-const TECH_PAGE_STYLE_BLOCK = `STORYBOARD_STYLE_LOCK: TECH_PAGE_V1
-- Output: technical storyboard page with 4-6 panels
-- Include technical headings and shot abbreviations (PG/PM/PMC/PP)
-- Allow simple movement arrows and blocking diagrams
-- Clean layout, readable. Grayscale pencil only.`;
+You must output EXACTLY ONE of the following fixed formats, depending on storyboard_style:
+A) GRID_SHEET_V1  = one sheet containing 6–9 panels in a clean grid layout
+B) TECH_PAGE_V1   = one technical sheet containing 4–6 panels with stronger technical annotations
+
+ABSOLUTE RULES (MUST):
+- Keep the SAME page layout, panel framing system, line weight, and paper texture across the ENTIRE generation
+- Grayscale pencil storyboard only. Clean linework. Subtle paper grain
+- Each panel must contain:
+  - Panel label "P{n}" clearly visible
+  - Shot type label (e.g., PG/PM/PMC/OTS/2SHOT/INSERT/LOW/TRACK/PP) visible
+  - Simple directional arrows only when needed (movement/camera)
+- Composition must be readable at thumbnail size. Clear silhouettes
+- Consistent margins, consistent panel borders, consistent typography style for labels
+
+ABSOLUTE PROHIBITIONS (NEVER):
+- Do NOT switch to comic/cartoon/anime/3D/colored illustration
+- Do NOT change the sheet format mid-generation
+- Do NOT add new UI frames, decorative backgrounds, or cinematic posters
+- Do NOT invent different label styles. Use the SAME label style in all panels
+- Do NOT output a single-panel "cinematic frame" if storyboard_style requests a sheet
+
+IF CONFLICT EXISTS:
+STORYBOARD FORMAT CONTRACT overrides everything else (including panel description)
+═══════════════════════════════════════════════════════════════════════════════`;
+
+// ============================================================================
+// PACK-FIRST CANON (GLOBAL RULE)
+// ============================================================================
+
+const PACK_FIRST_CANON = `═══════════════════════════════════════════════════════════════════════════════
+PACK_FIRST_CANON (GLOBAL RULE)
+═══════════════════════════════════════════════════════════════════════════════
+
+Canon priority for ANY downstream document or generation:
+1) FORMAT CONTRACT (layout + framing + labels)
+2) STYLE PACK (drawing style + paper + line weight)
+3) CHARACTER PACK (identity + wardrobe)
+4) LOCATION PACK (set dressing + environment anchors)
+5) CONTINUITY LOCKS (axis, props, wardrobe continuity)
+6) PANEL/SHOT DESCRIPTION (what happens)
+
+Any conflict must be resolved by higher priority. Never invent character identity if pack exists.
+═══════════════════════════════════════════════════════════════════════════════`;
+
+// ============================================================================
+// CONSTANTS - STYLE BLOCKS (v3.0 - IMPERATIVE WITH LAYOUT SPECIFICATION)
+// ============================================================================
+
+const GRID_SHEET_STYLE_BLOCK = `RENDER TARGET: GRID_SHEET_V1
+
+You are rendering a SINGLE storyboard SHEET with panels arranged in a clean grid.
+The sheet must look like a professional pencil storyboard printout.
+
+STYLE (LOCKED):
+- Grayscale pencil storyboard, clean linework, subtle shading (3–5 values)
+- Off-white paper with light grain
+- Consistent border thickness and label typography
+
+SHEET LAYOUT (MUST):
+- Grid layout: 2 rows if panel_count is 7–9; 2–3 rows if 6 panels (keep balanced)
+- Each panel has visible label "P{n}" and shot-type chip
+
+CHARACTER PACK (PACK-FIRST):
+Only depict characters using the provided character pack references.
+If a character is present in this panel, match face, hair, and wardrobe to the pack.
+If uncertain, simplify but do NOT change identity.
+
+CONTINUITY:
+Maintain axis, screen direction, and wardrobe continuity across panels.
+
+NOW RENDER THE FULL SHEET. No extra text outside labels.`;
+
+const TECH_PAGE_STYLE_BLOCK = `RENDER TARGET: TECH_PAGE_V1
+
+You are rendering a SINGLE technical storyboard SHEET with panels.
+This format is more technical: add simple camera arrows, blocking arrows, and minimal notes.
+
+STYLE (LOCKED):
+- Grayscale pencil storyboard
+- Technical cleanliness: clear arrows, clean annotations
+- Off-white paper, consistent borders and label style
+
+SHEET LAYOUT (MUST):
+- 2 rows layout preferred
+- Panel label "P{n}" + shot-type label always visible
+
+TECH ANNOTATIONS (MUST, minimal):
+- Camera direction arrow if movement occurs
+- Blocking arrow for subject movement if needed
+- NO verbose paragraphs. Only short technical marks
+
+CHARACTER PACK (PACK-FIRST):
+Use character pack references as identity truth. Never drift identity.
+
+NOW RENDER THE FULL TECH SHEET. No stylistic changes.`;
 
 const DEFAULT_STORYBOARD_STYLE_PACK = `- Storyboard look: professional pencil storyboard, grayscale, clean linework
 - Paper: subtle off-white texture, light grain
@@ -105,7 +192,7 @@ const DEFAULT_STORYBOARD_STYLE_PACK = `- Storyboard look: professional pencil st
 - Lighting: simple value structure (3-5 tones)`;
 
 // ============================================================================
-// EXTENDED NEGATIVE PROMPT (v2.0)
+// EXTENDED NEGATIVE PROMPT (v3.0 - ENHANCED WITH FORMAT GUARDS)
 // ============================================================================
 
 const EXTENDED_NEGATIVE_BLOCK = `NEGATIVE (NEVER GENERATE):
@@ -123,7 +210,11 @@ const EXTENDED_NEGATIVE_BLOCK = `NEGATIVE (NEVER GENERATE):
 - AI artifacts (extra limbs, distorted faces, melted features)
 - concept art finish (must be pencil sketch)
 - invented characters not in cast list
-- background characters with detailed faces (should be silhouettes)`;
+- background characters with detailed faces (should be silhouettes)
+- single-panel cinematic frame when sheet format is requested
+- decorative borders or poster-style composition
+- different label typography between panels
+- color accents or highlights`;
 
 // ============================================================================
 // CHARACTER PACK LOCK BUILDER (v2.0)
@@ -200,15 +291,16 @@ export function buildStoryboardImagePrompt(options: BuildStoryboardPromptOptions
     characters_present_ids,
     panel_spec,
     character_pack_data,
+    panel_count,
   } = options;
 
-  // 0. PRIORITY CONTEXT (v2.0)
-  const priorityBlock = `═══════════════════════════════════════════════════════════════
-PRIORITY ORDER (if any instruction conflicts):
-STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL DESCRIPTION
-═══════════════════════════════════════════════════════════════`;
+  // 0. FORMAT CONTRACT (HIGHEST PRIORITY - FIRST BLOCK)
+  const formatContractBlock = STORYBOARD_FORMAT_CONTRACT;
 
-  // 0.1 IDENTITY LOCK (NEW - multimodal instruction)
+  // 0.1 PACK-FIRST CANON (GLOBAL RULE)
+  const packFirstBlock = PACK_FIRST_CANON;
+
+  // 0.2 IDENTITY LOCK (multimodal instruction)
   const identityLockBlock = `IDENTITY LOCK (HARD):
 Use the ATTACHED REFERENCE IMAGES as the ONLY identity source.
 The reference images are being sent as multimodal inputs - YOU CAN SEE THEM.
@@ -221,10 +313,18 @@ Character Pack text descriptions are SECONDARY to the actual image references.`;
   const stylePackBlock = `STYLE_PACK_LOCK (GLOBAL - HIGHEST PRIORITY):
 ${style_pack_lock.text || DEFAULT_STORYBOARD_STYLE_PACK}`;
 
-  // 2. STORYBOARD_STYLE_LOCK
-  const storyboardStyleBlock = storyboard_style === 'GRID_SHEET_V1'
+  // 2. STORYBOARD_STYLE_LOCK (with panel_count if provided)
+  let storyboardStyleBlock = storyboard_style === 'GRID_SHEET_V1'
     ? GRID_SHEET_STYLE_BLOCK
     : TECH_PAGE_STYLE_BLOCK;
+
+  // Inject panel_count into the render block if provided
+  if (panel_count) {
+    storyboardStyleBlock = storyboardStyleBlock.replace(
+      /SHEET LAYOUT \(MUST\):/,
+      `SHEET LAYOUT (MUST):\n- Exactly ${panel_count} panels on the same sheet`
+    );
+  }
 
   // 3. LOCATION_LOCK (references now sent as multimodal, not text URLs)
   const locationBlock = location_lock
@@ -289,13 +389,14 @@ MovementArrows: ${movementArrowsText}`;
 - Respect 180-degree axis: ${panel_spec.staging.axis_180.screen_direction}
 - Maintain spatial relations between characters`;
 
-  // 7. EXTENDED NEGATIVE (v2.0)
+  // 7. EXTENDED NEGATIVE (v3.0)
   const negativeBlock = EXTENDED_NEGATIVE_BLOCK;
 
-  // Concatenate in priority order (IDENTITY LOCK added after priority block)
+  // Concatenate in strict priority order (FORMAT CONTRACT FIRST)
   return [
-    priorityBlock,
-    identityLockBlock,  // NEW - before style pack
+    formatContractBlock,  // HIGHEST PRIORITY - FORMAT CONTRACT
+    packFirstBlock,       // PACK-FIRST CANON
+    identityLockBlock,    // IDENTITY LOCK (multimodal)
     stylePackBlock,
     storyboardStyleBlock,
     locationBlock,
