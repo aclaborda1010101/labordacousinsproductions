@@ -7,11 +7,17 @@ interface StoryboardPanel {
   image_url: string | null;
 }
 
+interface CanvasFormat {
+  aspect_ratio: string;
+  orientation: string;
+}
+
 interface ExportVisualStoryboardParams {
   projectTitle: string;
   sceneSlugline: string;
   sceneNo: number;
   panels: StoryboardPanel[];
+  canvasFormat?: CanvasFormat;
 }
 
 interface ImageData {
@@ -70,21 +76,68 @@ async function loadImageWithDimensions(url: string): Promise<ImageData | null> {
   }
 }
 
+// Get grid configuration based on canvas format
+function getGridConfig(canvasFormat?: CanvasFormat): { 
+  orientation: 'portrait' | 'landscape'; 
+  cols: number; 
+  rows: number;
+  pageWidth: number;
+  pageHeight: number;
+} {
+  const aspectRatio = canvasFormat?.aspect_ratio || '16:9';
+  const isVertical = canvasFormat?.orientation === 'vertical' || 
+                     aspectRatio === '9:16' || 
+                     aspectRatio === '4:5' ||
+                     aspectRatio === '3:4';
+  
+  if (isVertical) {
+    // Portrait orientation for vertical formats (9:16, 4:5)
+    return {
+      orientation: 'portrait',
+      cols: 2,
+      rows: 4,
+      pageWidth: 210,
+      pageHeight: 297,
+    };
+  } else if (aspectRatio === '1:1') {
+    // Square format: 3x3 grid in landscape
+    return {
+      orientation: 'landscape',
+      cols: 3,
+      rows: 3,
+      pageWidth: 297,
+      pageHeight: 210,
+    };
+  } else {
+    // Landscape orientation for horizontal formats (16:9, 21:9)
+    return {
+      orientation: 'landscape',
+      cols: 4,
+      rows: 2,
+      pageWidth: 297,
+      pageHeight: 210,
+    };
+  }
+}
+
 export async function exportStoryboardVisualPDF({
   projectTitle,
   sceneSlugline,
   sceneNo,
   panels,
+  canvasFormat,
 }: ExportVisualStoryboardParams): Promise<void> {
-  // A4 Landscape: 297mm x 210mm
+  // Get grid configuration based on canvas format
+  const gridConfig = getGridConfig(canvasFormat);
+  
   const doc = new jsPDF({ 
-    orientation: 'landscape', 
+    orientation: gridConfig.orientation, 
     unit: 'mm', 
     format: 'a4' 
   });
   
-  const pageWidth = 297;
-  const pageHeight = 210;
+  const pageWidth = gridConfig.pageWidth;
+  const pageHeight = gridConfig.pageHeight;
   const margin = 10;
   
   // Header background
@@ -107,13 +160,13 @@ export async function exportStoryboardVisualPDF({
   doc.setFontSize(10);
   doc.text(`Escena ${sceneNo}: ${sceneSlugline}`, pageWidth - margin, 12, { align: 'right' });
   
-  // Grid layout: 4 cols × 2 rows
-  const cols = 4;
-  const rows = 2;
+  // Grid layout based on canvas format
+  const cols = gridConfig.cols;
+  const rows = gridConfig.rows;
   const gridTop = 25;
   const gridLeft = margin;
   const gridWidth = pageWidth - (margin * 2);
-  const gridHeight = pageHeight - gridTop - 18;
+  const gridHeight = pageHeight - gridTop - 22; // Extra space for footer with format info
   
   const cellWidth = gridWidth / cols;
   const cellHeight = gridHeight / rows;
@@ -121,8 +174,11 @@ export async function exportStoryboardVisualPDF({
   const imgWidth = cellWidth - (imgPadding * 2);
   const imgHeight = cellHeight - 22; // More space for 2-line description
   
+  // Calculate panels per page
+  const panelsPerPage = cols * rows;
+  const panelsToRender = panels.slice(0, panelsPerPage);
+  
   // Preload images with dimensions
-  const panelsToRender = panels.slice(0, 8);
   const imagePromises = panelsToRender.map(async (panel) => {
     if (!panel.image_url) return null;
     return loadImageWithDimensions(panel.image_url);
@@ -225,15 +281,28 @@ export async function exportStoryboardVisualPDF({
     doc.text(displayLines, x + 2, labelY);
   });
   
-  // Footer
+  // Footer with canvas format watermark
   doc.setFontSize(8);
   doc.setTextColor(120, 120, 120);
   doc.text(
     `${projectTitle} - Storyboard Escena ${sceneNo} - ${new Date().toLocaleDateString('es-ES')}`,
     pageWidth / 2,
-    pageHeight - 6,
+    pageHeight - 10,
     { align: 'center' }
   );
+  
+  // Canvas format indicator (bottom-right)
+  if (canvasFormat) {
+    const orientationLabel = canvasFormat.orientation === 'vertical' ? 'vert.' : 'horiz.';
+    doc.setFontSize(7);
+    doc.setTextColor(100, 100, 100);
+    doc.text(
+      `Formato: ${canvasFormat.aspect_ratio} (${orientationLabel})`,
+      pageWidth - margin,
+      pageHeight - 5,
+      { align: 'right' }
+    );
+  }
   
   // Generate filename
   const safeTitle = projectTitle.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
