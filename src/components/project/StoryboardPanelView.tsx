@@ -31,6 +31,8 @@ import type { StoryboardPanel } from '@/types/technical-doc';
 import { StoryboardGenerationOverlay } from './StoryboardGenerationOverlay';
 import { useStoryboardProgress } from '@/hooks/useStoryboardProgress';
 import { exportStoryboardVisualPDF } from '@/lib/exportStoryboardVisualPDF';
+import { StoryboardStylePicker } from './StoryboardStylePicker';
+import { type StoryboardStylePresetId } from '@/lib/storyboardStylePresets';
 
 // Identity QC types
 interface IdentityQC {
@@ -40,6 +42,14 @@ interface IdentityQC {
     status: 'pass' | 'fail' | 'uncertain';
   }>;
   overall_score?: number;
+  needs_regen?: boolean;
+}
+
+// Style QC types
+interface StyleQC {
+  preset_id?: string;
+  compliance_score?: number;
+  issues?: string[];
   needs_regen?: boolean;
 }
 
@@ -74,9 +84,11 @@ export function StoryboardPanelView({
   const [editingPanel, setEditingPanel] = useState<string | null>(null);
   const [allApproved, setAllApproved] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState<'GRID_SHEET_V1' | 'TECH_PAGE_V1'>('GRID_SHEET_V1');
+  const [selectedStylePreset, setSelectedStylePreset] = useState<StoryboardStylePresetId>('sb_cinematic_narrative');
   const [exporting, setExporting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{ url: string; panelNo: number } | null>(null);
   const [canvasFormat, setCanvasFormat] = useState<CanvasFormat | null>(null);
+  const [styleIsLocked, setStyleIsLocked] = useState(false);
 
   // Progress tracking hook
   const expectedPanelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
@@ -194,6 +206,9 @@ export function StoryboardPanelView({
       const typedPanels = (data || []) as unknown as StoryboardPanel[];
       setPanels(typedPanels);
       setAllApproved(typedPanels.length > 0 && typedPanels.every(p => p.approved));
+      // Lock style if panels exist
+      setStyleIsLocked(typedPanels.length > 0);
+      setAllApproved(typedPanels.length > 0 && typedPanels.every(p => p.approved));
     } catch (err) {
       console.error('Error fetching storyboard panels:', err);
     } finally {
@@ -204,6 +219,7 @@ export function StoryboardPanelView({
   const generateStoryboard = async () => {
     setGenerating(true);
     setShowOverlay(true);
+    setStyleIsLocked(true); // Lock style on generation start
     
     try {
       const panelCount = selectedStyle === 'GRID_SHEET_V1' ? 8 : 5;
@@ -220,6 +236,7 @@ export function StoryboardPanelView({
           scene_text: sceneText,
           visual_style: visualStyle,
           storyboard_style: selectedStyle,
+          style_preset_id: selectedStylePreset, // NEW: Pass style preset
           character_refs: characterRefs,
           location_ref: locationRef,
           panel_count: panelCount,
@@ -485,18 +502,30 @@ export function StoryboardPanelView({
           )}
         </div>
         <div className="flex items-center gap-2">
-          {/* Style Selector - GRID_SHEET vs TECH_PAGE */}
+          {/* NEW: Style Preset Picker (4 differentiated styles) */}
+          <StoryboardStylePicker
+            selectedPresetId={selectedStylePreset}
+            onSelectPreset={setSelectedStylePreset}
+            isLocked={styleIsLocked}
+            existingPanelCount={panels.length}
+            onConfirmChange={() => {
+              // Regenerate all panels with new style
+              generateStoryboard();
+            }}
+          />
+          
+          {/* Layout Selector - GRID_SHEET vs TECH_PAGE */}
           <Select value={selectedStyle} onValueChange={(v) => setSelectedStyle(v as 'GRID_SHEET_V1' | 'TECH_PAGE_V1')}>
-            <SelectTrigger className="w-52 h-8 text-xs">
+            <SelectTrigger className="w-44 h-8 text-xs">
               <Pencil className="w-3 h-3 mr-1" />
-              <SelectValue placeholder="Estilo" />
+              <SelectValue placeholder="Layout" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="GRID_SHEET_V1">
-                🎨 Lámina multipanel (6-9)
+                Multipanel (6-9)
               </SelectItem>
               <SelectItem value="TECH_PAGE_V1">
-                📋 Hoja técnica (4-6)
+                Técnica (4-6)
               </SelectItem>
             </SelectContent>
           </Select>

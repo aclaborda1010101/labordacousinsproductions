@@ -5269,6 +5269,8 @@ export type Database = {
           scene_id: string
           shot_hint: string | null
           staging: Json | null
+          style_qc: Json | null
+          style_regen_count: number | null
           updated_at: string | null
         }
         Insert: {
@@ -5295,6 +5297,8 @@ export type Database = {
           scene_id: string
           shot_hint?: string | null
           staging?: Json | null
+          style_qc?: Json | null
+          style_regen_count?: number | null
           updated_at?: string | null
         }
         Update: {
@@ -5321,6 +5325,8 @@ export type Database = {
           scene_id?: string
           shot_hint?: string | null
           staging?: Json | null
+          style_qc?: Json | null
+          style_regen_count?: number | null
           updated_at?: string | null
         }
         Relationships: [
@@ -5355,6 +5361,8 @@ export type Database = {
           scene_id: string
           status: string
           style_id: string
+          style_preset_id: string | null
+          style_preset_lock: Json | null
           updated_at: string
           version: number
         }
@@ -5365,6 +5373,8 @@ export type Database = {
           scene_id: string
           status?: string
           style_id?: string
+          style_preset_id?: string | null
+          style_preset_lock?: Json | null
           updated_at?: string
           version?: number
         }
@@ -5375,6 +5385,8 @@ export type Database = {
           scene_id?: string
           status?: string
           style_id?: string
+          style_preset_id?: string | null
+          style_preset_lock?: Json | null
           updated_at?: string
           version?: number
         }
