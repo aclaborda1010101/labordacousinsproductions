@@ -4,6 +4,18 @@ import { buildTokenLimit } from "../_shared/model-config.ts";
 import { generateImageWithNanoBanana } from "../_shared/image-generator.ts";
 import { aiFetch } from "../_shared/ai-fetch.ts";
 import { serializePanelList, generateSeed } from "../_shared/storyboard-serializer.ts";
+import {
+  buildStoryboardImagePrompt,
+  buildVisualDNAText,
+  getDefaultStylePackLock,
+  validateCharacterDNA,
+  STORYBOARD_PLANNER_SYSTEM_PROMPT,
+  buildStoryboardPlannerUserPrompt,
+  type StylePackLock,
+  type CharacterLock,
+  type LocationLock,
+  type PanelSpec,
+} from "../_shared/storyboard-prompt-builder.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,17 +36,53 @@ interface StoryboardRequest {
   dialogue_blocks?: { line_id: string; speaker_id: string; text: string }[];
   show_movement_arrows?: boolean;
   aspect_ratio?: string;
+  // New v1.0 SPEC fields
+  locks?: {
+    style_pack_id?: string;
+    style_pack_lock?: { schema_version: string; text: string };
+    characters?: Array<{
+      id: string;
+      name: string;
+      visual_dna_lock?: { schema_version: string; text: string };
+      reference_images?: string[];
+    }>;
+    locations?: Array<{
+      id: string;
+      name: string;
+      visual_lock?: { schema_version: string; text: string };
+      reference_images?: string[];
+    }>;
+  };
+  screenplay_context?: {
+    slugline: string;
+    scene_summary: string;
+    scene_dialogue?: string;
+  };
 }
 
 interface StoryboardPanel {
   panel_id: string;
   panel_no: number;
+  panel_code?: string;
   panel_intent: string;
   shot_hint: string;
   action_beat?: string;
-  characters_present: Array<{ character_id: string; importance: string }>;
-  props_present: Array<{ prop_id: string; importance: string }>;
+  action?: string;
+  dialogue_snippet?: string;
+  characters_present: Array<{ character_id: string; importance: string } | string>;
+  props_present: Array<{ prop_id: string; importance: string } | string>;
   movement_arrows?: Array<{ type: string; direction: string; intensity?: string }>;
+  staging?: {
+    schema_version?: string;
+    movement_arrows?: Array<{ subject: string; direction: string; intent: string }>;
+    spatial_info?: string;
+    axis_180?: { enabled: boolean; screen_direction: string };
+  };
+  continuity?: {
+    schema_version?: string;
+    must_match_previous?: string[];
+    do_not_change?: string[];
+  };
   spatial_info?: {
     camera_relative_position?: string;
     subject_direction?: string;
@@ -42,197 +90,180 @@ interface StoryboardPanel {
   };
 }
 
-// =============================================================================
-// STORYBOARD PLAN PROMPT - GPT-5.2 (JSON ONLY)
-// =============================================================================
-const STORYBOARD_PLAN_PROMPT_GRID = `ROLE: Senior Film Storyboard Director
+// ============================================================================
+// LOCK BUILDERS
+// ============================================================================
 
-You are designing a PROFESSIONAL FILM STORYBOARD as STRUCTURED DATA.
-You DO NOT generate images.
-You DO NOT describe camera lenses or lighting.
-You DO NOT invent characters, props, or locations outside the provided list.
-
-STYLE: GRID_SHEET_V1 - Multipanel sheet (6-9 panels) for visual production planning.
-
-HARD RULES:
-1. Storyboard panels define WHAT IS SEEN and WHERE it is seen from.
-2. Use classic film grammar: PG (Wide), PM (Medium), PMC (Medium-Close), PP (Close-up), OTS, 2SHOT, INSERT, POV.
-3. Maintain spatial continuity and 180° axis consistency.
-4. Output ONLY valid JSON matching the schema.
-5. No prose. No markdown. No commentary.
-
-OUTPUT JSON SCHEMA:
-{
-  "panels": [
-    {
-      "panel_id": "P1",
-      "panel_no": 1,
-      "panel_intent": "Establish scene geography and character entrance",
-      "shot_hint": "PG",
-      "action_beat": "Description of action in this panel",
-      "characters_present": [{"character_id": "id", "importance": "primary|secondary"}],
-      "props_present": [{"prop_id": "id", "importance": "primary|secondary"}],
-      "movement_arrows": [{"type": "subject|camera", "direction": "left|right|towards|away", "intensity": "low|medium|high"}],
-      "spatial_info": {
-        "camera_relative_position": "behind|front|left|right|above",
-        "subject_direction": "towards_camera|away_from_camera|lateral",
-        "axis_locked": true
-      }
-    }
-  ]
-}`;
-
-const STORYBOARD_PLAN_PROMPT_TECH = `ROLE: Senior Film Storyboard Director
-
-You are designing a TECHNICAL STORYBOARD PAGE as STRUCTURED DATA.
-This style emphasizes shot_label and blocking references over visual storytelling.
-
-STYLE: TECH_PAGE_V1 - Technical page with shot list + blocking diagram (4-6 panels).
-
-HARD RULES:
-1. Each panel represents a distinct camera setup.
-2. Include blocking_ref for scenes with character movement or multiple subjects.
-3. Emphasize shot_label with technical descriptors.
-4. Output ONLY valid JSON matching the schema.
-5. No prose. No markdown. No commentary.
-
-OUTPUT JSON SCHEMA:
-{
-  "panels": [
-    {
-      "panel_id": "P1",
-      "panel_no": 1,
-      "panel_intent": "Technical description of shot purpose",
-      "shot_hint": "PM",
-      "shot_label": "PMC lateral driver, weapons foreground",
-      "blocking_ref": "B1",
-      "action_beat": "Action description",
-      "characters_present": [{"character_id": "id", "importance": "primary"}],
-      "props_present": [{"prop_id": "id", "importance": "primary"}],
-      "spatial_info": {
-        "camera_relative_position": "lateral",
-        "axis_locked": true
-      }
-    }
-  ]
-}`;
-
-// =============================================================================
-// IMAGE GENERATION PROMPTS - NanoBanana Pro 3
-// =============================================================================
-const GRID_SHEET_IMAGE_PROMPT = `Generate a PROFESSIONAL BLACK AND WHITE STORYBOARD SHEET.
-
-STYLE (MANDATORY - NO EXCEPTIONS):
-- White paper background with clean margins
-- Crisp black ink linework with soft graphite shading (grey pencil)
-- NO color at all - strictly B&W/grayscale
-- NO painterly strokes, NO comic style
-- NO photorealism, NO CGI render look
-- Clean rectangular panels with uniform black borders
-- Film storyboard aesthetic (European cinema production)
-- Scanned storyboard sheet look
-
-LAYOUT:
-- Multi-panel grid (exactly {{N_PANELS}} panels)
-- 16:9 frames inside each panel
-- Panel labels P1, P2, P3... in bottom-right corner
-- Title area top-left: {{PROJECT_TITLE}} - Sec. {{SCENE_CODE}}
-
-CHARACTER CONSISTENCY:
-Use the provided character references EXACTLY.
-No variation in face, hair, clothing, or proportions.
-Simplify to sketch level but KEEP RECOGNIZABLE.
-
-CONTENT:
-{{PANEL_DESCRIPTIONS}}
-
-NEGATIVE PROMPT:
-color, CGI, 3D render, anime, comic book, messy sketch, exaggerated style, UI overlay, photographs, digital art, concept art, illustration`;
-
-const TECH_PAGE_IMAGE_PROMPT = `Generate a FILM SHOOTING TECH STORYBOARD PAGE in Spanish.
-
-STYLE (MANDATORY):
-- White paper background
-- Clean typed black text (sans-serif font)
-- ONE storyboard frame (ink + pencil sketch) in top-right
-- Numbered shot list on the left side (01, 02, 03...)
-- Top-view blocking diagram at bottom with:
-  - Circles with initials for characters
-  - Blue arrows for movement
-  - Camera position triangles
-- Professional shooting plan aesthetic
-- Clean, minimal, technical
-
-LAYOUT:
-Header line: {{SEC_CODE}}    {{LOCATION_CODE}}    {{SET_CODE}}    {{TIME_CONTEXT}}
-Subheader: {{SCENE_LOGLINE}}
-Shot list: {{SHOT_LIST}}
-Blocking diagram: {{BLOCKING_SPEC}}
-
-NEGATIVE PROMPT:
-illustration art, comic style, colors except blue arrows, decorative fonts, cinematic lighting effects, photographs, 3D render`;
-
-// =============================================================================
-// CHARACTER VISUAL DNA INJECTION
-// =============================================================================
-async function buildCharacterDNAContext(
-  supabaseClient: any,
+/**
+ * Builds Cast Locks with Visual DNA and reference images
+ */
+async function buildCastLocks(
+  supabase: any,
   characterRefs: { id: string; name: string; image_url?: string }[]
-): Promise<string> {
+): Promise<CharacterLock[]> {
   if (!characterRefs || characterRefs.length === 0) {
-    return "No characters specified for this scene.";
+    return [];
   }
 
-  const characterContextParts: string[] = [];
+  const locks: CharacterLock[] = [];
 
   for (const char of characterRefs) {
     try {
-      const { data: charData } = await supabaseClient
-        .from("characters")
-        .select(`name, bio, visual_dna, character_role, profile_json`)
-        .eq("id", char.id)
+      // 1. Get character + active visual DNA
+      const { data: charData } = await supabase
+        .from('characters')
+        .select(`
+          id, name, visual_dna, bio,
+          character_visual_dna!character_visual_dna_character_id_fkey(
+            visual_dna, continuity_lock, is_active
+          )
+        `)
+        .eq('id', char.id)
         .single();
 
-      if (charData) {
-        const visualDna = charData.visual_dna as Record<string, any> | null;
-        const profile = charData.profile_json as Record<string, any> | null;
+      // 2. Get reference images from character_pack_slots
+      const { data: packImages } = await supabase
+        .from('character_pack_slots')
+        .select('image_url, slot_type')
+        .eq('character_id', char.id)
+        .eq('status', 'accepted')
+        .in('slot_type', ['ref_closeup_front', 'closeup_front', 'identity_primary', 'portrait'])
+        .limit(3);
 
-        let description = `${charData.name} (ID: ${char.id})`;
-
-        if (visualDna) {
-          const physical = visualDna.physical_identity || {};
-          const hair = visualDna.hair?.head_hair || {};
-          const face = visualDna.face || {};
-
-          description += `\n  - Age: ${physical.age_exact_for_prompt || physical.age_range || "unspecified"}`;
-          description += `\n  - Build: ${physical.body_type?.somatotype || "average"}, height ${physical.height || "medium"}`;
-          description += `\n  - Hair: ${hair.color?.natural_base || "unspecified"} ${hair.length?.type || "medium"} hair`;
-          description += `\n  - Face: ${face.shape || "oval"} face shape`;
-          
-          if (face.distinctive_features) {
-            description += `\n  - Distinctive features: ${face.distinctive_features.join(", ")}`;
-          }
-        } else if (profile) {
-          description += `\n  - Profile: ${profile.appearance || charData.bio || "No detailed profile"}`;
-        } else if (charData.bio) {
-          description += `\n  - Bio: ${charData.bio}`;
-        }
-
-        description += "\n  MAINTAIN THESE TRAITS IN SIMPLIFIED SKETCH FORM - DO NOT REDESIGN";
-        
-        characterContextParts.push(description);
-      } else {
-        characterContextParts.push(`${char.name} (ID: ${char.id}): Use reference if available`);
+      // 3. Build DNA lock text
+      let dnaText = '';
+      const activeDna = charData?.character_visual_dna?.find((d: any) => d.is_active);
+      if (activeDna?.visual_dna) {
+        dnaText = buildVisualDNAText(activeDna.visual_dna);
+      } else if (charData?.visual_dna) {
+        dnaText = buildVisualDNAText(charData.visual_dna);
       }
+
+      // Collect reference images
+      const referenceImages: string[] = [];
+      if (packImages) {
+        referenceImages.push(...packImages.map((p: any) => p.image_url).filter(Boolean));
+      }
+      if (char.image_url) {
+        referenceImages.push(char.image_url);
+      }
+
+      locks.push({
+        id: char.id,
+        name: charData?.name || char.name,
+        visual_dna_lock: {
+          schema_version: '1.0',
+          text: dnaText || `Use reference images for ${char.name}`,
+        },
+        reference_images: referenceImages,
+      });
     } catch (err) {
       console.log(`[generate-storyboard] Could not fetch DNA for ${char.name}:`, err);
-      characterContextParts.push(`${char.name} (ID: ${char.id}): Use reference if available`);
+      locks.push({
+        id: char.id,
+        name: char.name,
+        visual_dna_lock: {
+          schema_version: '1.0',
+          text: 'No DNA available',
+        },
+        reference_images: char.image_url ? [char.image_url] : [],
+      });
     }
   }
 
-  return `CHARACTER VISUAL REFERENCES (MANDATORY - MAINTAIN IDENTITY):
-${characterContextParts.join("\n\n")}`;
+  return locks;
 }
+
+/**
+ * Gets Style Pack Lock from project
+ */
+async function getStylePackLock(supabase: any, projectId: string): Promise<StylePackLock> {
+  try {
+    const { data: project } = await supabase
+      .from('projects')
+      .select('style_pack, global_visual_dna')
+      .eq('id', projectId)
+      .single();
+
+    if (project?.style_pack) {
+      const sp = project.style_pack;
+      const parts: string[] = [];
+      
+      if (sp.visual_preset) parts.push(`Visual preset: ${sp.visual_preset}`);
+      if (sp.lens_style) parts.push(`Lens style: ${sp.lens_style}`);
+      if (sp.realism_level) parts.push(`Realism: ${sp.realism_level}`);
+      if (sp.grain_level) parts.push(`Grain: ${sp.grain_level}`);
+      if (sp.description) parts.push(sp.description);
+
+      if (parts.length > 0) {
+        return {
+          schema_version: '1.0',
+          text: `${parts.join('\n')}\n- Storyboard look: professional pencil storyboard, grayscale, clean linework`,
+        };
+      }
+    }
+
+    // Fallback to global_visual_dna if available
+    if (project?.global_visual_dna?.style_description) {
+      return {
+        schema_version: '1.0',
+        text: `${project.global_visual_dna.style_description}\n- Storyboard look: professional pencil storyboard, grayscale, clean linework`,
+      };
+    }
+  } catch (err) {
+    console.log('[generate-storyboard] Could not fetch style pack:', err);
+  }
+
+  return getDefaultStylePackLock();
+}
+
+/**
+ * Gets Location Lock
+ */
+async function getLocationLock(
+  supabase: any,
+  locationRef?: { id: string; name: string; image_url?: string; interior_exterior?: string; time_of_day?: string }
+): Promise<LocationLock | undefined> {
+  if (!locationRef?.id) return undefined;
+
+  try {
+    const { data: loc } = await supabase
+      .from('locations')
+      .select('id, name, visual_profile, reference_images, visual_dna')
+      .eq('id', locationRef.id)
+      .single();
+
+    if (loc) {
+      const visualText = loc.visual_profile 
+        || loc.visual_dna?.description 
+        || `${loc.name} - ${locationRef.interior_exterior || 'INT'} / ${locationRef.time_of_day || 'DAY'}`;
+
+      return {
+        id: loc.id,
+        name: loc.name,
+        visual_lock: { schema_version: '1.0', text: visualText },
+        reference_images: loc.reference_images || (locationRef.image_url ? [locationRef.image_url] : []),
+      };
+    }
+  } catch (err) {
+    console.log('[generate-storyboard] Could not fetch location:', err);
+  }
+
+  // Fallback with basic info
+  return {
+    id: locationRef.id,
+    name: locationRef.name,
+    visual_lock: {
+      schema_version: '1.0',
+      text: `${locationRef.name} - ${locationRef.interior_exterior || 'INT'} / ${locationRef.time_of_day || 'DAY'}`,
+    },
+    reference_images: locationRef.image_url ? [locationRef.image_url] : [],
+  };
+}
+
+// ============================================================================
+// MAIN HANDLER
+// ============================================================================
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -260,6 +291,8 @@ serve(async (req) => {
       dialogue_blocks = [],
       show_movement_arrows = true,
       aspect_ratio = "16:9",
+      locks,
+      screenplay_context,
     }: StoryboardRequest = await req.json();
 
     if (!scene_id || !project_id || !scene_text) {
@@ -275,63 +308,100 @@ serve(async (req) => {
 
     console.log(`[generate-storyboard] Style: ${storyboard_style}, Panels: ${targetPanelCount}`);
 
-    // Build character context WITH Visual DNA
-    const characterContext = await buildCharacterDNAContext(supabase, character_refs);
+    // ========================================================================
+    // PHASE 1: Build Locks (Style Pack, Cast, Location)
+    // ========================================================================
 
-    // Build location context
-    const locationContext = location_ref
-      ? `Location: ${location_ref.name}
-  - Interior/Exterior: ${location_ref.interior_exterior || "unspecified"}
-  - Time of Day: ${location_ref.time_of_day || "unspecified"}
-  ${location_ref.image_url ? "- Reference image available" : ""}`
-      : "Location not specified";
+    // Get Style Pack Lock (from request or fetch from project)
+    const stylePackLock: StylePackLock = locks?.style_pack_lock 
+      ? { schema_version: '1.0', text: locks.style_pack_lock.text }
+      : await getStylePackLock(supabase, project_id);
 
-    // Build beats context
-    const beatsContext = beats.length > 0
-      ? `Scene Beats:\n${beats.map(b => `- ${b.beat_id}: ${b.description}`).join("\n")}`
-      : "";
+    // Get Cast Locks with Visual DNA (from request or build from character_refs)
+    let castLocks: CharacterLock[];
+    if (locks?.characters && locks.characters.length > 0) {
+      castLocks = locks.characters.map(c => ({
+        id: c.id,
+        name: c.name,
+        visual_dna_lock: c.visual_dna_lock || { schema_version: '1.0', text: 'No DNA available' },
+        reference_images: c.reference_images || [],
+      }));
+    } else {
+      castLocks = await buildCastLocks(supabase, character_refs);
+    }
 
-    // Build dialogue context
-    const dialogueContext = dialogue_blocks.length > 0
-      ? `Key Dialogue:\n${dialogue_blocks.slice(0, 10).map(d => `- ${d.speaker_id}: "${d.text}"`).join("\n")}`
-      : "";
+    // Get Location Lock
+    let locationLock: LocationLock | undefined;
+    if (locks?.locations && locks.locations.length > 0) {
+      const loc = locks.locations[0];
+      locationLock = {
+        id: loc.id,
+        name: loc.name,
+        visual_lock: loc.visual_lock || { schema_version: '1.0', text: loc.name },
+        reference_images: loc.reference_images || [],
+      };
+    } else {
+      locationLock = await getLocationLock(supabase, location_ref);
+    }
 
-    // Select appropriate system prompt based on style
-    const systemPrompt = storyboard_style === 'GRID_SHEET_V1' 
-      ? STORYBOARD_PLAN_PROMPT_GRID 
-      : STORYBOARD_PLAN_PROMPT_TECH;
+    console.log(`[generate-storyboard] Locks: StylePack=${!!stylePackLock.text}, Cast=${castLocks.length}, Location=${!!locationLock}`);
 
-    const userPrompt = `Create a ${targetPanelCount}-panel storyboard for this film scene.
+    // Validate cast DNA and collect warnings
+    const dnaWarnings: string[] = [];
+    for (const char of castLocks) {
+      const validation = validateCharacterDNA(char);
+      if (validation.warning) {
+        dnaWarnings.push(validation.warning);
+      }
+    }
 
-SCENE: ${scene_slugline || "Untitled Scene"}
-${scene_text}
+    if (dnaWarnings.length > 0) {
+      console.log(`[generate-storyboard] DNA Warnings: ${dnaWarnings.join('; ')}`);
+    }
 
-${characterContext}
+    // ========================================================================
+    // PHASE 2: Generate Panel Structure with GPT-5.2
+    // ========================================================================
 
-${locationContext}
+    // Build cast list for planner
+    const castListText = castLocks.map(c => 
+      `- ID: ${c.id} | Name: ${c.name} | DNA: ${c.visual_dna_lock.text.substring(0, 100)}...`
+    ).join('\n');
 
-${beatsContext}
+    // Build scene context
+    const sceneContext = screenplay_context || {
+      slugline: scene_slugline || 'Untitled Scene',
+      scene_summary: scene_text,
+      scene_dialogue: dialogue_blocks.length > 0
+        ? dialogue_blocks.slice(0, 10).map(d => `${d.speaker_id}: "${d.text}"`).join('\n')
+        : '',
+    };
 
-${dialogueContext}
+    const userPrompt = buildStoryboardPlannerUserPrompt({
+      storyboard_style,
+      panel_count: targetPanelCount,
+      style_pack_lock_text: stylePackLock.text,
+      cast_list: castListText || 'No characters specified',
+      location_lock_text: locationLock?.visual_lock.text || 'Location not specified',
+      slugline: sceneContext.slugline,
+      scene_summary: sceneContext.scene_summary,
+      scene_dialogue: sceneContext.scene_dialogue || '',
+    });
 
-${show_movement_arrows ? "Include movement_arrows for camera and subject movement." : ""}
-
-Return a JSON object with a "panels" array containing ${targetPanelCount} panels.`;
-
-    // Call Lovable AI for panel structure generation using aiFetch envelope
+    // Call GPT-5.2 for panel structure
     const aiData = await aiFetch({
       url: "https://ai.gateway.lovable.dev/v1/chat/completions",
       apiKey: lovableApiKey!,
       payload: {
         model: "openai/gpt-5.2",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: STORYBOARD_PLANNER_SYSTEM_PROMPT },
           { role: "user", content: userPrompt }
         ],
         ...buildTokenLimit("openai/gpt-5.2", 12000),
         response_format: { type: "json_object" },
       },
-      label: "storyboard_plan",
+      label: "storyboard_plan_v1",
       supabase,
       projectId: project_id,
     });
@@ -354,6 +424,10 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
 
     const panels = panelsData.panels || [];
     console.log(`[generate-storyboard] Generated ${panels.length} panels structure`);
+
+    // ========================================================================
+    // PHASE 3: Persist Panels to Database
+    // ========================================================================
 
     // Upsert storyboards wrapper table
     const { data: storyboardRecord, error: storyboardError } = await supabase
@@ -378,32 +452,61 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
       .delete()
       .eq("scene_id", scene_id);
 
-    // Insert new panels with staging and continuity
-    const panelsToInsert = panels.map((panel, idx) => ({
-      scene_id,
-      project_id,
-      panel_no: panel.panel_no || idx + 1,
-      panel_code: panel.panel_id || `P${idx + 1}`,
-      panel_intent: panel.panel_intent,
-      shot_hint: panel.shot_hint,
-      image_prompt: buildImagePrompt(panel, storyboard_style, character_refs),
-      action_beat_ref: panel.action_beat || null,
-      characters_present: panel.characters_present?.map(c => c.character_id) || [],
-      props_present: panel.props_present?.map(p => p.prop_id) || [],
-      staging: {
+    // Normalize characters_present to array of IDs
+    const normalizeCharacters = (chars: any[]): string[] => {
+      if (!chars || chars.length === 0) return [];
+      return chars.map(c => typeof c === 'string' ? c : c.character_id).filter(Boolean);
+    };
+
+    // Insert new panels with full v1.0 SPEC compliance
+    const panelsToInsert = panels.map((panel, idx) => {
+      const charactersPresent = normalizeCharacters(panel.characters_present || []);
+      
+      // Build staging with schema_version
+      const staging = {
         schema_version: "1.0",
-        movement_arrows: panel.movement_arrows || [],
-        spatial_info: panel.spatial_info || {},
-      },
-      continuity: {
+        movement_arrows: panel.staging?.movement_arrows 
+          || panel.movement_arrows?.map(a => ({ subject: a.type, direction: a.direction, intent: '' }))
+          || [],
+        spatial_info: panel.staging?.spatial_info 
+          || panel.spatial_info?.camera_relative_position 
+          || '',
+        axis_180: panel.staging?.axis_180 || {
+          enabled: panel.spatial_info?.axis_locked || false,
+          screen_direction: 'left_to_right',
+        },
+      };
+
+      // Build continuity with schema_version
+      const continuity = {
         schema_version: "1.0",
-        visual_dna_lock_ids: character_refs.map(c => c.id),
-        must_match_previous: idx > 0,
-        axis_locked: panel.spatial_info?.axis_locked || false,
-      },
-      image_url: null,
-      approved: false,
-    }));
+        visual_dna_lock_ids: castLocks.map(c => c.id),
+        style_pack_lock_id: 'STYLE_PACK',
+        must_match_previous: panel.continuity?.must_match_previous || ['hair', 'wardrobe', 'scale'],
+        do_not_change: panel.continuity?.do_not_change || ['age', 'species'],
+      };
+
+      return {
+        scene_id,
+        project_id,
+        panel_no: panel.panel_no || idx + 1,
+        panel_code: panel.panel_code || panel.panel_id || `P${idx + 1}`,
+        panel_intent: panel.panel_intent,
+        shot_hint: panel.shot_hint,
+        dialogue_snippet: panel.dialogue_snippet || null,
+        location_id: locationLock?.id || null,
+        image_prompt: '', // Will be built per-panel during image generation
+        action_beat_ref: panel.action_beat || panel.action || null,
+        characters_present: charactersPresent,
+        props_present: (panel.props_present || []).map((p: any) => typeof p === 'string' ? p : p.prop_id),
+        staging,
+        continuity,
+        image_url: null,
+        image_status: 'pending',
+        image_error: null,
+        approved: false,
+      };
+    });
 
     const { data: insertedPanels, error: insertError } = await supabase
       .from("storyboard_panels")
@@ -417,15 +520,13 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
 
     console.log(`[SB] after_db_insert`, { 
       count: insertedPanels?.length, 
-      panelIds: insertedPanels?.map(p => p.id).slice(0, 3) 
+      panelIds: insertedPanels?.map((p: any) => p.id).slice(0, 3) 
     });
 
-    // Generate deterministic PANEL_LIST for consistent image generation
-    console.log(`[SB] before_serialize`, { panelCount: panels.length });
-    const panelListText = serializePanelList(panels);
-    console.log(`[SB] after_serialize`, { lines: panelListText.split("\n").length });
+    // ========================================================================
+    // PHASE 4: Generate Images with Lock-based Prompts
+    // ========================================================================
 
-    // Generate grayscale pencil sketch images for each panel using NanoBanana
     const generatedPanels = [];
     const panelsToProcess = insertedPanels || [];
     console.log(`[SB] entering_image_loop`, { toProcess: panelsToProcess.length });
@@ -439,16 +540,60 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
           .update({ image_status: 'generating' })
           .eq("id", panel.id);
 
-        // Calculate deterministic seed for this panel
+        // Calculate deterministic seed
         const seed = generateSeed(scene_id, storyboard_style, panelNo);
         console.log(`[SB] generating_panel`, { no: panelNo, id: panel.id, seed });
-        
-        // Build image prompt with frozen PANEL_LIST context
-        const panelContext = panelListText.split("\n").find(l => l.startsWith(`P${panelNo} `)) || "";
-        const imagePrompt = storyboard_style === 'GRID_SHEET_V1'
-          ? buildGridSheetImagePrompt(panel, panelContext)
-          : buildTechPageImagePrompt(panel, panelContext);
 
+        // Get character names for present characters
+        const presentCharNames = castLocks
+          .filter(c => panel.characters_present.includes(c.id))
+          .map(c => c.name);
+
+        // Check for missing DNA
+        const presentCharsWithMissingDna = castLocks
+          .filter(c => panel.characters_present.includes(c.id))
+          .filter(c => !validateCharacterDNA(c).valid);
+
+        // Build panel spec for prompt builder
+        const panelSpec: PanelSpec = {
+          panel_code: panel.panel_code,
+          shot_hint: panel.shot_hint,
+          panel_intent: panel.panel_intent,
+          action: panel.action_beat_ref || panel.panel_intent,
+          dialogue_snippet: panel.dialogue_snippet,
+          characters_present: presentCharNames,
+          props_present: panel.props_present || [],
+          staging: {
+            spatial_info: panel.staging?.spatial_info || '',
+            movement_arrows: panel.staging?.movement_arrows || [],
+            axis_180: panel.staging?.axis_180 || { enabled: false, screen_direction: 'left_to_right' },
+          },
+          continuity: {
+            must_match_previous: panel.continuity?.must_match_previous || [],
+            do_not_change: panel.continuity?.do_not_change || [],
+          },
+        };
+
+        // Build complete image prompt using the prompt builder
+        const imagePrompt = buildStoryboardImagePrompt({
+          storyboard_style,
+          style_pack_lock: stylePackLock,
+          location_lock: locationLock,
+          cast: castLocks,
+          characters_present_ids: panel.characters_present,
+          panel_spec: panelSpec,
+        });
+
+        // If characters have missing DNA, add warning
+        if (presentCharsWithMissingDna.length > 0) {
+          const warningMsg = `WARNING: Missing DNA for: ${presentCharsWithMissingDna.map(c => c.name).join(', ')}`;
+          await supabase
+            .from("storyboard_panels")
+            .update({ image_error: warningMsg })
+            .eq("id", panel.id);
+        }
+
+        // Generate image with NanoBanana
         const imageResult = await generateImageWithNanoBanana({
           lovableApiKey: lovableApiKey!,
           promptText: imagePrompt,
@@ -493,7 +638,6 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
               console.log(`[SB] uploaded_ok`, { no: panelNo, url: finalImageUrl?.slice(0, 80) });
             } else {
               console.error(`[SB] upload_error`, { no: panelNo, error: uploadError });
-              // Mark as error but continue
               await supabase
                 .from("storyboard_panels")
                 .update({ 
@@ -507,16 +651,22 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
           }
 
           if (finalImageUrl) {
+            // Keep any DNA warnings, just update URL and status
+            const currentError = presentCharsWithMissingDna.length > 0
+              ? `WARNING: Missing DNA for: ${presentCharsWithMissingDna.map(c => c.name).join(', ')}`
+              : null;
+
             await supabase
               .from("storyboard_panels")
               .update({ 
                 image_url: finalImageUrl,
+                image_prompt: imagePrompt.substring(0, 2000), // Store prompt for debugging
                 image_status: 'success',
-                image_error: null
+                image_error: currentError,
               })
               .eq("id", panel.id);
 
-            generatedPanels.push({ ...panel, image_url: finalImageUrl });
+            generatedPanels.push({ ...panel, image_url: finalImageUrl, image_error: currentError });
             console.log(`[SB] panel_complete`, { no: panelNo, seed });
           } else {
             await supabase
@@ -538,7 +688,6 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
         const errMsg = imgError instanceof Error ? imgError.message : String(imgError);
         console.error(`[SB] panel_error`, { no: panelNo, id: panel.id, error: errMsg.slice(0, 500) });
         
-        // Save error to panel for diagnosis
         await supabase
           .from("storyboard_panels")
           .update({ 
@@ -548,14 +697,14 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
           .eq("id", panel.id);
         
         generatedPanels.push({ ...panel, image_error: errMsg });
-        // continue - don't break the loop
       }
     }
 
     console.log(`[SB] loop_complete`, { 
       generated: generatedPanels.length,
-      withImages: generatedPanels.filter(p => p.image_url).length,
-      withErrors: generatedPanels.filter(p => p.image_error).length
+      withImages: generatedPanels.filter((p: any) => p.image_url).length,
+      withErrors: generatedPanels.filter((p: any) => p.image_error).length,
+      withWarnings: generatedPanels.filter((p: any) => p.image_error?.startsWith('WARNING')).length,
     });
 
     return new Response(
@@ -564,6 +713,7 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
         storyboard_id: storyboardRecord?.id,
         storyboard_style,
         panels: generatedPanels,
+        dna_warnings: dnaWarnings,
         message: `Generated ${generatedPanels.length} storyboard panels (${storyboard_style})`,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -580,57 +730,3 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
     );
   }
 });
-
-// =============================================================================
-// HELPER FUNCTIONS
-// =============================================================================
-
-function buildImagePrompt(
-  panel: StoryboardPanel,
-  style: string,
-  characterRefs: { id: string; name: string; image_url?: string }[]
-): string {
-  const charNames = characterRefs.map(c => c.name).join(", ");
-  const arrows = panel.movement_arrows?.map(a => `${a.type} movement ${a.direction}`).join(", ") || "";
-  
-  return `${panel.panel_intent}. Shot: ${panel.shot_hint}. Characters: ${charNames || "none"}. ${arrows ? `Movement: ${arrows}.` : ""}`;
-}
-
-function buildGridSheetImagePrompt(panel: any, panelContext: string): string {
-  const staging = panel.staging as Record<string, any> || {};
-  const arrows = staging.movement_arrows || [];
-  const arrowsText = arrows.length > 0 
-    ? `Include visual movement arrows: ${arrows.map((a: any) => `${a.type} ${a.direction}`).join(", ")}.`
-    : "";
-
-  return `Rough pencil storyboard sketch for film production.
-Style: Hand-drawn charcoal/pencil on paper, black and white only, grayscale.
-Loose expressive lines, visible construction marks, sketch quality.
-Classic Hollywood storyboard aesthetic from pre-production.
-
-Panel ${panel.panel_no}: ${panel.shot_hint} shot.
-${panel.panel_intent}
-
-FROZEN CONTEXT (render exactly):
-${panelContext}
-
-${arrowsText}
-
-NO color. NO realistic rendering. NO polish. NO text labels.
-This is a WORKING storyboard, not concept art.`;
-}
-
-function buildTechPageImagePrompt(panel: any, panelContext: string): string {
-  return `Technical storyboard frame for film production shooting plan.
-Style: Clean pencil sketch with technical precision, black and white, grayscale.
-One single frame showing the camera angle and composition.
-
-Shot ${panel.panel_no}: ${panel.shot_hint}
-${panel.panel_intent}
-
-FROZEN CONTEXT (render exactly):
-${panelContext}
-
-Simple, professional, production-ready storyboard frame.
-NO color. NO decorative elements.`;
-}
