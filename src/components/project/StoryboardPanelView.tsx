@@ -661,6 +661,13 @@ export function StoryboardPanelView({
                         En cola QC
                       </Badge>
                     )}
+                    {/* NEW: needs_identity_fix status */}
+                    {(getPanelImageStatus(panel) === 'needs_identity_fix' || (panel as any).image_status === 'needs_identity_fix') && (
+                      <Badge variant="outline" className="text-xs border-yellow-500/50 text-yellow-400 bg-yellow-500/10">
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                        Identidad pendiente
+                      </Badge>
+                    )}
                     {getPanelImageStatus(panel) === 'failed_safe' && (
                       <Badge variant="destructive" className="text-xs">
                         <AlertCircle className="w-3 h-3 mr-1" />
@@ -682,6 +689,12 @@ export function StoryboardPanelView({
                     {(panel as any).generation_mode === 'SAFE' && (
                       <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400 bg-amber-500/10">
                         Modo Seguro
+                      </Badge>
+                    )}
+                    {/* Show staging available badge */}
+                    {(panel as any).staging_image_url && !(panel as any).image_url && (
+                      <Badge variant="outline" className="text-xs border-blue-500/50 text-blue-400 bg-blue-500/10">
+                        Staging OK
                       </Badge>
                     )}
                     </div>
@@ -804,20 +817,22 @@ export function StoryboardPanelView({
                   {/* Phase 4: Action buttons based on status - 3 types */}
                   {(() => {
                     const status = getPanelImageStatus(panel);
+                    const panelImageStatus = (panel as any).image_status;
                     const identityQc = (panel as any).identity_qc as IdentityQC | undefined;
                     const hasIdentityIssues = identityQc?.needs_regen || 
                       Object.values(identityQc?.characters || {}).some(c => c.issues?.length > 0);
                     const hasStagingImage = !!(panel as any).staging_image_url;
+                    const needsIdentityFix = panelImageStatus === 'needs_identity_fix';
                     const isError = status === 'error' || status === 'failed_safe';
 
-                    // Case 1: Has staging but identity failed → Show Identity Fix
-                    if (hasStagingImage && hasIdentityIssues && !isError) {
+                    // Case 1: needs_identity_fix OR has staging but identity failed → Show Identity Fix as primary
+                    if (needsIdentityFix || (hasStagingImage && hasIdentityIssues && !isError)) {
                       return (
                         <div className="flex gap-1">
                           <Button
                             variant="default"
                             size="sm"
-                            className="flex-1"
+                            className="flex-1 bg-yellow-600 hover:bg-yellow-700"
                             onClick={() => runIdentityFix(panel)}
                             title="Solo corrige cara y pelo sin cambiar composición"
                           >

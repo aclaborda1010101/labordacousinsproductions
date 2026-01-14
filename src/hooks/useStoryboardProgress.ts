@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface PanelStatus {
   panel_no: number;
   panel_id: string;
-  status: 'pending' | 'generating' | 'success' | 'error' | 'pending_regen' | 'failed_safe';
+  status: 'pending' | 'generating' | 'success' | 'error' | 'pending_regen' | 'failed_safe' | 'needs_identity_fix';
   error?: string;
   errorSince?: number; // timestamp when error was first detected
   regenCount?: number; // number of regeneration attempts
@@ -114,6 +114,10 @@ export function useStoryboardProgress(
           } else if (panel.image_status === 'pending_regen') {
             // Phase 1: New status for QC-failed panels awaiting regen
             status = 'pending_regen';
+            errorTimestampsRef.current.delete(panel.id);
+          } else if (panel.image_status === 'needs_identity_fix') {
+            // Pipeline 2-step: Panel with staging OK but identity fix needed
+            status = 'needs_identity_fix';
             errorTimestampsRef.current.delete(panel.id);
           } else if (panel.image_status === 'failed_safe') {
             // Phase 1: Panel that exhausted regen attempts - needs manual intervention

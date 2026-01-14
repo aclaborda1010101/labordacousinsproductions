@@ -13,7 +13,7 @@ import {
 interface PanelStatus {
   panel_no: number;
   panel_id?: string;
-  status: 'pending' | 'generating' | 'success' | 'error' | 'pending_regen' | 'failed_safe';
+  status: 'pending' | 'generating' | 'success' | 'error' | 'pending_regen' | 'failed_safe' | 'needs_identity_fix';
   error?: string;
   regenCount?: number;
 }
