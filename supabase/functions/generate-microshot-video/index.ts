@@ -64,70 +64,55 @@ function json(data: unknown, status = 200) {
 }
 
 /**
- * Build a motion-focused prompt for video generation
+ * Build a MINIMAL motion-focused prompt for video generation
+ * ANTI-HALLUCINATION: Only describe movement, NOT characters or scenery
+ * Characters and scenery are already defined in the keyframes
  */
 function buildMicroShotPrompt(
   microShot: MicroShot,
   shot: Shot,
-  keyframeInitial: Keyframe | null,
-  keyframeFinal: Keyframe | null
+  _keyframeInitial: Keyframe | null,
+  _keyframeFinal: Keyframe | null
 ): string {
-  const parts: string[] = [];
+  // ============= ANTI-HALLUCINATION PROMPT =============
+  // RULE: NEVER describe characters physically (they're in keyframes)
+  // RULE: NEVER describe scenery/decorado (it's in keyframes)
+  // ONLY: Camera movement + minimal physical action
+  
+  const lines: string[] = [
+    'Use the provided start and end images as ground truth.',
+    'Create only subtle natural motion connecting them.',
+    'Keep identity, wardrobe, props, lighting and storyboard style unchanged.',
+    'No new objects. No new characters. No text overlays.',
+    ''
+  ];
 
-  // Scene context
-  parts.push(`Scene: ${shot.scenes.slugline}`);
-  if (shot.scenes.summary) {
-    parts.push(shot.scenes.summary);
+  // Movement beat - from microshot or derive from shot
+  const actionBeat = microShot.motion_notes 
+    || (shot.blocking as any)?.action 
+    || 'subtle natural movement';
+  
+  lines.push(`Movement: ${actionBeat}`);
+
+  // Camera beat - minimal camera description
+  const camera = shot.camera as Record<string, unknown> || {};
+  let cameraBeat = 'maintain framing';
+  
+  if (camera.movement && camera.movement !== 'Static') {
+    const movement = String(camera.movement).toLowerCase().replace(/_/g, ' ');
+    cameraBeat = movement;
   }
+  
+  lines.push(`Camera: ${cameraBeat}`);
 
-  // Shot type and camera
-  parts.push(`${shot.shot_type} shot`);
-  if (shot.camera) {
-    const cam = shot.camera as Record<string, unknown>;
-    if (cam.movement && cam.movement !== 'Static') {
-      parts.push(`Camera movement: ${cam.movement}`);
-    }
-    if (cam.focal_mm) {
-      parts.push(`${cam.focal_mm}mm lens`);
-    }
-  }
+  // Duration hint for pacing
+  lines.push(`Duration: ${microShot.duration_sec || 2} seconds`);
 
-  // Blocking/action
-  if (shot.blocking) {
-    const block = shot.blocking as Record<string, unknown>;
-    if (block.description) {
-      parts.push(`Action: ${block.description}`);
-    }
-    if (block.action) {
-      parts.push(block.action as string);
-    }
-  }
+  // Continuity enforcement
+  lines.push('');
+  lines.push('CONTINUITY: Match start/end keyframes exactly. No drift in character appearance, wardrobe, or props.');
 
-  // Dialogue context
-  if (shot.dialogue_text) {
-    parts.push(`Dialogue: "${shot.dialogue_text}"`);
-  }
-
-  // Micro-shot specific motion notes
-  if (microShot.motion_notes) {
-    parts.push(`Motion: ${microShot.motion_notes}`);
-  }
-
-  // Duration context
-  parts.push(`Duration: ${microShot.duration_sec} seconds`);
-
-  // Keyframe transition context
-  if (keyframeInitial?.prompt_text && keyframeFinal?.prompt_text) {
-    parts.push(`Transition from: ${keyframeInitial.prompt_text}`);
-    parts.push(`Transition to: ${keyframeFinal.prompt_text}`);
-  }
-
-  // Micro-shot custom prompt
-  if (microShot.prompt_text) {
-    parts.push(microShot.prompt_text);
-  }
-
-  return parts.join('. ');
+  return lines.join('\n');
 }
 
 serve(async (req) => {

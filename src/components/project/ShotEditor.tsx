@@ -8,9 +8,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings, Clock, Upload, CheckCircle2, XCircle, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Wand2, Save, Video, Camera, Sparkles, Settings, Clock, Upload, CheckCircle2, XCircle, Image as ImageIcon, Lock, Unlock, FileText, RefreshCw } from 'lucide-react';
 import KeyframeManager from './KeyframeManager';
 import TakesManager from './TakesManager';
 import MicroShotManager from './MicroShotManager';
@@ -41,6 +43,10 @@ interface Shot {
   continuity_notes?: string;
   coverage_type?: string;
   story_purpose?: string;
+  // Technical inheritance fields
+  inherit_technical?: boolean;
+  technical_overrides?: Record<string, any>;
+  technical_shot_idx?: number;
 }
 
 interface Scene {
@@ -264,6 +270,9 @@ export default function ShotEditor({
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generatingDetails, setGeneratingDetails] = useState(false);
+  const [inheritTechnical, setInheritTechnical] = useState(shot.inherit_technical ?? true);
+  const [hydratingFromTech, setHydratingFromTech] = useState(false);
+  const [hasTechDoc, setHasTechDoc] = useState(false);
   const [generationProgress, setGenerationProgress] = useState<GenerationProgress>({
     status: 'idle',
     elapsedSeconds: 0,
@@ -1189,6 +1198,80 @@ export default function ShotEditor({
           </TabsList>
 
           <TabsContent value="details" className="space-y-4 mt-4">
+            {/* Technical Doc Inheritance Section */}
+            <div className="p-3 border rounded-lg bg-muted/30 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <Label className="font-medium">Fuente de Datos</Label>
+                  {inheritTechnical ? (
+                    <Badge variant="secondary" className="gap-1">
+                      <Lock className="w-3 h-3" />
+                      Heredado
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="gap-1">
+                      <Unlock className="w-3 h-3" />
+                      Manual
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={inheritTechnical}
+                    onCheckedChange={async (checked) => {
+                      setInheritTechnical(checked);
+                      await supabase.from('shots').update({ inherit_technical: checked }).eq('id', shot.id);
+                      if (checked) {
+                        // Hydrate from technical doc
+                        setHydratingFromTech(true);
+                        try {
+                          const { error } = await supabase.functions.invoke('hydrate-shot-from-technical', {
+                            body: { shotId: shot.id, forceRefresh: true }
+                          });
+                          if (!error) {
+                            toast.success('Datos heredados del Documento Técnico');
+                            onShotUpdated();
+                          }
+                        } finally {
+                          setHydratingFromTech(false);
+                        }
+                      }
+                    }}
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    Heredar de Doc Técnico
+                  </span>
+                </div>
+              </div>
+              {inheritTechnical && (
+                <Alert className="py-2">
+                  <AlertDescription className="text-xs flex items-center justify-between">
+                    <span>Los campos técnicos se sincronizan con el Documento Técnico de la escena.</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={async () => {
+                        setHydratingFromTech(true);
+                        try {
+                          await supabase.functions.invoke('hydrate-shot-from-technical', {
+                            body: { shotId: shot.id, forceRefresh: true }
+                          });
+                          toast.success('Datos actualizados');
+                          onShotUpdated();
+                        } finally {
+                          setHydratingFromTech(false);
+                        }
+                      }}
+                      disabled={hydratingFromTech}
+                    >
+                      {hydratingFromTech ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+
             {/* AI Generate Button */}
             <div className="flex justify-end">
               <Button 
@@ -1210,7 +1293,7 @@ export default function ShotEditor({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Tipo de Plano</Label>
-                <Select value={form.shot_type} onValueChange={v => setForm({...form, shot_type: v})}>
+                <Select value={form.shot_type} onValueChange={v => setForm({...form, shot_type: v})} disabled={inheritTechnical}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
