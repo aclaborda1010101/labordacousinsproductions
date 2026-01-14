@@ -606,6 +606,14 @@ export default function KeyframeManager({
 
   return (
     <div className="space-y-4">
+      {/* Style Lock Badge */}
+      <div className="flex items-center gap-2 p-2 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+        <Lock className="w-4 h-4 text-purple-400" />
+        <span className="text-sm font-medium text-purple-300">ESTILO: Disney/Pixar 3D</span>
+        <Badge variant="outline" className="text-xs border-purple-500/30 text-purple-400">LOCKED</Badge>
+        <span className="text-xs text-muted-foreground ml-auto">Keyframes siempre en estilo animado</span>
+      </div>
+
       {/* Header with progress */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">

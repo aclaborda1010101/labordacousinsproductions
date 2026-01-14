@@ -4650,6 +4650,7 @@ export type Database = {
           slugline: string
           standardized_location: string | null
           standardized_time: string | null
+          style_profile: string | null
           summary: string | null
           technical_metadata: Json | null
           technical_notes: string | null
@@ -4694,6 +4695,7 @@ export type Database = {
           slugline: string
           standardized_location?: string | null
           standardized_time?: string | null
+          style_profile?: string | null
           summary?: string | null
           technical_metadata?: Json | null
           technical_notes?: string | null
@@ -4738,6 +4740,7 @@ export type Database = {
           slugline?: string
           standardized_location?: string | null
           standardized_time?: string | null
+          style_profile?: string | null
           summary?: string | null
           technical_metadata?: Json | null
           technical_notes?: string | null
