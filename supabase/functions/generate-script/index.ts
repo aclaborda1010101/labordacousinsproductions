@@ -1562,9 +1562,30 @@ IDIOMA: ${language}
     }
 
     // Always return 200 with quality indicator (never 500 for parse issues)
+    // V11.2: Include updatedGenerationState for frontend state accumulation
+    const updatedGenerationState = request.generationState 
+      ? updateGenerationState(
+          request.generationState,
+          {
+            threads_advanced: v3Result.threads_advanced || [],
+            turning_points_executed: v3Result.turning_points_executed || [],
+            characters_appeared: v3Result.characters_appeared || (v3Result.scenes || []).flatMap((s: any) => 
+              (s.characters_present || []).map((c: any) => c.name || c)
+            ),
+            scenes: v3Result.scenes || [],
+          },
+          request.currentBatchPlan || { episode: episodeNumber || 1, batchIndex: batchIndex || 0 } as any
+        )
+      : null;
+
     return new Response(
       JSON.stringify({
         ...v3Result,
+        // V11.2: Add batch contract compliance fields
+        threads_advanced: v3Result.threads_advanced || [],
+        turning_points_executed: v3Result.turning_points_executed || [],
+        characters_appeared: v3Result.characters_appeared || [],
+        updatedGenerationState,
         _meta: {
           qualityTier,
           provider: config.provider,
