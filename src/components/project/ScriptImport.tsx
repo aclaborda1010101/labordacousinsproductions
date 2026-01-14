@@ -2451,9 +2451,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         console.log('[AutoMaterialize] Bible empty but outline has entities, syncing in background...');
         setMaterializingEntities(true);
         try {
-          await supabase.functions.invoke('materialize-entities', {
+          const { data, error } = await supabase.functions.invoke('materialize-entities', {
             body: { projectId, source: 'outline' }
           });
+          
+          // Gracefully handle NO_OUTLINE_FOUND - this is expected after deletion
+          if (error || data?.error === 'NO_OUTLINE_FOUND') {
+            console.log('[AutoMaterialize] Skipped - no outline available (expected after delete)');
+            return;
+          }
+          
           console.log('[AutoMaterialize] Sync completed successfully');
           // Refresh Bible data after auto-sync
           await fetchBibleData();
