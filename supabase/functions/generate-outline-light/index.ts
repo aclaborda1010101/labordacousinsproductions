@@ -1150,6 +1150,7 @@ serve(async (req) => {
         .eq('project_id', projectId);
 
       // Create new outline record with 'queued' status (V5 async)
+      // V11.2: Persist density_targets and narrative_mode for worker to use
       const { data: outlineRecord, error: insertErr } = await auth.supabase
         .from('project_outlines')
         .insert({
@@ -1167,6 +1168,8 @@ serve(async (req) => {
           tone: tone || null,
           format: format || null,
           episode_count: cappedEpisodesCount,
+          narrative_mode: narrativeMode || 'serie_adictiva',
+          density_targets: disableDensity ? null : (densityTargets || null),
         })
         .select('id')
         .single();

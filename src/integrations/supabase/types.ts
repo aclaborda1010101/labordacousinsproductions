@@ -3838,6 +3838,7 @@ export type Database = {
           attempts: number | null
           completed_at: string | null
           created_at: string | null
+          density_targets: Json | null
           episode_count: number | null
           error_code: string | null
           error_detail: string | null
@@ -3865,6 +3866,7 @@ export type Database = {
           attempts?: number | null
           completed_at?: string | null
           created_at?: string | null
+          density_targets?: Json | null
           episode_count?: number | null
           error_code?: string | null
           error_detail?: string | null
@@ -3892,6 +3894,7 @@ export type Database = {
           attempts?: number | null
           completed_at?: string | null
           created_at?: string | null
+          density_targets?: Json | null
           episode_count?: number | null
           error_code?: string | null
           error_detail?: string | null
