@@ -225,6 +225,14 @@ serve(async (req) => {
     const projectId = scene.project_id;
     const sceneId = scene.id;
 
+    // Get total panel count for format contract (same as batch)
+    const { count: totalPanelCount } = await supabase
+      .from("storyboard_panels")
+      .select("*", { count: "exact", head: true })
+      .eq("scene_id", sceneId);
+
+    const panelCount = totalPanelCount || 8;
+
     // ========== DETERMINISTIC PROMPT FALLBACK ==========
     // 1) Start with explicit prompt or stored image_prompt
     let promptText = (body.prompt || panel.image_prompt || "").trim();
@@ -259,7 +267,7 @@ serve(async (req) => {
         },
       };
 
-      // Build prompt using the same builder as generate-storyboard
+      // Build prompt using the same builder as generate-storyboard (v3.0: with panel_count)
       promptText = buildStoryboardImagePrompt({
         storyboard_style: storyboardStyle,
         style_pack_lock: getDefaultStylePackLock(),
@@ -267,9 +275,10 @@ serve(async (req) => {
         cast: [],
         characters_present_ids: panelSpec.characters_present,
         panel_spec: panelSpec,
+        panel_count: panelCount,  // NEW: Inject panel count for format contract
       });
       
-      console.log(`[regenerate-panel] Rebuilt prompt (${promptText.length} chars)`);
+      console.log(`[regenerate-panel] Rebuilt prompt (${promptText.length} chars) panel_count=${panelCount}`);
     }
 
     // 3) ULTRA-MINIMAL FALLBACK if builders somehow returned empty (should never happen)
