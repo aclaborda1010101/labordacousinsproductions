@@ -70,9 +70,10 @@ COMPOSICIÓN:
 === FIN MANDATO ANTI-IA ===
 
 SAFE ZONES (para UI/texto de app):
-- ui_top_pct: 12% zona superior reservada
-- ui_bottom_pct: 18% zona inferior reservada  
-- ui_side_pct: 6% márgenes laterales
+- DYNAMIC: Use safe zone values from canvas_format if provided
+- Default ui_top_pct: 12% zona superior reservada
+- Default ui_bottom_pct: 18% zona inferior reservada  
+- Default ui_side_pct: 6% márgenes laterales
 - action_safe_pct: 10% zona segura general
 
 CAMPOS OBLIGATORIOS EN TU RESPUESTA JSON:
@@ -177,6 +178,17 @@ interface KeyframeRequest {
     colorPalette?: string[];
     lightingRules?: string[];
     aspectRatio?: string;
+  };
+  // NEW: Canvas format from style_pack
+  canvasFormat?: {
+    aspect_ratio?: string;
+    orientation?: string;
+    safe_area?: {
+      top?: number;
+      bottom?: number;
+      left?: number;
+      right?: number;
+    };
   };
 }
 
@@ -342,8 +354,25 @@ REGLA CRÍTICA: Este keyframe es ${request.timestampSec}s después. Los personaj
 `;
   }
 
+  // Build canvas format section with dynamic safe zones
+  const canvasFormat = request.canvasFormat;
+  const safeZones = canvasFormat?.safe_area || { top: 12, bottom: 18, left: 6, right: 6 };
+  const canvasSection = canvasFormat ? `
+CANVAS FORMAT (GLOBAL - NEVER OVERRIDE):
+- Aspect ratio: ${canvasFormat.aspect_ratio || '16:9'}
+- Orientation: ${canvasFormat.orientation || 'horizontal'}
+- Safe zones: top ${safeZones.top}%, bottom ${safeZones.bottom}%, left ${safeZones.left}%, right ${safeZones.right}%
+- COMPOSE FOR THIS ASPECT RATIO. Keep action inside safe zones.
+${canvasFormat.orientation === 'vertical' ? 
+'- VERTICAL FORMAT: More medium shots, vertical subject alignment, characters closer to camera' : 
+canvasFormat.orientation === 'square' ?
+'- SQUARE FORMAT: Centered composition, balanced headroom/footroom' :
+'- HORIZONTAL FORMAT: Use full horizontal space, rule of thirds laterally'}
+` : '';
+
   const userPrompt = `Genera un keyframe para esta escena:
 
+${canvasSection}
 CONTEXTO COMPLETO DEL PLANO:
 - Escena: ${request.sceneDescription}
 - Tipo de plano: ${request.shotType}
@@ -372,7 +401,7 @@ ${request.stylePack ? `ESTILO VISUAL:
 - ${request.stylePack.description || 'Hyperreal commercial'}
 - Paleta: ${request.stylePack.colorPalette?.join(', ') || 'Natural'}
 - Iluminación: ${request.stylePack.lightingRules?.join(', ') || 'Soft cinematic'}
-- Aspect ratio: ${request.stylePack.aspectRatio || '16:9'}` : ''}
+- Aspect ratio: ${canvasFormat?.aspect_ratio || request.stylePack.aspectRatio || '16:9'}` : ''}
 
 ${continuitySection}
 

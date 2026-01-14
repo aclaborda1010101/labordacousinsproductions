@@ -13,6 +13,7 @@ interface KlingStartRequest {
   keyframeUrl?: string;
   keyframeTailUrl?: string;  // Final keyframe for A→B transition
   qualityMode?: 'CINE' | 'ULTRA';
+  aspectRatio?: string; // NEW: Canvas format aspect ratio from style_pack
 }
 
 // Helper: base64url encoding for JWT
@@ -141,7 +142,7 @@ serve(async (req) => {
     const { userId } = await requireAuthOrDemo(req);
     console.log("[AUTH] Authenticated user:", userId);
 
-    const { prompt, duration, keyframeUrl, keyframeTailUrl, qualityMode = 'CINE' }: KlingStartRequest = await req.json();
+    const { prompt, duration, keyframeUrl, keyframeTailUrl, qualityMode = 'CINE', aspectRatio = '16:9' }: KlingStartRequest = await req.json();
 
     const KLING_ACCESS_KEY = Deno.env.get('KLING_ACCESS_KEY');
     const KLING_SECRET_KEY = Deno.env.get('KLING_SECRET_KEY');
@@ -195,13 +196,16 @@ serve(async (req) => {
 
     const finalKeyframeUrl: string | undefined = keyframeUrl;
 
+    // Use aspectRatio from request (passed from style_pack canvas_format)
     const requestBody: Record<string, unknown> = {
       prompt,
       duration: duration.toString(),
-      aspect_ratio: "16:9",
+      aspect_ratio: aspectRatio, // Use canvas format from project style_pack
       model_name: KLING_MODEL_NAME,
       mode
     };
+    
+    console.log(`Canvas format: ${aspectRatio}`);
 
     // For image2video, convert keyframe URL to raw base64 (no prefix)
     if (finalKeyframeUrl) {

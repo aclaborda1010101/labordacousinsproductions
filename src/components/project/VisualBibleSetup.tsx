@@ -17,12 +17,47 @@ import {
   Palette,
   Sparkles,
   Image as ImageIcon,
-  X
+  X,
+  Monitor,
+  Smartphone,
+  Square
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VISUAL_PRESETS, getPresetsByCategory, type VisualPreset } from '@/lib/visualPresets';
 import NextStepNavigator from './NextStepNavigator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+// Canvas Format Presets
+const CANVAS_PRESETS = [
+  { 
+    id: '16:9', 
+    label: 'Cine / YouTube', 
+    orientation: 'horizontal' as const, 
+    icon: Monitor,
+    safeArea: { top: 5, bottom: 5, left: 5, right: 5 } 
+  },
+  { 
+    id: '9:16', 
+    label: 'Reels / TikTok', 
+    orientation: 'vertical' as const, 
+    icon: Smartphone,
+    safeArea: { top: 12, bottom: 18, left: 8, right: 8 } 
+  },
+  { 
+    id: '1:1', 
+    label: 'Cuadrado', 
+    orientation: 'square' as const, 
+    icon: Square,
+    safeArea: { top: 8, bottom: 8, left: 8, right: 8 } 
+  },
+  { 
+    id: '4:5', 
+    label: 'Feed Instagram', 
+    orientation: 'vertical' as const, 
+    icon: Smartphone,
+    safeArea: { top: 8, bottom: 10, left: 6, right: 6 } 
+  },
+] as const;
 
 interface VisualBibleSetupProps {
   projectId: string;
@@ -61,6 +96,8 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
   const [customAnalysis, setCustomAnalysis] = useState<any>(null);
   const [styleDescription, setStyleDescription] = useState('');
   const [hasExistingStyle, setHasExistingStyle] = useState(false);
+  // Canvas Format state
+  const [selectedCanvas, setSelectedCanvas] = useState<string>('16:9');
 
   // Load existing style on mount
   useEffect(() => {
@@ -97,6 +134,17 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
           // Hydrate description
           if (stylePack.description) {
             setStyleDescription(stylePack.description);
+          }
+        }
+        
+        // Hydrate canvas format
+        if (stylePack?.aspect_ratio) {
+          setSelectedCanvas(stylePack.aspect_ratio);
+        }
+        if (stylePack?.canvas_format) {
+          const cf = stylePack.canvas_format as { aspect_ratio?: string };
+          if (cf.aspect_ratio) {
+            setSelectedCanvas(cf.aspect_ratio);
           }
         }
       } catch (err) {
@@ -197,15 +245,24 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
         .eq('project_id', projectId)
         .maybeSingle();
 
+      // Build canvas_format from selected preset
+      const canvasPreset = CANVAS_PRESETS.find(c => c.id === selectedCanvas);
+      const canvasFormat = {
+        aspect_ratio: selectedCanvas,
+        orientation: canvasPreset?.orientation || 'horizontal',
+        safe_area: canvasPreset?.safeArea || { top: 5, bottom: 5, left: 5, right: 5 }
+      };
+
       const payload: any = {
         project_id: projectId,
         description: styleDescription || `${preset?.name || 'Custom'} style`,
-        aspect_ratio: analysis?.composition?.aspect_ratio_suggestion || '16:9',
+        aspect_ratio: selectedCanvas, // Use selected canvas instead of analysis
         fps: 24,
         lens_style: preset?.camera.lens || analysis?.camera?.recommended_lens || null,
         grain_level: styleConfig.style.grain,
         visual_preset: selectedPreset,
         style_config: JSON.parse(JSON.stringify(styleConfig)),
+        canvas_format: canvasFormat, // NEW: Save canvas format
       };
 
       if (existing) {
@@ -271,6 +328,49 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
           El sistema configurará automáticamente cámara, lente y parámetros.
         </p>
       </div>
+
+      {/* Canvas Format Selector - NEW */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Monitor className="w-4 h-4" />
+            Formato de Video
+          </CardTitle>
+          <CardDescription>
+            Este formato se aplicará a todo el pipeline: storyboard, keyframes y vídeo final
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {CANVAS_PRESETS.map(canvas => {
+              const IconComponent = canvas.icon;
+              return (
+                <button
+                  key={canvas.id}
+                  onClick={() => setSelectedCanvas(canvas.id)}
+                  className={cn(
+                    "p-4 rounded-xl border-2 text-center transition-all",
+                    selectedCanvas === canvas.id 
+                      ? "border-primary bg-primary/10 ring-2 ring-primary/30" 
+                      : "border-border hover:border-primary/50 hover:bg-muted/50"
+                  )}
+                >
+                  <IconComponent className={cn(
+                    "w-6 h-6 mx-auto mb-2",
+                    canvas.orientation === 'vertical' && "rotate-0",
+                    selectedCanvas === canvas.id ? "text-primary" : "text-muted-foreground"
+                  )} />
+                  <div className="text-sm font-medium">{canvas.id}</div>
+                  <div className="text-[10px] text-muted-foreground">{canvas.label}</div>
+                  {selectedCanvas === canvas.id && (
+                    <Check className="w-4 h-4 text-primary mx-auto mt-1" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Reference Image Upload */}
       <Card className="border-2 border-dashed border-primary/30 bg-primary/5">

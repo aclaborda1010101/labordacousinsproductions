@@ -24,6 +24,7 @@ import {
   type CharacterPackLockData,
   type LocationLock,
   type PanelSpec,
+  type CanvasFormat,
 } from "../_shared/storyboard-prompt-builder.ts";
 
 const corsHeaders = {
@@ -117,28 +118,69 @@ serve(async (req) => {
     // Build Locks (cached per batch - same scene = same locks)
     // ========================================================================
 
-    // Get Style Pack Lock from project
+    // Get Style Pack Lock and Canvas Format from style_packs table
     let stylePackLock: StylePackLock = getDefaultStylePackLock();
+    let canvasFormat: CanvasFormat | undefined;
+    
     try {
-      const { data: project } = await supabase
-        .from("projects")
-        .select("style_pack, global_visual_dna")
-        .eq("id", projectId)
-        .single();
+      // First try style_packs table (new location)
+      const { data: stylePack } = await supabase
+        .from("style_packs")
+        .select("style_config, aspect_ratio, canvas_format, description, visual_preset, lens_style")
+        .eq("project_id", projectId)
+        .maybeSingle();
 
-      if (project?.style_pack) {
-        const sp = project.style_pack;
+      if (stylePack) {
         const parts: string[] = [];
-        if (sp.visual_preset) parts.push(`Visual preset: ${sp.visual_preset}`);
-        if (sp.lens_style) parts.push(`Lens style: ${sp.lens_style}`);
-        if (sp.realism_level) parts.push(`Realism: ${sp.realism_level}`);
-        if (sp.description) parts.push(sp.description);
+        if (stylePack.visual_preset) parts.push(`Visual preset: ${stylePack.visual_preset}`);
+        if (stylePack.lens_style) parts.push(`Lens style: ${stylePack.lens_style}`);
+        if (stylePack.description) parts.push(stylePack.description);
 
         if (parts.length > 0) {
           stylePackLock = {
             schema_version: "1.0",
             text: `${parts.join("\n")}\n- Storyboard look: professional pencil storyboard, grayscale, clean linework`,
           };
+        }
+        
+        // Extract canvas format (NEW - v4.0)
+        if (stylePack.canvas_format) {
+          canvasFormat = stylePack.canvas_format as CanvasFormat;
+          console.log(`[batch] Canvas format loaded:`, canvasFormat.aspect_ratio, canvasFormat.orientation);
+        } else if (stylePack.aspect_ratio) {
+          // Fallback: build canvas format from aspect_ratio
+          canvasFormat = {
+            aspect_ratio: stylePack.aspect_ratio as CanvasFormat['aspect_ratio'],
+            orientation: stylePack.aspect_ratio === '16:9' ? 'horizontal' : 
+                         stylePack.aspect_ratio === '9:16' ? 'vertical' : 
+                         stylePack.aspect_ratio === '1:1' ? 'square' : 'horizontal',
+            safe_area: { top: 5, bottom: 5, left: 5, right: 5 }
+          };
+        }
+      }
+      
+      // Fallback to project.style_pack if style_packs empty
+      if (!stylePack) {
+        const { data: project } = await supabase
+          .from("projects")
+          .select("style_pack, global_visual_dna")
+          .eq("id", projectId)
+          .single();
+
+        if (project?.style_pack) {
+          const sp = project.style_pack;
+          const parts: string[] = [];
+          if (sp.visual_preset) parts.push(`Visual preset: ${sp.visual_preset}`);
+          if (sp.lens_style) parts.push(`Lens style: ${sp.lens_style}`);
+          if (sp.realism_level) parts.push(`Realism: ${sp.realism_level}`);
+          if (sp.description) parts.push(sp.description);
+
+          if (parts.length > 0) {
+            stylePackLock = {
+              schema_version: "1.0",
+              text: `${parts.join("\n")}\n- Storyboard look: professional pencil storyboard, grayscale, clean linework`,
+            };
+          }
         }
       }
     } catch (e) {
@@ -291,7 +333,7 @@ serve(async (req) => {
           },
         };
 
-        // Build image prompt (v3.0: with panel_count for format contract)
+        // Build image prompt (v4.0: with panel_count and canvas_format)
         const imagePrompt = buildStoryboardImagePrompt({
           storyboard_style: storyboardStyle,
           style_pack_lock: stylePackLock,
@@ -300,7 +342,8 @@ serve(async (req) => {
           characters_present_ids: presentCharIds,
           panel_spec: panelSpec,
           character_pack_data: characterPackData,
-          panel_count: panelCount,  // NEW: Inject panel count for layout specification
+          panel_count: panelCount,
+          canvas_format: canvasFormat,  // NEW: Pass canvas format for consistent framing
         });
 
         // ================================================================

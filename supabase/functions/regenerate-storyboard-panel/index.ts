@@ -6,6 +6,7 @@ import {
   getDefaultStylePackLock,
   type PanelSpec,
   type CharacterPackLockData,
+  type CanvasFormat,
 } from "../_shared/storyboard-prompt-builder.ts";
 import { generateSeed } from "../_shared/storyboard-serializer.ts";
 
@@ -233,6 +234,32 @@ serve(async (req) => {
 
     const panelCount = totalPanelCount || 8;
 
+    // Fetch canvas_format from style_packs (NEW - v4.0)
+    let canvasFormat: CanvasFormat | undefined;
+    try {
+      const { data: stylePack } = await supabase
+        .from("style_packs")
+        .select("aspect_ratio, canvas_format")
+        .eq("project_id", projectId)
+        .maybeSingle();
+      
+      if (stylePack?.canvas_format) {
+        canvasFormat = stylePack.canvas_format as CanvasFormat;
+        console.log(`[regenerate-panel] Canvas format loaded:`, canvasFormat.aspect_ratio);
+      } else if (stylePack?.aspect_ratio) {
+        // Fallback: build from aspect_ratio
+        canvasFormat = {
+          aspect_ratio: stylePack.aspect_ratio as CanvasFormat['aspect_ratio'],
+          orientation: stylePack.aspect_ratio === '16:9' ? 'horizontal' : 
+                       stylePack.aspect_ratio === '9:16' ? 'vertical' : 
+                       stylePack.aspect_ratio === '1:1' ? 'square' : 'horizontal',
+          safe_area: { top: 5, bottom: 5, left: 5, right: 5 }
+        };
+      }
+    } catch (e) {
+      console.log("[regenerate-panel] canvas_format_fetch_error:", e);
+    }
+
     // ========== DETERMINISTIC PROMPT FALLBACK ==========
     // 1) Start with explicit prompt or stored image_prompt
     let promptText = (body.prompt || panel.image_prompt || "").trim();
@@ -267,7 +294,7 @@ serve(async (req) => {
         },
       };
 
-      // Build prompt using the same builder as generate-storyboard (v3.0: with panel_count)
+      // Build prompt using the same builder as generate-storyboard (v4.0: with canvas_format)
       promptText = buildStoryboardImagePrompt({
         storyboard_style: storyboardStyle,
         style_pack_lock: getDefaultStylePackLock(),
@@ -275,7 +302,8 @@ serve(async (req) => {
         cast: [],
         characters_present_ids: panelSpec.characters_present,
         panel_spec: panelSpec,
-        panel_count: panelCount,  // NEW: Inject panel count for format contract
+        panel_count: panelCount,
+        canvas_format: canvasFormat,  // NEW: Pass canvas format for consistent framing
       });
       
       console.log(`[regenerate-panel] Rebuilt prompt (${promptText.length} chars) panel_count=${panelCount}`);
