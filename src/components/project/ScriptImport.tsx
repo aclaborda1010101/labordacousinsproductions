@@ -97,6 +97,30 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { calculateAutoTargets, CalculatedTargets, TargetInputs, calculateDynamicBatches, BatchConfig, QualityTier, QUALITY_TIERS } from '@/lib/autoTargets';
 import { type QCStatus, STAGE_CONFIG } from '@/lib/qcUtils';
 
+/**
+ * Checks if a materialize-entities response indicates NO_OUTLINE_FOUND.
+ * When edge function returns 404, Supabase puts the JSON body in `data` (not `error.message`).
+ */
+function isMaterializeNoOutline(data: any, error: any): boolean {
+  // Case 1: Direct data.error check (most common)
+  if (data?.error === 'NO_OUTLINE_FOUND') return true;
+  
+  // Case 2: error.context.bodyJson for some Supabase versions
+  if ((error as any)?.context?.status === 404 && 
+      (error as any)?.context?.bodyJson?.error === 'NO_OUTLINE_FOUND') return true;
+  
+  // Case 3: Error message contains the error code
+  if (error?.message?.includes('NO_OUTLINE_FOUND')) return true;
+  
+  // Case 4: Stringified response contains the error
+  try {
+    const stringified = JSON.stringify(data) + JSON.stringify(error);
+    if (stringified.includes('NO_OUTLINE_FOUND')) return true;
+  } catch {}
+  
+  return false;
+}
+
 // Helper to migrate legacy quality tier values to new system
 function migrateQualityTier(tier: string): QualityTier {
   const legacyMap: Record<string, QualityTier> = {
@@ -2278,12 +2302,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         body: { projectId, source: 'outline' }
       });
 
-      const isNoOutlineFound =
-        data?.error === 'NO_OUTLINE_FOUND' ||
-        ((error as any)?.context?.status === 404 && (error as any)?.context?.bodyJson?.error === 'NO_OUTLINE_FOUND');
-
-      // Expected if no outline exists yet (e.g. after reset)
-      if (isNoOutlineFound) {
+      // Use robust helper to detect NO_OUTLINE_FOUND in any response format
+      if (isMaterializeNoOutline(data, error)) {
         toast.info('Genera un outline primero.');
         return false;
       }
@@ -2484,7 +2504,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           });
           
           // Gracefully handle NO_OUTLINE_FOUND - this is expected after deletion
-          if (error || data?.error === 'NO_OUTLINE_FOUND') {
+          if (error || isMaterializeNoOutline(data, error)) {
             console.log('[AutoMaterialize] Skipped - no outline available (expected after delete)');
             return;
           }
@@ -4867,12 +4887,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                             body: { projectId, source: 'outline' }
                           });
 
-                          const isNoOutlineFound =
-                            data?.error === 'NO_OUTLINE_FOUND' ||
-                            ((error as any)?.context?.status === 404 && (error as any)?.context?.bodyJson?.error === 'NO_OUTLINE_FOUND');
-
-                          // Handle NO_OUTLINE_FOUND gracefully
-                          if (isNoOutlineFound) {
+                          // Use robust helper to detect NO_OUTLINE_FOUND
+                          if (isMaterializeNoOutline(data, error)) {
                             toast.info('Genera un outline primero antes de sincronizar.');
                             return;
                           }
