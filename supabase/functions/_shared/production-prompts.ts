@@ -165,8 +165,8 @@ REGLAS:
 // =============================================================================
 export const SINGLE_SCENE_PROMPT = {
   model: 'openai/gpt-5.2',
-  maxTokens: 1500,
-  system: `Eres guionista profesional. Escribes SOLO la escena pedida. No avances a escenas siguientes.`,
+  maxTokens: 2000,
+  system: `Eres guionista profesional con ojo de director. Escribes escenas cinematográficas con profundidad visual y emocional. No avances a escenas siguientes.`,
   
   buildUserPrompt: (params: {
     seriesBibleJson: string;
@@ -181,11 +181,33 @@ EPISODE: ${params.episodeNumber}
 SCENE SPEC (JSON):
 ${params.sceneSpecJson}
 
-INSTRUCCIONES:
+═══════════════════════════════════════════════════════════════
+📍 SCENE SITUATION - OBLIGATORIO (8-12 LÍNEAS MÍNIMO)
+═══════════════════════════════════════════════════════════════
+Tu escena DEBE incluir estos 7 elementos en la descripción de acción:
+
+1. ATMÓSFERA: Tiempo, luz, sonido ambiente, sensación física del espacio
+2. INTENCIÓN DRAMÁTICA: ¿Qué DEBE sentir el espectador aquí?
+3. MICROCONFLICTO: Tensión específica de ESTA escena
+4. SUBTEXTO: Lo que NO se dice pero se comunica
+5. BLOCKING: Posición y movimiento de personajes en el espacio
+6. RITMO: Lento/tenso/acelerado/contemplativo
+7. HOOK DE CIERRE: ¿Qué empuja a la siguiente escena?
+
+⚠️ NO ACEPTABLE:
+- "Juan entra y habla con María" → VAGO
+- "Tienen una conversación tensa" → SIN ESPECIFICIDAD
+
+✅ ACEPTABLE:
+- Descripciones sensoriales, posiciones concretas, silencios medidos
+
+═══════════════════════════════════════════════════════════════
+
+INSTRUCCIONES ADICIONALES:
 - Escribe la escena en formato guion (slugline, acción, diálogos).
 - Mantén continuidad con objective/conflict/turn.
-- No inventes nuevos personajes. Si imprescindible, crea "NEW CHARACTER (TEMP)" y marca con [TEMP].
-- Longitud objetivo: ${params.targetLines} líneas aprox.
+- No inventes nuevos personajes. Si imprescindible, marca con [TEMP].
+- Longitud objetivo: ${params.targetLines} líneas aprox (mínimo 8 de descripción).
 - No añadas notas ni explicación.
 - Idioma: ${params.language || 'es-ES'}
 

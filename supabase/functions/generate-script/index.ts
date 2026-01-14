@@ -1396,6 +1396,27 @@ ${sourceText}
 6. Si necesitas entidad nueva → añádela a "new_entities_requested", NO la uses
 7. Si algo no está claro → añádelo a "uncertainties"
 
+═══════════════════════════════════════════════════════════════
+📍 SCENE SITUATION - OBLIGATORIO POR ESCENA (8-12 LÍNEAS)
+═══════════════════════════════════════════════════════════════
+Cada escena DEBE incluir en su action_summary y raw_content:
+
+1. ATMÓSFERA: Tiempo, luz, sonido ambiente, sensación física del espacio
+2. INTENCIÓN DRAMÁTICA: ¿Qué DEBE sentir el espectador en este momento?
+3. MICROCONFLICTO: Tensión específica de ESTA escena (no el arco general)
+4. SUBTEXTO: Lo que NO se dice pero se comunica con miradas/silencios/gestos
+5. BLOCKING: Dónde está cada personaje, cómo se mueven, qué distancia hay entre ellos
+6. RITMO: ¿Lento/contemplativo? ¿Tenso/acelerado? ¿Absurdo/cómico?
+7. HOOK DE CIERRE: ¿Qué empuja al espectador a la siguiente escena?
+
+⚠️ NO ACEPTABLE:
+- "Juan entra y habla con María" → DEMASIADO VAGO
+- "Tienen una conversación tensa" → NO HAY ESPECIFICIDAD
+- "Se enfrentan por el pasado" → ABSTRACTO SIN IMAGEN
+
+✅ ACEPTABLE:
+- "Juan entra por la puerta trasera, PISANDO el charco de sangre sin darse cuenta. María, sentada de espaldas frente al espejo, lo observa por el reflejo pero no se gira. El ventilador del techo GIRA lentamente, cortando la luz en franjas. Juan: '¿Dónde está?' (tono neutro, pero sus manos tiemblan). María no responde. El silencio dura tres segundos. Solo el ZUMBIDO del ventilador."
+
 GENERA exactamente ${scenesPerBatch} escenas con V3 schema completo.`;
       
       userPrompt = `
