@@ -1,9 +1,11 @@
 /**
- * Storyboard Prompt Builder v1.0
+ * Storyboard Prompt Builder v2.0 - Professional Lock System
+ * 
+ * PRIORITY ORDER: STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL
  * 
  * Builds image prompts by concatenating blocks in strict order:
- * STYLE_PACK_LOCK + STORYBOARD_STYLE_LOCK + LOCATION_LOCK + CAST_LOCK + 
- * CHARACTER_DNA_LOCKS + PANEL_SPEC + CONTINUITY_LOCK + FAILSAFE_NEGATIVE
+ * SYSTEM_CONTEXT + STYLE_PACK_LOCK + STORYBOARD_STYLE_LOCK + LOCATION_LOCK + 
+ * CHARACTER_PACK_LOCK + PANEL_SPEC + CONTINUITY_LOCK + EXTENDED_NEGATIVE
  */
 
 // ============================================================================
@@ -48,6 +50,25 @@ export interface PanelSpec {
   };
 }
 
+// ============================================================================
+// CHARACTER PACK LOCK DATA (v2.0)
+// ============================================================================
+
+export interface CharacterPackLockData {
+  id: string;
+  name: string;
+  role?: string;
+  age?: string | number;
+  height?: string;
+  body_type?: string;
+  face_description?: string;
+  hair_description?: string;
+  wardrobe_lock?: string;
+  reference_frontal?: string;
+  reference_profile?: string;
+  has_approved_pack: boolean;
+}
+
 export interface BuildStoryboardPromptOptions {
   storyboard_style: 'GRID_SHEET_V1' | 'TECH_PAGE_V1';
   style_pack_lock: StylePackLock;
@@ -55,6 +76,8 @@ export interface BuildStoryboardPromptOptions {
   cast: CharacterLock[];
   characters_present_ids: string[];
   panel_spec: PanelSpec;
+  // v2.0: Enhanced Character Pack Data
+  character_pack_data?: CharacterPackLockData[];
 }
 
 // ============================================================================
@@ -66,6 +89,8 @@ const GRID_SHEET_STYLE_BLOCK = `STORYBOARD_STYLE_LOCK: GRID_SHEET_V1
 - Paper: subtle off-white texture, light grain, no heavy stains
 - Readability: clear silhouettes, correct perspective, no warped anatomy
 - Lighting: simple value structure (3-5 tones), avoid full rendering
+- Annotations: hand-drawn arrows for movement and camera
+- Labels: panel code (P1, P2...), shot type (PG, PM, PMC, 2SHOT)
 - No color. Grayscale pencil only.`;
 
 const TECH_PAGE_STYLE_BLOCK = `STORYBOARD_STYLE_LOCK: TECH_PAGE_V1
@@ -74,24 +99,97 @@ const TECH_PAGE_STYLE_BLOCK = `STORYBOARD_STYLE_LOCK: TECH_PAGE_V1
 - Allow simple movement arrows and blocking diagrams
 - Clean layout, readable. Grayscale pencil only.`;
 
-const FAILSAFE_NEGATIVE_BLOCK = `FAILSAFE_NEGATIVE:
-- No photorealism, no 3D render, no color illustration
-- No distorted faces, no extra limbs, no broken perspective
-- No random wardrobe changes, no age shifts
-- No modern digital concept art
-- Must be storyboard pencil sketch`;
-
 const DEFAULT_STORYBOARD_STYLE_PACK = `- Storyboard look: professional pencil storyboard, grayscale, clean linework
 - Paper: subtle off-white texture, light grain
 - Readability: clear silhouettes, correct perspective
 - Lighting: simple value structure (3-5 tones)`;
 
 // ============================================================================
-// MAIN BUILDER FUNCTION
+// EXTENDED NEGATIVE PROMPT (v2.0)
+// ============================================================================
+
+const EXTENDED_NEGATIVE_BLOCK = `NEGATIVE (NEVER GENERATE):
+- wrong character age
+- generic child / adult with wrong proportions
+- incorrect facial features
+- different hairstyle than reference
+- different clothing than wardrobe lock
+- missing storyboard labels (P1, P2...)
+- colored illustration
+- cinematic lighting (keep flat storyboard lighting)
+- depth of field effects
+- photorealism or 3D render
+- fantasy/stylized art style
+- AI artifacts (extra limbs, distorted faces, melted features)
+- concept art finish (must be pencil sketch)
+- invented characters not in cast list
+- background characters with detailed faces (should be silhouettes)`;
+
+// ============================================================================
+// CHARACTER PACK LOCK BUILDER (v2.0)
+// ============================================================================
+
+/**
+ * Builds the CHARACTER PACK LOCK block for storyboard prompts.
+ * This is the single source of truth for character identity.
+ */
+export function buildCharacterPackLockBlock(characters: CharacterPackLockData[]): string {
+  if (!characters || characters.length === 0) {
+    return `CHARACTER PACK (ONLY THESE MAY APPEAR):
+No characters defined. Render all figures as neutral silhouettes.
+
+NO OTHER CHARACTERS MAY APPEAR.
+If any person is in the scene without data, draw SILHOUETTE only.`;
+  }
+
+  const charBlocks = characters.map(char => {
+    const lines: string[] = [
+      `CHARACTER ID: ${char.id}`,
+      `NAME: ${char.name}`,
+    ];
+    
+    if (char.role) lines.push(`ROLE: ${char.role}`);
+    if (char.age) lines.push(`AGE: ${char.age} (STRICT - DO NOT CHANGE)`);
+    if (char.height) lines.push(`HEIGHT: ${char.height}`);
+    if (char.body_type) lines.push(`BODY TYPE: ${char.body_type}`);
+    if (char.face_description) lines.push(`FACE: ${char.face_description}`);
+    if (char.hair_description) lines.push(`HAIR: ${char.hair_description}`);
+    if (char.wardrobe_lock) lines.push(`CLOTHING (LOCKED): ${char.wardrobe_lock}`);
+    
+    lines.push('REFERENCES:');
+    lines.push(char.reference_frontal ? '- frontal reference approved ✓' : '- frontal reference MISSING (use silhouette for face)');
+    lines.push(char.reference_profile ? '- profile reference approved ✓' : '- profile reference MISSING');
+    
+    lines.push('IDENTITY RULES:');
+    lines.push('- Must match approved pack visuals exactly');
+    lines.push('- No redesign of facial features');
+    lines.push('- No age shift (STRICT)');
+    lines.push('- No proportion change');
+    lines.push('- No wardrobe change from lock');
+    
+    return lines.join('\n');
+  }).join('\n\n---\n\n');
+
+  return `CHARACTER PACK (ONLY THESE MAY APPEAR):
+
+${charBlocks}
+
+═══════════════════════════════════════════════════════════════
+ABSOLUTE RULES:
+- NO OTHER CHARACTERS MAY APPEAR IN THIS STORYBOARD.
+- Background figures ONLY if explicitly allowed, and ONLY as silhouettes/blur.
+- If character data is missing, render as SILHOUETTE only - never invent features.
+- Unknown persons = faceless silhouette/blur.
+═══════════════════════════════════════════════════════════════`;
+}
+
+// ============================================================================
+// MAIN BUILDER FUNCTION (v2.0)
 // ============================================================================
 
 /**
  * Builds the complete image prompt by concatenating blocks in strict order
+ * PRIORITY: STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL
  */
 export function buildStoryboardImagePrompt(options: BuildStoryboardPromptOptions): string {
   const {
@@ -101,10 +199,17 @@ export function buildStoryboardImagePrompt(options: BuildStoryboardPromptOptions
     cast,
     characters_present_ids,
     panel_spec,
+    character_pack_data,
   } = options;
 
+  // 0. PRIORITY CONTEXT (v2.0)
+  const priorityBlock = `═══════════════════════════════════════════════════════════════
+PRIORITY ORDER (if any instruction conflicts):
+STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL DESCRIPTION
+═══════════════════════════════════════════════════════════════`;
+
   // 1. STYLE_PACK_LOCK (global)
-  const stylePackBlock = `STYLE_PACK_LOCK (GLOBAL):
+  const stylePackBlock = `STYLE_PACK_LOCK (GLOBAL - HIGHEST PRIORITY):
 ${style_pack_lock.text || DEFAULT_STORYBOARD_STYLE_PACK}`;
 
   // 2. STORYBOARD_STYLE_LOCK
@@ -119,34 +224,39 @@ ${location_lock.visual_lock.text}
 Reference images: ${location_lock.reference_images.length > 0 ? location_lock.reference_images.join(', ') : 'none'}`
     : '';
 
-  // 4. CAST_LOCK
-  const castBlock = `CAST_LOCK (ONLY THESE CHARACTERS MAY APPEAR):
-${cast.map(c => `- CharacterID: ${c.id} | Name: ${c.name}`).join('\n')}`;
-
-  // 5. CHARACTER_DNA_LOCKS (only for characters_present)
-  const presentChars = cast.filter(c => characters_present_ids.includes(c.id));
-  const missingDnaChars: string[] = [];
+  // 4. CHARACTER PACK LOCK (v2.0 - replaces old CAST_LOCK + DNA_LOCKS)
+  let characterPackBlock: string;
   
-  const dnaBlocks = presentChars.map(c => {
-    const hasRefs = c.reference_images.length > 0;
-    const hasDna = c.visual_dna_lock?.text && c.visual_dna_lock.text !== 'No DNA available';
+  if (character_pack_data && character_pack_data.length > 0) {
+    // Use enhanced character pack data
+    const presentCharData = character_pack_data.filter(c => characters_present_ids.includes(c.id));
+    characterPackBlock = buildCharacterPackLockBlock(presentCharData);
+  } else {
+    // Fallback to legacy cast lock format
+    const presentChars = cast.filter(c => characters_present_ids.includes(c.id));
+    const missingDnaChars: string[] = [];
     
-    if (!hasRefs && !hasDna) {
-      missingDnaChars.push(c.name);
-      return `Character ${c.name} (${c.id}): DNA/REFS MISSING - render as SILHOUETTE/BACK VIEW only`;
-    }
-    
-    return `Character ${c.name} (${c.id}) MUST MATCH:
+    const dnaBlocks = presentChars.map(c => {
+      const hasRefs = c.reference_images.length > 0;
+      const hasDna = c.visual_dna_lock?.text && c.visual_dna_lock.text !== 'No DNA available';
+      
+      if (!hasRefs && !hasDna) {
+        missingDnaChars.push(c.name);
+        return `Character ${c.name} (${c.id}): DNA/REFS MISSING - render as SILHOUETTE/BACK VIEW only`;
+      }
+      
+      return `Character ${c.name} (${c.id}) MUST MATCH:
 ${c.visual_dna_lock?.text || 'Use reference images only'}
 Reference images: ${c.reference_images.length > 0 ? c.reference_images.join(', ') : 'none'}`;
-  }).join('\n\n');
+    }).join('\n\n');
 
-  const characterDnaBlock = `CHARACTER_DNA_LOCKS:
+    characterPackBlock = `CHARACTER PACK (ONLY THESE MAY APPEAR):
 ${dnaBlocks || 'No characters in this panel.'}
 
 HARD RULE: Do NOT invent new characters. Unknown persons = faceless silhouette/blur.`;
+  }
 
-  // 6. PANEL_SPEC
+  // 5. PANEL_SPEC
   const movementArrowsText = panel_spec.staging.movement_arrows.length > 0
     ? panel_spec.staging.movement_arrows.map(a => `${a.subject} ${a.direction}`).join('; ')
     : 'none';
@@ -162,25 +272,26 @@ Props: ${panel_spec.props_present.join(', ') || 'none'}
 StagingNotes: ${panel_spec.staging.spatial_info || 'none'}
 MovementArrows: ${movementArrowsText}`;
 
-  // 7. CONTINUITY_LOCK
+  // 6. CONTINUITY_LOCK
   const continuityBlock = `CONTINUITY_LOCK:
 - Keep continuity with previous panels: ${panel_spec.continuity.must_match_previous.join(', ') || 'none specified'}
 - Do not change: ${panel_spec.continuity.do_not_change.join(', ') || 'none specified'}
-- Respect 180-degree axis: ${panel_spec.staging.axis_180.screen_direction}`;
+- Respect 180-degree axis: ${panel_spec.staging.axis_180.screen_direction}
+- Maintain spatial relations between characters`;
 
-  // 8. FAILSAFE_NEGATIVE
-  const failsafeBlock = FAILSAFE_NEGATIVE_BLOCK;
+  // 7. EXTENDED NEGATIVE (v2.0)
+  const negativeBlock = EXTENDED_NEGATIVE_BLOCK;
 
-  // Concatenate in order
+  // Concatenate in priority order
   return [
+    priorityBlock,
     stylePackBlock,
     storyboardStyleBlock,
     locationBlock,
-    castBlock,
-    characterDnaBlock,
+    characterPackBlock,
     panelBlock,
     continuityBlock,
-    failsafeBlock,
+    negativeBlock,
   ].filter(Boolean).join('\n\n');
 }
 
@@ -234,7 +345,7 @@ export function getDefaultStylePackLock(): StylePackLock {
 }
 
 /**
- * Validates if a character has sufficient DNA/refs for rendering
+ * Validates if a character has sufficient DNA/refs for rendering (legacy)
  */
 export function validateCharacterDNA(char: CharacterLock): {
   valid: boolean;
@@ -261,12 +372,85 @@ export function validateCharacterDNA(char: CharacterLock): {
 }
 
 // ============================================================================
-// GPT-5.2 STORYBOARD PLANNER PROMPTS
+// CHARACTER PACK VALIDATION (v2.0)
 // ============================================================================
+
+/**
+ * Validates character pack data for storyboard generation.
+ * Returns blockers (must fix) and warnings (can proceed but suboptimal).
+ */
+export function validateCharacterPackForStoryboard(
+  characters: CharacterPackLockData[]
+): { 
+  valid: boolean; 
+  blockers: string[]; 
+  warnings: string[];
+} {
+  const blockers: string[] = [];
+  const warnings: string[] = [];
+
+  for (const char of characters) {
+    // Critical: must have frontal reference for identity
+    if (!char.reference_frontal) {
+      blockers.push(`${char.name}: Missing frontal reference (REQUIRED for identity)`);
+    }
+    
+    // Important but not blocking
+    if (!char.has_approved_pack) {
+      warnings.push(`${char.name}: No approved reference pack - identity may vary`);
+    }
+    if (!char.age) {
+      warnings.push(`${char.name}: Age not specified - may cause proportion issues`);
+    }
+    if (!char.wardrobe_lock) {
+      warnings.push(`${char.name}: No wardrobe lock - clothing may vary between panels`);
+    }
+    if (!char.reference_profile) {
+      warnings.push(`${char.name}: Missing profile reference - side views may be inconsistent`);
+    }
+  }
+
+  return {
+    valid: blockers.length === 0,
+    blockers,
+    warnings,
+  };
+}
+
+// ============================================================================
+// GPT-5.2 STORYBOARD PLANNER PROMPTS (v2.0)
+// ============================================================================
+
+export const STORYBOARD_ARTIST_SYSTEM_PROMPT = `You are a PROFESSIONAL FILM STORYBOARD ARTIST working in pre-production.
+
+This is NOT concept art.
+This is NOT character design.
+This is NOT creative illustration.
+
+Your job is to produce TECHNICAL STORYBOARD PANELS that strictly follow:
+- the provided STYLE PACK
+- the provided CHARACTER PACK
+- the provided CONTINUITY RULES
+
+ABSOLUTE RULES:
+- NEVER invent characters.
+- NEVER change age, body proportions, or identity.
+- ONLY draw characters explicitly listed in the CHARACTER PACK.
+- If character data is missing or unclear, draw a neutral silhouette and flag a warning internally.
+- Respect cinematic grammar (shot size, axis, staging).
+- Respect storyboard conventions: framing, arrows, labels, notes.
+
+PRIORITY ORDER (if any instruction conflicts):
+STYLE PACK > CHARACTER PACK > CONTINUITY > PANEL DESCRIPTION`;
 
 export const STORYBOARD_PLANNER_SYSTEM_PROMPT = `You are a storyboard planner for film/animation.
 Output MUST be valid JSON only. No markdown. No commentary.
-You MUST follow constraints and never invent characters outside the provided cast list.`;
+
+ABSOLUTE RULES:
+- You MUST follow constraints and NEVER invent characters outside the provided cast list.
+- characters_present MUST contain ONLY character IDs from the cast list provided.
+- If a character is not in the cast list, they CANNOT appear.
+- Background figures should be marked as "silhouettes" in staging, never given identity.`;
 
 export function buildStoryboardPlannerUserPrompt(options: {
   storyboard_style: string;
@@ -285,24 +469,27 @@ INPUTS:
 - storyboard_style: ${options.storyboard_style}
 - panel_count: ${options.panel_count}
 - style_pack_lock (global): ${options.style_pack_lock_text}
-- cast (allowed characters): ${options.cast_list}
+- cast (ONLY ALLOWED characters): ${options.cast_list}
 - location_lock: ${options.location_lock_text}
 - screenplay_context:
   slugline: ${options.slugline}
   summary: ${options.scene_summary}
   dialogue: ${options.scene_dialogue || 'none'}
 
-HARD RULES:
-1) characters_present must contain ONLY ids from cast list.
-2) If DNA/ref missing for a character, still list the character but rendering will use silhouette/back view.
-3) Each panel must include:
+═══════════════════════════════════════════════════════════════
+HARD RULES (MANDATORY):
+═══════════════════════════════════════════════════════════════
+1) characters_present MUST contain ONLY ids from the cast list above.
+2) If DNA/ref missing for a character, still list the character but note in staging that rendering will use silhouette/back view.
+3) DO NOT invent new characters. If the scene needs extras, do NOT list them in characters_present - they will be rendered as silhouettes automatically.
+4) Each panel must include:
    - panel_no (1-based integer)
    - panel_code (P1, P2, P3...)
    - shot_hint (one of: PG, PM, PMC, PP, 2SHOT, OTS, TOP, LOW, TRACK, INSERT, MONTAGE)
    - panel_intent (why this panel exists - 1 sentence)
    - action (visual action description - 1-2 sentences)
    - dialogue_snippet (short quote if relevant, else null)
-   - characters_present (array of character ids from cast)
+   - characters_present (array of character ids from cast ONLY)
    - props_present (array of prop names as strings)
    - staging: {
        schema_version: "1.0",
@@ -313,7 +500,7 @@ HARD RULES:
    - continuity: {
        schema_version: "1.0",
        must_match_previous: ["hair", "wardrobe", "scale", "line_weight"],
-       do_not_change: ["age", "species", "gender_presentation"]
+       do_not_change: ["age", "species", "gender_presentation", "facial_features"]
      }
 
 OUTPUT FORMAT:
@@ -325,5 +512,6 @@ Return a JSON object with a "panels" array containing exactly ${options.panel_co
   ]
 }
 
-Generate panels that tell the scene clearly and cinematically, respecting 180° axis when possible.`;
+Generate panels that tell the scene clearly and cinematically, respecting 180° axis when possible.
+REMEMBER: Only use character IDs from the cast list. Never invent characters.`;
 }
