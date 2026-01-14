@@ -61,6 +61,20 @@ interface OutlineRecord {
   narrative_mode?: string;
   genre?: string;
   tone?: string;
+  // V11.2: Density targets from user configuration
+  density_targets?: {
+    protagonists_min?: number;
+    supporting_min?: number;
+    extras_min?: number;
+    locations_min?: number;
+    hero_props_min?: number;
+    setpieces_min?: number;
+    subplots_min?: number;
+    twists_min?: number;
+    scenes_target?: number;
+    scenes_per_episode?: number;
+    dialogue_action_ratio?: string;
+  } | null;
 }
 
 // Substep lock structure for idempotent resumability
@@ -389,8 +403,48 @@ const EPISODES_TOOL_SCHEMA = {
 // SYSTEM PROMPTS
 // ============================================================================
 
-const PART_A_SYSTEM = `Eres showrunner técnico. Produces estructura accionable, no un pitch vago.
+// V11.2: Build density block from user targets
+function buildDensityBlock(targets: OutlineRecord['density_targets']): string {
+  if (!targets) return '';
+  return `
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+DENSIDAD NARRATIVA (OBLIGATORIO - QC RECHAZARÁ SI NO SE CUMPLE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Protagonistas: MÍNIMO ${targets.protagonists_min || 3}
+- Secundarios: MÍNIMO ${targets.supporting_min || 10}
+- Extras con diálogo: MÍNIMO ${targets.extras_min || 15}
+- Localizaciones: MÍNIMO ${targets.locations_min || 8}
+- Props clave: MÍNIMO ${targets.hero_props_min || 5}
+- Setpieces visuales: MÍNIMO ${targets.setpieces_min || 4}
+- Subtramas: MÍNIMO ${targets.subplots_min || 3}
+- Giros por episodio: MÍNIMO ${targets.twists_min || 2}
+${targets.scenes_target ? `- Escenas totales: OBJETIVO ${targets.scenes_target}` : ''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+}
+
+// V11.2: Build PART_A system prompt with mandatory genre/tone enforcement
+function buildPartASystem(genre: string, tone: string, densityTargets?: OutlineRecord['density_targets']): string {
+  const genreUpper = (genre || 'Drama').toUpperCase();
+  const isComedy = genre?.toLowerCase().includes('comed');
+  
+  return `Eres showrunner técnico. Produces estructura accionable, no un pitch vago.
 No inventes elementos fuera del material. Prohibidas frases genéricas.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+GÉNERO OBLIGATORIO: ${genreUpper}
+TONO OBLIGATORIO: ${tone || 'Cinematográfico'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ PROHIBIDO cambiar el género o tono bajo ninguna circunstancia.
+${isComedy ? `
+INSTRUCCIONES ESPECÍFICAS PARA COMEDIA:
+- Situaciones absurdas pero coherentes con el mundo
+- Diálogos con timing cómico (setup → punchline)
+- Consecuencias irónicas de las decisiones
+- Personajes con quirks exagerados pero creíbles
+- Conflictos que escalen de forma ridícula
+- Cliffhangers que sean sorprendentes pero divertidos
+` : ''}
+${buildDensityBlock(densityTargets)}
 
 REGLAS ABSOLUTAS:
 - midpoint_reversal OBLIGATORIO y debe ser un EVENTO CONCRETO con agente.
@@ -398,6 +452,7 @@ REGLAS ABSOLUTAS:
 - cast mínimo 4 personajes, cada uno con WANT (lo que busca), NEED (lo que realmente necesita), FLAW (defecto dramático).
 - locations mínimo 3 con función dramática.
 - Devuelve SOLO JSON válido.`;
+}
 
 const EPISODES_SYSTEM = `Eres showrunner. Cada episodio requiere conflicto central, 4 turning points concretos y cliffhanger.
 
@@ -685,7 +740,8 @@ async function stageOutlineFanOut(
   
   const genre = outline.genre || 'Drama';
   const tone = outline.tone || 'Cinematográfico';
-  const config = { episodesCount, genre, tone, midpoint };
+  const densityTargets = outline.density_targets;  // V11.2: Get density targets
+  const config = { episodesCount, genre, tone, midpoint, densityTargets };
 
   console.log(`[WORKER] Stage OUTLINE FAN-OUT: ${episodesCount} episodes, midpoint at ${midpoint}`);
 
@@ -705,13 +761,14 @@ async function stageOutlineFanOut(
       });
       
       const partAPrompt = buildPartAPrompt(summaryText, episodesCount, genre, tone);
+      const partASystem = buildPartASystem(genre, tone, densityTargets);  // V11.2: Use dynamic system prompt
       
       // V11.1: Use executeWithFallback for PART_A with specific timeout
       const result = await executeWithFallback(
         async (model, timeout) => {
           const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
             supabase, outline.id,
-            PART_A_SYSTEM, partAPrompt,
+            partASystem, partAPrompt,  // V11.2: Use dynamic system prompt instead of static
             model, 4000,
             'deliver_part_a', PART_A_TOOL_SCHEMA, 'arc',
             timeout
