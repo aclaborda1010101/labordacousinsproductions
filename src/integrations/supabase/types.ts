@@ -5172,11 +5172,13 @@ export type Database = {
           characters_present: string[] | null
           continuity: Json | null
           created_at: string | null
+          dialogue_snippet: string | null
           id: string
           image_error: string | null
           image_prompt: string | null
           image_status: string | null
           image_url: string | null
+          location_id: string | null
           notes: string | null
           panel_code: string | null
           panel_intent: string | null
@@ -5194,11 +5196,13 @@ export type Database = {
           characters_present?: string[] | null
           continuity?: Json | null
           created_at?: string | null
+          dialogue_snippet?: string | null
           id?: string
           image_error?: string | null
           image_prompt?: string | null
           image_status?: string | null
           image_url?: string | null
+          location_id?: string | null
           notes?: string | null
           panel_code?: string | null
           panel_intent?: string | null
@@ -5216,11 +5220,13 @@ export type Database = {
           characters_present?: string[] | null
           continuity?: Json | null
           created_at?: string | null
+          dialogue_snippet?: string | null
           id?: string
           image_error?: string | null
           image_prompt?: string | null
           image_status?: string | null
           image_url?: string | null
+          location_id?: string | null
           notes?: string | null
           panel_code?: string | null
           panel_intent?: string | null
@@ -5233,6 +5239,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "storyboard_panels_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "storyboard_panels_project_id_fkey"
             columns: ["project_id"]
