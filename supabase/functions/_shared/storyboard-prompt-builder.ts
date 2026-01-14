@@ -277,6 +277,43 @@ const DEFAULT_STORYBOARD_STYLE_PACK = `- Storyboard look: professional pencil st
 - Lighting: simple value structure (3-5 tones)`;
 
 // ============================================================================
+// STAGING PROMPT (Paso A) - Composition without finalized face
+// ============================================================================
+
+/**
+ * STAGING_PROMPT - Used for Paso A of 2-step pipeline
+ * Generates composition, camera, blocking WITHOUT finalizing character faces
+ */
+export const STAGING_PROMPT_BLOCK = `
+═══════════════════════════════════════════════════════════════════════════════
+STAGING PASS (PASO A) - COMPOSITION FIRST
+═══════════════════════════════════════════════════════════════════════════════
+
+Generate ONE storyboard panel focusing on COMPOSITION ONLY.
+
+FOCUS ON:
+✓ Camera angle and framing
+✓ Character blocking and positioning
+✓ Environment and set dressing
+✓ Props placement
+✓ Motion clarity and staging
+✓ Overall composition balance
+
+CHARACTER RENDERING (SIMPLIFIED):
+• Keep character identity GENERIC in facial details
+• Minimal facial detail is acceptable (simple features, no finalized face)
+• Correct pose, silhouette, and proportions
+• Outfit silhouette must be correct
+• Do NOT finalize face details - just basic shapes
+
+WHY: The face will be corrected in a separate Identity Fix pass.
+This allows the model to focus on composition without fighting identity constraints.
+
+STYLE: Follow the locked storyboard style preset exactly.
+FORMAT: 16:9 (enforced by system).
+═══════════════════════════════════════════════════════════════════════════════`;
+
+// ============================================================================
 // EXTENDED NEGATIVE PROMPT (v3.0 - ENHANCED WITH FORMAT GUARDS)
 // ============================================================================
 
