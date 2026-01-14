@@ -3,8 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface PanelStatus {
   panel_no: number;
+  panel_id: string;
   status: 'pending' | 'generating' | 'success' | 'error';
   error?: string;
+  errorSince?: number; // timestamp when error was first detected
 }
 
 interface StoryboardProgress {
@@ -15,10 +17,13 @@ interface StoryboardProgress {
   elapsedSeconds: number;
   estimatedRemainingMs: number;
   totalPanels: number;
+  panelsToRetry: PanelStatus[];
+  markAsRetried: (panelId: string) => void;
 }
 
-const AVERAGE_PLANNING_TIME_MS = 15000; // ~15s for GPT-5.2 planning
-const AVERAGE_IMAGE_TIME_MS = 28000; // ~28s per panel image
+const AVERAGE_PLANNING_TIME_MS = 15000;
+const AVERAGE_IMAGE_TIME_MS = 28000;
+const AUTO_RETRY_DELAY_MS = 30000; // 30 seconds before auto-retry
 
 export function useStoryboardProgress(
   sceneId: string, 
@@ -34,6 +39,8 @@ export function useStoryboardProgress(
   
   const startTimeRef = useRef<number | null>(null);
   const completedTimesRef = useRef<number[]>([]);
+  const errorTimestampsRef = useRef<Map<string, number>>(new Map()); // track when errors first occurred
+  const retriedPanelsRef = useRef<Set<string>>(new Set()); // track panels already retried
 
   // Track elapsed time
   useEffect(() => {
@@ -70,7 +77,7 @@ export function useStoryboardProgress(
       try {
         const { data, error } = await supabase
           .from('storyboard_panels')
-          .select('panel_no, image_status, image_error')
+          .select('id, panel_no, image_status, image_error')
           .eq('scene_id', sceneId)
           .order('panel_no');
 
@@ -88,23 +95,34 @@ export function useStoryboardProgress(
 
         // We have panels - update total count
         setTotalPanels(data.length);
+        
+        const now = Date.now();
 
-        // Map to status objects
+        // Map to status objects with error tracking
         const statuses: PanelStatus[] = data.map(panel => {
           let status: PanelStatus['status'] = 'pending';
           
           if (panel.image_status === 'success') {
             status = 'success';
+            // Clear error timestamp if it was previously in error
+            errorTimestampsRef.current.delete(panel.id);
           } else if (panel.image_status === 'generating') {
             status = 'generating';
+            errorTimestampsRef.current.delete(panel.id);
           } else if (panel.image_status === 'error') {
             status = 'error';
+            // Track when error first occurred
+            if (!errorTimestampsRef.current.has(panel.id)) {
+              errorTimestampsRef.current.set(panel.id, now);
+            }
           }
 
           return {
             panel_no: panel.panel_no,
+            panel_id: panel.id,
             status,
             error: panel.image_error || undefined,
+            errorSince: errorTimestampsRef.current.get(panel.id),
           };
         });
 
@@ -177,6 +195,18 @@ export function useStoryboardProgress(
     return remainingPanels * AVERAGE_IMAGE_TIME_MS;
   }, [panelStatuses, totalPanels, currentPhase]);
 
+  // Calculate panels ready for auto-retry (in error for 30+ seconds, not already retried)
+  const panelsToRetry = panelStatuses.filter(p => {
+    if (p.status !== 'error' || !p.errorSince) return false;
+    if (retriedPanelsRef.current.has(p.panel_id)) return false;
+    return (Date.now() - p.errorSince) >= AUTO_RETRY_DELAY_MS;
+  });
+
+  // Mark panels as retried when they're returned for retry
+  const markAsRetried = useCallback((panelId: string) => {
+    retriedPanelsRef.current.add(panelId);
+  }, []);
+
   return {
     panelStatuses,
     currentPhase,
@@ -185,5 +215,7 @@ export function useStoryboardProgress(
     elapsedSeconds,
     estimatedRemainingMs: estimatedRemainingMs(),
     totalPanels,
+    panelsToRetry,
+    markAsRetried,
   };
 }
