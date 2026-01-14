@@ -168,6 +168,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [scriptHistory, setScriptHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [deletingScript, setDeletingScript] = useState(false);
+  
+  // Delete all project data state
+  const [deletingAllData, setDeletingAllData] = useState(false);
 
   // Form state
   const [ideaText, setIdeaText] = useState('');
@@ -1999,6 +2002,88 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       toast.success('Outline eliminado correctamente');
     } else {
       toast.error('Error al eliminar el outline');
+    }
+  };
+
+  // Handler to delete ALL project data and start fresh
+  const handleDeleteAllProjectData = async () => {
+    setDeletingAllData(true);
+    try {
+      // Order matters: delete in dependency order (children first)
+      const tables = [
+        'dialogues',           // Depends on scenes
+        'storyboard_panels',   // Depends on storyboards
+        'storyboards',         // Depends on scenes
+        'shots',               // Depends on scenes
+        'scenes',              // Depends on scripts
+        'scripts',             // Main script data
+        'script_breakdowns',   // Auxiliary
+        'character_pack_slots', // Depends on characters
+        'character_visual_dna', // Depends on characters
+        'character_outfits',    // Depends on characters
+        'character_reference_anchors', // Depends on characters
+        'reference_anchors',    // Depends on characters
+        'characters',           // Base entity
+        'locations',            // Base entity
+        'props',                // Base entity
+        'project_outlines',     // Narrative structure
+        'generation_runs',      // Logs
+        'batch_runs',           // Logs
+        'batch_run_items',      // Logs
+      ];
+
+      let errors: string[] = [];
+      
+      for (const table of tables) {
+        const { error } = await supabase
+          .from(table as any)
+          .delete()
+          .eq('project_id', projectId);
+        
+        if (error) {
+          console.warn(`[DeleteAll] Error deleting from ${table}:`, error.message);
+          errors.push(table);
+        }
+      }
+
+      // Clear local state
+      setLightOutline(null);
+      setOutlineApproved(false);
+      setGeneratedScript(null);
+      setScriptText('');
+      setCurrentScriptId(null);
+      setScriptLocked(false);
+      setGeneratedEpisodesList([]);
+      setBibleCharacters([]);
+      setBibleLocations([]);
+      setBreakdownPro(null);
+      setScenesCount(0);
+      setDensityGateResult(null);
+      setGenerationState(null);
+      setBatchPlans([]);
+      
+      // Clear localStorage pipeline state
+      clearPipelineState();
+      
+      // Clear draft persistence
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {}
+      
+      if (errors.length > 0) {
+        toast.warning(`Proyecto limpiado con algunos errores en: ${errors.join(', ')}`);
+      } else {
+        toast.success('Proyecto limpiado completamente. Puedes empezar de cero.');
+      }
+      
+      // Trigger parent refresh if available
+      if (onScenesCreated) onScenesCreated();
+      
+    } catch (error) {
+      console.error('[DeleteAll] Error:', error);
+      toast.error('Error al limpiar el proyecto');
+    } finally {
+      setDeletingAllData(false);
     }
   };
 
@@ -5337,11 +5422,56 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   <Button 
                     variant="destructive"
                     onClick={handleDeleteOutline}
-                    disabled={pipelineRunning || generatingOutline || upgradingOutline}
+                    disabled={pipelineRunning || generatingOutline || upgradingOutline || deletingAllData}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Borrar
                   </Button>
+                  
+                  {/* DELETE ALL - Nuclear reset */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline"
+                        className="border-destructive/50 text-destructive hover:bg-destructive/10"
+                        disabled={pipelineRunning || generatingOutline || deletingAllData}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Borrar TODO
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+                          <AlertTriangle className="w-5 h-5" />
+                          ¿Borrar TODO y empezar de cero?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="space-y-3">
+                          <p>Esta acción eliminará permanentemente:</p>
+                          <ul className="list-disc pl-6 text-sm space-y-1">
+                            <li>Outline y estructura narrativa</li>
+                            <li>Todos los guiones y escenas</li>
+                            <li>Personajes, locaciones y props</li>
+                            <li>Storyboards y renders</li>
+                            <li>Histórico de generaciones</li>
+                          </ul>
+                          <p className="font-medium text-destructive pt-2">
+                            El proyecto se mantendrá, pero completamente vacío. Esta acción NO se puede deshacer.
+                          </p>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={handleDeleteAllProjectData}
+                          className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                        >
+                          {deletingAllData && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                          Sí, borrar TODO
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </CardContent>
             </Card>
