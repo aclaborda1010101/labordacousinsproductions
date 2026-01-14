@@ -194,8 +194,37 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
     }));
   };
 
+  // Preload storyboard approval status for all scenes
+  const fetchAllStoryboardStatuses = async (sceneIds: string[]) => {
+    if (sceneIds.length === 0) return;
+    
+    const { data } = await supabase
+      .from('storyboard_panels')
+      .select('scene_id')
+      .in('scene_id', sceneIds)
+      .eq('approved', true);
+    
+    const approved: Record<string, boolean> = {};
+    sceneIds.forEach(id => { approved[id] = false; });
+    data?.forEach(p => { approved[p.scene_id] = true; });
+    
+    setStoryboardApproved(prev => ({ ...prev, ...approved }));
+  };
+
   useEffect(() => { 
-    fetchScenes();
+    const init = async () => {
+      setLoading(true);
+      const { data } = await supabase.from('scenes').select('*').eq('project_id', projectId).order('episode_no').order('scene_no');
+      setScenes(data || []);
+      
+      // Preload storyboard statuses for all scenes
+      if (data && data.length > 0) {
+        await fetchAllStoryboardStatuses(data.map(s => s.id));
+      }
+      setLoading(false);
+    };
+    init();
+    
     // Get project info including preferred engine
     supabase.from('projects').select('episodes_count, title, preferred_engine').eq('id', projectId).single().then(({ data }) => {
       if (data) {
@@ -1266,7 +1295,13 @@ export default function Scenes({ projectId, bibleReady }: ScenesProps) {
                               
                               <Tabs 
                                 value={activeSceneTab[scene.id] || 'screenplay'} 
-                                onValueChange={(val) => setActiveSceneTab(prev => ({...prev, [scene.id]: val}))}
+                                onValueChange={(val) => {
+                                  setActiveSceneTab(prev => ({...prev, [scene.id]: val}));
+                                  // Refresh storyboard status when switching to dependent tabs
+                                  if (val === 'camera_plan' || val === 'technical') {
+                                    fetchStoryboardStatus(scene.id);
+                                  }
+                                }}
                                 className="w-full"
                               >
                                 <TabsList className="mb-4">
