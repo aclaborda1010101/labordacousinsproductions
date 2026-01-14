@@ -74,7 +74,7 @@ serve(async (req) => {
         image_status
       `)
       .eq('id', panelId)
-      .single();
+      .maybeSingle();
 
     if (panelError || !panel) {
       console.error(`[regenerate-panel] Panel not found:`, panelError);
@@ -93,7 +93,7 @@ serve(async (req) => {
       .from('scenes')
       .select('id, project_id, slugline, summary, scene_no, episode_no, time_of_day, location_id, mood')
       .eq('id', panel.scene_id)
-      .single();
+      .maybeSingle();
 
     if (sceneError || !scene) {
       console.error(`[regenerate-panel] Scene not found:`, sceneError);
