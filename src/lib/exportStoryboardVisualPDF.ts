@@ -14,16 +14,57 @@ interface ExportVisualStoryboardParams {
   panels: StoryboardPanel[];
 }
 
-async function loadImageAsBase64(url: string): Promise<string | null> {
+interface ImageData {
+  data: string;
+  width: number;
+  height: number;
+}
+
+function fitImageInBox(
+  imgWidth: number,
+  imgHeight: number,
+  boxWidth: number,
+  boxHeight: number
+): { width: number; height: number; offsetX: number; offsetY: number } {
+  const imgRatio = imgWidth / imgHeight;
+  const boxRatio = boxWidth / boxHeight;
+
+  let finalWidth: number;
+  let finalHeight: number;
+
+  if (imgRatio > boxRatio) {
+    finalWidth = boxWidth;
+    finalHeight = boxWidth / imgRatio;
+  } else {
+    finalHeight = boxHeight;
+    finalWidth = boxHeight * imgRatio;
+  }
+
+  const offsetX = (boxWidth - finalWidth) / 2;
+  const offsetY = (boxHeight - finalHeight) / 2;
+
+  return { width: finalWidth, height: finalHeight, offsetX, offsetY };
+}
+
+async function loadImageWithDimensions(url: string): Promise<ImageData | null> {
   try {
     const response = await fetch(url);
     const blob = await response.blob();
-    return new Promise<string>((resolve) => {
+    const dataUrl = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = () => resolve(null as unknown as string);
+      reader.onerror = () => reject(new Error('Failed to read blob'));
       reader.readAsDataURL(blob);
     });
+
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = dataUrl;
+    });
+
+    return { data: dataUrl, width: img.naturalWidth, height: img.naturalHeight };
   } catch {
     return null;
   }
@@ -78,13 +119,13 @@ export async function exportStoryboardVisualPDF({
   const cellHeight = gridHeight / rows;
   const imgPadding = 3;
   const imgWidth = cellWidth - (imgPadding * 2);
-  const imgHeight = cellHeight - 16;
+  const imgHeight = cellHeight - 22; // More space for 2-line description
   
-  // Preload images as base64
+  // Preload images with dimensions
   const panelsToRender = panels.slice(0, 8);
   const imagePromises = panelsToRender.map(async (panel) => {
     if (!panel.image_url) return null;
-    return loadImageAsBase64(panel.image_url);
+    return loadImageWithDimensions(panel.image_url);
   });
   
   const images = await Promise.all(imagePromises);
@@ -110,7 +151,18 @@ export async function exportStoryboardVisualPDF({
     const imgData = images[index];
     if (imgData) {
       try {
-        doc.addImage(imgData, 'JPEG', x + 1, y + 1, imgWidth - 2, imgHeight - 2);
+        const boxW = imgWidth - 2;
+        const boxH = imgHeight - 2;
+        const fit = fitImageInBox(imgData.width, imgData.height, boxW, boxH);
+        
+        doc.addImage(
+          imgData.data,
+          'JPEG',
+          x + 1 + fit.offsetX,
+          y + 1 + fit.offsetY,
+          fit.width,
+          fit.height
+        );
       } catch {
         // Draw placeholder if image fails
         doc.setFillColor(40, 40, 45);
@@ -154,14 +206,23 @@ export async function exportStoryboardVisualPDF({
       doc.text(panel.shot_hint, x + imgWidth - hintWidth/2 - 2, y + 6, { align: 'center' });
     }
     
-    // Panel intent (below image)
-    const labelY = y + imgHeight + 4;
+    // Panel intent (below image) - with word wrap for 2 lines
+    const labelY = y + imgHeight + 5;
     doc.setTextColor(180, 180, 180);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
-    const intent = (panel.panel_intent || 'Sin descripción').substring(0, 50);
-    const displayIntent = intent + (panel.panel_intent && panel.panel_intent.length > 50 ? '...' : '');
-    doc.text(displayIntent, x, labelY);
+    
+    const intentText = panel.panel_intent || 'Sin descripción';
+    const maxWidth = imgWidth - 4;
+    const lines: string[] = doc.splitTextToSize(intentText, maxWidth);
+    
+    // Show max 2 lines with ellipsis if needed
+    const displayLines = lines.slice(0, 2);
+    if (lines.length > 2 && displayLines[1]) {
+      const lastLine = displayLines[1];
+      displayLines[1] = lastLine.length > 3 ? lastLine.substring(0, lastLine.length - 3) + '...' : lastLine;
+    }
+    doc.text(displayLines, x + 2, labelY);
   });
   
   // Footer
