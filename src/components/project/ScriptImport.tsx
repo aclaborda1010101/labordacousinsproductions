@@ -1,7 +1,16 @@
-import { useState, useEffect, forwardRef, useRef, useMemo } from 'react';
+import { useState, useEffect, forwardRef, useRef, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { invokeWithTimeout, InvokeFunctionError } from '@/lib/supabaseFetchWithTimeout';
+import {
+  type BatchPlan,
+  type GenerationState,
+  type DensityGateResult,
+  buildClientBatchPlan,
+  createInitialState,
+  updateGenerationStateClient,
+  validateBatchResult
+} from '@/lib/batchPlannerTypes';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -381,6 +390,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [regenerateEpisodeNo, setRegenerateEpisodeNo] = useState(1);
   const [regenerateEpisodeSynopsis, setRegenerateEpisodeSynopsis] = useState('');
+  
+  // V11.2: Batch Planner State - GATES + State Accumulation
+  const [batchPlans, setBatchPlans] = useState<BatchPlan[]>([]);
+  const [generationState, setGenerationState] = useState<GenerationState | null>(null);
+  const [densityGateResult, setDensityGateResult] = useState<DensityGateResult | null>(null);
+  const [showDensityGateModal, setShowDensityGateModal] = useState(false);
+  const [attemptsByBatch, setAttemptsByBatch] = useState<Record<number, number>>({});
   
   // V11: QC Status for visual gating
   const qcStatus = useMemo<QCStatus | null>(() => {
@@ -2163,6 +2179,49 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
+  // V11.2: DENSITY PRECHECK - Run before script generation
+  const runDensityPrecheck = useCallback(async (): Promise<DensityGateResult | null> => {
+    try {
+      const { data, error } = await invokeAuthedFunction('density-precheck', {
+        projectId,
+        formatProfile: format === 'film' ? 'pelicula_90min' : 'serie_drama',
+      });
+
+      if (error) {
+        // Handle 422/404 from backend as FAIL
+        const errorObj = error as any;
+        if (errorObj?.status === 422 || errorObj?.status === 404 || errorObj?.code?.includes('GATE_FAILED')) {
+          return {
+            status: 'FAIL',
+            density_score: errorObj.density_score || 0,
+            required_fixes: errorObj.required_fixes || [],
+            human_summary: errorObj.human_summary || errorObj.message || 'Densidad insuficiente',
+          };
+        }
+        throw error;
+      }
+
+      // Map backend response to our type
+      const checkResult = data?.check_result;
+      return {
+        status: data?.ok_to_generate ? 'PASS' : 'FAIL',
+        density_score: checkResult?.score || 100,
+        required_fixes: checkResult?.required_fixes || [],
+        human_summary: data?.human_summary || checkResult?.human_summary,
+        warnings: data?.recommendations,
+      };
+    } catch (err: any) {
+      console.error('[runDensityPrecheck] Error:', err);
+      // On network error, allow generation with warning
+      toast.warning('No se pudo verificar densidad, continuando con precaución...');
+      return {
+        status: 'WARN',
+        density_score: 0,
+        human_summary: 'Verificación de densidad no disponible',
+      };
+    }
+  }, [projectId, format]);
+
   // Fetch scenes count from DB
   const fetchScenesCount = async () => {
     if (!projectId) return;
@@ -2247,6 +2306,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, [projectId, lightOutline, bibleCharacters.length, bibleLocations.length, bibleLoading]);
 
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
+  // V11.2: Now includes DENSITY GATE + BATCH PLANNER + STATE ACCUMULATION
   const approveAndGenerateEpisodes = async () => {
     if (!lightOutline) return;
 
@@ -2259,6 +2319,29 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     // Refresh token to maximize validity for the pipeline
     await supabase.auth.refreshSession();
     console.log('[ScriptImport] Session refreshed before starting pipeline');
+
+    // ════════════════════════════════════════════════════════════════════════
+    // V11.2: DENSITY GATE - Block generation if outline doesn't meet minimums
+    // ════════════════════════════════════════════════════════════════════════
+    toast.info('Verificando densidad del outline...');
+    const densityResult = await runDensityPrecheck();
+    
+    if (!densityResult) {
+      toast.error('No se pudo verificar la densidad del outline');
+      return;
+    }
+    
+    setDensityGateResult(densityResult);
+    
+    if (densityResult.status === 'FAIL') {
+      console.warn('[DENSITY_GATE] BLOCKED:', densityResult);
+      setShowDensityGateModal(true);
+      return; // ← BLOCK generation until density is fixed
+    }
+    
+    if (densityResult.status === 'PASS') {
+      toast.success(`Densidad OK (score: ${densityResult.density_score})`);
+    }
 
     // PRE-FLIGHT: Ensure Bible has characters/locations before generating
     const bibleReady = await ensureBibleMaterialized();
@@ -2343,6 +2426,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     try {
       const episodes: any[] = [];
+      const MAX_REPAIR_ATTEMPTS = 2; // V11.2: Max repair attempts per batch
 
       for (let epNum = 1; epNum <= totalEpisodes; epNum++) {
         if (controller.signal.aborted) {
@@ -2352,6 +2436,29 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         setCurrentEpisodeGenerating(epNum);
         const episodeBeat = lightOutline.episode_beats?.[epNum - 1];
+
+        // ════════════════════════════════════════════════════════════════════
+        // V11.2: BUILD BATCH PLAN FOR THIS EPISODE
+        // ════════════════════════════════════════════════════════════════════
+        const episodeBatchPlan = buildClientBatchPlan(
+          epNum,
+          lightOutline,
+          BATCHES_PER_EPISODE,
+          SCENES_PER_BATCH
+        );
+        setBatchPlans(episodeBatchPlan);
+        console.log(`[V11.2] BatchPlan for Ep${epNum}:`, episodeBatchPlan.map(p => ({ 
+          batch: p.batchNumber, 
+          threads: p.requiredThreads, 
+          tps: p.requiredTurningPoints 
+        })));
+
+        // ════════════════════════════════════════════════════════════════════
+        // V11.2: INITIALIZE GENERATION STATE FOR THIS EPISODE
+        // ════════════════════════════════════════════════════════════════════
+        let episodeState: GenerationState = createInitialState();
+        setGenerationState(episodeState);
+        const batchAttempts: Record<number, number> = {};
 
         // Generate episode with dynamic batch count
         const allScenes: any[] = [];
@@ -2366,6 +2473,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         for (let batchIdx = 0; batchIdx < BATCHES_PER_EPISODE; batchIdx++) {
           if (controller.signal.aborted) break;
+
+          // V11.2: Get the batch plan for this batch
+          const currentPlan = episodeBatchPlan[batchIdx];
+          batchAttempts[batchIdx] = batchAttempts[batchIdx] || 0;
 
           // Add delay between batches based on tier rate limits
           if (batchIdx > 0) {
@@ -2382,117 +2493,197 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
           const t0 = Date.now();
           setEpisodeStartedAtMs(t0);
-
-          try {
-            const invokeBatch = async () => {
-              if (controller.signal.aborted) {
-                throw new Error('Aborted');
-              }
-              // V3.0: Call generate-script canonical router instead of legacy batch function
-              // V11.1: CRITICAL - projectId MUST be passed for Bible injection
-              return await invokeAuthedFunction('generate-script', {
-                projectId,  // ← P0 FIX: Required for Bible fetch
-                outline: { ...lightOutline, idea: ideaText },  // ← V11.2: Include ideaText for ADAPT_FROM_SOURCE mode
-                episodeNumber: epNum,
-                language,
-                batchIndex: batchIdx,
-                previousScenes: allScenes,
-                narrativeMode,
-                // Dynamic batch config
-                scenesPerBatch: SCENES_PER_BATCH,
-                totalBatches: BATCHES_PER_EPISODE,
-                isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1,
-                // V3.0: Quality tier instead of model selection
-                qualityTier,
-              });
-            };
-
-            const { data, error } = await retryWithBackoff(invokeBatch, {
-              maxRetries: 2,
-              initialDelayMs: 1500,
-              maxDelayMs: 12000,
-              retryOn: (e) => {
-                if (controller.signal.aborted) return false;
-                return (
-                  isRetryableError(e) ||
-                  (e instanceof Error &&
-                    /Failed to send a request to the Edge Function|Failed to fetch/i.test(e.message))
-                );
-              },
-              onRetry: (attempt, err, nextDelayMs) => {
-                console.warn(
-                  `[${batchLabel}] Reintentando (${attempt}) en ${Math.round(nextDelayMs)}ms...`,
-                  err
-                );
-              },
-            });
-
-            const batchDurationMs = Date.now() - t0;
-
-            if (error) {
-              console.error(`Error in ${batchLabel}:`, error);
-              
-              // Handle BIBLE_EMPTY recoverable error
-              const errorMsg = error?.message || '';
-              if (errorMsg.includes('BIBLE_EMPTY') || error?.code === 'BIBLE_EMPTY') {
-                toast.error('Faltan personajes/locaciones en la Bible.', {
-                  action: {
-                    label: 'Sincronizar ahora',
-                    onClick: async () => {
-                      await ensureBibleMaterialized();
-                    }
-                  },
-                  duration: 10000
-                });
-                // Break the episode loop - don't retry this error
-                episodeError = 'BIBLE_EMPTY';
-                break;
-              }
-              
-              episodeError = error.message;
-              toast.error(`Error en ${batchLabel}: ${error.message}`);
-              break;
+          
+          // V11.2: Batch loop with repair attempts
+          let batchPassed = false;
+          let lastBatchData: any = null;
+          
+          while (!batchPassed && batchAttempts[batchIdx] <= MAX_REPAIR_ATTEMPTS) {
+            const isRepairAttempt = batchAttempts[batchIdx] > 0;
+            
+            if (isRepairAttempt) {
+              console.log(`[${batchLabel}] REPAIR attempt ${batchAttempts[batchIdx]}...`);
+              toast.info(`Reparando batch ${batchIdx + 1}...`, { duration: 3000 });
             }
 
-            if (data?.scenes && Array.isArray(data.scenes)) {
-              allScenes.push(...data.scenes);
-              if (data.synopsis && !synopsisFromClaude) {
-                synopsisFromClaude = data.synopsis;
-              }
-
-              // Learn batch timing
-              setTimingModel(prev => {
-                const next = updateBatchTiming(prev, {
-                  durationMs: batchDurationMs,
-                  complexity,
+            try {
+              const invokeBatch = async () => {
+                if (controller.signal.aborted) {
+                  throw new Error('Aborted');
+                }
+                // V3.0: Call generate-script canonical router instead of legacy batch function
+                // V11.1: CRITICAL - projectId MUST be passed for Bible injection
+                // V11.2: Now includes currentBatchPlan + generationState
+                return await invokeAuthedFunction('generate-script', {
+                  projectId,  // ← P0 FIX: Required for Bible fetch
+                  outline: { ...lightOutline, idea: ideaText },  // ← V11.2: Include ideaText for ADAPT_FROM_SOURCE mode
+                  episodeNumber: epNum,
+                  language,
+                  batchIndex: batchIdx,
+                  previousScenes: allScenes,
+                  narrativeMode,
+                  // Dynamic batch config
+                  scenesPerBatch: SCENES_PER_BATCH,
+                  totalBatches: BATCHES_PER_EPISODE,
+                  isLastBatch: batchIdx === BATCHES_PER_EPISODE - 1,
+                  // V3.0: Quality tier instead of model selection
+                  qualityTier,
+                  // V11.2: Batch planner fields
+                  currentBatchPlan: currentPlan,
+                  generationState: episodeState,
+                  isRepairAttempt,
+                  repairBlockers: isRepairAttempt ? episodeState.lastRepairReason : undefined,
                 });
-                saveScriptTimingModel(next);
-                return next;
+              };
+
+              const { data, error } = await retryWithBackoff(invokeBatch, {
+                maxRetries: 2,
+                initialDelayMs: 1500,
+                maxDelayMs: 12000,
+                retryOn: (e) => {
+                  if (controller.signal.aborted) return false;
+                  return (
+                    isRetryableError(e) ||
+                    (e instanceof Error &&
+                      /Failed to send a request to the Edge Function|Failed to fetch/i.test(e.message))
+                  );
+                },
+                onRetry: (attempt, err, nextDelayMs) => {
+                  console.warn(
+                    `[${batchLabel}] Reintentando (${attempt}) en ${Math.round(nextDelayMs)}ms...`,
+                    err
+                  );
+                },
               });
 
-              completedBatches++;
-              const progress = 10 + Math.round((completedBatches / totalBatches) * 75);
-              setPipelineProgress(progress);
-              
-              // V49: Update background task progress with ETA
-              if (taskId) {
-                const remainingBatches = totalBatches - completedBatches;
-                const remainingMs = remainingBatches * estimateBatchMs(timingModel, complexity) + 15000; // +dialogues+teasers+save
-                updateTask(taskId, { 
-                  progress, 
-                  description: `Episodio ${epNum}/${totalEpisodes} | Restante: ${formatDurationMs(remainingMs)}`
-                });
+              const batchDurationMs = Date.now() - t0;
+
+              if (error) {
+                console.error(`Error in ${batchLabel}:`, error);
+                
+                // Handle GATE errors - abort immediately, don't retry
+                const errorObj = error as any;
+                const errorMsg = error?.message || '';
+                
+                if (errorObj?.status === 422 || errorMsg.includes('GATE_FAILED')) {
+                  setDensityGateResult({
+                    status: 'FAIL',
+                    density_score: errorObj.density_score || 0,
+                    required_fixes: errorObj.required_fixes || [],
+                    human_summary: errorMsg,
+                  });
+                  setShowDensityGateModal(true);
+                  throw new Error(`GATE_FAILED: ${errorMsg}`);
+                }
+                
+                // Handle BIBLE_EMPTY recoverable error
+                if (errorMsg.includes('BIBLE_EMPTY') || error?.code === 'BIBLE_EMPTY') {
+                  toast.error('Faltan personajes/locaciones en la Bible.', {
+                    action: {
+                      label: 'Sincronizar ahora',
+                      onClick: async () => {
+                        await ensureBibleMaterialized();
+                      }
+                    },
+                    duration: 10000
+                  });
+                  // Break the episode loop - don't retry this error
+                  episodeError = 'BIBLE_EMPTY';
+                  batchPassed = true; // exit loop
+                  break;
+                }
+                
+                // For other errors, increment attempt and maybe retry
+                batchAttempts[batchIdx]++;
+                episodeState = {
+                  ...episodeState,
+                  repairAttempts: episodeState.repairAttempts + 1,
+                  lastRepairReason: errorMsg,
+                };
+                continue; // retry
               }
 
-              console.log(`[${batchLabel}] ✓ ${data.scenes.length} scenes in ${batchDurationMs}ms`);
-            } else {
-              episodeError = 'No scenes returned';
-              break;
+              lastBatchData = data;
+
+              if (data?.scenes && Array.isArray(data.scenes)) {
+                // ════════════════════════════════════════════════════════════════
+                // V11.2: UPDATE GENERATION STATE
+                // ════════════════════════════════════════════════════════════════
+                if (data.updatedGenerationState) {
+                  // Use backend-provided state (preferred)
+                  episodeState = data.updatedGenerationState;
+                } else {
+                  // Fallback: update state manually from response
+                  episodeState = updateGenerationStateClient(episodeState, {
+                    threads_advanced: data.threads_advanced || data._qc?.threads_advanced || [],
+                    turning_points_executed: data.turning_points_executed || data._qc?.turning_points_executed || [],
+                    characters_appeared: data.characters_appeared || [],
+                    scenes: data.scenes,
+                  });
+                }
+                setGenerationState(episodeState);
+
+                // V11.2: Validate batch result against plan (soft validation - log only)
+                const validation = validateBatchResult(data, currentPlan);
+                if (!validation.passed) {
+                  console.warn(`[${batchLabel}] Batch validation:`, validation.blockers);
+                  // Don't fail here - QC is for logging, we already got scenes
+                }
+
+                allScenes.push(...data.scenes);
+                if (data.synopsis && !synopsisFromClaude) {
+                  synopsisFromClaude = data.synopsis;
+                }
+
+                // Learn batch timing
+                setTimingModel(prev => {
+                  const next = updateBatchTiming(prev, {
+                    durationMs: batchDurationMs,
+                    complexity,
+                  });
+                  saveScriptTimingModel(next);
+                  return next;
+                });
+
+                completedBatches++;
+                const progress = 10 + Math.round((completedBatches / totalBatches) * 75);
+                setPipelineProgress(progress);
+                
+                // V49: Update background task progress with ETA
+                if (taskId) {
+                  const remainingBatches = totalBatches - completedBatches;
+                  const remainingMs = remainingBatches * estimateBatchMs(timingModel, complexity) + 15000; // +dialogues+teasers+save
+                  updateTask(taskId, { 
+                    progress, 
+                    description: `Episodio ${epNum}/${totalEpisodes} | Restante: ${formatDurationMs(remainingMs)}`
+                  });
+                }
+
+                console.log(`[${batchLabel}] ✓ ${data.scenes.length} scenes | State: threads=${episodeState.threadsAdvanced.length}, tps=${episodeState.turningPointsDone.length}`);
+                batchPassed = true; // success!
+              } else {
+                // No scenes returned - retry
+                batchAttempts[batchIdx]++;
+                episodeState.lastRepairReason = 'No scenes returned';
+              }
+            } catch (err: any) {
+              console.error(`Exception in ${batchLabel}:`, err);
+              
+              // If it's a GATE error, propagate it up
+              if (err.message?.includes('GATE_FAILED')) {
+                throw err;
+              }
+              
+              batchAttempts[batchIdx]++;
+              episodeState.lastRepairReason = err.message || 'Unknown error';
             }
-          } catch (err: any) {
-            console.error(`Exception in ${batchLabel}:`, err);
-            episodeError = err.message || 'Unknown error';
-            break;
+          }
+          
+          // If batch still not passed after all attempts, log and continue
+          if (!batchPassed) {
+            console.error(`[${batchLabel}] FAILED after ${batchAttempts[batchIdx]} attempts`);
+            episodeError = `Batch ${batchIdx + 1} failed after ${MAX_REPAIR_ATTEMPTS} attempts`;
+            // Don't break - continue with other batches to get partial data
           }
         }
 
