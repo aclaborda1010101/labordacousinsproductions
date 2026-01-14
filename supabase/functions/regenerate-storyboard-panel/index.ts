@@ -9,7 +9,7 @@ const corsHeaders = {
 
 interface RegenerateRequest {
   panelId: string;
-  prompt?: string; // Optional: override the existing image_prompt
+  prompt?: string;
   seed?: number;
 }
 
@@ -47,20 +47,24 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // 1) Fetch the panel to get context
+    // 1) Fetch panel WITHOUT invalid joins - only use real FK relationships
     const { data: panel, error: panelError } = await supabase
       .from('storyboard_panels')
       .select(`
-        *,
-        storyboards!inner(
-          scene_id,
-          project_id,
-          visual_style,
-          scenes!inner(
-            title,
-            script_content
-          )
-        )
+        id,
+        scene_id,
+        panel_no,
+        panel_code,
+        shot_hint,
+        panel_intent,
+        image_prompt,
+        characters_present,
+        props_present,
+        staging,
+        continuity,
+        approved,
+        image_url,
+        image_status
       `)
       .eq('id', panelId)
       .single();
@@ -76,16 +80,35 @@ serve(async (req) => {
       });
     }
 
-    const projectId = panel.storyboards?.project_id;
+    // 2) Fetch scene using valid FK (panel.scene_id -> scenes.id)
+    const { data: scene, error: sceneError } = await supabase
+      .from('scenes')
+      .select('id, project_id, title, slugline, script_content, time_of_day, location_id')
+      .eq('id', panel.scene_id)
+      .single();
+
+    if (sceneError || !scene) {
+      console.error(`[regenerate-panel] Scene not found:`, sceneError);
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Scene not found for panel: ${sceneError?.message || 'unknown'}`
+      }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const projectId = scene.project_id;
+    const sceneId = scene.id;
     const prompt = body.prompt || panel.image_prompt;
 
     if (!prompt) {
       throw new Error('No prompt available for this panel');
     }
 
-    console.log(`[regenerate-panel] Panel ${panel.panel_no}, project ${projectId}`);
+    console.log(`[regenerate-panel] Panel ${panel.panel_no}, scene ${sceneId}, project ${projectId}`);
 
-    // 2) Mark panel as generating
+    // 3) Mark panel as generating
     await supabase
       .from('storyboard_panels')
       .update({ 
@@ -94,7 +117,7 @@ serve(async (req) => {
       })
       .eq('id', panelId);
 
-    // 3) Generate the image
+    // 4) Generate the image
     const seed = body.seed ?? Math.floor(Math.random() * 1000000);
     
     console.log(`[regenerate-panel] Generating image with seed ${seed}`);
@@ -117,7 +140,6 @@ serve(async (req) => {
     });
 
     if (!imageResult.success || (!imageResult.imageUrl && !imageResult.imageBase64)) {
-      // Mark as error
       await supabase
         .from('storyboard_panels')
         .update({ 
@@ -135,11 +157,11 @@ serve(async (req) => {
       });
     }
 
-    // 4) Upload to storage if we have base64
+    // 5) Upload to storage if we have base64
     let finalImageUrl = imageResult.imageUrl;
 
     if (imageResult.imageBase64) {
-      const fileName = `storyboard/${projectId}/${panel.storyboards?.scene_id}/panel_${panel.panel_no}_${Date.now()}.png`;
+      const fileName = `storyboard/${projectId}/${sceneId}/panel_${panel.panel_no}_${Date.now()}.png`;
       
       console.log(`[regenerate-panel] Uploading to ${fileName}`);
 
@@ -154,7 +176,6 @@ serve(async (req) => {
 
       if (uploadError) {
         console.error(`[regenerate-panel] Upload error:`, uploadError);
-        // Use the data URL as fallback
         finalImageUrl = `data:image/png;base64,${imageResult.imageBase64}`;
       } else {
         const { data: urlData } = supabase.storage
@@ -166,7 +187,7 @@ serve(async (req) => {
       }
     }
 
-    // 5) Update panel with success
+    // 6) Update panel with success
     const { error: updateError } = await supabase
       .from('storyboard_panels')
       .update({
@@ -197,7 +218,6 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error(`[regenerate-panel] FAILED:`, errorMessage);
 
-    // Try to mark panel as error
     if (panelId) {
       try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
