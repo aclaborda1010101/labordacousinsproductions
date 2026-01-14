@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { buildTokenLimit } from "../_shared/model-config.ts";
+import { generateImageWithNanoBanana } from "../_shared/image-generator.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -422,46 +423,64 @@ Return a JSON object with a "panels" array containing ${targetPanelCount} panels
 
     console.log(`[generate-storyboard] Inserted ${insertedPanels?.length} panels`);
 
-    // Generate grayscale pencil sketch images for each panel
+    // Generate grayscale pencil sketch images for each panel using NanoBanana
     const generatedPanels = [];
     for (const panel of insertedPanels || []) {
       try {
         const imagePrompt = storyboard_style === 'GRID_SHEET_V1'
           ? buildGridSheetImagePrompt(panel)
           : buildTechPageImagePrompt(panel);
-        
-        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${lovableApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "google/gemini-3-pro-image-preview",
-            prompt: imagePrompt,
-            n: 1,
-            size: "1536x1024",
-          }),
+
+        const imageResult = await generateImageWithNanoBanana({
+          lovableApiKey: lovableApiKey!,
+          promptText: imagePrompt,
+          label: `storyboard_panel_${panel.panel_no}`,
         });
 
-        if (imageResponse.ok) {
-          const imageData = await imageResponse.json();
-          const imageUrl = imageData.data?.[0]?.url;
-          
-          if (imageUrl) {
+        if (imageResult.success && (imageResult.imageUrl || imageResult.imageBase64)) {
+          let finalImageUrl = imageResult.imageUrl;
+
+          // Upload base64 to Supabase Storage if needed
+          if (imageResult.imageBase64 && !imageResult.imageUrl?.startsWith("http")) {
+            const binaryData = Uint8Array.from(
+              atob(imageResult.imageBase64),
+              (c) => c.charCodeAt(0)
+            );
+            const fileName = `storyboard/${panel.id}.png`;
+
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from("project-assets")
+              .upload(fileName, binaryData, {
+                contentType: "image/png",
+                upsert: true,
+              });
+
+            if (!uploadError && uploadData) {
+              const { data: publicUrl } = supabase.storage
+                .from("project-assets")
+                .getPublicUrl(fileName);
+              finalImageUrl = publicUrl.publicUrl;
+            } else {
+              console.error(`[generate-storyboard] Storage upload failed:`, uploadError);
+            }
+          }
+
+          if (finalImageUrl) {
             await supabase
               .from("storyboard_panels")
-              .update({ image_url: imageUrl })
+              .update({ image_url: finalImageUrl })
               .eq("id", panel.id);
-            
-            generatedPanels.push({ ...panel, image_url: imageUrl });
+
+            generatedPanels.push({ ...panel, image_url: finalImageUrl });
             console.log(`[generate-storyboard] Generated image for panel ${panel.panel_no}`);
           } else {
             generatedPanels.push(panel);
           }
         } else {
-          const errText = await imageResponse.text();
-          console.error(`[generate-storyboard] Image generation failed for panel ${panel.panel_no}:`, errText);
+          console.error(
+            `[generate-storyboard] Image failed for panel ${panel.panel_no}:`,
+            imageResult.error
+          );
           generatedPanels.push(panel);
         }
       } catch (imgError) {
