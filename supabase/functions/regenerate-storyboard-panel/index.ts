@@ -83,7 +83,7 @@ serve(async (req) => {
     // 2) Fetch scene using valid FK (panel.scene_id -> scenes.id)
     const { data: scene, error: sceneError } = await supabase
       .from('scenes')
-      .select('id, project_id, title, slugline, script_content, time_of_day, location_id')
+      .select('id, project_id, slugline, script_content, time_of_day, location_id')
       .eq('id', panel.scene_id)
       .single();
 
