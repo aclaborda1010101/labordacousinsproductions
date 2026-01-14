@@ -2011,25 +2011,34 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     try {
       // Order matters: delete in dependency order (children first)
       const tables = [
-        'dialogues',           // Depends on scenes
-        'storyboard_panels',   // Depends on storyboards
-        'storyboards',         // Depends on scenes
-        'shots',               // Depends on scenes
-        'scenes',              // Depends on scripts
-        'scripts',             // Main script data
-        'script_breakdowns',   // Auxiliary
-        'character_pack_slots', // Depends on characters
-        'character_visual_dna', // Depends on characters
-        'character_outfits',    // Depends on characters
+        // Child tables first (respect FK constraints)
+        'storyboard_panels',        // Depends on storyboards
+        'storyboards',              // Depends on scenes
+        'shot_transitions',         // Depends on shots
+        'micro_shots',              // Depends on shots
+        'keyframes',                // Depends on shots
+        'shots',                    // Depends on scenes
+        'scene_camera_plan',        // Depends on scenes
+        'scene_technical_docs',     // Depends on scenes
+        'scenes',                   // Depends on scripts/episodes
+        'episodes',                 // Depends on project
+        'scripts',                  // Main script data
+        'script_breakdowns',        // Auxiliary
+        'character_pack_slots',     // Depends on characters
+        'character_visual_dna',     // Depends on characters
+        'character_outfits',        // Depends on characters
+        'character_narrative',      // Depends on characters
         'character_reference_anchors', // Depends on characters
-        'reference_anchors',    // Depends on characters
-        'characters',           // Base entity
-        'locations',            // Base entity
-        'props',                // Base entity
-        'project_outlines',     // Narrative structure
-        'generation_runs',      // Logs
-        'batch_runs',           // Logs
-        'batch_run_items',      // Logs
+        'reference_anchors',        // Depends on characters
+        'characters',               // Base entity
+        'locations',                // Base entity
+        'props',                    // Base entity
+        'project_outlines',         // Narrative structure
+        'project_bibles',           // Bible data
+        'continuity_locks',         // Continuity data
+        'generation_runs',          // Logs
+        'batch_run_items',          // Logs (child of batch_runs)
+        'batch_runs',               // Logs
       ];
 
       let errors: string[] = [];
