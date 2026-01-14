@@ -2961,6 +2961,7 @@ export type Database = {
           locks: Json | null
           micro_shot_id: string | null
           negative_constraints: Json | null
+          pose_data: Json | null
           prompt_text: string | null
           run_id: string | null
           seed: number | null
@@ -2981,6 +2982,7 @@ export type Database = {
           locks?: Json | null
           micro_shot_id?: string | null
           negative_constraints?: Json | null
+          pose_data?: Json | null
           prompt_text?: string | null
           run_id?: string | null
           seed?: number | null
@@ -3001,6 +3003,7 @@ export type Database = {
           locks?: Json | null
           micro_shot_id?: string | null
           negative_constraints?: Json | null
+          pose_data?: Json | null
           prompt_text?: string | null
           run_id?: string | null
           seed?: number | null
@@ -4925,6 +4928,79 @@ export type Database = {
         }
         Relationships: []
       }
+      shot_transitions: {
+        Row: {
+          created_at: string | null
+          entry_pose: Json
+          exit_pose: Json
+          from_shot_id: string | null
+          id: string
+          override_reason: string | null
+          pose_match_score: number | null
+          project_id: string
+          relative_scale_lock: number | null
+          screen_direction_lock: string | null
+          to_shot_id: string
+          updated_at: string | null
+          validated_at: string | null
+          validation_status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entry_pose?: Json
+          exit_pose?: Json
+          from_shot_id?: string | null
+          id?: string
+          override_reason?: string | null
+          pose_match_score?: number | null
+          project_id: string
+          relative_scale_lock?: number | null
+          screen_direction_lock?: string | null
+          to_shot_id: string
+          updated_at?: string | null
+          validated_at?: string | null
+          validation_status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entry_pose?: Json
+          exit_pose?: Json
+          from_shot_id?: string | null
+          id?: string
+          override_reason?: string | null
+          pose_match_score?: number | null
+          project_id?: string
+          relative_scale_lock?: number | null
+          screen_direction_lock?: string | null
+          to_shot_id?: string
+          updated_at?: string | null
+          validated_at?: string | null
+          validation_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shot_transitions_from_shot_id_fkey"
+            columns: ["from_shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shot_transitions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shot_transitions_to_shot_id_fkey"
+            columns: ["to_shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shots: {
         Row: {
           ai_risk: Json | null
@@ -4939,6 +5015,7 @@ export type Database = {
           camera_position: Json | null
           camera_rotation: Json | null
           constraints: Json | null
+          continuity_lock: Json | null
           continuity_notes: string | null
           coverage_type: string | null
           created_at: string
@@ -4984,6 +5061,7 @@ export type Database = {
           camera_position?: Json | null
           camera_rotation?: Json | null
           constraints?: Json | null
+          continuity_lock?: Json | null
           continuity_notes?: string | null
           coverage_type?: string | null
           created_at?: string
@@ -5029,6 +5107,7 @@ export type Database = {
           camera_position?: Json | null
           camera_rotation?: Json | null
           constraints?: Json | null
+          continuity_lock?: Json | null
           continuity_notes?: string | null
           coverage_type?: string | null
           created_at?: string
