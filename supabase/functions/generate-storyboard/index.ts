@@ -757,10 +757,38 @@ serve(async (req) => {
             .eq("id", panel.id);
         }
 
-        // Generate image with NanoBanana
+        // ========================================================================
+        // RESOLVE REFERENCE IMAGE URLs FOR MULTIMODAL INPUT (v2.1)
+        // ========================================================================
+        const referenceImageUrls: string[] = [];
+
+        // Get references for characters present in this panel (max 2 per char)
+        const presentCharPacks = characterPackData.filter(c => 
+          panel.characters_present.includes(c.id)
+        );
+
+        for (const char of presentCharPacks) {
+          // Priority: frontal > profile (max 2 per character)
+          if (char.reference_frontal) referenceImageUrls.push(char.reference_frontal);
+          if (char.reference_profile) referenceImageUrls.push(char.reference_profile);
+        }
+
+        // Also add location reference if available (max 1)
+        if (locationLock?.reference_images?.length) {
+          referenceImageUrls.push(locationLock.reference_images[0]);
+        }
+
+        console.log(`[SB] panel_${panelNo}_refs`, { 
+          char_refs: referenceImageUrls.length,
+          chars: presentCharPacks.map(c => c.name).join(','),
+          first_url_host: referenceImageUrls[0] ? new URL(referenceImageUrls[0]).host : 'none'
+        });
+
+        // Generate image with NanoBanana + multimodal refs
         const imageResult = await generateImageWithNanoBanana({
           lovableApiKey: lovableApiKey!,
           promptText: imagePrompt,
+          referenceImageUrls,  // NEW: Pass actual image references
           label: `storyboard_panel_${panelNo}`,
           seed,
           supabase,
