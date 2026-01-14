@@ -256,6 +256,11 @@ serve(async (req) => {
         let keyframeId = role === 'initial' ? ms.keyframe_initial_id : ms.keyframe_final_id;
         let stagingUrl: string | null = null;
         let finalUrl: string | null = null;
+        
+        // Identity fix metrics (declared at outer scope for keyframe save)
+        let identityFixAttempts = 0;
+        let identityFixEngineModel = '';
+        let identityFixLatencyMs = 0;
 
         if (canReuse && previousEndKeyframeUrl) {
           // Reuse previous end keyframe
@@ -337,6 +342,11 @@ serve(async (req) => {
               });
             }
 
+            // Track metrics for traceability
+            identityFixAttempts = 1;
+            identityFixEngineModel = 'google/gemini-3-pro-image-preview';
+            const fixStartTime = Date.now();
+
             const identityResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
               method: 'POST',
               headers: {
@@ -344,11 +354,13 @@ serve(async (req) => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                model: 'google/gemini-3-pro-image-preview',
+                model: identityFixEngineModel,
                 messages: [{ role: 'user', content: identityContent }],
                 modalities: ['image', 'text'],
               }),
             });
+
+            identityFixLatencyMs = Date.now() - fixStartTime;
 
             if (identityResponse.ok) {
               const identityData = await identityResponse.json();
@@ -395,20 +407,23 @@ serve(async (req) => {
           }
         }
 
-        // Update or create keyframe
+        // Update or create keyframe with identity fix metrics
         if (keyframeId) {
           await supabase
             .from('keyframes')
             .update({
               image_url: storedUrl,
               staging_image_url: stagingUrl,
-              identity_status: skipIdentityFix ? 'pending' : 'fixed',
+              identity_status: skipIdentityFix ? 'pending' : (finalUrl !== stagingUrl ? 'fixed' : 'failed'),
               identity_anchors: identityAnchors.map(a => ({ characterId: a.characterId, urls: a.urls })),
+              identity_fix_attempts: identityFixAttempts,
+              identity_fix_engine_model: identityFixEngineModel || null,
+              identity_fix_latency_ms: identityFixLatencyMs || null,
               updated_at: new Date().toISOString()
             })
             .eq('id', keyframeId);
         } else {
-          // Create new keyframe
+          // Create new keyframe with metrics
           const { data: newKf } = await supabase
             .from('keyframes')
             .insert({
@@ -417,8 +432,11 @@ serve(async (req) => {
               chain_role: role,
               image_url: storedUrl,
               staging_image_url: stagingUrl,
-              identity_status: skipIdentityFix ? 'pending' : 'fixed',
+              identity_status: skipIdentityFix ? 'pending' : (finalUrl !== stagingUrl ? 'fixed' : 'failed'),
               identity_anchors: identityAnchors.map(a => ({ characterId: a.characterId, urls: a.urls })),
+              identity_fix_attempts: identityFixAttempts,
+              identity_fix_engine_model: identityFixEngineModel || null,
+              identity_fix_latency_ms: identityFixLatencyMs || null,
               timestamp_sec: role === 'initial' ? ms.start_sec : ms.end_sec,
               approved: false
             })

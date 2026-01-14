@@ -105,71 +105,53 @@ serve(async (req) => {
       });
     }
 
-    // 4. Build hydrated fields from technical doc
+    // 4. Build EFFECTIVE config from technical doc + overrides (composición en runtime)
+    // IMPORTANTE: No duplicamos config en el shot, solo guardamos referencia + patch
     const overrides = shot.technical_overrides || {};
     
-    // Camera configuration
-    const camera = overrides.camera ?? {
-      movement: techShot.camera?.camera_path || techShot.camera?.movement || 'Static',
-      height: techShot.camera?.camera_position?.height || 'EyeLevel',
-      angle: techShot.camera?.camera_position?.angle || '',
-      focal_mm: techShot.camera?.lens_mm || techShot.camera?.focal_mm || 35,
-      camera_body: techShot.camera?.camera_body || 'ARRI_ALEXA_35',
-      lens_model: techShot.camera?.lens_model || 'ARRI_SIGNATURE_PRIME',
-      ...(shot.camera || {}),
-      ...(overrides.camera || {})
+    // Compose effective config (for response, NOT stored in shot)
+    const effectiveConfig = {
+      camera: {
+        movement: techShot.camera?.camera_path || techShot.camera?.movement || 'Static',
+        height: techShot.camera?.camera_position?.height || 'EyeLevel',
+        angle: techShot.camera?.camera_position?.angle || '',
+        focal_mm: techShot.camera?.lens_mm || techShot.camera?.focal_mm || 35,
+        camera_body: techShot.camera?.camera_body || 'ARRI_ALEXA_35',
+        lens_model: techShot.camera?.lens_model || 'ARRI_SIGNATURE_PRIME',
+        ...(overrides.camera || {})
+      },
+      lighting: {
+        style: techShot.lighting?.look || techShot.lighting?.style || 'Naturalistic_Daylight',
+        key_direction: techShot.lighting?.key_direction,
+        fill_ratio: techShot.lighting?.fill_ratio,
+        practical_sources: techShot.lighting?.practical_sources,
+        ...(overrides.lighting || {})
+      },
+      focus: {
+        mode: techShot.focus?.mode || 'rack_focus',
+        depth: techShot.focus?.depth || 'shallow',
+        target: techShot.focus?.target,
+        ...(overrides.focus || {})
+      },
+      timing: {
+        start_sec: techShot.timing?.start_sec,
+        end_sec: techShot.timing?.end_sec,
+        duration_sec: techShot.timing?.duration_sec || shot.duration_target,
+        ...(overrides.timing || {})
+      },
+      constraints: {
+        ...techShot.constraints,
+        ...(overrides.constraints || {})
+      }
     };
 
-    // Lighting configuration
-    const lighting = overrides.lighting ?? {
-      style: techShot.lighting?.look || techShot.lighting?.style || 'Naturalistic_Daylight',
-      key_direction: techShot.lighting?.key_direction,
-      fill_ratio: techShot.lighting?.fill_ratio,
-      practical_sources: techShot.lighting?.practical_sources,
-      ...(shot.lighting || {}),
-      ...(overrides.lighting || {})
-    };
-
-    // Focus configuration (from technical doc)
-    const focus = overrides.focus ?? {
-      mode: techShot.focus?.mode || 'rack_focus',
-      depth: techShot.focus?.depth || 'shallow',
-      target: techShot.focus?.target,
-      ...(overrides.focus || {})
-    };
-
-    // Timing configuration
-    const timing = overrides.timing ?? {
-      start_sec: techShot.timing?.start_sec,
-      end_sec: techShot.timing?.end_sec,
-      duration_sec: techShot.timing?.duration_sec || shot.duration_target,
-    };
-
-    // Constraints / Locks from technical doc
-    const constraints = techShot.constraints || {};
-
-    // 5. Update shot with hydrated values
+    // 5. Update shot with ONLY the mapping reference (not the full config)
+    // Regla: el shot tiene referencia + patch, no snapshot
     const updatePayload: Record<string, any> = {
-      camera,
-      lighting,
       technical_shot_idx: shotIdx,
-    };
-
-    // Only update duration if not overridden
-    if (!overrides.duration_target && timing.duration_sec) {
-      updatePayload.duration_target = timing.duration_sec;
-    }
-
-    // Store focus and timing in a technical_context field or blocking
-    const currentBlocking = shot.blocking || {};
-    updatePayload.blocking = {
-      ...currentBlocking,
-      focus,
-      timing,
-      constraints,
-      // Preserve existing descriptions
-      description: overrides.blocking_description || currentBlocking.description,
-      action: overrides.blocking_action || currentBlocking.action,
+      inherit_technical: true,
+      // NO copiamos camera/lighting/blocking al shot
+      // Los consumidores deben componer en runtime: tech_doc.shots[idx] + overrides
     };
 
     const { error: updateError } = await supabase
@@ -182,21 +164,18 @@ serve(async (req) => {
       return json({ ok: false, error: `Failed to update shot: ${updateError.message}` }, 500);
     }
 
-    console.log(`[hydrate-shot] Hydrated shot ${shotId} from technical doc (idx: ${shotIdx})`);
+    console.log(`[hydrate-shot] Hydrated shot ${shotId} from technical doc (idx: ${shotIdx}) - reference only, no duplication`);
 
+    // Return effective config for immediate use (composed, not stored)
     return json({
       ok: true,
       hydrated: true,
       shotId,
       technicalDocId: techDoc.id,
-      hydratedFields: {
-        camera: Object.keys(camera),
-        lighting: Object.keys(lighting),
-        focus: Object.keys(focus),
-        timing: Object.keys(timing),
-        constraints: Object.keys(constraints),
-      },
-      message: 'Shot successfully hydrated from Technical Document'
+      technicalShotIdx: shotIdx,
+      // Devolvemos effective_config compuesto para uso inmediato
+      effectiveConfig,
+      message: 'Shot mapped to Technical Document (reference + overrides, no duplication)'
     });
 
   } catch (error) {
