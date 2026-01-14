@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { generateRun, updateRunStatus, GenerateRunPayload } from '@/lib/generateRun';
 import { toast } from 'sonner';
@@ -26,7 +27,9 @@ import {
   RotateCcw,
   Star,
   TrendingUp,
-  Layers
+  Layers,
+  ExternalLink,
+  ZoomIn
 } from 'lucide-react';
 import SetCanonModal from './SetCanonModal';
 import SceneCoverageGenerator from './SceneCoverageGenerator';
@@ -130,6 +133,16 @@ export default function KeyframeManager({
   const [lastRawResponse, setLastRawResponse] = useState<unknown>(null);
   const [showCoverageGenerator, setShowCoverageGenerator] = useState(false);
   const { isDeveloperMode } = useDeveloperMode();
+  
+  // Lightbox state for full-size keyframe viewing
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<{
+    url: string;
+    frameType: string;
+    timestampSec: number;
+    approved: boolean;
+    slotIndex: number;
+  } | null>(null);
 
   const KEYFRAME_PRESETS = ['initial', 'intermediate', 'final'];
   
@@ -538,6 +551,45 @@ export default function KeyframeManager({
     }
   };
 
+  // Navigate lightbox between keyframes
+  const navigateLightbox = (direction: -1 | 1) => {
+    if (!lightboxImage) return;
+    
+    let newIdx = lightboxImage.slotIndex + direction;
+    
+    // Find next slot with an image
+    while (newIdx >= 0 && newIdx < slots.length) {
+      const slot = slots[newIdx];
+      const kf = keyframes.find(k => Math.abs(k.timestamp_sec - slot.timestampSec) < 0.5);
+      
+      if (kf?.image_url) {
+        setLightboxImage({
+          url: kf.image_url,
+          frameType: slot.frameType,
+          timestampSec: slot.timestampSec,
+          approved: kf.approved,
+          slotIndex: newIdx,
+        });
+        setSelectedIndex(newIdx);
+        return;
+      }
+      newIdx += direction;
+    }
+  };
+
+  // Open lightbox for a keyframe
+  const openLightbox = (keyframe: Keyframe, slot: { frameType: string; timestampSec: number }, slotIndex: number) => {
+    if (!keyframe.image_url) return;
+    setLightboxImage({
+      url: keyframe.image_url,
+      frameType: slot.frameType,
+      timestampSec: slot.timestampSec,
+      approved: keyframe.approved,
+      slotIndex,
+    });
+    setLightboxOpen(true);
+  };
+
   const slots = getRequiredSlots();
   const completedCount = slots.filter(slot => 
     keyframes.find(kf => Math.abs(kf.timestamp_sec - slot.timestampSec) < 0.5 && kf.image_url)
@@ -637,7 +689,11 @@ export default function KeyframeManager({
                   <img
                     src={keyframe.image_url}
                     alt={`Keyframe ${slot.frameType}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover cursor-zoom-in"
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                      openLightbox(keyframe, slot, index);
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full bg-muted/50 flex items-center justify-center">
@@ -672,6 +728,22 @@ export default function KeyframeManager({
 
                 {/* Actions overlay */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-1 flex-wrap p-1">
+                  {/* Zoom / Lightbox button - only for images */}
+                  {keyframe?.image_url && (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-7 w-7"
+                      title="Ver en grande"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openLightbox(keyframe, slot, index);
+                      }}
+                    >
+                      <ZoomIn className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
+
                   {/* Generate / Regenerate button */}
                   {keyframe?.image_url && keyframe?.run_id ? (
                     <Button
@@ -976,6 +1048,75 @@ export default function KeyframeManager({
           }}
         />
       )}
+
+      {/* Keyframe Lightbox - Full-size viewer */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-none">
+          {lightboxImage && (
+            <>
+              <div className="relative">
+                <img
+                  src={lightboxImage.url}
+                  alt={`Keyframe ${lightboxImage.frameType}`}
+                  className="w-full h-auto max-h-[80vh] object-contain"
+                />
+                
+                {/* Overlay info at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Badge variant={
+                        lightboxImage.frameType === 'initial' ? 'default' : 
+                        lightboxImage.frameType === 'final' ? 'secondary' : 'outline'
+                      }>
+                        {lightboxImage.frameType === 'initial' ? 'Inicio' : 
+                         lightboxImage.frameType === 'final' ? 'Final' : 
+                         `${lightboxImage.timestampSec}s`}
+                      </Badge>
+                      {lightboxImage.approved && (
+                        <Badge className="bg-green-600">
+                          <CheckCircle2 className="w-3 h-3 mr-1" />
+                          Aprobado
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-white border-white/30 hover:bg-white/20"
+                      onClick={() => window.open(lightboxImage.url, '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Abrir en nueva pestaña
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Navigation arrows */}
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="absolute left-2 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 h-10 w-10"
+                onClick={() => navigateLightbox(-1)}
+                disabled={lightboxImage.slotIndex === 0}
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </Button>
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 h-10 w-10"
+                onClick={() => navigateLightbox(1)}
+                disabled={lightboxImage.slotIndex === slots.length - 1}
+              >
+                <ChevronRight className="w-6 h-6" />
+              </Button>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
