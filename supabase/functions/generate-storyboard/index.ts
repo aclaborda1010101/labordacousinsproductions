@@ -184,7 +184,8 @@ async function buildCastLocks(
  */
 async function buildCharacterPackData(
   supabase: any,
-  characterRefs: { id: string; name: string; image_url?: string }[]
+  characterRefs: { id?: string; name: string; image_url?: string }[],
+  projectId: string
 ): Promise<CharacterPackLockData[]> {
   if (!characterRefs || characterRefs.length === 0) {
     return [];
@@ -194,8 +195,36 @@ async function buildCharacterPackData(
 
   for (const char of characterRefs) {
     try {
+      let charData: any = null;
+      let charId = char.id;
+
+      // If no ID provided, look up by name in the project
+      if (!charId) {
+        const { data: lookupResult } = await supabase
+          .from('characters')
+          .select('id')
+          .eq('project_id', projectId)
+          .ilike('name', char.name)
+          .limit(1)
+          .single();
+        
+        if (lookupResult?.id) {
+          charId = lookupResult.id;
+          console.log(`[SB] Resolved character "${char.name}" to ID: ${charId}`);
+        } else {
+          console.log(`[SB] Character "${char.name}" not found in project, using silhouette`);
+          packData.push({
+            id: `unknown_${char.name}`,
+            name: char.name,
+            reference_frontal: char.image_url,
+            has_approved_pack: false,
+          });
+          continue;
+        }
+      }
+
       // Get character + active visual DNA + role
-      const { data: charData } = await supabase
+      const { data: fetchedChar } = await supabase
         .from('characters')
         .select(`
           id, name, character_role, visual_dna, wardrobe_lock_json,
@@ -203,8 +232,10 @@ async function buildCharacterPackData(
             visual_dna, continuity_lock, is_active
           )
         `)
-        .eq('id', char.id)
+        .eq('id', charId)
         .single();
+      
+      charData = fetchedChar;
 
       // Get reference images (frontal and profile) from pack slots
       const { data: packSlots } = await supabase
@@ -261,7 +292,7 @@ async function buildCharacterPackData(
       }
 
       packData.push({
-        id: char.id,
+        id: charId!,
         name: charData?.name || char.name,
         role: charData?.character_role,
         age: physical.age_exact_for_prompt || physical.age_range,
@@ -277,7 +308,7 @@ async function buildCharacterPackData(
     } catch (err) {
       console.log(`[generate-storyboard] Could not fetch pack data for ${char.name}:`, err);
       packData.push({
-        id: char.id,
+        id: char.id || `unknown_${char.name}`,
         name: char.name,
         reference_frontal: char.image_url,
         has_approved_pack: false,
@@ -445,7 +476,7 @@ serve(async (req) => {
     }
 
     // Build Character Pack Data v2.0 (enhanced identity information)
-    const characterPackData = await buildCharacterPackData(supabase, character_refs);
+    const characterPackData = await buildCharacterPackData(supabase, character_refs, project_id);
     
     // Validate Character Pack for storyboard
     const packValidation = validateCharacterPackForStoryboard(characterPackData);
