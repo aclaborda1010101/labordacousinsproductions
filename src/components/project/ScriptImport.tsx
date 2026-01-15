@@ -1757,7 +1757,31 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             const durationMs = Date.now() - t0;
             console.log('[ScriptImport] Outline polling completed in', durationMs, 'ms');
             
-            const outlineJson = completedOutline.outline_json as typeof lightOutline;
+            // V4.4: Extract from outline_parts if outline_json is empty (stalled recovery)
+            let outlineJson = completedOutline.outline_json as typeof lightOutline;
+            const outlineParts = completedOutline.outline_parts as Record<string, any>;
+            
+            // If outline_json is empty but we have parts data, reconstruct from parts
+            if ((!outlineJson || Object.keys(outlineJson).length === 0) && outlineParts) {
+              const scaffold = outlineParts.film_scaffold?.data;
+              const actI = outlineParts.expand_act_i?.data;
+              const actII = outlineParts.expand_act_ii?.data;
+              const actIII = outlineParts.expand_act_iii?.data;
+              
+              if (scaffold || actI || actII || actIII) {
+                console.log('[ScriptImport] V4.4: Reconstructing outline from parts data');
+                const allBeats = [
+                  ...(actI?.beats || []),
+                  ...(actII?.beats || []),
+                  ...(actIII?.beats || []),
+                ];
+                outlineJson = { 
+                  ...scaffold,
+                  beats: allBeats.length > 0 ? allBeats : scaffold?.beats || [],
+                };
+              }
+            }
+            
             const quality = completedOutline.quality || 'FULL';
             const qcIssues = completedOutline.qc_issues || [];
             
