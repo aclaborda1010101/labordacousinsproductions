@@ -14,8 +14,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Outlines are considered stale if no heartbeat for 5 minutes
-const STALE_THRESHOLD_MS = 5 * 60 * 1000;
+// Outlines are considered stale if no heartbeat for 3 minutes (faster recovery)
+const STALE_THRESHOLD_MS = 3 * 60 * 1000;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -31,7 +31,7 @@ serve(async (req) => {
     // Calculate the stale threshold timestamp
     const staleTime = new Date(Date.now() - STALE_THRESHOLD_MS).toISOString();
     
-    console.log(`[WATCHDOG] Checking for zombie outlines with heartbeat < ${staleTime}`);
+    console.log(`[WATCHDOG] Checking for zombie outlines with heartbeat < ${staleTime} (3 min threshold)`);
 
     // V15: Find and update zombie outlines with DUAL check
     // Status must be 'generating' or 'queued' AND BOTH:
@@ -78,12 +78,12 @@ serve(async (req) => {
       const { data: updatedZombies, error } = await supabase
         .from('project_outlines')
         .update({ 
-          status: 'error',              // Valid status for retry
+          status: 'stalled',            // Recoverable status for resume
           // stage: preserved - do NOT overwrite with 'done'
-          quality: 'error',
+          // quality: NOT set - preserve existing quality since this is recoverable
           error_code: 'ZOMBIE_TIMEOUT',
-          error_detail: 'Detectado por watchdog: sin heartbeat ni updates por más de 5 minutos',
-          completed_at: new Date().toISOString()
+          error_detail: 'Detectado por watchdog: sin heartbeat ni updates por más de 3 minutos. Puedes continuar la generación.'
+          // completed_at: NOT set - this is not a terminal state
         })
         .in('id', zombieIds)
         .select('id, project_id, stage, substage, progress');
