@@ -6,7 +6,29 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Showrunner-level system prompt
+// ============================================================================
+// V2: Chunked upgrade with heartbeat (avoids 60s Edge timeout)
+// Each invocation does ONE stage, frontend loops until complete
+// ============================================================================
+
+const CHUNK_TIMEOUT_MS = 45000; // 45s budget per chunk
+const HEARTBEAT_INTERVAL_MS = 15000; // 15s keepalive
+
+interface UpgradeStage {
+  id: string;
+  label: string;
+  progressStart: number;
+  progressEnd: number;
+  maxTokens: number;
+}
+
+const UPGRADE_STAGES: UpgradeStage[] = [
+  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 6000 },
+  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 6000 },
+  { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 8000 }
+];
+
+// Showrunner-level system prompt (shared across stages)
 const SHOWRUNNER_SYSTEM = `Eres showrunner senior para una serie de televisión de alto nivel (HBO/Apple TV+/Netflix).
 Tu misión NO es resumir, sino PROFUNDIZAR y ESTRUCTURAR DRAMA.
 
@@ -17,185 +39,245 @@ Piensas como un arquitecto narrativo:
 - La escala sube progresivamente: personal → grupal → societal → civilizatoria
 - Cada decisión tiene peso y consecuencias irreversibles`;
 
-// Build the upgrade prompt
-function buildShowrunnerPrompt(outlineLight: any, originalText: string): string {
-  return `Este es el outline preliminar de una serie:
-${JSON.stringify(outlineLight, null, 2)}
+// ============================================================================
+// Stage-specific schemas (smaller = faster)
+// ============================================================================
 
-Este es el material narrativo original de la serie:
-${originalText}
-
-TAREA:
-Transforma el outline preliminar en un OUTLINE DE TEMPORADA PROFUNDO.
-
-REQUISITOS OBLIGATORIOS:
-1. Define un ARCO CLARO DEL PROTAGONISTA:
-   - Estado inicial (quién es al empezar)
-   - Punto de quiebre (qué lo transforma)
-   - Estado final (en quién se convierte)
-
-2. Define el MIDPOINT de la temporada:
-   - El momento donde "no hay vuelta atrás"
-   - El giro que redefine el conflicto central
-
-3. Establece REGLAS DE MITOLOGÍA claras:
-   - Para cada entidad especial/sobrenatural, define qué PUEDE y qué NO PUEDE hacer
-   - Límites narrativos que dan tensión
-
-4. ESCALA PROGRESIVA:
-   - Episodios 1-3: Conflicto personal/íntimo
-   - Episodios 4-6: Conflicto grupal/institucional
-   - Episodios 7-8: Conflicto civilizatorio/existencial
-
-5. Cada EPISODIO debe tener:
-   - Conflicto central del episodio
-   - Giro irreversible (algo que no puede deshacerse)
-   - Consecuencia directa para el siguiente episodio
-   - Pregunta central que el episodio responde
-
-IMPORTANTE:
-- Mantén los personajes y localizaciones del outline original
-- Profundiza en sus arcos, no los cambies arbitrariamente
-- Respeta el tono y género establecidos
-- No seas conservador: esta es una serie de alto riesgo intelectual
-
-Devuelve el outline mejorado usando la herramienta deliver_showrunner_outline.`;
-}
-
-// Tool schema for structured output
-const SHOWRUNNER_TOOL_SCHEMA = {
+const SEASON_ARC_SCHEMA = {
   type: "object",
   properties: {
-    title: { type: "string", description: "Título de la serie" },
-    logline: { type: "string", description: "Logline mejorada con gancho dramático" },
-    genre: { type: "string" },
-    tone: { type: "string" },
-    format: { type: "string" },
-    target_episodes: { type: "number" },
-    
     season_arc: {
       type: "object",
-      description: "Arco dramático de la temporada completa",
       properties: {
         protagonist_name: { type: "string" },
         protagonist_start: { type: "string", description: "Estado emocional/situacional al inicio" },
         protagonist_break: { type: "string", description: "El momento de quiebre que lo transforma" },
         protagonist_end: { type: "string", description: "En quién se convierte al final" },
-        midpoint_episode: { type: "number", description: "Número del episodio donde ocurre el midpoint" },
-        midpoint_event: { type: "string", description: "Qué sucede en el midpoint" },
-        midpoint_consequence: { type: "string", description: "Por qué no hay vuelta atrás" },
-        thematic_question: { type: "string", description: "La pregunta filosófica que explora la temporada" },
-        thematic_answer: { type: "string", description: "Cómo responde la serie a esa pregunta" }
+        midpoint_episode: { type: "number" },
+        midpoint_event: { type: "string" },
+        midpoint_consequence: { type: "string" },
+        thematic_question: { type: "string" },
+        thematic_answer: { type: "string" }
       },
       required: ["protagonist_name", "protagonist_start", "protagonist_break", "protagonist_end", "midpoint_event", "thematic_question"]
     },
-    
     mythology_rules: {
       type: "array",
-      description: "Reglas del mundo para entidades especiales",
       items: {
         type: "object",
         properties: {
-          entity: { type: "string", description: "Nombre de la entidad (personaje, fuerza, tecnología)" },
-          nature: { type: "string", description: "Qué es fundamentalmente" },
-          can_do: { type: "array", items: { type: "string" }, description: "Lista de capacidades permitidas" },
-          cannot_do: { type: "array", items: { type: "string" }, description: "Lista de limitaciones absolutas" },
-          weakness: { type: "string", description: "Su vulnerabilidad narrativa" },
-          dramatic_purpose: { type: "string", description: "Por qué existe en la historia" }
+          entity: { type: "string" },
+          nature: { type: "string" },
+          can_do: { type: "array", items: { type: "string" } },
+          cannot_do: { type: "array", items: { type: "string" } },
+          weakness: { type: "string" },
+          dramatic_purpose: { type: "string" }
         },
         required: ["entity", "can_do", "cannot_do"]
       }
-    },
-    
+    }
+  },
+  required: ["season_arc"]
+};
+
+const CHARACTER_ARCS_SCHEMA = {
+  type: "object",
+  properties: {
     character_arcs: {
       type: "array",
-      description: "Arcos de personajes principales",
       items: {
         type: "object",
         properties: {
           name: { type: "string" },
           role: { type: "string" },
-          arc_type: { type: "string", description: "Tipo de arco: redención, caída, transformación, revelación" },
-          arc_start: { type: "string", description: "Quién es al inicio" },
-          arc_catalyst: { type: "string", description: "Qué evento inicia su cambio" },
-          arc_midpoint: { type: "string", description: "Su estado en el midpoint" },
-          arc_end: { type: "string", description: "Quién es al final" },
-          key_relationship: { type: "string", description: "Relación más importante para su arco" },
-          internal_conflict: { type: "string", description: "Su lucha interna principal" }
+          arc_type: { type: "string", description: "Tipo: redención, caída, transformación, revelación" },
+          arc_start: { type: "string" },
+          arc_catalyst: { type: "string" },
+          arc_midpoint: { type: "string" },
+          arc_end: { type: "string" },
+          key_relationship: { type: "string" },
+          internal_conflict: { type: "string" }
         },
         required: ["name", "role", "arc_start", "arc_end"]
       }
-    },
-    
-    main_characters: {
-      type: "array",
-      description: "Personajes principales con descripciones enriquecidas",
-      items: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          role: { type: "string" },
-          description: { type: "string" },
-          visual_description: { type: "string" },
-          personality_traits: { type: "array", items: { type: "string" } },
-          motivation: { type: "string" },
-          flaw: { type: "string" },
-          secret: { type: "string" }
-        },
-        required: ["name", "role", "description"]
-      }
-    },
-    
-    main_locations: {
-      type: "array",
-      description: "Localizaciones principales",
-      items: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          description: { type: "string" },
-          visual_description: { type: "string" },
-          dramatic_function: { type: "string", description: "Qué representa narrativamente" },
-          key_scenes: { type: "array", items: { type: "string" } }
-        },
-        required: ["name", "description"]
-      }
-    },
-    
+    }
+  },
+  required: ["character_arcs"]
+};
+
+const EPISODE_ENRICH_SCHEMA = {
+  type: "object",
+  properties: {
     episodes: {
       type: "array",
-      description: "Episodios con estructura dramática profunda",
       items: {
         type: "object",
         properties: {
           episode: { type: "number" },
           title: { type: "string" },
-          central_question: { type: "string", description: "Pregunta que el episodio responde" },
-          central_conflict: { type: "string", description: "El conflicto principal del episodio" },
-          stakes: { type: "string", description: "Qué está en juego" },
-          synopsis: { type: "string", description: "Resumen narrativo de 3-4 oraciones" },
-          key_events: { type: "array", items: { type: "string" } },
-          turning_point: { type: "string", description: "El giro principal del episodio" },
-          irreversible_change: { type: "string", description: "Qué cambia permanentemente" },
-          end_state: { type: "string", description: "Estado emocional/situacional al terminar" },
-          consequence_for_next: { type: "string", description: "Cómo afecta al siguiente episodio" },
+          central_question: { type: "string" },
+          central_conflict: { type: "string" },
+          stakes: { type: "string" },
+          turning_point: { type: "string" },
+          irreversible_change: { type: "string" },
+          end_state: { type: "string" },
+          consequence_for_next: { type: "string" },
           scale: { type: "string", enum: ["personal", "grupal", "institucional", "civilizatorio"] }
         },
-        required: ["episode", "title", "central_conflict", "turning_point", "irreversible_change", "consequence_for_next"]
+        required: ["episode", "title", "central_conflict", "turning_point", "irreversible_change"]
       }
     }
   },
-  required: ["title", "logline", "season_arc", "character_arcs", "episodes"]
+  required: ["episodes"]
 };
 
-// Call Lovable AI with tool
+// ============================================================================
+// Stage-specific prompts
+// ============================================================================
+
+function buildStagePrompt(stageId: string, outline: any, originalText: string): string {
+  const outlineStr = JSON.stringify(outline, null, 2);
+  
+  switch (stageId) {
+    case 'season_arc':
+      return `OUTLINE ACTUAL:
+${outlineStr}
+
+MATERIAL ORIGINAL:
+${originalText}
+
+TAREA: Define el ARCO DE LA TEMPORADA COMPLETA.
+
+REQUISITOS:
+1. ARCO DEL PROTAGONISTA:
+   - Estado inicial (quién es al empezar)
+   - Punto de quiebre (qué lo transforma)
+   - Estado final (en quién se convierte)
+
+2. MIDPOINT de la temporada:
+   - El momento donde "no hay vuelta atrás"
+   - El giro que redefine el conflicto central
+
+3. PREGUNTA TEMÁTICA:
+   - La pregunta filosófica que explora la temporada
+   - Cómo responde la serie a esa pregunta
+
+4. REGLAS DE MITOLOGÍA (si aplica):
+   - Para cada entidad especial, define qué PUEDE y qué NO PUEDE hacer
+   - Límites narrativos que dan tensión
+
+Usa la herramienta deliver_season_arc.`;
+
+    case 'character_arcs':
+      return `OUTLINE ACTUAL (con arco de temporada):
+${outlineStr}
+
+TAREA: Define ARCOS DRAMÁTICOS para cada personaje principal.
+
+Para cada personaje:
+- arc_type: redención, caída, transformación, o revelación
+- arc_start: Quién es al inicio
+- arc_catalyst: Qué evento inicia su cambio
+- arc_midpoint: Su estado en el midpoint de la temporada
+- arc_end: Quién es al final
+- key_relationship: Relación más importante para su arco
+- internal_conflict: Su lucha interna principal
+
+IMPORTANTE: Los arcos deben conectar con el season_arc y el midpoint ya definidos.
+
+Usa la herramienta deliver_character_arcs.`;
+
+    case 'episode_enrich':
+      return `OUTLINE ACTUAL (con arcos de personajes):
+${outlineStr}
+
+TAREA: Enriquece cada EPISODIO con estructura dramática profunda.
+
+Para cada episodio:
+- central_question: Pregunta que el episodio responde
+- central_conflict: El conflicto principal
+- stakes: Qué está en juego
+- turning_point: El giro principal
+- irreversible_change: Qué cambia permanentemente
+- end_state: Estado emocional/situacional al terminar
+- consequence_for_next: Cómo afecta al siguiente
+- scale: personal → grupal → institucional → civilizatorio (progresión)
+
+IMPORTANTE: 
+- Episodios 1-3: Conflicto personal/íntimo
+- Episodios 4-6: Conflicto grupal/institucional
+- Episodios 7+: Conflicto civilizatorio/existencial
+
+Usa la herramienta deliver_episode_enrichment.`;
+
+    default:
+      throw new Error(`Unknown stage: ${stageId}`);
+  }
+}
+
+function getSchemaForStage(stageId: string): any {
+  switch (stageId) {
+    case 'season_arc': return SEASON_ARC_SCHEMA;
+    case 'character_arcs': return CHARACTER_ARCS_SCHEMA;
+    case 'episode_enrich': return EPISODE_ENRICH_SCHEMA;
+    default: throw new Error(`Unknown stage: ${stageId}`);
+  }
+}
+
+function getToolNameForStage(stageId: string): string {
+  switch (stageId) {
+    case 'season_arc': return 'deliver_season_arc';
+    case 'character_arcs': return 'deliver_character_arcs';
+    case 'episode_enrich': return 'deliver_episode_enrichment';
+    default: return 'deliver_data';
+  }
+}
+
+// ============================================================================
+// Heartbeat: keeps process alive during AI call
+// ============================================================================
+
+function startHeartbeat(
+  supabase: any,
+  outlineId: string,
+  substage: string,
+  initialProgress: number
+) {
+  let currentSubstage = substage;
+  let currentProgress = initialProgress;
+  let stopped = false;
+
+  const timer = setInterval(async () => {
+    if (stopped) return;
+    try {
+      await supabase.from('project_outlines').update({
+        heartbeat_at: new Date().toISOString(),
+        substage: currentSubstage,
+        progress: currentProgress
+      }).eq('id', outlineId);
+      console.log(`[heartbeat] ${outlineId} substage=${currentSubstage} progress=${currentProgress}`);
+    } catch (e) {
+      console.warn('[heartbeat] update failed:', e);
+    }
+  }, HEARTBEAT_INTERVAL_MS);
+
+  return {
+    stop: () => { stopped = true; clearInterval(timer); },
+    update: (s: string, p: number) => { currentSubstage = s; currentProgress = p; }
+  };
+}
+
+// ============================================================================
+// AI call with timeout
+// ============================================================================
+
 async function callLovableAI(
   systemPrompt: string,
   userPrompt: string,
-  model: string,
   maxTokens: number,
   toolName: string,
-  toolSchema: any
+  toolSchema: any,
+  signal?: AbortSignal
 ): Promise<any> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) {
@@ -209,7 +291,7 @@ async function callLovableAI(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model,
+      model: "openai/gpt-5-mini", // Faster model for chunked approach
       max_completion_tokens: maxTokens,
       messages: [
         { role: "system", content: systemPrompt },
@@ -220,13 +302,14 @@ async function callLovableAI(
           type: "function",
           function: {
             name: toolName,
-            description: "Deliver the showrunner-level outline with deep dramatic structure",
+            description: `Deliver ${toolName} data`,
             parameters: toolSchema
           }
         }
       ],
       tool_choice: { type: "function", function: { name: toolName } }
     }),
+    signal
   });
 
   if (!response.ok) {
@@ -234,12 +317,12 @@ async function callLovableAI(
     console.error("AI API error:", response.status, errorText);
     
     if (response.status === 429) {
-      throw new Error("Rate limit exceeded. Please try again in a few minutes.");
+      throw new Error("RATE_LIMIT: Rate limit exceeded. Please try again in a few minutes.");
     }
     if (response.status === 402) {
-      throw new Error("API credits exhausted. Please add credits to continue.");
+      throw new Error("CREDITS_EXHAUSTED: API credits exhausted. Please add credits to continue.");
     }
-    throw new Error(`AI API error: ${response.status}`);
+    throw new Error(`AI_ERROR: ${response.status}`);
   }
 
   const data = await response.json();
@@ -251,7 +334,7 @@ async function callLovableAI(
       return JSON.parse(toolCall.function.arguments);
     } catch (e) {
       console.error("Failed to parse tool arguments:", e);
-      throw new Error("Invalid response format from AI");
+      throw new Error("PARSE_ERROR: Invalid response format from AI");
     }
   }
 
@@ -260,18 +343,29 @@ async function callLovableAI(
   if (content) {
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch {
+        throw new Error("PARSE_ERROR: Could not parse JSON from response");
+      }
     }
   }
 
-  throw new Error("No valid response from AI");
+  throw new Error("NO_RESPONSE: No valid response from AI");
 }
 
+// ============================================================================
+// Main handler
+// ============================================================================
+
 serve(async (req) => {
-  // Handle CORS
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
     const { outline_id } = await req.json();
@@ -282,11 +376,6 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // 1. Fetch current outline
     const { data: outline, error: fetchError } = await supabase
@@ -303,160 +392,170 @@ serve(async (req) => {
       );
     }
 
-    // Check if already showrunner quality
+    // 2. Check if already showrunner quality
     if (outline.quality === "showrunner") {
       return new Response(
-        JSON.stringify({ success: true, outline: outline.outline_json, message: "Already at showrunner level" }),
+        JSON.stringify({ 
+          success: true, 
+          is_complete: true,
+          message: "Already at showrunner level" 
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // 2. Mark as upgrading
-    await supabase
-      .from("project_outlines")
-      .update({
-        status: "upgrading",
-        stage: "showrunner",
-        progress: 10,
-        updated_at: new Date().toISOString()
-      })
-      .eq("id", outline_id);
-
-    console.log("Starting showrunner upgrade for outline:", outline_id);
-
-    // 3. Get original text (idea or summary)
-    const originalText = outline.idea || outline.summary_text || JSON.stringify(outline.outline_json);
-
-    // 4. Update progress
-    await supabase
-      .from("project_outlines")
-      .update({ progress: 30 })
-      .eq("id", outline_id);
-
-    // 5. Call GPT-5.2 with showrunner prompt
-    let upgradedData: any;
-    try {
-      upgradedData = await callLovableAI(
-        SHOWRUNNER_SYSTEM,
-        buildShowrunnerPrompt(outline.outline_json, originalText),
-        "openai/gpt-5.2",
-        32000,
-        "deliver_showrunner_outline",
-        SHOWRUNNER_TOOL_SCHEMA
-      );
-    } catch (aiError) {
-      console.error("AI call failed:", aiError);
-      
-      // Revert to previous state on error
-      await supabase
-        .from("project_outlines")
-        .update({
-          status: "completed",
-          stage: "done",
-          progress: 100,
-          error_message: (aiError as Error).message
-        })
-        .eq("id", outline_id);
-      
-      throw aiError;
-    }
-
-    // 6. Update progress
-    await supabase
-      .from("project_outlines")
-      .update({ progress: 80 })
-      .eq("id", outline_id);
-
-    // 7. Merge with original outline (preserve base data, enhance with showrunner insights)
-    const mergedOutline = {
-      // Base from original
-      title: upgradedData.title || outline.outline_json?.title,
-      logline: upgradedData.logline || outline.outline_json?.logline,
-      genre: upgradedData.genre || outline.outline_json?.genre,
-      tone: upgradedData.tone || outline.outline_json?.tone,
-      format: upgradedData.format || outline.outline_json?.format,
-      target_episodes: upgradedData.target_episodes || outline.outline_json?.target_episodes,
-      
-      // Showrunner enhancements
-      season_arc: upgradedData.season_arc,
-      mythology_rules: upgradedData.mythology_rules || [],
-      character_arcs: upgradedData.character_arcs || [],
-      
-      // Merged characters (prefer upgraded, fallback to original)
-      main_characters: upgradedData.main_characters?.length > 0 
-        ? upgradedData.main_characters 
-        : outline.outline_json?.main_characters || [],
-      
-      // Merged locations
-      main_locations: upgradedData.main_locations?.length > 0
-        ? upgradedData.main_locations
-        : outline.outline_json?.main_locations || [],
-      
-      // Episodes: use upgraded structure, map to expected format
-      episodes: (upgradedData.episodes || []).map((ep: any, idx: number) => {
-        const originalEp = outline.outline_json?.episodes?.[idx] || {};
-        return {
-          episode: ep.episode || idx + 1,
-          title: ep.title || originalEp.title,
-          synopsis: ep.synopsis || originalEp.synopsis,
-          central_question: ep.central_question,
-          central_conflict: ep.central_conflict,
-          stakes: ep.stakes,
-          key_events: ep.key_events || originalEp.key_events || [],
-          turning_point: ep.turning_point,
-          irreversible_change: ep.irreversible_change,
-          end_state: ep.end_state,
-          consequence_for_next: ep.consequence_for_next,
-          scale: ep.scale,
-          // Preserve original data
-          scenes: originalEp.scenes,
-          characters_featured: originalEp.characters_featured,
-          locations_featured: originalEp.locations_featured
-        };
-      }),
-      
-      // Metadata
-      _showrunner_upgrade: true,
-      _upgrade_timestamp: new Date().toISOString(),
-      _upgrade_model: "openai/gpt-5.2",
-      _original_quality: outline.quality
-    };
-
-    // 8. Save upgraded outline
-    const { error: updateError } = await supabase
-      .from("project_outlines")
-      .update({
+    // 3. Detect pending stage from _upgrade_parts
+    const upgradeParts = outline.outline_json?._upgrade_parts || {};
+    const pendingStage = UPGRADE_STAGES.find(s => !upgradeParts[s.id]?.done);
+    
+    if (!pendingStage) {
+      // All stages done, mark as showrunner
+      await supabase.from("project_outlines").update({
+        quality: "showrunner",
         status: "completed",
         stage: "done",
         progress: 100,
-        quality: "showrunner",
-        outline_json: mergedOutline,
-        updated_at: new Date().toISOString(),
-        error_message: null
-      })
-      .eq("id", outline_id);
+        updated_at: new Date().toISOString()
+      }).eq("id", outline_id);
 
-    if (updateError) {
-      console.error("Failed to save upgraded outline:", updateError);
-      throw new Error("Failed to save upgraded outline");
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          is_complete: true,
+          message: "Upgrade completed" 
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    console.log("Showrunner upgrade completed for outline:", outline_id);
+    console.log(`[outline-upgrade] Starting stage: ${pendingStage.id} for outline ${outline_id}`);
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        outline: mergedOutline,
-        message: "Outline upgraded to showrunner level"
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    // 4. Update status to upgrading
+    await supabase.from("project_outlines").update({
+      status: "upgrading",
+      substage: pendingStage.id,
+      progress: pendingStage.progressStart,
+      heartbeat_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      error_message: null
+    }).eq("id", outline_id);
 
-  } catch (error) {
+    // 5. Start heartbeat
+    const heartbeat = startHeartbeat(supabase, outline_id, pendingStage.id, pendingStage.progressStart);
+
+    try {
+      // 6. Prepare for AI call with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), CHUNK_TIMEOUT_MS);
+
+      // Get original text for context
+      const originalText = outline.idea || outline.summary_text || "";
+
+      // 7. Call AI for this stage
+      const stageResult = await callLovableAI(
+        SHOWRUNNER_SYSTEM,
+        buildStagePrompt(pendingStage.id, outline.outline_json, originalText),
+        pendingStage.maxTokens,
+        getToolNameForStage(pendingStage.id),
+        getSchemaForStage(pendingStage.id),
+        controller.signal
+      );
+
+      clearTimeout(timeoutId);
+      heartbeat.stop();
+
+      console.log(`[outline-upgrade] Stage ${pendingStage.id} completed successfully`);
+
+      // 8. Merge result into outline_json
+      const mergedOutline = {
+        ...outline.outline_json,
+        ...stageResult,
+        _upgrade_parts: {
+          ...upgradeParts,
+          [pendingStage.id]: { 
+            done: true, 
+            timestamp: new Date().toISOString() 
+          }
+        },
+        _showrunner_upgrade: true,
+        _upgrade_model: "openai/gpt-5-mini"
+      };
+
+      // Merge episodes if this is episode_enrich stage
+      if (pendingStage.id === 'episode_enrich' && stageResult.episodes) {
+        const existingEpisodes = outline.outline_json?.episodes || [];
+        mergedOutline.episodes = stageResult.episodes.map((ep: any, idx: number) => {
+          const existingEp = existingEpisodes[idx] || {};
+          return {
+            ...existingEp,
+            ...ep,
+            episode: ep.episode || idx + 1
+          };
+        });
+      }
+
+      // 9. Determine if complete
+      const nextStage = UPGRADE_STAGES.find(s => !mergedOutline._upgrade_parts[s.id]?.done);
+      const isComplete = !nextStage;
+
+      // 10. Save progress
+      await supabase.from("project_outlines").update({
+        outline_json: mergedOutline,
+        status: isComplete ? "completed" : "upgrading",
+        quality: isComplete ? "showrunner" : outline.quality,
+        stage: isComplete ? "done" : "showrunner",
+        substage: isComplete ? "done" : nextStage?.id,
+        progress: isComplete ? 100 : pendingStage.progressEnd,
+        updated_at: new Date().toISOString(),
+        error_message: null
+      }).eq("id", outline_id);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          stage_completed: pendingStage.id,
+          is_complete: isComplete,
+          next_stage: nextStage?.id || null,
+          progress: isComplete ? 100 : pendingStage.progressEnd
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+
+    } catch (stageError: any) {
+      heartbeat.stop();
+      console.error(`[outline-upgrade] Stage ${pendingStage.id} failed:`, stageError);
+
+      // Save error but don't revert prior progress
+      await supabase.from("project_outlines").update({
+        status: "error",
+        error_message: stageError.message || "Stage failed",
+        updated_at: new Date().toISOString()
+      }).eq("id", outline_id);
+
+      // Determine error type for frontend
+      const errMsg = stageError.message || "";
+      let errorCode = "STAGE_FAILED";
+      if (errMsg.includes("RATE_LIMIT")) errorCode = "RATE_LIMIT";
+      if (errMsg.includes("CREDITS_EXHAUSTED")) errorCode = "CREDITS_EXHAUSTED";
+      if (errMsg.includes("PARSE_ERROR")) errorCode = "PARSE_ERROR";
+      if (stageError.name === "AbortError") errorCode = "TIMEOUT";
+
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: stageError.message,
+          error_code: errorCode,
+          stage_failed: pendingStage.id
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+  } catch (error: any) {
     console.error("Outline upgrade error:", error);
     return new Response(
       JSON.stringify({ 
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error.message || "Unknown error",
         success: false 
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

@@ -2198,7 +2198,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
-  // PHASE 2: Upgrade Outline to Showrunner level using gpt-5.2
+  // PHASE 2: Upgrade Outline to Showrunner level (V2 - Chunked with stages)
   const handleUpgradeToShowrunner = async () => {
     const outlineId = outlinePersistence.savedOutline?.id;
     if (!outlineId) {
@@ -2213,51 +2213,103 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
     
     setUpgradingOutline(true);
-    toast.info('Elevando outline a nivel Showrunner con gpt-5.2...', {
-      description: 'Esto puede tardar 1-2 minutos. Añadiendo arcos dramáticos, reglas de mitología y estructura profunda.',
-      duration: 10000,
+    
+    const STAGE_LABELS: Record<string, string> = {
+      'season_arc': 'Arco de temporada',
+      'character_arcs': 'Arcos de personajes',
+      'episode_enrich': 'Enriquecimiento de episodios'
+    };
+    
+    const MAX_STAGES = 3;
+    let completedStages = 0;
+    let lastError: string | null = null;
+    
+    toast.info('Elevando outline a nivel Showrunner...', {
+      description: 'Procesando en etapas para mayor estabilidad.',
+      duration: 5000,
     });
     
     try {
-      const { data, error } = await invokeWithTimeout<any>(
-        'outline-upgrade',
-        { outline_id: outlineId },
-        { timeoutMs: 300000 } // 5 minutes timeout
-      );
-      
-      if (error) {
-        throw new Error(error.message || 'Error al mejorar outline');
+      // Loop through stages - each invocation does ONE stage
+      while (completedStages < MAX_STAGES) {
+        const { data, error } = await invokeWithTimeout<any>(
+          'outline-upgrade',
+          { outline_id: outlineId },
+          { timeoutMs: 90000 } // 90s timeout per stage (45s AI + buffer)
+        );
+        
+        if (error) {
+          lastError = error.message || 'Error desconocido';
+          break;
+        }
+        
+        if (!data?.success) {
+          lastError = data?.error || 'Error desconocido';
+          break;
+        }
+        
+        // Stage completed
+        if (data.stage_completed) {
+          completedStages++;
+          const stageLabel = STAGE_LABELS[data.stage_completed] || data.stage_completed;
+          toast.info(`✓ ${stageLabel} completado`, {
+            description: data.next_stage 
+              ? `Siguiente: ${STAGE_LABELS[data.next_stage] || data.next_stage}` 
+              : 'Finalizando...',
+            duration: 3000,
+          });
+        }
+        
+        // All stages done
+        if (data.is_complete) {
+          await outlinePersistence.refreshOutline();
+          toast.success('🎬 Outline elevado a nivel Showrunner', {
+            description: 'Arcos dramáticos, mitología y estructura profunda añadidos.',
+            duration: 8000,
+          });
+          break;
+        }
+        
+        // Small delay between stages
+        await new Promise(r => setTimeout(r, 500));
       }
       
-      if (data?.success) {
-        // Update local state with upgraded outline
-        setLightOutline(data.outline);
-        
-        // Refresh from database to get latest state
+      // If we have an error after some stages, show partial success
+      if (lastError && completedStages > 0) {
         await outlinePersistence.refreshOutline();
-        
-        toast.success('🎬 Outline elevado a nivel Showrunner', {
-          description: 'Ahora incluye arcos del protagonista, midpoint, reglas de mitología y estructura dramática profunda.',
+        toast.warning(`Upgrade parcial: ${completedStages}/3 etapas`, {
+          description: `Error: ${lastError}. Puedes reintentar para completar.`,
           duration: 8000,
         });
-      } else {
-        throw new Error(data?.error || 'Error desconocido');
+      } else if (lastError) {
+        // Handle specific error types
+        if (lastError.includes('RATE_LIMIT') || lastError.includes('429')) {
+          toast.error('Límite de solicitudes alcanzado', {
+            description: 'Espera unos segundos e inténtalo de nuevo.',
+          });
+        } else if (lastError.includes('CREDITS') || lastError.includes('402')) {
+          toast.error('Créditos agotados', {
+            description: 'Añade créditos a tu workspace.',
+          });
+        } else {
+          toast.error('Error al mejorar outline', {
+            description: lastError,
+          });
+        }
       }
+      
     } catch (err: any) {
       console.error('Error upgrading outline:', err);
       
-      const errorMsg = err.message || '';
-      if (errorMsg.includes('Rate limit') || errorMsg.includes('429')) {
-        toast.error('Límite de solicitudes alcanzado', {
-          description: 'Espera unos segundos e inténtalo de nuevo.',
-        });
-      } else if (errorMsg.includes('402') || errorMsg.includes('credits')) {
-        toast.error('Créditos agotados', {
-          description: 'Añade créditos a tu workspace de Lovable AI.',
+      // If some stages completed, refresh and show partial
+      if (completedStages > 0) {
+        await outlinePersistence.refreshOutline();
+        toast.warning(`Upgrade parcial: ${completedStages}/3 etapas`, {
+          description: 'Puedes reintentar para completar las etapas restantes.',
         });
       } else {
         toast.error('Error al mejorar outline', {
-          description: errorMsg || 'Inténtalo de nuevo.',
+          description: err.message || 'Inténtalo de nuevo.',
         });
       }
     } finally {
