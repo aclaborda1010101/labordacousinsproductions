@@ -236,19 +236,19 @@ Sé HONESTO y ESPECÍFICO en tu evaluación.`;
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    const response = await fetch('https://ai.lovable.dev/api/v1/chat', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5-mini', // Fast model for QC
+        model: 'google/gemini-3-flash-preview', // Fast model for QC
         messages: [
           { role: 'system', content: SMELL_TEST_SYSTEM },
           { role: 'user', content: userPrompt }
         ],
-        max_tokens: 2000,
+        max_completion_tokens: 2000,
         tools: [{
           type: 'function',
           function: SMELL_TEST_SCHEMA
