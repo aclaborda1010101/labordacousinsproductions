@@ -5,6 +5,10 @@ import { parseJsonSafe, parseToolCallArgs, parseAnthropicToolUse, ParseResult } 
 import { extractEpisodeContract, formatContractForPrompt, type EpisodeContract } from "../_shared/episode-contracts.ts";
 import { validateScriptAgainstContract, getQCSummary, validateBatchAgainstPlan, buildRepairPrompt, type ScriptQCResult, type BatchValidationResult } from "../_shared/script-qc.ts";
 import { validateDensity, getDensityProfile } from "../_shared/density-validator.ts";
+// V13: Narrative Profiles - Genre-driven writing method
+import { resolveNarrativeProfile, buildNarrativeProfilePromptBlock, type NarrativeProfile } from "../_shared/narrative-profiles.ts";
+// V13: Intelligent Repair Prompts
+import { buildIntelligentRepairPrompt, SITUATION_DETAIL_REQUIREMENT } from "../_shared/repair-prompts.ts";
 import { 
   buildBatchPlan, 
   buildStateBlock, 
@@ -1607,20 +1611,32 @@ IDIOMA: ${language}
 ⚠️ USA SOLO personajes/locaciones del Bible. Ninguna invención.`;
     }
 
-    // Add tier-specific instructions
+    // V13: Resolve narrative profile for writing method
+    const resolvedGenre = genre || outline?.genre || bible.project?.genre || 'Drama';
+    const resolvedTone = tone || outline?.tone || bible.project?.tone;
+    const narrativeProfileResolved = resolveNarrativeProfile(resolvedGenre, resolvedTone);
+    const narrativeProfileBlock = buildNarrativeProfilePromptBlock(narrativeProfileResolved);
+    
+    // Add tier-specific instructions + narrative profile
     const tierInstructions = qualityTier === 'rapido' 
       ? `\n\nMODO RÁPIDO: Genera rápido, confidence 0.6-0.8, technical_metadata._status = "EMPTY" en la mayoría.`
       : qualityTier === 'hollywood'
-        ? `\n\nMODO HOLLYWOOD: Máxima calidad literaria, confidence 0.85-0.95, diálogos pulidos, ritmo cinematográfico, technical_metadata._status = "PARTIAL" cuando se infiera del contexto.`
+        ? `\n\nMODO HOLLYWOOD: Máxima calidad literaria, confidence 0.85-0.95, diálogos pulidos, ritmo cinematográfico, technical_metadata._status = "PARTIAL" cuando se infiera del contexto.\n\n${SITUATION_DETAIL_REQUIREMENT}`
         : `\n\nMODO PROFESIONAL: Alta calidad, confidence 0.75-0.9, technical_metadata._status = "PARTIAL" cuando se infiera del contexto.`;
     
     userPrompt += tierInstructions;
+    userPrompt += `\n\n${narrativeProfileBlock}`;
 
     // =========================================================================
     // Call LLM with hardened parsing
     // =========================================================================
+    // V13: Build system prompt with narrative profile for Hollywood tier
+    const systemPrompt = qualityTier === 'hollywood' 
+      ? `${HOLLYWOOD_FILM_PROMPT}\n\n${narrativeProfileBlock}`
+      : V3_SYMMETRIC_PROMPT;
+    
     // Call Lovable AI Gateway with hardened parsing
-    const llmResult = await callLovableAI(V3_SYMMETRIC_PROMPT, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
+    const llmResult = await callLovableAI(systemPrompt, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
 
     clearTimeout(timeoutId);
 
