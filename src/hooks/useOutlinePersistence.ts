@@ -15,6 +15,7 @@ export interface PersistedOutline {
   id: string;
   project_id: string;
   outline_json: Record<string, unknown>;
+  outline_parts?: Json; // V4.4: Phased generation parts data (uses Json for Supabase compat)
   quality: string;
   qc_issues: string[];
   status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed' | 'timeout' | 'failed' | 'stalled';
@@ -418,9 +419,55 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           const isStaleId = !data || errorCode === 'PGRST116' || errorCode === '22P02';
           
           if (isStaleId) {
-            console.warn('[useOutlinePersistence] Stale outline ID, inserting new record instead');
+            console.warn('[useOutlinePersistence] Stale outline ID, checking for existing data...');
             
-            // Insert new outline since the old one doesn't exist
+            // V4.5: Before inserting, check if there's already an outline with valid data
+            const { data: existingWithData } = await supabase
+              .from('project_outlines')
+              .select('id, outline_json, outline_parts')
+              .eq('project_id', projectId)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            
+            // If existing outline has data in outline_json OR outline_parts, preserve it
+            const existingHasData = existingWithData && (
+              Object.keys(existingWithData.outline_json || {}).length > 0 ||
+              Object.keys(existingWithData.outline_parts || {}).length > 0
+            );
+            
+            if (existingHasData) {
+              console.log('[useOutlinePersistence] V4.5: Found existing outline with data, updating instead of creating empty:', existingWithData.id);
+              
+              // Merge: keep existing data, update metadata
+              const mergedPayload = {
+                ...payload,
+                outline_json: Object.keys(payload.outline_json || {}).length > 0 
+                  ? payload.outline_json 
+                  : existingWithData.outline_json,
+                outline_parts: existingWithData.outline_parts, // Always preserve parts
+              };
+              
+              const { data: updatedData, error: mergeError } = await supabase
+                .from('project_outlines')
+                .update(mergedPayload)
+                .eq('id', existingWithData.id)
+                .select()
+                .single();
+              
+              if (!mergeError && updatedData) {
+                setSavedOutline({
+                  ...updatedData,
+                  outline_json: updatedData.outline_json as Record<string, unknown>,
+                  qc_issues: Array.isArray(updatedData.qc_issues) ? updatedData.qc_issues as string[] : [],
+                  status: updatedData.status as PersistedOutline['status'],
+                });
+                console.log('[useOutlinePersistence] Updated existing outline with preserved data:', updatedData.id);
+                return { success: true, id: updatedData.id };
+              }
+            }
+            
+            // Only insert new if no existing data found
             const { data: newData, error: insertError } = await supabase
               .from('project_outlines')
               .insert(payload)
