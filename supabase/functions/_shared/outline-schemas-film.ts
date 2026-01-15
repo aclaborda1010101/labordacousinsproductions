@@ -1,5 +1,5 @@
 /**
- * FILM OUTLINE SCHEMAS
+ * FILM OUTLINE SCHEMAS (V2 - Phased Architecture)
  * 
  * Schemas estructurados para la generación de outlines de PELÍCULA.
  * Estructura de 3 ACTOS con causalidad dramática obligatoria.
@@ -9,10 +9,220 @@
  * - Estructura ACT_I / ACT_II / ACT_III
  * - Midpoint como punto de inflexión central
  * - Personajes con WANT/NEED/FLAW/DECISION_KEY
+ * 
+ * ARCHITECTURE V2 (Phased):
+ * - PHASE 1: FILM_SCAFFOLD (estructura ligera, rápida)
+ * - PHASE 2: EXPAND_ACT_I, EXPAND_ACT_II, EXPAND_ACT_III (detalle por acto)
+ * - PHASE 3: MERGE + Validación (local, sin AI)
  */
 
 // ═══════════════════════════════════════════════════════════════════════════
-// SCHEMA PARA TOOL CALLING (OpenAI Function Schema)
+// PHASE 1: FILM SCAFFOLD SCHEMA (Ligero - ~60 propiedades vs 240 del full)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const FILM_SCAFFOLD_SCHEMA = {
+  name: "generate_film_scaffold",
+  description: "Genera estructura cinematográfica base sin detalle de beats - decisiones arquitectónicas",
+  parameters: {
+    type: "object" as const,
+    properties: {
+      title: { 
+        type: "string" as const,
+        description: "Título de la película"
+      },
+      logline: { 
+        type: "string" as const, 
+        maxLength: 200,
+        description: "Resumen en 1-2 frases (máx 200 caracteres)"
+      },
+      thematic_premise: { 
+        type: "string" as const,
+        description: "Qué dice la película sobre el mundo/la condición humana"
+      },
+      genre: {
+        type: "string" as const,
+        description: "Género principal"
+      },
+      tone: {
+        type: "string" as const,
+        description: "Tono narrativo"
+      },
+      cast: { 
+        type: "array" as const, 
+        items: { 
+          type: "object" as const, 
+          properties: {
+            name: { type: "string" as const },
+            role: { 
+              type: "string" as const, 
+              enum: ["protagonist", "antagonist", "mentor", "ally", "love_interest", "shapeshifter", "trickster"]
+            },
+            want: { type: "string" as const, description: "Objetivo consciente" },
+            need: { type: "string" as const, description: "Necesidad interna" },
+            flaw: { type: "string" as const, description: "Defecto dramático" },
+            decision_key: { type: "string" as const, description: "Decisión clave en la película" }
+          },
+          required: ["name", "role", "want", "need", "flaw", "decision_key"]
+        },
+        description: "Cast mínimo 4 personajes"
+      },
+      locations: { 
+        type: "array" as const, 
+        items: { 
+          type: "object" as const, 
+          properties: {
+            name: { type: "string" as const },
+            function: { type: "string" as const, description: "Función dramática" },
+            visual_identity: { type: "string" as const, description: "Identidad visual" }
+          },
+          required: ["name", "function"]
+        },
+        description: "Localizaciones mínimo 5"
+      },
+      setpieces: { 
+        type: "array" as const, 
+        items: { 
+          type: "object" as const, 
+          properties: {
+            name: { type: "string" as const },
+            act: { type: "string" as const, enum: ["I", "II_A", "II_B", "III"] },
+            stakes: { type: "string" as const, description: "Qué está en juego" }
+          },
+          required: ["name", "act", "stakes"]
+        },
+        description: "Momentos visuales memorables (mínimo 3)"
+      },
+      world_rules: {
+        type: "array" as const,
+        items: {
+          type: "object" as const,
+          properties: {
+            rule: { type: "string" as const },
+            dramatic_effect: { type: "string" as const }
+          }
+        },
+        description: "Reglas del mundo (mínimo 2)"
+      },
+      acts_summary: {
+        type: "object" as const,
+        description: "Resumen de arquitectura de 3 actos - SIN beats detallados aún",
+        properties: {
+          act_i_goal: { type: "string" as const, description: "Objetivo dramático del Acto I" },
+          inciting_incident_summary: { type: "string" as const, description: "Evento detonante (resumen)" },
+          act_i_break: { type: "string" as const, description: "Cómo cierra el Acto I" },
+          act_ii_goal: { type: "string" as const, description: "Objetivo dramático del Acto II" },
+          midpoint_summary: { type: "string" as const, description: "Punto de inflexión central (resumen)" },
+          all_is_lost_summary: { type: "string" as const, description: "Momento más oscuro (resumen)" },
+          act_iii_goal: { type: "string" as const, description: "Objetivo dramático del Acto III" },
+          climax_summary: { type: "string" as const, description: "Clímax y resolución (resumen)" }
+        },
+        required: ["act_i_goal", "inciting_incident_summary", "act_ii_goal", "midpoint_summary", "act_iii_goal", "climax_summary"]
+      }
+    },
+    required: ["title", "logline", "thematic_premise", "cast", "locations", "acts_summary"]
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 2: EXPAND ACT SCHEMA (Reutilizable para cada acto)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const EXPAND_ACT_SCHEMA = {
+  name: "expand_film_act",
+  description: "Expande un acto con beats detallados y situation_detail filmable",
+  parameters: {
+    type: "object" as const,
+    properties: {
+      act: { 
+        type: "string" as const, 
+        enum: ["I", "II", "III"],
+        description: "Qué acto se está expandiendo"
+      },
+      dramatic_goal: { 
+        type: "string" as const,
+        description: "Objetivo dramático del acto"
+      },
+      beats: {
+        type: "array" as const,
+        description: "Beats expandidos con detalle filmable (6-12 por acto según duración)",
+        items: {
+          type: "object" as const,
+          properties: {
+            beat_number: { type: "number" as const },
+            event: { type: "string" as const, description: "EVENTO OBSERVABLE" },
+            agent: { type: "string" as const, description: "QUIÉN lo hace" },
+            consequence: { type: "string" as const, description: "QUÉ provoca" },
+            situation_detail: {
+              type: "object" as const,
+              description: "Detalle filmable de la situación",
+              properties: {
+                physical_context: { type: "string" as const, description: "Luz, espacio, disposición (1-2 frases)" },
+                action: { type: "string" as const, description: "Acción visible (1-2 frases)" },
+                goal: { type: "string" as const, description: "Objetivo inmediato del personaje" },
+                obstacle: { type: "string" as const, description: "Obstáculo tangible" },
+                state_change: { type: "string" as const, description: "Cambio de estado al final del beat" }
+              },
+              required: ["physical_context", "action", "goal", "obstacle", "state_change"]
+            }
+          },
+          required: ["beat_number", "event", "agent", "consequence", "situation_detail"]
+        }
+      },
+      key_moments: {
+        type: "object" as const,
+        description: "Momentos clave del acto (estructura varía por acto)",
+        properties: {
+          opening_image: { type: "string" as const },
+          world_setup: { type: "string" as const },
+          inciting_incident: {
+            type: "object" as const,
+            properties: {
+              event: { type: "string" as const },
+              agent: { type: "string" as const },
+              consequence: { type: "string" as const }
+            }
+          },
+          protagonist_decision: { type: "string" as const },
+          stakes_established: { type: "string" as const },
+          act_break: { type: "string" as const },
+          midpoint_reversal: {
+            type: "object" as const,
+            properties: {
+              event: { type: "string" as const },
+              agent: { type: "string" as const },
+              consequence: { type: "string" as const },
+              protagonist_new_goal: { type: "string" as const }
+            }
+          },
+          all_is_lost_moment: {
+            type: "object" as const,
+            properties: {
+              event: { type: "string" as const },
+              what_dies: { type: "string" as const }
+            }
+          },
+          dark_night_of_soul: { type: "string" as const },
+          catalyst_to_action: { type: "string" as const },
+          climax_decision: {
+            type: "object" as const,
+            properties: {
+              decision: { type: "string" as const },
+              cost: { type: "string" as const },
+              antagonist_confrontation: { type: "string" as const }
+            }
+          },
+          resolution: { type: "string" as const },
+          final_image: { type: "string" as const },
+          theme_statement: { type: "string" as const }
+        }
+      }
+    },
+    required: ["act", "dramatic_goal", "beats", "key_moments"]
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEGACY: FULL SCHEMA (Mantenido para compatibilidad, pero ya no usado en V2)
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const FILM_OUTLINE_SCHEMA = {
@@ -263,6 +473,21 @@ export interface FilmClimaxDecision {
   antagonist_confrontation?: string;
 }
 
+// V13: Beat expandido con situation_detail filmable
+export interface FilmBeat {
+  beat_number: number;
+  event: string;
+  agent: string;
+  consequence: string;
+  situation_detail?: {
+    physical_context: string;
+    action: string;
+    goal: string;
+    obstacle: string;
+    state_change: string;
+  };
+}
+
 export interface FilmActI {
   dramatic_goal: string;
   opening_image?: string;
@@ -271,6 +496,8 @@ export interface FilmActI {
   protagonist_decision: string;
   stakes_established?: string;
   act_break: string;
+  // V13: Beats expandidos (opcional, añadido en fase de expansión)
+  beats?: FilmBeat[];
 }
 
 export interface FilmActII {
@@ -283,6 +510,8 @@ export interface FilmActII {
     what_dies: string;
   };
   dark_night_of_soul?: string;
+  // V13: Beats expandidos (opcional, añadido en fase de expansión)
+  beats?: FilmBeat[];
 }
 
 export interface FilmActIII {
@@ -293,6 +522,8 @@ export interface FilmActIII {
   resolution: string;
   final_image?: string;
   theme_statement?: string;
+  // V13: Beats expandidos (opcional, añadido en fase de expansión)
+  beats?: FilmBeat[];
 }
 
 export interface FilmCharacter {

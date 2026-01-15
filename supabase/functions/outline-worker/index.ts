@@ -27,7 +27,15 @@ import { normalizeOutlineV11 } from "../_shared/normalize-outline-v11.ts";
 // V12: Hollywood Architecture - FILM bifurcation
 import { buildFormatProfile, detectForbiddenWords, formatProfileSummary, FormatProfile } from "../_shared/format-profile.ts";
 import { detectGenericPhrases, analyzeForGenericLanguage, getAntiGenericPromptBlock, validateGenericity } from "../_shared/anti-generic.ts";
-import { FILM_OUTLINE_SCHEMA, normalizeFilmOutline, filmOutlineToUniversalFormat, FilmOutline } from "../_shared/outline-schemas-film.ts";
+// V13: FILM Phased Architecture - Scaffold + Expand per act (gpt-5.2 only, no fallback)
+import { 
+  FILM_SCAFFOLD_SCHEMA, 
+  EXPAND_ACT_SCHEMA,
+  FILM_OUTLINE_SCHEMA, 
+  normalizeFilmOutline, 
+  filmOutlineToUniversalFormat, 
+  FilmOutline 
+} from "../_shared/outline-schemas-film.ts";
 // V13: Narrative Profiles - Genre-driven method/conflict/pacing
 import { resolveNarrativeProfile, buildNarrativeProfilePromptBlock, type NarrativeProfile } from "../_shared/narrative-profiles.ts";
 // Model configuration
@@ -746,41 +754,246 @@ async function executeSubstepIfNeeded(
 }
 
 // ============================================================================
-// V12: FILM OUTLINE - Single-pass 3-act Hollywood structure
+// V13: FILM OUTLINE - Phased Architecture (gpt-5.2 only, no fallback)
+// ============================================================================
+// PHASE 1: FILM_SCAFFOLD (estructura ligera, rápida: 15-25s)
+// PHASE 2: EXPAND_ACT_I, EXPAND_ACT_II, EXPAND_ACT_III (30-55s cada uno)
+// PHASE 3: MERGE + Validación (local, sin AI)
 // ============================================================================
 
-function buildFilmSystemPrompt(genre: string, tone: string, duration: number, densityTargets?: any): string {
-  const locMin = densityTargets?.locations_min || 5;
-  const charMin = densityTargets?.protagonists_min || 2;
-  return `Eres GUIONISTA DE CINE DE ESTUDIO (nivel A24 / Warner).
-Escribes películas que se ruedan, no pitches ni biblia de serie.
+// Timeout específico para FILM (más largo que SERIES por complejidad)
+const FILM_TIMEOUTS = {
+  SCAFFOLD_MS: 65000,      // 65s para scaffold ligero
+  EXPAND_ACT_MS: 75000,    // 75s por acto (Act II puede necesitar más)
+  EXPAND_ACT_II_MS: 85000, // 85s para Act II (el más largo)
+};
 
-FORMATO: LARGOMETRAJE | DURACIÓN: ${duration} min | GÉNERO: ${genre.toUpperCase()} | TONO: ${tone}
+function buildFilmScaffoldSystem(genre: string, tone: string, duration: number): string {
+  return `Eres un SHOWRUNNER SENIOR DE CINE (nivel A24 / Warner).
+Tu trabajo es DISEÑAR una PELÍCULA que podría producirse en Hollywood.
+
+NO escribes escenas.
+NO escribes diálogos.
+NO detallas beats.
+DISEÑAS una arquitectura dramática sólida.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+FORMATO ABSOLUTO: PELÍCULA (FILM)
+DURACIÓN: ${duration} minutos
+GÉNERO: ${genre.toUpperCase()}
+TONO: ${tone}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ⚠️ PROHIBICIONES ABSOLUTAS:
-- PROHIBIDO: episodios, temporadas, capítulos, cliffhangers
+- PROHIBIDO: episodios, temporadas, capítulos, cliffhangers seriales
 - PROHIBIDO: "todo cambia", "se dan cuenta", "la tensión aumenta", "empiezan a..."
+- PROHIBIDO: cualquier estructura serial o episódica
 
-CALIDAD HOLLYWOOD: Cada elemento = ACCIÓN OBSERVABLE + DECISIÓN IRREVERSIBLE + CONSECUENCIA
-
-DENSIDAD: Protagonistas min ${charMin} | Localizaciones min ${locMin}
-
-ESTRUCTURA 3 ACTOS:
-- ACTO I: Inciting Incident concreto + Decisión protagonista
-- ACTO II: MIDPOINT REVERSAL (evento visible por personaje identificable) + All-is-lost
-- ACTO III: Clímax con coste real + Resolución
+ESTRUCTURA 3 ACTOS CLÁSICOS:
+- ACTO I (~25%): Mundo ordinario → Inciting Incident → Decisión protagonista
+- ACTO II (~50%): Complicaciones → MIDPOINT REVERSAL → All-is-lost
+- ACTO III (~25%): Clímax con coste real → Resolución
 
 PERSONAJES: Cada uno con WANT/NEED/FLAW/DECISION_KEY
+- WANT: Lo que busca conscientemente
+- NEED: Lo que realmente necesita (inconsciente)
+- FLAW: Defecto que complica sus decisiones
+- DECISION_KEY: Decisión clave que tomará
 
-Devuelve SOLO JSON válido.`;
+Tu output será usado como base inmutable para expansión posterior por actos.
+Devuelve SOLO JSON válido.`.trim();
 }
 
-function buildFilmUserPrompt(summary: string, duration: number): string {
-  return `FORMAT: FILM (${duration}min)
-INPUT: ${summary}
+function buildFilmScaffoldUser(summary: string, duration: number): string {
+  return `FORMAT: FILM (${duration}min) - ESTRUCTURA DE 3 ACTOS
 
-TAREA: Outline completo con ACT_I, ACT_II, ACT_III, cast, locations, setpieces.
-⚠️ PROHIBIDO episodios/temporadas. Cada evento debe ser FILMABLE.`;
+INPUT CREATIVO:
+${summary}
+
+TAREA: Devuelve SOLO la estructura arquitectónica (NO beats detallados aún):
+- title, logline (max 200 chars), thematic_premise
+- cast: mínimo 4 personajes con WANT/NEED/FLAW/DECISION_KEY
+- locations: mínimo 5 con función dramática
+- setpieces: mínimo 3 momentos visuales memorables
+- world_rules: mínimo 2 reglas del mundo
+- acts_summary: resumen de arquitectura de 3 actos (SIN beats, solo dirección)
+
+⚠️ NO detalles beats ni escenas. Solo arquitectura.
+⚠️ PROHIBIDO episodios/temporadas.`.trim();
+}
+
+function buildExpandActSystem(act: 'I' | 'II' | 'III', genre: string, tone: string): string {
+  const actGoals: Record<string, string> = {
+    'I': `OBLIGACIONES ACTO I:
+- opening_image: Primera imagen que establece mundo y tono
+- world_setup: Mundo ordinario del protagonista
+- inciting_incident: EVENTO CONCRETO que rompe la normalidad (con agente + consecuencia)
+- protagonist_decision: Decisión ACTIVA del protagonista (no accidental)
+- stakes_established: Qué está en juego si falla
+- act_break: Evento que cierra el acto y lanza al protagonista al conflicto`,
+    'II': `OBLIGACIONES ACTO II:
+- first_half_complications: Obstáculos antes del midpoint
+- midpoint_reversal: EVENTO VISIBLE que cambia todo (con agente + consecuencia + nuevo objetivo)
+- second_half_escalation: Escalada post-midpoint
+- all_is_lost_moment: El momento más oscuro (qué pierde el protagonista)
+- dark_night_of_soul: Reflexión antes de la decisión final`,
+    'III': `OBLIGACIONES ACTO III:
+- catalyst_to_action: Qué impulsa al protagonista tras la noche oscura
+- climax_setup: Preparación para confrontación final
+- climax_decision: Elección final (con coste real + confrontación antagonista)
+- resolution: Nuevo equilibrio del mundo
+- final_image: Contrasta con opening_image
+- theme_statement: Cómo la resolución ilustra la premisa temática`
+  };
+  
+  return `Eres un GUIONISTA DE CINE PROFESIONAL.
+Estás expandiendo SOLO el ACTO ${act} de una película.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+GÉNERO: ${genre.toUpperCase()}
+TONO: ${tone}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ PROHIBICIONES:
+- Nada episódico
+- Nada genérico ("la tensión aumenta", "se complica", "algo cambia")
+- Todo debe ser FILMABLE
+
+CADA BEAT DEBE:
+- Ser un EVENTO OBSERVABLE (no sentimiento)
+- Tener AGENTE (quién actúa)
+- Tener CONSECUENCIA (qué provoca)
+- CAMBIAR el estado del protagonista
+
+${actGoals[act]}
+
+SITUATION_DETAIL OBLIGATORIO por beat:
+- physical_context: Luz, espacio, disposición (1-2 frases)
+- action: Acción visible (1-2 frases)
+- goal: Objetivo inmediato del personaje (1 frase)
+- obstacle: Obstáculo tangible (1 frase)
+- state_change: Cambio de estado al final (1 frase)
+
+Devuelve SOLO JSON válido.`.trim();
+}
+
+function buildExpandActUser(
+  scaffold: any, 
+  act: 'I' | 'II' | 'III', 
+  previousActI?: any,
+  previousActII?: any
+): string {
+  const beatsCount = act === 'II' ? '8-12' : '6-8';
+  
+  let previousContext = '';
+  if (act === 'II' && previousActI) {
+    previousContext = `
+ACTO I COMPLETADO:
+- Dramatic goal: ${previousActI.dramatic_goal}
+- Act break: ${previousActI.key_moments?.act_break || 'N/A'}
+- Beats: ${previousActI.beats?.length || 0}
+`;
+  } else if (act === 'III' && previousActI && previousActII) {
+    previousContext = `
+ACTO I COMPLETADO:
+- Act break: ${previousActI.key_moments?.act_break || 'N/A'}
+
+ACTO II COMPLETADO:
+- Midpoint: ${previousActII.key_moments?.midpoint_reversal?.event || 'N/A'}
+- All-is-lost: ${previousActII.key_moments?.all_is_lost_moment?.event || 'N/A'}
+`;
+  }
+
+  return `PELÍCULA: "${scaffold.title}"
+LOGLINE: ${scaffold.logline}
+THEMATIC PREMISE: ${scaffold.thematic_premise}
+
+CAST:
+${scaffold.cast?.map((c: any) => `- ${c.name} (${c.role}): WANT=${c.want}, NEED=${c.need}, FLAW=${c.flaw}`).join('\n') || 'N/A'}
+
+ARQUITECTURA DE ACTOS:
+- Acto I: ${scaffold.acts_summary?.act_i_goal || 'N/A'}
+- Acto II: ${scaffold.acts_summary?.act_ii_goal || 'N/A'}
+- Acto III: ${scaffold.acts_summary?.act_iii_goal || 'N/A'}
+${previousContext}
+
+TAREA: Expande SOLO el ACTO ${act} con ${beatsCount} beats detallados.
+Cada beat debe tener situation_detail completo (physical_context, action, goal, obstacle, state_change).
+Incluye key_moments obligatorios del acto.
+
+⚠️ SOLO ACTO ${act}. No toques otros actos.`.trim();
+}
+
+// Función para hacer merge de las partes expandidas
+function mergeFilmParts(
+  scaffold: any,
+  actI: any,
+  actII: any,
+  actIII: any
+): FilmOutline {
+  // Extraer key_moments de cada acto expandido
+  const actIKeyMoments = actI.key_moments || {};
+  const actIIKeyMoments = actII.key_moments || {};
+  const actIIIKeyMoments = actIII.key_moments || {};
+
+  return {
+    title: scaffold.title,
+    logline: scaffold.logline,
+    thematic_premise: scaffold.thematic_premise,
+    genre: scaffold.genre,
+    tone: scaffold.tone,
+    ACT_I: {
+      dramatic_goal: actI.dramatic_goal || scaffold.acts_summary?.act_i_goal,
+      opening_image: actIKeyMoments.opening_image,
+      world_setup: actIKeyMoments.world_setup,
+      inciting_incident: actIKeyMoments.inciting_incident || {
+        event: scaffold.acts_summary?.inciting_incident_summary || '',
+        agent: 'N/A',
+        consequence: 'N/A'
+      },
+      protagonist_decision: actIKeyMoments.protagonist_decision || '',
+      stakes_established: actIKeyMoments.stakes_established,
+      act_break: actIKeyMoments.act_break || scaffold.acts_summary?.act_i_break || '',
+      // V13: Añadir beats expandidos
+      beats: actI.beats
+    },
+    ACT_II: {
+      dramatic_goal: actII.dramatic_goal || scaffold.acts_summary?.act_ii_goal,
+      first_half_complications: actIIKeyMoments.first_half_complications,
+      midpoint_reversal: actIIKeyMoments.midpoint_reversal || {
+        event: scaffold.acts_summary?.midpoint_summary || '',
+        agent: 'N/A',
+        consequence: 'N/A',
+        protagonist_new_goal: ''
+      },
+      second_half_escalation: actIIKeyMoments.second_half_escalation,
+      all_is_lost_moment: actIIKeyMoments.all_is_lost_moment || {
+        event: scaffold.acts_summary?.all_is_lost_summary || '',
+        what_dies: ''
+      },
+      dark_night_of_soul: actIIKeyMoments.dark_night_of_soul,
+      // V13: Añadir beats expandidos
+      beats: actII.beats
+    },
+    ACT_III: {
+      dramatic_goal: actIII.dramatic_goal || scaffold.acts_summary?.act_iii_goal,
+      catalyst_to_action: actIIIKeyMoments.catalyst_to_action,
+      climax_setup: actIIIKeyMoments.climax_setup,
+      climax_decision: actIIIKeyMoments.climax_decision || {
+        decision: scaffold.acts_summary?.climax_summary || '',
+        cost: ''
+      },
+      resolution: actIIIKeyMoments.resolution || '',
+      final_image: actIIIKeyMoments.final_image,
+      theme_statement: actIIIKeyMoments.theme_statement,
+      // V13: Añadir beats expandidos
+      beats: actIII.beats
+    },
+    cast: scaffold.cast || [],
+    locations: scaffold.locations || [],
+    setpieces: scaffold.setpieces || [],
+    world_rules: scaffold.world_rules || []
+  };
 }
 
 async function stageFilmOutline(
@@ -793,37 +1006,182 @@ async function stageFilmOutline(
   const tone = outline.tone || 'Cinematográfico';
   const duration = formatProfile.duration_minutes || 110;
   
-  console.log(`[WORKER] FILM: Generating 3-act outline for ${duration}min ${genre}`);
+  console.log(`[WORKER] FILM V2: Phased generation for ${duration}min ${genre} (gpt-5.2 only)`);
   
+  // Recover existing parts for resumability
+  let parts: any = (outline.outline_parts && typeof outline.outline_parts === 'object' && !Array.isArray(outline.outline_parts)) 
+    ? outline.outline_parts 
+    : {};
+  
+  const config = { genre, tone, duration };
+  
+  // ════════════════════════════════════════════════════════════════════════
+  // PHASE 1: FILM SCAFFOLD (estructura ligera, rápida)
+  // ════════════════════════════════════════════════════════════════════════
+  const scaffoldHash = await hashInput(summaryText, config, 'film_scaffold');
+  const scaffoldResult = await executeSubstepIfNeeded(
+    supabase, { ...outline, outline_parts: parts }, 'film_scaffold', scaffoldHash,
+    async () => {
+      console.log(`[WORKER] FILM SCAFFOLD: generating base architecture`);
+      await updateOutline(supabase, outline.id, { 
+        stage: 'outline', substage: 'film_scaffold', progress: 15,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outline.id,
+        buildFilmScaffoldSystem(genre, tone, duration),
+        buildFilmScaffoldUser(summaryText, duration),
+        QUALITY_MODEL, 3000, 'generate_film_scaffold', 
+        FILM_SCAFFOLD_SCHEMA.parameters, 'film_scaffold',
+        FILM_TIMEOUTS.SCAFFOLD_MS
+      );
+      
+      const parseResult = parseJsonSafe(toolArgs || content, 'film_scaffold');
+      if (!parseResult.json) throw new Error('FILM_SCAFFOLD failed to parse');
+      
+      console.log(`[WORKER] FILM SCAFFOLD done: "${parseResult.json.title}"`);
+      return parseResult.json;
+    }
+  );
+  parts.film_scaffold = { status: 'done', hash: scaffoldHash, data: scaffoldResult.data };
+  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  
+  const scaffold = scaffoldResult.data;
+  
+  // ════════════════════════════════════════════════════════════════════════
+  // PHASE 2A: EXPAND ACT I
+  // ════════════════════════════════════════════════════════════════════════
+  const actIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_i');
+  const actIResult = await executeSubstepIfNeeded(
+    supabase, { ...outline, outline_parts: parts }, 'expand_act_i', actIHash,
+    async () => {
+      console.log(`[WORKER] FILM EXPAND: Act I`);
+      await updateOutline(supabase, outline.id, { 
+        substage: 'expand_act_i', progress: 30,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outline.id,
+        buildExpandActSystem('I', genre, tone),
+        buildExpandActUser(scaffold, 'I'),
+        QUALITY_MODEL, 3000, 'expand_film_act', 
+        EXPAND_ACT_SCHEMA.parameters, 'expand_act_i',
+        FILM_TIMEOUTS.EXPAND_ACT_MS
+      );
+      
+      const parseResult = parseJsonSafe(toolArgs || content, 'expand_act_i');
+      if (!parseResult.json) throw new Error('EXPAND_ACT_I failed to parse');
+      
+      console.log(`[WORKER] FILM ACT I done: ${parseResult.json.beats?.length || 0} beats`);
+      return parseResult.json;
+    }
+  );
+  parts.expand_act_i = { status: 'done', hash: actIHash, data: actIResult.data };
+  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  
+  // ════════════════════════════════════════════════════════════════════════
+  // PHASE 2B: EXPAND ACT II (el más largo, timeout extendido)
+  // ════════════════════════════════════════════════════════════════════════
+  const actIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_ii');
+  const actIIResult = await executeSubstepIfNeeded(
+    supabase, { ...outline, outline_parts: parts }, 'expand_act_ii', actIIHash,
+    async () => {
+      console.log(`[WORKER] FILM EXPAND: Act II`);
+      await updateOutline(supabase, outline.id, { 
+        substage: 'expand_act_ii', progress: 50,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outline.id,
+        buildExpandActSystem('II', genre, tone),
+        buildExpandActUser(scaffold, 'II', parts.expand_act_i?.data),
+        QUALITY_MODEL, 4000, 'expand_film_act',  // Más tokens para Act II
+        EXPAND_ACT_SCHEMA.parameters, 'expand_act_ii',
+        FILM_TIMEOUTS.EXPAND_ACT_II_MS  // Timeout extendido para Act II
+      );
+      
+      const parseResult = parseJsonSafe(toolArgs || content, 'expand_act_ii');
+      if (!parseResult.json) throw new Error('EXPAND_ACT_II failed to parse');
+      
+      console.log(`[WORKER] FILM ACT II done: ${parseResult.json.beats?.length || 0} beats`);
+      return parseResult.json;
+    }
+  );
+  parts.expand_act_ii = { status: 'done', hash: actIIHash, data: actIIResult.data };
+  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  
+  // ════════════════════════════════════════════════════════════════════════
+  // PHASE 2C: EXPAND ACT III
+  // ════════════════════════════════════════════════════════════════════════
+  const actIIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_iii');
+  const actIIIResult = await executeSubstepIfNeeded(
+    supabase, { ...outline, outline_parts: parts }, 'expand_act_iii', actIIIHash,
+    async () => {
+      console.log(`[WORKER] FILM EXPAND: Act III`);
+      await updateOutline(supabase, outline.id, { 
+        substage: 'expand_act_iii', progress: 70,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outline.id,
+        buildExpandActSystem('III', genre, tone),
+        buildExpandActUser(scaffold, 'III', parts.expand_act_i?.data, parts.expand_act_ii?.data),
+        QUALITY_MODEL, 3000, 'expand_film_act', 
+        EXPAND_ACT_SCHEMA.parameters, 'expand_act_iii',
+        FILM_TIMEOUTS.EXPAND_ACT_MS
+      );
+      
+      const parseResult = parseJsonSafe(toolArgs || content, 'expand_act_iii');
+      if (!parseResult.json) throw new Error('EXPAND_ACT_III failed to parse');
+      
+      console.log(`[WORKER] FILM ACT III done: ${parseResult.json.beats?.length || 0} beats`);
+      return parseResult.json;
+    }
+  );
+  parts.expand_act_iii = { status: 'done', hash: actIIIHash, data: actIIIResult.data };
+  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  
+  // ════════════════════════════════════════════════════════════════════════
+  // PHASE 3: MERGE + VALIDATION (local, sin AI)
+  // ════════════════════════════════════════════════════════════════════════
+  console.log(`[WORKER] FILM MERGE: Unifying 3 acts`);
   await updateOutline(supabase, outline.id, { 
-    stage: 'outline', substage: 'film_structure', progress: 40,
+    substage: 'merge', progress: 85,
     heartbeat_at: new Date().toISOString()
   });
   
-  const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-    supabase, outline.id,
-    buildFilmSystemPrompt(genre, tone, duration, outline.density_targets),
-    buildFilmUserPrompt(summaryText, duration),
-    QUALITY_MODEL, 6000, 'generate_film_outline', FILM_OUTLINE_SCHEMA.parameters, 'film_outline',
-    TIMEOUTS.OUTLINE_ARC_MS
+  const filmOutline = mergeFilmParts(
+    scaffold,
+    parts.expand_act_i.data,
+    parts.expand_act_ii.data,
+    parts.expand_act_iii.data
   );
   
-  const parseResult = parseJsonSafe(toolArgs || content, 'film_outline');
-  if (!parseResult.json) throw new Error('FILM_OUTLINE failed to parse');
-  
-  const filmOutline = normalizeFilmOutline(parseResult.json);
-  if (!filmOutline) throw new Error('FILM_OUTLINE normalization failed');
-  
+  // Validación anti-genéricas
   const violations = detectForbiddenWords(filmOutline, formatProfile.forbidden_words);
-  if (violations.length > 0) console.warn(`[WORKER] FILM: Forbidden words: ${violations.join(', ')}`);
+  if (violations.length > 0) {
+    console.warn(`[WORKER] FILM: Forbidden words detected: ${violations.join(', ')}`);
+  }
   
+  // Convertir a formato universal (compatible con pipeline existente)
   const universalOutline = filmOutlineToUniversalFormat(filmOutline);
   
+  // Guardar outline final
   await updateOutline(supabase, outline.id, { 
-    outline_json: universalOutline, progress: 85, heartbeat_at: new Date().toISOString()
+    outline_json: universalOutline, 
+    progress: 100,
+    heartbeat_at: new Date().toISOString()
   });
   
-  console.log(`[WORKER] FILM: Outline generated - "${filmOutline.title}"`);
+  const totalBeats = (parts.expand_act_i.data?.beats?.length || 0) + 
+                     (parts.expand_act_ii.data?.beats?.length || 0) + 
+                     (parts.expand_act_iii.data?.beats?.length || 0);
+  
+  console.log(`[WORKER] FILM V2 COMPLETE: "${filmOutline.title}" - ${totalBeats} beats across 3 acts`);
   return universalOutline;
 }
 
