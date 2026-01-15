@@ -5121,8 +5121,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       const role = char.role || '';
                       const roleDetail = char.role_detail || char.roleDetail;
                       const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
+                      // V21: Support multiple description field formats from different outline generators
+                      const description = char.description || char.bio || char.want;
+                      const details = char.need || char.flaw || char.arc;
                       return (
-                        <div key={i} className="p-2 bg-muted/30 rounded border">
+                        <div key={i} className="p-3 bg-muted/30 rounded border space-y-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <Badge variant={variant}>{char.name}</Badge>
                             {(role || roleDetail) && (
@@ -5131,8 +5134,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                               </span>
                             )}
                           </div>
-                          {char.description && (
-                            <p className="text-xs text-muted-foreground mt-1">{char.description}</p>
+                          {description && (
+                            <p className="text-xs text-muted-foreground">{description}</p>
+                          )}
+                          {details && (
+                            <p className="text-xs text-muted-foreground/70 italic">{details}</p>
                           )}
                         </div>
                       );
