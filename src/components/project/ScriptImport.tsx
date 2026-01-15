@@ -338,9 +338,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [nowMs, setNowMs] = useState(() => Date.now());
   
   // Light outline state (Pipeline V2)
-  const [lightOutline, setLightOutline] = useState<any>(null);
+  const [lightOutline, setLightOutlineRaw] = useState<any>(null);
   const [outlineApproved, setOutlineApproved] = useState(false);
   const [generatingOutline, setGeneratingOutline] = useState(false);
+  
+  // V21: Helper to normalize outline fields for consistent UI rendering
+  // This ensures main_characters and main_locations are always populated
+  const normalizeOutline = useCallback((outline: any): any => {
+    if (!outline) return null;
+    return {
+      ...outline,
+      main_characters: outline.main_characters || outline.cast || outline.characters || [],
+      main_locations: outline.main_locations || outline.locations || [],
+    };
+  }, []);
+  
+  // V21: Wrapper for setLightOutline that normalizes the data
+  const setLightOutline = useCallback((outline: any) => {
+    setLightOutlineRaw(normalizeOutline(outline));
+  }, [normalizeOutline]);
   
   // Showrunner upgrade state (Phase 2)
   const [upgradingOutline, setUpgradingOutline] = useState(false);
@@ -436,6 +452,29 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       const quality = outlinePersistence.savedOutline?.quality;
       if (quality === 'showrunner') return 'showrunner';
       
+      // V21: For FILM format, use different stage logic
+      if (format === 'film') {
+        const acts = lightOutline.acts_summary as Record<string, unknown> || {};
+        const hasFullActStructure = !!(
+          (acts.act_i_goal || acts.inciting_incident_summary) &&
+          (acts.midpoint_summary || acts.act_ii_goal) &&
+          (acts.climax_summary || acts.act_iii_goal)
+        );
+        
+        // Films with complete 3-act structure are considered 'threaded' (ready for script)
+        if (hasFullActStructure) return 'threaded';
+        
+        // Films with partial structure are 'operational'
+        const hasPartialStructure = !!(
+          acts.act_i_goal || acts.act_ii_goal || acts.act_iii_goal ||
+          acts.inciting_incident_summary || acts.midpoint_summary || acts.climax_summary
+        );
+        if (hasPartialStructure) return 'operational';
+        
+        return 'light';
+      }
+      
+      // SERIES: Original logic
       const threads = lightOutline.threads as unknown[];
       const episodes = lightOutline.episode_beats as Array<Record<string, unknown>>;
       
@@ -468,8 +507,34 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     };
     
     // Calculate blockers (simplified client-side version)
+    // V21: Supports both FILM and SERIES formats with different validation paths
     const calculateBlockers = (): string[] => {
       const blockers: string[] = [];
+      
+      // FILM FORMAT: Validate 3-act structure instead of episodes
+      if (format === 'film') {
+        const acts = lightOutline.acts_summary as Record<string, unknown> || {};
+        
+        // For films, check that we have a valid 3-act structure
+        const hasActI = !!(acts.act_i_goal || acts.inciting_incident_summary);
+        const hasActII = !!(acts.midpoint_summary || acts.act_ii_goal);
+        const hasActIII = !!(acts.climax_summary || acts.act_iii_goal);
+        
+        if (!hasActI) {
+          blockers.push('FILM_STRUCTURE:act_i_missing');
+        }
+        if (!hasActII) {
+          blockers.push('FILM_STRUCTURE:act_ii_missing');
+        }
+        if (!hasActIII) {
+          blockers.push('FILM_STRUCTURE:act_iii_missing');
+        }
+        
+        // Films don't need episode_beats, so return early with film-specific blockers
+        return blockers;
+      }
+      
+      // SERIES FORMAT: Original episode-based validation
       const arc = lightOutline.season_arc as Record<string, unknown> || {};
       const episodes = lightOutline.episode_beats as Array<Record<string, unknown>> || [];
       // Use outline's episode_count as source of truth, fallback to UI episodesCount
@@ -568,7 +633,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       score,
       canGenerateEpisodes,
     };
-  }, [lightOutline, outlinePersistence.savedOutline?.quality, episodesCount]);
+  }, [lightOutline, outlinePersistence.savedOutline?.quality, episodesCount, format]);
 
   // File upload for import tab
   const fileInputRef = useRef<HTMLInputElement>(null);

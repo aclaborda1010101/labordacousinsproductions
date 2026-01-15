@@ -53,12 +53,17 @@ export const STAGE_CONFIG: Record<PipelineStage, {
 
 // Human-readable blocker messages
 const BLOCKER_MESSAGES: Record<string, string> = {
-  // Season arc
+  // Season arc (for SERIES)
   'SEASON_ARC:inciting_incident_missing': 'Falta el incidente incitador del arco',
   'SEASON_ARC:first_turn_missing': 'Falta el primer giro del arco',
   'SEASON_ARC:midpoint_reversal_missing': 'Falta el punto medio del arco',
   'SEASON_ARC:all_is_lost_missing': 'Falta el momento "todo está perdido"',
   'SEASON_ARC:final_choice_missing': 'Falta la elección final del arco',
+  
+  // Film structure (for FILM format)
+  'FILM_STRUCTURE:act_i_missing': '🎬 Falta la estructura del Acto I (incidente incitador)',
+  'FILM_STRUCTURE:act_ii_missing': '🎬 Falta la estructura del Acto II (punto medio)',
+  'FILM_STRUCTURE:act_iii_missing': '🎬 Falta la estructura del Acto III (clímax)',
   
   // Episodes
   'EPISODES:episode_beats_missing': 'No hay episodios definidos',
@@ -250,6 +255,7 @@ export function getSuggestedAction(blockers: string[], pipelineStage: PipelineSt
 export function groupBlockers(blockers: string[]): Record<string, string[]> {
   const groups: Record<string, string[]> = {
     'Arco de Temporada': [],
+    'Estructura de Película': [],
     'Episodios': [],
     'Threads': [],
     'Otros': [],
@@ -260,6 +266,9 @@ export function groupBlockers(blockers: string[]): Record<string, string[]> {
       // OUTLINE_INCOMPLETE goes first and as its own category
       groups['Outline Incompleto'] = groups['Outline Incompleto'] || [];
       groups['Outline Incompleto'].push(humanizeBlocker(blocker));
+    } else if (blocker.includes('FILM_STRUCTURE:')) {
+      // Film-specific structure blockers
+      groups['Estructura de Película'].push(humanizeBlocker(blocker));
     } else if (blocker.includes('SEASON_ARC:')) {
       groups['Arco de Temporada'].push(humanizeBlocker(blocker));
     } else if (blocker.match(/EP\d+/) || blocker.includes('EPISODES:')) {
