@@ -80,14 +80,14 @@ const MAX_EPISODES = 10;
 // If a chunk fails, only that chunk needs to be retried (previous saved).
 // ============================================================================
 const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [number, number][] }> = {
-  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] },       // 2 chunks of 4 beats
-  II:  { beatsTotal: 10, chunks: [[1, 5], [6, 10]] },      // 2 chunks of 5 beats
-  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] }        // 2 chunks of 4 beats
+  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] },              // 2 chunks of 4 beats
+  II:  { beatsTotal: 10, chunks: [[1, 4], [5, 7], [8, 10]] },     // V19: 3 chunks of 3-4 beats (smaller = faster)
+  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] }               // 2 chunks of 4 beats
 };
 
-// V18: Reduced timeout per CHUNK (not per act)
-// 35s is enough for 4-5 beats, leaves room for retries within runtime budget
-const CHUNK_TIMEOUT_MS = 35000;
+// V19: Increased timeout per CHUNK from 35s to 50s
+// Scaffold takes ~43s, so 35s was insufficient. 50s gives margin for 4-5 beats.
+const CHUNK_TIMEOUT_MS = 50000;
 
 interface OutlineRecord {
   id: string;
@@ -1563,7 +1563,7 @@ RESPONDE SOLO CON JSON VÁLIDO:
 }`.trim();
 }
 
-// V18: Call a single chunk with retry logic
+// V19: Call a single chunk with retry logic + FAST_MODEL fallback on 3rd attempt
 async function callChunkWithRetry(
   supabase: SupabaseClient,
   outlineId: string,
@@ -1581,24 +1581,28 @@ async function callChunkWithRetry(
   
   for (let attempt = 1; attempt <= MAX_CHUNK_RETRIES; attempt++) {
     try {
-      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${attempt}/${MAX_CHUNK_RETRIES}`);
+      // V19: Use FAST_MODEL (gpt-5-mini) on 3rd attempt as fallback
+      const modelToUse = attempt === 3 ? FAST_MODEL : QUALITY_MODEL;
+      const modelLabel = attempt === 3 ? 'FALLBACK' : 'QUALITY';
+      
+      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${attempt}/${MAX_CHUNK_RETRIES} (${modelLabel}: ${modelToUse})`);
       
       // Build system prompt (reuse existing)
       const systemPrompt = buildExpandActSystem(act, genre, tone) + (attempt > 1 ? STRICT_JSON_SUFFIX : '');
       const userPrompt = buildChunkPrompt(scaffold, act, fromBeat, toBeat, previousActI, previousActII);
       
-      // V18: Use CHUNK_TIMEOUT_MS (35s) instead of full act timeout
+      // V19: Use CHUNK_TIMEOUT_MS (50s) per chunk
       const { toolArgs, content, extractionStrategy } = await callWithRetry502(
         () => callLovableAIWithToolAndHeartbeat(
           supabase, outlineId,
           systemPrompt,
           userPrompt,
-          QUALITY_MODEL,
+          modelToUse,  // V19: Dynamic model selection
           2000,  // Smaller max_tokens for chunk
           'expand_film_chunk',
           EXPAND_ACT_SCHEMA.parameters,
           chunkSubstage,
-          CHUNK_TIMEOUT_MS  // V18: 35s per chunk
+          CHUNK_TIMEOUT_MS  // V19: 50s per chunk
         ),
         { maxAttempts: 2, supabase, outlineId, substage: chunkSubstage, label: `CHUNK_${act}_${fromBeat}_${toBeat}` }
       );
@@ -1606,7 +1610,7 @@ async function callChunkWithRetry(
       const raw = toolArgs || content || '';
       
       if (!raw || !raw.trim()) {
-        console.warn(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: empty response (attempt ${attempt})`);
+        console.warn(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: empty response (attempt ${attempt}, model: ${modelToUse})`);
         if (attempt < MAX_CHUNK_RETRIES) continue;
         throw new Error(`CHUNK_EMPTY_RESPONSE: Act ${act} beats ${fromBeat}-${toBeat}`);
       }
@@ -1614,18 +1618,24 @@ async function callChunkWithRetry(
       // Parse response
       const parseResult = parseJsonRobust(raw, chunkSubstage);
       if (!parseResult.ok || !parseResult.json) {
-        console.warn(`[CHUNK] Parse failed (attempt ${attempt}): ${parseResult.error}`);
+        console.warn(`[CHUNK] Parse failed (attempt ${attempt}, model: ${modelToUse}): ${parseResult.error}`);
         if (attempt < MAX_CHUNK_RETRIES) continue;
         throw new Error(`CHUNK_PARSE_FAILED: ${parseResult.error}`);
       }
       
       const beats = parseResult.json.beats || [];
-      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: got ${beats.length} beats (strategy: ${extractionStrategy})`);
+      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: got ${beats.length} beats (strategy: ${extractionStrategy}, model: ${modelToUse})`);
       
       return beats;
       
     } catch (err: any) {
       console.error(`[CHUNK] Attempt ${attempt} failed:`, err.message);
+      
+      // V19: Log if we're about to try fallback model
+      if (attempt === 2) {
+        console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: 2 attempts with QUALITY_MODEL failed, next attempt will use FAST_MODEL fallback`);
+      }
+      
       if (attempt >= MAX_CHUNK_RETRIES) throw err;
     }
   }
