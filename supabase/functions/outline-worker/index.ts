@@ -20,6 +20,15 @@ import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-
 import { corsHeaders } from "../_shared/v3-enterprise.ts";
 import { parseJsonSafe } from "../_shared/llmJson.ts";
 import { MODEL_CONFIG } from "../_shared/model-config.ts";
+// V14: Robust JSON parsing with retry logic
+import { 
+  parseJsonRobust, 
+  validateExpandActMinimal, 
+  fillExpandActDefaults,
+  buildRawDebug,
+  type RawOutputDebug,
+  type ParseStrategy
+} from "../_shared/parse-json-robust.ts";
 import { STRUCTURED_SUMMARIZE_V11, OUTLINE_CORE_V11 } from "../_shared/production-prompts.ts";
 import { runStructuralQC as runStructuralQCV11, QCResult as QCResultV11 } from "../_shared/qc-validators.ts";
 import { TURNING_POINT_SCHEMA, SETPIECE_SCHEMA, THREAD_USAGE_SCHEMA } from "../_shared/outline-schemas-v11.ts";
@@ -761,6 +770,55 @@ async function executeSubstepIfNeeded(
 // PHASE 3: MERGE + Validación (local, sin AI)
 // ============================================================================
 
+// V14: Strict JSON prompt suffix for retry attempts
+const STRICT_JSON_SUFFIX = `
+
+═══════════════════════════════════════════════════════════════════
+⚠️ CRITICAL JSON REQUIREMENTS - MUST FOLLOW EXACTLY:
+═══════════════════════════════════════════════════════════════════
+- Respond ONLY with valid JSON
+- NO markdown code blocks (no \`\`\`json or \`\`\`)
+- NO text before or after the JSON object
+- Start your response with { and end with }
+- NO trailing commas (,} or ,] are INVALID JSON)
+- All string values must use standard double quotes "
+- Escape internal quotes properly: \\"
+═══════════════════════════════════════════════════════════════════`;
+
+// V14: Minimal expand prompt for fallback
+const MINIMAL_EXPAND_SYSTEM = `Eres guionista profesional de CINE.
+Tu tarea es generar beats básicos para un acto de película.
+
+RESPONDE ÚNICAMENTE CON JSON VÁLIDO.
+- Sin markdown
+- Sin explicaciones
+- Empieza con { y termina con }
+- Sin comas finales antes de } o ]`;
+
+function buildMinimalExpandPrompt(act: string, scaffold: any): string {
+  const beatsCount = act === 'II' ? '8' : '5';
+  return `PELÍCULA: "${scaffold.title}"
+LOGLINE: ${scaffold.logline}
+
+ARQUITECTURA:
+- Acto I: ${scaffold.acts_summary?.act_i_goal || 'Setup'}
+- Acto II: ${scaffold.acts_summary?.act_ii_goal || 'Confrontación'}
+- Acto III: ${scaffold.acts_summary?.act_iii_goal || 'Resolución'}
+
+TAREA: Genera ${beatsCount} beats mínimos para el ACTO ${act}.
+
+JSON OBLIGATORIO:
+{
+  "act": "${act}",
+  "dramatic_goal": "objetivo del acto",
+  "beats": [
+    {"beat_number": 1, "event": "qué ocurre", "agent": "quién actúa", "consequence": "resultado"},
+    ...
+  ],
+  "key_moments": {}
+}`;
+}
+
 // Timeout específico para FILM (más largo que SERIES por complejidad)
 const FILM_TIMEOUTS = {
   SCAFFOLD_MS: 65000,      // 65s para scaffold ligero
@@ -931,6 +989,189 @@ Incluye key_moments obligatorios del acto.
 ⚠️ SOLO ACTO ${act}. No toques otros actos.`.trim();
 }
 
+// ============================================================================
+// V14: EXPAND ACT WITH ROBUST RETRY LOGIC
+// ============================================================================
+// Attempts:
+// 1. Normal prompt with gpt-5.2
+// 2. Strict JSON prompt if parsing fails
+// 3. Fallback to minimal expand with gpt-5-mini
+// ============================================================================
+async function fallbackMinimalExpand(
+  supabase: SupabaseClient,
+  outlineId: string,
+  scaffold: any,
+  act: 'I' | 'II' | 'III',
+  genre: string,
+  tone: string
+): Promise<any> {
+  console.log(`[WORKER] EXPAND ACT ${act}: fallback to MINIMAL_EXPAND (gpt-5-mini)`);
+  
+  const substage = `expand_act_${act.toLowerCase()}_fallback`;
+  
+  try {
+    const { content, toolArgs } = await callLovableAIWithToolAndHeartbeat(
+      supabase, outlineId,
+      MINIMAL_EXPAND_SYSTEM,
+      buildMinimalExpandPrompt(act, scaffold),
+      FAST_MODEL,  // gpt-5-mini for fast fallback
+      2500,
+      'expand_film_act_minimal',
+      EXPAND_ACT_SCHEMA.parameters,
+      substage,
+      45000  // 45s timeout for fallback
+    );
+    
+    const raw = toolArgs || content || '';
+    const parseResult = parseJsonRobust(raw, `minimal_expand_${act}`);
+    
+    if (!parseResult.ok || !parseResult.json) {
+      throw new Error(`MINIMAL_EXPAND_${act} also failed to parse: ${parseResult.error}`);
+    }
+    
+    console.log(`[WORKER] MINIMAL_EXPAND ACT ${act}: ${parseResult.json.beats?.length || 0} beats (degraded)`);
+    
+    // Fill defaults for incomplete result
+    return fillExpandActDefaults(parseResult.json, act);
+    
+  } catch (err: any) {
+    console.error(`[WORKER] MINIMAL_EXPAND ACT ${act} failed:`, err.message);
+    throw new Error(`EXPAND_ACT_${act}_ALL_ATTEMPTS_FAILED: ${err.message}`);
+  }
+}
+
+async function expandActWithRetry(
+  supabase: SupabaseClient,
+  outlineId: string,
+  scaffold: any,
+  act: 'I' | 'II' | 'III',
+  parts: any,
+  genre: string,
+  tone: string,
+  previousActI?: any,
+  previousActII?: any
+): Promise<any> {
+  const substage = `expand_act_${act.toLowerCase()}` as const;
+  const MAX_RETRIES = 2;
+  const timeout = act === 'II' ? FILM_TIMEOUTS.EXPAND_ACT_II_MS : FILM_TIMEOUTS.EXPAND_ACT_MS;
+  
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const isStrictRetry = attempt > 1;
+    const systemPrompt = buildExpandActSystem(act, genre, tone) + (isStrictRetry ? STRICT_JSON_SUFFIX : '');
+    
+    console.log(`[WORKER] EXPAND ACT ${act}: attempt ${attempt}${isStrictRetry ? ' (strict JSON mode)' : ''}`);
+    
+    try {
+      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outlineId,
+        systemPrompt,
+        buildExpandActUser(scaffold, act, previousActI, previousActII),
+        QUALITY_MODEL,
+        act === 'II' ? 4000 : 3000,
+        'expand_film_act',
+        EXPAND_ACT_SCHEMA.parameters,
+        substage,
+        timeout
+      );
+      
+      const raw = toolArgs || content || '';
+      
+      // V14: Persist raw ALWAYS for debugging
+      const rawDebug: RawOutputDebug = buildRawDebug(content, toolArgs, 'direct', attempt);
+      parts[substage] = {
+        ...parts[substage],
+        ...rawDebug
+      };
+      await updateOutline(supabase, outlineId, { outline_parts: parts });
+      
+      // V14: Use robust parsing
+      const parseResult = parseJsonRobust(raw, substage);
+      
+      if (!parseResult.ok || !parseResult.json) {
+        console.warn(`[WORKER] EXPAND ACT ${act} parse failed (attempt ${attempt}): ${parseResult.error}`);
+        parts[substage].parse_strategy = parseResult.strategy;
+        parts[substage].last_error = parseResult.error;
+        parts[substage].warnings = parseResult.warnings;
+        await updateOutline(supabase, outlineId, { outline_parts: parts });
+        
+        if (attempt < MAX_RETRIES) {
+          console.log(`[WORKER] EXPAND ACT ${act}: retrying with strict JSON prompt...`);
+          continue;
+        }
+        
+        // Both attempts failed → try fallback
+        console.log(`[WORKER] EXPAND ACT ${act}: parse failed, trying MINIMAL_EXPAND fallback...`);
+        return await fallbackMinimalExpand(supabase, outlineId, scaffold, act, genre, tone);
+      }
+      
+      // V14: Minimal validation
+      const validation = validateExpandActMinimal(parseResult.json, act);
+      if (!validation.valid) {
+        console.warn(`[WORKER] EXPAND ACT ${act} validation issues (attempt ${attempt}): ${validation.issues.join(', ')}`);
+        parts[substage].validation_issues = validation.issues;
+        
+        if (attempt < MAX_RETRIES) {
+          console.log(`[WORKER] EXPAND ACT ${act}: validation failed, retrying with strict prompt...`);
+          continue;
+        }
+        
+        // If has at least 2 beats, fill defaults and proceed (degraded)
+        if (parseResult.json?.beats?.length >= 2) {
+          console.log(`[WORKER] EXPAND ACT ${act}: filling defaults for partial result (${parseResult.json.beats.length} beats)`);
+          parts[substage].parse_strategy = parseResult.strategy;
+          parts[substage].quality = 'degraded';
+          await updateOutline(supabase, outlineId, { outline_parts: parts });
+          return fillExpandActDefaults(parseResult.json, act);
+        }
+        
+        // Too few beats → fallback
+        console.log(`[WORKER] EXPAND ACT ${act}: insufficient beats, trying MINIMAL_EXPAND fallback...`);
+        return await fallbackMinimalExpand(supabase, outlineId, scaffold, act, genre, tone);
+      }
+      
+      // Success: fill defaults for optional fields
+      parts[substage].parse_strategy = parseResult.strategy;
+      parts[substage].quality = 'ok';
+      await updateOutline(supabase, outlineId, { outline_parts: parts });
+      
+      console.log(`[WORKER] EXPAND ACT ${act} done: ${parseResult.json.beats?.length || 0} beats (strategy: ${parseResult.strategy})`);
+      return fillExpandActDefaults(parseResult.json, act);
+      
+    } catch (err: any) {
+      console.error(`[WORKER] EXPAND ACT ${act} attempt ${attempt} error:`, err.message);
+      
+      // Persist error for debugging
+      parts[substage] = {
+        ...parts[substage],
+        last_error: err.message,
+        attempt_count: attempt,
+        timestamp: new Date().toISOString()
+      };
+      await updateOutline(supabase, outlineId, { outline_parts: parts });
+      
+      // If timeout or rate limit on first attempt, try with fallback model
+      const isTimeout = err.message?.includes('AI_TIMEOUT') || err.message?.includes('AbortError');
+      const isRateLimit = err.status === 429;
+      
+      if ((isTimeout || isRateLimit) && attempt < MAX_RETRIES) {
+        console.log(`[WORKER] EXPAND ACT ${act}: ${isTimeout ? 'timeout' : 'rate limit'}, will retry...`);
+        continue;
+      }
+      
+      // All retries exhausted → try minimal fallback
+      if (attempt >= MAX_RETRIES) {
+        console.log(`[WORKER] EXPAND ACT ${act}: all retries failed, trying MINIMAL_EXPAND fallback...`);
+        return await fallbackMinimalExpand(supabase, outlineId, scaffold, act, genre, tone);
+      }
+      
+      throw err;
+    }
+  }
+  
+  // Should not reach here, but safety fallback
+  return await fallbackMinimalExpand(supabase, outlineId, scaffold, act, genre, tone);
+}
+
 // Función para hacer merge de las partes expandidas
 function mergeFilmParts(
   scaffold: any,
@@ -1057,99 +1298,84 @@ async function stageFilmOutline(
   const scaffold = scaffoldResult.data;
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2A: EXPAND ACT I
+  // PHASE 2A: EXPAND ACT I (V14: with robust retry)
   // ════════════════════════════════════════════════════════════════════════
   const actIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_i');
   const actIResult = await executeSubstepIfNeeded(
     supabase, { ...outline, outline_parts: parts }, 'expand_act_i', actIHash,
     async () => {
-      console.log(`[WORKER] FILM EXPAND: Act I`);
       await updateOutline(supabase, outline.id, { 
         substage: 'expand_act_i', progress: 30,
         heartbeat_at: new Date().toISOString()
       });
       
-      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outline.id,
-        buildExpandActSystem('I', genre, tone),
-        buildExpandActUser(scaffold, 'I'),
-        QUALITY_MODEL, 3000, 'expand_film_act', 
-        EXPAND_ACT_SCHEMA.parameters, 'expand_act_i',
-        FILM_TIMEOUTS.EXPAND_ACT_MS
+      // V14: Use expandActWithRetry with robust parsing, validation, and fallback
+      return await expandActWithRetry(
+        supabase, outline.id, scaffold, 'I', parts, genre, tone
       );
-      
-      const parseResult = parseJsonSafe(toolArgs || content, 'expand_act_i');
-      if (!parseResult.json) throw new Error('EXPAND_ACT_I failed to parse');
-      
-      console.log(`[WORKER] FILM ACT I done: ${parseResult.json.beats?.length || 0} beats`);
-      return parseResult.json;
     }
   );
-  parts.expand_act_i = { status: 'done', hash: actIHash, data: actIResult.data };
+  parts.expand_act_i = { 
+    ...parts.expand_act_i,
+    status: 'done', 
+    hash: actIHash, 
+    data: actIResult.data 
+  };
   await updateOutline(supabase, outline.id, { outline_parts: parts });
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2B: EXPAND ACT II (el más largo, timeout extendido)
+  // PHASE 2B: EXPAND ACT II (V14: with robust retry)
   // ════════════════════════════════════════════════════════════════════════
   const actIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_ii');
   const actIIResult = await executeSubstepIfNeeded(
     supabase, { ...outline, outline_parts: parts }, 'expand_act_ii', actIIHash,
     async () => {
-      console.log(`[WORKER] FILM EXPAND: Act II`);
       await updateOutline(supabase, outline.id, { 
         substage: 'expand_act_ii', progress: 50,
         heartbeat_at: new Date().toISOString()
       });
       
-      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outline.id,
-        buildExpandActSystem('II', genre, tone),
-        buildExpandActUser(scaffold, 'II', parts.expand_act_i?.data),
-        QUALITY_MODEL, 4000, 'expand_film_act',  // Más tokens para Act II
-        EXPAND_ACT_SCHEMA.parameters, 'expand_act_ii',
-        FILM_TIMEOUTS.EXPAND_ACT_II_MS  // Timeout extendido para Act II
+      // V14: Use expandActWithRetry with robust parsing, validation, and fallback
+      return await expandActWithRetry(
+        supabase, outline.id, scaffold, 'II', parts, genre, tone,
+        parts.expand_act_i?.data  // Pass Act I for context
       );
-      
-      const parseResult = parseJsonSafe(toolArgs || content, 'expand_act_ii');
-      if (!parseResult.json) throw new Error('EXPAND_ACT_II failed to parse');
-      
-      console.log(`[WORKER] FILM ACT II done: ${parseResult.json.beats?.length || 0} beats`);
-      return parseResult.json;
     }
   );
-  parts.expand_act_ii = { status: 'done', hash: actIIHash, data: actIIResult.data };
+  parts.expand_act_ii = { 
+    ...parts.expand_act_ii,
+    status: 'done', 
+    hash: actIIHash, 
+    data: actIIResult.data 
+  };
   await updateOutline(supabase, outline.id, { outline_parts: parts });
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2C: EXPAND ACT III
+  // PHASE 2C: EXPAND ACT III (V14: with robust retry)
   // ════════════════════════════════════════════════════════════════════════
   const actIIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_iii');
   const actIIIResult = await executeSubstepIfNeeded(
     supabase, { ...outline, outline_parts: parts }, 'expand_act_iii', actIIIHash,
     async () => {
-      console.log(`[WORKER] FILM EXPAND: Act III`);
       await updateOutline(supabase, outline.id, { 
         substage: 'expand_act_iii', progress: 70,
         heartbeat_at: new Date().toISOString()
       });
       
-      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outline.id,
-        buildExpandActSystem('III', genre, tone),
-        buildExpandActUser(scaffold, 'III', parts.expand_act_i?.data, parts.expand_act_ii?.data),
-        QUALITY_MODEL, 3000, 'expand_film_act', 
-        EXPAND_ACT_SCHEMA.parameters, 'expand_act_iii',
-        FILM_TIMEOUTS.EXPAND_ACT_MS
+      // V14: Use expandActWithRetry with robust parsing, validation, and fallback
+      return await expandActWithRetry(
+        supabase, outline.id, scaffold, 'III', parts, genre, tone,
+        parts.expand_act_i?.data,   // Pass Act I for context
+        parts.expand_act_ii?.data   // Pass Act II for context
       );
-      
-      const parseResult = parseJsonSafe(toolArgs || content, 'expand_act_iii');
-      if (!parseResult.json) throw new Error('EXPAND_ACT_III failed to parse');
-      
-      console.log(`[WORKER] FILM ACT III done: ${parseResult.json.beats?.length || 0} beats`);
-      return parseResult.json;
     }
   );
-  parts.expand_act_iii = { status: 'done', hash: actIIIHash, data: actIIIResult.data };
+  parts.expand_act_iii = { 
+    ...parts.expand_act_iii,
+    status: 'done', 
+    hash: actIIIHash, 
+    data: actIIIResult.data 
+  };
   await updateOutline(supabase, outline.id, { outline_parts: parts });
   
   // ════════════════════════════════════════════════════════════════════════
@@ -1985,6 +2211,8 @@ serve(async (req) => {
         const isTimeout = err.message?.includes('AI_TIMEOUT') || err.message?.includes('AbortError');
         const isRateLimit = err.status === 429 || err.message?.includes('429');
         const isPayment = err.status === 402 || err.message?.includes('402');
+        const isExpandActFail = err.message?.includes('EXPAND_ACT') || err.message?.includes('ALL_ATTEMPTS_FAILED');
+        const isParseFail = err.message?.includes('failed to parse') || err.message?.includes('parse failed');
         
         let errorCode = 'WORKER_ERROR';
         let status = 'failed';
@@ -1998,12 +2226,27 @@ serve(async (req) => {
         } else if (isPayment) {
           errorCode = 'PAYMENT_REQUIRED';
           status = 'failed';
+        } else if (isExpandActFail) {
+          errorCode = 'EXPAND_ACT_FAILED';
+          status = 'failed';
+        } else if (isParseFail) {
+          errorCode = 'JSON_PARSE_FAILED';
+          status = 'failed';
+        }
+        
+        // V14: Extract which substage failed from error message
+        let failedSubstage = null;
+        const substageMatch = err.message?.match(/expand_act_(i{1,3})/i);
+        if (substageMatch) {
+          failedSubstage = `expand_act_${substageMatch[1].toLowerCase()}`;
         }
         
         await updateOutline(supabase, outlineId, {
           status,
           error_code: errorCode,
           error_detail: (err.message || 'Unknown error').substring(0, 500),
+          // V14: Preserve substage for resume capability
+          ...(failedSubstage && { substage: failedSubstage }),
           heartbeat_at: new Date().toISOString()
         });
         
