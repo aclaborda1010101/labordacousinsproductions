@@ -100,29 +100,51 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         return;
       }
 
-      // V23: Score each candidate and pick best
+      // V24: ENHANCED score each candidate - penalize empty completed/approved
       const scoreOutline = (o: any): number => {
         let score = 0;
-        // Prefer outlines with actual progress
+        const json = o.outline_json || {};
+        const parts = o.outline_parts || {};
+        
+        // Base: Prefer outlines with actual progress
         if (o.progress && o.progress > 0) score += 50 + o.progress;
-        // Prefer active statuses
+        
+        // Prefer active statuses (need attention or generating)
         if (['generating', 'stalled', 'queued'].includes(o.status)) score += 100;
         if (o.status === 'completed') score += 80;
         if (o.status === 'timeout' || o.status === 'failed') score += 40;
-        // Prefer outlines with outline_parts (partial work)
-        if (o.outline_parts && Object.keys(o.outline_parts).length > 0) {
+        
+        // Prefer outlines with outline_parts (partial work exists)
+        if (parts && Object.keys(parts).length > 0) {
           score += 30;
-          // Even more if there's actual scaffold data
-          if ((o.outline_parts as any)?.film_scaffold?.data) score += 20;
-          if ((o.outline_parts as any)?.expand_act_i?.beats?.length > 0) score += 15;
-          if ((o.outline_parts as any)?.expand_act_ii?.beats?.length > 0) score += 15;
+          // Even more if there's actual scaffold data with entities
+          const scaffold = parts.film_scaffold?.data;
+          if (scaffold) {
+            score += 20;
+            // Bonus for scaffold with cast/locations
+            if (Array.isArray(scaffold.cast) && scaffold.cast.length > 0) score += 15;
+            if (Array.isArray(scaffold.locations) && scaffold.locations.length > 0) score += 10;
+          }
+          if (parts.expand_act_i?.beats?.length > 0) score += 15;
+          if (parts.expand_act_ii?.beats?.length > 0) score += 15;
+          if (parts.expand_act_iii?.beats?.length > 0) score += 10;
         }
-        // Prefer outlines with content
-        const json = o.outline_json || {};
+        
+        // Prefer outlines with content in outline_json
         if (json.title || json.logline) score += 20;
-        if ((json.main_characters || json.cast)?.length > 0) score += 15;
-        // Penalize empty approved outlines (created accidentally)
-        if (o.status === 'approved' && (!json.title || Object.keys(json).length < 3)) score -= 100;
+        const hasCast = Array.isArray(json.main_characters || json.cast) && (json.main_characters || json.cast).length > 0;
+        const hasLocs = Array.isArray(json.main_locations || json.locations) && (json.main_locations || json.locations).length > 0;
+        if (hasCast) score += 15;
+        if (hasLocs) score += 10;
+        
+        // V24: HEAVILY PENALIZE empty approved/completed outlines (accidental creation)
+        if (['approved', 'completed'].includes(o.status)) {
+          const isEmpty = !json.title && Object.keys(json).length < 3;
+          const noEntities = !hasCast && !hasLocs;
+          if (isEmpty) score -= 150; // Strong penalty
+          else if (noEntities) score -= 80; // Medium penalty
+        }
+        
         return score;
       };
 
