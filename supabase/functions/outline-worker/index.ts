@@ -2977,12 +2977,20 @@ serve(async (req) => {
     const outline = outlineData as OutlineRecord;
     outlineId = outline.id;
 
-    // Check attempts
-    if (outline.attempts >= MAX_ATTEMPTS) {
+    // V24: FIX FOR CHUNKED MODE - Disable global attempts gating for FILM format
+    // In chunked mode, each "Continue" invocation increments attempts, but that's NOT a retry.
+    // Retry logic is handled per-chunk via outline_parts.<act>.retry_count
+    const isFilmFormat = outline.format === 'film' || outline.format === 'FILM';
+    const isChunkedMode = isFilmFormat; // FILM uses chunked expansion
+    const CHUNKED_MAX_INVOCATIONS = 50; // Allow many invocations for chunked mode (3 acts * 3-5 chunks each + retries)
+    const effectiveMaxAttempts = isChunkedMode ? CHUNKED_MAX_INVOCATIONS : MAX_ATTEMPTS;
+    
+    // Check attempts (only block on truly excessive invocations for chunked mode)
+    if (outline.attempts >= effectiveMaxAttempts) {
       await updateOutline(supabase, outline.id, {
         status: 'failed',
         error_code: 'MAX_ATTEMPTS_EXCEEDED',
-        error_detail: `Exceeded ${MAX_ATTEMPTS} attempts`
+        error_detail: `Exceeded ${effectiveMaxAttempts} ${isChunkedMode ? 'invocations (chunked)' : 'attempts'}`
       });
       return new Response(
         JSON.stringify({ success: false, code: 'MAX_ATTEMPTS_EXCEEDED' }),
@@ -2990,7 +2998,8 @@ serve(async (req) => {
       );
     }
 
-    // Increment attempts and set initial heartbeat
+    // Increment invocations and set initial heartbeat
+    // V24: For chunked mode, this is "invocation count", not "retry count"
     await updateOutline(supabase, outline.id, {
       status: 'generating',
       attempts: (outline.attempts || 0) + 1,

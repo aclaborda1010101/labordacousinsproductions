@@ -314,7 +314,8 @@ serve(async (req) => {
     let sourceDescription = '';
 
     if (source === 'outline') {
-      // Fetch outline from project_outlines - include outline_parts for film scaffold
+      // V3: Fetch outline from project_outlines - include outline_parts for film scaffold
+      // Use updated_at ordering for better selection of the "real" active outline
       const query = adminClient
         .from('project_outlines')
         .select('id, outline_json, outline_parts, quality, status')
@@ -323,8 +324,11 @@ serve(async (req) => {
       if (outlineId) {
         query.eq('id', outlineId);
       } else {
-        // Get the most recent approved or completed outline
-        query.in('status', ['approved', 'completed', 'generating', 'stalled']).order('created_at', { ascending: false }).limit(1);
+        // V3: Get the most recent outline by updated_at (not created_at)
+        // Include more statuses to catch partial work
+        query.in('status', ['approved', 'completed', 'generating', 'stalled', 'timeout', 'failed'])
+          .order('updated_at', { ascending: false })
+          .limit(1);
       }
       
       const { data: outlineData, error: outlineError } = await query.maybeSingle();
@@ -337,23 +341,47 @@ serve(async (req) => {
         );
       }
       
-      // V2: If outline_json is empty, try to reconstruct from outline_parts (film scaffold)
-      let outlineJson = outlineData?.outline_json;
+      // V3: ROBUST RECONSTRUCTION - Always try to extract from outline_parts first
+      let outlineJson = outlineData?.outline_json as Record<string, any> | null;
       const outlineParts = outlineData?.outline_parts as Record<string, any> | null;
       
-      if ((!outlineJson || Object.keys(outlineJson as any).length === 0) && outlineParts) {
-        console.log('[materialize-entities] V2: Reconstructing outline from outline_parts');
+      // V3: Check if outline_json is missing key entity data (cast/locations)
+      const outlineJsonHasCast = Array.isArray((outlineJson as any)?.cast) && (outlineJson as any)?.cast.length > 0 ||
+                                  Array.isArray((outlineJson as any)?.main_characters) && (outlineJson as any)?.main_characters.length > 0;
+      const outlineJsonHasLocs = Array.isArray((outlineJson as any)?.locations) && (outlineJson as any)?.locations.length > 0 ||
+                                  Array.isArray((outlineJson as any)?.main_locations) && (outlineJson as any)?.main_locations.length > 0;
+      
+      // V3: Reconstruct/merge from outline_parts if outline_json is missing OR lacks entities
+      if (outlineParts) {
         const scaffold = outlineParts.film_scaffold?.data;
         if (scaffold) {
-          outlineJson = {
-            ...scaffold,
-            main_characters: scaffold.cast || scaffold.main_characters || [],
-            main_locations: scaffold.locations || scaffold.main_locations || [],
-          };
+          const scaffoldCast = scaffold.cast || scaffold.main_characters || [];
+          const scaffoldLocs = scaffold.locations || scaffold.main_locations || [];
+          
+          // Merge scaffold data into outlineJson
+          if (!outlineJson || Object.keys(outlineJson).length === 0) {
+            console.log('[materialize-entities] V3: Reconstructing outline from film_scaffold');
+            outlineJson = {
+              ...scaffold,
+              main_characters: scaffoldCast,
+              main_locations: scaffoldLocs,
+            };
+          } else if (!outlineJsonHasCast || !outlineJsonHasLocs) {
+            console.log('[materialize-entities] V3: Merging scaffold entities into incomplete outline_json');
+            outlineJson = {
+              ...outlineJson,
+              main_characters: outlineJsonHasCast ? (outlineJson as any).main_characters || (outlineJson as any).cast : scaffoldCast,
+              main_locations: outlineJsonHasLocs ? (outlineJson as any).main_locations || (outlineJson as any).locations : scaffoldLocs,
+              // Also copy title/logline if missing
+              title: (outlineJson as any).title || scaffold.title,
+              logline: (outlineJson as any).logline || scaffold.logline,
+            };
+          }
         }
       }
       
-      if (!outlineJson || Object.keys(outlineJson as any).length === 0) {
+      // V3: Check if we have ANYTHING to work with
+      if (!outlineJson || Object.keys(outlineJson).length === 0) {
         return new Response(
           JSON.stringify({ 
             error: 'NO_OUTLINE_FOUND', 
@@ -517,6 +545,27 @@ serve(async (req) => {
       locationsCreated,
       locationsUpdated
     });
+
+    // V3: HONEST RESPONSE - Never return success:true with 0/0 extracted
+    const totalExtracted = extractedCharacters.length + extractedLocations.length;
+    const totalMaterialized = (charactersCreated + charactersUpdated) + (locationsCreated + locationsUpdated);
+    
+    if (totalExtracted === 0) {
+      console.warn('[materialize-entities] V3: No entities extracted - outline may be incomplete');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'OUTLINE_NOT_READY',
+          message: 'El outline no contiene personajes ni locaciones extraíbles. Puede que la generación aún no haya completado el scaffold.',
+          action: 'continue_outline',
+          has_partial: outline !== null,
+          source: sourceDescription,
+          characters: { extracted: 0, created: 0, updated: 0 },
+          locations: { extracted: 0, created: 0, updated: 0 }
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     return new Response(
       JSON.stringify({
