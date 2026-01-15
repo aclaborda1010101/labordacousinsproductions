@@ -769,29 +769,32 @@ const FILM_TIMEOUTS = {
 };
 
 function buildFilmScaffoldSystem(genre: string, tone: string, duration: number): string {
-  return `Eres un SHOWRUNNER SENIOR DE CINE (nivel A24 / Warner).
-Tu trabajo es DISEÑAR una PELÍCULA que podría producirse en Hollywood.
+  return `Eres showrunner senior de CINE (Hollywood-level).
 
-NO escribes escenas.
-NO escribes diálogos.
-NO detallas beats.
-DISEÑAS una arquitectura dramática sólida.
+FORMATO ABSOLUTO: PELÍCULA (FILM).
+PROHIBIDO BAJO CUALQUIER CIRCUNSTANCIA:
+- episodios, temporadas, season arcs
+- cliffhangers episódicos
+- estructura serial
+
+Tu trabajo NO es escribir escenas ni diálogos.
+Tu trabajo es diseñar una ARQUITECTURA CINEMATOGRÁFICA ejecutable.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-FORMATO ABSOLUTO: PELÍCULA (FILM)
+GÉNERO OBLIGATORIO: ${genre.toUpperCase()}
+TONO OBLIGATORIO: ${tone}
 DURACIÓN: ${duration} minutos
-GÉNERO: ${genre.toUpperCase()}
-TONO: ${tone}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-⚠️ PROHIBICIONES ABSOLUTAS:
-- PROHIBIDO: episodios, temporadas, capítulos, cliffhangers seriales
-- PROHIBIDO: "todo cambia", "se dan cuenta", "la tensión aumenta", "empiezan a..."
-- PROHIBIDO: cualquier estructura serial o episódica
+REGLAS:
+- 3 actos clásicos (I, II, III)
+- Cada beat es un HECHO OBSERVABLE con: evento + agente + consecuencia
+- Nada genérico ("todo cambia", "surge un conflicto")
+- Decisiones causales, no estados de ánimo
 
-ESTRUCTURA 3 ACTOS CLÁSICOS:
+ESTRUCTURA 3 ACTOS:
 - ACTO I (~25%): Mundo ordinario → Inciting Incident → Decisión protagonista
-- ACTO II (~50%): Complicaciones → MIDPOINT REVERSAL → All-is-lost
+- ACTO II (~50%): Complicaciones → MIDPOINT REVERSAL CONCRETO → All-is-lost
 - ACTO III (~25%): Clímax con coste real → Resolución
 
 PERSONAJES: Cada uno con WANT/NEED/FLAW/DECISION_KEY
@@ -800,8 +803,11 @@ PERSONAJES: Cada uno con WANT/NEED/FLAW/DECISION_KEY
 - FLAW: Defecto que complica sus decisiones
 - DECISION_KEY: Decisión clave que tomará
 
-Tu output será usado como base inmutable para expansión posterior por actos.
-Devuelve SOLO JSON válido.`.trim();
+SALIDA:
+- JSON válido y compacto
+- Este scaffold será BLOQUEADO y usado para expansión posterior
+
+Devuelve SOLO JSON válido según el schema.`.trim();
 }
 
 function buildFilmScaffoldUser(summary: string, duration: number): string {
@@ -833,7 +839,7 @@ function buildExpandActSystem(act: 'I' | 'II' | 'III', genre: string, tone: stri
 - act_break: Evento que cierra el acto y lanza al protagonista al conflicto`,
     'II': `OBLIGACIONES ACTO II:
 - first_half_complications: Obstáculos antes del midpoint
-- midpoint_reversal: EVENTO VISIBLE que cambia todo (con agente + consecuencia + nuevo objetivo)
+- midpoint_reversal: EVENTO VISIBLE e IRREVERSIBLE que cambia todo (con agente + consecuencia + nuevo objetivo)
 - second_half_escalation: Escalada post-midpoint
 - all_is_lost_moment: El momento más oscuro (qué pierde el protagonista)
 - dark_night_of_soul: Reflexión antes de la decisión final`,
@@ -846,35 +852,36 @@ function buildExpandActSystem(act: 'I' | 'II' | 'III', genre: string, tone: stri
 - theme_statement: Cómo la resolución ilustra la premisa temática`
   };
   
-  return `Eres un GUIONISTA DE CINE PROFESIONAL.
-Estás expandiendo SOLO el ACTO ${act} de una película.
+  return `Eres guionista profesional de CINE.
+
+FORMATO ABSOLUTO: PELÍCULA (FILM).
+Estás expandiendo SOLO el ACTO ${act}.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 GÉNERO: ${genre.toUpperCase()}
 TONO: ${tone}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-⚠️ PROHIBICIONES:
-- Nada episódico
-- Nada genérico ("la tensión aumenta", "se complica", "algo cambia")
-- Todo debe ser FILMABLE
+PROHIBIDO:
+- episodios, temporadas, cliffhangers
+- introducir personajes o localizaciones no presentes en el scaffold
+- lenguaje genérico ("la tensión aumenta", "se complica", "algo cambia")
 
-CADA BEAT DEBE:
-- Ser un EVENTO OBSERVABLE (no sentimiento)
-- Tener AGENTE (quién actúa)
-- Tener CONSECUENCIA (qué provoca)
-- CAMBIAR el estado del protagonista
+REGLAS:
+- Todo debe ser FILMABLE
+- Nada genérico
+- Cada beat debe CAMBIAR el ESTADO del protagonista
+
+CADA BEAT DEBE INCLUIR situation_detail:
+- physical_context (espacio, luz, disposición)
+- action (qué ocurre en pantalla)
+- goal (objetivo inmediato)
+- obstacle (impedimento tangible)
+- state_change (qué cambia al final)
 
 ${actGoals[act]}
 
-SITUATION_DETAIL OBLIGATORIO por beat:
-- physical_context: Luz, espacio, disposición (1-2 frases)
-- action: Acción visible (1-2 frases)
-- goal: Objetivo inmediato del personaje (1 frase)
-- obstacle: Obstáculo tangible (1 frase)
-- state_change: Cambio de estado al final (1 frase)
-
-Devuelve SOLO JSON válido.`.trim();
+Devuelve SOLO JSON válido según el schema.`.trim();
 }
 
 function buildExpandActUser(

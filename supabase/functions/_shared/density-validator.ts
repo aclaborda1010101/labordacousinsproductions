@@ -580,6 +580,142 @@ export function getDensityProfile(
 }
 
 // ============================================================================
+// V14: FILM PHASE-BASED DENSITY PROFILES (GENERIC FOR ALL GENRES)
+// ============================================================================
+
+export interface PhaseDensityProfile {
+  id: string;
+  min_score: number;
+  rules: Array<{ id: string; label: string; min: number }>;
+}
+
+// FILM SCAFFOLD PHASE - Validates architectural structure
+export const FILM_SCAFFOLD_PROFILE: PhaseDensityProfile = {
+  id: 'film_scaffold',
+  min_score: 60,
+  rules: [
+    { id: 'cast', label: 'Personajes principales', min: 4 },
+    { id: 'world_rules', label: 'Reglas del mundo', min: 2 },
+    { id: 'locations', label: 'Localizaciones', min: 5 },
+    { id: 'setpieces', label: 'Setpieces', min: 3 },
+    { id: 'acts', label: 'Actos', min: 3 },
+    { id: 'beats_total', label: 'Beats totales (scaffold)', min: 15 },
+    { id: 'midpoint', label: 'Midpoint reversal', min: 1 }
+  ]
+};
+
+// FILM EXPAND ACT PHASE - Validates per-act expansion
+export const FILM_EXPAND_ACT_PROFILE: PhaseDensityProfile = {
+  id: 'film_expand_act',
+  min_score: 70,
+  rules: [
+    { id: 'beats', label: 'Beats del acto', min: 6 },
+    { id: 'situation_detail', label: 'Detalle de situación', min: 6 },
+    { id: 'state_changes', label: 'Cambios de estado', min: 6 }
+  ]
+};
+
+// FILM FINAL PHASE - Validates complete outline
+export const FILM_FINAL_PROFILE: PhaseDensityProfile = {
+  id: 'film_final',
+  min_score: 80,
+  rules: [
+    { id: 'beats_total', label: 'Beats totales', min: 18 },
+    { id: 'setpieces', label: 'Setpieces activos', min: 3 },
+    { id: 'character_arcs', label: 'Arcos completos', min: 1 },
+    { id: 'lowest_point', label: 'Lowest point', min: 1 },
+    { id: 'final_resolution', label: 'Resolución final', min: 1 }
+  ]
+};
+
+/**
+ * Get FILM density profile by phase
+ */
+export function getFilmDensityProfile(phase: 'SCAFFOLD' | 'EXPAND_ACT' | 'FINAL'): PhaseDensityProfile {
+  switch (phase) {
+    case 'SCAFFOLD': return FILM_SCAFFOLD_PROFILE;
+    case 'EXPAND_ACT': return FILM_EXPAND_ACT_PROFILE;
+    case 'FINAL': return FILM_FINAL_PROFILE;
+  }
+}
+
+/**
+ * Validate FILM outline against phase-specific density profile
+ */
+export function validateFilmDensity(
+  data: Record<string, unknown>,
+  phase: 'SCAFFOLD' | 'EXPAND_ACT' | 'FINAL'
+): { passed: boolean; score: number; gaps: string[] } {
+  const profile = getFilmDensityProfile(phase);
+  const gaps: string[] = [];
+  let score = 100;
+  
+  for (const rule of profile.rules) {
+    let count = 0;
+    
+    switch (rule.id) {
+      case 'cast':
+        count = ((data.cast || data.characters || []) as any[]).length;
+        break;
+      case 'world_rules':
+        count = ((data.world_rules || []) as any[]).length;
+        break;
+      case 'locations':
+        count = ((data.locations || []) as any[]).length;
+        break;
+      case 'setpieces':
+        count = ((data.setpieces || []) as any[]).length;
+        break;
+      case 'acts':
+        count = (data.ACT_I ? 1 : 0) + (data.ACT_II ? 1 : 0) + (data.ACT_III ? 1 : 0);
+        break;
+      case 'beats':
+      case 'beats_total':
+        const actI = (data.ACT_I as any)?.beats?.length || 0;
+        const actII = (data.ACT_II as any)?.beats?.length || 0;
+        const actIII = (data.ACT_III as any)?.beats?.length || 0;
+        count = phase === 'EXPAND_ACT' 
+          ? ((data.beats || []) as any[]).length 
+          : actI + actII + actIII;
+        break;
+      case 'situation_detail':
+        const beats = (data.beats || []) as any[];
+        count = beats.filter((b: any) => b.situation_detail?.physical_context).length;
+        break;
+      case 'state_changes':
+        const beatsWithState = (data.beats || []) as any[];
+        count = beatsWithState.filter((b: any) => b.situation_detail?.state_change).length;
+        break;
+      case 'midpoint':
+        count = (data.ACT_II as any)?.midpoint_reversal?.event ? 1 : 0;
+        if (!count && (data as any).acts_summary?.midpoint_summary) count = 1;
+        break;
+      case 'character_arcs':
+        const cast = (data.cast || []) as any[];
+        count = cast.filter((c: any) => c.want && c.need && c.flaw).length > 0 ? 1 : 0;
+        break;
+      case 'lowest_point':
+        count = (data.ACT_II as any)?.all_is_lost_moment?.event ? 1 : 0;
+        break;
+      case 'final_resolution':
+        count = (data.ACT_III as any)?.resolution ? 1 : 0;
+        break;
+    }
+    
+    if (count < rule.min) {
+      gaps.push(`${rule.label}: ${count}/${rule.min}`);
+      score -= Math.round(100 / profile.rules.length);
+    }
+  }
+  
+  return {
+    passed: score >= profile.min_score,
+    score: Math.max(0, score),
+    gaps
+  };
+}
+
+// ============================================================================
 // POST-SCRIPT DENSITY VALIDATION
 // ============================================================================
 
