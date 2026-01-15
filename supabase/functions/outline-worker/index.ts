@@ -804,7 +804,7 @@ async function stageFilmOutline(
     supabase, outline.id,
     buildFilmSystemPrompt(genre, tone, duration, outline.density_targets),
     buildFilmUserPrompt(summaryText, duration),
-    QUALITY_MODEL, 6000, 'generate_film_outline', FILM_OUTLINE_SCHEMA, 'film_outline',
+    QUALITY_MODEL, 6000, 'generate_film_outline', FILM_OUTLINE_SCHEMA.parameters, 'film_outline',
     TIMEOUTS.OUTLINE_ARC_MS
   );
   
