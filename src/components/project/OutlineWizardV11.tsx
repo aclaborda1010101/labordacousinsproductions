@@ -44,6 +44,8 @@ interface OutlineWizardV11Props {
   canResume?: boolean;
   onResume?: () => void;
   outlineParts?: any;
+  // P0.1: Saved outline for status-aware messaging
+  savedOutline?: { status?: string; outline_parts?: any };
 }
 
 interface ChecklistItem {
@@ -141,6 +143,7 @@ export default function OutlineWizardV11({
   canResume,
   onResume,
   outlineParts,
+  savedOutline,
 }: OutlineWizardV11Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   
@@ -184,17 +187,20 @@ export default function OutlineWizardV11({
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {/* P0: Banner de generación pausada con opción de resume */}
-        {canResume && isStaleGenerating && (
+        {/* P0: Banner de generación pausada/interrumpida con opción de resume */}
+        {canResume && (
           <Alert className="border-amber-500/50 bg-amber-500/10">
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertTitle className="text-amber-700 dark:text-amber-300">
-              Generación pausada
+              {savedOutline?.status === 'failed' 
+                ? 'Generación interrumpida' 
+                : 'Generación pausada'}
             </AlertTitle>
             <AlertDescription className="text-amber-600/80 dark:text-amber-400/80">
               <p className="mb-2">
-                No hay heartbeat reciente, pero hay trabajo guardado. 
-                Puedes continuar desde el último paso completado.
+                {savedOutline?.status === 'failed'
+                  ? 'Hubo un error (probablemente temporal), pero hay trabajo guardado. Puedes reintentar desde el último paso completado.'
+                  : 'No hay heartbeat reciente, pero hay trabajo guardado. Puedes continuar desde el último paso completado.'}
               </p>
               {outlineParts && (
                 <p className="text-xs mb-2 opacity-75">

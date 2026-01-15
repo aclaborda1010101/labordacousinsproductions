@@ -5343,6 +5343,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     }
                   }}
                   outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
+                  savedOutline={outlinePersistence.savedOutline}
                 />
 
                 {/* Time Warning */}
@@ -5720,6 +5721,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       }
                     }}
                     outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
+                    savedOutline={outlinePersistence.savedOutline}
                   />
                 )}
 
