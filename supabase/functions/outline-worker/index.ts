@@ -157,6 +157,127 @@ async function heartbeat(
 }
 
 // ============================================================================
+// V15: GLOBAL KEEPALIVE - Continuous heartbeat during entire function execution
+// ============================================================================
+// This prevents ZOMBIE_TIMEOUT during:
+// - Long model calls
+// - Retries
+// - Parsing/validation gaps
+// - Transitions between phases
+// ============================================================================
+type KeepaliveHandle = { 
+  stop: () => void;
+  updateContext: (substage: string, progress: number, detail?: string) => void;
+};
+
+function startKeepalive(opts: {
+  supabase: SupabaseClient;
+  outlineId: string;
+  substage: string;
+  progress: number;
+  intervalMs?: number;
+}): KeepaliveHandle {
+  const { supabase, outlineId, intervalMs = 20000 } = opts;
+  let currentSubstage = opts.substage;
+  let currentProgress = opts.progress;
+  let currentDetail = 'keepalive-start';
+  let stopped = false;
+
+  // Immediate heartbeat at start (important: proves process is alive)
+  console.log(`[KEEPALIVE] Starting for ${outlineId} at ${currentSubstage} (${currentProgress}%)`);
+  void supabase.from('project_outlines').update({
+    heartbeat_at: new Date().toISOString(),
+    substage: currentSubstage,
+    progress: currentProgress
+  }).eq('id', outlineId);
+
+  const timer = setInterval(() => {
+    if (stopped) return;
+    console.log(`[KEEPALIVE] Tick for ${outlineId}: ${currentSubstage} (${currentProgress}%) - ${currentDetail}`);
+    void supabase.from('project_outlines').update({
+      heartbeat_at: new Date().toISOString(),
+      substage: currentSubstage,
+      progress: currentProgress
+    }).eq('id', outlineId);
+  }, intervalMs);
+
+  return {
+    stop: () => {
+      if (stopped) return;
+      stopped = true;
+      clearInterval(timer);
+      console.log(`[KEEPALIVE] Stopped for ${outlineId}`);
+    },
+    updateContext: (substage: string, progress: number, detail?: string) => {
+      currentSubstage = substage;
+      currentProgress = progress;
+      if (detail) currentDetail = detail;
+      // Immediate heartbeat on context change
+      if (!stopped) {
+        console.log(`[KEEPALIVE] Context update: ${substage} (${progress}%)`);
+        void supabase.from('project_outlines').update({
+          heartbeat_at: new Date().toISOString(),
+          substage: currentSubstage,
+          progress: currentProgress
+        }).eq('id', outlineId);
+      }
+    }
+  };
+}
+
+// ============================================================================
+// V15: RESUME POINT DETECTION - Detect where to resume from completed parts
+// ============================================================================
+interface ResumePoint {
+  resumeFrom: 'scaffold' | 'expand_act_i' | 'expand_act_ii' | 'expand_act_iii' | 'merge';
+  completedParts: string[];
+  skipReasons: Record<string, string>;
+}
+
+function getFilmResumePoint(parts: any): ResumePoint {
+  const completed: string[] = [];
+  const skipReasons: Record<string, string> = {};
+  
+  // Check scaffold
+  if (parts?.film_scaffold?.status === 'done' && parts.film_scaffold.data) {
+    completed.push('film_scaffold');
+    skipReasons['film_scaffold'] = 'Already completed with valid data';
+  } else {
+    return { resumeFrom: 'scaffold', completedParts: completed, skipReasons };
+  }
+  
+  // Check ACT I
+  if (parts?.expand_act_i?.status === 'done' && 
+      parts.expand_act_i.data?.beats?.length >= 4) {
+    completed.push('expand_act_i');
+    skipReasons['expand_act_i'] = `Completed with ${parts.expand_act_i.data.beats.length} beats`;
+  } else {
+    return { resumeFrom: 'expand_act_i', completedParts: completed, skipReasons };
+  }
+  
+  // Check ACT II
+  if (parts?.expand_act_ii?.status === 'done' && 
+      parts.expand_act_ii.data?.beats?.length >= 4) {
+    completed.push('expand_act_ii');
+    skipReasons['expand_act_ii'] = `Completed with ${parts.expand_act_ii.data.beats.length} beats`;
+  } else {
+    return { resumeFrom: 'expand_act_ii', completedParts: completed, skipReasons };
+  }
+  
+  // Check ACT III
+  if (parts?.expand_act_iii?.status === 'done' && 
+      parts.expand_act_iii.data?.beats?.length >= 4) {
+    completed.push('expand_act_iii');
+    skipReasons['expand_act_iii'] = `Completed with ${parts.expand_act_iii.data.beats.length} beats`;
+  } else {
+    return { resumeFrom: 'expand_act_iii', completedParts: completed, skipReasons };
+  }
+  
+  // All phases done, just need merge
+  return { resumeFrom: 'merge', completedParts: completed, skipReasons };
+}
+
+// ============================================================================
 // AI CALL: With tool schema and heartbeat (V11.1: configurable timeout)
 // ============================================================================
 async function callLovableAIWithToolAndHeartbeat(
@@ -1263,124 +1384,172 @@ async function stageFilmOutline(
   
   const config = { genre, tone, duration };
   
+  // V15: GLOBAL KEEPALIVE - Prevents ZOMBIE_TIMEOUT during entire function execution
+  const globalKeepalive = startKeepalive({
+    supabase,
+    outlineId: outline.id,
+    substage: 'film_outline_init',
+    progress: outline.progress || 10,
+    intervalMs: 20000  // 20 seconds between heartbeats
+  });
+  
+  // V15: RESUME POINT DETECTION - Skip completed parts
+  const { resumeFrom, completedParts, skipReasons } = getFilmResumePoint(parts);
+  if (completedParts.length > 0) {
+    console.log(`[WORKER] FILM V2 RESUME: Resuming from ${resumeFrom}`);
+    console.log(`[WORKER] FILM V2 RESUME: Completed parts: [${completedParts.join(', ')}]`);
+    for (const [part, reason] of Object.entries(skipReasons)) {
+      console.log(`[WORKER] FILM V2 RESUME: Skipping ${part}: ${reason}`);
+    }
+  }
+  
+  try {
+  
   // ════════════════════════════════════════════════════════════════════════
   // PHASE 1: FILM SCAFFOLD (estructura ligera, rápida)
   // ════════════════════════════════════════════════════════════════════════
-  const scaffoldHash = await hashInput(summaryText, config, 'film_scaffold');
-  const scaffoldResult = await executeSubstepIfNeeded(
-    supabase, { ...outline, outline_parts: parts }, 'film_scaffold', scaffoldHash,
-    async () => {
-      console.log(`[WORKER] FILM SCAFFOLD: generating base architecture`);
-      await updateOutline(supabase, outline.id, { 
-        stage: 'outline', substage: 'film_scaffold', progress: 15,
-        heartbeat_at: new Date().toISOString()
-      });
-      
-      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outline.id,
-        buildFilmScaffoldSystem(genre, tone, duration),
-        buildFilmScaffoldUser(summaryText, duration),
-        QUALITY_MODEL, 3000, 'generate_film_scaffold', 
-        FILM_SCAFFOLD_SCHEMA.parameters, 'film_scaffold',
-        FILM_TIMEOUTS.SCAFFOLD_MS
-      );
-      
-      const parseResult = parseJsonSafe(toolArgs || content, 'film_scaffold');
-      if (!parseResult.json) throw new Error('FILM_SCAFFOLD failed to parse');
-      
-      console.log(`[WORKER] FILM SCAFFOLD done: "${parseResult.json.title}"`);
-      return parseResult.json;
-    }
-  );
-  parts.film_scaffold = { status: 'done', hash: scaffoldHash, data: scaffoldResult.data };
-  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  let scaffold: any;
   
-  const scaffold = scaffoldResult.data;
-  
-  // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2A: EXPAND ACT I (V14: with robust retry)
-  // ════════════════════════════════════════════════════════════════════════
-  const actIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_i');
-  const actIResult = await executeSubstepIfNeeded(
-    supabase, { ...outline, outline_parts: parts }, 'expand_act_i', actIHash,
-    async () => {
-      await updateOutline(supabase, outline.id, { 
-        substage: 'expand_act_i', progress: 30,
-        heartbeat_at: new Date().toISOString()
-      });
-      
-      // V14: Use expandActWithRetry with robust parsing, validation, and fallback
-      return await expandActWithRetry(
-        supabase, outline.id, scaffold, 'I', parts, genre, tone
-      );
-    }
-  );
-  parts.expand_act_i = { 
-    ...parts.expand_act_i,
-    status: 'done', 
-    hash: actIHash, 
-    data: actIResult.data 
-  };
-  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  if (resumeFrom === 'scaffold' || !parts.film_scaffold?.data) {
+    globalKeepalive.updateContext('film_scaffold', 15, 'generating scaffold');
+    
+    const scaffoldHash = await hashInput(summaryText, config, 'film_scaffold');
+    const scaffoldResult = await executeSubstepIfNeeded(
+      supabase, { ...outline, outline_parts: parts }, 'film_scaffold', scaffoldHash,
+      async () => {
+        console.log(`[WORKER] FILM SCAFFOLD: generating base architecture`);
+        await updateOutline(supabase, outline.id, { 
+          stage: 'outline', substage: 'film_scaffold', progress: 15,
+          heartbeat_at: new Date().toISOString()
+        });
+        
+        const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
+          supabase, outline.id,
+          buildFilmScaffoldSystem(genre, tone, duration),
+          buildFilmScaffoldUser(summaryText, duration),
+          QUALITY_MODEL, 3000, 'generate_film_scaffold', 
+          FILM_SCAFFOLD_SCHEMA.parameters, 'film_scaffold',
+          FILM_TIMEOUTS.SCAFFOLD_MS
+        );
+        
+        const parseResult = parseJsonSafe(toolArgs || content, 'film_scaffold');
+        if (!parseResult.json) throw new Error('FILM_SCAFFOLD failed to parse');
+        
+        console.log(`[WORKER] FILM SCAFFOLD done: "${parseResult.json.title}"`);
+        return parseResult.json;
+      }
+    );
+    parts.film_scaffold = { status: 'done', hash: scaffoldHash, data: scaffoldResult.data };
+    await updateOutline(supabase, outline.id, { outline_parts: parts });
+    scaffold = scaffoldResult.data;
+  } else {
+    console.log(`[WORKER] FILM V2 RESUME: Reusing existing scaffold`);
+    scaffold = parts.film_scaffold.data;
+  }
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2B: EXPAND ACT II (V14: with robust retry)
+  // PHASE 2A: EXPAND ACT I (V14: with robust retry, V15: with resume)
   // ════════════════════════════════════════════════════════════════════════
-  const actIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_ii');
-  const actIIResult = await executeSubstepIfNeeded(
-    supabase, { ...outline, outline_parts: parts }, 'expand_act_ii', actIIHash,
-    async () => {
-      await updateOutline(supabase, outline.id, { 
-        substage: 'expand_act_ii', progress: 50,
-        heartbeat_at: new Date().toISOString()
-      });
-      
-      // V14: Use expandActWithRetry with robust parsing, validation, and fallback
-      return await expandActWithRetry(
-        supabase, outline.id, scaffold, 'II', parts, genre, tone,
-        parts.expand_act_i?.data  // Pass Act I for context
-      );
-    }
-  );
-  parts.expand_act_ii = { 
-    ...parts.expand_act_ii,
-    status: 'done', 
-    hash: actIIHash, 
-    data: actIIResult.data 
-  };
-  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  if (resumeFrom === 'scaffold' || resumeFrom === 'expand_act_i' || !parts.expand_act_i?.data?.beats?.length) {
+    globalKeepalive.updateContext('expand_act_i', 30, 'expanding act I');
+    
+    const actIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_i');
+    const actIResult = await executeSubstepIfNeeded(
+      supabase, { ...outline, outline_parts: parts }, 'expand_act_i', actIHash,
+      async () => {
+        await updateOutline(supabase, outline.id, { 
+          substage: 'expand_act_i', progress: 30,
+          heartbeat_at: new Date().toISOString()
+        });
+        
+        // V14: Use expandActWithRetry with robust parsing, validation, and fallback
+        return await expandActWithRetry(
+          supabase, outline.id, scaffold, 'I', parts, genre, tone
+        );
+      }
+    );
+    parts.expand_act_i = { 
+      ...parts.expand_act_i,
+      status: 'done', 
+      hash: actIHash, 
+      data: actIResult.data 
+    };
+    await updateOutline(supabase, outline.id, { outline_parts: parts });
+  } else {
+    console.log(`[WORKER] FILM V2 RESUME: Reusing existing ACT I (${parts.expand_act_i.data.beats?.length} beats)`);
+  }
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2C: EXPAND ACT III (V14: with robust retry)
+  // PHASE 2B: EXPAND ACT II (V14: with robust retry, V15: with resume)
   // ════════════════════════════════════════════════════════════════════════
-  const actIIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_iii');
-  const actIIIResult = await executeSubstepIfNeeded(
-    supabase, { ...outline, outline_parts: parts }, 'expand_act_iii', actIIIHash,
-    async () => {
-      await updateOutline(supabase, outline.id, { 
-        substage: 'expand_act_iii', progress: 70,
-        heartbeat_at: new Date().toISOString()
-      });
-      
-      // V14: Use expandActWithRetry with robust parsing, validation, and fallback
-      return await expandActWithRetry(
-        supabase, outline.id, scaffold, 'III', parts, genre, tone,
-        parts.expand_act_i?.data,   // Pass Act I for context
-        parts.expand_act_ii?.data   // Pass Act II for context
-      );
-    }
-  );
-  parts.expand_act_iii = { 
-    ...parts.expand_act_iii,
-    status: 'done', 
-    hash: actIIIHash, 
-    data: actIIIResult.data 
-  };
-  await updateOutline(supabase, outline.id, { outline_parts: parts });
+  if (resumeFrom === 'scaffold' || resumeFrom === 'expand_act_i' || resumeFrom === 'expand_act_ii' || !parts.expand_act_ii?.data?.beats?.length) {
+    globalKeepalive.updateContext('expand_act_ii', 50, 'expanding act II');
+    
+    const actIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_ii');
+    const actIIResult = await executeSubstepIfNeeded(
+      supabase, { ...outline, outline_parts: parts }, 'expand_act_ii', actIIHash,
+      async () => {
+        await updateOutline(supabase, outline.id, { 
+          substage: 'expand_act_ii', progress: 50,
+          heartbeat_at: new Date().toISOString()
+        });
+        
+        // V14: Use expandActWithRetry with robust parsing, validation, and fallback
+        return await expandActWithRetry(
+          supabase, outline.id, scaffold, 'II', parts, genre, tone,
+          parts.expand_act_i?.data  // Pass Act I for context
+        );
+      }
+    );
+    parts.expand_act_ii = { 
+      ...parts.expand_act_ii,
+      status: 'done', 
+      hash: actIIHash, 
+      data: actIIResult.data 
+    };
+    await updateOutline(supabase, outline.id, { outline_parts: parts });
+  } else {
+    console.log(`[WORKER] FILM V2 RESUME: Reusing existing ACT II (${parts.expand_act_ii.data.beats?.length} beats)`);
+  }
+  
+  // ════════════════════════════════════════════════════════════════════════
+  // PHASE 2C: EXPAND ACT III (V14: with robust retry, V15: with resume)
+  // ════════════════════════════════════════════════════════════════════════
+  if (resumeFrom === 'scaffold' || resumeFrom === 'expand_act_i' || resumeFrom === 'expand_act_ii' || resumeFrom === 'expand_act_iii' || !parts.expand_act_iii?.data?.beats?.length) {
+    globalKeepalive.updateContext('expand_act_iii', 70, 'expanding act III');
+    
+    const actIIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_iii');
+    const actIIIResult = await executeSubstepIfNeeded(
+      supabase, { ...outline, outline_parts: parts }, 'expand_act_iii', actIIIHash,
+      async () => {
+        await updateOutline(supabase, outline.id, { 
+          substage: 'expand_act_iii', progress: 70,
+          heartbeat_at: new Date().toISOString()
+        });
+        
+        // V14: Use expandActWithRetry with robust parsing, validation, and fallback
+        return await expandActWithRetry(
+          supabase, outline.id, scaffold, 'III', parts, genre, tone,
+          parts.expand_act_i?.data,   // Pass Act I for context
+          parts.expand_act_ii?.data   // Pass Act II for context
+        );
+      }
+    );
+    parts.expand_act_iii = { 
+      ...parts.expand_act_iii,
+      status: 'done', 
+      hash: actIIIHash, 
+      data: actIIIResult.data 
+    };
+    await updateOutline(supabase, outline.id, { outline_parts: parts });
+  } else {
+    console.log(`[WORKER] FILM V2 RESUME: Reusing existing ACT III (${parts.expand_act_iii.data.beats?.length} beats)`);
+  }
   
   // ════════════════════════════════════════════════════════════════════════
   // PHASE 3: MERGE + VALIDATION (local, sin AI)
   // ════════════════════════════════════════════════════════════════════════
+  globalKeepalive.updateContext('merge', 85, 'merging acts');
   console.log(`[WORKER] FILM MERGE: Unifying 3 acts`);
   await updateOutline(supabase, outline.id, { 
     substage: 'merge', progress: 85,
@@ -1416,6 +1585,11 @@ async function stageFilmOutline(
   
   console.log(`[WORKER] FILM V2 COMPLETE: "${filmOutline.title}" - ${totalBeats} beats across 3 acts`);
   return universalOutline;
+  
+  } finally {
+    // V15: Always stop the global keepalive when function ends (success or error)
+    globalKeepalive.stop();
+  }
 }
 
 async function stageOutlineFanOut(
