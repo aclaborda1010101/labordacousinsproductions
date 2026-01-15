@@ -534,6 +534,85 @@ function validateFactionRules(
 const MINIMUM_RAW_CONTENT_LENGTH = 300; // ~6-8 lines of rich description
 const MINIMUM_ACTION_SUMMARY_LENGTH = 80; // At least 1-2 sentences
 
+// ============================================================================
+// V14: LITERARY SCRIPT QC - Anti-Impoverishment Validation (GENERIC)
+// ============================================================================
+
+// Generic phrases that indicate weak/summary writing (not genre-specific)
+const GENERIC_SCENE_WEAK_PHRASES = [
+  'hablan de', 'discuten', 'comentan', 'recuerdan', 'reflexionan',
+  'la tensión aumenta', 'se miran en silencio', 'algo cambia',
+  'todo se complica', 'empiezan a', 'surge un conflicto',
+  'se dan cuenta de que', 'nada volverá a ser igual',
+  'todo cambia', 'las cosas se complican', 'la situación empeora',
+  'hay un momento de', 'se genera tensión', 'aumenta la presión'
+];
+
+function countWeakPhrases(text: string): number {
+  const lower = text.toLowerCase();
+  return GENERIC_SCENE_WEAK_PHRASES.filter(p => lower.includes(p)).length;
+}
+
+function hasActionVerbs(text: string): boolean {
+  return /(entra|sale|agarra|rompe|golpea|huye|avanza|retrocede|apunta|empuja|enciende|apaga|corre|salta|grita|susurra|lanza|atrapa|abre|cierra|esconde|revela|dispara|corta|abraza|empuja)/i.test(text);
+}
+
+/**
+ * V14: Run Literary Script QC - validates dramatic richness (genre-agnostic)
+ * This prevents "summary scripts" that fulfill structure but lack drama.
+ */
+export function runLiteraryScriptQC(scriptText: string): {
+  score: number;
+  blockers: string[];
+  warnings: string[];
+} {
+  let score = 100;
+  const blockers: string[] = [];
+  const warnings: string[] = [];
+
+  // SCENE COUNT CHECK
+  const scenes = scriptText.split(/\nINT\.|\nEXT\./).length - 1;
+  if (scenes < 10) {
+    blockers.push(`SCENES: Muy pocas escenas (${scenes}) para un largometraje`);
+    score -= 25;
+  }
+
+  // WEAK PHRASE COUNT (generic language detection)
+  const weakPhraseCount = countWeakPhrases(scriptText);
+  if (weakPhraseCount > 5) {
+    warnings.push(`Lenguaje genérico detectado (${weakPhraseCount} frases débiles)`);
+    score -= Math.min(weakPhraseCount * 2, 15);
+  }
+
+  // ACTION VERB CHECK (ensure filmable content)
+  if (!hasActionVerbs(scriptText)) {
+    blockers.push('AUSENCIA_DE_ACCION_VISIBLE: El guion describe estados, no acciones');
+    score -= 30;
+  }
+
+  // SHORT SCENES CHECK (symptom of summarization)
+  const sceneBlocks = scriptText.split(/\nINT\.|\nEXT\./).slice(1);
+  const shortScenes = sceneBlocks.filter(s => s.split(' ').length < 120).length;
+  if (shortScenes > sceneBlocks.length * 0.4) {
+    warnings.push('ESCENAS_RESUMIDAS: Muchas escenas son demasiado cortas');
+    score -= 15;
+  }
+
+  // DIALOGUE CHECK (ensure scenes have actual dialogue)
+  const dialogueMatches = scriptText.match(/^[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]{2,30}$/gm);
+  const dialogueCount = dialogueMatches?.length || 0;
+  if (scenes > 5 && dialogueCount < scenes * 2) {
+    warnings.push(`DIALOGOS_ESCASOS: Pocos diálogos detectados (${dialogueCount} para ${scenes} escenas)`);
+    score -= 10;
+  }
+
+  return { 
+    score: Math.max(0, score), 
+    blockers, 
+    warnings 
+  };
+}
+
 /**
  * Validate that scenes have sufficient depth (not just placeholders).
  * Returns list of issues for scenes that are too shallow.
