@@ -5337,34 +5337,121 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 )}
 
-                <div>
-                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Episodios ({lightOutline.episode_beats?.length || 0}) 
-                    <span className="ml-2 text-[10px] font-normal normal-case text-muted-foreground/70">
-                      (haz clic en el título para editarlo)
-                    </span>
-                  </Label>
-                  <div className="space-y-2">
-                    {lightOutline.episode_beats?.map((ep: any, idx: number) => (
-                      <div key={ep.episode} className="p-2 bg-muted/30 rounded border">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm shrink-0">Ep {ep.episode}:</span>
-                          <Input
-                            value={ep.title || ''}
-                            onChange={(e) => {
-                              const newBeats = [...(lightOutline.episode_beats || [])];
-                              newBeats[idx] = { ...newBeats[idx], title: e.target.value };
-                              setLightOutline({ ...lightOutline, episode_beats: newBeats });
-                            }}
-                            className="h-7 text-sm font-medium border-transparent bg-transparent hover:border-input focus:border-input transition-colors"
-                            placeholder="Título del episodio..."
-                          />
+                {/* V7: FILM vs SERIES structure rendering */}
+                {format === 'film' ? (
+                  /* FILM: Show 3-Act Structure */
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block flex items-center gap-2">
+                      <Film className="w-3 h-3" />
+                      Estructura de 3 Actos
+                    </Label>
+                    <div className="space-y-3">
+                      {/* Act I */}
+                      <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="bg-green-500/20 border-green-500/50">Acto I</Badge>
+                          <span className="text-xs text-muted-foreground">Setup</span>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1 pl-12">{ep.summary}</p>
+                        {lightOutline.acts_summary?.act_i_goal && (
+                          <p className="text-sm mb-1"><strong>Objetivo:</strong> {lightOutline.acts_summary.act_i_goal}</p>
+                        )}
+                        {lightOutline.acts_summary?.inciting_incident_summary && (
+                          <p className="text-xs text-muted-foreground">
+                            <span className="text-green-600 dark:text-green-400">🎬 Incidente Incitador:</span> {lightOutline.acts_summary.inciting_incident_summary}
+                          </p>
+                        )}
                       </div>
-                    ))}
+                      
+                      {/* Act II */}
+                      <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="bg-amber-500/20 border-amber-500/50">Acto II</Badge>
+                          <span className="text-xs text-muted-foreground">Confrontación</span>
+                        </div>
+                        {lightOutline.acts_summary?.act_ii_goal && (
+                          <p className="text-sm mb-1"><strong>Objetivo:</strong> {lightOutline.acts_summary.act_ii_goal}</p>
+                        )}
+                        {lightOutline.acts_summary?.midpoint_summary && (
+                          <p className="text-xs text-muted-foreground mb-1">
+                            <span className="text-amber-600 dark:text-amber-400">⚡ Punto Medio:</span> {lightOutline.acts_summary.midpoint_summary}
+                          </p>
+                        )}
+                        {lightOutline.acts_summary?.all_is_lost_summary && (
+                          <p className="text-xs text-muted-foreground">
+                            <span className="text-red-600 dark:text-red-400">💔 Todo Perdido:</span> {lightOutline.acts_summary.all_is_lost_summary}
+                          </p>
+                        )}
+                      </div>
+                      
+                      {/* Act III */}
+                      <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="bg-red-500/20 border-red-500/50">Acto III</Badge>
+                          <span className="text-xs text-muted-foreground">Resolución</span>
+                        </div>
+                        {lightOutline.acts_summary?.act_iii_goal && (
+                          <p className="text-sm mb-1"><strong>Objetivo:</strong> {lightOutline.acts_summary.act_iii_goal}</p>
+                        )}
+                        {lightOutline.acts_summary?.climax_summary && (
+                          <p className="text-xs text-muted-foreground">
+                            <span className="text-red-600 dark:text-red-400">🔥 Clímax:</span> {lightOutline.acts_summary.climax_summary}
+                          </p>
+                        )}
+                      </div>
+                      
+                      {/* Beats if available (from expansion) */}
+                      {lightOutline.beats?.length > 0 && (
+                        <div className="mt-2">
+                          <Label className="text-xs text-muted-foreground uppercase mb-1 block">
+                            Beats Detallados ({lightOutline.beats.length})
+                          </Label>
+                          <div className="grid gap-1">
+                            {lightOutline.beats.slice(0, 6).map((beat: any, i: number) => (
+                              <div key={i} className="p-2 bg-muted/30 rounded text-xs">
+                                <span className="font-medium">Beat {i + 1}:</span> {beat.event || beat.summary || beat.description}
+                              </div>
+                            ))}
+                            {lightOutline.beats.length > 6 && (
+                              <p className="text-xs text-muted-foreground text-center">
+                                +{lightOutline.beats.length - 6} más...
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  /* SERIES/MINI: Show Episodes */
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                      Episodios ({lightOutline.episode_beats?.length || 0}) 
+                      <span className="ml-2 text-[10px] font-normal normal-case text-muted-foreground/70">
+                        (haz clic en el título para editarlo)
+                      </span>
+                    </Label>
+                    <div className="space-y-2">
+                      {lightOutline.episode_beats?.map((ep: any, idx: number) => (
+                        <div key={ep.episode} className="p-2 bg-muted/30 rounded border">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm shrink-0">Ep {ep.episode}:</span>
+                            <Input
+                              value={ep.title || ''}
+                              onChange={(e) => {
+                                const newBeats = [...(lightOutline.episode_beats || [])];
+                                newBeats[idx] = { ...newBeats[idx], title: e.target.value };
+                                setLightOutline({ ...lightOutline, episode_beats: newBeats });
+                              }}
+                              className="h-7 text-sm font-medium border-transparent bg-transparent hover:border-input focus:border-input transition-colors"
+                              placeholder="Título del episodio..."
+                            />
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1 pl-12">{ep.summary}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 {/* V11: Threads Display */}
                 {lightOutline?.threads?.length > 0 && (
@@ -5738,20 +5825,43 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </div>
 
-                {/* Episodes */}
-                <div>
-                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Episodios ({lightOutline.episode_beats?.length || 0})
-                  </Label>
-                  <div className="space-y-2">
-                    {lightOutline.episode_beats?.map((ep: any, idx: number) => (
-                      <div key={ep.episode || idx} className="p-2 bg-muted/30 rounded border">
-                        <span className="font-medium text-sm">Ep {ep.episode}: {ep.title}</span>
-                        {ep.summary && <p className="text-xs text-muted-foreground mt-1">{ep.summary}</p>}
+                {/* V7: FILM vs SERIES structure (simple view) */}
+                {format === 'film' ? (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block flex items-center gap-2">
+                      <Film className="w-3 h-3" />
+                      Estructura de 3 Actos
+                    </Label>
+                    <div className="grid gap-2 md:grid-cols-3">
+                      <div className="p-2 bg-green-500/10 rounded border border-green-500/30">
+                        <span className="text-xs font-medium text-green-600 dark:text-green-400 block">Acto I</span>
+                        <p className="text-xs text-muted-foreground">{lightOutline.acts_summary?.act_i_goal || 'Setup'}</p>
                       </div>
-                    ))}
+                      <div className="p-2 bg-amber-500/10 rounded border border-amber-500/30">
+                        <span className="text-xs font-medium text-amber-600 dark:text-amber-400 block">Acto II</span>
+                        <p className="text-xs text-muted-foreground">{lightOutline.acts_summary?.act_ii_goal || 'Confrontación'}</p>
+                      </div>
+                      <div className="p-2 bg-red-500/10 rounded border border-red-500/30">
+                        <span className="text-xs font-medium text-red-600 dark:text-red-400 block">Acto III</span>
+                        <p className="text-xs text-muted-foreground">{lightOutline.acts_summary?.act_iii_goal || 'Resolución'}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div>
+                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                      Episodios ({lightOutline.episode_beats?.length || 0})
+                    </Label>
+                    <div className="space-y-2">
+                      {lightOutline.episode_beats?.map((ep: any, idx: number) => (
+                        <div key={ep.episode || idx} className="p-2 bg-muted/30 rounded border">
+                          <span className="font-medium text-sm">Ep {ep.episode}: {ep.title}</span>
+                          {ep.summary && <p className="text-xs text-muted-foreground mt-1">{ep.summary}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* V11 Wizard for approved outlines */}
                 {qcStatus && (

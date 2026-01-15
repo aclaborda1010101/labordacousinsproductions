@@ -139,9 +139,24 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           }
         }
         
+        // V7: Normalize outline fields for FILM format compatibility
+        // Backend may return cast/locations but UI expects main_characters/main_locations
+        const normalizedOutlineJson = {
+          ...outlineJson,
+          // Map cast → main_characters (fallback chain)
+          main_characters: (outlineJson as any).main_characters 
+            || (outlineJson as any).cast 
+            || (outlineJson as any).characters 
+            || [],
+          // Map locations → main_locations
+          main_locations: (outlineJson as any).main_locations 
+            || (outlineJson as any).locations 
+            || [],
+        };
+        
         const outline: PersistedOutline = {
           ...data,
-          outline_json: outlineJson,
+          outline_json: normalizedOutlineJson,
           outline_parts: outlineParts, // V5: Include outline_parts for hasPartialOutline check
           qc_issues: Array.isArray(data.qc_issues) ? data.qc_issues as string[] : [],
           status: data.status as PersistedOutline['status'],
@@ -150,7 +165,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
             : undefined,
         };
         setSavedOutline(outline);
-        console.log('[useOutlinePersistence] Loaded existing outline:', data.id, 'status:', data.status, 'quality:', data.quality, 'hasReconstructed:', outlineJson !== data.outline_json);
+        console.log('[useOutlinePersistence] V7: Loaded outline with normalized fields:', data.id, 'chars:', normalizedOutlineJson.main_characters?.length, 'locs:', normalizedOutlineJson.main_locations?.length);
         return outline;
       }
     } catch (e) {
