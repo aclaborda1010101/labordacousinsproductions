@@ -645,19 +645,18 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     try {
       console.log('[useOutlinePersistence] Resuming generation for outline:', savedOutline.id);
       
-      // Mark as stalled for traceability before restarting
-      await supabase.from('project_outlines').update({
-        status: 'stalled',
-        error_code: 'STALE_HEARTBEAT',
-        error_detail: 'UI-triggered resume: heartbeat stale while generating',
-        updated_at: new Date().toISOString(),
-      }).eq('id', savedOutline.id);
-
-      // Re-invoke the worker with resume flag
-      await invokeAuthedFunction('outline-worker', {
+      // Re-invoke the worker directly with resume flag
+      // Using outline_id bypasses status filter, worker will set to 'generating'
+      const result = await invokeAuthedFunction('outline-worker', {
         outline_id: savedOutline.id,
         resume: true,
       });
+
+      // Check for invocation failure
+      if (result && typeof result === 'object' && 'success' in result && result.success === false) {
+        console.error('[useOutlinePersistence] Resume invoke failed:', result);
+        return false;
+      }
 
       // Restart polling
       startPolling(savedOutline.id, { 
@@ -665,7 +664,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         onError: (err) => console.error('[useOutlinePersistence] Resume poll error:', err),
       });
 
-      // Clear stuck states
+      // Clear stuck states and update local state to generating
       setStuckSince(null);
       setIsStuck(false);
       setSavedOutline(prev => prev ? { ...prev, status: 'generating' } : null);
