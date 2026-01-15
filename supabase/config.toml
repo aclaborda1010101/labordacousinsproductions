@@ -314,3 +314,11 @@ verify_jwt = false
 [functions.outline-patch]
 # Auto-repairs outlines to meet density requirements
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PRODUCER NOTES (V15 - Studio Executive Feedback)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.producer-notes]
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false

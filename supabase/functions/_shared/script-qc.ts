@@ -557,61 +557,7 @@ function hasActionVerbs(text: string): boolean {
   return /(entra|sale|agarra|rompe|golpea|huye|avanza|retrocede|apunta|empuja|enciende|apaga|corre|salta|grita|susurra|lanza|atrapa|abre|cierra|esconde|revela|dispara|corta|abraza|empuja)/i.test(text);
 }
 
-/**
- * V14: Run Literary Script QC - validates dramatic richness (genre-agnostic)
- * This prevents "summary scripts" that fulfill structure but lack drama.
- */
-export function runLiteraryScriptQC(scriptText: string): {
-  score: number;
-  blockers: string[];
-  warnings: string[];
-} {
-  let score = 100;
-  const blockers: string[] = [];
-  const warnings: string[] = [];
-
-  // SCENE COUNT CHECK
-  const scenes = scriptText.split(/\nINT\.|\nEXT\./).length - 1;
-  if (scenes < 10) {
-    blockers.push(`SCENES: Muy pocas escenas (${scenes}) para un largometraje`);
-    score -= 25;
-  }
-
-  // WEAK PHRASE COUNT (generic language detection)
-  const weakPhraseCount = countWeakPhrases(scriptText);
-  if (weakPhraseCount > 5) {
-    warnings.push(`Lenguaje genérico detectado (${weakPhraseCount} frases débiles)`);
-    score -= Math.min(weakPhraseCount * 2, 15);
-  }
-
-  // ACTION VERB CHECK (ensure filmable content)
-  if (!hasActionVerbs(scriptText)) {
-    blockers.push('AUSENCIA_DE_ACCION_VISIBLE: El guion describe estados, no acciones');
-    score -= 30;
-  }
-
-  // SHORT SCENES CHECK (symptom of summarization)
-  const sceneBlocks = scriptText.split(/\nINT\.|\nEXT\./).slice(1);
-  const shortScenes = sceneBlocks.filter(s => s.split(' ').length < 120).length;
-  if (shortScenes > sceneBlocks.length * 0.4) {
-    warnings.push('ESCENAS_RESUMIDAS: Muchas escenas son demasiado cortas');
-    score -= 15;
-  }
-
-  // DIALOGUE CHECK (ensure scenes have actual dialogue)
-  const dialogueMatches = scriptText.match(/^[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]{2,30}$/gm);
-  const dialogueCount = dialogueMatches?.length || 0;
-  if (scenes > 5 && dialogueCount < scenes * 2) {
-    warnings.push(`DIALOGOS_ESCASOS: Pocos diálogos detectados (${dialogueCount} para ${scenes} escenas)`);
-    score -= 10;
-  }
-
-  return { 
-    score: Math.max(0, score), 
-    blockers, 
-    warnings 
-  };
-}
+// V14: runLiteraryScriptQC moved to V15 section below (unified with runNarrativeMaturityQC)
 
 /**
  * Validate that scenes have sufficient depth (not just placeholders).
@@ -1023,5 +969,265 @@ export function runScriptQC(payload: any, options?: { mode?: 'batch' | 'full' | 
       abstract_hits: gen.abstract_hits,
       errors: gen.errors
     }
+  };
+}
+
+// ============================================================================
+// V15: NARRATIVE MATURITY QC - Setup/Payoff, Callbacks, Causality, Dialogue
+// ============================================================================
+
+// ─────────────────────────────────────────────
+// UNIVERSAL NARRATIVE HEURISTICS (ALL GENRES)
+// ─────────────────────────────────────────────
+
+const SETUP_MARKERS = [
+  'presenta', 'introduce', 'por primera vez', 'se establece',
+  'queda claro que', 'descubrimos que', 'aparece', 'muestra',
+  'revela', 'vemos que', 'se menciona'
+];
+
+const PAYOFF_MARKERS = [
+  'regresa', 'vuelve a', 'ahora', 'finalmente',
+  'como consecuencia', 'esto provoca', 'por eso',
+  'resulta que', 'se cumple', 'paga el precio'
+];
+
+const CALLBACK_MARKERS = [
+  'recuerda', 'otra vez', 'de nuevo', 'tal como antes', 'igual que',
+  'como aquella vez', 'al igual que', 'repite'
+];
+
+const CAUSALITY_MARKERS = [
+  'porque', 'por lo tanto', 'debido a', 'como resultado', 'provoca que',
+  'en consecuencia', 'por eso', 'lo cual', 'gracias a', 'a causa de'
+];
+
+// ─────────────────────────────────────────────
+// DIALOGUE HEURISTICS (ALL GENRES)
+// ─────────────────────────────────────────────
+
+const EXPLICIT_EMOTION_PHRASES = [
+  'estoy triste', 'estoy enfadado', 'tengo miedo',
+  'me siento mal', 'me duele', 'no puedo más',
+  'estoy feliz', 'me siento bien', 'estoy preocupado',
+  'tengo rabia', 'estoy nervioso', 'me da miedo'
+];
+
+const GENERIC_DIALOGUE_PHRASES = [
+  'tenemos que hablar', 'esto no es lo que parece',
+  'no sabes de lo que hablas', 'todo ha cambiado',
+  'no lo entiendes', 'es complicado', 'no puedo explicarlo',
+  'confía en mí', 'es lo mejor para todos', 'no tenemos opción'
+];
+
+function countNarrativeMarkers(text: string, markers: string[]): number {
+  const lower = text.toLowerCase();
+  return markers.filter(m => lower.includes(m)).length;
+}
+
+export interface NarrativeMaturityResult {
+  score: number;
+  blockers: string[];
+  warnings: string[];
+  metrics: {
+    setups: number;
+    payoffs: number;
+    callbacks: number;
+    causality: number;
+    explicit_emotions: number;
+    generic_dialogue: number;
+    static_dialogue_percent: number;
+  };
+}
+
+/**
+ * Run comprehensive narrative maturity validation.
+ * Checks Setup/Payoff balance, Callbacks, Causality, and Dialogue quality.
+ * Universal for all genres.
+ */
+export function runNarrativeMaturityQC(scriptText: string): NarrativeMaturityResult {
+  let score = 100;
+  const blockers: string[] = [];
+  const warnings: string[] = [];
+  const metrics: NarrativeMaturityResult['metrics'] = {
+    setups: 0,
+    payoffs: 0,
+    callbacks: 0,
+    causality: 0,
+    explicit_emotions: 0,
+    generic_dialogue: 0,
+    static_dialogue_percent: 0
+  };
+
+  // ─────────────────────────────────────────────
+  // SETUP → PAYOFF VALIDATION
+  // ─────────────────────────────────────────────
+  
+  const setupCount = countNarrativeMarkers(scriptText, SETUP_MARKERS);
+  const payoffCount = countNarrativeMarkers(scriptText, PAYOFF_MARKERS);
+  
+  metrics.setups = setupCount;
+  metrics.payoffs = payoffCount;
+  
+  if (setupCount > payoffCount + 3) {
+    warnings.push(`SETUP_SIN_PAYOFF: ${setupCount} setups vs ${payoffCount} payoffs - ideas no pagadas`);
+    score -= Math.min((setupCount - payoffCount) * 3, 15);
+  }
+
+  // ─────────────────────────────────────────────
+  // CALLBACK VALIDATION
+  // ─────────────────────────────────────────────
+  
+  const callbackCount = countNarrativeMarkers(scriptText, CALLBACK_MARKERS);
+  metrics.callbacks = callbackCount;
+  
+  // For long scripts, callbacks are expected
+  if (callbackCount === 0 && scriptText.length > 15000) {
+    warnings.push('SIN_CALLBACKS: El guion no reutiliza elementos previos - falta eco narrativo');
+    score -= 10;
+  }
+
+  // ─────────────────────────────────────────────
+  // CAUSALITY CHECK
+  // ─────────────────────────────────────────────
+  
+  const causalityCount = countNarrativeMarkers(scriptText, CAUSALITY_MARKERS);
+  metrics.causality = causalityCount;
+  
+  // Scripts should have explicit causal connections
+  if (causalityCount < 5 && scriptText.length > 12000) {
+    warnings.push('BAJA_CAUSALIDAD: Muchos eventos sin conexión causal clara');
+    score -= 10;
+  } else if (causalityCount < 3 && scriptText.length > 8000) {
+    warnings.push('CAUSALIDAD_DEBIL: Pocos conectores causales explícitos');
+    score -= 5;
+  }
+
+  // ─────────────────────────────────────────────
+  // DIALOGUE QUALITY CHECKS
+  // ─────────────────────────────────────────────
+  
+  const explicitEmotionCount = countNarrativeMarkers(scriptText, EXPLICIT_EMOTION_PHRASES);
+  metrics.explicit_emotions = explicitEmotionCount;
+  
+  if (explicitEmotionCount > 6) {
+    blockers.push(`DIALOGO_EXPLICATIVO: ${explicitEmotionCount} emociones verbalizadas - falta subtexto`);
+    score -= 20;
+  } else if (explicitEmotionCount > 3) {
+    warnings.push(`DIALOGO_EXPLICATIVO: ${explicitEmotionCount} emociones expresadas verbalmente`);
+    score -= Math.min(explicitEmotionCount * 2, 10);
+  }
+  
+  const genericDialogueCount = countNarrativeMarkers(scriptText, GENERIC_DIALOGUE_PHRASES);
+  metrics.generic_dialogue = genericDialogueCount;
+  
+  if (genericDialogueCount > 5) {
+    blockers.push(`DIALOGO_GENERICO: ${genericDialogueCount} frases intercambiables - diálogo sin personalidad`);
+    score -= 15;
+  } else if (genericDialogueCount > 3) {
+    warnings.push(`DIALOGO_GENERICO: ${genericDialogueCount} frases intercambiables entre personajes`);
+    score -= Math.min(genericDialogueCount * 3, 10);
+  }
+
+  // ─────────────────────────────────────────────
+  // DIALOGUE FUNCTIONALITY (SCENE IMPACT)
+  // ─────────────────────────────────────────────
+  
+  // Find dialogue lines (CHARACTER: or CHARACTER\n patterns)
+  const dialogueLines = scriptText.split('\n').filter(l => {
+    const trimmed = l.trim();
+    return /^[A-ZÁÉÍÓÚÑ]{2,}:/.test(trimmed) || /^[A-ZÁÉÍÓÚÑ]{2,}\s*$/.test(trimmed);
+  });
+  
+  let staticDialogueCount = 0;
+  if (dialogueLines.length > 0) {
+    // Check if dialogue lines have consequence indicators
+    for (const line of dialogueLines) {
+      const hasConsequenceIndicator = 
+        line.includes('porque') || 
+        line.includes('si') || 
+        line.includes('entonces') ||
+        line.includes('pero') ||
+        line.includes('aunque');
+      
+      if (!hasConsequenceIndicator) {
+        staticDialogueCount++;
+      }
+    }
+    
+    const staticPercent = Math.round((staticDialogueCount / dialogueLines.length) * 100);
+    metrics.static_dialogue_percent = staticPercent;
+    
+    if (staticPercent > 70 && dialogueLines.length > 20) {
+      warnings.push('DIALOGO_SIN_IMPACTO: Mayoría del diálogo no cambia la situación');
+      score -= 10;
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // FINAL NORMALIZATION
+  // ─────────────────────────────────────────────
+  
+  score = Math.max(0, Math.min(100, score));
+  
+  return {
+    score,
+    blockers,
+    warnings,
+    metrics
+  };
+}
+
+/**
+ * Run literary script QC - comprehensive quality check for finished literary scripts.
+ * Combines anti-impoverishment checks with narrative maturity.
+ */
+export function runLiteraryScriptQC(scriptText: string): NarrativeMaturityResult {
+  let score = 100;
+  const blockers: string[] = [];
+  const warnings: string[] = [];
+  
+  // Start with narrative maturity
+  const maturity = runNarrativeMaturityQC(scriptText);
+  blockers.push(...maturity.blockers);
+  warnings.push(...maturity.warnings);
+  score = Math.min(score, maturity.score);
+  
+  // Additional anti-impoverishment checks
+  
+  // Scene count for feature films
+  const sceneHeaders = (scriptText.match(/\n(INT\.|EXT\.)/gi) || []).length;
+  if (sceneHeaders < 10 && scriptText.length > 5000) {
+    blockers.push(`POCAS_ESCENAS: Solo ${sceneHeaders} escenas detectadas para un largometraje`);
+    score -= 25;
+  }
+  
+  // Check for action verbs (filmability)
+  const hasActionVerbs = /(entra|sale|agarra|rompe|golpea|huye|avanza|retrocede|apunta|empuja|enciende|apaga|corre|salta|grita|susurra|lanza|atrapa|mira|camina|cruza|abre|cierra)/i.test(scriptText);
+  if (!hasActionVerbs && scriptText.length > 3000) {
+    blockers.push('SIN_ACCION_VISIBLE: El guion describe estados, no acciones filmables');
+    score -= 30;
+  }
+  
+  // Check for short scenes (symptom of summarization)
+  const sceneBlocks = scriptText.split(/\n(INT\.|EXT\.)/i).slice(1);
+  if (sceneBlocks.length > 5) {
+    const shortScenes = sceneBlocks.filter(s => s.split(' ').length < 100).length;
+    const shortPercent = Math.round((shortScenes / sceneBlocks.length) * 100);
+    
+    if (shortPercent > 50) {
+      warnings.push('ESCENAS_RESUMIDAS: Más del 50% de escenas son muy cortas - posible empobrecimiento');
+      score -= 15;
+    } else if (shortPercent > 30) {
+      warnings.push(`ESCENAS_CORTAS: ${shortPercent}% de escenas son breves`);
+      score -= 8;
+    }
+  }
+  
+  return {
+    score: Math.max(0, score),
+    blockers,
+    warnings,
+    metrics: maturity.metrics
   };
 }
