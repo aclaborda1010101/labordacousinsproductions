@@ -622,6 +622,8 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
   // Resume is allowed when:
   // 1. Stale generating (process died) with valid work
   // 2. Failed but has recoverable work (e.g., 502 gateway error)
+  // 3. Stalled by watchdog (ZOMBIE_TIMEOUT) with valid work
+  // 4. Error but with ZOMBIE_TIMEOUT/HEARTBEAT_STALE error_code (recoverable timeout)
   const canResume = useMemo(() => {
     if (!savedOutline) return false;
     
@@ -636,13 +638,22 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     const isIncomplete = ['expand_act_ii', 'expand_act_iii', 'part_b', 'part_c']
       .some(k => parts?.[k]?.status !== 'done');
     
+    // P0.2: Recoverable error codes from watchdog
+    const errorCode = (savedOutline as any).error_code;
+    const isRecoverableError = savedOutline.status === 'error' && 
+      ['ZOMBIE_TIMEOUT', 'HEARTBEAT_STALE'].includes(errorCode);
+    
     // Resume allowed if:
     // 1. Stale generating with valid work that's incomplete
     // 2. Failed but has recoverable work
+    // 3. Stalled by watchdog
+    // 4. Error with recoverable error_code
     const canResumeFromStale = isStaleGenerating && hasValidWork && isIncomplete;
     const canResumeFromFailed = savedOutline.status === 'failed' && hasValidWork && isIncomplete;
+    const canResumeFromStalled = savedOutline.status === 'stalled' && hasValidWork && isIncomplete;
+    const canResumeFromRecoverableError = isRecoverableError && hasValidWork && isIncomplete;
     
-    return canResumeFromStale || canResumeFromFailed;
+    return canResumeFromStale || canResumeFromFailed || canResumeFromStalled || canResumeFromRecoverableError;
   }, [isStaleGenerating, savedOutline]);
 
   // P0: Resume generation from last completed phase

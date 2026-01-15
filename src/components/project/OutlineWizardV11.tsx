@@ -129,6 +129,50 @@ function getCompletedPartsDescription(parts: any): string {
   return completed.length > 0 ? completed.join(', ') : 'Ninguna';
 }
 
+// P0.3: Dynamic title based on status
+function getResumeTitle(savedOutline?: { status?: string; error_code?: string }): string {
+  if (!savedOutline) return 'Generación pausada';
+  
+  const { status, error_code } = savedOutline as any;
+  
+  if (status === 'failed') return 'Generación interrumpida';
+  if (status === 'stalled') return 'Generación pausada (timeout)';
+  if (status === 'error' && error_code === 'ZOMBIE_TIMEOUT') return 'Generación pausada (timeout)';
+  if (status === 'error' && error_code === 'HEARTBEAT_STALE') return 'Generación pausada';
+  
+  return 'Generación pausada';
+}
+
+// P0.3: Dynamic description based on status
+function getResumeDescription(
+  savedOutline?: { status?: string; error_code?: string },
+  isStaleGenerating?: boolean
+): string {
+  if (!savedOutline) {
+    return 'Hay trabajo guardado. Puedes continuar desde el último paso completado.';
+  }
+  
+  const { status, error_code } = savedOutline as any;
+  
+  if (status === 'failed') {
+    return 'Hubo un error (probablemente temporal), pero hay trabajo guardado. Puedes reintentar desde el último paso completado.';
+  }
+  
+  if (status === 'stalled' || error_code === 'ZOMBIE_TIMEOUT') {
+    return 'El proceso se detuvo por timeout del servidor, pero hay trabajo guardado. Puedes continuar desde el último paso completado.';
+  }
+  
+  if (status === 'error' && error_code === 'HEARTBEAT_STALE') {
+    return 'El proceso dejó de responder, pero hay trabajo guardado. Puedes continuar desde el último paso completado.';
+  }
+  
+  if (isStaleGenerating) {
+    return 'No hay heartbeat reciente, pero hay trabajo guardado. Puedes continuar desde el último paso completado.';
+  }
+  
+  return 'Hay trabajo guardado. Puedes continuar desde el último paso completado.';
+}
+
 export default function OutlineWizardV11({
   outline,
   qcStatus,
@@ -192,15 +236,11 @@ export default function OutlineWizardV11({
           <Alert className="border-amber-500/50 bg-amber-500/10">
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertTitle className="text-amber-700 dark:text-amber-300">
-              {savedOutline?.status === 'failed' 
-                ? 'Generación interrumpida' 
-                : 'Generación pausada'}
+              {getResumeTitle(savedOutline)}
             </AlertTitle>
             <AlertDescription className="text-amber-600/80 dark:text-amber-400/80">
               <p className="mb-2">
-                {savedOutline?.status === 'failed'
-                  ? 'Hubo un error (probablemente temporal), pero hay trabajo guardado. Puedes reintentar desde el último paso completado.'
-                  : 'No hay heartbeat reciente, pero hay trabajo guardado. Puedes continuar desde el último paso completado.'}
+                {getResumeDescription(savedOutline, isStaleGenerating)}
               </p>
               {outlineParts && (
                 <p className="text-xs mb-2 opacity-75">
