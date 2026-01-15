@@ -5124,6 +5124,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       // V21: Support multiple description field formats from different outline generators
                       const description = char.description || char.bio || char.want;
                       const details = char.need || char.flaw || char.arc;
+                      const decisionKey = char.decision_key;
                       return (
                         <div key={i} className="p-3 bg-muted/30 rounded border space-y-1">
                           <div className="flex flex-wrap items-center gap-2">
@@ -5140,6 +5141,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           {details && (
                             <p className="text-xs text-muted-foreground/70 italic">{details}</p>
                           )}
+                          {decisionKey && (
+                            <p className="text-xs text-primary/80 italic">🎯 {decisionKey}</p>
+                          )}
                         </div>
                       );
                     })}
@@ -5152,19 +5156,66 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     Localizaciones ({lightOutline.main_locations?.length || 0})
                   </Label>
                   <div className="grid gap-2 md:grid-cols-2">
-                    {lightOutline.main_locations?.map((loc: any, i: number) => (
-                      <div key={i} className="p-2 bg-muted/30 rounded border">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant="outline">{loc.name}</Badge>
-                          {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
+                    {lightOutline.main_locations?.map((loc: any, i: number) => {
+                      // V21: Support multiple field formats from different generators
+                      const description = loc.description || loc.visual_identity || loc.function;
+                      const details = loc.function && loc.visual_identity ? loc.function : null;
+                      return (
+                        <div key={i} className="p-2 bg-muted/30 rounded border space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="outline">{loc.name}</Badge>
+                            {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
+                          </div>
+                          {description && (
+                            <p className="text-xs text-muted-foreground">{description}</p>
+                          )}
+                          {details && (
+                            <p className="text-xs text-muted-foreground/70 italic">{details}</p>
+                          )}
                         </div>
-                        {loc.description && (
-                          <p className="text-xs text-muted-foreground mt-1">{loc.description}</p>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
+
+                {/* Density Gap Warning */}
+                {targets && (() => {
+                  const charsCount = lightOutline.main_characters?.length || 0;
+                  const locsCount = lightOutline.main_locations?.length || 0;
+                  const propsCount = lightOutline.main_props?.length || 0;
+                  const charsMin = (targets.protagonists_min || 0) + (targets.supporting_min || 0);
+                  const locsMin = targets.locations_min || 0;
+                  const propsMin = targets.hero_props_min || 0;
+                  const hasGap = charsCount < charsMin || locsCount < locsMin || propsCount < propsMin;
+                  
+                  if (!hasGap) return null;
+                  
+                  return (
+                    <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                      <Label className="text-xs uppercase text-amber-600 mb-2 block flex items-center gap-2">
+                        <AlertTriangle className="h-3 w-3" />
+                        Densidad Narrativa
+                      </Label>
+                      <div className="grid gap-1 text-xs">
+                        {charsCount < charsMin && (
+                          <p className="text-muted-foreground">
+                            ⚠️ Personajes: {charsCount} / {charsMin} mínimo
+                          </p>
+                        )}
+                        {locsCount < locsMin && (
+                          <p className="text-muted-foreground">
+                            ⚠️ Localizaciones: {locsCount} / {locsMin} mínimo
+                          </p>
+                        )}
+                        {propsCount < propsMin && (
+                          <p className="text-muted-foreground">
+                            ⚠️ Props clave: {propsCount} / {propsMin} mínimo
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Props */}
                 {!!lightOutline.main_props?.length && (
