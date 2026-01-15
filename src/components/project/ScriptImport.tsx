@@ -888,23 +888,41 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   }, [outlinePersistence.savedOutline?.status]);
 
-  // V5: Sync reconstructed outline_json to lightOutline for stalled/timeout outlines with data
+  // V6: Robust sync of outline_json to lightOutline for ANY status with valid content
+  // This ensures outline visibility even in inconsistent states (e.g., approved but incomplete)
   useEffect(() => {
     const saved = outlinePersistence.savedOutline;
     if (!saved || outlinePersistence.isLoading) return;
     
     const status = saved.status;
-    const hasReconstructedData = saved.outline_json && Object.keys(saved.outline_json).length > 0;
+    const hasValidContent = saved.outline_json && Object.keys(saved.outline_json).length > 0 && (saved.outline_json as any).title;
     
-    // If status is stalled/timeout and we have reconstructed data but lightOutline is empty, sync it
-    if ((status === 'stalled' || status === 'timeout') && hasReconstructedData && !lightOutline) {
-      console.log('[ScriptImport] V5: Syncing reconstructed outline from stalled/timeout state');
+    // If we have valid content but lightOutline is empty, sync it regardless of status
+    // This catches: stalled, timeout, approved (with error), failed with partial data, etc.
+    if (hasValidContent && !lightOutline) {
+      console.log('[ScriptImport] V6: Syncing outline from persistence, status:', status);
       setLightOutline(saved.outline_json);
       if (saved.idea) setIdeaText(saved.idea);
       if (saved.genre) setGenre(saved.genre);
       if (saved.tone) setTone(saved.tone);
+      
+      // V6: Also sync outlineApproved state based on persisted status
+      if (status === 'approved') {
+        setOutlineApproved(true);
+        updatePipelineStep('outline', 'success');
+        updatePipelineStep('approval', 'success');
+      } else if (status === 'completed') {
+        updatePipelineStep('outline', 'success');
+        updatePipelineStep('approval', 'running', 'Esperando aprobación...');
+      }
     }
-  }, [outlinePersistence.savedOutline, outlinePersistence.isLoading, lightOutline]);
+    
+    // V6: Keep outlineApproved in sync with persistence status
+    if (status === 'approved' && !outlineApproved && hasValidContent) {
+      console.log('[ScriptImport] V6: Syncing outlineApproved=true from persistence');
+      setOutlineApproved(true);
+    }
+  }, [outlinePersistence.savedOutline, outlinePersistence.isLoading, lightOutline, outlineApproved]);
 
   // V11: Zombie outline detection - check if heartbeat is stale
   const isZombieOutline = useMemo(() => {
@@ -4695,6 +4713,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             hasOutline={!!outlinePersistence.savedOutline?.outline_json && Object.keys(outlinePersistence.savedOutline.outline_json).length > 0}
             hasPartialOutline={!!(outlinePersistence.savedOutline?.outline_parts && Object.keys(outlinePersistence.savedOutline.outline_parts as Record<string, unknown> || {}).length > 0)}
             outlineStatus={outlinePersistence.savedOutline?.status}
+            outlineProgress={outlinePersistence.savedOutline?.progress}
+            outlineErrorCode={outlinePersistence.savedOutline?.error_code}
             hasScript={!!generatedScript || !!scriptText}
             charactersCount={bibleCharacters.length}
             locationsCount={bibleLocations.length}
@@ -4704,14 +4724,29 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               fetchBibleData();
             }}
             onGenerateOutline={ideaText.trim() ? generateLightOutline : undefined}
-            onResumeGeneration={(outlinePersistence.savedOutline?.status === 'stalled' || outlinePersistence.savedOutline?.status === 'timeout') && outlinePersistence.canResume ? async () => {
+            onResumeGeneration={(outlinePersistence.savedOutline?.status === 'stalled' || outlinePersistence.savedOutline?.status === 'timeout' || outlinePersistence.canResume) ? async () => {
               // Resume generation from where it left off using the hook's resumeGeneration
               toast.info('Reanudando generación...');
-              const success = await outlinePersistence.resumeGeneration();
-              if (!success) {
-                toast.error('No se pudo reanudar. Intenta regenerar.');
+              const result = await outlinePersistence.resumeGeneration();
+              if (!result.success) {
+                if (result.errorCode === 'MAX_ATTEMPTS_EXCEEDED') {
+                  toast.error('Máximo de intentos alcanzado. Usa "Nuevo intento" para continuar.');
+                } else {
+                  toast.error('No se pudo reanudar. Intenta regenerar.');
+                }
               }
             } : undefined}
+            onCreateNewAttempt={async () => {
+              // V6: Create a fresh outline attempt but preserve scaffold if possible
+              toast.info('Creando nuevo intento...');
+              // Delete current outline and regenerate
+              await outlinePersistence.deleteOutline?.();
+              if (ideaText.trim()) {
+                generateLightOutline();
+              } else {
+                toast.info('Escribe tu idea y pulsa "Generar Outline"');
+              }
+            }}
           />
           
           {/* Script Source Selector - Only show when no script exists */}
@@ -5386,9 +5421,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   isStaleGenerating={outlinePersistence.isStaleGenerating}
                   canResume={outlinePersistence.canResume}
                   onResume={async () => {
-                    const success = await outlinePersistence.resumeGeneration();
-                    if (success) {
+                    const result = await outlinePersistence.resumeGeneration();
+                    if (result.success) {
                       toast.info('Reanudando generación desde el último paso...');
+                    } else if (result.errorCode === 'MAX_ATTEMPTS_EXCEEDED') {
+                      toast.error('Máximo de intentos alcanzado. Regenera el outline.');
                     } else {
                       toast.error('Error al reanudar la generación');
                     }
@@ -5764,9 +5801,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     isStaleGenerating={outlinePersistence.isStaleGenerating}
                     canResume={outlinePersistence.canResume}
                     onResume={async () => {
-                      const success = await outlinePersistence.resumeGeneration();
-                      if (success) {
+                      const result = await outlinePersistence.resumeGeneration();
+                      if (result.success) {
                         toast.info('Reanudando generación desde el último paso...');
+                      } else if (result.errorCode === 'MAX_ATTEMPTS_EXCEEDED') {
+                        toast.error('Máximo de intentos alcanzado. Regenera el outline.');
                       } else {
                         toast.error('Error al reanudar la generación');
                       }
