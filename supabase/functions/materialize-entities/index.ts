@@ -76,145 +76,199 @@ function mapToCharacterRole(role: string): 'protagonist' | 'recurring' | 'episod
   return 'episodic';
 }
 
-// Extract characters from outline structure
+// Extract characters from outline structure (supports multiple formats)
 function extractCharactersFromOutline(outline: any): ExtractedCharacter[] {
   const characters: ExtractedCharacter[] = [];
   const seenNames = new Set<string>();
   
-  // From main_characters array
+  // Helper to build bio from various character data fields
+  const buildBio = (c: any): string | null => {
+    // Priority 1: Existing bio or description
+    if (c.bio && c.bio.trim()) return c.bio.trim();
+    if (c.description && c.description.trim()) return c.description.trim();
+    
+    // Priority 2: Construct from want/need/flaw (film scaffold format)
+    const parts: string[] = [];
+    if (c.want) parts.push(`Quiere: ${c.want}`);
+    if (c.need) parts.push(`Necesita: ${c.need}`);
+    if (c.flaw) parts.push(`Defecto: ${c.flaw}`);
+    
+    if (parts.length > 0) return parts.join('. ');
+    
+    // Priority 3: Arc as fallback
+    if (c.arc && c.arc.trim()) return c.arc.trim();
+    
+    // Priority 4: Decision key
+    if (c.decision_key && c.decision_key.trim()) return `Decisión clave: ${c.decision_key.trim()}`;
+    
+    return null;
+  };
+  
+  // Helper to add character if not seen
+  const addCharacter = (c: any, source: string) => {
+    const name = c.name?.trim() || c.canonical_name?.trim();
+    if (!name) return;
+    
+    const normalizedName = normalizeName(name);
+    if (seenNames.has(normalizedName)) return;
+    seenNames.add(normalizedName);
+    
+    characters.push({
+      name: name,
+      role: mapToCharacterRole(c.role || c.category || 'protagonist'),
+      bio: buildBio(c),
+      arc: c.arc || null,
+      profile_json: { 
+        source,
+        original_role: c.role,
+        want: c.want,
+        need: c.need,
+        flaw: c.flaw,
+        decision_key: c.decision_key,
+        description: c.description,
+        arc: c.arc,
+        relationships: c.relationships,
+        ...c
+      }
+    });
+  };
+  
+  // Source 1: main_characters array
   if (Array.isArray(outline?.main_characters)) {
-    outline.main_characters.forEach((c: any) => {
-      const name = c.name?.trim();
-      if (!name) return;
-      
-      const normalizedName = normalizeName(name);
-      if (seenNames.has(normalizedName)) return;
-      seenNames.add(normalizedName);
-      
-      characters.push({
-        name: c.name.trim(),
-        role: mapToCharacterRole(c.role || 'protagonist'),
-        bio: c.description || c.bio || null,
-        arc: c.arc || null,
-        profile_json: { 
-          source: 'outline',
-          original_role: c.role,
-          description: c.description,
-          arc: c.arc,
-          relationships: c.relationships,
-          ...c
+    outline.main_characters.forEach((c: any) => addCharacter(c, 'outline_main'));
+  }
+  
+  // Source 2: cast array (film scaffold format)
+  if (Array.isArray(outline?.cast)) {
+    outline.cast.forEach((c: any) => addCharacter(c, 'outline_cast'));
+  }
+  
+  // Source 3: characters array (generic)
+  if (Array.isArray(outline?.characters)) {
+    outline.characters.forEach((c: any) => addCharacter(c, 'outline_characters'));
+  }
+  
+  // Source 4: supporting_characters array
+  if (Array.isArray(outline?.supporting_characters)) {
+    outline.supporting_characters.forEach((c: any) => addCharacter({ ...c, role: c.role || 'supporting' }, 'outline_supporting'));
+  }
+  
+  // Source 5: episode_beats.key_characters
+  if (Array.isArray(outline?.episode_beats)) {
+    outline.episode_beats.forEach((ep: any) => {
+      const keyChars = ep?.key_characters || ep?.characters_present || [];
+      keyChars.forEach((c: any) => {
+        if (typeof c === 'string') {
+          addCharacter({ name: c, role: 'recurring' }, 'outline_beat');
+        } else {
+          addCharacter({ ...c, role: c.role || 'recurring' }, 'outline_beat');
         }
       });
     });
   }
   
-  // From supporting_characters array
-  if (Array.isArray(outline?.supporting_characters)) {
-    outline.supporting_characters.forEach((c: any) => {
-      const name = c.name?.trim();
-      if (!name) return;
-      
-      const normalizedName = normalizeName(name);
-      if (seenNames.has(normalizedName)) return;
-      seenNames.add(normalizedName);
-      
-      characters.push({
-        name: c.name.trim(),
-        role: mapToCharacterRole(c.role || 'supporting'),
-        bio: c.description || c.bio || null,
-        arc: c.arc || null,
-        profile_json: { source: 'outline', ...c }
-      });
-    });
-  }
-  
-  // From episode_beats.key_characters
-  if (Array.isArray(outline?.episode_beats)) {
-    outline.episode_beats.forEach((ep: any) => {
-      const keyChars = ep?.key_characters || ep?.characters_present || [];
-      keyChars.forEach((c: any) => {
-        const name = typeof c === 'string' ? c.trim() : c.name?.trim();
-        if (!name) return;
-        
-        const normalizedName = normalizeName(name);
-        if (seenNames.has(normalizedName)) return;
-        seenNames.add(normalizedName);
-        
-        characters.push({
-          name: typeof c === 'string' ? c.trim() : c.name.trim(),
-          role: 'recurring',
-          bio: typeof c === 'object' ? c.description : null,
-          arc: null,
-          profile_json: { source: 'outline_beat', episode: ep.episode, original: c }
-        });
-      });
+  // Source 6: beats array (film format) - extract from protagonists mentions
+  if (Array.isArray(outline?.beats)) {
+    outline.beats.forEach((beat: any) => {
+      if (beat.agent && typeof beat.agent === 'string') {
+        addCharacter({ name: beat.agent, role: 'protagonist' }, 'outline_beat_agent');
+      }
     });
   }
   
   return characters;
 }
 
-// Extract locations from outline structure
+// Extract locations from outline structure (supports multiple formats)
 function extractLocationsFromOutline(outline: any): ExtractedLocation[] {
   const locations: ExtractedLocation[] = [];
   const seenNames = new Set<string>();
   
-  // From main_locations array
-  if (Array.isArray(outline?.main_locations)) {
-    outline.main_locations.forEach((l: any) => {
-      const name = l.name?.trim();
-      if (!name) return;
-      
-      const normalizedName = normalizeName(name);
-      if (seenNames.has(normalizedName)) return;
-      seenNames.add(normalizedName);
-      
-      locations.push({
-        name: l.name.trim(),
-        description: l.description || null,
-        narrative_role: l.narrative_role || l.role || null,
-        profile_json: { source: 'outline', ...l }
-      });
+  // Helper to build description from various location data fields
+  const buildDescription = (l: any): string | null => {
+    // Priority 1: Direct description
+    if (l.description && l.description.trim()) return l.description.trim();
+    
+    // Priority 2: Visual identity (film scaffold format)
+    if (l.visual_identity && l.visual_identity.trim()) return l.visual_identity.trim();
+    
+    // Priority 3: Function
+    if (l.function && l.function.trim()) return l.function.trim();
+    
+    // Priority 4: Role/narrative_role
+    if (l.narrative_role && l.narrative_role.trim()) return `Rol narrativo: ${l.narrative_role.trim()}`;
+    if (l.role && l.role.trim()) return l.role.trim();
+    
+    return null;
+  };
+  
+  // Helper to add location if not seen
+  const addLocation = (l: any, source: string) => {
+    const name = l.name?.trim() || l.base_name?.trim() || l.location_name?.trim();
+    if (!name) return;
+    
+    const normalizedName = normalizeName(name);
+    if (seenNames.has(normalizedName)) return;
+    seenNames.add(normalizedName);
+    
+    locations.push({
+      name: name,
+      description: buildDescription(l),
+      narrative_role: l.narrative_role || l.role || l.function || null,
+      profile_json: { 
+        source, 
+        visual_identity: l.visual_identity,
+        function: l.function,
+        ...l 
+      }
     });
+  };
+  
+  // Source 1: main_locations array
+  if (Array.isArray(outline?.main_locations)) {
+    outline.main_locations.forEach((l: any) => addLocation(l, 'outline_main'));
   }
   
-  // From episode_beats.location/locations
+  // Source 2: locations array (generic or film scaffold format)
+  if (Array.isArray(outline?.locations)) {
+    outline.locations.forEach((l: any) => addLocation(l, 'outline_locations'));
+  }
+  
+  // Source 3: episode_beats.location/locations
   if (Array.isArray(outline?.episode_beats)) {
     outline.episode_beats.forEach((ep: any) => {
       // Single location field
       if (ep?.location) {
-        const name = typeof ep.location === 'string' ? ep.location.trim() : ep.location.name?.trim();
-        if (name) {
-          const normalizedName = normalizeName(name);
-          if (!seenNames.has(normalizedName)) {
-            seenNames.add(normalizedName);
-            locations.push({
-              name: name,
-              description: typeof ep.location === 'object' ? ep.location.description : null,
-              narrative_role: null,
-              profile_json: { source: 'outline_beat', episode: ep.episode }
-            });
-          }
+        if (typeof ep.location === 'string') {
+          addLocation({ name: ep.location }, `outline_beat_ep${ep.episode}`);
+        } else {
+          addLocation(ep.location, `outline_beat_ep${ep.episode}`);
         }
       }
       
       // Multiple locations array
       if (Array.isArray(ep?.locations)) {
         ep.locations.forEach((l: any) => {
-          const name = typeof l === 'string' ? l.trim() : l.name?.trim();
-          if (!name) return;
-          
-          const normalizedName = normalizeName(name);
-          if (seenNames.has(normalizedName)) return;
-          seenNames.add(normalizedName);
-          
-          locations.push({
-            name: typeof l === 'string' ? l.trim() : l.name.trim(),
-            description: typeof l === 'object' ? l.description : null,
-            narrative_role: null,
-            profile_json: { source: 'outline_beat', episode: ep.episode }
-          });
+          if (typeof l === 'string') {
+            addLocation({ name: l }, `outline_beat_ep${ep.episode}`);
+          } else {
+            addLocation(l, `outline_beat_ep${ep.episode}`);
+          }
         });
+      }
+    });
+  }
+  
+  // Source 4: beats array (film format) - extract from situation_detail
+  if (Array.isArray(outline?.beats)) {
+    outline.beats.forEach((beat: any) => {
+      const sd = beat.situation_detail;
+      if (sd?.physical_context && typeof sd.physical_context === 'string') {
+        // Try to extract location from physical_context
+        const contextLower = sd.physical_context.toLowerCase();
+        if (!contextLower.includes('sin definir') && sd.physical_context.length < 100) {
+          addLocation({ name: sd.physical_context, description: sd.physical_context }, 'outline_beat_context');
+        }
       }
     });
   }
@@ -260,17 +314,17 @@ serve(async (req) => {
     let sourceDescription = '';
 
     if (source === 'outline') {
-      // Fetch outline from project_outlines
+      // Fetch outline from project_outlines - include outline_parts for film scaffold
       const query = adminClient
         .from('project_outlines')
-        .select('id, outline_json, quality, status')
+        .select('id, outline_json, outline_parts, quality, status')
         .eq('project_id', projectId);
       
       if (outlineId) {
         query.eq('id', outlineId);
       } else {
         // Get the most recent approved or completed outline
-        query.in('status', ['approved', 'completed', 'generating']).order('created_at', { ascending: false }).limit(1);
+        query.in('status', ['approved', 'completed', 'generating', 'stalled']).order('created_at', { ascending: false }).limit(1);
       }
       
       const { data: outlineData, error: outlineError } = await query.maybeSingle();
@@ -283,7 +337,23 @@ serve(async (req) => {
         );
       }
       
-      if (!outlineData?.outline_json) {
+      // V2: If outline_json is empty, try to reconstruct from outline_parts (film scaffold)
+      let outlineJson = outlineData?.outline_json;
+      const outlineParts = outlineData?.outline_parts as Record<string, any> | null;
+      
+      if ((!outlineJson || Object.keys(outlineJson as any).length === 0) && outlineParts) {
+        console.log('[materialize-entities] V2: Reconstructing outline from outline_parts');
+        const scaffold = outlineParts.film_scaffold?.data;
+        if (scaffold) {
+          outlineJson = {
+            ...scaffold,
+            main_characters: scaffold.cast || scaffold.main_characters || [],
+            main_locations: scaffold.locations || scaffold.main_locations || [],
+          };
+        }
+      }
+      
+      if (!outlineJson || Object.keys(outlineJson as any).length === 0) {
         return new Response(
           JSON.stringify({ 
             error: 'NO_OUTLINE_FOUND', 
@@ -295,8 +365,8 @@ serve(async (req) => {
         );
       }
       
-      outline = outlineData.outline_json;
-      sourceDescription = `outline (${outlineData.status}, quality: ${outlineData.quality || 'unknown'})`;
+      outline = outlineJson;
+      sourceDescription = `outline (${outlineData?.status}, quality: ${outlineData?.quality || 'unknown'})`;
       
     } else if (source === 'script_breakdown') {
       // Fetch from scripts.parsed_json
