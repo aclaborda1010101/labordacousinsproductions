@@ -81,10 +81,11 @@ const MAX_EPISODES = 10;
 // The next "Continue Generation" click triggers the next attempt.
 // This guarantees we never exceed Edge Runtime limits (~100-120s).
 // ============================================================================
+// V21: MICROCHUNKING - Maximum 4 beats per chunk to prevent timeouts
 const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [number, number][] }> = {
-  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] },              // 2 chunks of 4 beats
-  II:  { beatsTotal: 10, chunks: [[1, 4], [5, 7], [8, 10]] },     // 3 chunks of 3-4 beats
-  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] }               // 2 chunks of 4 beats
+  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] },         // 3 chunks (4+2+2)
+  II:  { beatsTotal: 10, chunks: [[1, 3], [4, 5], [6, 7], [8, 10]] },// 4 chunks (3+2+2+3)
+  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] }          // 3 chunks (4+2+2)
 };
 
 // V20: Timeout per CHUNK - 40s max (single attempt, no retries inside)
@@ -1514,7 +1515,7 @@ function calculateChunkProgress(act: 'I' | 'II' | 'III', chunkIndex: number, tot
   return Math.round(range.start + (chunkIndex * chunkSize));
 }
 
-// V18: Build CHUNK-SPECIFIC prompt (only requests beats N to M)
+// V21: Build MINIMAL CHUNK-SPECIFIC prompt (reduced tokens to prevent timeouts)
 function buildChunkPrompt(
   scaffold: any,
   act: 'I' | 'II' | 'III',
@@ -1523,47 +1524,60 @@ function buildChunkPrompt(
   previousActI?: any,
   previousActII?: any
 ): string {
-  // Context from previous acts
-  let previousContext = '';
-  if (act === 'II' && previousActI) {
-    previousContext = `\n[ACTO I completado: ${previousActI.beats?.length || 0} beats, goal: ${previousActI.dramatic_goal || 'N/A'}]`;
+  // V21: Extract only 3-4 protagonists with minimal fields
+  const protagonists = (scaffold.cast || []).slice(0, 4).map((c: any) => 
+    `- ${c.name}: WANT=${c.want || '?'}; FLAW=${c.flaw || '?'}`
+  ).join('\n');
+  
+  // V21: Build continuity anchors from previous acts (max 4 bullets)
+  const continuityAnchors: string[] = [];
+  if (previousActI?.beats?.length) {
+    const lastBeats = previousActI.beats.slice(-3);
+    lastBeats.forEach((b: any) => {
+      if (b.event && b.agent) {
+        continuityAnchors.push(`- ${b.agent}: ${b.event}${b.consequence ? ` → ${b.consequence}` : ''}`);
+      }
+    });
   }
-  if (act === 'III' && previousActI && previousActII) {
-    previousContext = `\n[ACTO I: ${previousActI.beats?.length || 0} beats | ACTO II: ${previousActII.beats?.length || 0} beats]`;
+  if (previousActII?.beats?.length && act === 'III') {
+    const lastBeats = previousActII.beats.slice(-2);
+    lastBeats.forEach((b: any) => {
+      if (b.event && b.agent) {
+        continuityAnchors.push(`- ${b.agent}: ${b.event}`);
+      }
+    });
   }
-
+  
   const actGoal = scaffold.acts_summary?.[`act_${act.toLowerCase()}_goal`] || 'Sin definir';
   
-  return `PELÍCULA: "${scaffold.title}"
-LOGLINE: ${scaffold.logline}
-THEMATIC PREMISE: ${scaffold.thematic_premise}
+  // V21: MINIMAL PROMPT - ~1500-2000 chars max (no full scaffold, no all locations)
+  return `FILM: "${scaffold.title}"
+LOGLINE: ${scaffold.logline || ''}
+TONE: ${scaffold.tone || 'cinematográfico'}
 
-ARQUITECTURA ACTO ${act}: ${actGoal}
-${previousContext}
+PROTAGONISTS:
+${protagonists}
 
-CAST:
-${scaffold.cast?.map((c: any) => `- ${c.name}: ${c.want}`).join('\n') || 'N/A'}
+ACT ${act} GOAL: ${actGoal}
+
+${continuityAnchors.length > 0 ? `CONTINUITY (must remain true):\n${continuityAnchors.slice(0, 4).join('\n')}` : ''}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ GENERA ÚNICAMENTE BEATS ${fromBeat} A ${toBeat} DEL ACTO ${act}.
-No incluyas otros beats. No repitas beats anteriores.
+GENERATE ONLY BEATS ${fromBeat}-${toBeat} OF ACT ${act}.
+No other beats. No repeats.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Cada beat DEBE incluir:
-- beat_number (${fromBeat} a ${toBeat})
-- scene_title (título corto)
-- event (qué ocurre físicamente)
-- agent (quién actúa)
-- consequence (qué cambia)
+Each beat MUST include:
+- beat_number (${fromBeat} to ${toBeat})
+- scene_title
+- event (physical action)
+- agent (who acts)
+- consequence (what changes)
 - situation_detail: { physical_context, action, goal, obstacle, state_change }
 
-RESPONDE SOLO CON JSON VÁLIDO:
+RESPOND ONLY WITH VALID JSON:
 {
-  "beats": [
-    { "beat_number": ${fromBeat}, "scene_title": "...", "event": "...", "agent": "...", "consequence": "...", "situation_detail": {...} },
-    ...
-    { "beat_number": ${toBeat}, "scene_title": "...", "event": "...", "agent": "...", "consequence": "...", "situation_detail": {...} }
-  ]
+  "beats": [...]
 }`.trim();
 }
 
@@ -1595,11 +1609,13 @@ async function callChunkOnce(
   chunkSubstage: string,
   retryCount: number  // 0, 1, or 2 - determines which model to use
 ): Promise<ChunkResult> {
-  // V20: Use FAST_MODEL (gpt-5-mini) on 3rd attempt (retryCount >= 2)
-  const modelToUse = retryCount >= 2 ? FAST_MODEL : QUALITY_MODEL;
-  const modelLabel = retryCount >= 2 ? 'FALLBACK' : 'QUALITY';
+  // V21: Use FAST_MODEL (gpt-5-mini) on 2nd attempt or later (retryCount >= 1)
+  // Also reduce timeout for fast model since it responds quicker
+  const modelToUse = retryCount >= 1 ? FAST_MODEL : QUALITY_MODEL;
+  const timeoutToUse = retryCount >= 1 ? 30000 : CHUNK_TIMEOUT_MS;  // 30s for fast model
+  const modelLabel = retryCount >= 1 ? 'FALLBACK' : 'QUALITY';
   
-  console.log(`[CHUNK-V20] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${retryCount + 1}/${MAX_CHUNK_RETRIES} (${modelLabel}: ${modelToUse})`);
+  console.log(`[CHUNK-V21] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${retryCount + 1}/${MAX_CHUNK_RETRIES} (${modelLabel}: ${modelToUse}, timeout: ${timeoutToUse}ms)`);
   
   try {
     // Build system prompt - add strict JSON suffix on retry attempts
@@ -1616,7 +1632,7 @@ async function callChunkOnce(
       'expand_film_chunk',
       EXPAND_ACT_SCHEMA.parameters,
       chunkSubstage,
-      CHUNK_TIMEOUT_MS
+      timeoutToUse  // V21: Use dynamic timeout based on model
     );
     
     const raw = toolArgs || content || '';
@@ -1805,6 +1821,9 @@ async function expandActInChunks(
       // FAIL: Increment retry_count, persist, EXIT IMMEDIATELY
       retryCount++;
       
+      // V21: Use 'stalled' instead of keeping 'generating' - enables UI "Continue" button
+      const isMaxRetries = retryCount >= MAX_CHUNK_RETRIES;
+      
       parts[substage] = {
         ...parts[substage],
         status: 'partial',
@@ -1817,16 +1836,22 @@ async function expandActInChunks(
         last_attempt_at: new Date().toISOString(),
         last_model_used: result.modelUsed
       };
+      
+      // V21: Set outline status to 'stalled' so UI can show "Continue" button (not 'failed' until max retries)
       await updateOutline(supabase, outlineId, { 
         outline_parts: parts,
+        status: isMaxRetries ? 'failed' : 'stalled',
+        substage: chunkSubstage,
+        error_code: isMaxRetries ? 'CHUNK_MAX_RETRIES' : 'CHUNK_ATTEMPT_FAILED',
+        error_detail: `Act ${act} chunk ${chunkIndex} - ${result.error}`,
         heartbeat_at: new Date().toISOString()
       });
       
-      console.log(`[CHUNK-V20] Act ${act} chunk ${chunkIndex} FAILED (attempt ${retryCount}/${MAX_CHUNK_RETRIES}): ${result.error}`);
-      console.log(`[CHUNK-V20] State persisted. User must click "Continue Generation" for next attempt.`);
+      console.log(`[CHUNK-V21] Act ${act} chunk ${chunkIndex} ${isMaxRetries ? 'FAILED' : 'STALLED'} (attempt ${retryCount}/${MAX_CHUNK_RETRIES}): ${result.error}`);
+      console.log(`[CHUNK-V21] State persisted. User must click "Continue Generation" for next attempt.`);
       
-      // V20: EXIT IMMEDIATELY - Do NOT continue in this invocation
-      throw new Error(`CHUNK_FAILED_ATTEMPT_${retryCount}: Act ${act} chunk ${chunkIndex} - ${result.error}`);
+      // V21: EXIT IMMEDIATELY - Do NOT continue in this invocation
+      throw new Error(`CHUNK_${isMaxRetries ? 'MAX_RETRIES' : 'ATTEMPT_FAILED'}: Act ${act} chunk ${chunkIndex} - ${result.error}`);
     }
   }
   

@@ -426,6 +426,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     lockedAt?: Date;
   } | null>(null);
   
+  // V21: Outline generation error state (anti-blank-screen)
+  const [outlineError, setOutlineError] = useState<{
+    code: string;
+    message: string;
+    substage?: string;
+    retryable: boolean;
+  } | null>(null);
+  
   // P1 FIX: Entity materialization state (sync outline to Bible)
   const [materializingEntities, setMaterializingEntities] = useState(false);
   
@@ -874,7 +882,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             },
             onError: (err) => {
               setGeneratingOutline(false);
-              toast.error('Error: ' + err);
+              // V21: Set error state for persistent UI feedback
+              if (err.includes('CHUNK') || err.includes('TIMEOUT') || err.includes('AI_') || err.includes('stalled')) {
+                setOutlineError({
+                  code: 'GENERATION_ERROR',
+                  message: err,
+                  substage: dbOutline.substage || undefined,
+                  retryable: true
+                });
+              } else {
+                toast.error('Error: ' + err);
+              }
             }
           });
           return; // Don't continue - wait for completion
@@ -1901,12 +1919,23 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           onError: (errorMsg) => {
             console.error('[ScriptImport] Outline polling error:', errorMsg);
             updatePipelineStep('outline', 'error');
-            toast.error('Error generando outline', { 
-              description: errorMsg,
-              duration: 10000,
-            });
             setGeneratingOutline(false);
             setOutlineStartTime(null); // V4.0: Clear start time
+            
+            // V21: Set error state for persistent UI feedback (anti-blank-screen)
+            if (errorMsg.includes('CHUNK') || errorMsg.includes('TIMEOUT') || errorMsg.includes('AI_') || errorMsg.includes('stalled')) {
+              setOutlineError({
+                code: 'GENERATION_ERROR',
+                message: errorMsg,
+                substage: outlinePersistence.savedOutline?.substage || undefined,
+                retryable: true
+              });
+            } else {
+              toast.error('Error generando outline', { 
+                description: errorMsg,
+                duration: 10000,
+              });
+            }
           }
         });
         
@@ -1963,9 +1992,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 },
                 onError: (errorMsg) => {
                   updatePipelineStep('outline', 'error');
-                  toast.error('Error generando outline', { description: errorMsg });
                   setGeneratingOutline(false);
                   setOutlineStartTime(null);
+                  // V21: Set error state for persistent UI feedback
+                  if (errorMsg.includes('CHUNK') || errorMsg.includes('TIMEOUT') || errorMsg.includes('AI_') || errorMsg.includes('stalled')) {
+                    setOutlineError({
+                      code: 'GENERATION_ERROR',
+                      message: errorMsg,
+                      substage: outlinePersistence.savedOutline?.substage || undefined,
+                      retryable: true
+                    });
+                  } else {
+                    toast.error('Error generando outline', { description: errorMsg });
+                  }
                 }
               });
               
@@ -2019,9 +2058,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 },
                 onError: (errorMsg) => {
                   updatePipelineStep('outline', 'error');
-                  toast.error('Error generando outline', { description: errorMsg });
                   setGeneratingOutline(false);
                   setOutlineStartTime(null); // V4.0: Clear start time
+                  // V21: Set error state for persistent UI feedback
+                  if (errorMsg.includes('CHUNK') || errorMsg.includes('TIMEOUT') || errorMsg.includes('AI_') || errorMsg.includes('stalled')) {
+                    setOutlineError({
+                      code: 'GENERATION_ERROR',
+                      message: errorMsg,
+                      substage: outlinePersistence.savedOutline?.substage || undefined,
+                      retryable: true
+                    });
+                  } else {
+                    toast.error('Error generando outline', { description: errorMsg });
+                  }
                 }
               });
               
@@ -2433,7 +2482,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         },
         onError: (err) => {
           setGeneratingOutline(false);
-          toast.error('Error: ' + err);
+          // V21: Set error state for persistent UI feedback
+          if (err.includes('CHUNK') || err.includes('TIMEOUT') || err.includes('AI_') || err.includes('stalled')) {
+            setOutlineError({
+              code: 'GENERATION_ERROR',
+              message: err,
+              substage: outlinePersistence.savedOutline?.substage || undefined,
+              retryable: true
+            });
+          } else {
+            toast.error('Error: ' + err);
+          }
         }
       });
       
@@ -4774,7 +4833,85 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         </Card>
       )}
 
-      {/* CRITICAL ALERT: Missing Dialogues */}
+      {/* V21: OUTLINE GENERATION ERROR BANNER - Anti-blank-screen */}
+      {outlineError && (
+        <Card className="border-2 border-destructive/50 bg-destructive/5">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-destructive/20">
+                  <AlertTriangle className="w-6 h-6 text-destructive" />
+                </div>
+                <div>
+                  <p className="font-semibold text-destructive">
+                    ⚠️ Error en Generación: {outlineError.code}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {outlineError.message}
+                    {outlineError.substage && (
+                      <span className="ml-1 text-xs">({outlineError.substage})</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                {outlineError.retryable && outlinePersistence.savedOutline?.id && (
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      setOutlineError(null);
+                      setGeneratingOutline(true);
+                      try {
+                        await invokeAuthedFunction('outline-worker', { 
+                          outline_id: outlinePersistence.savedOutline?.id 
+                        });
+                        outlinePersistence.startPolling(outlinePersistence.savedOutline!.id, {
+                          onComplete: () => {
+                            setGeneratingOutline(false);
+                            outlinePersistence.refreshOutline();
+                            toast.success('Outline generado correctamente');
+                          },
+                          onError: (err) => {
+                            setGeneratingOutline(false);
+                            // V21: Set error state instead of just toast
+                            if (err.includes('CHUNK') || err.includes('TIMEOUT') || err.includes('AI_')) {
+                              setOutlineError({
+                                code: 'CHUNK_ERROR',
+                                message: err,
+                                substage: outlinePersistence.savedOutline?.substage || undefined,
+                                retryable: true
+                              });
+                            } else {
+                              toast.error('Error: ' + err);
+                            }
+                          }
+                        });
+                        toast.info('Reintentando generación...');
+                      } catch (e: any) {
+                        setGeneratingOutline(false);
+                        toast.error('Error al reintentar: ' + e.message);
+                      }
+                    }}
+                    className="gap-2 border-destructive/50 text-destructive hover:bg-destructive/10"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Reintentar Chunk
+                  </Button>
+                )}
+                <Button 
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setOutlineError(null)}
+                >
+                  Cerrar
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {episodesNeedingDialogue.length > 0 && !pipelineRunning && (
         <Card className="border-2 border-destructive/50 bg-destructive/5">
           <CardContent className="pt-4 pb-4">
