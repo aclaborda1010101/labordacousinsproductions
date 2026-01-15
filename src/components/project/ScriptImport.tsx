@@ -418,6 +418,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Dynamic batch configuration
   const [batchConfig, setBatchConfig] = useState<BatchConfig | null>(null);
   
+  // V3.0: Project lock state for PROJECT_BUSY (409) errors
+  const [projectLockInfo, setProjectLockInfo] = useState<{
+    isLocked: boolean;
+    lockReason?: string;
+    retryAfterSeconds?: number;
+    lockedAt?: Date;
+  } | null>(null);
+  
   // P1 FIX: Entity materialization state (sync outline to Bible)
   const [materializingEntities, setMaterializingEntities] = useState(false);
   
@@ -2959,15 +2967,31 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 // Handle GATE errors - abort immediately, don't retry
                 const errorObj = error as any;
                 const errorMsg = error?.message || '';
+                const errorCode = errorObj?.code || '';
                 
-                if (errorObj?.status === 422 || errorMsg.includes('GATE_FAILED')) {
+                // V3.0: Enhanced density gate detection (includes DENSITY_INSUFFICIENT)
+                const isDensityError = 
+                  errorObj?.status === 422 || 
+                  errorMsg.includes('GATE_FAILED') || 
+                  errorMsg.includes('DENSITY_INSUFFICIENT') ||
+                  errorCode === 'DENSITY_INSUFFICIENT' ||
+                  errorCode === 'DENSITY_GATE_FAILED';
+                
+                if (isDensityError) {
                   setDensityGateResult({
                     status: 'FAIL',
-                    density_score: errorObj.density_score || 0,
+                    density_score: errorObj.density_score ?? errorObj.score ?? 0,
                     required_fixes: errorObj.required_fixes || [],
-                    human_summary: errorMsg,
+                    human_summary: errorObj.human_summary || errorMsg,
                   });
                   setShowDensityGateModal(true);
+                  
+                  // Also show toast with summary
+                  toast.error('Densidad narrativa insuficiente', {
+                    description: errorObj.human_summary || 'El outline necesita más contenido para generar el guión',
+                    duration: 10000
+                  });
+                  
                   throw new Error(`GATE_FAILED: ${errorMsg}`);
                 }
                 
@@ -2995,6 +3019,42 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     duration: 5000
                   });
                   // Continue to retry logic below
+                }
+                
+                // V3.0: Handle PROJECT_BUSY (409) - show lock info and allow unlock
+                if (errorObj?.status === 409 || errorObj?.code === 'PROJECT_BUSY' || errorMsg.includes('PROJECT_BUSY')) {
+                  const retryAfter = errorObj?.retry_after_seconds || 60;
+                  const lockReason = errorObj?.lock_reason || 'script_generation';
+                  
+                  setProjectLockInfo({
+                    isLocked: true,
+                    lockReason,
+                    retryAfterSeconds: retryAfter,
+                    lockedAt: new Date(),
+                  });
+                  
+                  toast.warning(`Proyecto ocupado: ${lockReason}`, {
+                    description: `Espera ${Math.ceil(retryAfter / 60)} min o desbloquea manualmente`,
+                    action: {
+                      label: 'Desbloquear',
+                      onClick: async () => {
+                        try {
+                          const { error: unlockError } = await invokeAuthedFunction('force-unlock-project', { projectId });
+                          if (unlockError) throw unlockError;
+                          setProjectLockInfo(null);
+                          toast.success('Proyecto desbloqueado');
+                        } catch (e: any) {
+                          toast.error(`Error al desbloquear: ${e.message}`);
+                        }
+                      }
+                    },
+                    duration: 15000
+                  });
+                  
+                  // Break the generation loop - don't retry automatically
+                  episodeError = 'PROJECT_BUSY';
+                  batchPassed = true; // exit loop
+                  break;
                 }
                 
                 // For other errors, increment attempt and maybe retry
@@ -4665,6 +4725,50 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   <span className="text-sm font-medium text-amber-600">Generando...</span>
                 </div>
               )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* V3.0: PROJECT LOCKED BANNER */}
+      {projectLockInfo?.isLocked && (
+        <Card className="border-2 border-amber-500/50 bg-amber-500/10">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-amber-500/20">
+                  <Lock className="w-6 h-6 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-amber-600">
+                    🔒 Proyecto Bloqueado: {projectLockInfo.lockReason || 'Generación en curso'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Otra operación está en curso. 
+                    {projectLockInfo.retryAfterSeconds && (
+                      <span> Espera ~{Math.ceil(projectLockInfo.retryAfterSeconds / 60)} min o desbloquea si crees que es un error.</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const { error: unlockError } = await invokeAuthedFunction('force-unlock-project', { projectId });
+                    if (unlockError) throw unlockError;
+                    setProjectLockInfo(null);
+                    toast.success('Proyecto desbloqueado exitosamente');
+                  } catch (e: any) {
+                    toast.error(`Error al desbloquear: ${e.message}`);
+                  }
+                }}
+                className="gap-2 shrink-0 border-amber-500/50 text-amber-600 hover:bg-amber-500/10"
+              >
+                <Unlock className="w-4 h-4" />
+                Desbloquear Proyecto
+              </Button>
             </div>
           </CardContent>
         </Card>
