@@ -14,7 +14,7 @@
 import type { EpisodeContract, TurningPointContract, ThreadContract } from "./episode-contracts.ts";
 import { validateScriptDensity, type DensityProfile, type PostScriptDensityResult } from "./density-validator.ts";
 import type { BatchPlan, BatchResult } from "./batch-planner.ts";
-import { detectGenericPhrases, validateEventStructure, type GenericDetectionResult } from "./anti-generic.ts";
+import { detectGenericPhrases, validateEventStructure, validateGenericity, type GenericDetectionResult } from "./anti-generic.ts";
 
 // ============================================================================
 // QC RESULT TYPES
@@ -831,4 +831,118 @@ export function getQCSummary(result: ScriptQCResult): string {
   }
   
   return parts.join(' | ');
+}
+
+// ============================================================================
+// V13: UNIFIED QC RUNNER - Single entry point for all QC validations
+// ============================================================================
+
+export interface UnifiedQCResult {
+  status: 'PASS' | 'FAIL';
+  score: number;
+  blockers: string[];
+  warnings: string[];
+  genericity: {
+    genericity_score: number;
+    observability_score: number;
+    generic_hits: number;
+    abstract_hits: number;
+    errors: string[];
+  };
+}
+
+/**
+ * Run all QC checks on a payload (outline, batch, or full script).
+ * Unified entry point for QC validation.
+ * 
+ * @param payload - The data to validate (outline, script, or batch)
+ * @param options - Optional configuration
+ * @returns UnifiedQCResult with comprehensive validation data
+ */
+export function runScriptQC(payload: any, options?: { mode?: 'batch' | 'full' | 'outline' }): UnifiedQCResult {
+  const blockers: string[] = [];
+  const warnings: string[] = [];
+  let score = 100;
+  
+  // 1. GENERICITY / OBSERVABILITY GATE (Hollywood-grade)
+  const gen = validateGenericity(payload);
+  if (gen.status === 'FAIL') {
+    blockers.push(...gen.errors);
+    score -= 25;
+  } else if (gen.genericity_score > 15) {
+    // Not a blocker but concerning
+    warnings.push(`GENERICITY: score ${gen.genericity_score} (borderline)`);
+    score -= 10;
+  }
+  
+  // 2. Anti-generic language check (if has scenes)
+  if (payload?.scenes) {
+    const antiGenResult = validateAntiGeneric(payload);
+    if (antiGenResult.phrasesFound.length >= 5) {
+      blockers.push(`GENERIC_LANGUAGE: ${antiGenResult.phrasesFound.length} critical phrases`);
+      score -= 25;
+    } else if (antiGenResult.phrasesFound.length >= 3) {
+      warnings.push(`GENERIC_LANGUAGE: ${antiGenResult.phrasesFound.length} phrases detected`);
+      score -= 15;
+    }
+  }
+  
+  // 3. Scene depth check (if has scenes)
+  if (payload?.scenes) {
+    const depthIssues = validateSceneDepth(payload);
+    if (depthIssues.length > 0) {
+      const scenes = payload.scenes as Array<Record<string, unknown>> || [];
+      const shallowPercent = Math.round((depthIssues.length / (scenes.length || 1)) * 100);
+      if (shallowPercent > 50) {
+        blockers.push(`SCENE_DEPTH: ${shallowPercent}% too shallow`);
+        score -= 20;
+      } else if (shallowPercent > 25) {
+        warnings.push(`SCENE_DEPTH: ${depthIssues.length} scenes need more detail`);
+        score -= 10;
+      }
+    }
+  }
+  
+  // 4. Event structure validation (if has turning_points)
+  if (payload?.turning_points && Array.isArray(payload.turning_points)) {
+    let invalidTPs = 0;
+    for (const tp of payload.turning_points) {
+      const event = String(tp?.event || '');
+      const agent = String(tp?.agent || '');
+      const consequence = String(tp?.consequence || '');
+      
+      // Check for filmable structure
+      const hasAgent = agent.length > 2;
+      const hasEvent = event.length > 15;
+      const hasConsequence = consequence.length > 15;
+      
+      if (!hasAgent || !hasEvent || !hasConsequence) {
+        invalidTPs++;
+      }
+    }
+    
+    if (invalidTPs > payload.turning_points.length * 0.3) {
+      blockers.push(`TURNING_POINTS: ${invalidTPs}/${payload.turning_points.length} incomplete`);
+      score -= 20;
+    } else if (invalidTPs > 0) {
+      warnings.push(`TURNING_POINTS: ${invalidTPs} incomplete structure`);
+      score -= 5;
+    }
+  }
+  
+  const status = blockers.length ? 'FAIL' : 'PASS';
+  
+  return {
+    status,
+    score: Math.max(0, score),
+    blockers,
+    warnings,
+    genericity: {
+      genericity_score: gen.genericity_score,
+      observability_score: gen.observability_score,
+      generic_hits: gen.generic_hits,
+      abstract_hits: gen.abstract_hits,
+      errors: gen.errors
+    }
+  };
 }
