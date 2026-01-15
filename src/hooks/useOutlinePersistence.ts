@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import { getStageTimeout } from '@/lib/outlineStages';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
+import { normalizeOutlineForDisplay } from '@/lib/outlineEntityDisplay';
 
 export interface PersistedOutline {
   id: string;
@@ -139,11 +140,11 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           }
         }
         
-        // V7: Normalize outline fields for FILM format compatibility
-        // Backend may return cast/locations but UI expects main_characters/main_locations
-        const normalizedOutlineJson = {
+        // V8: Normalize outline fields + ensure descriptions are always populated
+        // Uses centralised normalizeOutlineForDisplay to handle want/need/flaw -> description
+        const normalizedOutlineJson = normalizeOutlineForDisplay({
           ...outlineJson,
-          // Map cast → main_characters (fallback chain)
+          // Map cast → main_characters (fallback chain) - normalizeOutlineForDisplay handles this too
           main_characters: (outlineJson as any).main_characters 
             || (outlineJson as any).cast 
             || (outlineJson as any).characters 
@@ -152,7 +153,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           main_locations: (outlineJson as any).main_locations 
             || (outlineJson as any).locations 
             || [],
-        };
+        });
         
         const outline: PersistedOutline = {
           ...data,
@@ -165,7 +166,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
             : undefined,
         };
         setSavedOutline(outline);
-        console.log('[useOutlinePersistence] V7: Loaded outline with normalized fields:', data.id, 'chars:', normalizedOutlineJson.main_characters?.length, 'locs:', normalizedOutlineJson.main_locations?.length);
+        console.log('[useOutlinePersistence] V8: Loaded outline with normalized fields:', data.id, 'chars:', normalizedOutlineJson.main_characters?.length, 'locs:', normalizedOutlineJson.main_locations?.length);
         return outline;
       }
     } catch (e) {

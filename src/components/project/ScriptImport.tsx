@@ -167,6 +167,11 @@ import {
   extractTitle,
   extractWriters,
 } from '@/lib/breakdown/hydrate';
+import { 
+  normalizeOutlineForDisplay, 
+  getCharacterDescription, 
+  getLocationDescription 
+} from '@/lib/outlineEntityDisplay';
 
 interface ScriptImportProps {
   projectId: string;
@@ -342,18 +347,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [outlineApproved, setOutlineApproved] = useState(false);
   const [generatingOutline, setGeneratingOutline] = useState(false);
   
-  // V21: Helper to normalize outline fields for consistent UI rendering
-  // This ensures main_characters and main_locations are always populated
+  // V22: Helper to normalize outline fields for consistent UI rendering
+  // This ensures main_characters and main_locations are always populated WITH descriptions
   const normalizeOutline = useCallback((outline: any): any => {
     if (!outline) return null;
-    return {
-      ...outline,
-      main_characters: outline.main_characters || outline.cast || outline.characters || [],
-      main_locations: outline.main_locations || outline.locations || [],
-    };
+    // Use centralized normalizer that handles want/need/flaw -> description
+    return normalizeOutlineForDisplay(outline);
   }, []);
   
-  // V21: Wrapper for setLightOutline that normalizes the data
+  // V22: Wrapper for setLightOutline that normalizes the data
   const setLightOutline = useCallback((outline: any) => {
     setLightOutlineRaw(normalizeOutline(outline));
   }, [normalizeOutline]);
@@ -6205,14 +6207,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     {lightOutline.main_characters?.map((char: any, i: number) => {
                       const role = char.role || '';
                       const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
+                      // V22: Use normalized description (already populated by normalizeOutlineForDisplay)
+                      const charDescription = char.description || getCharacterDescription(char);
                       return (
                         <div key={i} className="p-2 bg-muted/30 rounded border">
                           <div className="flex flex-wrap items-center gap-2">
                             <Badge variant={variant}>{char.name}</Badge>
                             {role && <span className="text-xs text-muted-foreground">{role}</span>}
                           </div>
-                          {char.description && (
-                            <p className="text-xs text-muted-foreground mt-1">{char.description}</p>
+                          {charDescription && (
+                            <p className="text-xs text-muted-foreground mt-1">{charDescription}</p>
                           )}
                         </div>
                       );
@@ -6226,17 +6230,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     Localizaciones ({lightOutline.main_locations?.length || 0})
                   </Label>
                   <div className="grid gap-2 md:grid-cols-2">
-                    {lightOutline.main_locations?.map((loc: any, i: number) => (
-                      <div key={i} className="p-2 bg-muted/30 rounded border">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant="outline">{loc.name}</Badge>
-                          {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
+                    {lightOutline.main_locations?.map((loc: any, i: number) => {
+                      // V22: Use normalized description (already populated by normalizeOutlineForDisplay)
+                      const locDescription = loc.description || getLocationDescription(loc);
+                      return (
+                        <div key={i} className="p-2 bg-muted/30 rounded border">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="outline">{loc.name}</Badge>
+                            {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
+                          </div>
+                          {locDescription && (
+                            <p className="text-xs text-muted-foreground mt-1">{locDescription}</p>
+                          )}
                         </div>
-                        {loc.description && (
-                          <p className="text-xs text-muted-foreground mt-1">{loc.description}</p>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
