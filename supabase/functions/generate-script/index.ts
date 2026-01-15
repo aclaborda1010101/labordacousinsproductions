@@ -9,6 +9,8 @@ import { validateDensity, getDensityProfile } from "../_shared/density-validator
 import { resolveNarrativeProfile, buildNarrativeProfilePromptBlock, type NarrativeProfile } from "../_shared/narrative-profiles.ts";
 // V13: Intelligent Repair Prompts
 import { buildIntelligentRepairPrompt, SITUATION_DETAIL_REQUIREMENT } from "../_shared/repair-prompts.ts";
+// V13: Genericity validation for Hollywood-grade scripts
+import { validateGenericity } from "../_shared/anti-generic.ts";
 import { 
   buildBatchPlan, 
   buildStateBlock, 
@@ -1245,6 +1247,76 @@ serve(async (req) => {
           status: 422, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         });
+      }
+    }
+
+    // =========================================================================
+    // V13: FORMAT GATE - FILM cannot have series artifacts
+    // Pre-Bible check: use request format only (bible not yet loaded)
+    // =========================================================================
+    const formatUpper = (format || 'SERIES').toUpperCase();
+    if (formatUpper === 'FILM' || formatUpper === 'PELÍCULA' || formatUpper === 'PELICULA') {
+      const outlineBlob = JSON.stringify(outline ?? {});
+      const hasSeriesArtifacts = 
+        /"episodes?":/i.test(outlineBlob) || 
+        /season_episodes/i.test(outlineBlob) || 
+        /season_arc/i.test(outlineBlob) ||
+        /episode_beats/i.test(outlineBlob) ||
+        /episode_number/i.test(outlineBlob);
+        
+      if (hasSeriesArtifacts) {
+        console.warn('[generate-script] FORMAT_GATE_FAILED: FILM contains series artifacts');
+        
+        // Release lock if acquired
+        if (lockAcquired && projectIdForLock) {
+          try {
+            await auth.supabase.rpc('release_project_lock', { p_project_id: projectIdForLock });
+          } catch { /* ignore */ }
+        }
+        
+        clearTimeout(timeoutId);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'FORMAT_GATE_FAILED',
+          code: 'FILM_CONTAINS_SERIES_ARTIFACTS',
+          message: 'El outline FILM contiene artefactos de series (episodios/temporada). Regenera el outline en formato película con estructura de 3 actos.'
+        }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+    }
+
+    // =========================================================================
+    // V13: PRE-GENERATION GENERICITY CHECK (cheap, prevents garbage)
+    // =========================================================================
+    if (outline && !isRepairAttempt) {
+      const genPre = validateGenericity(outline);
+      
+      if (genPre.status === 'FAIL') {
+        console.warn('[generate-script] GENERICITY_GATE_FAILED:', {
+          score: genPre.genericity_score,
+          observability: genPre.observability_score,
+          phrases: genPre.phrases_found?.slice(0, 5)
+        });
+        
+        // Release lock if acquired
+        if (lockAcquired && projectIdForLock) {
+          try {
+            await auth.supabase.rpc('release_project_lock', { p_project_id: projectIdForLock });
+          } catch { /* ignore */ }
+        }
+        
+        clearTimeout(timeoutId);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'GENERICITY_GATE_FAILED',
+          code: 'OUTLINE_TOO_GENERIC',
+          message: 'El outline contiene vaguedad / turning points no filmables. Auto-parchea o mejora el outline.',
+          genericity: {
+            score: genPre.genericity_score,
+            observability_score: genPre.observability_score,
+            phrases_found: genPre.phrases_found,
+            errors: genPre.errors
+          }
+        }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
     }
 
