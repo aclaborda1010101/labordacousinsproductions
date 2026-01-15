@@ -888,6 +888,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   }, [outlinePersistence.savedOutline?.status]);
 
+  // V5: Sync reconstructed outline_json to lightOutline for stalled/timeout outlines with data
+  useEffect(() => {
+    const saved = outlinePersistence.savedOutline;
+    if (!saved || outlinePersistence.isLoading) return;
+    
+    const status = saved.status;
+    const hasReconstructedData = saved.outline_json && Object.keys(saved.outline_json).length > 0;
+    
+    // If status is stalled/timeout and we have reconstructed data but lightOutline is empty, sync it
+    if ((status === 'stalled' || status === 'timeout') && hasReconstructedData && !lightOutline) {
+      console.log('[ScriptImport] V5: Syncing reconstructed outline from stalled/timeout state');
+      setLightOutline(saved.outline_json);
+      if (saved.idea) setIdeaText(saved.idea);
+      if (saved.genre) setGenre(saved.genre);
+      if (saved.tone) setTone(saved.tone);
+    }
+  }, [outlinePersistence.savedOutline, outlinePersistence.isLoading, lightOutline]);
+
   // V11: Zombie outline detection - check if heartbeat is stale
   const isZombieOutline = useMemo(() => {
     const saved = outlinePersistence.savedOutline;
@@ -4675,6 +4693,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           {/* Project Data Status - Shows what's in backend */}
           <ProjectDataStatus
             hasOutline={!!outlinePersistence.savedOutline?.outline_json && Object.keys(outlinePersistence.savedOutline.outline_json).length > 0}
+            hasPartialOutline={!!(outlinePersistence.savedOutline?.outline_parts && Object.keys(outlinePersistence.savedOutline.outline_parts as Record<string, unknown> || {}).length > 0)}
             outlineStatus={outlinePersistence.savedOutline?.status}
             hasScript={!!generatedScript || !!scriptText}
             charactersCount={bibleCharacters.length}
@@ -4685,6 +4704,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               fetchBibleData();
             }}
             onGenerateOutline={ideaText.trim() ? generateLightOutline : undefined}
+            onResumeGeneration={(outlinePersistence.savedOutline?.status === 'stalled' || outlinePersistence.savedOutline?.status === 'timeout') && outlinePersistence.canResume ? async () => {
+              // Resume generation from where it left off using the hook's resumeGeneration
+              toast.info('Reanudando generación...');
+              const success = await outlinePersistence.resumeGeneration();
+              if (!success) {
+                toast.error('No se pudo reanudar. Intenta regenerar.');
+              }
+            } : undefined}
           />
           
           {/* Script Source Selector - Only show when no script exists */}
