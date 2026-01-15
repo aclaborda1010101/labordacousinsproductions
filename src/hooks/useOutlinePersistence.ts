@@ -90,7 +90,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         .from('project_outlines')
         .select('*')
         .eq('project_id', projectId)
-        .in('status', ['completed', 'generating', 'approved', 'queued'])
+        .in('status', ['completed', 'generating', 'approved', 'queued', 'stalled', 'failed', 'timeout'])
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
