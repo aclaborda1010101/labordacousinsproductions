@@ -1029,11 +1029,12 @@ JSON OBLIGATORIO:
 }`;
 }
 
-// Timeout específico para FILM (más largo que SERIES por complejidad)
+// Timeout específico para FILM (V17: Reducido para evitar runtime shutdown)
+// Edge Runtime tiene ~120s de límite total, con retries necesitamos tiempos más cortos
 const FILM_TIMEOUTS = {
-  SCAFFOLD_MS: 65000,      // 65s para scaffold ligero
-  EXPAND_ACT_MS: 75000,    // 75s por acto (Act II puede necesitar más)
-  EXPAND_ACT_II_MS: 85000, // 85s para Act II (el más largo)
+  SCAFFOLD_MS: 50000,      // 50s para scaffold (was 65s)
+  EXPAND_ACT_MS: 55000,    // 55s por acto (was 75s) - permite 2 intentos + backoff
+  EXPAND_ACT_II_MS: 55000, // 55s para Act II (was 85s) - igual que otros actos
 };
 
 function buildFilmScaffoldSystem(genre: string, tone: string, duration: number): string {
