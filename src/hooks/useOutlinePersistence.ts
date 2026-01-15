@@ -619,20 +619,30 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
   }, [savedOutline]);
 
   // P0: Determine if there's valid work that allows resume
+  // Resume is allowed when:
+  // 1. Stale generating (process died) with valid work
+  // 2. Failed but has recoverable work (e.g., 502 gateway error)
   const canResume = useMemo(() => {
-    if (!isStaleGenerating) return false;
     if (!savedOutline) return false;
     
     const parts = (savedOutline as any).outline_parts;
     if (!parts) return false;
     
-    // Has valid work if scaffold or any act is done
-    const hasValidWork = 
-      parts?.film_scaffold?.status === 'done' ||
-      parts?.expand_act_i?.status === 'done' ||
-      parts?.part_a?.status === 'done'; // For series
+    // Has valid work if ANY part is done (scaffold or any act)
+    const hasValidWork = ['film_scaffold', 'expand_act_i', 'expand_act_ii', 'expand_act_iii', 'part_a']
+      .some(k => parts?.[k]?.status === 'done');
     
-    return hasValidWork;
+    // Is incomplete if any required act/part is not done
+    const isIncomplete = ['expand_act_ii', 'expand_act_iii', 'part_b', 'part_c']
+      .some(k => parts?.[k]?.status !== 'done');
+    
+    // Resume allowed if:
+    // 1. Stale generating with valid work that's incomplete
+    // 2. Failed but has recoverable work
+    const canResumeFromStale = isStaleGenerating && hasValidWork && isIncomplete;
+    const canResumeFromFailed = savedOutline.status === 'failed' && hasValidWork && isIncomplete;
+    
+    return canResumeFromStale || canResumeFromFailed;
   }, [isStaleGenerating, savedOutline]);
 
   // P0: Resume generation from last completed phase

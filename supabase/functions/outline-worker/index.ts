@@ -278,6 +278,81 @@ function getFilmResumePoint(parts: any): ResumePoint {
 }
 
 // ============================================================================
+// V16: RETRY WITH BACKOFF FOR TRANSIENT GATEWAY ERRORS (502, 503)
+// ============================================================================
+// Retry policy: 3 attempts with exponential backoff (2s, 6s, 14s) + jitter
+// Keeps heartbeat active during sleep to prevent watchdog from marking as zombie
+// ============================================================================
+async function sleepWithHeartbeat(
+  ms: number,
+  supabase: SupabaseClient,
+  outlineId: string,
+  substage: string
+): Promise<void> {
+  const start = Date.now();
+  while (Date.now() - start < ms) {
+    const remaining = ms - (Date.now() - start);
+    const sleepTime = Math.min(HEARTBEAT_INTERVAL_MS, remaining);
+    await new Promise(r => setTimeout(r, sleepTime));
+    // Update heartbeat during sleep
+    if (remaining > 0) {
+      await supabase.from('project_outlines').update({
+        heartbeat_at: new Date().toISOString(),
+        substage: `${substage}_retry_wait`,
+      }).eq('id', outlineId);
+    }
+  }
+}
+
+function isRetryableGatewayError(error: any): boolean {
+  const errorMsg = error?.message || String(error);
+  return /502|503|Bad Gateway|Cloudflare|ECONNRESET|ETIMEDOUT|Gateway|Timeout/i.test(errorMsg);
+}
+
+async function callWithRetry502<T>(
+  fn: () => Promise<T>,
+  options: {
+    maxAttempts?: number;
+    supabase?: SupabaseClient;
+    outlineId?: string;
+    substage?: string;
+    label?: string;
+  } = {}
+): Promise<T> {
+  const { maxAttempts = 3, supabase, outlineId, substage = 'unknown', label = 'call' } = options;
+  const baseDelays = [2000, 6000, 14000]; // Exponential backoff
+  
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      const isRetryable = isRetryableGatewayError(error);
+      
+      if (!isRetryable || attempt === maxAttempts) {
+        console.error(`[callWithRetry502] ${label} attempt ${attempt}/${maxAttempts} FINAL FAILURE:`, error?.message);
+        throw error; // Not retryable or max attempts reached
+      }
+      
+      // Calculate delay with jitter
+      const baseDelay = baseDelays[attempt - 1] || 14000;
+      const jitter = Math.floor(Math.random() * 2000);
+      const delay = baseDelay + jitter;
+      
+      console.log(`[callWithRetry502] ${label} attempt ${attempt} failed with retryable error, waiting ${delay}ms...`, error?.message?.slice(0, 100));
+      
+      // Sleep with heartbeat if supabase context available
+      if (supabase && outlineId) {
+        await sleepWithHeartbeat(delay, supabase, outlineId, substage);
+      } else {
+        await new Promise(r => setTimeout(r, delay));
+      }
+    }
+  }
+  
+  throw new Error(`[callWithRetry502] ${label} - Should not reach here`);
+}
+
+// ============================================================================
 // AI CALL: With tool schema and heartbeat (V11.1: configurable timeout)
 // ============================================================================
 async function callLovableAIWithToolAndHeartbeat(
@@ -1131,16 +1206,20 @@ async function fallbackMinimalExpand(
   const substage = `expand_act_${act.toLowerCase()}_fallback`;
   
   try {
-    const { content, toolArgs } = await callLovableAIWithToolAndHeartbeat(
-      supabase, outlineId,
-      MINIMAL_EXPAND_SYSTEM,
-      buildMinimalExpandPrompt(act, scaffold),
-      FAST_MODEL,  // gpt-5-mini for fast fallback
-      2500,
-      'expand_film_act_minimal',
-      EXPAND_ACT_SCHEMA.parameters,
-      substage,
-      45000  // 45s timeout for fallback
+    // V16: Wrap fallback with 502 retry as well
+    const { content, toolArgs } = await callWithRetry502(
+      () => callLovableAIWithToolAndHeartbeat(
+        supabase, outlineId,
+        MINIMAL_EXPAND_SYSTEM,
+        buildMinimalExpandPrompt(act, scaffold),
+        FAST_MODEL,  // gpt-5-mini for fast fallback
+        2500,
+        'expand_film_act_minimal',
+        EXPAND_ACT_SCHEMA.parameters,
+        substage,
+        45000  // 45s timeout for fallback
+      ),
+      { maxAttempts: 3, supabase, outlineId, substage, label: `MINIMAL_EXPAND_${act}` }
     );
     
     const raw = toolArgs || content || '';
@@ -1183,16 +1262,20 @@ async function expandActWithRetry(
     console.log(`[WORKER] EXPAND ACT ${act}: attempt ${attempt}${isStrictRetry ? ' (strict JSON mode)' : ''}`);
     
     try {
-      const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outlineId,
-        systemPrompt,
-        buildExpandActUser(scaffold, act, previousActI, previousActII),
-        QUALITY_MODEL,
-        act === 'II' ? 4000 : 3000,
-        'expand_film_act',
-        EXPAND_ACT_SCHEMA.parameters,
-        substage,
-        timeout
+      // V16: Wrap model call with 502 retry logic
+      const { toolArgs, content } = await callWithRetry502(
+        () => callLovableAIWithToolAndHeartbeat(
+          supabase, outlineId,
+          systemPrompt,
+          buildExpandActUser(scaffold, act, previousActI, previousActII),
+          QUALITY_MODEL,
+          act === 'II' ? 4000 : 3000,
+          'expand_film_act',
+          EXPAND_ACT_SCHEMA.parameters,
+          substage,
+          timeout
+        ),
+        { maxAttempts: 3, supabase, outlineId, substage, label: `EXPAND_ACT_${act}` }
       );
       
       const raw = toolArgs || content || '';
@@ -1423,13 +1506,17 @@ async function stageFilmOutline(
           heartbeat_at: new Date().toISOString()
         });
         
-        const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
-          supabase, outline.id,
-          buildFilmScaffoldSystem(genre, tone, duration),
-          buildFilmScaffoldUser(summaryText, duration),
-          QUALITY_MODEL, 3000, 'generate_film_scaffold', 
-          FILM_SCAFFOLD_SCHEMA.parameters, 'film_scaffold',
-          FILM_TIMEOUTS.SCAFFOLD_MS
+        // V16: Wrap scaffold with 502 retry
+        const { toolArgs, content } = await callWithRetry502(
+          () => callLovableAIWithToolAndHeartbeat(
+            supabase, outline.id,
+            buildFilmScaffoldSystem(genre, tone, duration),
+            buildFilmScaffoldUser(summaryText, duration),
+            QUALITY_MODEL, 3000, 'generate_film_scaffold', 
+            FILM_SCAFFOLD_SCHEMA.parameters, 'film_scaffold',
+            FILM_TIMEOUTS.SCAFFOLD_MS
+          ),
+          { maxAttempts: 3, supabase, outlineId: outline.id, substage: 'film_scaffold', label: 'FILM_SCAFFOLD' }
         );
         
         const parseResult = parseJsonSafe(toolArgs || content, 'film_scaffold');
