@@ -26,8 +26,10 @@ import { TURNING_POINT_SCHEMA, SETPIECE_SCHEMA, THREAD_USAGE_SCHEMA } from "../_
 import { normalizeOutlineV11 } from "../_shared/normalize-outline-v11.ts";
 // V12: Hollywood Architecture - FILM bifurcation
 import { buildFormatProfile, detectForbiddenWords, formatProfileSummary, FormatProfile } from "../_shared/format-profile.ts";
-import { detectGenericPhrases, analyzeForGenericLanguage, getAntiGenericPromptBlock } from "../_shared/anti-generic.ts";
+import { detectGenericPhrases, analyzeForGenericLanguage, getAntiGenericPromptBlock, validateGenericity } from "../_shared/anti-generic.ts";
 import { FILM_OUTLINE_SCHEMA, normalizeFilmOutline, filmOutlineToUniversalFormat, FilmOutline } from "../_shared/outline-schemas-film.ts";
+// V13: Narrative Profiles - Genre-driven method/conflict/pacing
+import { resolveNarrativeProfile, buildNarrativeProfilePromptBlock, type NarrativeProfile } from "../_shared/narrative-profiles.ts";
 // Model configuration
 const FAST_MODEL = MODEL_CONFIG.SCRIPT.RAPIDO;       // gpt-5-mini
 const QUALITY_MODEL = MODEL_CONFIG.SCRIPT.HOLLYWOOD; // gpt-5.2
@@ -426,12 +428,17 @@ ${targets.scenes_target ? `- Escenas totales: OBJETIVO ${targets.scenes_target}`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 }
 
-// V11.2: Build PART_A system prompt with mandatory genre/tone enforcement
+// V13: Build PART_A system prompt with mandatory genre/tone enforcement + NARRATIVE PROFILE
 function buildPartASystem(genre: string, tone: string, densityTargets?: OutlineRecord['density_targets']): string {
   const genreUpper = (genre || 'Drama').toUpperCase();
   const isComedy = genre?.toLowerCase().includes('comed');
   
-  return `Eres showrunner técnico. Produces estructura accionable, no un pitch vago.
+  // V13: Resolve narrative profile based on genre and tone
+  const narrativeProfile = resolveNarrativeProfile(genre || 'Drama', tone);
+  const profileBlock = buildNarrativeProfilePromptBlock(narrativeProfile);
+  
+  return `Eres showrunner técnico-profesional. Produces estructura accionable, filmable y con causalidad.
+Primero escribes como profesional. Después cumples QC. Nunca al revés.
 No inventes elementos fuera del material. Prohibidas frases genéricas.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -439,6 +446,9 @@ GÉNERO OBLIGATORIO: ${genreUpper}
 TONO OBLIGATORIO: ${tone || 'Cinematográfico'}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚠️ PROHIBIDO cambiar el género o tono bajo ninguna circunstancia.
+
+${profileBlock}
+
 ${isComedy ? `
 INSTRUCCIONES ESPECÍFICAS PARA COMEDIA:
 - Situaciones absurdas pero coherentes con el mundo
@@ -459,7 +469,11 @@ REGLAS ABSOLUTAS:
 - Devuelve SOLO JSON válido.`;
 }
 
-const EPISODES_SYSTEM = `Eres showrunner. Cada episodio requiere conflicto central, 4 turning points concretos y cliffhanger.
+// V13: Episodes system prompt now receives narrative profile dynamically
+function buildEpisodesSystem(narrativeProfile: NarrativeProfile): string {
+  return `Eres showrunner profesional. Cada episodio requiere conflicto central, 4 turning points concretos y cliffhanger.
+
+${buildNarrativeProfilePromptBlock(narrativeProfile)}
 
 REGLAS ABSOLUTAS:
 - PROHIBIDO frases genéricas como "aparecen amenazas", "surge un conflicto", "algo cambia".
@@ -468,6 +482,7 @@ REGLAS ABSOLUTAS:
 - cliffhanger debe ser específico y generar tensión.
 - NO introducir personajes fuera del cast salvo que lo declares explícitamente.
 - Devuelve SOLO JSON válido.`;
+}
 
 // ============================================================================
 // PROMPT BUILDERS
@@ -902,13 +917,15 @@ const locationsMin = densityTargets?.locations_min || 8;
       });
       
       const partBPrompt = buildPartBPrompt(summaryText, partAResult.data, 1, midpoint);
+      // V13: Resolve narrative profile for episode generation
+      const narrativeProfile = resolveNarrativeProfile(genre, tone);
       
       // V11.1: Use executeWithFallback for PART_B with specific timeout
       const result = await executeWithFallback(
         async (model, timeout) => {
           const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
             supabase, outline.id,
-            EPISODES_SYSTEM, partBPrompt,
+            buildEpisodesSystem(narrativeProfile), partBPrompt,
             model, 6000,
             'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_1',
             timeout
@@ -953,13 +970,15 @@ const locationsMin = densityTargets?.locations_min || 8;
         });
         
         const partCPrompt = buildPartCPrompt(summaryText, partAResult.data, partBResult.data, midpoint + 1, episodesCount);
+        // V13: Resolve narrative profile for episode generation
+        const narrativeProfile = resolveNarrativeProfile(genre, tone);
         
         // V11.1: Use executeWithFallback for PART_C with specific timeout
         const result = await executeWithFallback(
           async (model, timeout) => {
             const { toolArgs, content } = await callLovableAIWithToolAndHeartbeat(
               supabase, outline.id,
-              EPISODES_SYSTEM, partCPrompt,
+              buildEpisodesSystem(narrativeProfile), partCPrompt,
               model, 6000,
               'deliver_episodes', EPISODES_TOOL_SCHEMA, 'episodes_2',
               timeout
