@@ -81,12 +81,35 @@ const MAX_EPISODES = 10;
 // The next "Continue Generation" click triggers the next attempt.
 // This guarantees we never exceed Edge Runtime limits (~100-120s).
 // ============================================================================
-// V21: MICROCHUNKING - Maximum 4 beats per chunk to prevent timeouts
+// V22: ULTRA-GRANULAR CHUNKING - Maximum 2 beats per chunk for Act II to prevent timeouts
 const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [number, number][] }> = {
-  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] },         // 3 chunks (4+2+2)
-  II:  { beatsTotal: 10, chunks: [[1, 3], [4, 5], [6, 7], [8, 10]] },// 4 chunks (3+2+2+3)
-  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] }          // 3 chunks (4+2+2)
+  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] },                     // 3 chunks (4+2+2)
+  II:  { beatsTotal: 10, chunks: [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]] },    // 5 chunks (2+2+2+2+2)
+  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] }                      // 3 chunks (4+2+2)
 };
+
+// V22: Prompt modes for escalating retry strategy
+type PromptMode = 'MINIMAL' | 'ULTRA_MINIMAL';
+
+// V22: Escalating retry policy - different model/prompt/timeout per attempt
+function pickModel(attempt: number): string {
+  // Attempts 0-1: QUALITY_MODEL (gpt-5.2)
+  // Attempt 2+: FAST_MODEL (gpt-5-mini)
+  return attempt >= 2 ? FAST_MODEL : QUALITY_MODEL;
+}
+
+function pickPromptMode(attempt: number): PromptMode {
+  // Attempt 0: MINIMAL
+  // Attempt 1: ULTRA_MINIMAL (recorta más)
+  // Attempt 2+: MINIMAL (con fast model es suficiente)
+  return attempt === 1 ? 'ULTRA_MINIMAL' : 'MINIMAL';
+}
+
+function pickTimeout(attempt: number): number {
+  if (attempt === 0) return 40000;  // 40s for first attempt
+  if (attempt === 1) return 35000;  // 35s for ultra-minimal
+  return 30000;                      // 30s for fast model
+}
 
 // V20: Timeout per CHUNK - 40s max (single attempt, no retries inside)
 const CHUNK_TIMEOUT_MS = 40000;
@@ -1515,21 +1538,62 @@ function calculateChunkProgress(act: 'I' | 'II' | 'III', chunkIndex: number, tot
   return Math.round(range.start + (chunkIndex * chunkSize));
 }
 
-// V21: Build MINIMAL CHUNK-SPECIFIC prompt (reduced tokens to prevent timeouts)
+// V22: Build MINIMAL or ULTRA_MINIMAL chunk-specific prompt
 function buildChunkPrompt(
   scaffold: any,
   act: 'I' | 'II' | 'III',
   fromBeat: number,
   toBeat: number,
   previousActI?: any,
-  previousActII?: any
+  previousActII?: any,
+  mode: PromptMode = 'MINIMAL'
 ): string {
-  // V21: Extract only 3-4 protagonists with minimal fields
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ULTRA_MINIMAL mode: ~800-1000 chars (for retry attempts with heavy context)
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (mode === 'ULTRA_MINIMAL') {
+    // Very condensed Act I recap for Act II
+    let actRecap = '';
+    if (act === 'II') {
+      actRecap = `ACT I RECAP:
+- Protagonists committed to becoming "Kings" by circumstance
+- Antagonist announced zero tolerance
+- Each protagonist made identity choice`;
+    } else if (act === 'III') {
+      actRecap = `ACT II RECAP:
+- Conflict escalated to crisis point
+- Stakes raised to maximum
+- Point of no return reached`;
+    }
+    
+    const actGoal = scaffold.acts_summary?.[`act_${act.toLowerCase()}_goal`] || '';
+    
+    return `FILM: "${scaffold.title}"
+LOGLINE: ${scaffold.logline || ''}
+
+${actRecap}
+
+ACT ${act} GOAL: ${actGoal}
+
+GENERATE BEATS ${fromBeat}-${toBeat} ONLY.
+
+Each beat: beat_number, scene_title, event, agent, consequence, situation_detail.
+
+RESPOND JSON ONLY:
+{ "beats": [...] }`.trim();
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // MINIMAL mode: ~1500-2000 chars (standard first attempt)
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Extract only 3-4 protagonists with minimal fields
   const protagonists = (scaffold.cast || []).slice(0, 4).map((c: any) => 
     `- ${c.name}: WANT=${c.want || '?'}; FLAW=${c.flaw || '?'}`
   ).join('\n');
   
-  // V21: Build continuity anchors from previous acts (max 4 bullets)
+  // Build continuity anchors from previous acts (max 4 bullets)
   const continuityAnchors: string[] = [];
   if (previousActI?.beats?.length) {
     const lastBeats = previousActI.beats.slice(-3);
@@ -1550,7 +1614,6 @@ function buildChunkPrompt(
   
   const actGoal = scaffold.acts_summary?.[`act_${act.toLowerCase()}_goal`] || 'Sin definir';
   
-  // V21: MINIMAL PROMPT - ~1500-2000 chars max (no full scaffold, no all locations)
   return `FILM: "${scaffold.title}"
 LOGLINE: ${scaffold.logline || ''}
 TONE: ${scaffold.tone || 'cinematográfico'}
@@ -1607,20 +1670,20 @@ async function callChunkOnce(
   previousActI: any,
   previousActII: any,
   chunkSubstage: string,
-  retryCount: number  // 0, 1, or 2 - determines which model to use
+  retryCount: number  // 0, 1, or 2 - determines which model/prompt/timeout to use
 ): Promise<ChunkResult> {
-  // V21: Use FAST_MODEL (gpt-5-mini) on 2nd attempt or later (retryCount >= 1)
-  // Also reduce timeout for fast model since it responds quicker
-  const modelToUse = retryCount >= 1 ? FAST_MODEL : QUALITY_MODEL;
-  const timeoutToUse = retryCount >= 1 ? 30000 : CHUNK_TIMEOUT_MS;  // 30s for fast model
-  const modelLabel = retryCount >= 1 ? 'FALLBACK' : 'QUALITY';
+  // V22: Escalating retry policy using centralized functions
+  const modelToUse = pickModel(retryCount);
+  const promptMode = pickPromptMode(retryCount);
+  const timeoutToUse = pickTimeout(retryCount);
+  const modelLabel = retryCount >= 2 ? 'FALLBACK' : (retryCount === 1 ? 'ULTRA_MINIMAL' : 'QUALITY');
   
-  console.log(`[CHUNK-V21] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${retryCount + 1}/${MAX_CHUNK_RETRIES} (${modelLabel}: ${modelToUse}, timeout: ${timeoutToUse}ms)`);
+  console.log(`[CHUNK-V22] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${retryCount + 1}/${MAX_CHUNK_RETRIES} (${modelLabel}: ${modelToUse}, mode: ${promptMode}, timeout: ${timeoutToUse}ms)`);
   
   try {
     // Build system prompt - add strict JSON suffix on retry attempts
     const systemPrompt = buildExpandActSystem(act, genre, tone) + (retryCount > 0 ? STRICT_JSON_SUFFIX : '');
-    const userPrompt = buildChunkPrompt(scaffold, act, fromBeat, toBeat, previousActI, previousActII);
+    const userPrompt = buildChunkPrompt(scaffold, act, fromBeat, toBeat, previousActI, previousActII, promptMode);
     
     // V20: SINGLE CALL - No wrapper, no retries inside
     const { toolArgs, content, extractionStrategy } = await callLovableAIWithToolAndHeartbeat(
