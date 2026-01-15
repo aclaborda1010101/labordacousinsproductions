@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 
 interface ProjectDataStatusProps {
   hasOutline: boolean;
+  hasPartialOutline?: boolean; // V5: Has data in outline_parts even if outline_json is empty
   outlineStatus?: string | null;
   hasScript: boolean;
   charactersCount: number;
@@ -17,10 +18,12 @@ interface ProjectDataStatusProps {
   isLoading?: boolean;
   onRefresh?: () => void;
   onGenerateOutline?: () => void;
+  onResumeGeneration?: () => void; // V5: Resume stalled generation
 }
 
 export default function ProjectDataStatus({
   hasOutline,
+  hasPartialOutline,
   outlineStatus,
   hasScript,
   charactersCount,
@@ -28,6 +31,7 @@ export default function ProjectDataStatus({
   isLoading,
   onRefresh,
   onGenerateOutline,
+  onResumeGeneration,
 }: ProjectDataStatusProps) {
   const hasEntities = charactersCount > 0 || locationsCount > 0;
   const hasAnyData = hasOutline || hasScript || hasEntities;
@@ -50,7 +54,34 @@ export default function ProjectDataStatus({
       };
     }
 
-    if (!hasOutline) {
+    // V5: Handle stalled status - show resume option
+    if (outlineStatus === 'stalled' || outlineStatus === 'timeout') {
+      return {
+        icon: AlertCircle,
+        iconClass: 'text-amber-500',
+        title: 'Generación pausada',
+        description: hasPartialOutline 
+          ? 'La generación se pausó por timeout. Hay datos parciales disponibles.'
+          : 'La generación se pausó. Puedes reintentar.',
+        action: (
+          <div className="flex gap-2">
+            {onResumeGeneration && (
+              <Button size="sm" variant="default" onClick={onResumeGeneration}>
+                Reanudar
+              </Button>
+            )}
+            {onGenerateOutline && (
+              <Button size="sm" variant="outline" onClick={onGenerateOutline}>
+                Regenerar
+              </Button>
+            )}
+          </div>
+        ),
+        variant: 'warning' as const,
+      };
+    }
+
+    if (!hasOutline && !hasPartialOutline) {
       return {
         icon: AlertCircle,
         iconClass: 'text-amber-500',
@@ -59,6 +90,26 @@ export default function ProjectDataStatus({
         action: onGenerateOutline ? (
           <Button size="sm" variant="default" onClick={onGenerateOutline}>
             Generar Outline
+          </Button>
+        ) : null,
+        variant: 'warning' as const,
+      };
+    }
+
+    // V5: Has partial outline but not complete - show partial status
+    if (hasPartialOutline && !hasOutline) {
+      return {
+        icon: FileText,
+        iconClass: 'text-amber-500',
+        title: 'Outline parcial disponible',
+        description: 'Hay datos generados pero el outline no está completo.',
+        action: onResumeGeneration ? (
+          <Button size="sm" variant="default" onClick={onResumeGeneration}>
+            Continuar generación
+          </Button>
+        ) : onGenerateOutline ? (
+          <Button size="sm" variant="default" onClick={onGenerateOutline}>
+            Regenerar
           </Button>
         ) : null,
         variant: 'warning' as const,

@@ -115,9 +115,34 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
       }
 
       if (data) {
+        // V5: Reconstruct outline_json from outline_parts if empty but parts exist
+        let outlineJson = data.outline_json as Record<string, unknown>;
+        const outlineParts = data.outline_parts as Record<string, any> | null;
+        
+        if ((!outlineJson || Object.keys(outlineJson).length === 0) && outlineParts) {
+          const scaffold = outlineParts.film_scaffold?.data;
+          const actI = outlineParts.expand_act_i?.data;
+          const actII = outlineParts.expand_act_ii?.data;
+          const actIII = outlineParts.expand_act_iii?.data;
+          
+          if (scaffold || actI || actII || actIII) {
+            console.log('[useOutlinePersistence] V5: Reconstructing outline_json from outline_parts');
+            const allBeats = [
+              ...(actI?.beats || []),
+              ...(actII?.beats || []),
+              ...(actIII?.beats || []),
+            ];
+            outlineJson = { 
+              ...scaffold, 
+              beats: allBeats.length > 0 ? allBeats : scaffold?.beats || [] 
+            };
+          }
+        }
+        
         const outline: PersistedOutline = {
           ...data,
-          outline_json: data.outline_json as Record<string, unknown>,
+          outline_json: outlineJson,
+          outline_parts: outlineParts, // V5: Include outline_parts for hasPartialOutline check
           qc_issues: Array.isArray(data.qc_issues) ? data.qc_issues as string[] : [],
           status: data.status as PersistedOutline['status'],
           error_message: data.status === 'error' && Array.isArray(data.qc_issues) && data.qc_issues.length > 0 
@@ -125,7 +150,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
             : undefined,
         };
         setSavedOutline(outline);
-        console.log('[useOutlinePersistence] Loaded existing outline:', data.id, 'status:', data.status, 'quality:', data.quality);
+        console.log('[useOutlinePersistence] Loaded existing outline:', data.id, 'status:', data.status, 'quality:', data.quality, 'hasReconstructed:', outlineJson !== data.outline_json);
         return outline;
       }
     } catch (e) {
