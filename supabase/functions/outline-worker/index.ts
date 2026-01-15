@@ -85,9 +85,9 @@ const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [numb
   III: { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] }               // 2 chunks of 4 beats
 };
 
-// V19: Increased timeout per CHUNK from 35s to 50s
-// Scaffold takes ~43s, so 35s was insufficient. 50s gives margin for 4-5 beats.
-const CHUNK_TIMEOUT_MS = 50000;
+// V19.1: Timeout per CHUNK back to 35s - with FLATTENED retry logic
+// The 3 direct retries (35s each) give ~77s before fallback, leaving ~40s for gpt-5-mini
+const CHUNK_TIMEOUT_MS = 35000;
 
 interface OutlineRecord {
   id: string;
@@ -1563,7 +1563,9 @@ RESPONDE SOLO CON JSON VÁLIDO:
 }`.trim();
 }
 
-// V19: Call a single chunk with retry logic + FAST_MODEL fallback on 3rd attempt
+// V19.1: Call a single chunk with FLAT retry logic (no nested callWithRetry502)
+// This ensures the FAST_MODEL fallback is actually reached within runtime limits
+// Timeline: Attempt 1 (35s) + 3s + Attempt 2 (35s) + 4s = ~77s before FAST_MODEL fallback
 async function callChunkWithRetry(
   supabase: SupabaseClient,
   outlineId: string,
@@ -1581,7 +1583,7 @@ async function callChunkWithRetry(
   
   for (let attempt = 1; attempt <= MAX_CHUNK_RETRIES; attempt++) {
     try {
-      // V19: Use FAST_MODEL (gpt-5-mini) on 3rd attempt as fallback
+      // V19.1: Use FAST_MODEL (gpt-5-mini) on 3rd attempt as fallback
       const modelToUse = attempt === 3 ? FAST_MODEL : QUALITY_MODEL;
       const modelLabel = attempt === 3 ? 'FALLBACK' : 'QUALITY';
       
@@ -1591,27 +1593,30 @@ async function callChunkWithRetry(
       const systemPrompt = buildExpandActSystem(act, genre, tone) + (attempt > 1 ? STRICT_JSON_SUFFIX : '');
       const userPrompt = buildChunkPrompt(scaffold, act, fromBeat, toBeat, previousActI, previousActII);
       
-      // V19: Use CHUNK_TIMEOUT_MS (50s) per chunk
-      const { toolArgs, content, extractionStrategy } = await callWithRetry502(
-        () => callLovableAIWithToolAndHeartbeat(
-          supabase, outlineId,
-          systemPrompt,
-          userPrompt,
-          modelToUse,  // V19: Dynamic model selection
-          2000,  // Smaller max_tokens for chunk
-          'expand_film_chunk',
-          EXPAND_ACT_SCHEMA.parameters,
-          chunkSubstage,
-          CHUNK_TIMEOUT_MS  // V19: 50s per chunk
-        ),
-        { maxAttempts: 2, supabase, outlineId, substage: chunkSubstage, label: `CHUNK_${act}_${fromBeat}_${toBeat}` }
+      // V19.1: DIRECT CALL - No callWithRetry502 wrapper (flattened retry)
+      const { toolArgs, content, extractionStrategy } = await callLovableAIWithToolAndHeartbeat(
+        supabase, outlineId,
+        systemPrompt,
+        userPrompt,
+        modelToUse,  // V19.1: Dynamic model selection
+        2000,  // Smaller max_tokens for chunk
+        'expand_film_chunk',
+        EXPAND_ACT_SCHEMA.parameters,
+        chunkSubstage,
+        CHUNK_TIMEOUT_MS  // V19.1: 35s per chunk
       );
       
       const raw = toolArgs || content || '';
       
       if (!raw || !raw.trim()) {
         console.warn(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: empty response (attempt ${attempt}, model: ${modelToUse})`);
-        if (attempt < MAX_CHUNK_RETRIES) continue;
+        if (attempt < MAX_CHUNK_RETRIES) {
+          // V19.1: Sleep with heartbeat between retries (3s first retry, 4s second)
+          const backoffMs = 2000 + (attempt * 1000);
+          console.log(`[CHUNK] Waiting ${backoffMs}ms before retry...`);
+          await sleepWithHeartbeat(backoffMs, supabase, outlineId, chunkSubstage);
+          continue;
+        }
         throw new Error(`CHUNK_EMPTY_RESPONSE: Act ${act} beats ${fromBeat}-${toBeat}`);
       }
       
@@ -1619,7 +1624,12 @@ async function callChunkWithRetry(
       const parseResult = parseJsonRobust(raw, chunkSubstage);
       if (!parseResult.ok || !parseResult.json) {
         console.warn(`[CHUNK] Parse failed (attempt ${attempt}, model: ${modelToUse}): ${parseResult.error}`);
-        if (attempt < MAX_CHUNK_RETRIES) continue;
+        if (attempt < MAX_CHUNK_RETRIES) {
+          const backoffMs = 2000 + (attempt * 1000);
+          console.log(`[CHUNK] Waiting ${backoffMs}ms before retry...`);
+          await sleepWithHeartbeat(backoffMs, supabase, outlineId, chunkSubstage);
+          continue;
+        }
         throw new Error(`CHUNK_PARSE_FAILED: ${parseResult.error}`);
       }
       
@@ -1631,12 +1641,17 @@ async function callChunkWithRetry(
     } catch (err: any) {
       console.error(`[CHUNK] Attempt ${attempt} failed:`, err.message);
       
-      // V19: Log if we're about to try fallback model
+      // V19.1: Log if we're about to try fallback model
       if (attempt === 2) {
         console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: 2 attempts with QUALITY_MODEL failed, next attempt will use FAST_MODEL fallback`);
       }
       
       if (attempt >= MAX_CHUNK_RETRIES) throw err;
+      
+      // V19.1: Sleep with heartbeat between retries
+      const backoffMs = 2000 + (attempt * 1000);
+      console.log(`[CHUNK] Waiting ${backoffMs}ms before retry after error...`);
+      await sleepWithHeartbeat(backoffMs, supabase, outlineId, chunkSubstage);
     }
   }
   
