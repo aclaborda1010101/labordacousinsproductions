@@ -66,6 +66,9 @@ export interface DensityCheckResult {
 // ============================================================================
 
 export const DENSITY_PROFILES: Record<string, DensityProfile> = {
+  // ============================================================================
+  // SERIES PROFILES
+  // ============================================================================
   serie_drama: {
     min_characters_total: 8,
     min_supporting_characters: 3,
@@ -84,15 +87,72 @@ export const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_threads_total: 6,
     min_secondary_threads: 3
   },
+  serie_antologia: {
+    min_characters_total: 6,
+    min_supporting_characters: 2,
+    min_antagonists: 1,
+    min_locations: 5,
+    min_scenes_per_episode: 8,
+    min_threads_total: 3,
+    min_secondary_threads: 1
+  },
+  
+  // ============================================================================
+  // FILM PROFILES (Hollywood Standard)
+  // ============================================================================
+  film_90min: {
+    min_characters_total: 6,
+    min_supporting_characters: 2,
+    min_antagonists: 1,
+    min_locations: 5,
+    min_scenes_per_episode: 25, // Total scenes for entire film
+    min_threads_total: 3,
+    min_secondary_threads: 1
+  },
+  film_120min: {
+    min_characters_total: 8,
+    min_supporting_characters: 3,
+    min_antagonists: 1,
+    min_locations: 7,
+    min_scenes_per_episode: 35, // Total scenes for entire film
+    min_threads_total: 4,
+    min_secondary_threads: 2
+  },
+  film_indie: {
+    min_characters_total: 4,
+    min_supporting_characters: 1,
+    min_antagonists: 1,
+    min_locations: 3,
+    min_scenes_per_episode: 20,
+    min_threads_total: 2,
+    min_secondary_threads: 1
+  },
+  film_blockbuster: {
+    min_characters_total: 10,
+    min_supporting_characters: 4,
+    min_antagonists: 2,
+    min_locations: 10,
+    min_scenes_per_episode: 45,
+    min_threads_total: 5,
+    min_secondary_threads: 3
+  },
+  
+  // ============================================================================
+  // LEGACY COMPAT
+  // ============================================================================
   pelicula_90min: {
     min_characters_total: 6,
     min_supporting_characters: 2,
     min_antagonists: 1,
     min_locations: 5,
-    min_scenes_per_episode: 25, // Total scenes for film
+    min_scenes_per_episode: 25,
     min_threads_total: 3,
     min_secondary_threads: 1
   },
+  
+  // ============================================================================
+  // SHORT FORM
+  // ============================================================================
   corto: {
     min_characters_total: 3,
     min_supporting_characters: 1,
@@ -108,6 +168,19 @@ export const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_antagonists: 1,
     min_locations: 4,
     min_scenes_per_episode: 12,
+    min_threads_total: 4,
+    min_secondary_threads: 2
+  },
+  
+  // ============================================================================
+  // MINI-SERIES (3-6 episodes)
+  // ============================================================================
+  mini_limited: {
+    min_characters_total: 7,
+    min_supporting_characters: 3,
+    min_antagonists: 1,
+    min_locations: 5,
+    min_scenes_per_episode: 10,
     min_threads_total: 4,
     min_secondary_threads: 2
   }

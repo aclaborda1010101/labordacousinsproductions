@@ -1,5 +1,5 @@
 /**
- * SCRIPT QC V11.2 - Structural Validation of Generated Scripts
+ * SCRIPT QC V11.4 - Structural Validation of Generated Scripts
  * 
  * Validates that a generated script adheres to its episode contract.
  * This is POST-GENERATION validation - the script must have executed
@@ -7,11 +7,14 @@
  * 
  * V11.1: Added density validation post-generation
  * V11.2: Added batch-level validation and repair prompt generation
+ * V11.3: Added scene depth validation
+ * V11.4: Added anti-generic phrase detection
  */
 
 import type { EpisodeContract, TurningPointContract, ThreadContract } from "./episode-contracts.ts";
 import { validateScriptDensity, type DensityProfile, type PostScriptDensityResult } from "./density-validator.ts";
 import type { BatchPlan, BatchResult } from "./batch-planner.ts";
+import { detectGenericPhrases, validateEventStructure, type GenericDetectionResult } from "./anti-generic.ts";
 
 // ============================================================================
 // QC RESULT TYPES
@@ -63,6 +66,10 @@ export interface ScriptQCResult {
   
   // V11.3: Scene depth validation
   scene_depth_issues: string[];
+  
+  // V11.4: Anti-generic validation
+  generic_language_issues: string[];
+  generic_phrases_found: string[];
   
   blockers: string[];
   warnings: string[];
@@ -576,6 +583,48 @@ function validateSceneDepth(script: Record<string, unknown>): string[] {
 }
 
 // ============================================================================
+// V11.4: ANTI-GENERIC LANGUAGE VALIDATION
+// ============================================================================
+
+/**
+ * Validate that script doesn't contain generic/vague language.
+ * Returns list of issues for scenes with problematic language.
+ */
+function validateAntiGeneric(script: Record<string, unknown>): { issues: string[]; phrasesFound: string[] } {
+  const issues: string[] = [];
+  const allPhrasesFound: string[] = [];
+  const scenes = script.scenes as Array<Record<string, unknown>> || [];
+  
+  for (let i = 0; i < scenes.length; i++) {
+    const scene = scenes[i];
+    const sceneNum = scene.scene_number || (i + 1);
+    const rawContent = (scene.raw_content as string) || '';
+    const actionSummary = (scene.action_summary as string) || '';
+    const conflict = (scene.conflict as string) || '';
+    
+    // Combine all text for analysis
+    const combinedText = `${rawContent} ${actionSummary} ${conflict}`;
+    
+    // Check for generic phrases - detectGenericPhrases returns string[]
+    const phrasesFound = detectGenericPhrases(combinedText);
+    if (phrasesFound.length > 0) {
+      allPhrasesFound.push(...phrasesFound);
+      issues.push(`Scene ${sceneNum}: Generic language detected: "${phrasesFound.join('", "')}"`);
+    }
+    
+    // Check action summary for proper structure (subject + verb + consequence)
+    if (actionSummary.length > 20) {
+      const eventValidation = validateEventStructure(actionSummary);
+      if (!eventValidation.valid) {
+        issues.push(`Scene ${sceneNum}: Action lacks structure - ${eventValidation.reason}`);
+      }
+    }
+  }
+  
+  return { issues, phrasesFound: [...new Set(allPhrasesFound)] };
+}
+
+// ============================================================================
 // MAIN VALIDATION FUNCTION
 // ============================================================================
 
@@ -688,6 +737,22 @@ export function validateScriptAgainstContract(
     }
   }
   
+  // 10. V11.4: Validate anti-generic language
+  const antiGenericResult = validateAntiGeneric(script);
+  const genericLanguageIssues = antiGenericResult.issues;
+  const genericPhrasesFound = antiGenericResult.phrasesFound;
+  
+  if (genericPhrasesFound.length >= 5) {
+    blockers.push(`GENERIC_LANGUAGE: ${genericPhrasesFound.length} frases genéricas críticas detectadas`);
+    score -= 25;
+  } else if (genericPhrasesFound.length >= 3) {
+    warnings.push(`GENERIC_LANGUAGE: ${genericPhrasesFound.length} frases genéricas detectadas - revisar calidad`);
+    score -= 15;
+  } else if (genericPhrasesFound.length > 0) {
+    warnings.push(`GENERIC_LANGUAGE: ${genericPhrasesFound.length} frase(s) genérica(s) menor(es)`);
+    score -= 5;
+  }
+  
   // Clamp score
   score = Math.max(0, Math.min(100, score));
   
@@ -716,6 +781,8 @@ export function validateScriptAgainstContract(
     setpiece_executed: setpieceExec,
     faction_violations: factionViolations,
     scene_depth_issues: sceneDepthIssues,
+    generic_language_issues: genericLanguageIssues,
+    generic_phrases_found: genericPhrasesFound,
     blockers,
     warnings
   };
