@@ -12,6 +12,8 @@ interface ProjectDataStatusProps {
   hasOutline: boolean;
   hasPartialOutline?: boolean; // V5: Has data in outline_parts even if outline_json is empty
   outlineStatus?: string | null;
+  outlineProgress?: number | null; // V6: Generation progress (0-100)
+  outlineErrorCode?: string | null; // V6: Error code for paused generation
   hasScript: boolean;
   charactersCount: number;
   locationsCount: number;
@@ -19,12 +21,15 @@ interface ProjectDataStatusProps {
   onRefresh?: () => void;
   onGenerateOutline?: () => void;
   onResumeGeneration?: () => void; // V5: Resume stalled generation
+  onCreateNewAttempt?: () => void; // V6: Create new attempt (for MAX_ATTEMPTS_EXCEEDED)
 }
 
 export default function ProjectDataStatus({
   hasOutline,
   hasPartialOutline,
   outlineStatus,
+  outlineProgress,
+  outlineErrorCode,
   hasScript,
   charactersCount,
   locationsCount,
@@ -32,12 +37,17 @@ export default function ProjectDataStatus({
   onRefresh,
   onGenerateOutline,
   onResumeGeneration,
+  onCreateNewAttempt,
 }: ProjectDataStatusProps) {
   const hasEntities = charactersCount > 0 || locationsCount > 0;
   const hasAnyData = hasOutline || hasScript || hasEntities;
   
-  // If everything looks good, don't show status card
-  if (hasOutline && (outlineStatus === 'completed' || outlineStatus === 'approved')) {
+  // V6: Check if outline has error_code indicating paused generation (even if status is "approved")
+  const hasPartialProgress = outlineProgress != null && outlineProgress > 0 && outlineProgress < 100;
+  const isPausedWithError = hasPartialProgress && !!outlineErrorCode;
+  
+  // If everything looks good AND no paused error, don't show status card
+  if (hasOutline && (outlineStatus === 'completed' || outlineStatus === 'approved') && !isPausedWithError) {
     return null;
   }
 
@@ -51,6 +61,38 @@ export default function ProjectDataStatus({
         description: null,
         action: null,
         variant: 'muted' as const,
+      };
+    }
+
+    // V6: Handle paused generation with error (even if status is "approved")
+    // This catches inconsistent states where status=approved but generation actually failed
+    if (isPausedWithError) {
+      const isMaxAttempts = outlineErrorCode === 'MAX_ATTEMPTS_EXCEEDED';
+      return {
+        icon: AlertCircle,
+        iconClass: 'text-amber-500',
+        title: 'Generación pausada',
+        description: `Progreso: ${Math.round(outlineProgress || 0)}%. ${isMaxAttempts ? 'Máximo de intentos alcanzado.' : 'Hay datos parciales disponibles.'}`,
+        action: (
+          <div className="flex gap-2 flex-wrap">
+            {isMaxAttempts && onCreateNewAttempt && (
+              <Button size="sm" variant="default" onClick={onCreateNewAttempt}>
+                Nuevo intento
+              </Button>
+            )}
+            {!isMaxAttempts && onResumeGeneration && (
+              <Button size="sm" variant="default" onClick={onResumeGeneration}>
+                Continuar
+              </Button>
+            )}
+            {onGenerateOutline && (
+              <Button size="sm" variant="outline" onClick={onGenerateOutline}>
+                Reiniciar
+              </Button>
+            )}
+          </div>
+        ),
+        variant: 'warning' as const,
       };
     }
 

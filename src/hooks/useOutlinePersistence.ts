@@ -735,10 +735,11 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
   }, [isStaleGenerating, savedOutline]);
 
   // P0: Resume generation from last completed phase
-  const resumeGeneration = useCallback(async (): Promise<boolean> => {
+  // V6: Returns { success, errorCode } for better error handling
+  const resumeGeneration = useCallback(async (): Promise<{ success: boolean; errorCode?: string }> => {
     if (!savedOutline?.id) {
       console.warn('[useOutlinePersistence] No outline to resume');
-      return false;
+      return { success: false };
     }
 
     try {
@@ -751,10 +752,17 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         resume: true,
       });
 
-      // Check for invocation failure
-      if (result && typeof result === 'object' && 'success' in result && result.success === false) {
-        console.error('[useOutlinePersistence] Resume invoke failed:', result);
-        return false;
+      // V6: Check for specific error codes (MAX_ATTEMPTS_EXCEEDED, etc.)
+      if (result && typeof result === 'object') {
+        const code = (result as any).code;
+        if (code === 'MAX_ATTEMPTS_EXCEEDED') {
+          console.warn('[useOutlinePersistence] Resume blocked: MAX_ATTEMPTS_EXCEEDED');
+          return { success: false, errorCode: 'MAX_ATTEMPTS_EXCEEDED' };
+        }
+        if ('success' in result && result.success === false) {
+          console.error('[useOutlinePersistence] Resume invoke failed:', result);
+          return { success: false, errorCode: code };
+        }
       }
 
       // Restart polling
@@ -769,10 +777,15 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
       setSavedOutline(prev => prev ? { ...prev, status: 'generating' } : null);
 
       console.log('[useOutlinePersistence] Resume initiated for outline:', savedOutline.id);
-      return true;
-    } catch (e) {
+      return { success: true };
+    } catch (e: any) {
       console.error('[useOutlinePersistence] Resume error:', e);
-      return false;
+      // V6: Parse error for specific codes
+      const message = e?.message || '';
+      if (message.includes('MAX_ATTEMPTS_EXCEEDED')) {
+        return { success: false, errorCode: 'MAX_ATTEMPTS_EXCEEDED' };
+      }
+      return { success: false };
     }
   }, [savedOutline?.id, startPolling, loadOutline]);
 
