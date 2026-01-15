@@ -1,5 +1,5 @@
 // ============================================================================
-// V10.1 OUTLINE WORKER - Industrial Pipeline with 4 Substeps + Blindaje
+// V18 OUTLINE WORKER - E4 CHUNKING for Edge Runtime Stability
 // ============================================================================
 // Architecture:
 // - PART_A: Season arc, rules, cast, locations (gpt-5.2)
@@ -7,11 +7,16 @@
 // - PART_C: Episodes 6-10 with turning points (gpt-5.2)
 // - MERGE+QC: Unify + validate with anti-vaguedad filter
 // ============================================================================
-// V10.1 Improvements:
-// - heartbeat_at without touching updated_at (let trigger handle it)
-// - Idempotent locks with input hash for resumability
-// - Structural QC (deterministic) + Semantic QC (AI-based) split
-// - outline_parts as {} not []
+// V18 CRITICAL IMPROVEMENT - CHUNKING:
+// - Act expansion now happens in CHUNKS (4-5 beats per chunk)
+// - Each chunk has its own 35s timeout (not 55-65s per entire act)
+// - Chunks are persisted INCREMENTALLY after each successful call
+// - If runtime dies mid-act, completed chunks are NOT lost
+// - Resume can continue from the exact chunk that failed
+// ============================================================================
+// Why: Edge Runtime has ~100-120s total limit. 
+// Old approach: 55s call + retry + backoff = exceeded limit → shutdown
+// New approach: 35s per chunk × N chunks, each persisted immediately
 // ============================================================================
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
@@ -67,6 +72,22 @@ const AI_TIMEOUT_MS = MODEL_CONFIG.LIMITS.TIMEOUT_MS;  // Default fallback
 const MAX_ATTEMPTS = MODEL_CONFIG.LIMITS.RETRY_COUNT;
 const HEARTBEAT_INTERVAL_MS = 12000;
 const MAX_EPISODES = 10;
+
+// ============================================================================
+// V18: CHUNKING CONFIGURATION - Beats in batches to avoid runtime shutdown
+// ============================================================================
+// Each chunk generates 4-5 beats. This keeps individual AI calls under 35s.
+// If a chunk fails, only that chunk needs to be retried (previous saved).
+// ============================================================================
+const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [number, number][] }> = {
+  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] },       // 2 chunks of 4 beats
+  II:  { beatsTotal: 10, chunks: [[1, 5], [6, 10]] },      // 2 chunks of 5 beats
+  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] }        // 2 chunks of 4 beats
+};
+
+// V18: Reduced timeout per CHUNK (not per act)
+// 35s is enough for 4-5 beats, leaves room for retries within runtime budget
+const CHUNK_TIMEOUT_MS = 35000;
 
 interface OutlineRecord {
   id: string;
@@ -228,12 +249,17 @@ function startKeepalive(opts: {
 }
 
 // ============================================================================
-// V15: RESUME POINT DETECTION - Detect where to resume from completed parts
+// V18: RESUME POINT DETECTION - Now CHUNK-AWARE for granular recovery
 // ============================================================================
 interface ResumePoint {
   resumeFrom: 'scaffold' | 'expand_act_i' | 'expand_act_ii' | 'expand_act_iii' | 'merge';
   completedParts: string[];
   skipReasons: Record<string, string>;
+  chunkResume?: {
+    act: 'I' | 'II' | 'III';
+    nextChunk: number;
+    existingBeats: any[];
+  };
 }
 
 function getFilmResumePoint(parts: any): ResumePoint {
@@ -248,29 +274,69 @@ function getFilmResumePoint(parts: any): ResumePoint {
     return { resumeFrom: 'scaffold', completedParts: completed, skipReasons };
   }
   
-  // Check ACT I
-  if (parts?.expand_act_i?.status === 'done' && 
-      parts.expand_act_i.data?.beats?.length >= 4) {
+  // V18: Check ACT I with CHUNK awareness
+  const actIPart = parts?.expand_act_i;
+  if (actIPart?.status === 'done' && actIPart.data?.beats?.length >= 6) {
     completed.push('expand_act_i');
-    skipReasons['expand_act_i'] = `Completed with ${parts.expand_act_i.data.beats.length} beats`;
+    skipReasons['expand_act_i'] = `Completed with ${actIPart.data.beats.length} beats`;
+  } else if (actIPart?.chunks_done?.length > 0 && actIPart.chunks_done.length < ACT_CHUNKS.I.chunks.length) {
+    // Partial chunk progress - can resume from next chunk
+    const nextChunk = actIPart.chunks_done.length + 1;
+    skipReasons['expand_act_i'] = `Partial: ${actIPart.chunks_done.length}/${ACT_CHUNKS.I.chunks.length} chunks done`;
+    return { 
+      resumeFrom: 'expand_act_i', 
+      completedParts: completed, 
+      skipReasons,
+      chunkResume: {
+        act: 'I',
+        nextChunk,
+        existingBeats: actIPart.beats || []
+      }
+    };
   } else {
     return { resumeFrom: 'expand_act_i', completedParts: completed, skipReasons };
   }
   
-  // Check ACT II
-  if (parts?.expand_act_ii?.status === 'done' && 
-      parts.expand_act_ii.data?.beats?.length >= 4) {
+  // V18: Check ACT II with CHUNK awareness
+  const actIIPart = parts?.expand_act_ii;
+  if (actIIPart?.status === 'done' && actIIPart.data?.beats?.length >= 6) {
     completed.push('expand_act_ii');
-    skipReasons['expand_act_ii'] = `Completed with ${parts.expand_act_ii.data.beats.length} beats`;
+    skipReasons['expand_act_ii'] = `Completed with ${actIIPart.data.beats.length} beats`;
+  } else if (actIIPart?.chunks_done?.length > 0 && actIIPart.chunks_done.length < ACT_CHUNKS.II.chunks.length) {
+    const nextChunk = actIIPart.chunks_done.length + 1;
+    skipReasons['expand_act_ii'] = `Partial: ${actIIPart.chunks_done.length}/${ACT_CHUNKS.II.chunks.length} chunks done`;
+    return { 
+      resumeFrom: 'expand_act_ii', 
+      completedParts: completed, 
+      skipReasons,
+      chunkResume: {
+        act: 'II',
+        nextChunk,
+        existingBeats: actIIPart.beats || []
+      }
+    };
   } else {
     return { resumeFrom: 'expand_act_ii', completedParts: completed, skipReasons };
   }
   
-  // Check ACT III
-  if (parts?.expand_act_iii?.status === 'done' && 
-      parts.expand_act_iii.data?.beats?.length >= 4) {
+  // V18: Check ACT III with CHUNK awareness
+  const actIIIPart = parts?.expand_act_iii;
+  if (actIIIPart?.status === 'done' && actIIIPart.data?.beats?.length >= 6) {
     completed.push('expand_act_iii');
-    skipReasons['expand_act_iii'] = `Completed with ${parts.expand_act_iii.data.beats.length} beats`;
+    skipReasons['expand_act_iii'] = `Completed with ${actIIIPart.data.beats.length} beats`;
+  } else if (actIIIPart?.chunks_done?.length > 0 && actIIIPart.chunks_done.length < ACT_CHUNKS.III.chunks.length) {
+    const nextChunk = actIIIPart.chunks_done.length + 1;
+    skipReasons['expand_act_iii'] = `Partial: ${actIIIPart.chunks_done.length}/${ACT_CHUNKS.III.chunks.length} chunks done`;
+    return { 
+      resumeFrom: 'expand_act_iii', 
+      completedParts: completed, 
+      skipReasons,
+      chunkResume: {
+        act: 'III',
+        nextChunk,
+        existingBeats: actIIIPart.beats || []
+      }
+    };
   } else {
     return { resumeFrom: 'expand_act_iii', completedParts: completed, skipReasons };
   }
@@ -1421,6 +1487,292 @@ async function expandActWithRetry(
   return await fallbackMinimalExpand(supabase, outlineId, scaffold, act, genre, tone);
 }
 
+// ============================================================================
+// V18: CHUNK-BASED ACT EXPANSION - The Core of E4 Fix
+// ============================================================================
+// This is the REPLACEMENT for expandActWithRetry when chunking is enabled.
+// Instead of requesting all beats at once (which times out), we:
+// 1. Request beats 1-4, persist immediately
+// 2. Request beats 5-8, merge with existing, persist immediately
+// 3. If runtime dies between chunks, saved chunks are NOT lost
+// ============================================================================
+
+// V18: Calculate progress for a specific chunk within an act
+function calculateChunkProgress(act: 'I' | 'II' | 'III', chunkIndex: number, totalChunks: number): number {
+  // Act I: 30-45%, Act II: 50-70%, Act III: 75-90%
+  const ranges: Record<'I' | 'II' | 'III', { start: number; end: number }> = {
+    I:   { start: 30, end: 45 },
+    II:  { start: 50, end: 70 },
+    III: { start: 75, end: 90 }
+  };
+  const range = ranges[act];
+  const chunkSize = (range.end - range.start) / totalChunks;
+  return Math.round(range.start + (chunkIndex * chunkSize));
+}
+
+// V18: Build CHUNK-SPECIFIC prompt (only requests beats N to M)
+function buildChunkPrompt(
+  scaffold: any,
+  act: 'I' | 'II' | 'III',
+  fromBeat: number,
+  toBeat: number,
+  previousActI?: any,
+  previousActII?: any
+): string {
+  // Context from previous acts
+  let previousContext = '';
+  if (act === 'II' && previousActI) {
+    previousContext = `\n[ACTO I completado: ${previousActI.beats?.length || 0} beats, goal: ${previousActI.dramatic_goal || 'N/A'}]`;
+  }
+  if (act === 'III' && previousActI && previousActII) {
+    previousContext = `\n[ACTO I: ${previousActI.beats?.length || 0} beats | ACTO II: ${previousActII.beats?.length || 0} beats]`;
+  }
+
+  const actGoal = scaffold.acts_summary?.[`act_${act.toLowerCase()}_goal`] || 'Sin definir';
+  
+  return `PELÍCULA: "${scaffold.title}"
+LOGLINE: ${scaffold.logline}
+THEMATIC PREMISE: ${scaffold.thematic_premise}
+
+ARQUITECTURA ACTO ${act}: ${actGoal}
+${previousContext}
+
+CAST:
+${scaffold.cast?.map((c: any) => `- ${c.name}: ${c.want}`).join('\n') || 'N/A'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ GENERA ÚNICAMENTE BEATS ${fromBeat} A ${toBeat} DEL ACTO ${act}.
+No incluyas otros beats. No repitas beats anteriores.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cada beat DEBE incluir:
+- beat_number (${fromBeat} a ${toBeat})
+- scene_title (título corto)
+- event (qué ocurre físicamente)
+- agent (quién actúa)
+- consequence (qué cambia)
+- situation_detail: { physical_context, action, goal, obstacle, state_change }
+
+RESPONDE SOLO CON JSON VÁLIDO:
+{
+  "beats": [
+    { "beat_number": ${fromBeat}, "scene_title": "...", "event": "...", "agent": "...", "consequence": "...", "situation_detail": {...} },
+    ...
+    { "beat_number": ${toBeat}, "scene_title": "...", "event": "...", "agent": "...", "consequence": "...", "situation_detail": {...} }
+  ]
+}`.trim();
+}
+
+// V18: Call a single chunk with retry logic
+async function callChunkWithRetry(
+  supabase: SupabaseClient,
+  outlineId: string,
+  scaffold: any,
+  act: 'I' | 'II' | 'III',
+  fromBeat: number,
+  toBeat: number,
+  genre: string,
+  tone: string,
+  previousActI: any,
+  previousActII: any,
+  chunkSubstage: string
+): Promise<any[]> {
+  const MAX_CHUNK_RETRIES = 3;
+  
+  for (let attempt = 1; attempt <= MAX_CHUNK_RETRIES; attempt++) {
+    try {
+      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${attempt}/${MAX_CHUNK_RETRIES}`);
+      
+      // Build system prompt (reuse existing)
+      const systemPrompt = buildExpandActSystem(act, genre, tone) + (attempt > 1 ? STRICT_JSON_SUFFIX : '');
+      const userPrompt = buildChunkPrompt(scaffold, act, fromBeat, toBeat, previousActI, previousActII);
+      
+      // V18: Use CHUNK_TIMEOUT_MS (35s) instead of full act timeout
+      const { toolArgs, content, extractionStrategy } = await callWithRetry502(
+        () => callLovableAIWithToolAndHeartbeat(
+          supabase, outlineId,
+          systemPrompt,
+          userPrompt,
+          QUALITY_MODEL,
+          2000,  // Smaller max_tokens for chunk
+          'expand_film_chunk',
+          EXPAND_ACT_SCHEMA.parameters,
+          chunkSubstage,
+          CHUNK_TIMEOUT_MS  // V18: 35s per chunk
+        ),
+        { maxAttempts: 2, supabase, outlineId, substage: chunkSubstage, label: `CHUNK_${act}_${fromBeat}_${toBeat}` }
+      );
+      
+      const raw = toolArgs || content || '';
+      
+      if (!raw || !raw.trim()) {
+        console.warn(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: empty response (attempt ${attempt})`);
+        if (attempt < MAX_CHUNK_RETRIES) continue;
+        throw new Error(`CHUNK_EMPTY_RESPONSE: Act ${act} beats ${fromBeat}-${toBeat}`);
+      }
+      
+      // Parse response
+      const parseResult = parseJsonRobust(raw, chunkSubstage);
+      if (!parseResult.ok || !parseResult.json) {
+        console.warn(`[CHUNK] Parse failed (attempt ${attempt}): ${parseResult.error}`);
+        if (attempt < MAX_CHUNK_RETRIES) continue;
+        throw new Error(`CHUNK_PARSE_FAILED: ${parseResult.error}`);
+      }
+      
+      const beats = parseResult.json.beats || [];
+      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: got ${beats.length} beats (strategy: ${extractionStrategy})`);
+      
+      return beats;
+      
+    } catch (err: any) {
+      console.error(`[CHUNK] Attempt ${attempt} failed:`, err.message);
+      if (attempt >= MAX_CHUNK_RETRIES) throw err;
+    }
+  }
+  
+  return []; // Should not reach
+}
+
+// V18: THE MAIN CHUNKED EXPANSION FUNCTION
+async function expandActInChunks(
+  supabase: SupabaseClient,
+  outlineId: string,
+  scaffold: any,
+  act: 'I' | 'II' | 'III',
+  parts: any,
+  genre: string,
+  tone: string,
+  previousActI?: any,
+  previousActII?: any
+): Promise<any> {
+  const config = ACT_CHUNKS[act];
+  const substage = `expand_act_${act.toLowerCase()}`;
+  
+  // V18: Recover existing chunk progress
+  const existingPart = parts[substage] || {};
+  const chunksDone = new Set<number>(existingPart.chunks_done ?? []);
+  let beats: any[] = existingPart.beats ?? [];
+  
+  console.log(`[CHUNK] === EXPANDING ACT ${act} in ${config.chunks.length} CHUNKS ===`);
+  console.log(`[CHUNK] Existing progress: ${chunksDone.size}/${config.chunks.length} chunks, ${beats.length} beats`);
+  
+  for (let i = 0; i < config.chunks.length; i++) {
+    const chunkIndex = i + 1;
+    
+    // Skip already completed chunks
+    if (chunksDone.has(chunkIndex)) {
+      console.log(`[CHUNK] Act ${act} chunk ${chunkIndex}/${config.chunks.length}: ALREADY DONE, skipping`);
+      continue;
+    }
+    
+    const [fromBeat, toBeat] = config.chunks[i];
+    const chunkSubstage = `${substage}_chunk_${chunkIndex}`;
+    
+    console.log(`[CHUNK] Act ${act} chunk ${chunkIndex}/${config.chunks.length}: beats ${fromBeat}-${toBeat}`);
+    
+    // Update substage and progress for this chunk
+    const chunkProgress = calculateChunkProgress(act, chunkIndex, config.chunks.length);
+    await updateOutline(supabase, outlineId, {
+      substage: chunkSubstage,
+      progress: chunkProgress,
+      heartbeat_at: new Date().toISOString()
+    });
+    
+    // Call model for this chunk (with retry)
+    const chunkBeats = await callChunkWithRetry(
+      supabase, outlineId, scaffold, act, fromBeat, toBeat,
+      genre, tone, previousActI, previousActII, chunkSubstage
+    );
+    
+    // V18: Merge beats by beat_number (no duplicates)
+    const beatsMap = new Map(beats.map((b: any) => [b.beat_number, b]));
+    for (const b of chunkBeats) {
+      beatsMap.set(b.beat_number, b);
+    }
+    beats = Array.from(beatsMap.values()).sort((a, b) => a.beat_number - b.beat_number);
+    
+    // V18: PERSIST IMMEDIATELY after each chunk (this is the key!)
+    chunksDone.add(chunkIndex);
+    parts[substage] = {
+      ...parts[substage],
+      status: chunksDone.size === config.chunks.length ? 'done' : 'partial',
+      chunks_done: Array.from(chunksDone),
+      chunks_total: config.chunks.length,
+      beats,
+      last_chunk_at: new Date().toISOString()
+    };
+    await updateOutline(supabase, outlineId, { 
+      outline_parts: parts,
+      heartbeat_at: new Date().toISOString()
+    });
+    
+    console.log(`[CHUNK] Act ${act} chunk ${chunkIndex} PERSISTED: ${beats.length} total beats so far`);
+  }
+  
+  // All chunks done - finalize
+  const dramaticGoal = scaffold.acts_summary?.[`act_${act.toLowerCase()}_goal`] || '';
+  
+  // Fill in key_moments based on beats
+  const keyMoments = extractKeyMomentsFromBeats(beats, act);
+  
+  parts[substage] = {
+    ...parts[substage],
+    status: 'done',
+    data: {
+      beats,
+      dramatic_goal: dramaticGoal,
+      key_moments: keyMoments
+    }
+  };
+  await updateOutline(supabase, outlineId, { outline_parts: parts });
+  
+  console.log(`[CHUNK] Act ${act} COMPLETE: ${beats.length} beats across ${config.chunks.length} chunks`);
+  
+  return {
+    beats,
+    dramatic_goal: dramaticGoal,
+    key_moments: keyMoments
+  };
+}
+
+// V18: Extract key moments from generated beats (heuristic)
+function extractKeyMomentsFromBeats(beats: any[], act: 'I' | 'II' | 'III'): any {
+  const keyMoments: any = {};
+  
+  if (act === 'I') {
+    keyMoments.opening_image = beats[0]?.event || 'N/A';
+    keyMoments.inciting_incident = {
+      event: beats.find(b => b.beat_number === 2)?.event || '',
+      agent: beats.find(b => b.beat_number === 2)?.agent || '',
+      consequence: beats.find(b => b.beat_number === 2)?.consequence || ''
+    };
+    keyMoments.act_break = beats[beats.length - 1]?.event || '';
+  } else if (act === 'II') {
+    const midpointBeat = beats.find(b => b.beat_number === 5 || b.beat_number === 6);
+    keyMoments.midpoint_reversal = {
+      event: midpointBeat?.event || '',
+      agent: midpointBeat?.agent || '',
+      consequence: midpointBeat?.consequence || '',
+      protagonist_new_goal: ''
+    };
+    const allIsLostBeat = beats.find(b => b.beat_number === 9 || b.beat_number === 10);
+    keyMoments.all_is_lost_moment = {
+      event: allIsLostBeat?.event || '',
+      what_dies: ''
+    };
+  } else if (act === 'III') {
+    const climaxBeat = beats.find(b => b.beat_number === 6 || b.beat_number === 7);
+    keyMoments.climax_decision = {
+      decision: climaxBeat?.event || '',
+      cost: climaxBeat?.consequence || ''
+    };
+    keyMoments.resolution = beats[beats.length - 1]?.event || '';
+    keyMoments.final_image = beats[beats.length - 1]?.scene_title || '';
+  }
+  
+  return keyMoments;
+}
+
 // Función para hacer merge de las partes expandidas
 function mergeFilmParts(
   scaffold: any,
@@ -1580,100 +1932,95 @@ async function stageFilmOutline(
   }
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2A: EXPAND ACT I (V14: with robust retry, V15: with resume)
+  // PHASE 2A: EXPAND ACT I (V18: CHUNKED EXPANSION for runtime stability)
   // ════════════════════════════════════════════════════════════════════════
   if (resumeFrom === 'scaffold' || resumeFrom === 'expand_act_i' || !parts.expand_act_i?.data?.beats?.length) {
-    globalKeepalive.updateContext('expand_act_i', 30, 'expanding act I');
+    globalKeepalive.updateContext('expand_act_i', 30, 'expanding act I (chunked)');
     
-    const actIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_i');
-    const actIResult = await executeSubstepIfNeeded(
-      supabase, { ...outline, outline_parts: parts }, 'expand_act_i', actIHash,
-      async () => {
-        await updateOutline(supabase, outline.id, { 
-          substage: 'expand_act_i', progress: 30,
-          heartbeat_at: new Date().toISOString()
-        });
-        
-        // V14: Use expandActWithRetry with robust parsing, validation, and fallback
-        return await expandActWithRetry(
-          supabase, outline.id, scaffold, 'I', parts, genre, tone
-        );
-      }
+    console.log(`[WORKER] === ACT I: Using V18 CHUNKED EXPANSION ===`);
+    
+    await updateOutline(supabase, outline.id, { 
+      substage: 'expand_act_i', progress: 30,
+      heartbeat_at: new Date().toISOString()
+    });
+    
+    // V18: Use expandActInChunks instead of expandActWithRetry
+    const actIResult = await expandActInChunks(
+      supabase, outline.id, scaffold, 'I', parts, genre, tone
     );
-    parts.expand_act_i = { 
-      ...parts.expand_act_i,
-      status: 'done', 
-      hash: actIHash, 
-      data: actIResult.data 
-    };
-    await updateOutline(supabase, outline.id, { outline_parts: parts });
+    
+    // The function already updates parts internally, but ensure final state
+    if (!parts.expand_act_i?.data?.beats?.length) {
+      parts.expand_act_i = { 
+        ...parts.expand_act_i,
+        status: 'done', 
+        data: actIResult 
+      };
+      await updateOutline(supabase, outline.id, { outline_parts: parts });
+    }
   } else {
     console.log(`[WORKER] FILM V2 RESUME: Reusing existing ACT I (${parts.expand_act_i.data.beats?.length} beats)`);
   }
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2B: EXPAND ACT II (V14: with robust retry, V15: with resume)
+  // PHASE 2B: EXPAND ACT II (V18: CHUNKED EXPANSION for runtime stability)
   // ════════════════════════════════════════════════════════════════════════
   if (resumeFrom === 'scaffold' || resumeFrom === 'expand_act_i' || resumeFrom === 'expand_act_ii' || !parts.expand_act_ii?.data?.beats?.length) {
-    globalKeepalive.updateContext('expand_act_ii', 50, 'expanding act II');
+    globalKeepalive.updateContext('expand_act_ii', 50, 'expanding act II (chunked)');
     
-    const actIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_ii');
-    const actIIResult = await executeSubstepIfNeeded(
-      supabase, { ...outline, outline_parts: parts }, 'expand_act_ii', actIIHash,
-      async () => {
-        await updateOutline(supabase, outline.id, { 
-          substage: 'expand_act_ii', progress: 50,
-          heartbeat_at: new Date().toISOString()
-        });
-        
-        // V14: Use expandActWithRetry with robust parsing, validation, and fallback
-        return await expandActWithRetry(
-          supabase, outline.id, scaffold, 'II', parts, genre, tone,
-          parts.expand_act_i?.data  // Pass Act I for context
-        );
-      }
+    console.log(`[WORKER] === ACT II: Using V18 CHUNKED EXPANSION ===`);
+    
+    await updateOutline(supabase, outline.id, { 
+      substage: 'expand_act_ii', progress: 50,
+      heartbeat_at: new Date().toISOString()
+    });
+    
+    // V18: Use expandActInChunks with Act I context
+    const actIIResult = await expandActInChunks(
+      supabase, outline.id, scaffold, 'II', parts, genre, tone,
+      parts.expand_act_i?.data  // Pass Act I for context
     );
-    parts.expand_act_ii = { 
-      ...parts.expand_act_ii,
-      status: 'done', 
-      hash: actIIHash, 
-      data: actIIResult.data 
-    };
-    await updateOutline(supabase, outline.id, { outline_parts: parts });
+    
+    if (!parts.expand_act_ii?.data?.beats?.length) {
+      parts.expand_act_ii = { 
+        ...parts.expand_act_ii,
+        status: 'done', 
+        data: actIIResult 
+      };
+      await updateOutline(supabase, outline.id, { outline_parts: parts });
+    }
   } else {
     console.log(`[WORKER] FILM V2 RESUME: Reusing existing ACT II (${parts.expand_act_ii.data.beats?.length} beats)`);
   }
   
   // ════════════════════════════════════════════════════════════════════════
-  // PHASE 2C: EXPAND ACT III (V14: with robust retry, V15: with resume)
+  // PHASE 2C: EXPAND ACT III (V18: CHUNKED EXPANSION for runtime stability)
   // ════════════════════════════════════════════════════════════════════════
   if (resumeFrom === 'scaffold' || resumeFrom === 'expand_act_i' || resumeFrom === 'expand_act_ii' || resumeFrom === 'expand_act_iii' || !parts.expand_act_iii?.data?.beats?.length) {
-    globalKeepalive.updateContext('expand_act_iii', 70, 'expanding act III');
+    globalKeepalive.updateContext('expand_act_iii', 75, 'expanding act III (chunked)');
     
-    const actIIIHash = await hashInput(JSON.stringify(scaffold), config, 'expand_act_iii');
-    const actIIIResult = await executeSubstepIfNeeded(
-      supabase, { ...outline, outline_parts: parts }, 'expand_act_iii', actIIIHash,
-      async () => {
-        await updateOutline(supabase, outline.id, { 
-          substage: 'expand_act_iii', progress: 70,
-          heartbeat_at: new Date().toISOString()
-        });
-        
-        // V14: Use expandActWithRetry with robust parsing, validation, and fallback
-        return await expandActWithRetry(
-          supabase, outline.id, scaffold, 'III', parts, genre, tone,
-          parts.expand_act_i?.data,   // Pass Act I for context
-          parts.expand_act_ii?.data   // Pass Act II for context
-        );
-      }
+    console.log(`[WORKER] === ACT III: Using V18 CHUNKED EXPANSION ===`);
+    
+    await updateOutline(supabase, outline.id, { 
+      substage: 'expand_act_iii', progress: 75,
+      heartbeat_at: new Date().toISOString()
+    });
+    
+    // V18: Use expandActInChunks with Act I + II context
+    const actIIIResult = await expandActInChunks(
+      supabase, outline.id, scaffold, 'III', parts, genre, tone,
+      parts.expand_act_i?.data,   // Pass Act I for context
+      parts.expand_act_ii?.data   // Pass Act II for context
     );
-    parts.expand_act_iii = { 
-      ...parts.expand_act_iii,
-      status: 'done', 
-      hash: actIIIHash, 
-      data: actIIIResult.data 
-    };
-    await updateOutline(supabase, outline.id, { outline_parts: parts });
+    
+    if (!parts.expand_act_iii?.data?.beats?.length) {
+      parts.expand_act_iii = { 
+        ...parts.expand_act_iii,
+        status: 'done', 
+        data: actIIIResult 
+      };
+      await updateOutline(supabase, outline.id, { outline_parts: parts });
+    }
   } else {
     console.log(`[WORKER] FILM V2 RESUME: Reusing existing ACT III (${parts.expand_act_iii.data.beats?.length} beats)`);
   }
