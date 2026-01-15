@@ -29,6 +29,8 @@ import {
   type RawOutputDebug,
   type ParseStrategy
 } from "../_shared/parse-json-robust.ts";
+// V17: Canonical model text extractor
+import { extractModelText, logExtractionDiagnostic } from "../_shared/extract-model-text.ts";
 import { STRUCTURED_SUMMARIZE_V11, OUTLINE_CORE_V11 } from "../_shared/production-prompts.ts";
 import { runStructuralQC as runStructuralQCV11, QCResult as QCResultV11 } from "../_shared/qc-validators.ts";
 import { TURNING_POINT_SCHEMA, SETPIECE_SCHEMA, THREAD_USAGE_SCHEMA } from "../_shared/outline-schemas-v11.ts";
@@ -306,7 +308,8 @@ async function sleepWithHeartbeat(
 
 function isRetryableGatewayError(error: any): boolean {
   const errorMsg = error?.message || String(error);
-  return /502|503|Bad Gateway|Cloudflare|ECONNRESET|ETIMEDOUT|Gateway|Timeout/i.test(errorMsg);
+  // V17: Include EMPTY_MODEL_OUTPUT as retryable (transient gateway/parsing issue)
+  return /502|503|Bad Gateway|Cloudflare|ECONNRESET|ETIMEDOUT|Gateway|Timeout|EMPTY_MODEL_OUTPUT/i.test(errorMsg);
 }
 
 async function callWithRetry502<T>(
@@ -366,7 +369,7 @@ async function callLovableAIWithToolAndHeartbeat(
   toolSchema: any,
   substage: string,
   timeoutMs: number = AI_TIMEOUT_MS  // V11.1: Configurable timeout
-): Promise<{ toolArgs: string | null; content: string }> {
+): Promise<{ toolArgs: string | null; content: string; extractionStrategy?: string }> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
 
@@ -415,11 +418,22 @@ async function callLovableAIWithToolAndHeartbeat(
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content ?? '';
+    
+    // V17: Use canonical extractor to handle all response formats
+    const extraction = extractModelText(data);
+    logExtractionDiagnostic(extraction, { phase: substage, model, attempt: 1 });
+    
+    // Log raw response preview if extraction failed
+    if (!extraction.text) {
+      console.warn(`[AI] EMPTY_RESPONSE for ${substage}: Raw preview:`, JSON.stringify(data).slice(0, 500));
+    }
+    
+    // For backward compatibility, also extract legacy fields
+    const content = extraction.text || data.choices?.[0]?.message?.content || '';
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     const toolArgs = toolCall?.function?.arguments ?? null;
 
-    return { toolArgs, content };
+    return { toolArgs, content, extractionStrategy: extraction.strategy };
   } catch (err: any) {
     clearTimeout(timeoutId);
     clearInterval(heartbeatInterval);
@@ -1207,7 +1221,7 @@ async function fallbackMinimalExpand(
   
   try {
     // V16: Wrap fallback with 502 retry as well
-    const { content, toolArgs } = await callWithRetry502(
+    const { content, toolArgs, extractionStrategy } = await callWithRetry502(
       () => callLovableAIWithToolAndHeartbeat(
         supabase, outlineId,
         MINIMAL_EXPAND_SYSTEM,
@@ -1223,6 +1237,13 @@ async function fallbackMinimalExpand(
     );
     
     const raw = toolArgs || content || '';
+    
+    // V17: Empty response handling in fallback
+    if (!raw || !raw.trim()) {
+      console.error(`[WORKER] MINIMAL_EXPAND ACT ${act}: EMPTY_MODEL_OUTPUT (strategy: ${extractionStrategy})`);
+      throw new Error(`MINIMAL_EXPAND_${act}_EMPTY_MODEL_OUTPUT: No content returned`);
+    }
+    
     const parseResult = parseJsonRobust(raw, `minimal_expand_${act}`);
     
     if (!parseResult.ok || !parseResult.json) {
@@ -1263,7 +1284,7 @@ async function expandActWithRetry(
     
     try {
       // V16: Wrap model call with 502 retry logic
-      const { toolArgs, content } = await callWithRetry502(
+      const { toolArgs, content, extractionStrategy } = await callWithRetry502(
         () => callLovableAIWithToolAndHeartbeat(
           supabase, outlineId,
           systemPrompt,
@@ -1280,11 +1301,34 @@ async function expandActWithRetry(
       
       const raw = toolArgs || content || '';
       
+      // V17: Empty response is retryable, not a parse failure
+      if (!raw || !raw.trim()) {
+        console.warn(`[WORKER] EXPAND ACT ${act} attempt ${attempt}: EMPTY_MODEL_OUTPUT (strategy: ${extractionStrategy})`);
+        parts[substage] = {
+          ...parts[substage],
+          last_error: 'EMPTY_MODEL_OUTPUT',
+          extraction_strategy: extractionStrategy || 'none',
+          attempt_count: attempt,
+          timestamp: new Date().toISOString()
+        };
+        await updateOutline(supabase, outlineId, { outline_parts: parts });
+        
+        if (attempt < MAX_RETRIES) {
+          console.log(`[WORKER] EXPAND ACT ${act}: empty response, retrying with strict JSON prompt...`);
+          continue;
+        }
+        
+        // Empty after retries → fallback
+        console.log(`[WORKER] EXPAND ACT ${act}: empty after ${attempt} attempts, trying MINIMAL_EXPAND fallback...`);
+        return await fallbackMinimalExpand(supabase, outlineId, scaffold, act, genre, tone);
+      }
+      
       // V14: Persist raw ALWAYS for debugging
       const rawDebug: RawOutputDebug = buildRawDebug(content, toolArgs, 'direct', attempt);
       parts[substage] = {
         ...parts[substage],
-        ...rawDebug
+        ...rawDebug,
+        extraction_strategy: extractionStrategy || 'direct'
       };
       await updateOutline(supabase, outlineId, { outline_parts: parts });
       
