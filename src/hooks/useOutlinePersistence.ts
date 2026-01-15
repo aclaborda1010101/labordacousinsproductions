@@ -85,34 +85,53 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     setError(null);
     
     try {
-      // V10.3: Prioritize completed/generating/approved outlines over draft
-      // This prevents orphan drafts from hiding completed outlines
-      let { data, error: fetchError } = await supabase
+      // V23: ROBUST OUTLINE SELECTION - Prioritize outline with actual progress
+      // Fetch last 5 outlines and pick the "best" one based on scoring
+      const { data: candidates, error: fetchError } = await supabase
         .from('project_outlines')
         .select('*')
         .eq('project_id', projectId)
-        .in('status', ['completed', 'generating', 'approved', 'queued', 'stalled', 'failed', 'timeout'])
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      // Fallback: if no completed/generating outline, get any (including draft)
-      if (!data && !fetchError) {
-        const fallback = await supabase
-          .from('project_outlines')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        data = fallback.data;
-        fetchError = fallback.error;
-      }
+        .order('updated_at', { ascending: false })
+        .limit(5);
 
       if (fetchError) {
         console.error('[useOutlinePersistence] Error loading outline:', fetchError);
         setError(fetchError.message);
         return;
+      }
+
+      // V23: Score each candidate and pick best
+      const scoreOutline = (o: any): number => {
+        let score = 0;
+        // Prefer outlines with actual progress
+        if (o.progress && o.progress > 0) score += 50 + o.progress;
+        // Prefer active statuses
+        if (['generating', 'stalled', 'queued'].includes(o.status)) score += 100;
+        if (o.status === 'completed') score += 80;
+        if (o.status === 'timeout' || o.status === 'failed') score += 40;
+        // Prefer outlines with outline_parts (partial work)
+        if (o.outline_parts && Object.keys(o.outline_parts).length > 0) {
+          score += 30;
+          // Even more if there's actual scaffold data
+          if ((o.outline_parts as any)?.film_scaffold?.data) score += 20;
+          if ((o.outline_parts as any)?.expand_act_i?.beats?.length > 0) score += 15;
+          if ((o.outline_parts as any)?.expand_act_ii?.beats?.length > 0) score += 15;
+        }
+        // Prefer outlines with content
+        const json = o.outline_json || {};
+        if (json.title || json.logline) score += 20;
+        if ((json.main_characters || json.cast)?.length > 0) score += 15;
+        // Penalize empty approved outlines (created accidentally)
+        if (o.status === 'approved' && (!json.title || Object.keys(json).length < 3)) score -= 100;
+        return score;
+      };
+
+      let data = null;
+      if (candidates && candidates.length > 0) {
+        const scored = candidates.map(o => ({ o, score: scoreOutline(o) }));
+        scored.sort((a, b) => b.score - a.score);
+        console.log('[useOutlinePersistence] V23: Candidate scores:', scored.map(s => ({ id: s.o.id.slice(0,8), status: s.o.status, progress: s.o.progress, score: s.score })));
+        data = scored[0].o;
       }
 
       if (data) {
@@ -292,20 +311,21 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           setIsStuck(false);
         }
 
-        // V12.0: ROBUST terminal detection - multiple conditions for immediate closure
+        // V23: ROBUST terminal detection - 'stalled' is ACTIONABLE, not terminal
         const hasValidContent = !!(data.outline_json as any)?.title;
         const qualityDone = data.quality && data.quality !== 'generating';
         const stageDone = data.stage === 'done';
         const progressComplete = data.progress != null && data.progress >= 99;
         
-        // Terminal statuses - IMMEDIATE completion
-        const isTerminalStatus = 
+        // V23: 'stalled' is NOT terminal - it means user must take action (Continue button)
+        const isHardTerminalStatus = 
           data.status === 'completed' || 
           data.status === 'approved' ||
           data.status === 'failed' ||
-          data.status === 'error' ||
-          data.status === 'timeout' ||
-          data.status === 'stalled';
+          data.status === 'error';
+        
+        // V23: 'stalled'/'timeout' are ACTIONABLE - stop polling but show error banner
+        const isActionableStatus = data.status === 'stalled' || data.status === 'timeout';
         
         // Pragmatic completion - stage done OR high progress with content
         const isPragmaticComplete = 
@@ -317,10 +337,24 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         const highProgressDuration = highProgressSince ? (Date.now() - highProgressSince) / 1000 : 0;
         const isGracePeriodComplete = data.progress === 100 && highProgressDuration > 10 && hasValidContent;
 
-        const isComplete = isTerminalStatus || isPragmaticComplete || isGracePeriodComplete;
+        const isComplete = isHardTerminalStatus || isPragmaticComplete || isGracePeriodComplete;
+        
+        // V23: Handle actionable states (stalled/timeout) - stop polling, trigger error callback
+        if (isActionableStatus) {
+          console.log('[useOutlinePersistence] V23: Actionable state detected:', data.status, 'error_code:', data.error_code);
+          stopPolling();
+          // Construct detailed error message for UI banner
+          const errorParts = [];
+          if (data.substage) errorParts.push(`Fase: ${data.substage}`);
+          if (data.error_code) errorParts.push(`Código: ${data.error_code}`);
+          if (data.error_detail) errorParts.push(data.error_detail);
+          const errorMsg = errorParts.length > 0 ? errorParts.join(' | ') : `Estado: ${data.status}`;
+          onError?.(errorMsg);
+          return; // Exit polling loop
+        }
 
         if (isComplete) {
-          const isError = data.status === 'error' || data.status === 'failed' || data.status === 'timeout' || data.quality === 'error';
+          const isError = data.status === 'error' || data.status === 'failed' || data.quality === 'error';
           
           if (isError) {
             console.error('[useOutlinePersistence] Outline generation failed:', outline.error_message);
@@ -328,7 +362,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
             onError?.(outline.error_message || 'Error en la generación');
           } else {
             console.log('[useOutlinePersistence] Outline generation completed:', data.id, 'status:', data.status, 'via:', 
-              isTerminalStatus ? 'terminal_status' : isPragmaticComplete ? 'pragmatic' : 'grace_period');
+              isHardTerminalStatus ? 'terminal_status' : isPragmaticComplete ? 'pragmatic' : 'grace_period');
             stopPolling();
             onComplete?.(outline);
           }

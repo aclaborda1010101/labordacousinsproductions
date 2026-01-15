@@ -1876,9 +1876,22 @@ async function expandActInChunks(
         heartbeat_at: new Date().toISOString()
       });
       
-      console.log(`[CHUNK-V20] Act ${act} chunk ${chunkIndex} PERSISTED: ${beats.length} total beats so far`);
+      console.log(`[CHUNK-V23] Act ${act} chunk ${chunkIndex} PERSISTED: ${beats.length} total beats so far`);
       
-      // Continue to next chunk within same invocation (if any remaining)
+      // V23: EXIT AFTER EACH SUCCESSFUL CHUNK to prevent runtime death
+      // If more chunks remain, set stalled with CHUNK_READY_NEXT code
+      if (chunkIndex < config.chunks.length) {
+        await updateOutline(supabase, outlineId, {
+          status: 'stalled',
+          error_code: 'CHUNK_READY_NEXT',
+          error_detail: `Act ${act} chunk ${chunkIndex} done. Ready for chunk ${chunkIndex + 1}.`
+        });
+        console.log(`[CHUNK-V23] Exiting after successful chunk ${chunkIndex}. User/system should trigger next chunk.`);
+        // Throw a special error that the caller can catch and handle gracefully
+        throw new Error(`CHUNK_CONTINUE_NEEDED: Act ${act} chunk ${chunkIndex} complete, ${config.chunks.length - chunkIndex} remaining`);
+      }
+      
+      // If this was the last chunk, continue to finalization (don't throw)
       
     } else {
       // FAIL: Increment retry_count, persist, EXIT IMMEDIATELY
@@ -3071,66 +3084,89 @@ serve(async (req) => {
           Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
         );
         
-        // V20: Classify error type for better debugging and resume capability
+        // V23: Classify error type for better debugging and resume capability
         const isTimeout = err.message?.includes('AI_TIMEOUT') || err.message?.includes('AbortError');
         const isRateLimit = err.status === 429 || err.message?.includes('429');
         const isPayment = err.status === 402 || err.message?.includes('402');
         const isExpandActFail = err.message?.includes('EXPAND_ACT') || err.message?.includes('ALL_ATTEMPTS_FAILED');
         const isParseFail = err.message?.includes('failed to parse') || err.message?.includes('parse failed');
+        // V23: Chunk continue is NOT an error - it's a controlled exit after successful chunk
+        const isChunkContinue = err.message?.includes('CHUNK_CONTINUE_NEEDED');
         // V20: Chunk failure is RESUMABLE - NOT a terminal failure
-        const isChunkFailAttempt = err.message?.includes('CHUNK_FAILED_ATTEMPT_');
+        const isChunkAttemptFailed = err.message?.includes('CHUNK_ATTEMPT_FAILED');
         const isChunkMaxRetries = err.message?.includes('CHUNK_MAX_RETRIES');
         
-        let errorCode = 'WORKER_ERROR';
-        let status = 'failed';
-        
-        if (isChunkFailAttempt) {
-          // V20: Chunk failed but has retries left - mark as STALLED so user can resume
-          errorCode = 'CHUNK_ATTEMPT_FAILED';
-          status = 'stalled';  // STALLED allows "Continue Generation" button
-          console.log(`[WORKER] V20: Chunk attempt failed, marking as STALLED for resume`);
-        } else if (isChunkMaxRetries) {
-          // V20: Chunk exhausted all retries - terminal failure
-          errorCode = 'CHUNK_MAX_RETRIES';
-          status = 'failed';
-        } else if (isTimeout) {
-          errorCode = 'STAGE_TIMEOUT';
-          status = 'stalled';  // V20: Timeout is also resumable
-        } else if (isRateLimit) {
-          errorCode = 'RATE_LIMIT';
-          status = 'stalled';  // V20: Rate limit is resumable
-        } else if (isPayment) {
-          errorCode = 'PAYMENT_REQUIRED';
-          status = 'failed';
-        } else if (isExpandActFail) {
-          errorCode = 'EXPAND_ACT_FAILED';
-          status = 'failed';
-        } else if (isParseFail) {
-          errorCode = 'JSON_PARSE_FAILED';
-          status = 'stalled';  // V20: Parse fail might succeed on retry with strict JSON
+        // V23: CHUNK_CONTINUE_NEEDED is a SUCCESS case - don't update status (already set)
+        if (isChunkContinue) {
+          console.log(`[WORKER] V23: Chunk complete, controlled exit. No error status update needed.`);
+          // Return early - the status was already set to 'stalled' + 'CHUNK_READY_NEXT'
+          // which is the correct state for the UI to show "Continue" button
+        } else {
+          let errorCode = 'WORKER_ERROR';
+          let status = 'failed';
+          
+          if (isChunkAttemptFailed) {
+            // V20: Chunk failed but has retries left - mark as STALLED so user can resume
+            errorCode = 'CHUNK_ATTEMPT_FAILED';
+            status = 'stalled';  // STALLED allows "Continue Generation" button
+            console.log(`[WORKER] V23: Chunk attempt failed, marking as STALLED for resume`);
+          } else if (isChunkMaxRetries) {
+            // V20: Chunk exhausted all retries - terminal failure
+            errorCode = 'CHUNK_MAX_RETRIES';
+            status = 'failed';
+          } else if (isTimeout) {
+            errorCode = 'STAGE_TIMEOUT';
+            status = 'stalled';  // V20: Timeout is also resumable
+          } else if (isRateLimit) {
+            errorCode = 'RATE_LIMIT';
+            status = 'stalled';  // V20: Rate limit is resumable
+          } else if (isPayment) {
+            errorCode = 'PAYMENT_REQUIRED';
+            status = 'failed';
+          } else if (isExpandActFail) {
+            errorCode = 'EXPAND_ACT_FAILED';
+            status = 'failed';
+          } else if (isParseFail) {
+            errorCode = 'JSON_PARSE_FAILED';
+            status = 'stalled';  // V20: Parse fail might succeed on retry with strict JSON
+          }
+          
+          // V14: Extract which substage failed from error message
+          let failedSubstage = null;
+          const substageMatch = err.message?.match(/expand_act_(i{1,3})/i);
+          if (substageMatch) {
+            failedSubstage = `expand_act_${substageMatch[1].toLowerCase()}`;
+          }
+          
+          await updateOutline(supabase, outlineId, {
+            status,
+            error_code: errorCode,
+            error_detail: (err.message || 'Unknown error').substring(0, 500),
+            // V14: Preserve substage for resume capability
+            ...(failedSubstage && { substage: failedSubstage }),
+            heartbeat_at: new Date().toISOString()
+          });
+          
+          console.log(`[WORKER] Updated outline ${outlineId} with status=${status}, error_code=${errorCode}`);
         }
-        
-        // V14: Extract which substage failed from error message
-        let failedSubstage = null;
-        const substageMatch = err.message?.match(/expand_act_(i{1,3})/i);
-        if (substageMatch) {
-          failedSubstage = `expand_act_${substageMatch[1].toLowerCase()}`;
-        }
-        
-        await updateOutline(supabase, outlineId, {
-          status,
-          error_code: errorCode,
-          error_detail: (err.message || 'Unknown error').substring(0, 500),
-          // V14: Preserve substage for resume capability
-          ...(failedSubstage && { substage: failedSubstage }),
-          heartbeat_at: new Date().toISOString()
-        });
-        
-        console.log(`[WORKER] Updated outline ${outlineId} with status=${status}, error_code=${errorCode}`);
       } catch (updateErr) {
         // Last resort: log the error but don't throw - we're already in error handling
         console.error('[WORKER] Failed to update outline status after error:', updateErr);
       }
+    }
+
+    // V23: CHUNK_CONTINUE_NEEDED is a success case - return success response
+    const isChunkContinue = err.message?.includes('CHUNK_CONTINUE_NEEDED');
+    if (isChunkContinue) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          code: 'CHUNK_COMPLETE',
+          message: 'Chunk completed. Continue generation for remaining chunks.',
+          needs_continue: true
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Return structured error
