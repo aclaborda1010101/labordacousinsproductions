@@ -2259,7 +2259,7 @@ serve(async (req) => {
     if (outlineId) {
       query = query.eq('id', outlineId);
     } else {
-      query = query.eq('project_id', projectId).in('status', ['queued', 'generating', 'draft', 'timeout']).order('updated_at', { ascending: false }).limit(1);
+      query = query.eq('project_id', projectId).in('status', ['queued', 'generating', 'draft', 'timeout', 'stalled']).order('updated_at', { ascending: false }).limit(1);
     }
 
     const { data: outlineData, error: fetchError } = await query.single();
