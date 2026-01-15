@@ -631,8 +631,14 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     if (!parts) return false;
     
     // Has valid work if ANY part is done (scaffold or any act)
+    // P0.3: More robust check - recognize status: 'done' OR presence of valid data for scaffold
     const hasValidWork = ['film_scaffold', 'expand_act_i', 'expand_act_ii', 'expand_act_iii', 'part_a']
-      .some(k => parts?.[k]?.status === 'done');
+      .some(k => {
+        const part = parts?.[k];
+        if (!part) return false;
+        // Recognize explicit done status OR scaffold with data (legacy format support)
+        return part.status === 'done' || (k === 'film_scaffold' && part.data);
+      });
     
     // Is incomplete if any required act/part is not done
     const isIncomplete = ['expand_act_ii', 'expand_act_iii', 'part_b', 'part_c']
