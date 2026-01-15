@@ -5,7 +5,7 @@
  * V7.0: Added stuck detection + stage-aware progress
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import { getStageTimeout } from '@/lib/outlineStages';
@@ -605,6 +605,79 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     }
   }, [savedOutline?.id]);
 
+  // P0: Staleness threshold for UI (more aggressive than watchdog)
+  const STALE_UI_MS = 120_000; // 2 minutes
+
+  // P0: Detect if outline is stale (generating but no recent heartbeat)
+  const isStaleGenerating = useMemo(() => {
+    if (!savedOutline || savedOutline.status !== 'generating') return false;
+    if (!savedOutline.heartbeat_at) return false;
+    
+    const heartbeatTime = new Date(savedOutline.heartbeat_at).getTime();
+    const timeSinceHeartbeat = Date.now() - heartbeatTime;
+    return timeSinceHeartbeat > STALE_UI_MS;
+  }, [savedOutline]);
+
+  // P0: Determine if there's valid work that allows resume
+  const canResume = useMemo(() => {
+    if (!isStaleGenerating) return false;
+    if (!savedOutline) return false;
+    
+    const parts = (savedOutline as any).outline_parts;
+    if (!parts) return false;
+    
+    // Has valid work if scaffold or any act is done
+    const hasValidWork = 
+      parts?.film_scaffold?.status === 'done' ||
+      parts?.expand_act_i?.status === 'done' ||
+      parts?.part_a?.status === 'done'; // For series
+    
+    return hasValidWork;
+  }, [isStaleGenerating, savedOutline]);
+
+  // P0: Resume generation from last completed phase
+  const resumeGeneration = useCallback(async (): Promise<boolean> => {
+    if (!savedOutline?.id) {
+      console.warn('[useOutlinePersistence] No outline to resume');
+      return false;
+    }
+
+    try {
+      console.log('[useOutlinePersistence] Resuming generation for outline:', savedOutline.id);
+      
+      // Mark as stalled for traceability before restarting
+      await supabase.from('project_outlines').update({
+        status: 'stalled',
+        error_code: 'STALE_HEARTBEAT',
+        error_detail: 'UI-triggered resume: heartbeat stale while generating',
+        updated_at: new Date().toISOString(),
+      }).eq('id', savedOutline.id);
+
+      // Re-invoke the worker with resume flag
+      await invokeAuthedFunction('outline-worker', {
+        outline_id: savedOutline.id,
+        resume: true,
+      });
+
+      // Restart polling
+      startPolling(savedOutline.id, { 
+        onComplete: () => loadOutline(),
+        onError: (err) => console.error('[useOutlinePersistence] Resume poll error:', err),
+      });
+
+      // Clear stuck states
+      setStuckSince(null);
+      setIsStuck(false);
+      setSavedOutline(prev => prev ? { ...prev, status: 'generating' } : null);
+
+      console.log('[useOutlinePersistence] Resume initiated for outline:', savedOutline.id);
+      return true;
+    } catch (e) {
+      console.error('[useOutlinePersistence] Resume error:', e);
+      return false;
+    }
+  }, [savedOutline?.id, startPolling, loadOutline]);
+
   return {
     savedOutline,
     isLoading,
@@ -622,5 +695,9 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     retryCurrentStage,
     hasRecoverableOutline: !!savedOutline && savedOutline.status === 'draft',
     isGenerating: savedOutline?.status === 'generating',
+    // P0: New staleness detection + resume
+    isStaleGenerating,
+    canResume,
+    resumeGeneration,
   };
 }

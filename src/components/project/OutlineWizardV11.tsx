@@ -25,6 +25,7 @@ import {
   Crown,
   Sparkles,
   ChevronRight,
+  RefreshCw,
 } from 'lucide-react';
 import { STAGE_CONFIG, humanizeBlocker, groupBlockers, getSuggestedAction, type PipelineStage, type QCStatus } from '@/lib/qcUtils';
 
@@ -38,6 +39,11 @@ interface OutlineWizardV11Props {
   onThreads: () => void;
   onShowrunner: () => void;
   onGenerateEpisodes: () => void;
+  // P0: Staleness detection + resume
+  isStaleGenerating?: boolean;
+  canResume?: boolean;
+  onResume?: () => void;
+  outlineParts?: any;
 }
 
 interface ChecklistItem {
@@ -107,6 +113,20 @@ function getChecklistItems(outline: Record<string, unknown> | null): ChecklistIt
   ];
 }
 
+// Helper to show completed parts description
+function getCompletedPartsDescription(parts: any): string {
+  if (!parts) return 'Ninguna';
+  const completed: string[] = [];
+  if (parts?.film_scaffold?.status === 'done') completed.push('Scaffold');
+  if (parts?.expand_act_i?.status === 'done') completed.push('Acto I');
+  if (parts?.expand_act_ii?.status === 'done') completed.push('Acto II');
+  if (parts?.expand_act_iii?.status === 'done') completed.push('Acto III');
+  if (parts?.part_a?.status === 'done') completed.push('Parte A');
+  if (parts?.part_b?.status === 'done') completed.push('Parte B');
+  if (parts?.part_c?.status === 'done') completed.push('Parte C');
+  return completed.length > 0 ? completed.join(', ') : 'Ninguna';
+}
+
 export default function OutlineWizardV11({
   outline,
   qcStatus,
@@ -117,6 +137,10 @@ export default function OutlineWizardV11({
   onThreads,
   onShowrunner,
   onGenerateEpisodes,
+  isStaleGenerating,
+  canResume,
+  onResume,
+  outlineParts,
 }: OutlineWizardV11Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   
@@ -160,6 +184,36 @@ export default function OutlineWizardV11({
       </CardHeader>
       
       <CardContent className="space-y-4">
+        {/* P0: Banner de generación pausada con opción de resume */}
+        {canResume && isStaleGenerating && (
+          <Alert className="border-amber-500/50 bg-amber-500/10">
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertTitle className="text-amber-700 dark:text-amber-300">
+              Generación pausada
+            </AlertTitle>
+            <AlertDescription className="text-amber-600/80 dark:text-amber-400/80">
+              <p className="mb-2">
+                No hay heartbeat reciente, pero hay trabajo guardado. 
+                Puedes continuar desde el último paso completado.
+              </p>
+              {outlineParts && (
+                <p className="text-xs mb-2 opacity-75">
+                  Partes completadas: {getCompletedPartsDescription(outlineParts)}
+                </p>
+              )}
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={onResume}
+                className="mt-2"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Continuar generación
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">

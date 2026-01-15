@@ -5332,6 +5332,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   }}
                   onShowrunner={handleUpgradeToShowrunner}
                   onGenerateEpisodes={approveAndGenerateEpisodes}
+                  isStaleGenerating={outlinePersistence.isStaleGenerating}
+                  canResume={outlinePersistence.canResume}
+                  onResume={async () => {
+                    const success = await outlinePersistence.resumeGeneration();
+                    if (success) {
+                      toast.info('Reanudando generación desde el último paso...');
+                    } else {
+                      toast.error('Error al reanudar la generación');
+                    }
+                  }}
+                  outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
                 />
 
                 {/* Time Warning */}
@@ -5698,6 +5709,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     }}
                     onShowrunner={handleUpgradeToShowrunner}
                     onGenerateEpisodes={approveAndGenerateEpisodes}
+                    isStaleGenerating={outlinePersistence.isStaleGenerating}
+                    canResume={outlinePersistence.canResume}
+                    onResume={async () => {
+                      const success = await outlinePersistence.resumeGeneration();
+                      if (success) {
+                        toast.info('Reanudando generación desde el último paso...');
+                      } else {
+                        toast.error('Error al reanudar la generación');
+                      }
+                    }}
+                    outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
                   />
                 )}
 
