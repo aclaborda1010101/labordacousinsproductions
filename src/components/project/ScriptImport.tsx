@@ -884,8 +884,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             },
             onError: (err) => {
               setGeneratingOutline(false);
-              // V21: Set error state for persistent UI feedback
-              if (err.includes('CHUNK') || err.includes('TIMEOUT') || err.includes('AI_') || err.includes('stalled')) {
+              // V23: Detect CHUNK_READY_NEXT as "continue" state
+              const isReadyNext = err.includes('CHUNK_READY_NEXT');
+              if (isReadyNext) {
+                setOutlineError({
+                  code: 'CHUNK_READY_NEXT',
+                  message: err,
+                  substage: dbOutline.substage || undefined,
+                  retryable: true
+                });
+              } else if (err.includes('CHUNK') || err.includes('TIMEOUT') || err.includes('AI_') || err.includes('stalled')) {
                 setOutlineError({
                   code: 'GENERATION_ERROR',
                   message: err,
@@ -1920,12 +1928,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           },
           onError: (errorMsg) => {
             console.error('[ScriptImport] Outline polling error:', errorMsg);
-            updatePipelineStep('outline', 'error');
             setGeneratingOutline(false);
             setOutlineStartTime(null); // V4.0: Clear start time
             
-            // V21: Set error state for persistent UI feedback (anti-blank-screen)
-            if (errorMsg.includes('CHUNK') || errorMsg.includes('TIMEOUT') || errorMsg.includes('AI_') || errorMsg.includes('stalled')) {
+            // V23: Detect CHUNK_READY_NEXT as "continue" state, not error
+            const isReadyNext = errorMsg.includes('CHUNK_READY_NEXT');
+            if (isReadyNext) {
+              setOutlineError({
+                code: 'CHUNK_READY_NEXT',
+                message: errorMsg,
+                substage: outlinePersistence.savedOutline?.substage || undefined,
+                retryable: true
+              });
+              toast.info('Chunk completado. Presiona "Continuar" para el siguiente.');
+            } else if (errorMsg.includes('CHUNK') || errorMsg.includes('TIMEOUT') || errorMsg.includes('AI_') || errorMsg.includes('stalled')) {
+              updatePipelineStep('outline', 'error');
               setOutlineError({
                 code: 'GENERATION_ERROR',
                 message: errorMsg,
@@ -1933,6 +1950,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 retryable: true
               });
             } else {
+              updatePipelineStep('outline', 'error');
               toast.error('Error generando outline', { 
                 description: errorMsg,
                 duration: 10000,
@@ -4835,18 +4853,37 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         </Card>
       )}
 
-      {/* V21: OUTLINE GENERATION ERROR BANNER - Anti-blank-screen */}
+      {/* V23: OUTLINE GENERATION STATUS BANNER - Handles errors AND "ready to continue" states */}
       {outlineError && (
-        <Card className="border-2 border-destructive/50 bg-destructive/5">
+        <Card className={`border-2 ${
+          outlineError.code === 'CHUNK_READY_NEXT' 
+            ? 'border-blue-500/50 bg-blue-500/5' 
+            : 'border-destructive/50 bg-destructive/5'
+        }`}>
           <CardContent className="pt-4 pb-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/20">
-                  <AlertTriangle className="w-6 h-6 text-destructive" />
+                <div className={`p-2 rounded-lg ${
+                  outlineError.code === 'CHUNK_READY_NEXT' 
+                    ? 'bg-blue-500/20' 
+                    : 'bg-destructive/20'
+                }`}>
+                  {outlineError.code === 'CHUNK_READY_NEXT' ? (
+                    <Play className="w-6 h-6 text-blue-600" />
+                  ) : (
+                    <AlertTriangle className="w-6 h-6 text-destructive" />
+                  )}
                 </div>
                 <div>
-                  <p className="font-semibold text-destructive">
-                    ⚠️ Error en Generación: {outlineError.code}
+                  <p className={`font-semibold ${
+                    outlineError.code === 'CHUNK_READY_NEXT' 
+                      ? 'text-blue-600' 
+                      : 'text-destructive'
+                  }`}>
+                    {outlineError.code === 'CHUNK_READY_NEXT' 
+                      ? '⏳ Chunk completado - Continuar generación'
+                      : `⚠️ Error en Generación: ${outlineError.code}`
+                    }
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {outlineError.message}
@@ -4854,17 +4891,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       <span className="ml-1 text-xs">({outlineError.substage})</span>
                     )}
                   </p>
+                  {outlinePersistence.savedOutline?.progress != null && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Progreso actual: {outlinePersistence.savedOutline.progress}%
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
                 {outlineError.retryable && outlinePersistence.savedOutline?.id && (
                   <Button 
-                    variant="outline"
+                    variant={outlineError.code === 'CHUNK_READY_NEXT' ? 'default' : 'outline'}
                     size="sm"
                     onClick={async () => {
                       setOutlineError(null);
                       setGeneratingOutline(true);
                       try {
+                        // V23: Reset status to generating before invoking worker
+                        await supabase
+                          .from('project_outlines')
+                          .update({
+                            status: 'generating',
+                            error_code: null,
+                            error_detail: null,
+                            heartbeat_at: new Date().toISOString()
+                          })
+                          .eq('id', outlinePersistence.savedOutline?.id);
+                        
                         await invokeAuthedFunction('outline-worker', { 
                           outline_id: outlinePersistence.savedOutline?.id 
                         });
@@ -4876,29 +4929,44 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           },
                           onError: (err) => {
                             setGeneratingOutline(false);
-                            // V21: Set error state instead of just toast
-                            if (err.includes('CHUNK') || err.includes('TIMEOUT') || err.includes('AI_')) {
-                              setOutlineError({
-                                code: 'CHUNK_ERROR',
-                                message: err,
-                                substage: outlinePersistence.savedOutline?.substage || undefined,
-                                retryable: true
-                              });
-                            } else {
-                              toast.error('Error: ' + err);
+                            // V23: Detect CHUNK_READY_NEXT as a "continue" state, not error
+                            const isReadyNext = err.includes('CHUNK_READY_NEXT');
+                            setOutlineError({
+                              code: isReadyNext ? 'CHUNK_READY_NEXT' : 'CHUNK_ERROR',
+                              message: err,
+                              substage: outlinePersistence.savedOutline?.substage || undefined,
+                              retryable: true
+                            });
+                            if (isReadyNext) {
+                              toast.info('Chunk completado. Presiona "Continuar" para el siguiente.');
                             }
                           }
                         });
-                        toast.info('Reintentando generación...');
+                        toast.info(outlineError.code === 'CHUNK_READY_NEXT' 
+                          ? 'Continuando generación...' 
+                          : 'Reintentando generación...'
+                        );
                       } catch (e: any) {
                         setGeneratingOutline(false);
-                        toast.error('Error al reintentar: ' + e.message);
+                        toast.error('Error al continuar: ' + e.message);
                       }
                     }}
-                    className="gap-2 border-destructive/50 text-destructive hover:bg-destructive/10"
+                    className={outlineError.code === 'CHUNK_READY_NEXT' 
+                      ? 'gap-2' 
+                      : 'gap-2 border-destructive/50 text-destructive hover:bg-destructive/10'
+                    }
                   >
-                    <RefreshCw className="w-4 h-4" />
-                    Reintentar Chunk
+                    {outlineError.code === 'CHUNK_READY_NEXT' ? (
+                      <>
+                        <Play className="w-4 h-4" />
+                        Continuar Generación
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="w-4 h-4" />
+                        Reintentar Chunk
+                      </>
+                    )}
                   </Button>
                 )}
                 <Button 
