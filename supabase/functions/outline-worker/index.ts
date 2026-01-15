@@ -74,20 +74,24 @@ const HEARTBEAT_INTERVAL_MS = 12000;
 const MAX_EPISODES = 10;
 
 // ============================================================================
-// V18: CHUNKING CONFIGURATION - Beats in batches to avoid runtime shutdown
+// V20: CHUNKING CONFIGURATION - 1 ATTEMPT PER INVOCATION
 // ============================================================================
-// Each chunk generates 4-5 beats. This keeps individual AI calls under 35s.
-// If a chunk fails, only that chunk needs to be retried (previous saved).
+// CRITICAL FIX: Each Edge invocation executes ONLY ONE AI call.
+// If it fails, we persist retry_count and exit immediately.
+// The next "Continue Generation" click triggers the next attempt.
+// This guarantees we never exceed Edge Runtime limits (~100-120s).
 // ============================================================================
 const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [number, number][] }> = {
   I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] },              // 2 chunks of 4 beats
-  II:  { beatsTotal: 10, chunks: [[1, 4], [5, 7], [8, 10]] },     // V19: 3 chunks of 3-4 beats (smaller = faster)
+  II:  { beatsTotal: 10, chunks: [[1, 4], [5, 7], [8, 10]] },     // 3 chunks of 3-4 beats
   III: { beatsTotal: 8,  chunks: [[1, 4], [5, 8]] }               // 2 chunks of 4 beats
 };
 
-// V19.1: Timeout per CHUNK back to 35s - with FLATTENED retry logic
-// The 3 direct retries (35s each) give ~77s before fallback, leaving ~40s for gpt-5-mini
-const CHUNK_TIMEOUT_MS = 35000;
+// V20: Timeout per CHUNK - 40s max (single attempt, no retries inside)
+const CHUNK_TIMEOUT_MS = 40000;
+
+// V20: Max retries PER CHUNK (across multiple invocations)
+const MAX_CHUNK_RETRIES = 3;
 
 interface OutlineRecord {
   id: string;
@@ -1563,10 +1567,21 @@ RESPONDE SOLO CON JSON VÁLIDO:
 }`.trim();
 }
 
-// V19.1: Call a single chunk with FLAT retry logic (no nested callWithRetry502)
-// This ensures the FAST_MODEL fallback is actually reached within runtime limits
-// Timeline: Attempt 1 (35s) + 3s + Attempt 2 (35s) + 4s = ~77s before FAST_MODEL fallback
-async function callChunkWithRetry(
+// ============================================================================
+// V20: CALL CHUNK ONCE - Single attempt per invocation
+// ============================================================================
+// CRITICAL: This function makes EXACTLY ONE AI call and returns.
+// NO retries, NO sleeps, NO loops inside. If it fails, we return error info
+// and let the caller decide what to do (persist & exit, or handle inline).
+// ============================================================================
+interface ChunkResult {
+  success: boolean;
+  beats: any[];
+  error?: string;
+  modelUsed?: string;
+}
+
+async function callChunkOnce(
   supabase: SupabaseClient,
   outlineId: string,
   scaffold: any,
@@ -1577,88 +1592,107 @@ async function callChunkWithRetry(
   tone: string,
   previousActI: any,
   previousActII: any,
-  chunkSubstage: string
-): Promise<any[]> {
-  const MAX_CHUNK_RETRIES = 3;
+  chunkSubstage: string,
+  retryCount: number  // 0, 1, or 2 - determines which model to use
+): Promise<ChunkResult> {
+  // V20: Use FAST_MODEL (gpt-5-mini) on 3rd attempt (retryCount >= 2)
+  const modelToUse = retryCount >= 2 ? FAST_MODEL : QUALITY_MODEL;
+  const modelLabel = retryCount >= 2 ? 'FALLBACK' : 'QUALITY';
   
-  for (let attempt = 1; attempt <= MAX_CHUNK_RETRIES; attempt++) {
-    try {
-      // V19.1: Use FAST_MODEL (gpt-5-mini) on 3rd attempt as fallback
-      const modelToUse = attempt === 3 ? FAST_MODEL : QUALITY_MODEL;
-      const modelLabel = attempt === 3 ? 'FALLBACK' : 'QUALITY';
-      
-      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${attempt}/${MAX_CHUNK_RETRIES} (${modelLabel}: ${modelToUse})`);
-      
-      // Build system prompt (reuse existing)
-      const systemPrompt = buildExpandActSystem(act, genre, tone) + (attempt > 1 ? STRICT_JSON_SUFFIX : '');
-      const userPrompt = buildChunkPrompt(scaffold, act, fromBeat, toBeat, previousActI, previousActII);
-      
-      // V19.1: DIRECT CALL - No callWithRetry502 wrapper (flattened retry)
-      const { toolArgs, content, extractionStrategy } = await callLovableAIWithToolAndHeartbeat(
-        supabase, outlineId,
-        systemPrompt,
-        userPrompt,
-        modelToUse,  // V19.1: Dynamic model selection
-        2000,  // Smaller max_tokens for chunk
-        'expand_film_chunk',
-        EXPAND_ACT_SCHEMA.parameters,
-        chunkSubstage,
-        CHUNK_TIMEOUT_MS  // V19.1: 35s per chunk
-      );
-      
-      const raw = toolArgs || content || '';
-      
-      if (!raw || !raw.trim()) {
-        console.warn(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: empty response (attempt ${attempt}, model: ${modelToUse})`);
-        if (attempt < MAX_CHUNK_RETRIES) {
-          // V19.1: Sleep with heartbeat between retries (3s first retry, 4s second)
-          const backoffMs = 2000 + (attempt * 1000);
-          console.log(`[CHUNK] Waiting ${backoffMs}ms before retry...`);
-          await sleepWithHeartbeat(backoffMs, supabase, outlineId, chunkSubstage);
-          continue;
-        }
-        throw new Error(`CHUNK_EMPTY_RESPONSE: Act ${act} beats ${fromBeat}-${toBeat}`);
-      }
-      
-      // Parse response
-      const parseResult = parseJsonRobust(raw, chunkSubstage);
-      if (!parseResult.ok || !parseResult.json) {
-        console.warn(`[CHUNK] Parse failed (attempt ${attempt}, model: ${modelToUse}): ${parseResult.error}`);
-        if (attempt < MAX_CHUNK_RETRIES) {
-          const backoffMs = 2000 + (attempt * 1000);
-          console.log(`[CHUNK] Waiting ${backoffMs}ms before retry...`);
-          await sleepWithHeartbeat(backoffMs, supabase, outlineId, chunkSubstage);
-          continue;
-        }
-        throw new Error(`CHUNK_PARSE_FAILED: ${parseResult.error}`);
-      }
-      
-      const beats = parseResult.json.beats || [];
-      console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: got ${beats.length} beats (strategy: ${extractionStrategy}, model: ${modelToUse})`);
-      
-      return beats;
-      
-    } catch (err: any) {
-      console.error(`[CHUNK] Attempt ${attempt} failed:`, err.message);
-      
-      // V19.1: Log if we're about to try fallback model
-      if (attempt === 2) {
-        console.log(`[CHUNK] Act ${act} beats ${fromBeat}-${toBeat}: 2 attempts with QUALITY_MODEL failed, next attempt will use FAST_MODEL fallback`);
-      }
-      
-      if (attempt >= MAX_CHUNK_RETRIES) throw err;
-      
-      // V19.1: Sleep with heartbeat between retries
-      const backoffMs = 2000 + (attempt * 1000);
-      console.log(`[CHUNK] Waiting ${backoffMs}ms before retry after error...`);
-      await sleepWithHeartbeat(backoffMs, supabase, outlineId, chunkSubstage);
+  console.log(`[CHUNK-V20] Act ${act} beats ${fromBeat}-${toBeat}: attempt ${retryCount + 1}/${MAX_CHUNK_RETRIES} (${modelLabel}: ${modelToUse})`);
+  
+  try {
+    // Build system prompt - add strict JSON suffix on retry attempts
+    const systemPrompt = buildExpandActSystem(act, genre, tone) + (retryCount > 0 ? STRICT_JSON_SUFFIX : '');
+    const userPrompt = buildChunkPrompt(scaffold, act, fromBeat, toBeat, previousActI, previousActII);
+    
+    // V20: SINGLE CALL - No wrapper, no retries inside
+    const { toolArgs, content, extractionStrategy } = await callLovableAIWithToolAndHeartbeat(
+      supabase, outlineId,
+      systemPrompt,
+      userPrompt,
+      modelToUse,
+      2000,  // Smaller max_tokens for chunk
+      'expand_film_chunk',
+      EXPAND_ACT_SCHEMA.parameters,
+      chunkSubstage,
+      CHUNK_TIMEOUT_MS
+    );
+    
+    const raw = toolArgs || content || '';
+    
+    // Empty response check
+    if (!raw || !raw.trim()) {
+      console.warn(`[CHUNK-V20] Act ${act} beats ${fromBeat}-${toBeat}: EMPTY response (model: ${modelToUse})`);
+      return { 
+        success: false, 
+        beats: [], 
+        error: 'EMPTY_MODEL_OUTPUT',
+        modelUsed: modelToUse
+      };
     }
+    
+    // Parse response
+    const parseResult = parseJsonRobust(raw, chunkSubstage);
+    if (!parseResult.ok || !parseResult.json) {
+      console.warn(`[CHUNK-V20] Parse failed (model: ${modelToUse}): ${parseResult.error}`);
+      return { 
+        success: false, 
+        beats: [], 
+        error: `PARSE_FAILED: ${parseResult.error}`,
+        modelUsed: modelToUse
+      };
+    }
+    
+    // Extract beats
+    const chunkBeats = parseResult.json.beats || [];
+    if (chunkBeats.length === 0) {
+      console.warn(`[CHUNK-V20] No beats returned (model: ${modelToUse})`);
+      return { 
+        success: false, 
+        beats: [], 
+        error: 'ZERO_BEATS_RETURNED',
+        modelUsed: modelToUse
+      };
+    }
+    
+    // Ensure beat_number is set
+    const normalizedBeats = chunkBeats.map((b: any, i: number) => ({
+      ...b,
+      beat_number: b.beat_number || (fromBeat + i)
+    }));
+    
+    console.log(`[CHUNK-V20] Act ${act} beats ${fromBeat}-${toBeat}: SUCCESS - ${normalizedBeats.length} beats (model: ${modelToUse})`);
+    
+    return { 
+      success: true, 
+      beats: normalizedBeats,
+      modelUsed: modelToUse
+    };
+    
+  } catch (err: any) {
+    const errorMsg = err.message || String(err);
+    console.error(`[CHUNK-V20] Act ${act} beats ${fromBeat}-${toBeat} ERROR (model: ${modelToUse}):`, errorMsg);
+    
+    return { 
+      success: false, 
+      beats: [], 
+      error: errorMsg,
+      modelUsed: modelToUse
+    };
   }
-  
-  return []; // Should not reach
 }
 
-// V18: THE MAIN CHUNKED EXPANSION FUNCTION
+// ============================================================================
+// V20: THE MAIN CHUNKED EXPANSION FUNCTION - 1 ATTEMPT PER INVOCATION
+// ============================================================================
+// CRITICAL ARCHITECTURE:
+// - Finds the first incomplete chunk
+// - Makes ONE AI call for that chunk
+// - If SUCCESS: persists, moves to next chunk (within same invocation if time permits)
+// - If FAIL: persists retry_count, exits IMMEDIATELY
+// - Next "Continue Generation" click resumes from the failed chunk
+// ============================================================================
 async function expandActInChunks(
   supabase: SupabaseClient,
   outlineId: string,
@@ -1673,27 +1707,50 @@ async function expandActInChunks(
   const config = ACT_CHUNKS[act];
   const substage = `expand_act_${act.toLowerCase()}`;
   
-  // V18: Recover existing chunk progress
+  // V20: Recover existing chunk progress INCLUDING retry_count
   const existingPart = parts[substage] || {};
   const chunksDone = new Set<number>(existingPart.chunks_done ?? []);
   let beats: any[] = existingPart.beats ?? [];
+  let currentChunk = existingPart.current_chunk || 1;
+  let retryCount = existingPart.retry_count || 0;
   
-  console.log(`[CHUNK] === EXPANDING ACT ${act} in ${config.chunks.length} CHUNKS ===`);
-  console.log(`[CHUNK] Existing progress: ${chunksDone.size}/${config.chunks.length} chunks, ${beats.length} beats`);
+  console.log(`[CHUNK-V20] === EXPANDING ACT ${act} in ${config.chunks.length} CHUNKS ===`);
+  console.log(`[CHUNK-V20] Progress: ${chunksDone.size}/${config.chunks.length} chunks, ${beats.length} beats, current=${currentChunk}, retries=${retryCount}`);
   
   for (let i = 0; i < config.chunks.length; i++) {
     const chunkIndex = i + 1;
     
     // Skip already completed chunks
     if (chunksDone.has(chunkIndex)) {
-      console.log(`[CHUNK] Act ${act} chunk ${chunkIndex}/${config.chunks.length}: ALREADY DONE, skipping`);
+      console.log(`[CHUNK-V20] Act ${act} chunk ${chunkIndex}/${config.chunks.length}: ALREADY DONE, skipping`);
       continue;
+    }
+    
+    // V20: Check if this chunk has exhausted retries
+    if (chunkIndex === currentChunk && retryCount >= MAX_CHUNK_RETRIES) {
+      console.error(`[CHUNK-V20] Act ${act} chunk ${chunkIndex}: MAX_RETRIES_EXHAUSTED (${retryCount}/${MAX_CHUNK_RETRIES})`);
+      parts[substage] = {
+        ...parts[substage],
+        status: 'failed',
+        current_chunk: chunkIndex,
+        retry_count: retryCount,
+        error_code: 'MAX_CHUNK_RETRIES_EXHAUSTED',
+        last_error: existingPart.last_error || 'Unknown',
+        beats
+      };
+      await updateOutline(supabase, outlineId, { 
+        outline_parts: parts,
+        status: 'failed',
+        error_code: 'CHUNK_MAX_RETRIES',
+        error_detail: `Act ${act} chunk ${chunkIndex} failed after ${MAX_CHUNK_RETRIES} attempts`
+      });
+      throw new Error(`CHUNK_MAX_RETRIES: Act ${act} chunk ${chunkIndex} failed after ${MAX_CHUNK_RETRIES} attempts`);
     }
     
     const [fromBeat, toBeat] = config.chunks[i];
     const chunkSubstage = `${substage}_chunk_${chunkIndex}`;
     
-    console.log(`[CHUNK] Act ${act} chunk ${chunkIndex}/${config.chunks.length}: beats ${fromBeat}-${toBeat}`);
+    console.log(`[CHUNK-V20] Act ${act} chunk ${chunkIndex}/${config.chunks.length}: beats ${fromBeat}-${toBeat} (attempt ${retryCount + 1}/${MAX_CHUNK_RETRIES})`);
     
     // Update substage and progress for this chunk
     const chunkProgress = calculateChunkProgress(act, chunkIndex, config.chunks.length);
@@ -1703,35 +1760,74 @@ async function expandActInChunks(
       heartbeat_at: new Date().toISOString()
     });
     
-    // Call model for this chunk (with retry)
-    const chunkBeats = await callChunkWithRetry(
+    // V20: SINGLE ATTEMPT - call once and check result
+    const result = await callChunkOnce(
       supabase, outlineId, scaffold, act, fromBeat, toBeat,
-      genre, tone, previousActI, previousActII, chunkSubstage
+      genre, tone, previousActI, previousActII, chunkSubstage, retryCount
     );
     
-    // V18: Merge beats by beat_number (no duplicates)
-    const beatsMap = new Map(beats.map((b: any) => [b.beat_number, b]));
-    for (const b of chunkBeats) {
-      beatsMap.set(b.beat_number, b);
+    if (result.success) {
+      // SUCCESS: Merge beats, mark chunk done, reset retry_count
+      const beatsMap = new Map(beats.map((b: any) => [b.beat_number, b]));
+      for (const b of result.beats) {
+        beatsMap.set(b.beat_number, b);
+      }
+      beats = Array.from(beatsMap.values()).sort((a, b) => a.beat_number - b.beat_number);
+      
+      chunksDone.add(chunkIndex);
+      
+      // V20: Reset retry_count for next chunk, update current_chunk
+      currentChunk = chunkIndex + 1;
+      retryCount = 0;
+      
+      parts[substage] = {
+        ...parts[substage],
+        status: chunksDone.size === config.chunks.length ? 'done' : 'partial',
+        chunks_done: Array.from(chunksDone),
+        chunks_total: config.chunks.length,
+        current_chunk: currentChunk,
+        retry_count: 0,
+        last_error: null,
+        beats,
+        last_chunk_at: new Date().toISOString(),
+        last_model_used: result.modelUsed
+      };
+      await updateOutline(supabase, outlineId, { 
+        outline_parts: parts,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      console.log(`[CHUNK-V20] Act ${act} chunk ${chunkIndex} PERSISTED: ${beats.length} total beats so far`);
+      
+      // Continue to next chunk within same invocation (if any remaining)
+      
+    } else {
+      // FAIL: Increment retry_count, persist, EXIT IMMEDIATELY
+      retryCount++;
+      
+      parts[substage] = {
+        ...parts[substage],
+        status: 'partial',
+        chunks_done: Array.from(chunksDone),
+        chunks_total: config.chunks.length,
+        current_chunk: chunkIndex,
+        retry_count: retryCount,
+        last_error: result.error,
+        beats,
+        last_attempt_at: new Date().toISOString(),
+        last_model_used: result.modelUsed
+      };
+      await updateOutline(supabase, outlineId, { 
+        outline_parts: parts,
+        heartbeat_at: new Date().toISOString()
+      });
+      
+      console.log(`[CHUNK-V20] Act ${act} chunk ${chunkIndex} FAILED (attempt ${retryCount}/${MAX_CHUNK_RETRIES}): ${result.error}`);
+      console.log(`[CHUNK-V20] State persisted. User must click "Continue Generation" for next attempt.`);
+      
+      // V20: EXIT IMMEDIATELY - Do NOT continue in this invocation
+      throw new Error(`CHUNK_FAILED_ATTEMPT_${retryCount}: Act ${act} chunk ${chunkIndex} - ${result.error}`);
     }
-    beats = Array.from(beatsMap.values()).sort((a, b) => a.beat_number - b.beat_number);
-    
-    // V18: PERSIST IMMEDIATELY after each chunk (this is the key!)
-    chunksDone.add(chunkIndex);
-    parts[substage] = {
-      ...parts[substage],
-      status: chunksDone.size === config.chunks.length ? 'done' : 'partial',
-      chunks_done: Array.from(chunksDone),
-      chunks_total: config.chunks.length,
-      beats,
-      last_chunk_at: new Date().toISOString()
-    };
-    await updateOutline(supabase, outlineId, { 
-      outline_parts: parts,
-      heartbeat_at: new Date().toISOString()
-    });
-    
-    console.log(`[CHUNK] Act ${act} chunk ${chunkIndex} PERSISTED: ${beats.length} total beats so far`);
   }
   
   // All chunks done - finalize
@@ -1743,6 +1839,8 @@ async function expandActInChunks(
   parts[substage] = {
     ...parts[substage],
     status: 'done',
+    retry_count: 0,
+    current_chunk: null,
     data: {
       beats,
       dramatic_goal: dramaticGoal,
@@ -1751,7 +1849,7 @@ async function expandActInChunks(
   };
   await updateOutline(supabase, outlineId, { outline_parts: parts });
   
-  console.log(`[CHUNK] Act ${act} COMPLETE: ${beats.length} beats across ${config.chunks.length} chunks`);
+  console.log(`[CHUNK-V20] Act ${act} COMPLETE: ${beats.length} beats across ${config.chunks.length} chunks`);
   
   return {
     beats,
@@ -2885,22 +2983,34 @@ serve(async (req) => {
           Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
         );
         
-        // Classify error type for better debugging
+        // V20: Classify error type for better debugging and resume capability
         const isTimeout = err.message?.includes('AI_TIMEOUT') || err.message?.includes('AbortError');
         const isRateLimit = err.status === 429 || err.message?.includes('429');
         const isPayment = err.status === 402 || err.message?.includes('402');
         const isExpandActFail = err.message?.includes('EXPAND_ACT') || err.message?.includes('ALL_ATTEMPTS_FAILED');
         const isParseFail = err.message?.includes('failed to parse') || err.message?.includes('parse failed');
+        // V20: Chunk failure is RESUMABLE - NOT a terminal failure
+        const isChunkFailAttempt = err.message?.includes('CHUNK_FAILED_ATTEMPT_');
+        const isChunkMaxRetries = err.message?.includes('CHUNK_MAX_RETRIES');
         
         let errorCode = 'WORKER_ERROR';
         let status = 'failed';
         
-        if (isTimeout) {
+        if (isChunkFailAttempt) {
+          // V20: Chunk failed but has retries left - mark as STALLED so user can resume
+          errorCode = 'CHUNK_ATTEMPT_FAILED';
+          status = 'stalled';  // STALLED allows "Continue Generation" button
+          console.log(`[WORKER] V20: Chunk attempt failed, marking as STALLED for resume`);
+        } else if (isChunkMaxRetries) {
+          // V20: Chunk exhausted all retries - terminal failure
+          errorCode = 'CHUNK_MAX_RETRIES';
+          status = 'failed';
+        } else if (isTimeout) {
           errorCode = 'STAGE_TIMEOUT';
-          status = 'timeout';
+          status = 'stalled';  // V20: Timeout is also resumable
         } else if (isRateLimit) {
           errorCode = 'RATE_LIMIT';
-          status = 'failed';
+          status = 'stalled';  // V20: Rate limit is resumable
         } else if (isPayment) {
           errorCode = 'PAYMENT_REQUIRED';
           status = 'failed';
@@ -2909,7 +3019,7 @@ serve(async (req) => {
           status = 'failed';
         } else if (isParseFail) {
           errorCode = 'JSON_PARSE_FAILED';
-          status = 'failed';
+          status = 'stalled';  // V20: Parse fail might succeed on retry with strict JSON
         }
         
         // V14: Extract which substage failed from error message
