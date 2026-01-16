@@ -60,7 +60,7 @@ interface PlotTwistData {
   act?: number;
 }
 
-interface OutlineData {
+export interface OutlineData {
   title: string;
   logline?: string;
   synopsis?: string;
