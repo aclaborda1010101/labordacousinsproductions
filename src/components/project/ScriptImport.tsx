@@ -6205,6 +6205,56 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </Badge>
                   )}
                   
+                  {/* Export PDF Button */}
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      if (!lightOutline) return;
+                      const outlineData: OutlinePDFData = {
+                        title: lightOutline.title || 'Sin título',
+                        logline: lightOutline.logline,
+                        synopsis: lightOutline.synopsis,
+                        genre: lightOutline.genre,
+                        tone: lightOutline.tone,
+                        format: format,
+                        estimatedDuration: lightOutline.estimated_duration || (format === 'film' ? filmDurationMin : episodeDurationMin),
+                        themes: lightOutline.themes,
+                        visualStyle: lightOutline.visual_style,
+                        characters: lightOutline.main_characters?.map((char: any) => ({
+                          name: char.name,
+                          role: char.role,
+                          role_detail: char.role_detail,
+                          description: char.description || char.want || char.bio,
+                          arc: char.arc || char.flaw,
+                        })),
+                        locations: lightOutline.main_locations?.map((loc: any) => ({
+                          name: loc.name,
+                          type: loc.type,
+                          description: loc.description || loc.visual_identity || loc.function,
+                        })),
+                        episodes: format === 'film'
+                          ? lightOutline.acts_summary ? [
+                              { episode_number: 1, title: 'Acto I', synopsis: lightOutline.acts_summary.act_i_goal || lightOutline.acts_summary.act_i_summary },
+                              { episode_number: 2, title: 'Acto II', synopsis: lightOutline.acts_summary.act_ii_goal || lightOutline.acts_summary.act_ii_summary },
+                              { episode_number: 3, title: 'Acto III', synopsis: lightOutline.acts_summary.act_iii_goal || lightOutline.acts_summary.act_iii_summary },
+                            ] : undefined
+                          : lightOutline.episode_beats?.map((ep: any, i: number) => ({
+                              episode_number: ep.episode || i + 1,
+                              title: ep.title || `Episodio ${i + 1}`,
+                              synopsis: ep.summary || ep.synopsis,
+                            })),
+                        subplots: lightOutline.subplots,
+                        plot_twists: lightOutline.plot_twists,
+                      };
+                      exportOutlinePDF(outlineData);
+                      toast.success('PDF del outline generado');
+                    }}
+                    className="gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exportar PDF
+                  </Button>
+                  
                   <Button 
                     variant="outline"
                     onClick={regenerateOutline}
@@ -6275,61 +6325,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           {lightOutline && outlineApproved && !generatedScript && !pipelineRunning && (
             <Card className="border-2 border-green-500/50 bg-green-500/5">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    Outline Aprobado
-                  </CardTitle>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      if (!lightOutline) return;
-                      const outlineData: OutlinePDFData = {
-                        title: lightOutline.title || 'Sin título',
-                        logline: lightOutline.logline,
-                        synopsis: lightOutline.synopsis,
-                        genre: lightOutline.genre,
-                        tone: lightOutline.tone,
-                        format: format,
-                        estimatedDuration: lightOutline.estimated_duration || (format === 'film' ? filmDurationMin : episodeDurationMin),
-                        themes: lightOutline.themes,
-                        visualStyle: lightOutline.visual_style,
-                        characters: lightOutline.main_characters?.map((char: any) => ({
-                          name: char.name,
-                          role: char.role,
-                          role_detail: char.role_detail,
-                          description: char.description || char.want || char.bio,
-                          arc: char.arc || char.flaw,
-                        })),
-                        locations: lightOutline.main_locations?.map((loc: any) => ({
-                          name: loc.name,
-                          type: loc.type,
-                          description: loc.description || loc.visual_identity || loc.function,
-                        })),
-                        episodes: format === 'film'
-                          ? lightOutline.acts_summary ? [
-                              { episode_number: 1, title: 'Acto I', synopsis: lightOutline.acts_summary.act_i_goal || lightOutline.acts_summary.act_i_summary },
-                              { episode_number: 2, title: 'Acto II', synopsis: lightOutline.acts_summary.act_ii_goal || lightOutline.acts_summary.act_ii_summary },
-                              { episode_number: 3, title: 'Acto III', synopsis: lightOutline.acts_summary.act_iii_goal || lightOutline.acts_summary.act_iii_summary },
-                            ] : undefined
-                          : lightOutline.episode_beats?.map((ep: any, i: number) => ({
-                              episode_number: ep.episode || i + 1,
-                              title: ep.title || `Episodio ${i + 1}`,
-                              synopsis: ep.summary || ep.synopsis,
-                            })),
-                        subplots: lightOutline.subplots,
-                        plot_twists: lightOutline.plot_twists,
-                      };
-                      exportOutlinePDF(outlineData);
-                      toast.success('PDF del outline generado');
-                    }}
-                    className="gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Exportar PDF
-                  </Button>
-                </div>
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  Outline Aprobado
+                </CardTitle>
                 <CardDescription>
                   Tu outline está listo. Ahora puedes generar el guion completo.
                 </CardDescription>
