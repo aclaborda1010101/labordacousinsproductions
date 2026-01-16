@@ -3370,14 +3370,52 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       }
 
       setCurrentEpisodeGenerating(null);
-      updatePipelineStep('episodes', 'success');
-
+      
       // Calculate actual counts from generated content
       const protagonistsCount = lightOutline.main_characters?.filter((c: any) => c.role === 'protagonist').length || 0;
       const supportingCount = lightOutline.main_characters?.filter((c: any) => c.role === 'supporting' || c.role === 'antagonist').length || 0;
       const locationsCount = lightOutline.main_locations?.length || 0;
       const totalScenes = episodes.reduce((sum, ep) => sum + (ep.scenes?.length || 0), 0);
       const totalDialogueLines = episodes.reduce((sum, ep) => sum + (ep.total_dialogue_lines || 0), 0);
+      
+      // ════════════════════════════════════════════════════════════════════════
+      // V3.2 CRITICAL: Fail if 0 scenes were generated (don't silently succeed)
+      // ════════════════════════════════════════════════════════════════════════
+      if (totalScenes === 0) {
+        const failReason = episodes.length > 0 && episodes[0].error 
+          ? `Sin escenas generadas: ${episodes[0].error}` 
+          : 'Sin escenas generadas. Revisa el outline y la Bible del proyecto.';
+        
+        console.error('[Pipeline] FAILURE: 0 scenes generated across all episodes', { 
+          episodes: episodes.map(e => ({ ep: e.episode_number, scenes: e.scenes?.length, error: e.error }))
+        });
+        
+        toast.error('Generación fallida: 0 escenas', {
+          description: failReason,
+          action: {
+            label: 'Diagnóstico',
+            onClick: () => {
+              // Show diagnostic info
+              console.log('[Diagnostic] Outline:', lightOutline);
+              console.log('[Diagnostic] Episodes:', episodes);
+              toast.info('Revisa la consola del navegador para más detalles de diagnóstico.');
+            }
+          },
+          duration: 15000
+        });
+        
+        updatePipelineStep('episodes', 'error');
+        
+        if (taskId) {
+          failTask(taskId, failReason);
+          setScriptTaskId(null);
+        }
+        
+        // Don't proceed with dialogues/teasers/save - the generation failed
+        return;
+      }
+      
+      updatePipelineStep('episodes', 'success');
 
       // Build complete screenplay with density metrics
       const completeScreenplay: Record<string, any> = {

@@ -489,18 +489,43 @@ function filterBibleToRelevant(
   outline: any,
   episodeNumber?: number
 ): { characters: any[], locations: any[] } {
-  // Extract names from outline/beats
+  // ==========================================================================
+  // V3.2 ENHANCED BIBLE FILTER - Supports FILM + SERIES with multiple field names
+  // ==========================================================================
   const beatCharacterNames = new Set<string>();
   const beatLocationNames = new Set<string>();
   
-  // From main_characters in outline
-  if (outline?.main_characters) {
-    outline.main_characters.forEach((c: any) => {
-      if (c.name) beatCharacterNames.add(c.name.toLowerCase());
-    });
-  }
+  // Helper to normalize and add name
+  const addCharName = (c: any) => {
+    const name = typeof c === 'string' ? c : c?.name;
+    if (name) beatCharacterNames.add(name.toLowerCase().trim());
+  };
+  const addLocName = (l: any) => {
+    const name = typeof l === 'string' ? l : l?.name;
+    if (name) beatLocationNames.add(name.toLowerCase().trim());
+  };
   
-  // From episode_beats
+  // ──────────────────────────────────────────────────────────────────────────
+  // 1. CHARACTERS: Support multiple field names (main_characters, cast, characters)
+  // ──────────────────────────────────────────────────────────────────────────
+  const charFields = ['main_characters', 'cast', 'characters', 'protagonists', 'ensemble'];
+  charFields.forEach(field => {
+    const arr = outline?.[field];
+    if (Array.isArray(arr)) arr.forEach(addCharName);
+  });
+  
+  // ──────────────────────────────────────────────────────────────────────────
+  // 2. LOCATIONS: Support multiple field names (main_locations, locations, settings)
+  // ──────────────────────────────────────────────────────────────────────────
+  const locFields = ['main_locations', 'locations', 'settings', 'worlds'];
+  locFields.forEach(field => {
+    const arr = outline?.[field];
+    if (Array.isArray(arr)) arr.forEach(addLocName);
+  });
+  
+  // ──────────────────────────────────────────────────────────────────────────
+  // 3. EPISODE BEATS (for series)
+  // ──────────────────────────────────────────────────────────────────────────
   if (outline?.episode_beats) {
     const relevantBeats = episodeNumber 
       ? [outline.episode_beats[episodeNumber - 1]].filter(Boolean)
@@ -508,64 +533,107 @@ function filterBibleToRelevant(
     
     relevantBeats.forEach((beat: any) => {
       // Characters from beat
-      if (beat?.characters_present) {
-        beat.characters_present.forEach((c: any) => {
-          const name = typeof c === 'string' ? c : c.name;
-          if (name) beatCharacterNames.add(name.toLowerCase());
-        });
-      }
-      if (beat?.key_characters) {
-        beat.key_characters.forEach((c: any) => {
-          const name = typeof c === 'string' ? c : c.name;
-          if (name) beatCharacterNames.add(name.toLowerCase());
-        });
-      }
+      ['characters_present', 'key_characters', 'characters', 'cast'].forEach(f => {
+        const arr = beat?.[f];
+        if (Array.isArray(arr)) arr.forEach(addCharName);
+      });
       // Locations from beat
-      if (beat?.location) {
-        beatLocationNames.add(beat.location.toLowerCase());
-      }
-      if (beat?.locations) {
-        beat.locations.forEach((l: any) => {
-          const name = typeof l === 'string' ? l : l.name;
-          if (name) beatLocationNames.add(name.toLowerCase());
+      ['location', 'locations', 'setting'].forEach(f => {
+        const val = beat?.[f];
+        if (typeof val === 'string') addLocName(val);
+        if (Array.isArray(val)) val.forEach(addLocName);
+      });
+    });
+  }
+  
+  // ──────────────────────────────────────────────────────────────────────────
+  // 4. ACTS_SUMMARY (for FILM) - Extract from beat arrays within acts
+  // ──────────────────────────────────────────────────────────────────────────
+  if (outline?.acts_summary) {
+    Object.values(outline.acts_summary).forEach((act: any) => {
+      // Each act may have beats array
+      const beats = act?.beats || act?.scenes || [];
+      if (Array.isArray(beats)) {
+        beats.forEach((beat: any) => {
+          ['characters_present', 'key_characters', 'characters'].forEach(f => {
+            const arr = beat?.[f];
+            if (Array.isArray(arr)) arr.forEach(addCharName);
+          });
+          ['location', 'locations', 'setting'].forEach(f => {
+            const val = beat?.[f];
+            if (typeof val === 'string') addLocName(val);
+            if (Array.isArray(val)) val.forEach(addLocName);
+          });
         });
       }
     });
   }
   
-  // From main_locations in outline
-  if (outline?.main_locations) {
-    outline.main_locations.forEach((l: any) => {
-      if (l.name) beatLocationNames.add(l.name.toLowerCase());
-    });
+  // ──────────────────────────────────────────────────────────────────────────
+  // 5. FALLBACK: If no names extracted, include ALL bible entities for FILM
+  // ──────────────────────────────────────────────────────────────────────────
+  const isFilm = bible.project?.format?.toLowerCase() === 'film' || 
+                 outline?.format?.toLowerCase() === 'film' ||
+                 !outline?.episode_beats;
+  
+  const noNamesExtracted = beatCharacterNames.size === 0 && beatLocationNames.size === 0;
+  
+  if (isFilm && noNamesExtracted) {
+    console.log('[Bible] FILM fallback: including ALL entities (no names extracted from outline)');
+    return { 
+      characters: bible.characters, 
+      locations: bible.locations 
+    };
   }
   
-  // Filter characters: include P0/P1 always + any mentioned in beats
+  // ──────────────────────────────────────────────────────────────────────────
+  // 6. FILTER: P0/P1/P2 always + any mentioned + partial name matching
+  // ──────────────────────────────────────────────────────────────────────────
   const filteredCharacters = bible.characters.filter(char => {
     const canonLevel = char.canon_level?.toUpperCase() || 'P3';
-    const isHighPriority = canonLevel === 'P0' || canonLevel === 'P1';
-    const isInBeats = beatCharacterNames.has(char.name?.toLowerCase());
-    return isHighPriority || isInBeats;
+    const isHighPriority = ['P0', 'P1', 'P2'].includes(canonLevel);
+    const charNameLower = char.name?.toLowerCase()?.trim();
+    const isInBeats = charNameLower && beatCharacterNames.has(charNameLower);
+    // Partial match: if outline mentions "María" and bible has "María García"
+    const partialMatch = charNameLower && Array.from(beatCharacterNames).some(
+      n => charNameLower.includes(n) || n.includes(charNameLower)
+    );
+    return isHighPriority || isInBeats || partialMatch;
   });
   
-  // Filter locations: include P0/P1 always + any mentioned in beats
   const filteredLocations = bible.locations.filter(loc => {
     const canonLevel = loc.canon_level?.toUpperCase() || 'P3';
-    const isHighPriority = canonLevel === 'P0' || canonLevel === 'P1';
-    const isInBeats = beatLocationNames.has(loc.name?.toLowerCase());
-    return isHighPriority || isInBeats;
+    const isHighPriority = ['P0', 'P1', 'P2'].includes(canonLevel);
+    const locNameLower = loc.name?.toLowerCase()?.trim();
+    const isInBeats = locNameLower && beatLocationNames.has(locNameLower);
+    const partialMatch = locNameLower && Array.from(beatLocationNames).some(
+      n => locNameLower.includes(n) || n.includes(locNameLower)
+    );
+    return isHighPriority || isInBeats || partialMatch;
   });
   
-  console.log('[Bible] Filtered:', {
+  // ──────────────────────────────────────────────────────────────────────────
+  // 7. SAFETY NET: If filter returned <3 chars for film, include all
+  // ──────────────────────────────────────────────────────────────────────────
+  const finalCharacters = (isFilm && filteredCharacters.length < 3 && bible.characters.length > filteredCharacters.length)
+    ? bible.characters
+    : filteredCharacters;
+  const finalLocations = (isFilm && filteredLocations.length < 2 && bible.locations.length > filteredLocations.length)
+    ? bible.locations
+    : filteredLocations;
+  
+  console.log('[Bible] V3.2 Filtered:', {
+    format: isFilm ? 'FILM' : 'SERIES',
     totalCharacters: bible.characters.length,
-    relevantCharacters: filteredCharacters.length,
+    relevantCharacters: finalCharacters.length,
     totalLocations: bible.locations.length,
-    relevantLocations: filteredLocations.length,
-    beatCharacterNames: Array.from(beatCharacterNames).slice(0, 10),
-    beatLocationNames: Array.from(beatLocationNames).slice(0, 10)
+    relevantLocations: finalLocations.length,
+    extractedCharNames: Array.from(beatCharacterNames).slice(0, 10),
+    extractedLocNames: Array.from(beatLocationNames).slice(0, 10),
+    usedFallback: noNamesExtracted || finalCharacters.length > filteredCharacters.length
   });
   
-  return { characters: filteredCharacters, locations: filteredLocations };
+  return { characters: finalCharacters, locations: finalLocations };
 }
 
 // =============================================================================
