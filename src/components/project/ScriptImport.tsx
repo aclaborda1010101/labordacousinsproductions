@@ -6272,10 +6272,53 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         ];
                       };
                       
+                      // Build synopsis from acts_summary if not available
+                      const buildSynopsis = (): string => {
+                        if (lightOutline.synopsis) return lightOutline.synopsis;
+                        
+                        if (lightOutline.acts_summary) {
+                          const parts: string[] = [];
+                          
+                          // Acto I
+                          if (lightOutline.acts_summary.act_i_goal) {
+                            parts.push(`ACTO I: ${lightOutline.acts_summary.act_i_goal}`);
+                          }
+                          if (lightOutline.acts_summary.inciting_incident_summary) {
+                            parts.push(`Detonante: ${lightOutline.acts_summary.inciting_incident_summary}`);
+                          }
+                          if (lightOutline.acts_summary.act_i_break) {
+                            parts.push(`Quiebre: ${lightOutline.acts_summary.act_i_break}`);
+                          }
+                          
+                          // Acto II
+                          if (lightOutline.acts_summary.act_ii_goal) {
+                            parts.push(`\nACTO II: ${lightOutline.acts_summary.act_ii_goal}`);
+                          }
+                          if (lightOutline.acts_summary.midpoint_summary) {
+                            parts.push(`Midpoint: ${lightOutline.acts_summary.midpoint_summary}`);
+                          }
+                          if (lightOutline.acts_summary.all_is_lost_summary) {
+                            parts.push(`Crisis: ${lightOutline.acts_summary.all_is_lost_summary}`);
+                          }
+                          
+                          // Acto III
+                          if (lightOutline.acts_summary.act_iii_goal) {
+                            parts.push(`\nACTO III: ${lightOutline.acts_summary.act_iii_goal}`);
+                          }
+                          if (lightOutline.acts_summary.climax_summary) {
+                            parts.push(`Clímax: ${lightOutline.acts_summary.climax_summary}`);
+                          }
+                          
+                          return parts.join('\n');
+                        }
+                        
+                        return '';
+                      };
+                      
                       const outlineData: OutlinePDFData = {
                         title: lightOutline.title || 'Sin título',
                         logline: lightOutline.logline,
-                        synopsis: lightOutline.synopsis,
+                        synopsis: buildSynopsis(),
                         genre: lightOutline.genre,
                         tone: lightOutline.tone,
                         format: format,

@@ -165,6 +165,8 @@ const COLORS = {
 const ROLE_LABELS: Record<string, string> = {
   protagonist: 'PROTAGONISTA',
   antagonist: 'ANTAGONISTA',
+  ally: 'ALIADO',
+  mentor: 'MENTOR',
   supporting: 'SECUNDARIO',
   recurring: 'RECURRENTE',
   cameo: 'CAMEO',
@@ -172,7 +174,7 @@ const ROLE_LABELS: Record<string, string> = {
   collective_entity: 'COLECTIVO',
 };
 
-const ROLE_ORDER = ['protagonist', 'antagonist', 'supporting', 'recurring', 'cameo', 'extra_with_lines', 'collective_entity'];
+const ROLE_ORDER = ['protagonist', 'antagonist', 'ally', 'mentor', 'supporting', 'recurring', 'cameo', 'extra_with_lines', 'collective_entity'];
 
 export function exportOutlinePDF(data: OutlineData): void {
   const doc = new jsPDF({
