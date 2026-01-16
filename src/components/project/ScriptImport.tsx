@@ -6205,11 +6205,73 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </Badge>
                   )}
                   
-                  {/* Export PDF Button */}
+                  {/* Export PDF Button - Comprehensive mapping */}
                   <Button 
                     variant="outline"
                     onClick={() => {
                       if (!lightOutline) return;
+                      
+                      // Extract characters from cast or main_characters
+                      const chars = lightOutline.cast || lightOutline.main_characters || [];
+                      
+                      // Extract locations from main_locations or locations
+                      const locs = lightOutline.main_locations || lightOutline.locations || [];
+                      
+                      // Build acts structure with beats for film
+                      const buildActs = () => {
+                        if (format !== 'film' || !lightOutline.acts_summary) return undefined;
+                        
+                        const allBeats = lightOutline.beats || [];
+                        
+                        return [
+                          {
+                            act_number: 1,
+                            title: 'Acto I',
+                            goal: lightOutline.acts_summary.act_i_goal,
+                            summary: lightOutline.acts_summary.act_i_summary,
+                            inciting_incident: lightOutline.acts_summary.inciting_incident_summary,
+                            break_point: lightOutline.acts_summary.act_i_break,
+                            beats: allBeats.filter((b: any) => b.beat_number <= 8).map((b: any) => ({
+                              beat_number: b.beat_number,
+                              event: b.event || b.description,
+                              agent: b.agent,
+                              consequence: b.consequence,
+                              situation_detail: b.situation_detail,
+                            })),
+                          },
+                          {
+                            act_number: 2,
+                            title: 'Acto II',
+                            goal: lightOutline.acts_summary.act_ii_goal,
+                            summary: lightOutline.acts_summary.act_ii_summary,
+                            midpoint: lightOutline.acts_summary.midpoint_summary,
+                            all_is_lost: lightOutline.acts_summary.all_is_lost_summary,
+                            break_point: lightOutline.acts_summary.act_ii_break,
+                            beats: allBeats.filter((b: any) => b.beat_number > 8 && b.beat_number <= 16).map((b: any) => ({
+                              beat_number: b.beat_number,
+                              event: b.event || b.description,
+                              agent: b.agent,
+                              consequence: b.consequence,
+                              situation_detail: b.situation_detail,
+                            })),
+                          },
+                          {
+                            act_number: 3,
+                            title: 'Acto III',
+                            goal: lightOutline.acts_summary.act_iii_goal,
+                            summary: lightOutline.acts_summary.act_iii_summary,
+                            climax: lightOutline.acts_summary.climax_summary,
+                            beats: allBeats.filter((b: any) => b.beat_number > 16).map((b: any) => ({
+                              beat_number: b.beat_number,
+                              event: b.event || b.description,
+                              agent: b.agent,
+                              consequence: b.consequence,
+                              situation_detail: b.situation_detail,
+                            })),
+                          },
+                        ];
+                      };
+                      
                       const outlineData: OutlinePDFData = {
                         title: lightOutline.title || 'Sin título',
                         logline: lightOutline.logline,
@@ -6220,34 +6282,70 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         estimatedDuration: lightOutline.estimated_duration || (format === 'film' ? filmDurationMin : episodeDurationMin),
                         themes: lightOutline.themes,
                         visualStyle: lightOutline.visual_style,
-                        characters: lightOutline.main_characters?.map((char: any) => ({
+                        thematic_thread: lightOutline.thematic_thread,
+                        
+                        // Full character data with want/need/flaw/arc
+                        characters: chars.map((char: any) => ({
                           name: char.name,
                           role: char.role,
                           role_detail: char.role_detail,
-                          description: char.description || char.want || char.bio,
-                          arc: char.arc || char.flaw,
+                          description: char.description || char.bio,
+                          want: char.want,
+                          need: char.need,
+                          flaw: char.flaw,
+                          decision_key: char.decision_key,
+                          arc: char.arc,
+                          arc_start: char.arc_start,
+                          arc_end: char.arc_end,
                         })),
-                        locations: lightOutline.main_locations?.map((loc: any) => ({
+                        
+                        // Full location data with visual identity
+                        locations: locs.map((loc: any) => ({
                           name: loc.name,
                           type: loc.type,
-                          description: loc.description || loc.visual_identity || loc.function,
+                          description: loc.description,
+                          visual_identity: loc.visual_identity,
+                          function: loc.function,
+                          narrative_role: loc.narrative_role || loc.role,
                         })),
-                        episodes: format === 'film'
-                          ? lightOutline.acts_summary ? [
-                              { episode_number: 1, title: 'Acto I', synopsis: lightOutline.acts_summary.act_i_goal || lightOutline.acts_summary.act_i_summary },
-                              { episode_number: 2, title: 'Acto II', synopsis: lightOutline.acts_summary.act_ii_goal || lightOutline.acts_summary.act_ii_summary },
-                              { episode_number: 3, title: 'Acto III', synopsis: lightOutline.acts_summary.act_iii_goal || lightOutline.acts_summary.act_iii_summary },
-                            ] : undefined
-                          : lightOutline.episode_beats?.map((ep: any, i: number) => ({
+                        
+                        // Acts structure with beats (for film)
+                        acts: buildActs(),
+                        
+                        // Episodes (for series)
+                        episodes: format !== 'film' && lightOutline.episode_beats
+                          ? lightOutline.episode_beats.map((ep: any, i: number) => ({
                               episode_number: ep.episode || i + 1,
                               title: ep.title || `Episodio ${i + 1}`,
                               synopsis: ep.summary || ep.synopsis,
-                            })),
+                            }))
+                          : undefined,
+                        
+                        // Factions
+                        factions: lightOutline.factions?.map((f: any) => ({
+                          name: f.name,
+                          leader: f.leader,
+                          objective: f.objective,
+                          method: f.method,
+                          red_line: f.red_line,
+                        })),
+                        
+                        // Entity rules (can/cannot do)
+                        entity_rules: lightOutline.entity_rules?.map((r: any) => ({
+                          entity: r.entity,
+                          can_do: r.can_do,
+                          cannot_do: r.cannot_do,
+                          cost: r.cost,
+                          dramatic_purpose: r.dramatic_purpose,
+                        })),
+                        
+                        // Subplots and twists
                         subplots: lightOutline.subplots,
                         plot_twists: lightOutline.plot_twists,
                       };
+                      
                       exportOutlinePDF(outlineData);
-                      toast.success('PDF del outline generado');
+                      toast.success('PDF del outline generado con todos los datos');
                     }}
                     className="gap-2"
                   >
