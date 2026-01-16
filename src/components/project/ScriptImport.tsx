@@ -348,6 +348,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [outlineApproved, setOutlineApproved] = useState(false);
   const [generatingOutline, setGeneratingOutline] = useState(false);
   
+  // V24: Stable outline ref to prevent flicker during operations
+  const lastStableOutlineRef = useRef<any>(null);
+  
+  // V24: PDF export loading state
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  
   // V22: Helper to normalize outline fields for consistent UI rendering
   // This ensures main_characters and main_locations are always populated WITH descriptions
   const normalizeOutline = useCallback((outline: any): any => {
@@ -357,9 +363,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, []);
   
   // V22: Wrapper for setLightOutline that normalizes the data
+  // V24: Also updates the stable ref for flicker prevention
   const setLightOutline = useCallback((outline: any) => {
-    setLightOutlineRaw(normalizeOutline(outline));
+    const normalized = normalizeOutline(outline);
+    setLightOutlineRaw(normalized);
+    if (normalized) {
+      lastStableOutlineRef.current = normalized;
+    }
   }, [normalizeOutline]);
+  
+  // V24: Get stable outline for UI rendering (prevents flicker to 0 during operations)
+  const outlineForUI = useMemo(() => {
+    return lightOutline ?? lastStableOutlineRef.current;
+  }, [lightOutline]);
   
   // Showrunner upgrade state (Phase 2)
   const [upgradingOutline, setUpgradingOutline] = useState(false);
@@ -2680,6 +2696,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         status: 'WARN',
         density_score: 0,
         human_summary: 'Verificación de densidad no disponible',
+        required_fixes: [],
+        warnings: [],
       };
     }
   }, [projectId, format]);
@@ -5423,7 +5441,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <Label className="text-xs uppercase text-muted-foreground">
-                      Personajes ({lightOutline.main_characters?.length || 0})
+                      Personajes {bibleLoading || materializingEntities ? '' : `(${outlineForUI?.main_characters?.length || 0})`}
                     </Label>
                     {/* P1 FIX: Materialize Bible Button */}
                     <Button
@@ -5464,7 +5482,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </Button>
                   </div>
                   <div className="grid gap-2 md:grid-cols-2">
-                    {lightOutline.main_characters?.map((char: any, i: number) => {
+                    {(outlineForUI?.main_characters ?? []).map((char: any, i: number) => {
                       const role = char.role || '';
                       const roleDetail = char.role_detail || char.roleDetail;
                       const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
@@ -5500,10 +5518,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 {/* Locations (with type + description) */}
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Localizaciones ({lightOutline.main_locations?.length || 0})
+                    Localizaciones {bibleLoading || materializingEntities ? '' : `(${outlineForUI?.main_locations?.length || 0})`}
                   </Label>
                   <div className="grid gap-2 md:grid-cols-2">
-                    {lightOutline.main_locations?.map((loc: any, i: number) => {
+                    {(outlineForUI?.main_locations ?? []).map((loc: any, i: number) => {
                       // V21: Support multiple field formats from different generators
                       const description = loc.description || loc.visual_identity || loc.function;
                       const details = loc.function && loc.visual_identity ? loc.function : null;
@@ -6205,195 +6223,217 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </Badge>
                   )}
                   
-                  {/* Export PDF Button - Comprehensive mapping */}
+                  {/* Export PDF Button - Comprehensive mapping with try/catch */}
                   <Button 
                     variant="outline"
-                    onClick={() => {
-                      if (!lightOutline) return;
+                    disabled={isExportingPdf}
+                    onClick={async () => {
+                      // V24: Use outlineForUI for stable reference during export
+                      const outline = outlineForUI;
+                      if (!outline) {
+                        toast.error('No hay outline para exportar');
+                        return;
+                      }
                       
-                      // Extract characters from cast or main_characters
-                      const chars = lightOutline.cast || lightOutline.main_characters || [];
+                      setIsExportingPdf(true);
                       
-                      // Extract locations from main_locations or locations
-                      const locs = lightOutline.main_locations || lightOutline.locations || [];
+                      // Yield to event loop so React paints loading state
+                      await new Promise(r => setTimeout(r, 0));
                       
-                      // Build acts structure with beats for film
-                      const buildActs = () => {
-                        if (format !== 'film' || !lightOutline.acts_summary) return undefined;
+                      try {
+                        // Extract characters from cast or main_characters
+                        const chars = outline.cast || outline.main_characters || [];
                         
-                        const allBeats = lightOutline.beats || [];
+                        // Extract locations from main_locations or locations
+                        const locs = outline.main_locations || outline.locations || [];
                         
-                        return [
-                          {
-                            act_number: 1,
-                            title: 'Acto I',
-                            goal: lightOutline.acts_summary.act_i_goal,
-                            summary: lightOutline.acts_summary.act_i_summary,
-                            inciting_incident: lightOutline.acts_summary.inciting_incident_summary,
-                            break_point: lightOutline.acts_summary.act_i_break,
-                            beats: allBeats.filter((b: any) => b.beat_number <= 8).map((b: any) => ({
-                              beat_number: b.beat_number,
-                              event: b.event || b.description,
-                              agent: b.agent,
-                              consequence: b.consequence,
-                              situation_detail: b.situation_detail,
-                            })),
-                          },
-                          {
-                            act_number: 2,
-                            title: 'Acto II',
-                            goal: lightOutline.acts_summary.act_ii_goal,
-                            summary: lightOutline.acts_summary.act_ii_summary,
-                            midpoint: lightOutline.acts_summary.midpoint_summary,
-                            all_is_lost: lightOutline.acts_summary.all_is_lost_summary,
-                            break_point: lightOutline.acts_summary.act_ii_break,
-                            beats: allBeats.filter((b: any) => b.beat_number > 8 && b.beat_number <= 16).map((b: any) => ({
-                              beat_number: b.beat_number,
-                              event: b.event || b.description,
-                              agent: b.agent,
-                              consequence: b.consequence,
-                              situation_detail: b.situation_detail,
-                            })),
-                          },
-                          {
-                            act_number: 3,
-                            title: 'Acto III',
-                            goal: lightOutline.acts_summary.act_iii_goal,
-                            summary: lightOutline.acts_summary.act_iii_summary,
-                            climax: lightOutline.acts_summary.climax_summary,
-                            beats: allBeats.filter((b: any) => b.beat_number > 16).map((b: any) => ({
-                              beat_number: b.beat_number,
-                              event: b.event || b.description,
-                              agent: b.agent,
-                              consequence: b.consequence,
-                              situation_detail: b.situation_detail,
-                            })),
-                          },
-                        ];
-                      };
-                      
-                      // Build synopsis from acts_summary if not available
-                      const buildSynopsis = (): string => {
-                        if (lightOutline.synopsis) return lightOutline.synopsis;
-                        
-                        if (lightOutline.acts_summary) {
-                          const parts: string[] = [];
+                        // Build acts structure with beats for film
+                        const buildActs = () => {
+                          if (format !== 'film' || !outline.acts_summary) return undefined;
                           
-                          // Acto I
-                          if (lightOutline.acts_summary.act_i_goal) {
-                            parts.push(`ACTO I: ${lightOutline.acts_summary.act_i_goal}`);
-                          }
-                          if (lightOutline.acts_summary.inciting_incident_summary) {
-                            parts.push(`Detonante: ${lightOutline.acts_summary.inciting_incident_summary}`);
-                          }
-                          if (lightOutline.acts_summary.act_i_break) {
-                            parts.push(`Quiebre: ${lightOutline.acts_summary.act_i_break}`);
+                          const allBeats = outline.beats || [];
+                          
+                          return [
+                            {
+                              act_number: 1,
+                              title: 'Acto I',
+                              goal: outline.acts_summary.act_i_goal,
+                              summary: outline.acts_summary.act_i_summary,
+                              inciting_incident: outline.acts_summary.inciting_incident_summary,
+                              break_point: outline.acts_summary.act_i_break,
+                              beats: allBeats.filter((b: any) => b.beat_number <= 8).map((b: any) => ({
+                                beat_number: b.beat_number,
+                                event: b.event || b.description,
+                                agent: b.agent,
+                                consequence: b.consequence,
+                                situation_detail: b.situation_detail,
+                              })),
+                            },
+                            {
+                              act_number: 2,
+                              title: 'Acto II',
+                              goal: outline.acts_summary.act_ii_goal,
+                              summary: outline.acts_summary.act_ii_summary,
+                              midpoint: outline.acts_summary.midpoint_summary,
+                              all_is_lost: outline.acts_summary.all_is_lost_summary,
+                              break_point: outline.acts_summary.act_ii_break,
+                              beats: allBeats.filter((b: any) => b.beat_number > 8 && b.beat_number <= 16).map((b: any) => ({
+                                beat_number: b.beat_number,
+                                event: b.event || b.description,
+                                agent: b.agent,
+                                consequence: b.consequence,
+                                situation_detail: b.situation_detail,
+                              })),
+                            },
+                            {
+                              act_number: 3,
+                              title: 'Acto III',
+                              goal: outline.acts_summary.act_iii_goal,
+                              summary: outline.acts_summary.act_iii_summary,
+                              climax: outline.acts_summary.climax_summary,
+                              beats: allBeats.filter((b: any) => b.beat_number > 16).map((b: any) => ({
+                                beat_number: b.beat_number,
+                                event: b.event || b.description,
+                                agent: b.agent,
+                                consequence: b.consequence,
+                                situation_detail: b.situation_detail,
+                              })),
+                            },
+                          ];
+                        };
+                        
+                        // Build synopsis from acts_summary if not available
+                        const buildSynopsis = (): string => {
+                          if (outline.synopsis) return outline.synopsis;
+                          
+                          if (outline.acts_summary) {
+                            const parts: string[] = [];
+                            
+                            // Acto I
+                            if (outline.acts_summary.act_i_goal) {
+                              parts.push(`ACTO I: ${outline.acts_summary.act_i_goal}`);
+                            }
+                            if (outline.acts_summary.inciting_incident_summary) {
+                              parts.push(`Detonante: ${outline.acts_summary.inciting_incident_summary}`);
+                            }
+                            if (outline.acts_summary.act_i_break) {
+                              parts.push(`Quiebre: ${outline.acts_summary.act_i_break}`);
+                            }
+                            
+                            // Acto II
+                            if (outline.acts_summary.act_ii_goal) {
+                              parts.push(`\nACTO II: ${outline.acts_summary.act_ii_goal}`);
+                            }
+                            if (outline.acts_summary.midpoint_summary) {
+                              parts.push(`Midpoint: ${outline.acts_summary.midpoint_summary}`);
+                            }
+                            if (outline.acts_summary.all_is_lost_summary) {
+                              parts.push(`Crisis: ${outline.acts_summary.all_is_lost_summary}`);
+                            }
+                            
+                            // Acto III
+                            if (outline.acts_summary.act_iii_goal) {
+                              parts.push(`\nACTO III: ${outline.acts_summary.act_iii_goal}`);
+                            }
+                            if (outline.acts_summary.climax_summary) {
+                              parts.push(`Clímax: ${outline.acts_summary.climax_summary}`);
+                            }
+                            
+                            return parts.join('\n');
                           }
                           
-                          // Acto II
-                          if (lightOutline.acts_summary.act_ii_goal) {
-                            parts.push(`\nACTO II: ${lightOutline.acts_summary.act_ii_goal}`);
-                          }
-                          if (lightOutline.acts_summary.midpoint_summary) {
-                            parts.push(`Midpoint: ${lightOutline.acts_summary.midpoint_summary}`);
-                          }
-                          if (lightOutline.acts_summary.all_is_lost_summary) {
-                            parts.push(`Crisis: ${lightOutline.acts_summary.all_is_lost_summary}`);
-                          }
+                          return '';
+                        };
+                        
+                        const outlineData: OutlinePDFData = {
+                          title: outline.title || 'Sin título',
+                          logline: outline.logline,
+                          synopsis: buildSynopsis(),
+                          genre: outline.genre,
+                          tone: outline.tone,
+                          format: format,
+                          estimatedDuration: outline.estimated_duration || (format === 'film' ? filmDurationMin : episodeDurationMin),
+                          themes: outline.themes,
+                          visualStyle: outline.visual_style,
+                          thematic_thread: outline.thematic_thread,
                           
-                          // Acto III
-                          if (lightOutline.acts_summary.act_iii_goal) {
-                            parts.push(`\nACTO III: ${lightOutline.acts_summary.act_iii_goal}`);
-                          }
-                          if (lightOutline.acts_summary.climax_summary) {
-                            parts.push(`Clímax: ${lightOutline.acts_summary.climax_summary}`);
-                          }
+                          // Full character data with want/need/flaw/arc
+                          characters: chars.map((char: any) => ({
+                            name: char.name,
+                            role: char.role,
+                            role_detail: char.role_detail,
+                            description: char.description || char.bio,
+                            want: char.want,
+                            need: char.need,
+                            flaw: char.flaw,
+                            decision_key: char.decision_key,
+                            arc: char.arc,
+                            arc_start: char.arc_start,
+                            arc_end: char.arc_end,
+                          })),
                           
-                          return parts.join('\n');
-                        }
+                          // Full location data with visual identity
+                          locations: locs.map((loc: any) => ({
+                            name: loc.name,
+                            type: loc.type,
+                            description: loc.description,
+                            visual_identity: loc.visual_identity,
+                            function: loc.function,
+                            narrative_role: loc.narrative_role || loc.role,
+                          })),
+                          
+                          // Acts structure with beats (for film)
+                          acts: buildActs(),
+                          
+                          // Episodes (for series)
+                          episodes: format !== 'film' && outline.episode_beats
+                            ? outline.episode_beats.map((ep: any, i: number) => ({
+                                episode_number: ep.episode || i + 1,
+                                title: ep.title || `Episodio ${i + 1}`,
+                                synopsis: ep.summary || ep.synopsis,
+                              }))
+                            : undefined,
+                          
+                          // Factions
+                          factions: outline.factions?.map((f: any) => ({
+                            name: f.name,
+                            leader: f.leader,
+                            objective: f.objective,
+                            method: f.method,
+                            red_line: f.red_line,
+                          })),
+                          
+                          // Entity rules (can/cannot do)
+                          entity_rules: outline.entity_rules?.map((r: any) => ({
+                            entity: r.entity,
+                            can_do: r.can_do,
+                            cannot_do: r.cannot_do,
+                            cost: r.cost,
+                            dramatic_purpose: r.dramatic_purpose,
+                          })),
+                          
+                          // Subplots and twists
+                          subplots: outline.subplots,
+                          plot_twists: outline.plot_twists,
+                        };
                         
-                        return '';
-                      };
-                      
-                      const outlineData: OutlinePDFData = {
-                        title: lightOutline.title || 'Sin título',
-                        logline: lightOutline.logline,
-                        synopsis: buildSynopsis(),
-                        genre: lightOutline.genre,
-                        tone: lightOutline.tone,
-                        format: format,
-                        estimatedDuration: lightOutline.estimated_duration || (format === 'film' ? filmDurationMin : episodeDurationMin),
-                        themes: lightOutline.themes,
-                        visualStyle: lightOutline.visual_style,
-                        thematic_thread: lightOutline.thematic_thread,
-                        
-                        // Full character data with want/need/flaw/arc
-                        characters: chars.map((char: any) => ({
-                          name: char.name,
-                          role: char.role,
-                          role_detail: char.role_detail,
-                          description: char.description || char.bio,
-                          want: char.want,
-                          need: char.need,
-                          flaw: char.flaw,
-                          decision_key: char.decision_key,
-                          arc: char.arc,
-                          arc_start: char.arc_start,
-                          arc_end: char.arc_end,
-                        })),
-                        
-                        // Full location data with visual identity
-                        locations: locs.map((loc: any) => ({
-                          name: loc.name,
-                          type: loc.type,
-                          description: loc.description,
-                          visual_identity: loc.visual_identity,
-                          function: loc.function,
-                          narrative_role: loc.narrative_role || loc.role,
-                        })),
-                        
-                        // Acts structure with beats (for film)
-                        acts: buildActs(),
-                        
-                        // Episodes (for series)
-                        episodes: format !== 'film' && lightOutline.episode_beats
-                          ? lightOutline.episode_beats.map((ep: any, i: number) => ({
-                              episode_number: ep.episode || i + 1,
-                              title: ep.title || `Episodio ${i + 1}`,
-                              synopsis: ep.summary || ep.synopsis,
-                            }))
-                          : undefined,
-                        
-                        // Factions
-                        factions: lightOutline.factions?.map((f: any) => ({
-                          name: f.name,
-                          leader: f.leader,
-                          objective: f.objective,
-                          method: f.method,
-                          red_line: f.red_line,
-                        })),
-                        
-                        // Entity rules (can/cannot do)
-                        entity_rules: lightOutline.entity_rules?.map((r: any) => ({
-                          entity: r.entity,
-                          can_do: r.can_do,
-                          cannot_do: r.cannot_do,
-                          cost: r.cost,
-                          dramatic_purpose: r.dramatic_purpose,
-                        })),
-                        
-                        // Subplots and twists
-                        subplots: lightOutline.subplots,
-                        plot_twists: lightOutline.plot_twists,
-                      };
-                      
-                      exportOutlinePDF(outlineData);
-                      toast.success('PDF del outline generado con todos los datos');
+                        exportOutlinePDF(outlineData);
+                        toast.success('PDF del outline generado');
+                      } catch (err: any) {
+                        console.error('[ExportPDF] Error:', err);
+                        toast.error('Error al exportar PDF: ' + (err?.message || 'Error desconocido'));
+                      } finally {
+                        setIsExportingPdf(false);
+                      }
                     }}
                     className="gap-2"
                   >
-                    <Download className="w-4 h-4" />
-                    Exportar PDF
+                    {isExportingPdf ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {isExportingPdf ? 'Generando...' : 'Exportar PDF'}
                   </Button>
                   
                   <Button 
@@ -6496,10 +6536,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 {/* Characters */}
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Personajes ({lightOutline.main_characters?.length || 0})
+                    Personajes {bibleLoading || materializingEntities ? '' : `(${outlineForUI?.main_characters?.length || 0})`}
                   </Label>
                   <div className="grid gap-2 md:grid-cols-2">
-                    {lightOutline.main_characters?.map((char: any, i: number) => {
+                    {(outlineForUI?.main_characters ?? []).map((char: any, i: number) => {
                       const role = char.role || '';
                       const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
                       // V22: Use normalized description (already populated by normalizeOutlineForDisplay)
@@ -6522,10 +6562,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 {/* Locations */}
                 <div>
                   <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Localizaciones ({lightOutline.main_locations?.length || 0})
+                    Localizaciones {bibleLoading || materializingEntities ? '' : `(${outlineForUI?.main_locations?.length || 0})`}
                   </Label>
                   <div className="grid gap-2 md:grid-cols-2">
-                    {lightOutline.main_locations?.map((loc: any, i: number) => {
+                    {(outlineForUI?.main_locations ?? []).map((loc: any, i: number) => {
                       // V22: Use normalized description (already populated by normalizeOutlineForDisplay)
                       const locDescription = loc.description || getLocationDescription(loc);
                       return (
