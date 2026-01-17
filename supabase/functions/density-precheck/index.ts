@@ -55,12 +55,12 @@ serve(async (req) => {
 
     console.log('[density-precheck] Starting for project:', projectId);
 
-    // Fetch the project outline
+    // Fetch the project outline (accept 'completed' or 'approved' status)
     const { data: outlineData, error: outlineError } = await supabase
       .from('project_outlines')
       .select('outline_json')
       .eq('project_id', projectId)
-      .eq('status', 'completed')
+      .in('status', ['completed', 'approved'])
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
