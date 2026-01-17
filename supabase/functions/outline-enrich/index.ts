@@ -787,9 +787,23 @@ serve(async (req) => {
     // ========================================================================
     // SAVE ENRICHED OUTLINE
     // ========================================================================
+    // V2: Detect FILM format - these use _film_structure, NOT episode_beats
+    const isFilmFormat = !!enrichedOutline._film_structure 
+      || enrichedOutline.format === 'FILM'
+      || ((!enrichedOutline.episode_beats || enrichedOutline.episode_beats.length === 0) 
+          && (enrichedOutline.acts_summary || enrichedOutline._film_structure));
+    
     // CRITICAL: Normalize turning_points from strings to objects BEFORE saving
-    const normalizedOutline = normalizeOutlineV11(enrichedOutline);
-    console.log(`[outline-enrich] Normalized turning_points for ${normalizedOutline.episode_beats?.length || 0} episodes`);
+    // BUT only for episodic formats - FILM uses _film_structure which we must preserve
+    let normalizedOutline;
+    if (isFilmFormat) {
+      // FILM: Don't run episodic normalization, just preserve structure
+      normalizedOutline = enrichedOutline;
+      console.log(`[outline-enrich] FILM format detected - preserving _film_structure, skipping episode_beats normalization`);
+    } else {
+      normalizedOutline = normalizeOutlineV11(enrichedOutline);
+      console.log(`[outline-enrich] Normalized turning_points for ${normalizedOutline.episode_beats?.length || 0} episodes`);
+    }
     
     const qualityLevel = normalizedOutline.threads?.length >= 5 ? 'threaded' : 'enriched';
     
