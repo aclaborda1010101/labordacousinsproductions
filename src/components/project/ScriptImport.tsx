@@ -839,6 +839,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   useEffect(() => {
     const storedState = loadPipelineState();
     
+    // V9.0: Detect and clear stale pipeline states (>30 min old)
+    const MAX_STALE_AGE_MS = 30 * 60 * 1000; // 30 minutes
+    if (storedState && storedState.startedAt) {
+      const stateAgeMs = Date.now() - storedState.startedAt;
+      if (stateAgeMs > MAX_STALE_AGE_MS) {
+        console.warn('[ScriptImport] Stale pipeline state detected (>30min), clearing');
+        clearPipelineState();
+        return; // Don't restore stale state
+      }
+    }
+    
     // CRITICAL: Verify the stored state is valid
     // Accept legacy states without projectId field for backward compatibility
     if (storedState && storedState.pipelineRunning && (!storedState.projectId || storedState.projectId === projectId)) {
