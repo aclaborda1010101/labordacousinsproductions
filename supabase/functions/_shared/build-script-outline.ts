@@ -251,15 +251,21 @@ export function buildScriptOutlineFromRecord(record: OutlineRecord): ScriptOutli
     outline.format = outline.format || scaffold.format || 'FILM';
     
     // Characters: use scaffold if outline has fewer or none
+    // V2: Fixed empty array check - [] is truthy so must check length explicitly
     const scaffoldCast = (scaffold.cast || scaffold.main_characters || []).map(normalizeCharacter);
-    const existingChars = outline.main_characters || [];
+    const existingChars = (Array.isArray(outline.main_characters) && outline.main_characters.length > 0) 
+      ? outline.main_characters 
+      : [];
     if (scaffoldCast.length > existingChars.length) {
       outline.main_characters = scaffoldCast;
     }
     
     // Locations: use scaffold if outline has fewer or none
+    // V2: Fixed empty array check - [] is truthy so must check length explicitly
     const scaffoldLocs = (scaffold.locations || scaffold.main_locations || []).map(normalizeLocation);
-    const existingLocs = outline.main_locations || [];
+    const existingLocs = (Array.isArray(outline.main_locations) && outline.main_locations.length > 0)
+      ? outline.main_locations
+      : [];
     if (scaffoldLocs.length > existingLocs.length) {
       outline.main_locations = scaffoldLocs;
     }

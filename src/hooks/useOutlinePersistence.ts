@@ -162,7 +162,11 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         const outlineParts = data.outline_parts as Record<string, any> | null;
         
         // V6: Enhanced reconstruction - handle scaffold-only case + chunks
-        if ((!outlineJson || Object.keys(outlineJson).length === 0) && outlineParts) {
+        // V9: Also reconstruct if main_characters is empty array but scaffold has cast
+        const jsonNeedsEnrichment = !outlineJson 
+          || Object.keys(outlineJson).length === 0
+          || (Array.isArray((outlineJson as any).main_characters) && (outlineJson as any).main_characters.length === 0 && outlineParts?.film_scaffold?.data?.cast?.length > 0);
+        if (jsonNeedsEnrichment && outlineParts) {
           const scaffold = outlineParts.film_scaffold?.data;
           const actI = outlineParts.expand_act_i?.data;
           const actII = outlineParts.expand_act_ii?.data;
@@ -218,17 +222,19 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         
         // V8: Normalize outline fields + ensure descriptions are always populated
         // Uses centralised normalizeOutlineForDisplay to handle want/need/flaw -> description
+        // V9: Fixed empty array fallback - [] is truthy so we must check .length > 0
+        const rawChars = (outlineJson as any).main_characters;
+        const rawLocs = (outlineJson as any).main_locations;
         const normalizedOutlineJson = normalizeOutlineForDisplay({
           ...outlineJson,
-          // Map cast → main_characters (fallback chain) - normalizeOutlineForDisplay handles this too
-          main_characters: (outlineJson as any).main_characters 
-            || (outlineJson as any).cast 
-            || (outlineJson as any).characters 
-            || [],
-          // Map locations → main_locations
-          main_locations: (outlineJson as any).main_locations 
-            || (outlineJson as any).locations 
-            || [],
+          // V9: Explicit length check to fix empty array fallback bug
+          main_characters: (Array.isArray(rawChars) && rawChars.length > 0)
+            ? rawChars
+            : ((outlineJson as any).cast || (outlineJson as any).characters || []),
+          // V9: Same fix for locations
+          main_locations: (Array.isArray(rawLocs) && rawLocs.length > 0)
+            ? rawLocs
+            : ((outlineJson as any).locations || []),
         });
         
         const outline: PersistedOutline = {
