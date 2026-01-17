@@ -1384,18 +1384,34 @@ serve(async (req) => {
     }
 
     // =========================================================================
-    // V13: FORMAT GATE - FILM cannot have series artifacts
+    // V14: FORMAT GATE - FILM cannot have series artifacts (with acts-in-disguise detection)
     // Pre-Bible check: use request format only (bible not yet loaded)
     // =========================================================================
     const formatUpper = (format || 'SERIES').toUpperCase();
     if (formatUpper === 'FILM' || formatUpper === 'PELÍCULA' || formatUpper === 'PELICULA') {
       const outlineBlob = JSON.stringify(effectiveOutline ?? {});
-      const hasSeriesArtifacts = 
+      
+      // V14: Detect if "episodes" are actually acts in disguise (legacy format)
+      // This happens when the outline was created with acts stored as episodes
+      const episodesArray = effectiveOutline?.episodes || [];
+      const episodesAreActsInDisguise = Array.isArray(episodesArray) && episodesArray.length > 0 &&
+        episodesArray.every((ep: any) => 
+          /^acto\s+(i|ii|iii|iv|1|2|3|4)/i.test(ep?.title || '') ||
+          /^act\s+(i|ii|iii|iv|1|2|3|4)/i.test(ep?.title || '')
+        );
+      
+      if (episodesAreActsInDisguise) {
+        console.log('[generate-script] FORMAT_GATE: Episodes detected as acts in disguise, allowing FILM generation');
+      }
+      
+      // Only flag as series artifacts if episodes are NOT acts in disguise
+      const hasSeriesArtifacts = !episodesAreActsInDisguise && (
         /"episodes?":/i.test(outlineBlob) || 
         /season_episodes/i.test(outlineBlob) || 
         /season_arc/i.test(outlineBlob) ||
         /episode_beats/i.test(outlineBlob) ||
-        /episode_number/i.test(outlineBlob);
+        /episode_number/i.test(outlineBlob)
+      );
         
       if (hasSeriesArtifacts) {
         console.warn('[generate-script] FORMAT_GATE_FAILED: FILM contains series artifacts');
