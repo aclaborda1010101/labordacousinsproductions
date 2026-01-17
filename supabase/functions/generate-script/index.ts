@@ -1349,7 +1349,15 @@ serve(async (req) => {
     const isRepairAttempt = request.isRepairAttempt || false;
     
     if (effectiveOutline && !isRepairAttempt) {
-      const densityProfile = getDensityProfile(format || 'serie_drama');
+      // V11.3: Map format to correct density profile (consistent with density-precheck)
+      const formatLower = (format || '').toLowerCase();
+      let densityProfileName: string = format || 'serie_drama';
+      if (formatLower.includes('film') || formatLower.includes('pelicula') || formatLower.includes('película')) {
+        densityProfileName = 'pelicula_90min';
+      } else if (formatLower.includes('short') || formatLower.includes('corto')) {
+        densityProfileName = 'corto';
+      }
+      const densityProfile = getDensityProfile(densityProfileName);
       const densityCheck = validateDensity(effectiveOutline, densityProfile);
       
       if (densityCheck.status === 'FAIL') {
@@ -1409,14 +1417,29 @@ serve(async (req) => {
         console.log('[generate-script] FORMAT_GATE: Episodes detected as acts in disguise, allowing FILM generation');
       }
       
-      // Only flag as series artifacts if episodes are NOT acts in disguise
-      const hasSeriesArtifacts = !episodesAreActsInDisguise && (
-        /"episodes?":/i.test(outlineBlob) || 
+      // V14.2: Only flag as series artifacts if episodes are NOT acts in disguise
+      // AND contain actual series-specific patterns (not just the "episodes" key which FILM uses for acts)
+      let hasSeriesArtifacts = !episodesAreActsInDisguise && (
         /season_episodes/i.test(outlineBlob) || 
         /season_arc/i.test(outlineBlob) ||
         /episode_beats/i.test(outlineBlob) ||
         /episode_number/i.test(outlineBlob)
       );
+      
+      // Only check for "episodes" key if episodes are NOT acts in disguise
+      // and the titles look like real episode titles (not act titles)
+      if (!episodesAreActsInDisguise && !hasSeriesArtifacts && episodesArray.length > 0) {
+        const hasRealEpisodeTitles = episodesArray.some((ep: any) => {
+          const title = (ep?.title || '').toLowerCase();
+          return /episodio\s+\d+/i.test(title) || 
+                 /episode\s+\d+/i.test(title) || 
+                 /capítulo\s+\d+/i.test(title) ||
+                 /cap\.\s*\d+/i.test(title);
+        });
+        if (hasRealEpisodeTitles) {
+          hasSeriesArtifacts = true;
+        }
+      }
         
       if (hasSeriesArtifacts) {
         console.warn('[generate-script] FORMAT_GATE_FAILED: FILM contains series artifacts');
