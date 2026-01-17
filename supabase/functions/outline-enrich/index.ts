@@ -793,6 +793,19 @@ serve(async (req) => {
       || ((!enrichedOutline.episode_beats || enrichedOutline.episode_beats.length === 0) 
           && (enrichedOutline.acts_summary || enrichedOutline._film_structure));
     
+    // V3: CRITICAL - Copy cast → main_characters if main_characters is empty
+    // This prevents the UI from showing 0 characters after enrichment
+    if ((!enrichedOutline.main_characters || enrichedOutline.main_characters.length === 0) 
+        && enrichedOutline.cast?.length > 0) {
+      enrichedOutline.main_characters = enrichedOutline.cast;
+      console.log(`[outline-enrich] V3: Copied ${enrichedOutline.cast.length} characters from cast → main_characters`);
+    }
+    if ((!enrichedOutline.main_locations || enrichedOutline.main_locations.length === 0) 
+        && enrichedOutline.locations?.length > 0) {
+      enrichedOutline.main_locations = enrichedOutline.locations;
+      console.log(`[outline-enrich] V3: Copied ${enrichedOutline.locations.length} locations → main_locations`);
+    }
+    
     // CRITICAL: Normalize turning_points from strings to objects BEFORE saving
     // BUT only for episodic formats - FILM uses _film_structure which we must preserve
     let normalizedOutline;

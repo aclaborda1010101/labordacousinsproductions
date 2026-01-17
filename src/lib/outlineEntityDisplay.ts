@@ -145,14 +145,21 @@ export function normalizeLocation(loc: any): NormalizedLocation {
 export function normalizeOutlineForDisplay(outline: any): any {
   if (!outline) return null;
   
-  // Build main_characters array with normalized descriptions
-  const rawCharacters = outline.main_characters || outline.cast || outline.characters || [];
+  // V2: Build main_characters with STRICT length > 0 check
+  // Empty arrays are truthy, so || doesn't work - we need explicit length check
+  const rawMainChars = outline.main_characters;
+  const rawCharacters = (Array.isArray(rawMainChars) && rawMainChars.length > 0)
+    ? rawMainChars
+    : (outline.cast || outline.characters || []);
   const main_characters = Array.isArray(rawCharacters)
     ? rawCharacters.map(normalizeCharacter)
     : [];
   
-  // Build main_locations array with normalized descriptions
-  const rawLocations = outline.main_locations || outline.locations || [];
+  // V2: Build main_locations with STRICT length > 0 check
+  const rawMainLocs = outline.main_locations;
+  const rawLocations = (Array.isArray(rawMainLocs) && rawMainLocs.length > 0)
+    ? rawMainLocs
+    : (outline.locations || []);
   const main_locations = Array.isArray(rawLocations)
     ? rawLocations.map(normalizeLocation)
     : [];
