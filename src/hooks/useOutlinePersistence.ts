@@ -161,22 +161,57 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         let outlineJson = data.outline_json as Record<string, unknown>;
         const outlineParts = data.outline_parts as Record<string, any> | null;
         
+        // V6: Enhanced reconstruction - handle scaffold-only case + chunks
         if ((!outlineJson || Object.keys(outlineJson).length === 0) && outlineParts) {
           const scaffold = outlineParts.film_scaffold?.data;
           const actI = outlineParts.expand_act_i?.data;
           const actII = outlineParts.expand_act_ii?.data;
           const actIII = outlineParts.expand_act_iii?.data;
           
-          if (scaffold || actI || actII || actIII) {
-            console.log('[useOutlinePersistence] V5: Reconstructing outline_json from outline_parts');
-            const allBeats = [
-              ...(actI?.beats || []),
-              ...(actII?.beats || []),
-              ...(actIII?.beats || []),
-            ];
+          // V6: Collect ALL beats including from chunks
+          const allBeats: any[] = [];
+          
+          // Standard act beats
+          [actI, actII, actIII].forEach(act => {
+            if (act?.beats && Array.isArray(act.beats)) {
+              allBeats.push(...act.beats);
+            }
+          });
+          
+          // V6: Also extract from chunk keys (expand_act_i_chunk_1, etc.)
+          Object.keys(outlineParts)
+            .filter(k => k.includes('_chunk_'))
+            .sort()
+            .forEach(key => {
+              const chunkData = outlineParts[key]?.data || outlineParts[key];
+              if (chunkData?.beats && Array.isArray(chunkData.beats)) {
+                chunkData.beats.forEach((beat: any) => {
+                  const exists = allBeats.some(
+                    existing => existing.title === beat.title && existing.description === beat.description
+                  );
+                  if (!exists) allBeats.push(beat);
+                });
+              }
+            });
+          
+          // V6: Reconstruct if we have EITHER scaffold OR acts (scaffold-only is valid!)
+          if (scaffold || actI || actII || actIII || allBeats.length > 0) {
+            console.log('[useOutlinePersistence] V6: Reconstructing outline_json from outline_parts', {
+              hasScaffold: !!scaffold,
+              hasActs: !!(actI || actII || actIII),
+              beatsCount: allBeats.length
+            });
+            
+            // V6: Use scaffold data even without expanded acts
             outlineJson = { 
-              ...scaffold, 
-              beats: allBeats.length > 0 ? allBeats : scaffold?.beats || [] 
+              ...(scaffold || {}),
+              // Ensure main_characters is populated from scaffold.cast
+              main_characters: scaffold?.cast || scaffold?.main_characters || [],
+              main_locations: scaffold?.locations || scaffold?.main_locations || [],
+              acts_summary: scaffold?.acts_summary,
+              beats: allBeats.length > 0 ? allBeats : scaffold?.beats || [],
+              // Preserve format
+              format: scaffold?.format || 'FILM',
             };
           }
         }

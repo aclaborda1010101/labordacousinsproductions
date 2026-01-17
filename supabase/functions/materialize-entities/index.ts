@@ -13,6 +13,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { requireAuthOrDemo, requireProjectAccess, authErrorResponse, type AuthContext } from "../_shared/auth.ts";
+import { buildScriptOutlineFromRecord, hasUsableOutlineData } from "../_shared/build-script-outline.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -341,47 +342,9 @@ serve(async (req) => {
         );
       }
       
-      // V3: ROBUST RECONSTRUCTION - Always try to extract from outline_parts first
-      let outlineJson = outlineData?.outline_json as Record<string, any> | null;
-      const outlineParts = outlineData?.outline_parts as Record<string, any> | null;
-      
-      // V3: Check if outline_json is missing key entity data (cast/locations)
-      const outlineJsonHasCast = Array.isArray((outlineJson as any)?.cast) && (outlineJson as any)?.cast.length > 0 ||
-                                  Array.isArray((outlineJson as any)?.main_characters) && (outlineJson as any)?.main_characters.length > 0;
-      const outlineJsonHasLocs = Array.isArray((outlineJson as any)?.locations) && (outlineJson as any)?.locations.length > 0 ||
-                                  Array.isArray((outlineJson as any)?.main_locations) && (outlineJson as any)?.main_locations.length > 0;
-      
-      // V3: Reconstruct/merge from outline_parts if outline_json is missing OR lacks entities
-      if (outlineParts) {
-        const scaffold = outlineParts.film_scaffold?.data;
-        if (scaffold) {
-          const scaffoldCast = scaffold.cast || scaffold.main_characters || [];
-          const scaffoldLocs = scaffold.locations || scaffold.main_locations || [];
-          
-          // Merge scaffold data into outlineJson
-          if (!outlineJson || Object.keys(outlineJson).length === 0) {
-            console.log('[materialize-entities] V3: Reconstructing outline from film_scaffold');
-            outlineJson = {
-              ...scaffold,
-              main_characters: scaffoldCast,
-              main_locations: scaffoldLocs,
-            };
-          } else if (!outlineJsonHasCast || !outlineJsonHasLocs) {
-            console.log('[materialize-entities] V3: Merging scaffold entities into incomplete outline_json');
-            outlineJson = {
-              ...outlineJson,
-              main_characters: outlineJsonHasCast ? (outlineJson as any).main_characters || (outlineJson as any).cast : scaffoldCast,
-              main_locations: outlineJsonHasLocs ? (outlineJson as any).main_locations || (outlineJson as any).locations : scaffoldLocs,
-              // Also copy title/logline if missing
-              title: (outlineJson as any).title || scaffold.title,
-              logline: (outlineJson as any).logline || scaffold.logline,
-            };
-          }
-        }
-      }
-      
-      // V3: Check if we have ANYTHING to work with
-      if (!outlineJson || Object.keys(outlineJson).length === 0) {
+      // V4: Use canonical reconstruction function for robustness
+      // This handles stalled/failed outlines with valid outline_parts
+      if (!hasUsableOutlineData({ outline_json: outlineData?.outline_json, outline_parts: outlineData?.outline_parts })) {
         return new Response(
           JSON.stringify({ 
             error: 'NO_OUTLINE_FOUND', 
@@ -393,8 +356,32 @@ serve(async (req) => {
         );
       }
       
-      outline = outlineJson;
-      sourceDescription = `outline (${outlineData?.status}, quality: ${outlineData?.quality || 'unknown'})`;
+      // V4: Reconstruct outline using shared function
+      const reconstructed = buildScriptOutlineFromRecord({
+        outline_json: outlineData?.outline_json,
+        outline_parts: outlineData?.outline_parts,
+        status: outlineData?.status
+      });
+      
+      if (!reconstructed) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'OUTLINE_NOT_READY', 
+            message: 'El outline no tiene suficientes datos. Espera a que complete la generación.',
+            actionable: true,
+            suggestedAction: 'wait_or_resume'
+          }),
+          { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Map reconstructed ScriptOutline to extraction format
+      outline = {
+        ...reconstructed,
+        cast: reconstructed.main_characters,
+        locations: reconstructed.main_locations,
+      };
+      sourceDescription = `outline (${outlineData?.status}, source: ${reconstructed._source || 'RECONSTRUCTED'})`;
       
     } else if (source === 'script_breakdown') {
       // Fetch from scripts.parsed_json

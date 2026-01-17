@@ -11,6 +11,8 @@ import { resolveNarrativeProfile, buildNarrativeProfilePromptBlock, type Narrati
 import { buildIntelligentRepairPrompt, SITUATION_DETAIL_REQUIREMENT } from "../_shared/repair-prompts.ts";
 // V13: Genericity validation for Hollywood-grade scripts
 import { validateGenericity } from "../_shared/anti-generic.ts";
+// V4: Canonical outline reconstruction
+import { buildScriptOutlineFromRecord, formatActsSummaryForPrompt, type ScriptOutline } from "../_shared/build-script-outline.ts";
 import { 
   buildBatchPlan, 
   buildStateBlock, 
@@ -1275,13 +1277,65 @@ serve(async (req) => {
       );
     }
 
+    // =========================================================================
+    // V4: OUTLINE RECONSTRUCTION - If outline is empty/incomplete, reconstruct from DB
+    // =========================================================================
+    let effectiveOutline = outline;
+    let outlineSource = 'REQUEST';
+    
+    const outlineIsEmpty = !outline || Object.keys(outline).length === 0;
+    const outlineLacksContext = outline && !outline.logline && !outline.acts_summary && 
+      (!outline.beats || outline.beats.length === 0) &&
+      (!outline.main_characters || outline.main_characters.length === 0);
+    
+    if ((outlineIsEmpty || outlineLacksContext) && projectId) {
+      console.log('[generate-script] V4: Outline empty/incomplete, attempting reconstruction from DB', {
+        isEmpty: outlineIsEmpty,
+        lacksContext: outlineLacksContext
+      });
+      
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const adminClient = createClient(supabaseUrl, serviceRoleKey);
+      
+      const { data: outlineRecord } = await adminClient
+        .from('project_outlines')
+        .select('outline_json, outline_parts, status, density_targets')
+        .eq('project_id', projectId)
+        .in('status', ['completed', 'approved', 'generating', 'stalled', 'failed', 'timeout'])
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (outlineRecord) {
+        const reconstructed = buildScriptOutlineFromRecord(outlineRecord);
+        if (reconstructed) {
+          effectiveOutline = reconstructed;
+          outlineSource = reconstructed._source || 'RECONSTRUCTED';
+          console.log('[generate-script] V4: Outline reconstructed:', {
+            source: outlineSource,
+            chars: reconstructed.main_characters?.length,
+            locs: reconstructed.main_locations?.length,
+            beats: reconstructed.beats?.length,
+            hasActsSummary: !!reconstructed.acts_summary,
+            hasValidNarrativeContext: reconstructed._hasValidNarrativeContext
+          });
+        } else {
+          console.warn('[generate-script] V4: Reconstruction returned null, continuing with original outline');
+        }
+      } else {
+        console.warn('[generate-script] V4: No outline record found in DB for project:', projectId);
+      }
+    }
+
     const config = TIER_CONFIGS[qualityTier as QualityTier] || TIER_CONFIGS.profesional;
     
-    console.log('[generate-script] v3.1 CANONICAL ROUTER + BIBLE:', {
+    console.log('[generate-script] v4.0 CANONICAL ROUTER + BIBLE:', {
       qualityTier,
       provider: config.provider,
       model: config.apiModel,
-      hasOutline: !!outline,
+      hasOutline: !!effectiveOutline,
+      outlineSource,
       episodeNumber,
       batchIndex,
       scenesPerBatch,
@@ -1294,9 +1348,9 @@ serve(async (req) => {
     // =========================================================================
     const isRepairAttempt = request.isRepairAttempt || false;
     
-    if (outline && !isRepairAttempt) {
+    if (effectiveOutline && !isRepairAttempt) {
       const densityProfile = getDensityProfile(format || 'serie_drama');
-      const densityCheck = validateDensity(outline, densityProfile);
+      const densityCheck = validateDensity(effectiveOutline, densityProfile);
       
       if (densityCheck.status === 'FAIL') {
         console.warn('[generate-script] DENSITY_GATE_FAILED:', {
@@ -1335,7 +1389,7 @@ serve(async (req) => {
     // =========================================================================
     const formatUpper = (format || 'SERIES').toUpperCase();
     if (formatUpper === 'FILM' || formatUpper === 'PELÍCULA' || formatUpper === 'PELICULA') {
-      const outlineBlob = JSON.stringify(outline ?? {});
+      const outlineBlob = JSON.stringify(effectiveOutline ?? {});
       const hasSeriesArtifacts = 
         /"episodes?":/i.test(outlineBlob) || 
         /season_episodes/i.test(outlineBlob) || 
@@ -1366,8 +1420,8 @@ serve(async (req) => {
     // =========================================================================
     // V13: PRE-GENERATION GENERICITY CHECK (cheap, prevents garbage)
     // =========================================================================
-    if (outline && !isRepairAttempt) {
-      const genPre = validateGenericity(outline);
+    if (effectiveOutline && !isRepairAttempt) {
+      const genPre = validateGenericity(effectiveOutline);
       
       if (genPre.status === 'FAIL') {
         console.warn('[generate-script] GENERICITY_GATE_FAILED:', {
@@ -1469,15 +1523,15 @@ serve(async (req) => {
         }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
       
-      // Filter to relevant entities
-      filteredBible = filterBibleToRelevant(bible, outline, episodeNumber);
+      // Filter to relevant entities - use effectiveOutline for better name extraction
+      filteredBible = filterBibleToRelevant(bible, effectiveOutline, episodeNumber);
       
       // Build the Story Bible block
       storyBibleBlock = buildStoryBibleBlock(
         bible.project,
         filteredBible.characters,
         filteredBible.locations,
-        outline
+        effectiveOutline
       );
       
       // Count P0/P1 for logging
@@ -1535,7 +1589,7 @@ serve(async (req) => {
     // If outline.idea contains a screenplay with sluglines/dialogue, adapt it
     // instead of generating from scratch
     // =======================================================================
-    const sourceText = outline?.idea?.trim() || '';
+    const sourceText = effectiveOutline?.idea?.trim() || '';
     // V11.2 FIX: Detect sluglines with or without markdown bold (**INT. or INT.)
     const hasScreenplayMarkers = 
       sourceText && 
@@ -1561,9 +1615,9 @@ serve(async (req) => {
     // =======================================================================
     let episodeContract: EpisodeContract | null = null;
     
-    if (outline && episodeNumber !== undefined && batchIndex !== undefined) {
+    if (effectiveOutline && episodeNumber !== undefined && batchIndex !== undefined) {
       // BATCH MODE: Generating scenes from outline with CONTRACT ENFORCEMENT
-      const episodeBeat = outline.episode_beats?.[episodeNumber - 1];
+      const episodeBeat = effectiveOutline.episode_beats?.[episodeNumber - 1];
       const episodeTitle = episodeBeat?.title || `Episodio ${episodeNumber}`;
       const episodeSummary = episodeBeat?.summary || '';
       
@@ -1571,7 +1625,7 @@ serve(async (req) => {
       // V11: Extract episode contract (non-negotiable structural requirements)
       // =====================================================================
       try {
-        episodeContract = extractEpisodeContract(outline, episodeNumber);
+        episodeContract = extractEpisodeContract(effectiveOutline, episodeNumber);
         console.log('[generate-script] Contract extracted:', {
           episode: episodeNumber,
           threads: episodeContract.threads_required.length,
@@ -1585,37 +1639,42 @@ serve(async (req) => {
       
       // Build outline context
       let outlineContext = '';
-      if (outline.logline) outlineContext += `\nLOGLINE: ${outline.logline}`;
-      if (outline.synopsis) outlineContext += `\nSINOPSIS: ${outline.synopsis}`;
+      if (effectiveOutline.logline) outlineContext += `\nLOGLINE: ${effectiveOutline.logline}`;
+      if (effectiveOutline.synopsis) outlineContext += `\nSINOPSIS: ${effectiveOutline.synopsis}`;
+      
+      // V4: Inject acts_summary if no beats but have act structure (for FILM)
+      if (effectiveOutline.acts_summary && (!effectiveOutline.beats || effectiveOutline.beats.length === 0)) {
+        outlineContext += '\n\n' + formatActsSummaryForPrompt(effectiveOutline.acts_summary);
+      }
       
       // Main characters from outline (not in Bible block already)
-      if (outline.main_characters?.length && !projectId) {
-        outlineContext += `\n\n=== PERSONAJES (${outline.main_characters.length}) ===`;
-        outline.main_characters.forEach((char: any) => {
-          outlineContext += `\n• ${char.name} (${char.role || 'supporting'}): ${char.description || ''}`;
+      if (effectiveOutline.main_characters?.length && !projectId) {
+        outlineContext += `\n\n=== PERSONAJES (${effectiveOutline.main_characters.length}) ===`;
+        effectiveOutline.main_characters.forEach((char: any) => {
+          outlineContext += `\n• ${char.name} (${char.role || 'supporting'}): ${char.description || char.bio || ''}`;
         });
       }
       
       // Main locations from outline (not in Bible block already)
-      if (outline.main_locations?.length && !projectId) {
-        outlineContext += `\n\n=== LOCACIONES (${outline.main_locations.length}) ===`;
-        outline.main_locations.forEach((loc: any) => {
+      if (effectiveOutline.main_locations?.length && !projectId) {
+        outlineContext += `\n\n=== LOCACIONES (${effectiveOutline.main_locations.length}) ===`;
+        effectiveOutline.main_locations.forEach((loc: any) => {
           outlineContext += `\n• ${loc.name}: ${loc.description || ''}`;
         });
       }
       
       // Props
-      if (outline.main_props?.length) {
+      if (effectiveOutline.main_props?.length) {
         outlineContext += `\n\n=== PROPS ===`;
-        outline.main_props.slice(0, 8).forEach((prop: any) => {
+        effectiveOutline.main_props.slice(0, 8).forEach((prop: any) => {
           outlineContext += `\n• ${prop.name}: ${prop.description || ''} - ${prop.narrative_function || ''}`;
         });
       }
       
       // Subplots (legacy - now using threads)
-      if (outline.subplots?.length && !outline.threads?.length) {
+      if (effectiveOutline.subplots?.length && !effectiveOutline.threads?.length) {
         outlineContext += `\n\n=== SUBTRAMAS ===`;
-        outline.subplots.forEach((subplot: any) => {
+        effectiveOutline.subplots.forEach((subplot: any) => {
           outlineContext += `\n• ${subplot.name}: ${subplot.description || ''}`;
         });
       }
