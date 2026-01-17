@@ -55,17 +55,33 @@ serve(async (req) => {
 
     console.log('[density-precheck] Starting for project:', projectId);
 
-    // Fetch the project outline (accept 'completed' or 'approved' status)
+    // Fetch the project outline (accept 'completed', 'approved', 'stalled', 'generating' status)
+    // V2: Also fetch outline_parts for partial recovery when outline_json is empty
     const { data: outlineData, error: outlineError } = await supabase
       .from('project_outlines')
-      .select('outline_json')
+      .select('outline_json, outline_parts')
       .eq('project_id', projectId)
-      .in('status', ['completed', 'approved'])
+      .in('status', ['completed', 'approved', 'stalled', 'generating'])
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
-    if (outlineError || !outlineData?.outline_json) {
+    // V2: Check if outline_json is empty but outline_parts has data (partial recovery)
+    let effectiveOutline = outlineData?.outline_json as Record<string, unknown> | null;
+    const outlineParts = outlineData?.outline_parts as Record<string, unknown> | null;
+    
+    // If outline_json is empty or null, try to recover from outline_parts
+    if (!effectiveOutline || Object.keys(effectiveOutline).length === 0) {
+      if (outlineParts?.film_scaffold) {
+        console.log('[density-precheck] Recovering outline from film_scaffold in outline_parts');
+        effectiveOutline = outlineParts.film_scaffold as Record<string, unknown>;
+      } else if (outlineParts?.light_outline) {
+        console.log('[density-precheck] Recovering outline from light_outline in outline_parts');
+        effectiveOutline = outlineParts.light_outline as Record<string, unknown>;
+      }
+    }
+
+    if (outlineError || !effectiveOutline || Object.keys(effectiveOutline).length === 0) {
       console.error('[density-precheck] Outline fetch error:', outlineError);
       return new Response(
         JSON.stringify({ 
@@ -104,9 +120,8 @@ serve(async (req) => {
     
     console.log('[density-precheck] Using profile:', profileName, profile);
 
-    // Run validation
-    const outline = outlineData.outline_json as Record<string, unknown>;
-    const checkResult = validateDensity(outline, profile);
+    // Run validation - use effectiveOutline which may have been recovered from outline_parts
+    const checkResult = validateDensity(effectiveOutline, profile);
 
     console.log('[density-precheck] Result:', {
       status: checkResult.status,
