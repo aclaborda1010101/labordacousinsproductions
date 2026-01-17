@@ -207,6 +207,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
             });
             
             // V6: Use scaffold data even without expanded acts
+            // V10: Also preserve _film_structure and acts_summary for FILM projects
             outlineJson = { 
               ...(scaffold || {}),
               // Ensure main_characters is populated from scaffold.cast
@@ -216,8 +217,24 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
               beats: allBeats.length > 0 ? allBeats : scaffold?.beats || [],
               // Preserve format
               format: scaffold?.format || 'FILM',
+              // V10: Preserve _film_structure from outline_json if exists (FILM projects)
+              _film_structure: (data.outline_json as any)?._film_structure || null,
             };
           }
+        }
+        
+        // V10: FILM - Ensure acts_summary comes from scaffold if missing in outline_json
+        const scaffoldActsSummary = outlineParts?.film_scaffold?.data?.acts_summary;
+        if (scaffoldActsSummary && !(outlineJson as any)?.acts_summary) {
+          (outlineJson as any).acts_summary = scaffoldActsSummary;
+          console.log('[useOutlinePersistence] V10: Copied acts_summary from scaffold');
+        }
+        
+        // V10: FILM - Preserve _film_structure from original outline_json
+        const originalFilmStructure = (data.outline_json as any)?._film_structure;
+        if (originalFilmStructure && !(outlineJson as any)?._film_structure) {
+          (outlineJson as any)._film_structure = originalFilmStructure;
+          console.log('[useOutlinePersistence] V10: Preserved _film_structure from outline_json');
         }
         
         // V8: Normalize outline fields + ensure descriptions are always populated
