@@ -618,6 +618,15 @@ serve(async (req) => {
     const actualOutlineId = outlineRecord.id;
 
     const outline = outlineRecord.outline_json as any;
+    const outlineParts = outlineRecord.outline_parts as any;
+    
+    // V4: CRITICAL - For FILM, copy acts_summary from scaffold if missing
+    // This prevents the UI from showing empty acts after enrichment
+    const scaffoldActsSummary = outlineParts?.film_scaffold?.data?.acts_summary;
+    if (scaffoldActsSummary && !outline.acts_summary) {
+      outline.acts_summary = scaffoldActsSummary;
+      console.log('[outline-enrich] V4: Copied acts_summary from film_scaffold →', Object.keys(scaffoldActsSummary));
+    }
     
     // Update status to enriching
     await supabase
