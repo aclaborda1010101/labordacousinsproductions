@@ -1391,14 +1391,19 @@ serve(async (req) => {
     if (formatUpper === 'FILM' || formatUpper === 'PELÍCULA' || formatUpper === 'PELICULA') {
       const outlineBlob = JSON.stringify(effectiveOutline ?? {});
       
-      // V14: Detect if "episodes" are actually acts in disguise (legacy format)
-      // This happens when the outline was created with acts stored as episodes
+      // V14.1: Detect if "episodes" are actually acts in disguise (legacy format)
+      // Check both title pattern AND explicit 'act' field
       const episodesArray = effectiveOutline?.episodes || [];
       const episodesAreActsInDisguise = Array.isArray(episodesArray) && episodesArray.length > 0 &&
-        episodesArray.every((ep: any) => 
-          /^acto\s+(i|ii|iii|iv|1|2|3|4)/i.test(ep?.title || '') ||
-          /^act\s+(i|ii|iii|iv|1|2|3|4)/i.test(ep?.title || '')
-        );
+        episodesArray.every((ep: any) => {
+          const title = ep?.title || '';
+          const actField = ep?.act || '';
+          // Check title starts with "Acto" or has act field like "I", "II", "III", "II_A", etc.
+          const titleIsAct = /acto\s+(i|ii|iii|iv|1|2|3|4)/i.test(title) || 
+                             /^act\s+(i|ii|iii|iv|1|2|3|4)/i.test(title);
+          const hasActField = /^(I|II|III|IV|1|2|3|4)([-_]?[AB])?$/i.test(actField);
+          return titleIsAct || hasActField;
+        });
       
       if (episodesAreActsInDisguise) {
         console.log('[generate-script] FORMAT_GATE: Episodes detected as acts in disguise, allowing FILM generation');
