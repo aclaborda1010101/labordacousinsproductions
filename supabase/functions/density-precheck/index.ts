@@ -58,7 +58,7 @@ serve(async (req) => {
     // Fetch the project outline
     const { data: outlineData, error: outlineError } = await supabase
       .from('project_outlines')
-      .select('outline_json, version')
+      .select('outline_json')
       .eq('project_id', projectId)
       .eq('status', 'completed')
       .order('created_at', { ascending: false })

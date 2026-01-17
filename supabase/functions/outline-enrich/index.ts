@@ -628,11 +628,11 @@ serve(async (req) => {
       console.log('[outline-enrich] V4: Copied acts_summary from film_scaffold →', Object.keys(scaffoldActsSummary));
     }
     
-    // Update status to enriching
+    // Update status to generating (enriching stage)
     await supabase
       .from('project_outlines')
       .update({ 
-        status: 'enriching',
+        status: 'generating',
         stage: 'enriching',
         progress: 10
       })
