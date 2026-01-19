@@ -316,13 +316,16 @@ export default function KeyframeManager({
     setGenerating(`slot-${slotIndex}`);
     try {
       // Get project_id from shot -> scene -> project
-      const { data: shotData } = await supabase
+      const { data: shotData, error: shotError } = await supabase
         .from('shots')
         .select('scene_id, scenes(project_id)')
         .eq('id', shotId)
         .single();
       
-      const fetchedProjectId = (shotData?.scenes as any)?.project_id || 'unknown';
+      const fetchedProjectId = (shotData?.scenes as any)?.project_id;
+      if (!fetchedProjectId) {
+        throw new Error('No se pudo obtener el project_id del shot. Verifica que el shot esté asociado a una escena válida.');
+      }
       setProjectId(fetchedProjectId); // Store for canon modal
 
       const payload = buildGenerationPayload(slotIndex, fetchedProjectId, parentRunId);
