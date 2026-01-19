@@ -3457,6 +3457,7 @@ export type Database = {
           camera_beat: string | null
           created_at: string
           duration_sec: number | null
+          end_frame_image_url: string | null
           end_sec: number
           generation_run_id: string | null
           id: string
@@ -3464,10 +3465,12 @@ export type Database = {
           keyframe_initial_id: string | null
           keyframe_pipeline_status: string | null
           motion_notes: string | null
+          negative_prompt: string | null
           project_id: string
           prompt_text: string | null
           qc_issues: Json | null
           quality_score: number | null
+          seed: number | null
           sequence_no: number
           shot_id: string
           start_sec: number
@@ -3481,6 +3484,7 @@ export type Database = {
           camera_beat?: string | null
           created_at?: string
           duration_sec?: number | null
+          end_frame_image_url?: string | null
           end_sec: number
           generation_run_id?: string | null
           id?: string
@@ -3488,10 +3492,12 @@ export type Database = {
           keyframe_initial_id?: string | null
           keyframe_pipeline_status?: string | null
           motion_notes?: string | null
+          negative_prompt?: string | null
           project_id: string
           prompt_text?: string | null
           qc_issues?: Json | null
           quality_score?: number | null
+          seed?: number | null
           sequence_no: number
           shot_id: string
           start_sec?: number
@@ -3505,6 +3511,7 @@ export type Database = {
           camera_beat?: string | null
           created_at?: string
           duration_sec?: number | null
+          end_frame_image_url?: string | null
           end_sec?: number
           generation_run_id?: string | null
           id?: string
@@ -3512,10 +3519,12 @@ export type Database = {
           keyframe_initial_id?: string | null
           keyframe_pipeline_status?: string | null
           motion_notes?: string | null
+          negative_prompt?: string | null
           project_id?: string
           prompt_text?: string | null
           qc_issues?: Json | null
           quality_score?: number | null
+          seed?: number | null
           sequence_no?: number
           shot_id?: string
           start_sec?: number
@@ -5060,6 +5069,7 @@ export type Database = {
           camera_position: Json | null
           camera_rotation: Json | null
           constraints: Json | null
+          continuity_anchor_image_url: string | null
           continuity_lock: Json | null
           continuity_notes: string | null
           coverage_type: string | null
@@ -5079,7 +5089,9 @@ export type Database = {
           keyframe_hints: Json | null
           lighting: Json | null
           name: string | null
+          output_video_url: string | null
           prompt_json: Json | null
+          provider_preference: string | null
           render_status: string | null
           scene_id: string
           shot_no: number
@@ -5087,6 +5099,7 @@ export type Database = {
           sound_plan: Json | null
           story_purpose: string | null
           storyboard_panel_id: string | null
+          style_lock: Json | null
           technical_overrides: Json | null
           technical_shot_idx: number | null
           timing_config: Json | null
@@ -5110,6 +5123,7 @@ export type Database = {
           camera_position?: Json | null
           camera_rotation?: Json | null
           constraints?: Json | null
+          continuity_anchor_image_url?: string | null
           continuity_lock?: Json | null
           continuity_notes?: string | null
           coverage_type?: string | null
@@ -5129,7 +5143,9 @@ export type Database = {
           keyframe_hints?: Json | null
           lighting?: Json | null
           name?: string | null
+          output_video_url?: string | null
           prompt_json?: Json | null
+          provider_preference?: string | null
           render_status?: string | null
           scene_id: string
           shot_no: number
@@ -5137,6 +5153,7 @@ export type Database = {
           sound_plan?: Json | null
           story_purpose?: string | null
           storyboard_panel_id?: string | null
+          style_lock?: Json | null
           technical_overrides?: Json | null
           technical_shot_idx?: number | null
           timing_config?: Json | null
@@ -5160,6 +5177,7 @@ export type Database = {
           camera_position?: Json | null
           camera_rotation?: Json | null
           constraints?: Json | null
+          continuity_anchor_image_url?: string | null
           continuity_lock?: Json | null
           continuity_notes?: string | null
           coverage_type?: string | null
@@ -5179,7 +5197,9 @@ export type Database = {
           keyframe_hints?: Json | null
           lighting?: Json | null
           name?: string | null
+          output_video_url?: string | null
           prompt_json?: Json | null
+          provider_preference?: string | null
           render_status?: string | null
           scene_id?: string
           shot_no?: number
@@ -5187,6 +5207,7 @@ export type Database = {
           sound_plan?: Json | null
           story_purpose?: string | null
           storyboard_panel_id?: string | null
+          style_lock?: Json | null
           technical_overrides?: Json | null
           technical_shot_idx?: number | null
           timing_config?: Json | null
@@ -6163,6 +6184,7 @@ export type Database = {
           camera_beat: string | null
           created_at: string
           duration_sec: number | null
+          end_frame_image_url: string | null
           end_sec: number
           generation_run_id: string | null
           id: string
@@ -6170,10 +6192,12 @@ export type Database = {
           keyframe_initial_id: string | null
           keyframe_pipeline_status: string | null
           motion_notes: string | null
+          negative_prompt: string | null
           project_id: string
           prompt_text: string | null
           qc_issues: Json | null
           quality_score: number | null
+          seed: number | null
           sequence_no: number
           shot_id: string
           start_sec: number
