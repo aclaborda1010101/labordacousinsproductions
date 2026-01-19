@@ -315,16 +315,39 @@ export default function KeyframeManager({
 
     setGenerating(`slot-${slotIndex}`);
     try {
-      // Get project_id from shot -> scene -> project
-      const { data: shotData, error: shotError } = await supabase
-        .from('shots')
-        .select('scene_id, scenes(project_id)')
-        .eq('id', shotId)
-        .single();
+      // Get project_id from scene (use sceneId prop if available, otherwise fetch from shot)
+      let fetchedProjectId: string | null = null;
       
-      const fetchedProjectId = (shotData?.scenes as any)?.project_id;
+      if (sceneId) {
+        // Directly query the scene for project_id
+        const { data: sceneData } = await supabase
+          .from('scenes')
+          .select('project_id')
+          .eq('id', sceneId)
+          .single();
+        fetchedProjectId = sceneData?.project_id || null;
+      }
+      
+      // Fallback: try to get from shot -> scene relationship
       if (!fetchedProjectId) {
-        throw new Error('No se pudo obtener el project_id del shot. Verifica que el shot esté asociado a una escena válida.');
+        const { data: shotData } = await supabase
+          .from('shots')
+          .select('scene_id')
+          .eq('id', shotId)
+          .single();
+        
+        if (shotData?.scene_id) {
+          const { data: sceneData } = await supabase
+            .from('scenes')
+            .select('project_id')
+            .eq('id', shotData.scene_id)
+            .single();
+          fetchedProjectId = sceneData?.project_id || null;
+        }
+      }
+      
+      if (!fetchedProjectId) {
+        throw new Error('No se pudo obtener el project_id. Verifica que el shot esté asociado a una escena válida.');
       }
       setProjectId(fetchedProjectId); // Store for canon modal
 
