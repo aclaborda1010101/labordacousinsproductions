@@ -1,5 +1,13 @@
 import { supabase } from '@/integrations/supabase/client';
 
+/**
+ * Validate if a string is a valid UUID v4 format
+ */
+function isUuid(value: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(value);
+}
+
 export interface GenerateRunPayload {
   projectId: string;
   type: 'character' | 'location' | 'keyframe';
@@ -85,6 +93,22 @@ async function logAutoRegenerateEvent(
  * Implements auto-retry (1x) for transient technical failures.
  */
 export async function generateRun(payload: GenerateRunPayload): Promise<GenerateRunResult> {
+  // Validate projectId is a valid UUID before invoking backend
+  if (!payload.projectId || !isUuid(payload.projectId)) {
+    console.error('[generateRun] INVALID projectId', {
+      projectId: payload.projectId,
+      type: payload.type,
+      phase: payload.phase,
+      engine: payload.engine,
+      context: payload.context,
+      params: payload.params
+    });
+    return {
+      ok: false,
+      error: `INVALID_PROJECT_ID: "${payload.projectId}" is not a valid UUID`
+    };
+  }
+
   const executeGeneration = async (isRetry: boolean, parentRunId?: string): Promise<GenerateRunResult> => {
     try {
       const bodyPayload = isRetry 
