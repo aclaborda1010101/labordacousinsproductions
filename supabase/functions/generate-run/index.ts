@@ -37,6 +37,12 @@ interface GenerateRunResponse {
   error?: string;
 }
 
+// UUID validation helper
+function isUuid(value: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(value);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -53,6 +59,19 @@ serve(async (req) => {
       return new Response(JSON.stringify({
         ok: false,
         error: 'Missing required fields: projectId, type, phase, engine, prompt'
+      } as GenerateRunResponse), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 1b) Validate projectId is a valid UUID (not "unknown" or garbage)
+    if (!isUuid(body.projectId)) {
+      console.error('[generate-run] INVALID projectId received:', body.projectId, 'type:', body.type);
+      return new Response(JSON.stringify({
+        ok: false,
+        error: `INVALID_PROJECT_ID: "${body.projectId}" is not a valid UUID`,
+        received: body.projectId
       } as GenerateRunResponse), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
