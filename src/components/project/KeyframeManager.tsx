@@ -99,6 +99,7 @@ interface KeyframeManagerProps {
   sceneSlugline?: string;
   sceneType?: string;
   projectStyle?: { visualStyle?: string; animationType?: string };
+  projectId?: string; // Direct prop to avoid DB lookups
   onKeyframesChange?: (keyframes: Keyframe[]) => void;
 }
 
@@ -117,6 +118,7 @@ export default function KeyframeManager({
   sceneSlugline,
   sceneType,
   projectStyle,
+  projectId: projectIdProp,
   onKeyframesChange
 }: KeyframeManagerProps) {
   const [keyframes, setKeyframes] = useState<Keyframe[]>([]);
@@ -315,41 +317,62 @@ export default function KeyframeManager({
 
     setGenerating(`slot-${slotIndex}`);
     try {
-      // Get project_id from scene (use sceneId prop if available, otherwise fetch from shot)
-      let fetchedProjectId: string | null = null;
+      // Use projectId prop if available, otherwise fall back to state, then DB lookup
+      let fetchedProjectId: string | null = projectIdProp || projectId;
       
-      if (sceneId) {
-        // Directly query the scene for project_id
-        const { data: sceneData } = await supabase
-          .from('scenes')
-          .select('project_id')
-          .eq('id', sceneId)
-          .single();
-        fetchedProjectId = sceneData?.project_id || null;
-      }
-      
-      // Fallback: try to get from shot -> scene relationship
+      // Only query DB if no projectId available from props/state
       if (!fetchedProjectId) {
-        const { data: shotData } = await supabase
-          .from('shots')
-          .select('scene_id')
-          .eq('id', shotId)
-          .single();
+        console.log('[KeyframeManager] No projectId prop, attempting DB lookup...', { shotId, sceneId });
         
-        if (shotData?.scene_id) {
-          const { data: sceneData } = await supabase
+        if (sceneId) {
+          const { data: sceneData, error: sceneError } = await supabase
             .from('scenes')
             .select('project_id')
-            .eq('id', shotData.scene_id)
-            .single();
+            .eq('id', sceneId)
+            .maybeSingle();
+          
+          if (sceneError) {
+            console.error('[KeyframeManager] Failed to fetch scene:', sceneError);
+          }
           fetchedProjectId = sceneData?.project_id || null;
+        }
+        
+        // Fallback: try to get from shot -> scene relationship
+        if (!fetchedProjectId) {
+          const { data: shotData, error: shotError } = await supabase
+            .from('shots')
+            .select('scene_id')
+            .eq('id', shotId)
+            .maybeSingle();
+          
+          if (shotError) {
+            console.error('[KeyframeManager] Failed to fetch shot:', shotError);
+          }
+          
+          if (shotData?.scene_id) {
+            const { data: sceneData, error: sceneError2 } = await supabase
+              .from('scenes')
+              .select('project_id')
+              .eq('id', shotData.scene_id)
+              .maybeSingle();
+            
+            if (sceneError2) {
+              console.error('[KeyframeManager] Failed to fetch scene from shot:', sceneError2);
+            }
+            fetchedProjectId = sceneData?.project_id || null;
+          }
         }
       }
       
       if (!fetchedProjectId) {
+        console.error('[KeyframeManager] Could not resolve projectId', { shotId, sceneId, projectIdProp });
         throw new Error('No se pudo obtener el project_id. Verifica que el shot esté asociado a una escena válida.');
       }
-      setProjectId(fetchedProjectId); // Store for canon modal
+      
+      // Store for canon modal and future use
+      if (!projectId) {
+        setProjectId(fetchedProjectId);
+      }
 
       const payload = buildGenerationPayload(slotIndex, fetchedProjectId, parentRunId);
       if (!payload) throw new Error('Invalid slot');

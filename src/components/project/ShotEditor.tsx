@@ -59,6 +59,7 @@ interface Scene {
   character_ids: string[] | null;
   location_id: string | null;
   time_of_day?: string | null;
+  project_id?: string; // Added for KeyframeManager
 }
 
 interface Character {
@@ -1608,6 +1609,8 @@ export default function ShotEditor({
                 dialogueText: form.dialogue_text,
                 effectiveMode: form.effective_mode
               }}
+              sceneId={scene.id}
+              projectId={(scene as any).project_id}
             />
           </TabsContent>
 
