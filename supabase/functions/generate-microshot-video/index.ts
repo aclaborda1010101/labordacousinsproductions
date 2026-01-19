@@ -1,7 +1,13 @@
 /**
- * GENERATE-MICROSHOT-VIDEO Edge Function
+ * GENERATE-MICROSHOT-VIDEO Edge Function v2
  * Generates video for individual micro-shots using keyframe chaining
- * Supports Kling and Veo engines
+ * Supports Kling (A→B), Runway Gen-3 (A→B), and Veo (chaining only)
+ * 
+ * Features:
+ * - Automatic engine selection based on A→B availability
+ * - Canonical anti-hallucination prompts
+ * - Support for end frame extraction via chaining
+ * - Negative prompt injection
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -14,8 +20,10 @@ const corsHeaders = {
 
 interface MicroShotRequest {
   microShotId: string;
-  engine?: 'kling' | 'veo';
+  engine?: 'kling' | 'runway' | 'veo' | 'auto';
   promptOverride?: string;
+  keyframeUrlOverride?: string;  // For chaining from previous microshot
+  keyframeTailUrlOverride?: string;  // For A→B transition
 }
 
 interface MicroShot {
@@ -32,6 +40,9 @@ interface MicroShot {
   video_engine: string;
   prompt_text: string | null;
   motion_notes: string | null;
+  negative_prompt: string | null;
+  seed: number | null;
+  end_frame_image_url: string | null;
 }
 
 interface Keyframe {
@@ -49,12 +60,22 @@ interface Shot {
   dialogue_text: string | null;
   camera: Record<string, unknown>;
   blocking: Record<string, unknown>;
+  provider_preference: string;
+  style_lock: Record<string, unknown>;
+  continuity_anchor_image_url: string | null;
   scenes: {
     slugline: string;
     summary: string | null;
     project_id: string;
+    style_profile: string | null;
   };
 }
+
+// Canonical negative prompt for all engines
+const CANONICAL_NEGATIVE = 
+  'no face drift, no wardrobe change, no prop change, no new characters, ' +
+  'no text, no logos, no extra limbs, no lighting change, no scene change, ' +
+  'no camera angle change, no style drift, no morphing, no blur artifacts';
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -64,61 +85,97 @@ function json(data: unknown, status = 200) {
 }
 
 /**
- * Build a MINIMAL motion-focused prompt for video generation
- * ANTI-HALLUCINATION v3: Only describe movement, NOT characters or scenery
- * Characters and scenery are already defined in the keyframes
+ * Select the best engine based on A→B availability
  */
-function buildMicroShotPrompt(
+function selectEngine(
+  preferredEngine: string,
+  hasEndFrame: boolean,
+  configuredEngines: string[]
+): 'kling' | 'runway' | 'veo' {
+  // Respect explicit preference
+  if (preferredEngine && preferredEngine !== 'auto') {
+    if (configuredEngines.includes(preferredEngine)) {
+      return preferredEngine as 'kling' | 'runway' | 'veo';
+    }
+  }
+
+  // A→B mode: prioritize Kling > Runway
+  if (hasEndFrame) {
+    if (configuredEngines.includes('kling')) return 'kling';
+    if (configuredEngines.includes('runway')) return 'runway';
+  }
+
+  // Default priority: Kling > Runway > Veo
+  if (configuredEngines.includes('kling')) return 'kling';
+  if (configuredEngines.includes('runway')) return 'runway';
+  return 'veo';
+}
+
+/**
+ * Build a CANONICAL anti-hallucination prompt for video generation
+ * Following the studio's STYLE LOCK / CAMERA LOCK / CONTINUITY pattern
+ */
+function buildCanonicalPrompt(
   microShot: MicroShot,
   shot: Shot,
   _keyframeInitial: Keyframe | null,
   _keyframeFinal: Keyframe | null
-): string {
-  // ============= ANTI-HALLUCINATION PROMPT v3 =============
-  // RULE: NEVER describe characters physically (they're in keyframes)
-  // RULE: NEVER describe scenery/decorado (it's in keyframes)
-  // ONLY: Camera movement + minimal physical action
-  // HARD LINES: Added to prevent drift in Kling/Veo/Runway
-  
-  const lines: string[] = [
-    'Use the provided start and end images as ground truth.',
-    'Create only subtle natural motion connecting them.',
-    'No scene changes. No style changes.',  // HARD LINE anti-drift
-    'Keep identity, wardrobe, props, lighting and storyboard style unchanged.',
-    'No new objects. No new characters. No text overlays.',
-    ''
-  ];
+): { prompt: string; negative: string } {
+  const lines: string[] = [];
 
-  // Movement beat - from microshot or derive from shot
+  // STYLE LOCK
+  const styleName = (shot.style_lock as any)?.name 
+    || shot.scenes?.style_profile 
+    || 'CINEMATIC_CONSISTENT';
+  lines.push(`STYLE LOCK: ${styleName} (mantener estilo constante)`);
+  lines.push('');
+
+  // SCENE LOCK (minimal - keyframes define the scene)
+  const slugline = shot.scenes?.slugline || 'INTERIOR - SCENE';
+  lines.push(`SCENE LOCK: ${slugline}`);
+  lines.push('');
+
+  // CAMERA LOCK
+  const camera = shot.camera as Record<string, unknown> || {};
+  const shotType = shot.shot_type || camera.shot_type || 'MEDIUM';
+  const focalMm = camera.focal_mm || 35;
+  const movement = camera.movement || 'maintain framing';
+  const framing = camera.framing || 'center';
+  const height = camera.height || 'eye-level';
+  
+  lines.push(`CAMERA LOCK: ${shotType}, lens ${focalMm}mm, movement ${movement}, framing ${framing}, camera height ${height}`);
+  lines.push('');
+
+  // LIGHT/FOCUS (from scene or defaults)
+  const lighting = (shot.blocking as any)?.lighting || 'natural ambient';
+  lines.push(`LIGHT/FOCUS: ${lighting}`);
+  lines.push('');
+
+  // ACTION (solo 1 micro-cambio)
   const actionBeat = microShot.motion_notes 
     || (shot.blocking as any)?.action 
     || 'subtle natural movement';
-  
-  lines.push(`Movement: ${actionBeat}`);
+  lines.push(`ACTION: ${actionBeat}`);
+  lines.push('');
 
-  // Camera beat - minimal camera description
-  const camera = shot.camera as Record<string, unknown> || {};
-  let cameraBeat = 'maintain framing';
-  
-  if (camera.movement && camera.movement !== 'Static') {
-    const movement = String(camera.movement).toLowerCase().replace(/_/g, ' ');
-    cameraBeat = movement;
-  }
-  
-  lines.push(`Camera: ${cameraBeat}`);
+  // CONTINUITY ENFORCEMENT
+  lines.push('CONTINUITY: same identities, same clothes, same props, same background, same lighting, no new objects, no camera jump');
+  lines.push('');
 
-  // Duration hint for pacing
+  // GROUND TRUTH
+  lines.push('Use the provided start and end images as ground truth.');
+  lines.push('Create only subtle natural motion connecting them.');
+  lines.push('No scene changes. No style changes.');
   lines.push(`Duration: ${microShot.duration_sec || 2} seconds`);
-
-  // Continuity enforcement
   lines.push('');
-  lines.push('CONTINUITY: Match start/end keyframes exactly. No drift in character appearance, wardrobe, or props.');
   
-  // REDUNDANCIA ÚTIL: repetir ground truth al final para reforzar
-  lines.push('');
-  lines.push('Use start and end images as ground truth.');
+  // REDUNDANCY: repeat ground truth for emphasis
+  lines.push('Match start/end keyframes exactly. No drift in character appearance, wardrobe, or props.');
 
-  return lines.join('\n');
+  return { 
+    prompt: lines.join('\n'), 
+    negative: microShot.negative_prompt || CANONICAL_NEGATIVE 
+  };
 }
 
 serve(async (req) => {
@@ -132,10 +189,26 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { microShotId, engine = 'kling', promptOverride } = await req.json() as MicroShotRequest;
+    const { 
+      microShotId, 
+      engine: requestedEngine = 'auto', 
+      promptOverride,
+      keyframeUrlOverride,
+      keyframeTailUrlOverride
+    } = await req.json() as MicroShotRequest;
 
     if (!microShotId) {
       return json({ ok: false, error: 'microShotId is required' }, 400);
+    }
+
+    // Check configured engines
+    const configuredEngines: string[] = [];
+    if (Deno.env.get('KLING_ACCESS_KEY')) configuredEngines.push('kling');
+    if (Deno.env.get('RUNWAY_API_KEY')) configuredEngines.push('runway');
+    if (Deno.env.get('GCP_SERVICE_ACCOUNT_JSON')) configuredEngines.push('veo');
+
+    if (configuredEngines.length === 0) {
+      return json({ ok: false, error: 'No video engines configured. Set KLING_ACCESS_KEY, RUNWAY_API_KEY, or GCP_SERVICE_ACCOUNT_JSON.' }, 500);
     }
 
     // 1. Fetch micro_shot with related data
@@ -171,8 +244,13 @@ serve(async (req) => {
       keyframeFinal = data;
     }
 
-    // 3. Validate keyframes
-    if (!keyframeInitial?.image_url) {
+    // 3. Determine effective keyframe URLs (with override support for chaining)
+    const effectiveStartUrl = keyframeUrlOverride || keyframeInitial?.image_url;
+    const effectiveTailUrl = keyframeTailUrlOverride || 
+      (keyframeFinal?.approved ? keyframeFinal?.image_url : undefined);
+
+    // 4. Validate start keyframe
+    if (!effectiveStartUrl) {
       return json({ 
         ok: false, 
         error: 'Keyframe inicial no disponible. Genera y aprueba el keyframe primero.',
@@ -180,7 +258,8 @@ serve(async (req) => {
       }, 400);
     }
 
-    if (!keyframeInitial.approved) {
+    // If using original keyframe, check approval
+    if (!keyframeUrlOverride && keyframeInitial && !keyframeInitial.approved) {
       return json({ 
         ok: false, 
         error: 'Keyframe inicial no aprobado. Aprueba el keyframe antes de generar video.',
@@ -188,18 +267,12 @@ serve(async (req) => {
       }, 400);
     }
 
-    // Note: Final keyframe is optional for video generation
-    // but will be used in prompt for motion direction
-    if (keyframeFinal && !keyframeFinal.approved) {
-      console.log('[generate-microshot-video] Warning: Final keyframe not approved, using only initial');
-    }
-
-    // 4. Fetch shot details for prompt building
+    // 5. Fetch shot details for prompt building
     const { data: shot, error: shotError } = await supabase
       .from('shots')
       .select(`
         *,
-        scenes!inner(slugline, summary, project_id)
+        scenes!inner(slugline, summary, project_id, style_profile)
       `)
       .eq('id', microShot.shot_id)
       .single();
@@ -208,79 +281,109 @@ serve(async (req) => {
       return json({ ok: false, error: `Shot not found: ${shotError?.message}` }, 404);
     }
 
-    // 5. Build prompt
-    const prompt = promptOverride || buildMicroShotPrompt(
-      microShot as MicroShot,
-      shot as unknown as Shot,
-      keyframeInitial,
-      keyframeFinal
+    // 6. Select engine (auto-selection or explicit)
+    const hasEndFrame = !!effectiveTailUrl;
+    const shotPreference = shot.provider_preference || 'auto';
+    const selectedEngine = selectEngine(
+      requestedEngine !== 'auto' ? requestedEngine : shotPreference,
+      hasEndFrame,
+      configuredEngines
     );
 
-    // 6. Update micro_shot status to generating
+    console.log(`[generate-microshot-video] Engine selection: ${selectedEngine} (hasEndFrame: ${hasEndFrame}, available: ${configuredEngines.join(',')})`);
+
+    // 7. Build prompt
+    const { prompt, negative } = promptOverride 
+      ? { prompt: promptOverride, negative: microShot.negative_prompt || CANONICAL_NEGATIVE }
+      : buildCanonicalPrompt(
+          microShot as MicroShot,
+          shot as unknown as Shot,
+          keyframeInitial,
+          keyframeFinal
+        );
+
+    // 8. Generate seed if not set
+    const seed = microShot.seed || Math.floor(Math.random() * 2147483647);
+
+    // 9. Update micro_shot status to generating
     await supabase
       .from('micro_shots')
       .update({ 
         video_status: 'generating',
-        video_engine: engine,
-        prompt_text: prompt
+        video_engine: selectedEngine,
+        prompt_text: prompt,
+        negative_prompt: negative,
+        seed: seed
       })
       .eq('id', microShotId);
 
-    // 7. Invoke video generation engine
+    // 10. Invoke video generation engine
     let videoResult: { taskId?: string; operationName?: string; error?: string };
 
-    if (engine === 'kling') {
-      // Pass both keyframes for A→B transition if final is available and approved
-      const tailKeyframeUrl = keyframeFinal?.approved && keyframeFinal?.image_url 
-        ? keyframeFinal.image_url 
-        : undefined;
-      
-      console.log(`[generate-microshot-video] Kling: initial=${!!keyframeInitial?.image_url}, tail=${!!tailKeyframeUrl}`);
+    if (selectedEngine === 'kling') {
+      console.log(`[generate-microshot-video] Kling: start=${!!effectiveStartUrl}, tail=${!!effectiveTailUrl}`);
       
       const { data, error } = await supabase.functions.invoke('kling_start', {
         body: {
           prompt,
           duration: microShot.duration_sec || 2,
-          keyframeUrl: keyframeInitial.image_url,
-          keyframeTailUrl: tailKeyframeUrl,  // Final keyframe for transition
+          keyframeUrl: effectiveStartUrl,
+          keyframeTailUrl: effectiveTailUrl,
           qualityMode: 'CINE'
         }
       });
 
       if (error) {
         console.error('[generate-microshot-video] Kling error:', error);
-        await supabase
-          .from('micro_shots')
-          .update({ video_status: 'failed' })
-          .eq('id', microShotId);
+        await supabase.from('micro_shots').update({ video_status: 'failed' }).eq('id', microShotId);
         return json({ ok: false, error: `Kling error: ${error.message}` }, 500);
       }
-
       videoResult = data;
-    } else if (engine === 'veo') {
+
+    } else if (selectedEngine === 'runway') {
+      console.log(`[generate-microshot-video] Runway: start=${!!effectiveStartUrl}, tail=${!!effectiveTailUrl}`);
+      
+      const { data, error } = await supabase.functions.invoke('runway_start', {
+        body: {
+          prompt,
+          duration: microShot.duration_sec || 4,
+          keyframeUrl: effectiveStartUrl,
+          keyframeTailUrl: effectiveTailUrl,  // A→B native support
+          negativePrompt: negative
+        }
+      });
+
+      if (error) {
+        console.error('[generate-microshot-video] Runway error:', error);
+        await supabase.from('micro_shots').update({ video_status: 'failed' }).eq('id', microShotId);
+        return json({ ok: false, error: `Runway error: ${error.message}` }, 500);
+      }
+      videoResult = data;
+
+    } else if (selectedEngine === 'veo') {
+      console.log(`[generate-microshot-video] Veo: start=${!!effectiveStartUrl} (no A→B support)`);
+      
       const { data, error } = await supabase.functions.invoke('veo_start', {
         body: {
           prompt,
           seconds: microShot.duration_sec || 2,
-          keyframeUrl: keyframeInitial.image_url
+          keyframeUrl: effectiveStartUrl
+          // Note: Veo doesn't support tail keyframe
         }
       });
 
       if (error) {
         console.error('[generate-microshot-video] Veo error:', error);
-        await supabase
-          .from('micro_shots')
-          .update({ video_status: 'failed' })
-          .eq('id', microShotId);
+        await supabase.from('micro_shots').update({ video_status: 'failed' }).eq('id', microShotId);
         return json({ ok: false, error: `Veo error: ${error.message}` }, 500);
       }
-
       videoResult = data;
+
     } else {
-      return json({ ok: false, error: `Unsupported engine: ${engine}` }, 400);
+      return json({ ok: false, error: `Unsupported engine: ${selectedEngine}` }, 400);
     }
 
-    // 8. Create generation_run for tracking
+    // 11. Create generation_run for tracking
     const { data: genRun } = await supabase
       .from('generation_runs')
       .insert({
@@ -288,7 +391,7 @@ serve(async (req) => {
         entity_type: 'micro_shot',
         entity_id: microShotId,
         phase: 'production',
-        engine: engine,
+        engine: selectedEngine,
         prompt_text: prompt,
         status: 'pending',
         raw_response: videoResult
@@ -296,21 +399,20 @@ serve(async (req) => {
       .select()
       .single();
 
-    // 9. Update micro_shot with generation run reference
+    // 12. Update micro_shot with generation run reference
     await supabase
       .from('micro_shots')
-      .update({ 
-        generation_run_id: genRun?.id
-      })
+      .update({ generation_run_id: genRun?.id })
       .eq('id', microShotId);
 
     return json({
       ok: true,
       microShotId,
-      engine,
+      engine: selectedEngine,
       taskId: videoResult.taskId || videoResult.operationName,
       generationRunId: genRun?.id,
-      message: 'Video generation started. Use polling to check status.'
+      hasAtoB: hasEndFrame && (selectedEngine === 'kling' || selectedEngine === 'runway'),
+      message: `Video generation started with ${selectedEngine.toUpperCase()}. ${hasEndFrame ? 'A→B mode active.' : 'Chaining mode.'}`
     });
 
   } catch (error) {

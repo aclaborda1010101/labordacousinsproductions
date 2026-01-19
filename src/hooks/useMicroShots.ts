@@ -1,11 +1,22 @@
 /**
- * useMicroShots Hook
+ * useMicroShots Hook v2
  * Manages micro-shots for a given shot, including CRUD operations and video generation
+ * 
+ * Features:
+ * - Automatic chaining: end_frame of previous microshot → start of next
+ * - Inter-shot continuity: continuity_anchor_image_url from previous shot
+ * - A→B mode support with engine auto-selection
+ * - Realtime updates via Supabase subscription
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { 
+  selectVideoProvider, 
+  VideoEngine,
+  generateShotSeed 
+} from '@/lib/videoProviderSelector';
 
 export interface MicroShot {
   id: string;
@@ -19,10 +30,13 @@ export interface MicroShot {
   keyframe_final_id: string | null;
   video_url: string | null;
   video_status: 'pending' | 'generating' | 'ready' | 'failed' | 'approved';
-  video_engine: 'kling' | 'veo' | 'runway';
+  video_engine: VideoEngine;
   generation_run_id: string | null;
   prompt_text: string | null;
   motion_notes: string | null;
+  negative_prompt: string | null;
+  seed: number | null;
+  end_frame_image_url: string | null;
   quality_score: number | null;
   qc_issues: Record<string, unknown> | null;
   created_at: string;
@@ -37,6 +51,12 @@ export interface Keyframe {
   approved: boolean;
 }
 
+export interface ShotContext {
+  provider_preference: 'auto' | VideoEngine;
+  continuity_anchor_image_url: string | null;
+  style_lock: Record<string, unknown>;
+}
+
 interface UseMicroShotsOptions {
   shotId: string;
   enabled?: boolean;
@@ -46,20 +66,24 @@ interface UseMicroShotsReturn {
   microShots: MicroShot[];
   loading: boolean;
   error: string | null;
+  shotContext: ShotContext | null;
   subdivide: (microDuration?: number) => Promise<MicroShot[]>;
   assignKeyframes: () => Promise<void>;
-  generateVideo: (microShotId: string, engine?: 'kling' | 'veo') => Promise<void>;
-  generateAllVideos: (engine?: 'kling' | 'veo') => Promise<void>;
+  generateVideo: (microShotId: string, engine?: VideoEngine | 'auto') => Promise<void>;
+  generateAllVideos: (engine?: VideoEngine | 'auto') => Promise<void>;
   updateMicroShot: (id: string, updates: Partial<MicroShot>) => Promise<void>;
   deleteMicroShot: (id: string) => Promise<void>;
   pollVideoStatus: (microShotId: string) => Promise<void>;
   refresh: () => Promise<void>;
+  getChainedKeyframeUrl: (microShotId: string) => string | null;
 }
 
 export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions): UseMicroShotsReturn {
   const [microShots, setMicroShots] = useState<MicroShot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shotContext, setShotContext] = useState<ShotContext | null>(null);
+  const [keyframesMap, setKeyframesMap] = useState<Record<string, Keyframe>>({});
 
   // Fetch micro-shots for this shot
   const fetchMicroShots = useCallback(async () => {
@@ -69,6 +93,22 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
     setError(null);
 
     try {
+      // Fetch shot context for provider preference and continuity anchor
+      const { data: shotData } = await supabase
+        .from('shots')
+        .select('provider_preference, continuity_anchor_image_url, style_lock')
+        .eq('id', shotId)
+        .single();
+
+      if (shotData) {
+        setShotContext({
+          provider_preference: (shotData.provider_preference || 'auto') as 'auto' | VideoEngine,
+          continuity_anchor_image_url: shotData.continuity_anchor_image_url,
+          style_lock: (shotData.style_lock || {}) as Record<string, unknown>
+        });
+      }
+
+      // Fetch micro-shots
       const { data, error: fetchError } = await supabase
         .from('micro_shots')
         .select('*')
@@ -77,7 +117,31 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
 
       if (fetchError) throw fetchError;
       
-      setMicroShots((data || []) as MicroShot[]);
+      const typedData = (data || []) as unknown as MicroShot[];
+      setMicroShots(typedData);
+
+      // Load keyframes for display
+      const keyframeIds = new Set<string>();
+      typedData.forEach((ms) => {
+        if (ms.keyframe_initial_id) keyframeIds.add(ms.keyframe_initial_id);
+        if (ms.keyframe_final_id) keyframeIds.add(ms.keyframe_final_id);
+      });
+
+      if (keyframeIds.size > 0) {
+        const { data: kfData } = await supabase
+          .from('keyframes')
+          .select('*')
+          .in('id', Array.from(keyframeIds));
+
+        if (kfData) {
+          const map: Record<string, Keyframe> = {};
+          kfData.forEach((kf: unknown) => { 
+            const keyframe = kf as Keyframe;
+            map[keyframe.id] = keyframe; 
+          });
+          setKeyframesMap(map);
+        }
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error loading micro-shots';
       setError(message);
@@ -125,6 +189,42 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
     };
   }, [shotId, enabled]);
 
+  /**
+   * Get the chained keyframe URL for a microshot
+   * Uses: previous microshot's end_frame_image_url OR shot's continuity_anchor
+   */
+  const getChainedKeyframeUrl = useCallback((microShotId: string): string | null => {
+    const msIndex = microShots.findIndex(m => m.id === microShotId);
+    if (msIndex < 0) return null;
+
+    const ms = microShots[msIndex];
+
+    // First microshot: use continuity anchor from previous shot
+    if (msIndex === 0) {
+      if (shotContext?.continuity_anchor_image_url) {
+        return shotContext.continuity_anchor_image_url;
+      }
+      // Fallback to assigned keyframe
+      if (ms.keyframe_initial_id && keyframesMap[ms.keyframe_initial_id]?.image_url) {
+        return keyframesMap[ms.keyframe_initial_id].image_url;
+      }
+      return null;
+    }
+
+    // Subsequent microshots: use end_frame from previous
+    const prevMs = microShots[msIndex - 1];
+    if (prevMs.end_frame_image_url) {
+      return prevMs.end_frame_image_url;
+    }
+
+    // Fallback to assigned keyframe
+    if (ms.keyframe_initial_id && keyframesMap[ms.keyframe_initial_id]?.image_url) {
+      return keyframesMap[ms.keyframe_initial_id].image_url;
+    }
+
+    return null;
+  }, [microShots, shotContext, keyframesMap]);
+
   // Subdivide shot into micro-shots using database function
   const subdivide = useCallback(async (microDuration = 2): Promise<MicroShot[]> => {
     try {
@@ -137,6 +237,18 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
       if (rpcError) throw rpcError;
 
       const newMicroShots = (data || []) as MicroShot[];
+      
+      // Generate a consistent seed for all microshots in this shot
+      const shotSeed = generateShotSeed(shotId);
+      
+      // Update all microshots with the same seed
+      for (const ms of newMicroShots) {
+        await supabase
+          .from('micro_shots')
+          .update({ seed: shotSeed })
+          .eq('id', ms.id);
+      }
+
       setMicroShots(newMicroShots);
       toast.success(`Shot subdividido en ${newMicroShots.length} micro-shots`);
       return newMicroShots;
@@ -161,12 +273,10 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
 
       // Assign keyframes to each micro-shot based on timing
       for (const ms of microShots) {
-        // Find keyframe closest to start_sec (initial)
         const initialKf = (keyframes || []).find(kf => 
           Math.abs(kf.timestamp_sec - ms.start_sec) < 0.5
         );
         
-        // Find keyframe closest to end_sec (final)
         const finalKf = (keyframes || []).find(kf => 
           Math.abs(kf.timestamp_sec - ms.end_sec) < 0.5
         );
@@ -194,16 +304,33 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
     }
   }, [shotId, microShots, fetchMicroShots]);
 
-  // Generate video for a single micro-shot
-  const generateVideo = useCallback(async (microShotId: string, engine: 'kling' | 'veo' = 'kling') => {
+  // Generate video for a single micro-shot with chaining support
+  const generateVideo = useCallback(async (microShotId: string, engine: VideoEngine | 'auto' = 'auto') => {
     try {
+      const ms = microShots.find(m => m.id === microShotId);
+      if (!ms) throw new Error('MicroShot not found');
+
       // Update local state optimistically
-      setMicroShots(prev => prev.map(ms => 
-        ms.id === microShotId ? { ...ms, video_status: 'generating' as const } : ms
+      setMicroShots(prev => prev.map(m => 
+        m.id === microShotId ? { ...m, video_status: 'generating' as const } : m
       ));
 
+      // Get chained keyframe URL (from previous microshot or continuity anchor)
+      const chainedKeyframeUrl = getChainedKeyframeUrl(microShotId);
+
+      // Get tail keyframe URL for A→B (if available and approved)
+      let keyframeTailUrl: string | undefined;
+      if (ms.keyframe_final_id && keyframesMap[ms.keyframe_final_id]?.approved) {
+        keyframeTailUrl = keyframesMap[ms.keyframe_final_id].image_url || undefined;
+      }
+
       const { data, error: invokeError } = await supabase.functions.invoke('generate-microshot-video', {
-        body: { microShotId, engine }
+        body: { 
+          microShotId, 
+          engine,
+          keyframeUrlOverride: chainedKeyframeUrl || undefined,
+          keyframeTailUrlOverride: keyframeTailUrl
+        }
       });
 
       if (invokeError) throw invokeError;
@@ -212,43 +339,48 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
         throw new Error(data.error || 'Generation failed');
       }
 
-      toast.success(`Generación iniciada con ${engine.toUpperCase()}`);
+      const engineUsed = data.engine?.toUpperCase() || engine.toUpperCase();
+      const modeInfo = data.hasAtoB ? 'A→B' : 'chaining';
+      toast.success(`Generación iniciada con ${engineUsed} (${modeInfo})`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error generating video';
       toast.error(message);
       
       // Revert optimistic update
-      setMicroShots(prev => prev.map(ms => 
-        ms.id === microShotId ? { ...ms, video_status: 'failed' as const } : ms
+      setMicroShots(prev => prev.map(m => 
+        m.id === microShotId ? { ...m, video_status: 'failed' as const } : m
       ));
       throw err;
     }
-  }, []);
+  }, [microShots, getChainedKeyframeUrl, keyframesMap]);
 
-  // Generate videos for all micro-shots sequentially
-  const generateAllVideos = useCallback(async (engine: 'kling' | 'veo' = 'kling') => {
+  // Generate videos for all micro-shots sequentially (maintains chaining)
+  const generateAllVideos = useCallback(async (engine: VideoEngine | 'auto' = 'auto') => {
     const pendingShots = microShots.filter(ms => 
-      ms.video_status === 'pending' && ms.keyframe_initial_id
+      ms.video_status === 'pending' && 
+      (ms.keyframe_initial_id || shotContext?.continuity_anchor_image_url)
     );
 
     if (pendingShots.length === 0) {
-      toast.info('No hay micro-shots pendientes con keyframes aprobados');
+      toast.info('No hay micro-shots pendientes con keyframes disponibles');
       return;
     }
 
-    toast.info(`Generando ${pendingShots.length} videos...`);
+    toast.info(`Generando ${pendingShots.length} videos en secuencia...`);
 
+    // Sequential generation to maintain chaining
     for (const ms of pendingShots) {
       try {
         await generateVideo(ms.id, engine);
-        // Small delay between requests
-        await new Promise(r => setTimeout(r, 1000));
+        // Wait for previous video to complete before starting next (for chaining)
+        // In practice, this is handled by polling in the UI
+        await new Promise(r => setTimeout(r, 2000));
       } catch (err) {
         console.error(`[useMicroShots] Failed to generate video for ${ms.id}:`, err);
-        // Continue with next
+        // Continue with next but note the chaining will be broken
       }
     }
-  }, [microShots, generateVideo]);
+  }, [microShots, shotContext, generateVideo]);
 
   // Poll video status for a micro-shot
   const pollVideoStatus = useCallback(async (microShotId: string) => {
@@ -257,10 +389,15 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
 
     try {
       // Determine which poll function to use
-      const pollFunction = ms.video_engine === 'veo' ? 'veo_poll' : 'kling_poll';
+      let pollFunction = 'kling_poll';
+      if (ms.video_engine === 'veo') pollFunction = 'veo_poll';
+      if (ms.video_engine === 'runway') pollFunction = 'runway_poll';
       
       const { data, error: pollError } = await supabase.functions.invoke(pollFunction, {
-        body: { runId: ms.generation_run_id }
+        body: { 
+          runId: ms.generation_run_id,
+          taskId: ms.generation_run_id
+        }
       });
 
       if (pollError) throw pollError;
@@ -271,6 +408,7 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
           .update({
             video_url: data.outputUrl,
             video_status: 'ready'
+            // Note: end_frame_image_url will be set by extract-end-frame function
           })
           .eq('id', microShotId);
 
@@ -325,6 +463,7 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
     microShots,
     loading,
     error,
+    shotContext,
     subdivide,
     assignKeyframes,
     generateVideo,
@@ -332,6 +471,7 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
     updateMicroShot,
     deleteMicroShot,
     pollVideoStatus,
-    refresh: fetchMicroShots
+    refresh: fetchMicroShots,
+    getChainedKeyframeUrl
   };
 }
