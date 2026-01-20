@@ -19,7 +19,7 @@ export interface PersistedOutline {
   outline_parts?: Json; // V4.4: Phased generation parts data (uses Json for Supabase compat)
   quality: string;
   qc_issues: string[];
-  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed' | 'timeout' | 'failed' | 'stalled';
+  status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed' | 'timeout' | 'failed' | 'stalled' | 'obsolete';
   idea?: string;
   genre?: string;
   tone?: string;
@@ -87,10 +87,12 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
     try {
       // V23: ROBUST OUTLINE SELECTION - Prioritize outline with actual progress
       // Fetch last 5 outlines and pick the "best" one based on scoring
+      // V25: Exclude obsolete outlines from query
       const { data: candidates, error: fetchError } = await supabase
         .from('project_outlines')
         .select('*')
         .eq('project_id', projectId)
+        .neq('status', 'obsolete')  // V25: Ignore obsolete outlines
         .order('updated_at', { ascending: false })
         .limit(5);
 
