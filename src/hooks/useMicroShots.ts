@@ -226,7 +226,7 @@ export function useMicroShots({ shotId, enabled = true }: UseMicroShotsOptions):
   }, [microShots, shotContext, keyframesMap]);
 
   // Subdivide shot into micro-shots using database function
-  const subdivide = useCallback(async (microDuration = 2): Promise<MicroShot[]> => {
+  const subdivide = useCallback(async (microDuration = 0.5): Promise<MicroShot[]> => { // Hollywood Standard: 0.5s default
     try {
       const { data, error: rpcError } = await supabase
         .rpc('subdivide_shot_into_microshots', {

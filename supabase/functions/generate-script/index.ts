@@ -73,7 +73,8 @@ const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
 };
 
 // =============================================================================
-// HOLLYWOOD FILM SYSTEM PROMPT V2 - Literary Script Generation (Genre-Agnostic)
+// HOLLYWOOD FILM SYSTEM PROMPT V3 - Literary Script Generation (Genre-Agnostic)
+// Extended Synopsis + Hollywood Standard Density
 // =============================================================================
 const HOLLYWOOD_FILM_PROMPT = `Eres guionista profesional de CINE (nivel Hollywood).
 
@@ -82,6 +83,22 @@ PROHIBIDO:
 - episodios, temporadas, estructura serial, cliffhangers episódicos
 
 Tu tarea es escribir un GUION LITERARIO profesional basado en un OUTLINE ya validado.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📖 SINOPSIS EXTENDIDA (OBLIGATORIA - 500-800 palabras)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+ANTES de las escenas, genera una sinopsis completa que incluya:
+1. PREMISA: Contexto del mundo, época, y situación inicial (2-3 párrafos)
+2. PROTAGONISTA(S): Quiénes son, qué quieren, qué temen perder
+3. CONFLICTO CENTRAL: El motor de la historia (no genérico)
+4. ANTAGONISMO: Fuerzas opositoras (persona, sistema, dilema interno)
+5. ARCO EMOCIONAL: Transformación del protagonista de A a B
+6. STAKES: Qué se pierde si fracasa (concreto, visceral)
+7. GIRO PRINCIPAL: El momento que cambia todo (sin spoilers completos)
+8. RESOLUCIÓN: Hacia dónde conduce la historia (tono del final)
+
+La sinopsis debe ser ATRACTIVA como la contraportada de un libro, no un resumen técnico.
+Mínimo 500 palabras, máximo 800 palabras.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 REGLAS GENERALES (VÁLIDAS PARA TODOS LOS GÉNEROS)
@@ -135,15 +152,21 @@ USO DEL NARRATIVE_PROFILE
 - NO expliques el perfil, aplícalo
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-IMPORTANTE
+⚠️ DENSIDAD HOLLYWOOD STANDARD
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-- No inventes personajes, reglas o localizaciones nuevas
-- No simplifiques el outline
-- No reduzcas densidad
+Una película de 90 minutos DEBE incluir:
+- 15+ personajes con nombre (protagonistas, antagonistas, secundarios, figurantes recurrentes)
+- 15+ localizaciones distintas (variedad visual)
+- 45+ escenas (ritmo cinematográfico profesional)
+- Props narrativos significativos (objetos que cuentan historia)
+
+NO inventes personajes ni localizaciones nuevas. Usa TODO lo del Bible.
+Si necesitas más, solicítalo en new_entities_requested.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 V3 SCHEMA (OBLIGATORIO)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
+La sinopsis va en el campo "synopsis" (500-800 palabras).
 Cada escena incluye:
 - scene_number, slugline, raw_content (descripción rica)
 - action_summary (qué pasa dramáticamente)
@@ -263,7 +286,7 @@ const V3_OUTPUT_SCHEMA = {
   parameters: {
     type: "object",
     properties: {
-      synopsis: { type: "string", description: "Episode/script synopsis" },
+      synopsis: { type: "string", description: "Extended synopsis (500-800 words) covering premise, conflict, character arcs, stakes, and resolution", minLength: 400 },
       scenes: {
         type: "array",
         items: {
@@ -409,7 +432,7 @@ const V3_OUTPUT_SCHEMA = {
         }
       }
     },
-    required: ["scenes"]
+    required: ["synopsis", "scenes"]  // Synopsis is now REQUIRED for Hollywood Standard
   }
 };
 
