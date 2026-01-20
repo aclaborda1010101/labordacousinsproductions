@@ -941,9 +941,11 @@ async function generateWithLovableAI(
     }),
   });
 
+  // Handle empty or error response safely
+  const responseText = await response.text();
+  
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[Lovable AI] Generation error:', response.status, errorText);
+    console.error('[Lovable AI] Generation error:', response.status, responseText);
     
     // Handle specific error codes
     if (response.status === 429) {
@@ -953,11 +955,24 @@ async function generateWithLovableAI(
       throw new Error('Insufficient credits. Please add funds to your workspace.');
     }
     
-    throw new Error(`Lovable AI generation failed: ${response.status} - ${errorText}`);
+    throw new Error(`Lovable AI generation failed: ${response.status} - ${responseText}`);
   }
 
-  const data = await response.json();
-  const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  // Safely parse JSON - handle empty response
+  if (!responseText || responseText.trim() === '') {
+    console.error('[Lovable AI] Empty response from AI gateway');
+    throw new Error('Empty response from AI gateway - please retry');
+  }
+
+  let data: Record<string, unknown>;
+  try {
+    data = JSON.parse(responseText);
+  } catch (parseErr) {
+    console.error('[Lovable AI] JSON parse error:', parseErr, 'Response preview:', responseText.substring(0, 200));
+    throw new Error(`Failed to parse AI response: ${responseText.substring(0, 100)}`);
+  }
+
+  const imageUrl = (data.choices as any)?.[0]?.message?.images?.[0]?.image_url?.url;
   const seed = Math.floor(Math.random() * 999999); // Lovable AI doesn't return seed, generate random
 
   if (!imageUrl) {
@@ -1021,9 +1036,11 @@ async function editKeyframeWithLovableAI(
     }),
   });
 
+  // Handle empty or error response safely
+  const responseText = await response.text();
+  
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[Lovable AI] Edit error:', response.status, errorText);
+    console.error('[Lovable AI] Edit error:', response.status, responseText);
     
     if (response.status === 429) {
       throw new Error('Rate limit exceeded. Please try again later.');
@@ -1032,11 +1049,24 @@ async function editKeyframeWithLovableAI(
       throw new Error('Insufficient credits. Please add funds to your workspace.');
     }
     
-    throw new Error(`Lovable AI edit failed: ${response.status} - ${errorText}`);
+    throw new Error(`Lovable AI edit failed: ${response.status} - ${responseText}`);
   }
 
-  const data = await response.json();
-  const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  // Safely parse JSON - handle empty response
+  if (!responseText || responseText.trim() === '') {
+    console.error('[Lovable AI] Empty response from AI gateway');
+    throw new Error('Empty response from AI gateway - please retry');
+  }
+
+  let data: Record<string, unknown>;
+  try {
+    data = JSON.parse(responseText);
+  } catch (parseErr) {
+    console.error('[Lovable AI] JSON parse error:', parseErr, 'Response preview:', responseText.substring(0, 200));
+    throw new Error(`Failed to parse AI response: ${responseText.substring(0, 100)}`);
+  }
+
+  const imageUrl = (data.choices as any)?.[0]?.message?.images?.[0]?.image_url?.url;
   const seed = Math.floor(Math.random() * 999999);
 
   if (!imageUrl) {
