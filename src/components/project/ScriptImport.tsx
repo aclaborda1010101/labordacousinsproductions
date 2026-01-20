@@ -1200,6 +1200,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       }
     }
   }, [outlinePersistence.savedOutline, outlinePersistence.isLoading, lightOutline, ideaText]);
+  
+  // V4.1: Auto-initialize ideaText from failed/stalled outline for recovery UI
+  // This ensures the "Generar nuevo" button is enabled even on fresh page load
+  useEffect(() => {
+    const outline = outlinePersistence.savedOutline;
+    const status = outline?.status;
+    const isFailed = status === 'failed' || status === 'stalled';
+    
+    if (isFailed && outline?.idea && !ideaText.trim()) {
+      console.log('[ScriptImport] V4.1: Initializing ideaText from failed outline');
+      setIdeaText(outline.idea);
+      if (outline.genre) setGenre(outline.genre);
+      if (outline.tone) setTone(outline.tone);
+    }
+  }, [outlinePersistence.savedOutline?.id, outlinePersistence.savedOutline?.status]);
 
   // Auto-save form draft for PRO mode (debounced)
   useEffect(() => {
@@ -5501,8 +5516,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <Button 
                   variant="default" 
                   className="gap-2"
-                  disabled={generatingOutline || !ideaText.trim()}
+                  disabled={generatingOutline || (!ideaText.trim() && !outlinePersistence.savedOutline?.idea)}
                   onClick={async () => {
+                    // Use saved idea as fallback if local state is empty
+                    const effectiveIdea = ideaText.trim() || outlinePersistence.savedOutline?.idea || '';
+                    
+                    if (!effectiveIdea) {
+                      toast.error('No hay idea disponible para regenerar');
+                      return;
+                    }
+                    
+                    // Ensure ideaText state is populated for generateOutlineDirect
+                    if (!ideaText.trim() && effectiveIdea) {
+                      setIdeaText(effectiveIdea);
+                    }
+                    
                     // Mark old outline as obsolete and generate new with Direct Generation
                     if (outlinePersistence.savedOutline?.id) {
                       await supabase
@@ -5513,6 +5541,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     setLightOutline(null);
                     setOutlineApproved(false);
                     await outlinePersistence.refreshOutline();
+                    
+                    // Small delay to ensure state updates propagate before generation
+                    await new Promise(r => setTimeout(r, 100));
                     generateOutlineDirect();
                   }}
                 >
