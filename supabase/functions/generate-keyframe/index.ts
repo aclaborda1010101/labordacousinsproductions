@@ -115,15 +115,48 @@ function buildDeterministicPromptForAnimatedStyle(
     ? 'warm cinematic animation lighting, soft global illumination, Disney-Pixar style rim lighting'
     : 'simple even lighting, sketch-appropriate soft shadows';
   
-  // Build wardrobe description
-  const wardrobeDesc = Array.from(characterWardrobes.values())
-    .map(w => `${w.name}: ${w.wardrobe}`)
-    .join('. ') || request.characters.map(c => `${c.name}: stylized outfit`).join('. ');
+  // Separate humans from animals
+  const humanCharacters = request.characters.filter(c => 
+    c.entity_subtype !== 'animal' && c.entity_subtype !== 'creature'
+  );
+  const animalCharacters = request.characters.filter(c => 
+    c.entity_subtype === 'animal' || c.entity_subtype === 'creature'
+  );
   
-  // Build identity locks
-  const identityDesc = Array.from(characterIdentities.values())
+  console.log(`[buildDeterministicPromptForAnimatedStyle] Characters: ${humanCharacters.length} humans, ${animalCharacters.length} animals`);
+  
+  // Build wardrobe description (only for humans)
+  const wardrobeDesc = Array.from(characterWardrobes.values())
+    .filter(w => humanCharacters.some(h => h.name === w.name))
+    .map(w => `${w.name}: ${w.wardrobe}`)
+    .join('. ') || humanCharacters.map(c => `${c.name}: stylized outfit`).join('. ');
+  
+  // Build identity locks (only for humans)
+  const humanIdentityDesc = Array.from(characterIdentities.values())
+    .filter(c => humanCharacters.some(h => h.name === c.name))
     .map(c => c.identityLock || `${c.name}: consistent stylized appearance`)
     .join('\n');
+  
+  // Build animal identity locks
+  const animalIdentityDesc = animalCharacters
+    .map(c => buildAnimalIdentityLock(c))
+    .join('\n');
+
+  // Build human characters section
+  const humanCharSection = humanCharacters.length > 0 
+    ? `HUMAN CHARACTERS (stylized 3D, big expressive eyes, smooth skin without pores):
+${humanCharacters.map(c => `- ${c.name}${c.token ? ` [${c.token}]` : ''}`).join('\n')}`
+    : '';
+
+  // Build animal characters section with strict anti-duplication
+  const animalCharSection = animalCharacters.length > 0
+    ? `ANIMALS IN SCENE (COUNT IS EXACT - NO ADDITIONS OR DUPLICATIONS):
+${animalCharacters.map(c => {
+    const role = c.profile_json?.original_role || 'pet companion';
+    return `- EXACTLY ONE: ${c.name} (${role}) - DO NOT ADD EXTRA ANIMALS`;
+  }).join('\n')}
+${animalCharacters.length === 1 ? `\n⚠️ CRITICAL: There is ONLY ONE animal (${animalCharacters[0].name}) - generating multiple animals is FORBIDDEN` : ''}`
+    : 'NO ANIMALS IN THIS SCENE - Do not add any pets or animals';
 
   // Deterministic prompt WITHOUT photorealistic vocabulary
   const rawPrompt = `${style.lock}
@@ -132,14 +165,18 @@ Disney-Pixar 3D Animation style frame. ${request.shotType}, ${shotDetails.focalM
 
 SCENE: ${request.sceneDescription}
 
-CHARACTERS (stylized 3D, big expressive eyes, smooth skin without pores):
-${request.characters.map(c => `- ${c.name}${c.token ? ` [${c.token}]` : ''}`).join('\n')}
+${humanCharSection}
 
-WARDROBE (stylized materials, clean fabric):
-${wardrobeDesc}
+${animalCharSection}
 
-IDENTITY LOCKS:
-${identityDesc}
+${humanCharacters.length > 0 ? `WARDROBE (stylized materials, clean fabric):
+${wardrobeDesc}` : ''}
+
+${humanIdentityDesc ? `HUMAN IDENTITY LOCKS:
+${humanIdentityDesc}` : ''}
+
+${animalIdentityDesc ? `ANIMAL IDENTITY LOCKS:
+${animalIdentityDesc}` : ''}
 
 LOCATION: ${request.location?.name || 'Stylized interior'}${request.location?.token ? ` [${request.location.token}]` : ''}
 
@@ -156,14 +193,22 @@ ${style.lock}`;
 
   console.log(`[buildDeterministicPromptForAnimatedStyle] Built prompt for ${styleProfile}, length: ${rawPrompt.length}`);
 
+  // Build negative prompt with anti-duplication for single animals
+  let negativePrompt = style.negative;
+  if (animalCharacters.length === 1) {
+    const animalType = animalCharacters[0].profile_json?.original_role?.toLowerCase().includes('perr') ? 'dog' : 'animal';
+    negativePrompt += `, two ${animalType}s, multiple ${animalType}s, second pet, extra animals, duplicate pets, additional animals, pair of ${animalType}s`;
+  }
+
   return {
     prompt_text: sanitizePromptForStyle(rawPrompt, styleProfile),
-    negative_prompt: style.negative,
+    negative_prompt: negativePrompt,
     continuity_locks: {
       wardrobe_description: wardrobeDesc,
       lighting_setup: animationLighting,
       background_elements: request.location?.name || 'Stylized interior set',
-      art_style: styleProfile
+      art_style: styleProfile,
+      animal_count: animalCharacters.length.toString()
     },
     frame_geometry: {
       shot_type: request.shotType,
@@ -173,7 +218,10 @@ ${style.lock}`;
     },
     staging_snapshot: {},
     determinism: { guidance: 7.5, steps: 30 },
-    negative_constraints: getAntiAIPrompts(styleProfile)
+    negative_constraints: [
+      ...getAntiAIPrompts(styleProfile),
+      ...(animalCharacters.length === 1 ? ['two dogs', 'multiple dogs', 'extra animals', 'second pet', 'duplicate animals'] : [])
+    ]
   };
 }
 
@@ -348,6 +396,19 @@ interface PoseData {
   };
 }
 
+interface CharacterForKeyframe {
+  id: string;
+  name: string;
+  token?: string;
+  referenceUrl?: string;
+  entity_subtype?: string; // 'human' | 'animal' | 'creature' | 'robot'
+  bio?: string;
+  profile_json?: {
+    original_role?: string;
+    description?: string;
+  };
+}
+
 interface KeyframeRequest {
   shotId: string;
   sceneDescription: string;
@@ -355,12 +416,7 @@ interface KeyframeRequest {
   duration: number;
   frameType: 'initial' | 'intermediate' | 'final';
   timestampSec: number;
-  characters: Array<{
-    id: string;
-    name: string;
-    token?: string;
-    referenceUrl?: string;
-  }>;
+  characters: CharacterForKeyframe[];
   location?: {
     id: string;
     name: string;
@@ -447,8 +503,52 @@ interface VisualDNAForKeyframe {
   };
 }
 
-// Build identity lock for keyframe generation from Visual DNA
-function buildIdentityLockForKeyframe(visualDNA: VisualDNAForKeyframe, characterName: string): string {
+// Build identity lock for ANIMALS (prevents duplication)
+function buildAnimalIdentityLock(character: CharacterForKeyframe): string {
+  const bio = character.bio || character.profile_json?.description || '';
+  const role = character.profile_json?.original_role || '';
+  
+  // Extract animal type from role/bio
+  const animalKeywords = (role + ' ' + bio).toLowerCase();
+  let animalType = 'animal';
+  let breed = '';
+  
+  // Dog breeds
+  if (animalKeywords.includes('yorkshire') || animalKeywords.includes('yorkie')) {
+    animalType = 'dog';
+    breed = 'Yorkshire Terrier';
+  } else if (animalKeywords.includes('perro') || animalKeywords.includes('dog')) {
+    animalType = 'dog';
+  } else if (animalKeywords.includes('gato') || animalKeywords.includes('cat')) {
+    animalType = 'cat';
+  } else if (animalKeywords.includes('caballo') || animalKeywords.includes('horse')) {
+    animalType = 'horse';
+  }
+  
+  return `
+═══════════════════════════════════════════════════════════════
+ANIMAL IDENTITY LOCK: ${character.name} (SINGULAR - NON-NEGOTIABLE)
+═══════════════════════════════════════════════════════════════
+Type: ${role || animalType}${breed ? ` (${breed})` : ''}
+COUNT: EXACTLY ONE ${animalType} named ${character.name}
+DESCRIPTION: ${bio || `A ${animalType} companion`}
+
+MANDATORY RULES:
+- There is ONLY ONE ${animalType} in this scene
+- Do NOT add any other pets or animals
+- Do NOT duplicate this ${animalType}
+- Preserve exact fur color, size, and breed characteristics
+- This is a specific individual ${animalType}, not a generic one
+═══════════════════════════════════════════════════════════════`;
+}
+
+// Build identity lock for keyframe generation from Visual DNA (HUMANS ONLY)
+function buildIdentityLockForKeyframe(visualDNA: VisualDNAForKeyframe, characterName: string, entitySubtype?: string): string {
+  // Skip human-centric locks for animals - they use buildAnimalIdentityLock instead
+  if (entitySubtype === 'animal' || entitySubtype === 'creature') {
+    return ''; // Animals handled separately
+  }
+  
   const parts: string[] = [];
   
   // Age - Critical for consistency
