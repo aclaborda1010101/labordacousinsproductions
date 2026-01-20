@@ -296,6 +296,9 @@ export default function ShotEditor({
       if (interval) clearInterval(interval);
     };
   }, [generationProgress.status]);
+
+  // State for auto-population
+  const [autoPopulating, setAutoPopulating] = useState(false);
   
   const [form, setForm] = useState({
     shot_type: shot.shot_type,
@@ -328,11 +331,59 @@ export default function ShotEditor({
     keyframe_end: (shot.keyframe_hints as any)?.end_frame || '',
     continuity_notes: shot.continuity_notes || '',
   });
+
+  // Auto-populate context from adjacent shots when modal opens
+  useEffect(() => {
+    if (!open || !scene.id) return;
+
+    const fetchAdjacentShotsContext = async () => {
+      try {
+        // Fetch all shots for this scene
+        const { data: allShots, error } = await supabase
+          .from('shots')
+          .select('id, shot_no, shot_type, dialogue_text, blocking, edit_intent')
+          .eq('scene_id', scene.id)
+          .order('shot_no', { ascending: true });
+
+        if (error || !allShots) return;
+
+        const currentIndex = allShots.findIndex(s => s.id === shot.id);
+        if (currentIndex === -1) return;
+
+        // Get previous shot context
+        let prevContext = '';
+        if (currentIndex > 0) {
+          const prev = allShots[currentIndex - 1];
+          const prevBlocking = (prev.blocking as any)?.description || (prev.blocking as any)?.action || '';
+          prevContext = `Plano ${prev.shot_no} (${prev.shot_type}): ${prevBlocking || prev.dialogue_text || 'Sin descripción'}`.slice(0, 100);
+        }
+
+        // Get next shot context
+        let nextContext = '';
+        if (currentIndex < allShots.length - 1) {
+          const next = allShots[currentIndex + 1];
+          const nextBlocking = (next.blocking as any)?.description || (next.blocking as any)?.action || '';
+          nextContext = `Plano ${next.shot_no} (${next.shot_type}): ${nextBlocking || next.dialogue_text || 'Sin descripción'}`.slice(0, 100);
+        }
+
+        setForm(prev => ({
+          ...prev,
+          prev_shot_context: prev.prev_shot_context || prevContext,
+          next_shot_context: prev.next_shot_context || nextContext,
+        }));
+      } catch (err) {
+        console.error('[ShotEditor] Error fetching adjacent shots:', err);
+      }
+    };
+
+    fetchAdjacentShotsContext();
+  }, [open, scene.id, shot.id]);
   
   const [selectedEngine, setSelectedEngine] = useState<VideoEngine>(
     (preferredEngine as VideoEngine) || 'lovable'
   );
 
+  // Derived values - must be defined before useEffects that use them
   const sceneCharacters = scene.character_ids 
     ? characters.filter(c => scene.character_ids?.includes(c.id))
     : [];
@@ -340,6 +391,86 @@ export default function ShotEditor({
   const sceneLocation = scene.location_id 
     ? locations.find(l => l.id === scene.location_id)
     : null;
+
+  // Auto-populate empty fields with AI when modal opens (only if key fields are empty)
+  useEffect(() => {
+    if (!open || autoPopulating) return;
+
+    const hasEmptyKeyFields = !form.viewer_notice && !form.intention && !form.blocking_action;
+    if (!hasEmptyKeyFields) return;
+
+    const autoPopulateWithAI = async () => {
+      // Only auto-populate if we have scene context
+      if (!scene.slugline && !scene.summary) return;
+
+      setAutoPopulating(true);
+      try {
+        const response = await supabase.functions.invoke('generate-shot-details', {
+          body: {
+            project: {
+              quality_mode_default: scene.quality_mode,
+              fps: 24,
+              aspect_ratio: '16:9',
+              language: 'es-ES'
+            },
+            scene: {
+              slugline: scene.slugline,
+              scene_summary: scene.summary || '',
+              previous_shot_context: form.prev_shot_context,
+              next_shot_context: form.next_shot_context
+            },
+            shot: {
+              shot_index: shot.shot_no,
+              effective_mode: form.effective_mode,
+              duration_sec: form.duration_target,
+              current_fields: {
+                shot_type: form.shot_type,
+                camera_movement: form.camera_movement,
+                dialogue: form.dialogue_text
+              }
+            },
+            location: sceneLocation ? {
+              name: sceneLocation.name,
+              time_of_day: scene.time_of_day
+            } : undefined,
+            characters: sceneCharacters.map(c => ({
+              name: c.name,
+              reference_images_available: !!(c.turnaround_urls as string[])?.length
+            })),
+            auto_populate: true // Flag for lighter/faster generation
+          }
+        });
+
+        if (response.error) {
+          console.warn('[ShotEditor] Auto-populate failed:', response.error);
+          return;
+        }
+
+        const data = response.data;
+        const fills = data.fills || data;
+
+        // Only update empty fields
+        setForm(prev => ({
+          ...prev,
+          viewer_notice: prev.viewer_notice || fills.viewer_notice || '',
+          ai_risk: prev.ai_risk || fills.ai_risk?.primary_risk || '',
+          intention: prev.intention || fills.intention || '',
+          blocking_action: prev.blocking_action || fills.blocking_action || '',
+          blocking_description: prev.blocking_description || fills.blocking_action || '',
+        }));
+
+        console.log('[ShotEditor] Auto-populated empty fields');
+      } catch (err) {
+        console.warn('[ShotEditor] Auto-populate error:', err);
+      } finally {
+        setAutoPopulating(false);
+      }
+    };
+
+    // Delay to allow adjacent shots to load first
+    const timeoutId = setTimeout(autoPopulateWithAI, 500);
+    return () => clearTimeout(timeoutId);
+  }, [open, scene, shot, form.prev_shot_context, form.next_shot_context, autoPopulating, sceneLocation, sceneCharacters]);
 
   const saveShot = async () => {
     setSaving(true);
