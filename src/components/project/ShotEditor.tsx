@@ -86,6 +86,51 @@ interface Render {
 
 type VideoEngine = 'veo' | 'kling' | 'lovable' | 'runway';
 
+// Helper to extract dialogues from a screenplay block
+function extractDialoguesFromBlock(blockText: string): { character: string; line: string }[] {
+  if (!blockText) return [];
+  const dialogues: { character: string; line: string }[] = [];
+  // Match character cues: UPPERCASE name followed by dialogue lines
+  const regex = /\n([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+)\n([^A-ZÁÉÍÓÚÑ\n][\s\S]*?)(?=\n[A-ZÁÉÍÓÚÑ]{2,}|\n\d+\.\s|$)/g;
+  let match;
+  while ((match = regex.exec(blockText)) !== null) {
+    const character = match[1].trim();
+    const line = match[2].replace(/\s+/g, ' ').trim();
+    if (line.length > 2) {
+      dialogues.push({ character, line });
+    }
+  }
+  return dialogues;
+}
+
+// Helper to find the scene block in raw script text
+function findSceneBlockInScript(rawText: string, sceneNo: number, slugline: string): string {
+  if (!rawText) return '';
+  // Split by scene headers (e.g., "1. INT." or "1. EXT.")
+  const scenePattern = /(\d+)\.\s*(INT\.|EXT\.|INT\/EXT\.)/gi;
+  const parts = rawText.split(scenePattern);
+  
+  // Try to find by scene number
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (part && parseInt(part) === sceneNo && parts[i + 2]) {
+      // Reconstruct the block
+      const prefix = parts[i + 1] || 'INT.';
+      const content = parts[i + 2] || '';
+      return `${sceneNo}. ${prefix} ${content}`;
+    }
+  }
+  
+  // Fallback: search for slugline
+  const slugIndex = rawText.toLowerCase().indexOf(slugline.toLowerCase().slice(0, 30));
+  if (slugIndex !== -1) {
+    const blockEnd = rawText.indexOf('\n' + (sceneNo + 1) + '.', slugIndex);
+    return rawText.slice(slugIndex, blockEnd > slugIndex ? blockEnd : slugIndex + 2000);
+  }
+  
+  return '';
+}
+
 interface ShotEditorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -332,6 +377,13 @@ export default function ShotEditor({
     continuity_notes: shot.continuity_notes || '',
   });
 
+  // State for script context (loaded once per modal open)
+  const [scriptContext, setScriptContext] = useState<{
+    rawText: string;
+    sceneBlock: string;
+    dialogues: { character: string; line: string }[];
+  }>({ rawText: '', sceneBlock: '', dialogues: [] });
+
   // Auto-populate context from adjacent shots when modal opens
   useEffect(() => {
     if (!open || !scene.id) return;
@@ -378,6 +430,62 @@ export default function ShotEditor({
 
     fetchAdjacentShotsContext();
   }, [open, scene.id, shot.id]);
+
+  // NEW: Sync dialogue from script when modal opens
+  useEffect(() => {
+    if (!open || !scene.project_id) return;
+
+    const syncDialogueFromScript = async () => {
+      try {
+        // 1. Fetch the project's script
+        const { data: scripts, error } = await supabase
+          .from('scripts')
+          .select('raw_text')
+          .eq('project_id', scene.project_id)
+          .limit(1);
+
+        if (error || !scripts?.[0]?.raw_text) {
+          console.log('[ShotEditor] No script found for dialogue sync');
+          return;
+        }
+
+        const rawText = scripts[0].raw_text;
+        
+        // 2. Find the current scene's block
+        const sceneBlock = findSceneBlockInScript(rawText, scene.scene_no, scene.slugline);
+        
+        if (!sceneBlock) {
+          console.log('[ShotEditor] Scene block not found in script');
+          return;
+        }
+
+        // 3. Extract dialogues from the block
+        const dialogues = extractDialoguesFromBlock(sceneBlock);
+        
+        // Store for later use (Shot Assistant)
+        setScriptContext({ rawText, sceneBlock, dialogues });
+
+        // 4. Auto-fill dialogue_text if empty
+        if (!form.dialogue_text && dialogues.length > 0) {
+          // Map to shot based on position (approximation)
+          const shotDialogueIndex = Math.min(shot.shot_no - 1, dialogues.length - 1);
+          const shotDialogue = dialogues[shotDialogueIndex];
+          
+          if (shotDialogue) {
+            setForm(prev => ({
+              ...prev,
+              dialogue_text: prev.dialogue_text || `${shotDialogue.character}: ${shotDialogue.line}`.slice(0, 500)
+            }));
+            console.log('[ShotEditor] Auto-filled dialogue from script');
+          }
+        }
+      } catch (err) {
+        console.error('[ShotEditor] Script sync error:', err);
+      }
+    };
+
+    syncDialogueFromScript();
+  }, [open, scene.project_id, scene.scene_no, scene.slugline, shot.shot_no]);
   
   const [selectedEngine, setSelectedEngine] = useState<VideoEngine>(
     (preferredEngine as VideoEngine) || 'lovable'
@@ -392,12 +500,14 @@ export default function ShotEditor({
     ? locations.find(l => l.id === scene.location_id)
     : null;
 
-  // Auto-populate empty fields with AI when modal opens (only if key fields are empty)
+  // Auto-populate empty fields with AI when modal opens (MORE AGGRESSIVE: triggers if ANY key field is empty)
   useEffect(() => {
     if (!open || autoPopulating) return;
 
-    const hasEmptyKeyFields = !form.viewer_notice && !form.intention && !form.blocking_action;
-    if (!hasEmptyKeyFields) return;
+    // More aggressive check: trigger if viewer_notice OR intention OR blocking_action OR camera is static
+    const shouldAutoPopulate = !form.viewer_notice || !form.intention || 
+      !form.blocking_action || form.camera_movement === 'Static';
+    if (!shouldAutoPopulate) return;
 
     const autoPopulateWithAI = async () => {
       // Only auto-populate if we have scene context
@@ -417,7 +527,10 @@ export default function ShotEditor({
               slugline: scene.slugline,
               scene_summary: scene.summary || '',
               previous_shot_context: form.prev_shot_context,
-              next_shot_context: form.next_shot_context
+              next_shot_context: form.next_shot_context,
+              // NEW: Pass script context for better AI extraction
+              scene_raw_text: scriptContext.sceneBlock || '',
+              dialogues: scriptContext.dialogues || []
             },
             shot: {
               shot_index: shot.shot_no,
@@ -449,7 +562,7 @@ export default function ShotEditor({
         const data = response.data;
         const fills = data.fills || data;
 
-        // Only update empty fields
+        // Update fields - prioritize empty fields but also suggest camera movement
         setForm(prev => ({
           ...prev,
           viewer_notice: prev.viewer_notice || fills.viewer_notice || '',
@@ -457,9 +570,15 @@ export default function ShotEditor({
           intention: prev.intention || fills.intention || '',
           blocking_action: prev.blocking_action || fills.blocking_action || '',
           blocking_description: prev.blocking_description || fills.blocking_action || '',
+          // Suggest camera movement if currently static
+          camera_movement: prev.camera_movement === 'Static' && fills.camera_movement 
+            ? fills.camera_movement 
+            : prev.camera_movement,
+          // Update dialogue if we got a better one from script context
+          dialogue_text: prev.dialogue_text || fills.dialogue || '',
         }));
 
-        console.log('[ShotEditor] Auto-populated empty fields');
+        console.log('[ShotEditor] Auto-populated fields with AI');
       } catch (err) {
         console.warn('[ShotEditor] Auto-populate error:', err);
       } finally {
@@ -467,10 +586,10 @@ export default function ShotEditor({
       }
     };
 
-    // Delay to allow adjacent shots to load first
-    const timeoutId = setTimeout(autoPopulateWithAI, 500);
+    // Delay to allow script context and adjacent shots to load first
+    const timeoutId = setTimeout(autoPopulateWithAI, 800);
     return () => clearTimeout(timeoutId);
-  }, [open, scene, shot, form.prev_shot_context, form.next_shot_context, autoPopulating, sceneLocation, sceneCharacters]);
+  }, [open, scene, shot, form.prev_shot_context, form.next_shot_context, autoPopulating, sceneLocation, sceneCharacters, scriptContext]);
 
   const saveShot = async () => {
     setSaving(true);
