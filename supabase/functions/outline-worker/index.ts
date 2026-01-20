@@ -91,24 +91,24 @@ const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [numb
 // V22: Prompt modes for escalating retry strategy
 type PromptMode = 'MINIMAL' | 'ULTRA_MINIMAL';
 
-// V22: Escalating retry policy - different model/prompt/timeout per attempt
+// V24: AGGRESSIVE RETRY POLICY - Switch to fast model on 2nd attempt
+// Reason: Act III chunks consistently timeout with gpt-5.2, even with ULTRA_MINIMAL
 function pickModel(attempt: number): string {
-  // Attempts 0-1: QUALITY_MODEL (gpt-5.2)
-  // Attempt 2+: FAST_MODEL (gpt-5-mini)
-  return attempt >= 2 ? FAST_MODEL : QUALITY_MODEL;
+  // Attempt 0: QUALITY_MODEL (gpt-5.2) - first try
+  // Attempt 1+: FAST_MODEL (gpt-5-mini) - faster, more reliable
+  return attempt >= 1 ? FAST_MODEL : QUALITY_MODEL;
 }
 
 function pickPromptMode(attempt: number): PromptMode {
-  // Attempt 0: MINIMAL
-  // Attempt 1: ULTRA_MINIMAL (recorta más)
-  // Attempt 2+: MINIMAL (con fast model es suficiente)
-  return attempt === 1 ? 'ULTRA_MINIMAL' : 'MINIMAL';
+  // Attempt 0: MINIMAL (full context)
+  // Attempt 1+: ULTRA_MINIMAL (reduced context for fast model)
+  return attempt >= 1 ? 'ULTRA_MINIMAL' : 'MINIMAL';
 }
 
 function pickTimeout(attempt: number): number {
-  if (attempt === 0) return 40000;  // 40s for first attempt
-  if (attempt === 1) return 35000;  // 35s for ultra-minimal
-  return 30000;                      // 30s for fast model
+  // V24: Shorter timeouts to fail fast and retry
+  if (attempt === 0) return 30000;  // 30s for quality model
+  return 25000;                      // 25s for fast model
 }
 
 // V20: Timeout per CHUNK - 40s max (single attempt, no retries inside)
