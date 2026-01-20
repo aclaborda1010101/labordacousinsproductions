@@ -83,9 +83,10 @@ const MAX_EPISODES = 10;
 // ============================================================================
 // V22: ULTRA-GRANULAR CHUNKING - Maximum 2 beats per chunk for Act II to prevent timeouts
 const ACT_CHUNKS: Record<'I' | 'II' | 'III', { beatsTotal: number; chunks: [number, number][] }> = {
-  I:   { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] },                     // 3 chunks (4+2+2)
-  II:  { beatsTotal: 10, chunks: [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]] },    // 5 chunks (2+2+2+2+2)
-  III: { beatsTotal: 8,  chunks: [[1, 4], [5, 6], [7, 8]] }                      // 3 chunks (4+2+2)
+  // V26: Further micro-chunking to avoid AI_TIMEOUT on heavy situation_detail payloads
+  I:   { beatsTotal: 8,  chunks: [[1, 2], [3, 4], [5, 6], [7, 8]] },                 // 4 chunks (2+2+2+2)
+  II:  { beatsTotal: 10, chunks: [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]] },        // 5 chunks (2+2+2+2+2)
+  III: { beatsTotal: 8,  chunks: [[1, 2], [3, 4], [5, 6], [7, 8]] }                  // 4 chunks (2+2+2+2)
 };
 
 // V22: Prompt modes for escalating retry strategy
@@ -106,9 +107,9 @@ function pickPromptMode(attempt: number): PromptMode {
 }
 
 function pickTimeout(attempt: number): number {
-  // V24: Shorter timeouts to fail fast and retry
-  if (attempt === 0) return 30000;  // 30s for quality model
-  return 25000;                      // 25s for fast model
+  // V26: Give the gateway a bit more room; we're still safe because we do 1 chunk per invocation.
+  if (attempt === 0) return 45000; // 45s for quality model
+  return 35000;                   // 35s for fast model
 }
 
 // V20: Timeout per CHUNK - 40s max (single attempt, no retries inside)
@@ -1538,6 +1539,39 @@ function calculateChunkProgress(act: 'I' | 'II' | 'III', chunkIndex: number, tot
   return Math.round(range.start + (chunkIndex * chunkSize));
 }
 
+// V26: Tool schema for chunked expansion (beats only). Using the full EXPAND_ACT_SCHEMA
+// forces key_moments + dramatic_goal for every chunk, inflating output and causing timeouts.
+const EXPAND_ACT_CHUNK_SCHEMA = {
+  type: "object" as const,
+  properties: {
+    beats: {
+      type: "array" as const,
+      items: {
+        type: "object" as const,
+        properties: {
+          beat_number: { type: "number" as const },
+          event: { type: "string" as const },
+          agent: { type: "string" as const },
+          consequence: { type: "string" as const },
+          situation_detail: {
+            type: "object" as const,
+            properties: {
+              physical_context: { type: "string" as const },
+              action: { type: "string" as const },
+              goal: { type: "string" as const },
+              obstacle: { type: "string" as const },
+              state_change: { type: "string" as const },
+            },
+            required: ["physical_context", "action", "goal", "obstacle", "state_change"],
+          },
+        },
+        required: ["beat_number", "event", "agent", "consequence", "situation_detail"],
+      },
+    },
+  },
+  required: ["beats"],
+} as const;
+
 // V22: Build MINIMAL or ULTRA_MINIMAL chunk-specific prompt
 function buildChunkPrompt(
   scaffold: any,
@@ -1578,7 +1612,7 @@ ACT ${act} GOAL: ${actGoal}
 
 GENERATE BEATS ${fromBeat}-${toBeat} ONLY.
 
-Each beat: beat_number, scene_title, event, agent, consequence, situation_detail.
+Each beat: beat_number, event, agent, consequence, situation_detail.
 
 RESPOND JSON ONLY:
 { "beats": [...] }`.trim();
@@ -1632,7 +1666,6 @@ No other beats. No repeats.
 
 Each beat MUST include:
 - beat_number (${fromBeat} to ${toBeat})
-- scene_title
 - event (physical action)
 - agent (who acts)
 - consequence (what changes)
@@ -1693,7 +1726,7 @@ async function callChunkOnce(
       modelToUse,
       2000,  // Smaller max_tokens for chunk
       'expand_film_chunk',
-      EXPAND_ACT_SCHEMA.parameters,
+      EXPAND_ACT_CHUNK_SCHEMA,
       chunkSubstage,
       timeoutToUse  // V21: Use dynamic timeout based on model
     );
