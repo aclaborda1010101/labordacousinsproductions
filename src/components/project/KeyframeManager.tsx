@@ -146,9 +146,12 @@ export default function KeyframeManager({
     slotIndex: number;
   } | null>(null);
 
+  // Recovery polling state
+  const [recoveryPollingActive, setRecoveryPollingActive] = useState(false);
+
   const KEYFRAME_PRESETS = ['initial', 'intermediate', 'final'];
   
-  // Recommendations v1 - only enable when projectId is available
+  // Recommendations v1 - DISABLE during generation to reduce network pressure
   const { 
     recommendation, 
     orderedPresets,
@@ -163,7 +166,7 @@ export default function KeyframeManager({
     assetType: 'keyframe',
     availablePresets: KEYFRAME_PRESETS,
     phase: 'exploration',
-    enabled: !!projectId 
+    enabled: !!projectId && !generating // Disable during generation
   });
 
   // Log recommendation shown
@@ -193,6 +196,102 @@ export default function KeyframeManager({
     
     return slots;
   }, [duration]);
+
+  // Recovery polling: detects completed keyframes even if the main request failed
+  useEffect(() => {
+    if (!generating || !shotId) {
+      setRecoveryPollingActive(false);
+      return;
+    }
+
+    setRecoveryPollingActive(true);
+    let pollCount = 0;
+    const MAX_POLLS = 60; // 2s * 60 = 120s max
+    const POLL_INTERVAL = 2000;
+    const slots = getRequiredSlots();
+
+    const pollForRecovery = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('keyframes')
+          .select('*')
+          .eq('shot_id', shotId)
+          .order('timestamp_sec', { ascending: true });
+
+        if (error) {
+          console.warn('[KeyframeManager] Recovery poll error:', error);
+          return;
+        }
+
+        const typedKeyframes = (data || []) as unknown as Keyframe[];
+        
+        // Check if all slots have images now
+        const allComplete = slots.every(slot => 
+          typedKeyframes.some(kf => 
+            Math.abs(kf.timestamp_sec - slot.timestampSec) < 0.5 && kf.image_url
+          )
+        );
+
+        // Check if specific slot is complete (for single-slot generation)
+        const slotMatch = generating?.match(/^slot-(\d+)$/);
+        if (slotMatch) {
+          const slotIndex = parseInt(slotMatch[1], 10);
+          const slot = slots[slotIndex];
+          const slotComplete = slot && typedKeyframes.some(kf => 
+            Math.abs(kf.timestamp_sec - slot.timestampSec) < 0.5 && kf.image_url
+          );
+          
+          if (slotComplete) {
+            console.log('[KeyframeManager] Recovery poll: slot completed, syncing state');
+            setKeyframes(typedKeyframes);
+            onKeyframesChange?.(typedKeyframes);
+            setGenerating(null);
+            setRecoveryPollingActive(false);
+            toast.success('Keyframe generado (recuperado via polling)');
+            return;
+          }
+        }
+
+        // For 'all' generation
+        if (generating === 'all' && allComplete) {
+          console.log('[KeyframeManager] Recovery poll: all slots completed, syncing state');
+          setKeyframes(typedKeyframes);
+          onKeyframesChange?.(typedKeyframes);
+          setGenerating(null);
+          setRecoveryPollingActive(false);
+          toast.success('Todos los keyframes generados (recuperado via polling)');
+          return;
+        }
+
+        // Partial update: sync any new images found
+        if (typedKeyframes.length > keyframes.length || 
+            typedKeyframes.some((kf, i) => kf.image_url && !keyframes[i]?.image_url)) {
+          setKeyframes(typedKeyframes);
+          onKeyframesChange?.(typedKeyframes);
+        }
+      } catch (err) {
+        console.error('[KeyframeManager] Recovery poll exception:', err);
+      }
+
+      pollCount++;
+      if (pollCount >= MAX_POLLS) {
+        console.warn('[KeyframeManager] Recovery polling timed out after 120s');
+        setRecoveryPollingActive(false);
+        setGenerating(null);
+        toast.warning('Timeout de generación. Recarga para ver si el keyframe se generó.');
+      }
+    };
+
+    const intervalId = setInterval(pollForRecovery, POLL_INTERVAL);
+    
+    // First poll after a short delay
+    const initialTimeoutId = setTimeout(pollForRecovery, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(initialTimeoutId);
+    };
+  }, [generating, shotId, getRequiredSlots, keyframes, onKeyframesChange]);
 
   // Load existing keyframes
   useEffect(() => {
