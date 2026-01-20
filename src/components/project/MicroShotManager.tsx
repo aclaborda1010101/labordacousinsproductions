@@ -68,7 +68,7 @@ export default function MicroShotManager({
   onMicroShotsChange,
   onProviderChange
 }: MicroShotManagerProps) {
-  const [microDuration, setMicroDuration] = useState<string>('2');
+  const [microDuration, setMicroDuration] = useState<string>('0.5'); // Hollywood Standard: 0.5s per microshot
   const [selectedProvider, setSelectedProvider] = useState<ProviderKey>(providerPreference as ProviderKey || 'auto');
   const [abModeEnabled, setAbModeEnabled] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -427,9 +427,9 @@ export default function MicroShotManager({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="0.5">0.5s</SelectItem>
                     <SelectItem value="1">1s</SelectItem>
                     <SelectItem value="2">2s</SelectItem>
-                    <SelectItem value="3">3s</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

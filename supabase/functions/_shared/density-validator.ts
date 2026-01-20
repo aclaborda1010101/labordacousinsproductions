@@ -98,56 +98,63 @@ export const DENSITY_PROFILES: Record<string, DensityProfile> = {
   },
   
   // ============================================================================
-  // FILM PROFILES (Hollywood Standard)
+  // FILM PROFILES (Hollywood Standard V2 - Upgraded Density)
   // ============================================================================
+  
+  // HOLLYWOOD STANDARD - Full production density for theatrical releases
   film_90min: {
-    min_characters_total: 6,
-    min_supporting_characters: 2,
-    min_antagonists: 1,
-    min_locations: 5,
-    min_scenes_per_episode: 25, // Total scenes for entire film
-    min_threads_total: 3,
-    min_secondary_threads: 1
+    min_characters_total: 15,      // Protagonists (2-3) + Antagonists (2) + Supporting (8-10) + Figurantes (3-5)
+    min_supporting_characters: 8,  // Named characters with arcs
+    min_antagonists: 2,            // Main + secondary opposition
+    min_locations: 15,             // Visual variety for 90 minutes
+    min_scenes_per_episode: 45,    // ~2 min average per scene
+    min_threads_total: 5,          // A-plot + B-plot + C-plot + 2 subplots
+    min_secondary_threads: 3       // Character-driven subplots
   },
+  
   film_120min: {
+    min_characters_total: 20,
+    min_supporting_characters: 10,
+    min_antagonists: 2,
+    min_locations: 20,
+    min_scenes_per_episode: 60,    // ~2 min average per scene
+    min_threads_total: 6,
+    min_secondary_threads: 4
+  },
+  
+  // INDIE/AUTOR - Character-driven, fewer locations but deep
+  film_indie: {
     min_characters_total: 8,
-    min_supporting_characters: 3,
+    min_supporting_characters: 4,
     min_antagonists: 1,
-    min_locations: 7,
-    min_scenes_per_episode: 35, // Total scenes for entire film
-    min_threads_total: 4,
+    min_locations: 6,
+    min_scenes_per_episode: 30,
+    min_threads_total: 3,
     min_secondary_threads: 2
   },
-  film_indie: {
-    min_characters_total: 4,
-    min_supporting_characters: 1,
-    min_antagonists: 1,
-    min_locations: 3,
-    min_scenes_per_episode: 20,
-    min_threads_total: 2,
-    min_secondary_threads: 1
-  },
+  
+  // BLOCKBUSTER - Large ensemble, multiple locations
   film_blockbuster: {
-    min_characters_total: 10,
-    min_supporting_characters: 4,
-    min_antagonists: 2,
-    min_locations: 10,
-    min_scenes_per_episode: 45,
-    min_threads_total: 5,
-    min_secondary_threads: 3
+    min_characters_total: 25,
+    min_supporting_characters: 12,
+    min_antagonists: 3,
+    min_locations: 25,
+    min_scenes_per_episode: 70,
+    min_threads_total: 7,
+    min_secondary_threads: 5
   },
   
   // ============================================================================
-  // LEGACY COMPAT
+  // LEGACY COMPAT (redirects to Hollywood Standard)
   // ============================================================================
   pelicula_90min: {
-    min_characters_total: 6,
-    min_supporting_characters: 2,
-    min_antagonists: 1,
-    min_locations: 5,
-    min_scenes_per_episode: 25,
-    min_threads_total: 3,
-    min_secondary_threads: 1
+    min_characters_total: 15,
+    min_supporting_characters: 8,
+    min_antagonists: 2,
+    min_locations: 15,
+    min_scenes_per_episode: 45,
+    min_threads_total: 5,
+    min_secondary_threads: 3
   },
   
   // ============================================================================
@@ -589,17 +596,18 @@ export interface PhaseDensityProfile {
   rules: Array<{ id: string; label: string; min: number }>;
 }
 
-// FILM SCAFFOLD PHASE - Validates architectural structure
+// FILM SCAFFOLD PHASE - Validates architectural structure (Hollywood Standard V2)
 export const FILM_SCAFFOLD_PROFILE: PhaseDensityProfile = {
   id: 'film_scaffold',
   min_score: 60,
   rules: [
-    { id: 'cast', label: 'Personajes principales', min: 4 },
+    { id: 'cast', label: 'Personajes principales', min: 8 },        // Upgraded from 4
+    { id: 'supporting', label: 'Personajes secundarios', min: 5 },  // NEW
     { id: 'world_rules', label: 'Reglas del mundo', min: 2 },
-    { id: 'locations', label: 'Localizaciones', min: 5 },
-    { id: 'setpieces', label: 'Setpieces', min: 3 },
+    { id: 'locations', label: 'Localizaciones', min: 10 },          // Upgraded from 5
+    { id: 'setpieces', label: 'Setpieces', min: 4 },                // Upgraded from 3
     { id: 'acts', label: 'Actos', min: 3 },
-    { id: 'beats_total', label: 'Beats totales (scaffold)', min: 15 },
+    { id: 'beats_total', label: 'Beats totales (scaffold)', min: 25 }, // Upgraded from 15
     { id: 'midpoint', label: 'Midpoint reversal', min: 1 }
   ]
 };
@@ -615,14 +623,16 @@ export const FILM_EXPAND_ACT_PROFILE: PhaseDensityProfile = {
   ]
 };
 
-// FILM FINAL PHASE - Validates complete outline
+// FILM FINAL PHASE - Validates complete outline (Hollywood Standard V2)
 export const FILM_FINAL_PROFILE: PhaseDensityProfile = {
   id: 'film_final',
   min_score: 80,
   rules: [
-    { id: 'beats_total', label: 'Beats totales', min: 18 },
-    { id: 'setpieces', label: 'Setpieces activos', min: 3 },
-    { id: 'character_arcs', label: 'Arcos completos', min: 1 },
+    { id: 'beats_total', label: 'Beats totales', min: 35 },         // Upgraded from 18
+    { id: 'cast', label: 'Personajes con arco', min: 12 },          // NEW
+    { id: 'locations', label: 'Localizaciones', min: 12 },          // NEW
+    { id: 'setpieces', label: 'Setpieces activos', min: 5 },        // Upgraded from 3
+    { id: 'character_arcs', label: 'Arcos completos', min: 3 },     // Upgraded from 1
     { id: 'lowest_point', label: 'Lowest point', min: 1 },
     { id: 'final_resolution', label: 'Resolución final', min: 1 }
   ]
@@ -655,13 +665,20 @@ export function validateFilmDensity(
     
     switch (rule.id) {
       case 'cast':
-        count = ((data.cast || data.characters || []) as any[]).length;
+        count = ((data.cast || data.characters || data.main_characters || []) as any[]).length;
+        break;
+      case 'supporting':
+        const allChars = (data.cast || data.characters || data.main_characters || []) as any[];
+        count = allChars.filter((c: any) => {
+          const role = (c.role || c.character_role || '').toLowerCase();
+          return role.includes('supporting') || role.includes('secondary') || role.includes('recurring');
+        }).length;
         break;
       case 'world_rules':
         count = ((data.world_rules || []) as any[]).length;
         break;
       case 'locations':
-        count = ((data.locations || []) as any[]).length;
+        count = ((data.locations || data.main_locations || []) as any[]).length;
         break;
       case 'setpieces':
         count = ((data.setpieces || []) as any[]).length;
@@ -674,9 +691,11 @@ export function validateFilmDensity(
         const actI = (data.ACT_I as any)?.beats?.length || 0;
         const actII = (data.ACT_II as any)?.beats?.length || 0;
         const actIII = (data.ACT_III as any)?.beats?.length || 0;
+        const episodeBeats = ((data.episode_beats || []) as any[]).reduce((sum, ep) => 
+          sum + (ep.turning_points?.length || ep.beats?.length || 0), 0);
         count = phase === 'EXPAND_ACT' 
           ? ((data.beats || []) as any[]).length 
-          : actI + actII + actIII;
+          : Math.max(actI + actII + actIII, episodeBeats);
         break;
       case 'situation_detail':
         const beats = (data.beats || []) as any[];
@@ -691,14 +710,19 @@ export function validateFilmDensity(
         if (!count && (data as any).acts_summary?.midpoint_summary) count = 1;
         break;
       case 'character_arcs':
-        const cast = (data.cast || []) as any[];
-        count = cast.filter((c: any) => c.want && c.need && c.flaw).length > 0 ? 1 : 0;
+        const cast = (data.cast || data.characters || []) as any[];
+        // Count characters with complete arcs (want + need + flaw OR arc description)
+        count = cast.filter((c: any) => 
+          (c.want && c.need && c.flaw) || (c.arc && c.arc.length > 20)
+        ).length;
         break;
       case 'lowest_point':
         count = (data.ACT_II as any)?.all_is_lost_moment?.event ? 1 : 0;
+        if (!count && (data as any).acts_summary?.all_is_lost_summary) count = 1;
         break;
       case 'final_resolution':
         count = (data.ACT_III as any)?.resolution ? 1 : 0;
+        if (!count && (data as any).acts_summary?.resolution) count = 1;
         break;
     }
     
