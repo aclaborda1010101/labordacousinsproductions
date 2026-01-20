@@ -5007,51 +5007,115 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     variant={outlineError.code === 'CHUNK_READY_NEXT' ? 'default' : 'outline'}
                     size="sm"
                     onClick={async () => {
+                      // V25: AUTO-LOOP - Continue all chunks automatically
                       setOutlineError(null);
                       setGeneratingOutline(true);
-                      try {
-                        // V23: Reset status to generating before invoking worker
-                        await supabase
-                          .from('project_outlines')
-                          .update({
-                            status: 'generating',
-                            error_code: null,
-                            error_detail: null,
-                            heartbeat_at: new Date().toISOString()
-                          })
-                          .eq('id', outlinePersistence.savedOutline?.id);
-                        
-                        await invokeAuthedFunction('outline-worker', { 
-                          outline_id: outlinePersistence.savedOutline?.id 
-                        });
-                        outlinePersistence.startPolling(outlinePersistence.savedOutline!.id, {
-                          onComplete: () => {
-                            setGeneratingOutline(false);
-                            outlinePersistence.refreshOutline();
-                            toast.success('Outline generado correctamente');
-                          },
-                          onError: (err) => {
-                            setGeneratingOutline(false);
-                            // V23: Detect CHUNK_READY_NEXT as a "continue" state, not error
-                            const isReadyNext = err.includes('CHUNK_READY_NEXT');
-                            setOutlineError({
-                              code: isReadyNext ? 'CHUNK_READY_NEXT' : 'CHUNK_ERROR',
-                              message: err,
-                              substage: outlinePersistence.savedOutline?.substage || undefined,
-                              retryable: true
-                            });
-                            if (isReadyNext) {
-                              toast.info('Chunk completado. Presiona "Continuar" para el siguiente.');
-                            }
+                      setOutlineStartTime(Date.now());
+                      
+                      const MAX_AUTO_CHUNKS = 20; // Safety limit for infinite loop prevention
+                      let chunkCount = 0;
+                      let shouldContinue = true;
+                      
+                      const processChunk = async (): Promise<boolean> => {
+                        if (!shouldContinue || chunkCount >= MAX_AUTO_CHUNKS) {
+                          if (chunkCount >= MAX_AUTO_CHUNKS) {
+                            toast.warning('Límite de auto-continuaciones alcanzado');
                           }
-                        });
-                        toast.info(outlineError.code === 'CHUNK_READY_NEXT' 
-                          ? 'Continuando generación...' 
-                          : 'Reintentando generación...'
-                        );
+                          return false;
+                        }
+                        
+                        chunkCount++;
+                        const outlineId = outlinePersistence.savedOutline?.id;
+                        if (!outlineId) return false;
+                        
+                        try {
+                          // Reset status to generating
+                          await supabase
+                            .from('project_outlines')
+                            .update({
+                              status: 'generating',
+                              error_code: null,
+                              error_detail: null,
+                              heartbeat_at: new Date().toISOString()
+                            })
+                            .eq('id', outlineId);
+                          
+                          // Invoke worker
+                          const { data, error } = await invokeWithTimeout<any>('outline-worker', {
+                            outline_id: outlineId
+                          }, { timeoutMs: 90000 }); // 90s timeout for chunk
+                          
+                          if (error) {
+                            console.error('[V25 Auto-Loop] Worker error:', error);
+                            // Check if it's a timeout/retryable error
+                            const errMsg = String(error?.message || error || '');
+                            if (errMsg.includes('CHUNK_READY_NEXT') || errMsg.includes('CHUNK_COMPLETE')) {
+                              // Chunk done, continue to next
+                              toast.info(`✓ Chunk ${chunkCount} completado, continuando...`, { duration: 2000 });
+                              await new Promise(r => setTimeout(r, 800)); // Brief pause
+                              return processChunk(); // Recursive call for next chunk
+                            }
+                            throw new Error(errMsg);
+                          }
+                          
+                          // Check response for continuation signals
+                          const needsContinue = data?.needs_continue || data?.code === 'CHUNK_COMPLETE' || data?.code === 'CHUNK_READY_NEXT';
+                          const isComplete = data?.code === 'GENERATION_COMPLETE' || data?.status === 'completed' || data?.is_complete;
+                          
+                          if (isComplete) {
+                            return true; // Done!
+                          }
+                          
+                          if (needsContinue) {
+                            toast.info(`✓ Chunk ${chunkCount} completado, continuando...`, { duration: 2000 });
+                            await new Promise(r => setTimeout(r, 800)); // Brief pause
+                            return processChunk(); // Recursive call
+                          }
+                          
+                          // If we get here without clear signals, check DB status
+                          await new Promise(r => setTimeout(r, 1000));
+                          const { data: checkData } = await supabase
+                            .from('project_outlines')
+                            .select('status, progress, error_code')
+                            .eq('id', outlineId)
+                            .single();
+                          
+                          if (checkData?.status === 'completed' || checkData?.status === 'approved') {
+                            return true;
+                          }
+                          if (checkData?.status === 'stalled' || checkData?.error_code?.includes('CHUNK')) {
+                            // Continue from stalled state
+                            toast.info(`Chunk ${chunkCount} pausado, reintentando...`, { duration: 2000 });
+                            await new Promise(r => setTimeout(r, 500));
+                            return processChunk();
+                          }
+                          
+                          return true; // Assume done if unclear
+                        } catch (e: any) {
+                          console.error('[V25 Auto-Loop] Chunk error:', e);
+                          throw e;
+                        }
+                      };
+                      
+                      try {
+                        toast.info('Iniciando generación automática de chunks...', { duration: 3000 });
+                        const success = await processChunk();
+                        
+                        if (success) {
+                          setGeneratingOutline(false);
+                          setOutlineStartTime(null);
+                          await outlinePersistence.refreshOutline();
+                          toast.success(`🎬 Outline completado (${chunkCount} chunks procesados)`);
+                        }
                       } catch (e: any) {
                         setGeneratingOutline(false);
-                        toast.error('Error al continuar: ' + e.message);
+                        setOutlineStartTime(null);
+                        setOutlineError({
+                          code: 'CHUNK_ERROR',
+                          message: e.message || 'Error en chunk',
+                          substage: outlinePersistence.savedOutline?.substage || undefined,
+                          retryable: true
+                        });
                       }
                     }}
                     className={outlineError.code === 'CHUNK_READY_NEXT' 
