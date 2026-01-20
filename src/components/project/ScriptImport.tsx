@@ -5485,6 +5485,62 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             }}
           />
           
+          {/* V4.0: Failed Outline Recovery Card - Show when outline failed/blocked by QC */}
+          {outlinePersistence.savedOutline?.status === 'failed' && (
+            <Card className="border-red-500/50 bg-red-50/30 dark:bg-red-950/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2 text-red-700 dark:text-red-400">
+                  <XCircle className="h-5 w-5" />
+                  Outline rechazado por QC
+                </CardTitle>
+                <CardDescription className="text-red-600/80 dark:text-red-400/80">
+                  {outlinePersistence.savedOutline?.error_detail || outlinePersistence.savedOutline?.error_code || 'El outline anterior no pasó las validaciones de calidad'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                <Button 
+                  variant="default" 
+                  className="gap-2"
+                  disabled={generatingOutline || !ideaText.trim()}
+                  onClick={async () => {
+                    // Mark old outline as obsolete and generate new with Direct Generation
+                    if (outlinePersistence.savedOutline?.id) {
+                      await supabase
+                        .from('project_outlines')
+                        .update({ status: 'obsolete' })
+                        .eq('id', outlinePersistence.savedOutline.id);
+                    }
+                    setLightOutline(null);
+                    setOutlineApproved(false);
+                    await outlinePersistence.refreshOutline();
+                    generateOutlineDirect();
+                  }}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Generar nuevo (Generación Directa)
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={() => {
+                    // Use the existing failed outline anyway
+                    const outlineJson = outlinePersistence.savedOutline?.outline_json;
+                    if (outlineJson && Object.keys(outlineJson).length > 0) {
+                      setLightOutline(outlineJson);
+                      updatePipelineStep('outline', 'success');
+                      toast.info('Usando outline existente a pesar de los warnings');
+                    } else {
+                      toast.error('No hay datos de outline para usar');
+                    }
+                  }}
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Usar este outline de todos modos
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+          
           {/* Script Source Selector - Only show when no script exists */}
           {!lightOutline && !pipelineRunning && !generatedScript && (
             <div className="grid gap-4 md:grid-cols-2">
