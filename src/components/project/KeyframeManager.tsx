@@ -59,6 +59,12 @@ interface Character {
   name: string;
   token?: string;
   turnaround_urls?: string[];
+  entity_subtype?: string; // 'human' | 'animal' | 'creature' | 'robot'
+  bio?: string;
+  profile_json?: {
+    original_role?: string;
+    description?: string;
+  };
 }
 
 interface Location {
@@ -398,7 +404,10 @@ export default function KeyframeManager({
           id: c.id,
           name: c.name,
           token: c.token,
-          referenceUrl: c.turnaround_urls?.[0]
+          referenceUrl: c.turnaround_urls?.[0],
+          entity_subtype: c.entity_subtype || 'human',
+          bio: c.bio,
+          profile_json: c.profile_json
         })),
         location: location ? {
           id: location.id,
