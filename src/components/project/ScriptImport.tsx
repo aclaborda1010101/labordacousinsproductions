@@ -42,6 +42,7 @@ import { CastingReportTable } from './CastingReportTable';
 import OutlineWizardV11 from './OutlineWizardV11';
 import ThreadsDisplay from './ThreadsDisplay';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
+import { DensityProfileSelector } from './DensityProfileSelector';
 import { 
   FileText, 
   Wand2, 
@@ -259,6 +260,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // V3.0: Quality tier selection (replaces legacy generationModel)
   const [qualityTier, setQualityTier] = useState<QualityTier>('profesional');
+  
+  // V4.0 DIRECT GENERATION: Density profile for simplified single-call generation
+  const [densityProfile, setDensityProfile] = useState<'indie' | 'standard' | 'hollywood'>('standard');
+  
+  // V4.0: Use direct generation mode (new architecture)
+  const [useDirectGeneration, setUseDirectGeneration] = useState(true);
   
   // V3.0: Disable narrative density (let AI generate based purely on user idea)
   const [disableDensity, setDisableDensity] = useState(true); // Default: OFF (no density constraints)
@@ -2255,7 +2262,141 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const regenerateOutline = () => {
     setLightOutline(null);
     setOutlineApproved(false);
-    generateLightOutline();
+    if (useDirectGeneration) {
+      generateOutlineDirect();
+    } else {
+      generateLightOutline();
+    }
+  };
+
+  // ============================================================================
+  // V4.0 DIRECT GENERATION - Simplified single-call outline generation
+  // ============================================================================
+  const generateOutlineDirect = async () => {
+    if (!ideaText.trim()) {
+      toast.error('Escribe una idea para generar el guion');
+      return;
+    }
+
+    setGeneratingOutline(true);
+    setOutlineStartTime(Date.now());
+    setLightOutline(null);
+    setOutlineApproved(false);
+    setOutlineError(null);
+    setPipelineSteps(prev => prev.map(s => ({ ...s, status: 'pending' })));
+    updatePipelineStep('outline', 'running');
+
+    const t0 = Date.now();
+
+    try {
+      toast.info('Generación directa iniciada...', {
+        description: 'Una sola llamada al modelo. ~60-90 segundos.',
+        duration: 5000,
+      });
+
+      const { data, error } = await invokeWithTimeout<{
+        success: boolean;
+        outline?: any;
+        outlineId?: string;
+        warnings?: { type: string; message: string; current: number; required: number }[];
+        score?: number;
+        error?: string;
+        message?: string;
+      }>(
+        'generate-outline-direct',
+        {
+          projectId,
+          idea: ideaText.trim(),
+          format,
+          densityProfile,
+          genre,
+          tone,
+          duration: format === 'film' ? filmDurationMin : episodeDurationMin,
+        },
+        130000 // 130s timeout (un poco más que el worker de 120s)
+      );
+
+      if (error) {
+        // Handle specific error codes
+        const errorMessage = String(error?.message || '');
+        
+        if (errorMessage.includes('PROJECT_BUSY') || errorMessage.includes('409')) {
+          toast.warning('Proyecto ocupado', {
+            description: 'Ya hay una generación en curso. Espera un momento.',
+            duration: 8000,
+          });
+          updatePipelineStep('outline', 'error');
+          return;
+        }
+        
+        throw error;
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.message || data?.error || 'Error en generación directa');
+      }
+
+      const durationMs = Date.now() - t0;
+      console.log('[ScriptImport] Direct outline generated in', durationMs, 'ms');
+
+      // Show warnings if any (but don't block!)
+      if (data.warnings && data.warnings.length > 0) {
+        const warningMessages = data.warnings.map(w => w.message);
+        toast.warning(`Outline generado con ${data.warnings.length} sugerencias`, {
+          description: warningMessages.slice(0, 2).join('. '),
+          duration: 10000,
+        });
+      }
+
+      // Handle success - save and display
+      handleOutlineSuccess(
+        data.outline,
+        data.score && data.score >= 80 ? 'FULL' : 'DEGRADED',
+        data.warnings?.map(w => w.message) || [],
+        durationMs
+      );
+
+      // Refresh outline persistence to get the latest from DB
+      await outlinePersistence.refreshOutline();
+
+    } catch (err: any) {
+      console.error('[generateOutlineDirect] Error:', err);
+      updatePipelineStep('outline', 'error');
+      
+      const errorMessage = String(err?.message || err || '').toLowerCase();
+      
+      if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
+        toast.error('Límite de solicitudes alcanzado', {
+          description: 'Espera unos segundos e inténtalo de nuevo.',
+          duration: 8000,
+        });
+      } else if (errorMessage.includes('402') || errorMessage.includes('payment')) {
+        toast.error('Créditos agotados', {
+          description: 'Añade créditos a tu workspace de Lovable AI.',
+          duration: 10000,
+        });
+      } else if (errorMessage.includes('timeout') || errorMessage.includes('aborted')) {
+        setOutlineError({
+          code: 'AI_TIMEOUT',
+          message: 'La generación tardó demasiado. Inténtalo de nuevo.',
+          retryable: true,
+        });
+        toast.error('Timeout en la generación', {
+          description: 'Inténtalo de nuevo. El servidor puede estar ocupado.',
+          duration: 8000,
+        });
+      } else {
+        setOutlineError({
+          code: 'GENERATION_ERROR',
+          message: err.message || 'Error desconocido',
+          retryable: true,
+        });
+        toast.error(err.message || 'Error al generar outline');
+      }
+    } finally {
+      setGeneratingOutline(false);
+      setOutlineStartTime(null);
+    }
   };
 
   // PIPELINE V2: Delete Outline
@@ -5360,17 +5501,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     Describe tu idea y generaremos un guion completo con personajes, localizaciones y diálogos
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
+                  {/* V4.0: Density Profile Selector */}
+                  <DensityProfileSelector 
+                    value={densityProfile} 
+                    onChange={setDensityProfile}
+                    compact
+                  />
+                  
                   <Button 
                     variant="gold" 
                     className="w-full"
-                    onClick={generateLightOutline} 
+                    onClick={useDirectGeneration ? generateOutlineDirect : generateLightOutline} 
                     disabled={generatingOutline || !ideaText.trim()}
                   >
                     {generatingOutline ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generando...</>
                     ) : (
-                      <><Sparkles className="w-4 h-4 mr-2" />Generar Outline</>
+                      <><Zap className="w-4 h-4 mr-2" />Generar Outline</>
                     )}
                   </Button>
                   <p className="text-xs text-muted-foreground mt-2 text-center">

@@ -280,10 +280,12 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
 // ============================================================================
 
 async function callAI(prompt: string, timeout = 120000): Promise<any> {
-  const AI_GATEWAY_URL = Deno.env.get('AI_GATEWAY_URL');
-  if (!AI_GATEWAY_URL) {
-    throw new Error('AI_GATEWAY_URL not configured');
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) {
+    throw new Error('LOVABLE_API_KEY not configured');
   }
+
+  const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -291,13 +293,15 @@ async function callAI(prompt: string, timeout = 120000): Promise<any> {
   try {
     const response = await fetch(AI_GATEWAY_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+      },
       body: JSON.stringify({
         model: 'openai/gpt-5.2',
         messages: [
           { role: 'user', content: prompt }
         ],
-        response_format: { type: 'json_object' },
         max_tokens: 16000,
         temperature: 0.7,
       }),
@@ -528,13 +532,11 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        outline_id: outlineId,
+        outlineId,
         outline,
-        validation: {
-          warnings: validation.warnings,
-          score: validation.score,
-          profile: profile.id,
-        },
+        warnings: validation.warnings,
+        score: validation.score,
+        profile: profile.id,
         duration_ms: durationMs,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
