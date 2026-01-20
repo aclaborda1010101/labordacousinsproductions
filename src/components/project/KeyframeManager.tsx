@@ -347,15 +347,36 @@ export default function KeyframeManager({
   }, [isPlaying, keyframes.length]);
 
   // Build generation payload for a slot
-  const buildGenerationPayload = useCallback((slotIndex: number, projectId: string, parentRunId?: string): GenerateRunPayload | null => {
+  // explicitPreviousUrl: used in batch mode to bypass stale React state
+  const buildGenerationPayload = useCallback((
+    slotIndex: number, 
+    projectId: string, 
+    parentRunId?: string,
+    explicitPreviousUrl?: string
+  ): GenerateRunPayload | null => {
     const slots = getRequiredSlots();
     const slot = slots[slotIndex];
     if (!slot) return null;
 
     // Find previous keyframe for continuity
-    const previousKeyframe = keyframes
-      .filter(kf => kf.timestamp_sec < slot.timestampSec && kf.image_url)
-      .sort((a, b) => b.timestamp_sec - a.timestamp_sec)[0];
+    // Priority: explicit URL (batch mode) > state keyframes
+    let previousKeyframeUrl = explicitPreviousUrl;
+    let previousKeyframeData: { promptText?: string | null; frameGeometry?: unknown; stagingSnapshot?: unknown } | undefined;
+
+    if (!previousKeyframeUrl) {
+      const previousKeyframe = keyframes
+        .filter(kf => kf.timestamp_sec < slot.timestampSec && kf.image_url)
+        .sort((a, b) => b.timestamp_sec - a.timestamp_sec)[0];
+      
+      previousKeyframeUrl = previousKeyframe?.image_url || undefined;
+      previousKeyframeData = previousKeyframe ? {
+        promptText: previousKeyframe.prompt_text,
+        frameGeometry: previousKeyframe.frame_geometry,
+        stagingSnapshot: previousKeyframe.staging_snapshot
+      } : undefined;
+    }
+
+    console.log(`[KeyframeManager] buildPayload slot ${slotIndex}: previousKeyframeUrl=${previousKeyframeUrl ? 'PROVIDED' : 'NONE'}, explicitPreviousUrl=${explicitPreviousUrl ? 'YES' : 'NO'}`);
 
     return {
       projectId,
@@ -397,22 +418,23 @@ export default function KeyframeManager({
           dialogueText: shotDetails?.dialogueText,
           effectiveMode: shotDetails?.effectiveMode
         },
-        previousKeyframeUrl: previousKeyframe?.image_url,
-        previousKeyframeData: previousKeyframe ? {
-          promptText: previousKeyframe.prompt_text,
-          frameGeometry: previousKeyframe.frame_geometry,
-          stagingSnapshot: previousKeyframe.staging_snapshot
-        } : undefined,
+        previousKeyframeUrl,
+        previousKeyframeData,
         stylePack
       }
     };
   }, [getRequiredSlots, keyframes, sceneDescription, shotType, shotId, duration, characters, location, cameraMovement, blocking, shotDetails, stylePack]);
 
   // Generate a keyframe for a specific slot (or regenerate with parentRunId)
-  const generateKeyframe = async (slotIndex: number, parentRunId?: string) => {
+  // explicitPreviousUrl: used in batch mode to ensure correlative continuity
+  const generateKeyframe = async (
+    slotIndex: number, 
+    parentRunId?: string,
+    explicitPreviousUrl?: string
+  ): Promise<{ imageUrl?: string; runId?: string } | null> => {
     const slots = getRequiredSlots();
     const slot = slots[slotIndex];
-    if (!slot) return;
+    if (!slot) return null;
 
     setGenerating(`slot-${slotIndex}`);
     try {
@@ -473,7 +495,8 @@ export default function KeyframeManager({
         setProjectId(fetchedProjectId);
       }
 
-      const payload = buildGenerationPayload(slotIndex, fetchedProjectId, parentRunId);
+      // Pass explicitPreviousUrl to bypass stale React state in batch mode
+      const payload = buildGenerationPayload(slotIndex, fetchedProjectId, parentRunId, explicitPreviousUrl);
       if (!payload) throw new Error('Invalid slot');
 
       // Check if user is overriding recommendation
@@ -528,9 +551,12 @@ export default function KeyframeManager({
       onKeyframesChange?.(typedKeyframes);
       refreshRecs(); // Refresh recommendations
       toast.success(`Keyframe ${slot.frameType} generado (runId: ${result.runId?.slice(0, 8)})`);
+      
+      return { imageUrl: result.outputUrl, runId: result.runId };
     } catch (error) {
       console.error('Error generating keyframe:', error);
       toast.error('Error al generar keyframe');
+      return null;
     } finally {
       setGenerating(null);
     }
@@ -571,25 +597,68 @@ export default function KeyframeManager({
     await generateKeyframe(slotIndex, keyframe.run_id || undefined);
   };
 
-  // Generate all missing keyframes
+  // Generate all missing keyframes with CORRELATIVE CONTINUITY
+  // This ensures each subsequent frame is generated from the previous one
   const generateAllMissing = async () => {
     const slots = getRequiredSlots();
     setGenerating('all');
     
     try {
+      // Track what we've generated in THIS batch session to bypass stale React state
+      let lastGeneratedImageUrl: string | null = null;
+      
       for (let i = 0; i < slots.length; i++) {
         const slot = slots[i];
-        const existing = keyframes.find(
-          kf => Math.abs(kf.timestamp_sec - slot.timestampSec) < 0.5
-        );
         
-        if (!existing?.image_url) {
-          await generateKeyframe(i);
-          // Small delay between generations
-          await new Promise(r => setTimeout(r, 500));
+        // Check if this slot already has an image in the DB
+        const { data: existingInDb } = await supabase
+          .from('keyframes')
+          .select('image_url')
+          .eq('shot_id', shotId)
+          .gte('timestamp_sec', slot.timestampSec - 0.5)
+          .lte('timestamp_sec', slot.timestampSec + 0.5)
+          .not('image_url', 'is', null)
+          .maybeSingle();
+        
+        if (existingInDb?.image_url) {
+          // Slot already filled - use it for next frame's continuity
+          lastGeneratedImageUrl = existingInDb.image_url;
+          console.log(`[KeyframeManager] Slot ${i} already has image, using for continuity`);
+          continue;
         }
+        
+        // Find the most recent previous keyframe from DB (not React state)
+        // This bypasses the stale state issue in batch mode
+        let previousImageUrl: string | null = lastGeneratedImageUrl;
+        
+        if (!previousImageUrl && i > 0) {
+          const { data: prevKeyframes } = await supabase
+            .from('keyframes')
+            .select('image_url, timestamp_sec')
+            .eq('shot_id', shotId)
+            .lt('timestamp_sec', slot.timestampSec)
+            .not('image_url', 'is', null)
+            .order('timestamp_sec', { ascending: false })
+            .limit(1);
+          
+          previousImageUrl = prevKeyframes?.[0]?.image_url || null;
+        }
+        
+        console.log(`[KeyframeManager] Generating slot ${i} (${slot.frameType}) with previousImageUrl: ${previousImageUrl ? 'PROVIDED' : 'NONE (initial frame)'}`);
+        
+        // Generate with explicit previous frame URL for correlative pipeline
+        const result = await generateKeyframe(i, undefined, previousImageUrl || undefined);
+        
+        // Track for next iteration
+        if (result?.imageUrl) {
+          lastGeneratedImageUrl = result.imageUrl;
+          console.log(`[KeyframeManager] Slot ${i} generated, storing URL for next frame continuity`);
+        }
+        
+        // Small delay between generations
+        await new Promise(r => setTimeout(r, 500));
       }
-      toast.success('Todos los keyframes generados');
+      toast.success('Todos los keyframes generados (modo correlativo)');
     } catch (error) {
       console.error('Error generating all keyframes:', error);
     } finally {
