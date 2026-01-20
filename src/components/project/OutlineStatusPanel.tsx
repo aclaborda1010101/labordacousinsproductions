@@ -220,14 +220,38 @@ export default function OutlineStatusPanel({
       <CardContent className="space-y-3">
         {outline ? (
           <>
-            {/* Progress bar */}
-            {outline.progress != null && outline.status === 'generating' && (
+            {/* V25: Enhanced Progress bar with chunk info */}
+            {outline.progress != null && (outline.status === 'generating' || outline.status === 'stalled') && (
               <div className="space-y-1">
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Progreso</span>
+                  <span className="flex items-center gap-2">
+                    Progreso
+                    {/* V25: Show act/chunk info from substage */}
+                    {outline.substage && (() => {
+                      const actMatch = outline.substage.match(/act_([iI]{1,3})/i);
+                      const chunkMatch = outline.substage.match(/chunk_(\d+)/);
+                      if (actMatch || chunkMatch) {
+                        const actNum = actMatch ? actMatch[1].toUpperCase() : null;
+                        const chunkNum = chunkMatch ? chunkMatch[1] : null;
+                        return (
+                          <Badge variant="secondary" className="text-[10px] h-4 px-1">
+                            {actNum && `Acto ${actNum}`}
+                            {actNum && chunkNum && ' · '}
+                            {chunkNum && `Chunk ${chunkNum}`}
+                          </Badge>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </span>
                   <span>{outline.progress}%</span>
                 </div>
                 <Progress value={outline.progress} className="h-2" />
+                {outline.status === 'stalled' && (
+                  <p className="text-xs text-yellow-600 mt-1">
+                    ⏸️ Pausado - Presiona &quot;Continuar&quot; para reanudar
+                  </p>
+                )}
               </div>
             )}
 
