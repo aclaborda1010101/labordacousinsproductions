@@ -220,13 +220,13 @@ export default function OutlineStatusPanel({
       <CardContent className="space-y-3">
         {outline ? (
           <>
-            {/* V25: Enhanced Progress bar with chunk info */}
-            {outline.progress != null && (outline.status === 'generating' || outline.status === 'stalled') && (
+            {/* V26: Progress bar visible in ALL states (generating, stalled, completed, failed) */}
+            {outline.progress != null && (
               <div className="space-y-1">
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span className="flex items-center gap-2">
                     Progreso
-                    {/* V25: Show act/chunk info from substage */}
+                    {/* Show act/chunk info from substage */}
                     {outline.substage && (() => {
                       const actMatch = outline.substage.match(/act_([iI]{1,3})/i);
                       const chunkMatch = outline.substage.match(/chunk_(\d+)/);
@@ -243,13 +243,35 @@ export default function OutlineStatusPanel({
                       }
                       return null;
                     })()}
+                    {/* V26: Show final status badge */}
+                    {(outline.status === 'completed' || outline.status === 'approved') && (
+                      <Badge variant="default" className="text-[10px] h-4 px-1 bg-green-500">
+                        Completado
+                      </Badge>
+                    )}
+                    {outline.status === 'failed' && (
+                      <Badge variant="destructive" className="text-[10px] h-4 px-1">
+                        Error
+                      </Badge>
+                    )}
                   </span>
                   <span>{outline.progress}%</span>
                 </div>
-                <Progress value={outline.progress} className="h-2" />
+                <Progress 
+                  value={outline.progress} 
+                  className={`h-2 ${
+                    outline.status === 'failed' ? '[&>div]:bg-red-500' : 
+                    (outline.status === 'completed' || outline.status === 'approved') ? '[&>div]:bg-green-500' : ''
+                  }`} 
+                />
                 {outline.status === 'stalled' && (
                   <p className="text-xs text-yellow-600 mt-1">
                     ⏸️ Pausado - Presiona &quot;Continuar&quot; para reanudar
+                  </p>
+                )}
+                {outline.status === 'failed' && outline.error_code && (
+                  <p className="text-xs text-red-600 mt-1">
+                    ❌ {outline.error_code}: {outline.error_message || 'Error durante la generación'}
                   </p>
                 )}
               </div>

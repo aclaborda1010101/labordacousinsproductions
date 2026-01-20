@@ -97,65 +97,92 @@ export const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_secondary_threads: 1
   },
   
-  // ============================================================================
-  // FILM PROFILES (Hollywood Standard V2 - Upgraded Density)
-  // ============================================================================
-  
-  // HOLLYWOOD STANDARD - Full production density for theatrical releases
-  film_90min: {
-    min_characters_total: 15,      // Protagonists (2-3) + Antagonists (2) + Supporting (8-10) + Figurantes (3-5)
-    min_supporting_characters: 8,  // Named characters with arcs
-    min_antagonists: 2,            // Main + secondary opposition
-    min_locations: 15,             // Visual variety for 90 minutes
-    min_scenes_per_episode: 45,    // ~2 min average per scene
-    min_threads_total: 5,          // A-plot + B-plot + C-plot + 2 subplots
-    min_secondary_threads: 3       // Character-driven subplots
-  },
-  
-  film_120min: {
-    min_characters_total: 20,
-    min_supporting_characters: 10,
-    min_antagonists: 2,
-    min_locations: 20,
-    min_scenes_per_episode: 60,    // ~2 min average per scene
-    min_threads_total: 6,
-    min_secondary_threads: 4
-  },
-  
-  // INDIE/AUTOR - Character-driven, fewer locations but deep
-  film_indie: {
-    min_characters_total: 8,
-    min_supporting_characters: 4,
-    min_antagonists: 1,
-    min_locations: 6,
-    min_scenes_per_episode: 30,
-    min_threads_total: 3,
-    min_secondary_threads: 2
-  },
-  
-  // BLOCKBUSTER - Large ensemble, multiple locations
-  film_blockbuster: {
-    min_characters_total: 25,
-    min_supporting_characters: 12,
-    min_antagonists: 3,
-    min_locations: 25,
-    min_scenes_per_episode: 70,
-    min_threads_total: 7,
-    min_secondary_threads: 5
-  },
-  
-  // ============================================================================
-  // LEGACY COMPAT (redirects to Hollywood Standard)
-  // ============================================================================
-  pelicula_90min: {
-    min_characters_total: 15,
-    min_supporting_characters: 8,
-    min_antagonists: 2,
-    min_locations: 15,
-    min_scenes_per_episode: 45,
-    min_threads_total: 5,
-    min_secondary_threads: 3
-  },
+// ============================================================================
+// FILM PROFILES V3.0 - User-selectable complexity levels
+// ============================================================================
+
+// INDIE/AUTOR - Character-driven, intimate productions
+// Use case: Art house films, character studies, low-budget productions
+film_indie: {
+  min_characters_total: 6,       // 2 protagonists + 1 antagonist + 3 supporting
+  min_supporting_characters: 3,  // Named characters with presence
+  min_antagonists: 1,            // Can be internal or subtle
+  min_locations: 6,              // Intimate, well-developed spaces
+  min_scenes_per_episode: 25,    // ~3.5 min average per scene
+  min_threads_total: 2,          // A-plot + B-plot
+  min_secondary_threads: 1       // Character relationship subplot
+},
+
+// STANDARD - Balanced production (RECOMMENDED DEFAULT)
+// Use case: Most theatrical releases, streaming originals
+film_standard: {
+  min_characters_total: 10,      // 2-3 protagonists + 1-2 antagonists + 5-6 supporting
+  min_supporting_characters: 5,  // Named characters with arcs
+  min_antagonists: 1,            // Clear opposition
+  min_locations: 10,             // Good visual variety
+  min_scenes_per_episode: 35,    // ~2.5 min average per scene
+  min_threads_total: 3,          // A + B + C plots
+  min_secondary_threads: 2       // Character-driven subplots
+},
+
+// HOLLYWOOD - Full production density for major releases
+// Use case: Theatrical blockbusters, ensemble pieces
+film_hollywood: {
+  min_characters_total: 15,      // Large ensemble
+  min_supporting_characters: 8,  // Named characters with arcs
+  min_antagonists: 2,            // Main + secondary opposition
+  min_locations: 15,             // High visual variety
+  min_scenes_per_episode: 45,    // ~2 min average per scene
+  min_threads_total: 5,          // Multiple interwoven plots
+  min_secondary_threads: 3       // Character-driven subplots
+},
+
+// BLOCKBUSTER - Epic scale productions
+film_blockbuster: {
+  min_characters_total: 20,
+  min_supporting_characters: 10,
+  min_antagonists: 2,
+  min_locations: 20,
+  min_scenes_per_episode: 55,
+  min_threads_total: 6,
+  min_secondary_threads: 4
+},
+
+// ============================================================================
+// LEGACY COMPAT - Map old names to new profiles
+// ============================================================================
+
+// Legacy: film_90min -> film_standard (was too strict with Hollywood requirements)
+film_90min: {
+  min_characters_total: 10,      // Reduced from 15
+  min_supporting_characters: 5,  // Reduced from 8
+  min_antagonists: 1,            // Reduced from 2
+  min_locations: 10,             // Reduced from 15
+  min_scenes_per_episode: 35,    // Reduced from 45
+  min_threads_total: 3,          // Reduced from 5
+  min_secondary_threads: 2       // Reduced from 3
+},
+
+film_120min: {
+  min_characters_total: 12,
+  min_supporting_characters: 6,
+  min_antagonists: 2,
+  min_locations: 12,
+  min_scenes_per_episode: 45,
+  min_threads_total: 4,
+  min_secondary_threads: 3
+},
+
+// Legacy Spanish name
+pelicula_90min: {
+  min_characters_total: 10,
+  min_supporting_characters: 5,
+  min_antagonists: 1,
+  min_locations: 10,
+  min_scenes_per_episode: 35,
+  min_threads_total: 3,
+  min_secondary_threads: 2
+},
   
   // ============================================================================
   // SHORT FORM

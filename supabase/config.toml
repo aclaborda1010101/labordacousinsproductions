@@ -37,6 +37,11 @@ verify_jwt = true
 # V3 Async: Fast enqueue endpoint - validates auth internally
 verify_jwt = false
 
+[functions.generate-outline-direct]
+# V3.1 SIMPLIFIED: Single-call outline generation with flexible density profiles
+# No chunking, no micro-stages - just one powerful prompt to the LLM
+verify_jwt = false
+
 [functions.outline-worker]
 # V3 Async: Step-based worker - validates auth internally
 verify_jwt = false
