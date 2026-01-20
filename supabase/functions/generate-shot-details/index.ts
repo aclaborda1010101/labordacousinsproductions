@@ -95,6 +95,9 @@ interface GenerateShotDetailsRequest {
     scene_mood?: string;
     previous_shot_context?: string;
     next_shot_context?: string;
+    // NEW: Raw script context for better extraction
+    scene_raw_text?: string;
+    dialogues?: { character: string; line: string }[];
   };
   shot: {
     shot_index: number;
@@ -123,6 +126,7 @@ interface GenerateShotDetailsRequest {
     current_emotion?: string;
     reference_images_available?: boolean;
   }[];
+  auto_populate?: boolean;
 }
 
 serve(async (req) => {
@@ -270,14 +274,30 @@ Return ONLY valid JSON with this exact structure:`;
   }
 }`;
 
+    // Build enhanced input with script context
+    const hasScriptContext = request.scene.scene_raw_text || (request.scene.dialogues && request.scene.dialogues.length > 0);
+    
     const inputData = `INPUT DATA:
 {
   "project": ${JSON.stringify(request.project || {})},
-  "scene": ${JSON.stringify(request.scene)},
+  "scene": ${JSON.stringify({
+    ...request.scene,
+    // Include script context for better extraction
+    scene_raw_text: request.scene.scene_raw_text || '',
+    dialogues: request.scene.dialogues || []
+  })},
   "shot": ${JSON.stringify(request.shot)},
   "location": ${JSON.stringify(request.location || {})},
   "characters": ${JSON.stringify(request.characters)}
 }
+
+${hasScriptContext ? `
+SCRIPT CONTEXT AVAILABLE:
+- Use "scene_raw_text" to extract the ACTION lines for blocking_action
+- Use "dialogues" array to find the dialogue for shot ${request.shot.shot_index}
+- Derive camera_movement suggestions from character movement described in ACTION lines
+- Extract emotional beats and intentions from dialogue subtext
+` : ''}
 
 Generate the complete shot details following the schema above. Return ONLY the JSON, no markdown or extra text.`;
 
