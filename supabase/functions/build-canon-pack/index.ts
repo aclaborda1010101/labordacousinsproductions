@@ -60,70 +60,91 @@ function buildCanonPackPrompt(
   packType: string,
   characterStates?: Record<string, any>
 ): string {
-  const charContext = characterStates 
-    ? `\n\n## ESTADOS DE PERSONAJES ACTUALES\n${JSON.stringify(characterStates, null, 2)}`
+  const charStatesBlock = characterStates 
+    ? `\n## ESTADOS ACTUALES DE PERSONAJES\n${JSON.stringify(characterStates, null, 2)}`
     : '';
-  
-  return `
-# TAREA: Generar CANON PACK para ${packType}
 
-## BIBLE RESUMEN
+  return `
+# TAREA: Generar Canon Pack Compacto (máx 1500 tokens)
+
+## BIBLE SUMMARY
 ${bibleSummary}
 
-## OUTLINE
+## OUTLINE SUMMARY  
 ${outlineSummary}
-${charContext}
+${charStatesBlock}
+
+## TIPO DE PACK: ${packType.toUpperCase()}
 
 ## INSTRUCCIONES
 
-Genera un CANON PACK compacto (máximo 1500 tokens) que contenga:
+Genera un pack canónico COMPACTO que contenga SOLO lo esencial para mantener coherencia narrativa.
+Este pack será inyectado en cada bloque de generación de guion.
 
-### 1. VOICE & TONE RULES (10 reglas concretas)
-Reglas específicas de escritura para mantener consistencia de voz.
-Ejemplo: "Diálogos cortos, máximo 3 líneas por intervención"
+REGLAS:
+1. Máximo 1500 tokens total
+2. Solo información CRÍTICA para continuidad
+3. Reglas concretas, no descripciones
+4. Personajes solo con traits activos para este ${packType}
+5. invariants_by_character: 3-6 bullets INMUTABLES por personaje principal
 
-### 2. ACTIVE CAST
-Solo personajes relevantes para este ${packType}.
-Para cada uno: rol, 3 rasgos clave, objetivo actual, relaciones activas.
-
-### 3. TIMELINE STATE
-- Fecha/día actual de la historia
-- Momento del día predominante
-- Día de la historia (Day 1, Day 2, etc.)
-- Temperatura emocional general
-
-### 4. ACTIVE PROPS & LOCATIONS
-Lista de props importantes y locaciones en uso.
-
-### 5. CONTINUITY LOCKS (INMUTABLES)
-Cosas que NO pueden cambiar bajo ninguna circunstancia.
-Ejemplo: "María tiene cicatriz en mano izquierda desde escena 5"
-
-## FORMATO JSON REQUERIDO
+## FORMATO JSON OBLIGATORIO
 
 {
   "voice_tone_rules": [
-    "Regla 1...",
-    "Regla 2..."
+    "Diálogos cortos, máximo 3 líneas",
+    "Descripciones visuales, no explicativas",
+    "Subtexto > texto literal",
+    "Ritmo: escenas de 2-3 páginas máximo",
+    "Tono: [específico del proyecto]"
   ],
   "active_cast": {
-    "Nombre": {
-      "role": "protagonista/antagonista/secundario",
-      "traits": ["rasgo1", "rasgo2", "rasgo3"],
-      "current_goal": "qué quiere ahora",
+    "NOMBRE_PERSONAJE": {
+      "role": "protagonista|antagonista|soporte",
+      "traits": ["trait1", "trait2"],
+      "current_goal": "objetivo actual específico",
       "relationships": {
-        "OtroPersonaje": "tipo de relación"
+        "otro_personaje": "tipo de relación"
       }
     }
   },
   "timeline_state": {
-    "current_date": "descripción",
-    "time_of_day": "DAY/NIGHT/DAWN/DUSK",
+    "current_date": "Día X de la historia",
+    "time_of_day": "DAY|NIGHT|DAWN|DUSK",
     "story_day": 1,
-    "emotional_temperature": "tensa/esperanzadora/desesperada"
+    "emotional_temperature": "tenso|esperanzador|desesperado|etc"
   },
-  "active_props_locs": ["prop1", "loc1"],
-  "continuity_locks": ["lock1", "lock2"]
+  "active_props_locs": [
+    "PROP: descripción breve",
+    "LOC: descripción breve"
+  ],
+  "continuity_locks": [
+    "NO puede morir X hasta episodio Y",
+    "X NO sabe que Y es su hermano",
+    "El secreto Z no se revela aún"
+  ],
+  "invariants_by_character": {
+    "PERSONAJE_1": [
+      "Siempre lleva el anillo de su madre",
+      "Cojea de la pierna izquierda",
+      "Nunca dice malas palabras",
+      "Tiene 35 años exactos",
+      "Es médica, no enfermera",
+      "Pelo negro corto, nunca rubio"
+    ],
+    "PERSONAJE_2": [
+      "Cicatriz en la mejilla derecha",
+      "Acento del norte",
+      "Zurdo"
+    ]
+  },
+  "locked_fields": [
+    "character_names",
+    "character_ages", 
+    "timeline_base",
+    "key_relationships",
+    "death_schedule"
+  ]
 }
 
 Responde SOLO con el JSON.

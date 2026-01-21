@@ -2,6 +2,11 @@
  * ScriptGenerationCreativeProgress - UX-optimized progress for Hollywood pipeline
  * Shows creative progress (episodes/acts/scenes) instead of raw call counts
  * Implements P2: UX Progress + Streaming delivery
+ * 
+ * P2.1 IMPROVEMENTS:
+ * - Scene objectives displayed ("Elena escapes but leaves evidence")
+ * - Quality badges (Hollywood vs Standard)
+ * - Model tier indicator
  */
 
 import { useState, useEffect } from 'react';
@@ -22,6 +27,8 @@ import {
   AlertTriangle,
   Eye,
   BellRing,
+  Shield,
+  Sparkles,
 } from 'lucide-react';
 
 // =============================================================================
@@ -51,12 +58,17 @@ export interface CreativeProgressState {
   totalEpisodes: number;
   episodes: EpisodeProgress[];
   currentScene: string;
+  currentSceneObjective?: string; // P2.1: Scene objective
   currentPhase: 'bible' | 'outline' | 'scene_cards' | 'script' | 'polish';
   elapsedSeconds: number;
   estimatedRemainingMinutes: number;
   driftWarnings: number;
   rescuePasses: number;
   streamingContent?: string;
+  // P2.1: Quality indicators
+  currentModelTier?: 'hollywood' | 'professional' | 'fast';
+  currentModelReason?: string;
+  qaScore?: number;
 }
 
 export interface ScriptGenerationCreativeProgressProps {
@@ -98,6 +110,34 @@ function getPhaseIcon(phase: CreativeProgressState['currentPhase']) {
     case 'script': return Pen;
     case 'polish': return Zap;
     default: return Loader2;
+  }
+}
+
+function getModelTierBadge(tier?: CreativeProgressState['currentModelTier'], reason?: string) {
+  if (!tier) return null;
+  
+  switch (tier) {
+    case 'hollywood':
+      return (
+        <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 gap-1">
+          <Sparkles className="w-3 h-3" />
+          Hollywood
+          {reason && <span className="text-xs opacity-70">({reason})</span>}
+        </Badge>
+      );
+    case 'professional':
+      return (
+        <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30 gap-1">
+          <Shield className="w-3 h-3" />
+          Pro
+        </Badge>
+      );
+    default:
+      return (
+        <Badge variant="outline" className="bg-muted text-muted-foreground gap-1">
+          Standard
+        </Badge>
+      );
   }
 }
 
@@ -145,7 +185,25 @@ export function ScriptGenerationCreativeProgress({
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* P2.1: Model tier badge */}
+            {getModelTierBadge(state.currentModelTier, state.currentModelReason)}
+            
+            {/* QA Score indicator */}
+            {state.qaScore !== undefined && (
+              <Badge 
+                variant="outline" 
+                className={cn(
+                  "gap-1",
+                  state.qaScore >= 80 && "bg-green-500/10 text-green-600 border-green-500/30",
+                  state.qaScore >= 60 && state.qaScore < 80 && "bg-amber-500/10 text-amber-600 border-amber-500/30",
+                  state.qaScore < 60 && "bg-red-500/10 text-red-600 border-red-500/30"
+                )}
+              >
+                QA: {state.qaScore}%
+              </Badge>
+            )}
+            
             {state.driftWarnings > 0 && (
               <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">
                 <AlertTriangle className="w-3 h-3 mr-1" />
@@ -157,7 +215,7 @@ export function ScriptGenerationCreativeProgress({
               <Clock className="w-4 h-4" />
               <span>{formatElapsed(state.elapsedSeconds)}</span>
               {state.estimatedRemainingMinutes > 0 && (
-                <span className="text-xs">• ~{state.estimatedRemainingMinutes} min restante</span>
+                <span className="text-xs">• ~{state.estimatedRemainingMinutes} min</span>
               )}
             </div>
           </div>
@@ -178,14 +236,23 @@ export function ScriptGenerationCreativeProgress({
         </div>
       </div>
 
-      {/* Current Scene Indicator */}
-      {state.currentScene && (
-        <div className="px-4 py-2 bg-primary/5 border-b flex items-center gap-2">
-          <Pen className="w-4 h-4 text-primary" />
-          <span className="text-sm">
-            <span className="text-muted-foreground">Escribiendo:</span>{' '}
-            <span className="font-medium">{state.currentScene}</span>
-          </span>
+      {/* P2.1: Enhanced Current Scene Indicator with Objective */}
+      {(state.currentScene || state.currentSceneObjective) && (
+        <div className="px-4 py-3 bg-primary/5 border-b">
+          <div className="flex items-start gap-2">
+            <Pen className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm">
+                <span className="text-muted-foreground">Escribiendo:</span>{' '}
+                <span className="font-medium">{state.currentScene}</span>
+              </div>
+              {state.currentSceneObjective && (
+                <div className="text-xs text-muted-foreground mt-0.5 italic">
+                  "{state.currentSceneObjective}"
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -197,7 +264,7 @@ export function ScriptGenerationCreativeProgress({
               <div 
                 key={episode.episodeNumber}
                 className={cn(
-                  "rounded-lg border p-3 transition-all cursor-pointer",
+                  "rounded-lg border p-3 transition-all cursor-pointer hover:border-primary/30",
                   episode.status === 'generating' && "border-primary/50 bg-primary/5",
                   episode.status === 'completed' && "border-green-500/30 bg-green-500/5",
                   episode.status === 'failed' && "border-red-500/30 bg-red-500/5"
@@ -252,7 +319,7 @@ export function ScriptGenerationCreativeProgress({
               <div 
                 key={act.actNumber}
                 className={cn(
-                  "rounded-lg border p-3 text-center",
+                  "rounded-lg border p-3 text-center transition-all",
                   act.progress === 100 && "border-green-500/30 bg-green-500/5",
                   act.progress > 0 && act.progress < 100 && "border-primary/50 bg-primary/5"
                 )}
@@ -263,6 +330,11 @@ export function ScriptGenerationCreativeProgress({
                 <div className="text-xs text-muted-foreground mt-1">
                   {act.scenesCompleted}/{act.scenesTotal} escenas
                 </div>
+                {act.currentScene && (
+                  <div className="text-xs text-primary mt-1 truncate">
+                    {act.currentScene}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -272,22 +344,22 @@ export function ScriptGenerationCreativeProgress({
       {/* Streaming Preview */}
       {showStreaming && state.streamingContent && (
         <div className="px-4 pb-4">
-          <div className="rounded-lg border bg-muted/30 p-3 max-h-40 overflow-y-auto font-mono text-xs">
+          <div className="rounded-lg border bg-muted/30 p-3 max-h-40 overflow-y-auto font-mono text-xs whitespace-pre-wrap">
             {state.streamingContent}
           </div>
         </div>
       )}
 
       {/* Actions */}
-      <div className="p-4 border-t bg-muted/20 flex items-center justify-between">
-        <Alert className="flex-1 mr-4 bg-blue-500/5 border-blue-500/20 py-2">
+      <div className="p-4 border-t bg-muted/20 flex items-center justify-between gap-4">
+        <Alert className="flex-1 bg-blue-500/5 border-blue-500/20 py-2">
           <BellRing className="h-4 w-4 text-blue-500" />
           <AlertDescription className="text-xs">
             Puedes navegar libremente — Te notificaremos cuando termine.
           </AlertDescription>
         </Alert>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {onViewContent && (
             <Button variant="outline" size="sm" onClick={onViewContent}>
               <Eye className="w-4 h-4 mr-1" />
@@ -333,11 +405,15 @@ export function useCreativeProgressState(
     totalEpisodes,
     episodes: initialEpisodes,
     currentScene: '',
+    currentSceneObjective: undefined,
     currentPhase: 'bible',
     elapsedSeconds: 0,
     estimatedRemainingMinutes: 0,
     driftWarnings: 0,
-    rescuePasses: 0
+    rescuePasses: 0,
+    currentModelTier: undefined,
+    currentModelReason: undefined,
+    qaScore: undefined
   });
 
   const updateState = (updates: Partial<CreativeProgressState>) => {
