@@ -3840,6 +3840,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 throw err;
               }
               
+              // V3.2: If it's a PROJECT_BUSY error, propagate it up - DO NOT retry
+              // This prevents the 409 spam loop that causes blank screens
+              if (err.message?.includes('PROJECT_BUSY')) {
+                console.log('[ScriptImport] PROJECT_BUSY detected in catch - propagating to exit all loops');
+                throw err;
+              }
+              
               batchAttempts[batchIdx]++;
               episodeState.lastRepairReason = err.message || 'Unknown error';
             }
