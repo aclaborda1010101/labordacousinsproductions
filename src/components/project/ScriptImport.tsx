@@ -2172,7 +2172,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           duration: 6000,
         });
         // Auto-retry with a slight delay
-        setTimeout(() => generateLightOutline(), 1500);
+        setTimeout(() => generateOutlineDirect(), 1500);
         return;
       }
       
@@ -3920,7 +3920,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // Legacy pipeline (keeping for compatibility)
   const runFullPipeline = async () => {
     // Redirect to new V2 flow
-    generateLightOutline();
+    generateOutlineDirect();
   };
 
   // Script Doctor
@@ -5392,9 +5392,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   // Auto-regenerate if we have an idea saved
                   if (ideaText.trim()) {
                     toast.info('Regenerando outline con tu idea original...');
-                    // Use setTimeout to allow state updates before calling generateLightOutline
+                    // Use setTimeout to allow state updates before calling generateOutlineDirect
                     setTimeout(() => {
-                      generateLightOutline();
+                      generateOutlineDirect();
                     }, 100);
                   } else {
                     toast.info('Ingresa tu idea y genera un nuevo outline.');
@@ -5474,7 +5474,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               outlinePersistence.refreshOutline();
               fetchBibleData();
             }}
-            onGenerateOutline={ideaText.trim() ? generateLightOutline : undefined}
+            onGenerateOutline={ideaText.trim() ? generateOutlineDirect : undefined}
             onResumeGeneration={(outlinePersistence.savedOutline?.status === 'stalled' || outlinePersistence.savedOutline?.status === 'timeout' || outlinePersistence.canResume) ? async () => {
               // Resume generation from where it left off using the hook's resumeGeneration
               toast.info('Reanudando generación...');
@@ -5493,7 +5493,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               // Delete current outline and regenerate
               await outlinePersistence.deleteOutline?.();
               if (ideaText.trim()) {
-                generateLightOutline();
+                generateOutlineDirect();
               } else {
                 toast.info('Escribe tu idea y pulsa "Generar Outline"');
               }
@@ -7311,7 +7311,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       {/* Retry from scratch */}
                       {!isZombie && (
                         <Button 
-                          onClick={generateLightOutline}
+                          onClick={generateOutlineDirect}
                           disabled={!ideaText.trim() || ideaText.trim().length < 30}
                           variant={resumeInfo.canResume ? "outline" : "default"}
                           className={resumeInfo.canResume ? "" : "flex-1"}
@@ -7717,7 +7717,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <Button 
                   variant="gold" 
                   className="w-full"
-                  onClick={generateLightOutline} 
+                  onClick={generateOutlineDirect} 
                   disabled={generatingOutline || !ideaText.trim() || pipelineRunning}
                 >
                   {generatingOutline ? (
