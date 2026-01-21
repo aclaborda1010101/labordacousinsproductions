@@ -1485,9 +1485,13 @@ serve(async (req) => {
     }
 
     // =========================================================================
-    // V13: PRE-GENERATION GENERICITY CHECK (cheap, prevents garbage)
+    // V13.1: PRE-GENERATION GENERICITY CHECK (relaxed for FILM format)
+    // FILM bypasses genericity gate because film outlines use different narrative style
+    // Series still get strict enforcement
     // =========================================================================
-    if (effectiveOutline && !isRepairAttempt) {
+    const isFilmFormat = formatUpper === 'FILM' || formatUpper === 'PELÍCULA' || formatUpper === 'PELICULA';
+    
+    if (effectiveOutline && !isRepairAttempt && !isFilmFormat) {
       const genPre = validateGenericity(effectiveOutline);
       
       if (genPre.status === 'FAIL') {
@@ -1518,6 +1522,15 @@ serve(async (req) => {
           }
         }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
+    } else if (isFilmFormat && effectiveOutline) {
+      // Log but don't block for films
+      const genPre = validateGenericity(effectiveOutline);
+      console.log('[generate-script] FILM genericity check (advisory only):', {
+        score: genPre.genericity_score,
+        observability: genPre.observability_score,
+        status: genPre.status,
+        bypassed: true
+      });
     }
 
     // =========================================================================
