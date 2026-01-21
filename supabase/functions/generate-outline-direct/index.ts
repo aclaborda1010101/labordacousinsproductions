@@ -276,21 +276,34 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
 }
 
 // ============================================================================
-// AI CALL
+// AI CALL - With retry on timeout using faster model
 // ============================================================================
 
-async function callAI(prompt: string, timeout = 120000): Promise<any> {
+const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+
+// Model fallback chain: fast → faster
+const MODEL_CHAIN = [
+  { model: 'google/gemini-2.5-flash', timeout: 150000, maxTokens: 16000 },
+  { model: 'google/gemini-2.5-flash-lite', timeout: 120000, maxTokens: 12000 },
+];
+
+async function callAIWithModel(
+  prompt: string, 
+  model: string, 
+  timeout: number, 
+  maxTokens: number
+): Promise<{ outline: any; model: string }> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) {
     throw new Error('LOVABLE_API_KEY not configured');
   }
 
-  const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
-
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
+    console.log(`[generate-outline-direct] Calling ${model} with ${timeout}ms timeout`);
+    
     const response = await fetch(AI_GATEWAY_URL, {
       method: 'POST',
       headers: { 
@@ -298,11 +311,11 @@ async function callAI(prompt: string, timeout = 120000): Promise<any> {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5.2',
+        model,
         messages: [
           { role: 'user', content: prompt }
         ],
-        max_completion_tokens: 16000,
+        max_completion_tokens: maxTokens,
         temperature: 0.7,
       }),
       signal: controller.signal,
@@ -335,14 +348,38 @@ async function callAI(prompt: string, timeout = 120000): Promise<any> {
       throw new Error('No valid JSON found in AI response');
     }
 
-    return JSON.parse(jsonMatch[0]);
+    return { outline: JSON.parse(jsonMatch[0]), model };
   } catch (error: any) {
     clearTimeout(timeoutId);
     if (error.name === 'AbortError') {
-      throw new Error('AI_TIMEOUT: Request exceeded 120 seconds');
+      throw new Error(`TIMEOUT_${model}`);
     }
     throw error;
   }
+}
+
+async function callAI(prompt: string): Promise<{ outline: any; model: string }> {
+  let lastError: Error | null = null;
+
+  for (const config of MODEL_CHAIN) {
+    try {
+      return await callAIWithModel(prompt, config.model, config.timeout, config.maxTokens);
+    } catch (error: any) {
+      console.warn(`[generate-outline-direct] ${config.model} failed:`, error.message);
+      lastError = error;
+      
+      // If it's a timeout, try next model
+      if (error.message?.startsWith('TIMEOUT_')) {
+        console.log(`[generate-outline-direct] Retrying with next model in chain...`);
+        continue;
+      }
+      
+      // For other errors, throw immediately
+      throw error;
+    }
+  }
+
+  throw new Error(`AI_TIMEOUT: All models timed out. Last error: ${lastError?.message}`);
 }
 
 // ============================================================================
@@ -442,10 +479,14 @@ serve(async (req) => {
       })
       .eq('id', outlineId);
 
-    // Call AI
+    // Call AI with model fallback
     let outline: any;
+    let usedModel: string = 'unknown';
     try {
-      outline = await callAI(prompt);
+      const result = await callAI(prompt);
+      outline = result.outline;
+      usedModel = result.model;
+      console.log(`[generate-outline-direct] Success with model: ${usedModel}`);
     } catch (aiError: any) {
       console.error('[generate-outline-direct] AI error:', aiError);
       
