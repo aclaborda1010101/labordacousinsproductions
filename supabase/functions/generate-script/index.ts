@@ -1208,10 +1208,12 @@ serve(async (req) => {
       // =======================================================================
       projectIdForLock = request.projectId;
       
+      // V3.1: Reduced lock duration from 600s to 180s to prevent stale locks
+      // If generation times out, lock expires faster and project becomes unblocked sooner
       const { data: lockResult, error: lockError } = await auth.supabase.rpc('acquire_project_lock', {
         p_project_id: request.projectId,
         p_reason: 'script_generation',
-        p_duration_seconds: 600 // 10 minutes max
+        p_duration_seconds: 180 // 3 minutes max (reduced from 10 to prevent stale locks)
       });
 
       if (lockError) {
