@@ -7,7 +7,8 @@
 export type AIEngineId = 
   | 'nano-banana' 
   | 'flux-ultra' 
-  | 'kling-v2' 
+  | 'kling-v2'
+  | 'kling-o1'
   | 'veo' 
   | 'chatgpt' 
   | 'claude' 
@@ -18,6 +19,7 @@ export const AI_ENGINE_DISPLAY_NAMES: Record<AIEngineId, string> = {
   'nano-banana': 'Nano Banana Pro',
   'flux-ultra': 'FLUX Pro Ultra',
   'kling-v2': 'Kling v2',
+  'kling-o1': 'Kling O1 (Omni)',
   'veo': 'Google Veo',
   'chatgpt': 'ChatGPT',
   'claude': 'Claude',
@@ -61,6 +63,15 @@ export const ENGINE_CAPABILITIES: Record<AIEngineId, EngineCapabilities> = {
     maxDurationSec: 10,
     strengthAreas: ['motion quality', 'keyframe consistency', 'action sequences'],
     weaknessAreas: ['long durations', 'face stability', 'rapid movements']
+  },
+  'kling-o1': {
+    supportsImage: false,
+    supportsVideo: true,
+    supportsText: true,
+    supportsKeyframeAnchor: true,
+    maxDurationSec: 120,
+    strengthAreas: ['4K quality', 'long duration', 'text-to-video', 'multimodal coherence'],
+    weaknessAreas: ['cost', 'generation time']
   },
   'veo': {
     supportsImage: false,

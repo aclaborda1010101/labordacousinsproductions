@@ -70,6 +70,11 @@ const ENGINE_PROMPT_MODIFIERS: Record<AIEngineId, (prompt: string) => string> = 
     return `${motionPrefix}${prompt}, smooth motion, cinematic quality`;
   },
   
+  'kling-o1': (prompt) => {
+    // O1 (Omni) optimized for highest quality
+    return `${prompt}, 4K quality, smooth motion, cinematic quality, professional production`;
+  },
+  
   'veo': (prompt) => {
     // Use cinematic terminology
     return `Cinematic shot: ${prompt}, film grain, professional color grading, atmospheric`;
@@ -97,6 +102,11 @@ const ENGINE_NEGATIVE_PATTERNS: Record<AIEngineId, string[]> = {
     'static', 'frozen', 'still image', 'no movement',
     'morphing', 'glitching', 'flickering', 'jittery',
     'face distortion', 'identity change'
+  ],
+  'kling-o1': [
+    'static', 'frozen', 'still image', 'no movement',
+    'morphing', 'glitching', 'flickering', 'jittery',
+    'face distortion', 'identity change', 'low resolution'
   ],
   'veo': [
     'text overlay', 'subtitles', 'watermark',
