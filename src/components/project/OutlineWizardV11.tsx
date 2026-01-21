@@ -48,6 +48,10 @@ interface OutlineWizardV11Props {
   savedOutline?: { status?: string; outline_parts?: any };
   // Format for conditional labels
   format?: string;
+  // V3.1: Project lock state
+  isProjectLocked?: boolean;
+  lockCountdown?: string; // "MM:SS" format
+  onUnlock?: () => void;
 }
 
 interface ChecklistItem {
@@ -191,6 +195,10 @@ export default function OutlineWizardV11({
   outlineParts,
   savedOutline,
   format,
+  // V3.1: Project lock props
+  isProjectLocked,
+  lockCountdown,
+  onUnlock,
 }: OutlineWizardV11Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   
@@ -367,15 +375,38 @@ export default function OutlineWizardV11({
             </Button>
           )}
           
+          {/* V3.1: Project Lock Banner */}
+          {isProjectLocked && lockCountdown && (
+            <Alert variant="destructive" className="bg-amber-500/10 border-amber-500/40">
+              <Lock className="h-4 w-4" />
+              <AlertTitle className="text-amber-700 dark:text-amber-300">Proyecto ocupado</AlertTitle>
+              <AlertDescription className="text-amber-600 dark:text-amber-400">
+                <div className="flex items-center justify-between">
+                  <span>Disponible en <strong className="font-mono">{lockCountdown}</strong></span>
+                  {onUnlock && (
+                    <Button variant="outline" size="sm" onClick={onUnlock} className="ml-2">
+                      Desbloquear
+                    </Button>
+                  )}
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {/* Generate Episodes Button */}
           <Button
             variant="gold"
             size="lg"
             className="w-full"
             onClick={onGenerateEpisodes}
-            disabled={!qcStatus.canGenerateEpisodes || isLoading}
+            disabled={!qcStatus.canGenerateEpisodes || isLoading || isProjectLocked}
           >
-            {qcStatus.canGenerateEpisodes ? (
+            {isProjectLocked ? (
+              <>
+                <Lock className="w-4 h-4 mr-2 animate-pulse" />
+                Proyecto ocupado ({lockCountdown})
+              </>
+            ) : qcStatus.canGenerateEpisodes ? (
               <>
                 <CheckCircle className="w-4 h-4 mr-2" />
                 {format === 'film' ? '✅ Aprobar y Generar Guión' : '✅ Aprobar y Generar Episodios'}

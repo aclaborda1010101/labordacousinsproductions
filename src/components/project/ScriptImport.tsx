@@ -1432,6 +1432,51 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     return () => clearInterval(interval);
   }, [pipelineRunning, scriptStartTime]);
 
+  // V3.1: Project lock countdown timer - auto-clears lock state when expired
+  const [lockRemainingSeconds, setLockRemainingSeconds] = useState(0);
+  
+  useEffect(() => {
+    if (!projectLockInfo?.isLocked || !projectLockInfo.lockedAt || !projectLockInfo.retryAfterSeconds) {
+      setLockRemainingSeconds(0);
+      return;
+    }
+    
+    const calculateRemaining = () => {
+      const elapsedMs = Date.now() - new Date(projectLockInfo.lockedAt!).getTime();
+      const elapsedSeconds = Math.floor(elapsedMs / 1000);
+      const remaining = Math.max(0, projectLockInfo.retryAfterSeconds! - elapsedSeconds);
+      return remaining;
+    };
+    
+    // Initial calculation
+    setLockRemainingSeconds(calculateRemaining());
+    
+    const interval = setInterval(() => {
+      const remaining = calculateRemaining();
+      setLockRemainingSeconds(remaining);
+      
+      // Auto-clear lock when timer expires
+      if (remaining <= 0) {
+        setProjectLockInfo(null);
+        toast.info('Proyecto desbloqueado. Puedes reintentar la generación.');
+      }
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [projectLockInfo]);
+  
+  // V3.1: Derived state - is project currently locked?
+  const isProjectLocked = useMemo(() => {
+    return projectLockInfo?.isLocked && lockRemainingSeconds > 0;
+  }, [projectLockInfo, lockRemainingSeconds]);
+  
+  // V3.1: Format lock countdown for display (MM:SS)
+  const formatLockCountdown = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const updatePipelineStep = (stepId: string, status: PipelineStep['status'], label?: string) => {
     setPipelineSteps(prev => prev.map(s => s.id === stepId ? { ...s, status, label: label || s.label } : s));
     if (label) setCurrentStepLabel(label);
@@ -3324,11 +3369,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   // Continue to retry logic below
                 }
                 
-                // V3.0: Handle PROJECT_BUSY (409) - show lock info and allow unlock
+                // V3.1: Handle PROJECT_BUSY (409) - STOP generation completely, show countdown
+                // DO NOT auto-retry - this causes the 409 spam loop
                 if (errorObj?.status === 409 || errorObj?.code === 'PROJECT_BUSY' || errorMsg.includes('PROJECT_BUSY')) {
                   const retryAfter = errorObj?.retry_after_seconds || 60;
                   const lockReason = errorObj?.lock_reason || 'script_generation';
                   
+                  // Set lock info with countdown timer
                   setProjectLockInfo({
                     isLocked: true,
                     lockReason,
@@ -3336,8 +3383,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     lockedAt: new Date(),
                   });
                   
-                  toast.warning(`Proyecto ocupado: ${lockReason}`, {
-                    description: `Espera ${Math.ceil(retryAfter / 60)} min o desbloquea manualmente`,
+                  // V3.1: STOP pipeline completely - don't continue to next batch/episode
+                  setPipelineRunning(false);
+                  setGeneratingOutline(false);
+                  clearPipelineState();
+                  
+                  // Clean up background task if running
+                  if (taskId) {
+                    failTask(taskId, `Proyecto ocupado: ${lockReason}`);
+                    setScriptTaskId(null);
+                  }
+                  
+                  toast.warning(`Proyecto ocupado`, {
+                    description: `Otro proceso está ejecutándose. Disponible en ~${Math.ceil(retryAfter / 60)} minutos.`,
                     action: {
                       label: 'Desbloquear',
                       onClick: async () => {
@@ -3345,19 +3403,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                           const { error: unlockError } = await invokeAuthedFunction('force-unlock-project', { projectId });
                           if (unlockError) throw unlockError;
                           setProjectLockInfo(null);
-                          toast.success('Proyecto desbloqueado');
+                          toast.success('Proyecto desbloqueado. Puedes reintentar.');
                         } catch (e: any) {
                           toast.error(`Error al desbloquear: ${e.message}`);
                         }
                       }
                     },
-                    duration: 15000
+                    duration: 20000
                   });
                   
-                  // Break the generation loop - don't retry automatically
-                  episodeError = 'PROJECT_BUSY';
-                  batchPassed = true; // exit loop
-                  break;
+                  // V3.1: Throw to exit all loops completely - don't continue to next episode
+                  throw new Error(`PROJECT_BUSY: ${lockReason}. Reinicia en ${retryAfter}s`);
                 }
                 
                 // For other errors, increment attempt and maybe retry
@@ -6410,6 +6466,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   }}
                   outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
                   savedOutline={outlinePersistence.savedOutline}
+                  isProjectLocked={isProjectLocked}
+                  lockCountdown={lockRemainingSeconds > 0 ? formatLockCountdown(lockRemainingSeconds) : undefined}
+                  onUnlock={async () => {
+                    try {
+                      const { error } = await invokeAuthedFunction('force-unlock-project', { projectId });
+                      if (error) throw error;
+                      setProjectLockInfo(null);
+                      toast.success('Proyecto desbloqueado');
+                    } catch (e: any) {
+                      toast.error(`Error al desbloquear: ${e.message}`);
+                    }
+                  }}
                 />
 
                 {/* Time Warning */}
@@ -7033,6 +7101,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     }}
                     outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
                     savedOutline={outlinePersistence.savedOutline}
+                    isProjectLocked={isProjectLocked}
+                    lockCountdown={lockRemainingSeconds > 0 ? formatLockCountdown(lockRemainingSeconds) : undefined}
+                    onUnlock={async () => {
+                      try {
+                        const { error } = await invokeAuthedFunction('force-unlock-project', { projectId });
+                        if (error) throw error;
+                        setProjectLockInfo(null);
+                        toast.success('Proyecto desbloqueado');
+                      } catch (e: any) {
+                        toast.error(`Error al desbloquear: ${e.message}`);
+                      }
+                    }}
                   />
                 )}
 
