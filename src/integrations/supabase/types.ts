@@ -2449,6 +2449,81 @@ export type Database = {
           },
         ]
       }
+      generation_blocks: {
+        Row: {
+          block_index: number
+          block_type: string
+          completed_at: string | null
+          continuity_summary: Json | null
+          created_at: string | null
+          episode_number: number | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          input_context: Json | null
+          output_data: Json | null
+          project_id: string
+          retry_count: number | null
+          scene_range: string | null
+          script_id: string | null
+          started_at: string | null
+          status: string | null
+        }
+        Insert: {
+          block_index: number
+          block_type: string
+          completed_at?: string | null
+          continuity_summary?: Json | null
+          created_at?: string | null
+          episode_number?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          input_context?: Json | null
+          output_data?: Json | null
+          project_id: string
+          retry_count?: number | null
+          scene_range?: string | null
+          script_id?: string | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          block_index?: number
+          block_type?: string
+          completed_at?: string | null
+          continuity_summary?: Json | null
+          created_at?: string | null
+          episode_number?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          input_context?: Json | null
+          output_data?: Json | null
+          project_id?: string
+          retry_count?: number | null
+          scene_range?: string | null
+          script_id?: string | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generation_blocks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generation_blocks_script_id_fkey"
+            columns: ["script_id"]
+            isOneToOne: false
+            referencedRelation: "scripts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       generation_history: {
         Row: {
           character_id: string
@@ -6116,6 +6191,10 @@ export type Database = {
           quality: number
         }[]
       }
+      get_last_continuity_summary: {
+        Args: { p_episode_number?: number; p_project_id: string }
+        Returns: Json
+      }
       get_primary_identity_anchor: {
         Args: { char_id: string }
         Returns: {
@@ -6166,6 +6245,10 @@ export type Database = {
             Args: { p_project_id: string; p_user_id: string }
             Returns: undefined
           }
+      reset_failed_blocks: {
+        Args: { p_block_type?: string; p_project_id: string }
+        Returns: number
+      }
       save_to_cache: {
         Args: {
           p_anchor_id: string

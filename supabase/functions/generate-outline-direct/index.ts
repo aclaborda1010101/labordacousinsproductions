@@ -302,7 +302,7 @@ async function callAI(prompt: string, timeout = 120000): Promise<any> {
         messages: [
           { role: 'user', content: prompt }
         ],
-        max_tokens: 16000,
+        max_completion_tokens: 16000,
         temperature: 0.7,
       }),
       signal: controller.signal,
