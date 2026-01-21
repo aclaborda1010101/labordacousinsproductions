@@ -1,8 +1,13 @@
 /**
- * MODEL SELECTOR V1.0
+ * MODEL SELECTOR V1.1
  * 
  * Intelligent model selection for Writer's Room Hollywood Pipeline
  * Balances quality and cost by using appropriate models for each block type
+ * 
+ * P1.2 REFINEMENTS:
+ * - REVEAL_DIALOGUE: Reveals + intense confrontations → gpt-5.2
+ * - VISUAL_SETPIECE: Scenes >4min or action-heavy → gpt-5.2
+ * - POST_RESCUE_STABILIZE: Block after rescue also uses gpt-5.2
  */
 
 // Critical beats that require highest quality model
@@ -18,8 +23,17 @@ const CRITICAL_BEATS = [
   'climax',
   'resolution',
   'cliffhanger',
-  'season_finale'
+  'season_finale',
+  'reveal',
+  'confession',
+  'twist',
+  'confrontation'
 ] as const;
+
+// Reveal-related keywords for intense dialogue detection
+const REVEAL_KEYWORDS = ['reveal', 'confession', 'twist', 'secret', 'truth', 'discover'];
+const INTENSE_DIALOGUE_KEYWORDS = ['confronta', 'revela', 'enfrenta', 'acusa', 'confiesa'];
+const SETPIECE_KEYWORDS = ['setpiece', 'action', 'chase', 'fight', 'escape', 'explosion'];
 
 export type ModelTier = 'hollywood' | 'professional' | 'fast';
 export type ModelId = 'openai/gpt-5.2' | 'openai/gpt-5' | 'openai/gpt-5-mini';
@@ -29,6 +43,7 @@ export interface SceneCard {
   beat_executed?: string;
   duration_seconds?: number;
   objective?: string;
+  conflict?: string;
 }
 
 export interface ModelSelectionContext {
@@ -39,6 +54,7 @@ export interface ModelSelectionContext {
   episodeNumber?: number;
   totalEpisodes?: number;
   qualityTier?: ModelTier;
+  previousBlockWasRescue?: boolean; // P1.2: Post-rescue stabilization
 }
 
 export interface ModelSelectionResult {
@@ -50,12 +66,16 @@ export interface ModelSelectionResult {
 /**
  * Select appropriate model for a script block based on context
  * 
- * Rules:
- * 1. Rescue: If drift warnings >= 2 → gpt-5.2
- * 2. Critical beats (cold_open, climax, midpoint, etc.) → gpt-5.2
- * 3. Episode bookends (first/last block) → gpt-5.2
- * 4. Season premiere/finale episodes → gpt-5.2
- * 5. Default → gpt-5-mini
+ * Rules (in priority order):
+ * 1. Hollywood tier override → gpt-5.2
+ * 2. Rescue: If drift warnings >= 2 → gpt-5.2
+ * 3. Post-rescue stabilization → gpt-5.2
+ * 4. Reveal + intense dialogue → gpt-5.2
+ * 5. Visual setpiece → gpt-5.2  
+ * 6. Critical beats (cold_open, climax, midpoint, etc.) → gpt-5.2
+ * 7. Episode bookends (first/last block) → gpt-5.2
+ * 8. Season premiere/finale episodes → gpt-5
+ * 9. Default → gpt-5-mini
  */
 export function selectModelForBlock(context: ModelSelectionContext): ModelSelectionResult {
   const {
@@ -65,7 +85,8 @@ export function selectModelForBlock(context: ModelSelectionContext): ModelSelect
     driftWarnings,
     episodeNumber,
     totalEpisodes,
-    qualityTier = 'professional'
+    qualityTier = 'professional',
+    previousBlockWasRescue = false
   } = context;
 
   // Force hollywood tier uses gpt-5.2 for everything
@@ -82,6 +103,53 @@ export function selectModelForBlock(context: ModelSelectionContext): ModelSelect
     return {
       model: 'openai/gpt-5.2',
       reason: 'RESCUE_DRIFT',
+      tier: 'hollywood'
+    };
+  }
+
+  // P1.2: Post-rescue stabilization - use premium model to prevent cascade
+  if (previousBlockWasRescue) {
+    return {
+      model: 'openai/gpt-5.2',
+      reason: 'POST_RESCUE_STABILIZE',
+      tier: 'hollywood'
+    };
+  }
+
+  // P1.2: Check for reveal + intense dialogue combination
+  const hasReveal = sceneCards.some(sc => {
+    const beat = (sc.beat_executed || '').toLowerCase();
+    const objective = (sc.objective || '').toLowerCase();
+    return REVEAL_KEYWORDS.some(kw => beat.includes(kw) || objective.includes(kw));
+  });
+  
+  const hasIntenseDialogue = sceneCards.some(sc => {
+    const objective = (sc.objective || '').toLowerCase();
+    const conflict = (sc.conflict || '').toLowerCase();
+    return INTENSE_DIALOGUE_KEYWORDS.some(kw => objective.includes(kw) || conflict.includes(kw));
+  });
+
+  if (hasReveal && hasIntenseDialogue) {
+    return {
+      model: 'openai/gpt-5.2',
+      reason: 'REVEAL_DIALOGUE',
+      tier: 'hollywood'
+    };
+  }
+
+  // P1.2: Check for visual setpiece
+  const hasSetpiece = sceneCards.some(sc => {
+    const beat = (sc.beat_executed || '').toLowerCase();
+    const duration = sc.duration_seconds || 0;
+    const isLongScene = duration > 240; // >4 minutes
+    const isSetpieceBeat = SETPIECE_KEYWORDS.some(kw => beat.includes(kw));
+    return isLongScene || isSetpieceBeat;
+  });
+
+  if (hasSetpiece) {
+    return {
+      model: 'openai/gpt-5.2',
+      reason: 'VISUAL_SETPIECE',
       tier: 'hollywood'
     };
   }
@@ -188,28 +256,29 @@ export function estimateModelDistribution(
     };
   }
 
-  // Estimate based on typical distribution:
+  // P1.2: Updated estimates with reveal/setpiece/post-rescue rules
   // - 2 blocks per episode are bookends → gpt-5.2
-  // - ~15% of blocks have critical beats → gpt-5.2
-  // - ~5% need rescue → gpt-5.2
+  // - ~20% of blocks have critical beats/reveals/setpieces → gpt-5.2
+  // - ~5% need rescue + 5% post-rescue → gpt-5.2
+  // - Season premiere/finale get upgrades → gpt-5
   // - Rest → gpt-5-mini
   
   const bookendBlocks = totalEpisodes * 2;
-  const criticalBlocks = Math.ceil(totalBlocks * 0.15);
-  const rescueBlocks = Math.ceil(totalBlocks * 0.05);
-  const seasonBookendBlocks = 4; // First and last episode get upgrades
+  const criticalBlocks = Math.ceil(totalBlocks * 0.20); // Increased from 15%
+  const rescueAndPostRescue = Math.ceil(totalBlocks * 0.10); // 5% rescue + 5% stabilize
+  const seasonBookendBlocks = 4;
   
   const gpt52Blocks = Math.min(
     totalBlocks,
-    bookendBlocks + criticalBlocks + rescueBlocks + seasonBookendBlocks
+    bookendBlocks + criticalBlocks + rescueAndPostRescue + seasonBookendBlocks
   );
   
   const gpt5Blocks = Math.min(
     totalBlocks - gpt52Blocks,
-    Math.ceil(totalBlocks * 0.05) // Season bookends use gpt-5
+    Math.ceil(totalBlocks * 0.05)
   );
   
-  const gpt5MiniBlocks = totalBlocks - gpt52Blocks - gpt5Blocks;
+  const gpt5MiniBlocks = Math.max(0, totalBlocks - gpt52Blocks - gpt5Blocks);
 
   // Cost ratio: gpt-5.2 = 10x, gpt-5 = 3x, gpt-5-mini = 1x
   const allGpt52Cost = totalBlocks * 10;
@@ -228,7 +297,7 @@ export function estimateModelDistribution(
  * Get model for specific task types
  */
 export function getModelForTask(taskType: 
-  'bible' | 'outline' | 'scene_cards' | 'script_block' | 'polish' | 'rescue' | 'drift_check'
+  'bible' | 'outline' | 'scene_cards' | 'script_block' | 'polish' | 'rescue' | 'drift_check' | 'auto_fix'
 ): ModelId {
   switch (taskType) {
     case 'bible':
@@ -239,6 +308,7 @@ export function getModelForTask(taskType:
     
     case 'scene_cards':
     case 'drift_check':
+    case 'auto_fix': // P1.3: Light fixes use mini
       return 'openai/gpt-5-mini';
     
     case 'script_block':

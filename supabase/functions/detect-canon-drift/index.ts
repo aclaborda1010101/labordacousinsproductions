@@ -67,11 +67,17 @@ function buildDriftDetectionPrompt(
     ? `\n\n## CONTINUITY ANTERIOR\n${JSON.stringify(previousContinuity, null, 2)}`
     : '';
   
+  // P0.5: Extract invariants for precise checking
+  const invariantsBlock = canonPack.invariants_by_character
+    ? `\n\n## INVARIANTS POR PERSONAJE (NUNCA PUEDEN CAMBIAR)\n${JSON.stringify(canonPack.invariants_by_character, null, 2)}`
+    : '';
+  
   return `
 # TAREA: Detectar Canon Drift
 
 ## CANON PACK (REFERENCIA INMUTABLE)
 ${JSON.stringify(canonPack, null, 2)}
+${invariantsBlock}
 ${prevContext}
 
 ## CONTENIDO GENERADO A VALIDAR
@@ -79,43 +85,42 @@ ${generatedContent.slice(0, 6000)}
 
 ## INSTRUCCIONES
 
-Analiza el contenido generado buscando inconsistencias con el Canon Pack.
+Analiza el contenido buscando inconsistencias con el Canon Pack.
 
-### TIPOS DE DRIFT A DETECTAR:
+### CHECKS PRIORITARIOS (P0.5):
+1. **INVARIANTS**: Cada personaje debe cumplir sus invariants exactamente
+2. **NOMBRES**: Deben coincidir exactamente (María ≠ Maria)
+3. **TIMELINE**: Coherencia temporal estricta
+4. **RELATIONSHIPS**: Relaciones según canon
+5. **CONTINUITY_LOCKS**: Reglas inmutables
 
-1. **CHARACTER DRIFT**: Personaje actúa fuera de carácter, nombre mal escrito, relación incorrecta
-2. **TIMELINE DRIFT**: Inconsistencia temporal (noche cuando debería ser día, día incorrecto)
-3. **CONTINUITY DRIFT**: Viola un continuity_lock (prop que no debería estar, herida desaparecida)
-4. **VOICE DRIFT**: Viola reglas de voz/tono (diálogos muy largos si la regla dice cortos)
+### TIPOS DE DRIFT:
+- CHARACTER: Actúa fuera de carácter, nombre mal escrito
+- TIMELINE: Inconsistencia temporal
+- CONTINUITY: Viola continuity_lock
+- VOICE: Viola reglas de tono
+- INVARIANT: Viola un invariant de personaje
 
 ### SCORING:
-- 0-20: Aceptable (minor issues)
+- 0-20: Aceptable
 - 21-50: Retry recomendado
-- 51-100: Rescue pass obligatorio
+- 51-100: Rescue obligatorio
 
-## FORMATO JSON REQUERIDO
+## FORMATO JSON
 
 {
   "hasDrift": true/false,
   "driftScore": 0-100,
   "violations": [
     {
-      "type": "character/timeline/continuity/voice",
-      "severity": "warn/error",
+      "type": "character|timeline|continuity|voice|invariant",
+      "severity": "warn|error",
       "description": "Descripción del problema",
-      "expected": "Lo que debería ser según canon",
-      "found": "Lo que se encontró en el contenido"
+      "expected": "Lo que debería ser",
+      "found": "Lo encontrado"
     }
   ],
-  "recommendation": "accept/retry/rescue"
-}
-
-Si no hay drift, devuelve:
-{
-  "hasDrift": false,
-  "driftScore": 0,
-  "violations": [],
-  "recommendation": "accept"
+  "recommendation": "accept|retry|rescue"
 }
 
 Responde SOLO con el JSON.

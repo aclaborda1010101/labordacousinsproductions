@@ -415,10 +415,13 @@ export type Database = {
           act_number: number | null
           active_cast: Json | null
           active_props_locs: Json | null
+          canon_hash: string | null
           continuity_locks: Json | null
           created_at: string | null
           episode_number: number | null
           id: string
+          invariants_by_character: Json | null
+          locked_fields: Json | null
           pack_type: string
           project_id: string
           timeline_state: Json | null
@@ -431,10 +434,13 @@ export type Database = {
           act_number?: number | null
           active_cast?: Json | null
           active_props_locs?: Json | null
+          canon_hash?: string | null
           continuity_locks?: Json | null
           created_at?: string | null
           episode_number?: number | null
           id?: string
+          invariants_by_character?: Json | null
+          locked_fields?: Json | null
           pack_type: string
           project_id: string
           timeline_state?: Json | null
@@ -447,10 +453,13 @@ export type Database = {
           act_number?: number | null
           active_cast?: Json | null
           active_props_locs?: Json | null
+          canon_hash?: string | null
           continuity_locks?: Json | null
           created_at?: string | null
           episode_number?: number | null
           id?: string
+          invariants_by_character?: Json | null
+          locked_fields?: Json | null
           pack_type?: string
           project_id?: string
           timeline_state?: Json | null
@@ -2516,16 +2525,20 @@ export type Database = {
           completed_at: string | null
           continuity_summary: Json | null
           created_at: string | null
+          drift_flags: Json | null
           drift_warnings: number | null
           episode_number: number | null
           error_code: string | null
           error_message: string | null
           id: string
           input_context: Json | null
+          latency_ms: number | null
           model_reason: string | null
           model_used: string | null
           output_data: Json | null
+          output_tokens_est: number | null
           project_id: string
+          qa_flags: Json | null
           retry_count: number | null
           scene_range: string | null
           script_id: string | null
@@ -2539,16 +2552,20 @@ export type Database = {
           completed_at?: string | null
           continuity_summary?: Json | null
           created_at?: string | null
+          drift_flags?: Json | null
           drift_warnings?: number | null
           episode_number?: number | null
           error_code?: string | null
           error_message?: string | null
           id?: string
           input_context?: Json | null
+          latency_ms?: number | null
           model_reason?: string | null
           model_used?: string | null
           output_data?: Json | null
+          output_tokens_est?: number | null
           project_id: string
+          qa_flags?: Json | null
           retry_count?: number | null
           scene_range?: string | null
           script_id?: string | null
@@ -2562,16 +2579,20 @@ export type Database = {
           completed_at?: string | null
           continuity_summary?: Json | null
           created_at?: string | null
+          drift_flags?: Json | null
           drift_warnings?: number | null
           episode_number?: number | null
           error_code?: string | null
           error_message?: string | null
           id?: string
           input_context?: Json | null
+          latency_ms?: number | null
           model_reason?: string | null
           model_used?: string | null
           output_data?: Json | null
+          output_tokens_est?: number | null
           project_id?: string
+          qa_flags?: Json | null
           retry_count?: number | null
           scene_range?: string | null
           script_id?: string | null
