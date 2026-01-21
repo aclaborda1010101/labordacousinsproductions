@@ -991,6 +991,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       
       // Restore form draft - ONLY narrative/creative fields, NOT config (format, episodes, duration)
       // Config comes from projects table which is the source of truth
+      // V49: Now includes proMode and targets for "operational meat" persistence
       try {
         const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
         if (savedDraft) {
@@ -1004,6 +1005,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           if (draft.qualityTier) setQualityTier(migrateQualityTier(draft.qualityTier));
           if (draft.complexity) setComplexity(draft.complexity);
           if (typeof draft.disableDensity === 'boolean') setDisableDensity(draft.disableDensity);
+          // V49: Restore PRO mode and manual targets
+          if (typeof draft.proMode === 'boolean') setProMode(draft.proMode);
+          if (draft.proMode && draft.targets) setTargets(draft.targets as CalculatedTargets);
           // DO NOT restore: format, episodesCount, episodeDurationMin, filmDurationMin
           // These come from the projects table (lines 1031-1039)
         }
@@ -1221,10 +1225,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, [outlinePersistence.savedOutline?.id, outlinePersistence.savedOutline?.status]);
 
   // Auto-save form draft for PRO mode (debounced)
+  // V49: Now includes proMode and targets to persist "operational meat" across refresh
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       try {
-        const draft = {
+        const draft: Record<string, unknown> = {
           ideaText,
           format,
           genre,
@@ -1237,7 +1242,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           filmDurationMin,
           complexity,
           disableDensity,
+          proMode, // V49: Persist PRO mode state
         };
+        // V49: Only save targets if proMode is active (manual values)
+        if (proMode && targets) {
+          draft.targets = targets;
+        }
         localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
       } catch (e) {
         console.warn('[ScriptImport] Error saving draft:', e);
@@ -1245,7 +1255,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }, 1000); // 1s debounce
     
     return () => clearTimeout(timeoutId);
-  }, [ideaText, format, genre, tone, references, narrativeMode, qualityTier, episodesCount, episodeDurationMin, filmDurationMin, complexity, disableDensity, DRAFT_STORAGE_KEY]);
+  }, [ideaText, format, genre, tone, references, narrativeMode, qualityTier, episodesCount, episodeDurationMin, filmDurationMin, complexity, disableDensity, proMode, targets, DRAFT_STORAGE_KEY]);
 
   // Poll for script updates when background generation is active
   useEffect(() => {
@@ -6767,50 +6777,74 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   )}
                   
                   {/* Enrichment Button - Add Operational Meat */}
-                  {outlinePersistence.savedOutline?.quality !== 'enriched' && (
-                    <Button 
-                      variant="outline"
-                      onClick={async () => {
-                        if (!outlinePersistence.savedOutline?.id) return;
-                        setEnrichingOutline(true);
-                        try {
-                          const { data, error } = await invokeAuthedFunction('outline-enrich', {
-                            outline_id: outlinePersistence.savedOutline.id
-                          });
-                          if (error) throw error;
-                          await outlinePersistence.refreshOutline();
-                          if (data?.outline) setLightOutline(data.outline);
-                          toast.success('Outline enriquecido con facciones, reglas y setpieces');
-                        } catch (err) {
-                          toast.error('Error al enriquecer: ' + (err as Error).message);
-                        } finally {
-                          setEnrichingOutline(false);
-                        }
-                      }}
-                      disabled={generatingOutline || pipelineRunning || upgradingOutline || enrichingOutline}
-                      className="bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
-                    >
-                      {enrichingOutline ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Enriqueciendo...
-                        </>
-                      ) : (
-                        <>
-                          <Zap className="w-4 h-4 mr-2" />
-                          Añadir Carne Operativa
-                        </>
-                      )}
-                    </Button>
-                  )}
+                  {/* V49: Check content, not just quality label - hide if already has operational content */}
+                  {(() => {
+                    const quality = outlinePersistence.savedOutline?.quality;
+                    // Hide if quality is enriched, threaded, or showrunner
+                    if (quality === 'enriched' || quality === 'threaded' || quality === 'showrunner') return null;
+                    // Also hide if outline already has operational content (factions, entity_rules, setpieces)
+                    const hasFactions = Array.isArray(lightOutline?.factions) && lightOutline.factions.length >= 2;
+                    const hasEntityRules = Array.isArray(lightOutline?.entity_rules) && lightOutline.entity_rules.length > 0;
+                    const hasSetpieces = Array.isArray(lightOutline?.episode_beats) && lightOutline.episode_beats.some((ep: any) => ep?.setpiece?.stakes);
+                    if (hasFactions || hasEntityRules || hasSetpieces) return null;
+                    
+                    return (
+                      <Button 
+                        variant="outline"
+                        onClick={async () => {
+                          if (!outlinePersistence.savedOutline?.id) return;
+                          setEnrichingOutline(true);
+                          try {
+                            const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                              outline_id: outlinePersistence.savedOutline.id
+                            });
+                            if (error) throw error;
+                            await outlinePersistence.refreshOutline();
+                            if (data?.outline) setLightOutline(data.outline);
+                            toast.success('Outline enriquecido con facciones, reglas y setpieces');
+                          } catch (err) {
+                            toast.error('Error al enriquecer: ' + (err as Error).message);
+                          } finally {
+                            setEnrichingOutline(false);
+                          }
+                        }}
+                        disabled={generatingOutline || pipelineRunning || upgradingOutline || enrichingOutline}
+                        className="bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
+                      >
+                        {enrichingOutline ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Enriqueciendo...
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="w-4 h-4 mr-2" />
+                            Añadir Carne Operativa
+                          </>
+                        )}
+                      </Button>
+                    );
+                  })()}
                   
-                  {/* Badge if enriched */}
-                  {outlinePersistence.savedOutline?.quality === 'enriched' && (
-                    <Badge variant="outline" className="h-10 px-4 bg-emerald-500/10 border-emerald-500/50 text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                      <Zap className="w-3 h-3" />
-                      Operativo
-                    </Badge>
-                  )}
+                  {/* Badge if has operational content (enriched, threaded, or showrunner) */}
+                  {/* V49: Show badge based on content OR quality label */}
+                  {(() => {
+                    const quality = outlinePersistence.savedOutline?.quality;
+                    const hasFactions = Array.isArray(lightOutline?.factions) && lightOutline.factions.length >= 2;
+                    const hasEntityRules = Array.isArray(lightOutline?.entity_rules) && lightOutline.entity_rules.length > 0;
+                    const hasSetpieces = Array.isArray(lightOutline?.episode_beats) && lightOutline.episode_beats.some((ep: any) => ep?.setpiece?.stakes);
+                    const hasOperationalContent = hasFactions || hasEntityRules || hasSetpieces;
+                    
+                    if (quality === 'enriched' || (hasOperationalContent && quality !== 'threaded' && quality !== 'showrunner')) {
+                      return (
+                        <Badge variant="outline" className="h-10 px-4 bg-emerald-500/10 border-emerald-500/50 text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                          <Zap className="w-3 h-3" />
+                          Operativo
+                        </Badge>
+                      );
+                    }
+                    return null;
+                  })()}
                   
                   {/* V11: Threads Button - Add Narrative Lanes */}
                   {(outlinePersistence.savedOutline?.quality === 'enriched' || outlinePersistence.savedOutline?.quality === 'showrunner') && 
