@@ -440,14 +440,34 @@ export function calculateDynamicBatches(
   episodeBeats?: any[],
   durationMin?: number,
   qualityTier: QualityTier = 'profesional',
-  genre: string = 'drama'
+  genre: string = 'drama',
+  format: 'film' | 'series' = 'series'
 ): BatchConfig {
   const baseDuration = 45;
   const actualDuration = durationMin || baseDuration;
   
   // V3.0: Use genre-based scenes per page
   const scenesPerPage = getScenesPerPageByGenre(genre);
-  const estimatedScenes = targets.scenes_per_episode || Math.round(actualDuration * scenesPerPage);
+  
+  // V3.1: Smart scene estimation with fallbacks for films without beats
+  let estimatedScenes: number;
+  
+  if (targets.scenes_per_episode && targets.scenes_per_episode > 0) {
+    // Use calculated target if available
+    estimatedScenes = targets.scenes_per_episode;
+  } else if (targets.scenes_target && targets.scenes_target > 0) {
+    // For films, use scenes_target directly
+    estimatedScenes = targets.scenes_target;
+  } else if (format === 'film') {
+    // V3.1: FALLBACK for films without beats - Hollywood standard ~45-50 scenes for 90-120 min film
+    // 3 acts × 15 scenes average = 45 scenes minimum
+    const filmMinutes = actualDuration || 100;
+    estimatedScenes = Math.max(45, Math.round(filmMinutes * 0.5)); // ~0.5 scenes per minute as safe minimum
+    console.log(`[calculateDynamicBatches] FILM FALLBACK: No beats detected, using ${estimatedScenes} scenes for ${filmMinutes}min film`);
+  } else {
+    // Series default
+    estimatedScenes = Math.round(actualDuration * scenesPerPage);
+  }
   
   let complexityScore = complexity === 'simple' ? 20 : complexity === 'medium' ? 50 : 80;
   
@@ -475,7 +495,9 @@ export function calculateDynamicBatches(
     scenesPerBatch = 2;  // Default to quality
   }
   
-  const batchesPerEpisode = Math.max(3, Math.min(40, Math.ceil(estimatedScenes / scenesPerBatch)));
+  // V3.1: Ensure minimum batches for films (at least 10 batches = 20+ scenes)
+  const minBatches = format === 'film' ? 10 : 3;
+  const batchesPerEpisode = Math.max(minBatches, Math.min(40, Math.ceil(estimatedScenes / scenesPerBatch)));
   
   return {
     batchesPerEpisode,
