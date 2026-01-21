@@ -1,6 +1,7 @@
 // Auto Target Calculator for Script Generation
 // Based on format, duration, complexity, and genre
-// V2.0 - Calibrated to industry standards: 1 página ≈ 1 minuto ≈ 1 escena
+// V3.0 - Hollywood-Grade Pipeline with corrected batch calculations
+// 1 página ≈ 1 minuto, scenesPerPage varies by genre
 
 export interface TargetInputs {
   format: 'film' | 'series';
@@ -33,6 +34,105 @@ export interface CalculatedTargets {
 }
 
 const clamp = (x: number, min: number, max: number) => Math.min(Math.max(x, min), max);
+
+// =============================================================================
+// V3.0 HOLLYWOOD BATCH CALCULATOR
+// Corrected scene/block calculations based on real TV/film metrics
+// =============================================================================
+
+// Scenes per page by genre (based on real production data)
+const SCENES_PER_PAGE_BY_GENRE: Record<string, number> = {
+  'drama': 1.1,
+  'romance': 1.1,
+  'action': 1.4,
+  'thriller': 1.3,
+  'comedy': 1.3,
+  'horror': 1.3,
+  'sci-fi': 1.2,
+  'fantasy': 1.2,
+  'crime': 1.2,
+  'mystery': 1.2,
+  'default': 1.2
+};
+
+export interface HollywoodBatchConfig {
+  totalScenes: number;
+  totalBlocks: number;
+  scenesPerBlock: number;
+  sceneCardsCallsNeeded: number;
+  polishCallsNeeded: number;
+  estimatedTotalCalls: number;
+  estimatedTimeMinutes: number;
+  scenesPerPage: number;
+}
+
+/**
+ * Calculate Hollywood-grade batch configuration
+ * Uses corrected formulas: pages × scenesPerPage ÷ scenesPerBlock
+ * 
+ * Example outputs (with genre=drama, scenesPerPage=1.1):
+ * - Film 180 min: 198 scenes → 99 blocks (2 scenes/block)
+ * - Series 10×60: 660 scenes → 330 blocks (2 scenes/block)
+ */
+export function calculateHollywoodBatches(
+  format: 'film' | 'series',
+  durationMin: number,
+  genre: string,
+  episodeCount?: number,
+  complexity: 'simple' | 'medium' | 'high' = 'medium'
+): HollywoodBatchConfig {
+  const genreLower = genre.toLowerCase();
+  const scenesPerPage = SCENES_PER_PAGE_BY_GENRE[genreLower] || SCENES_PER_PAGE_BY_GENRE['default'];
+  
+  // 1 page ≈ 1 minute
+  const totalPages = format === 'series' 
+    ? durationMin * (episodeCount || 10)
+    : durationMin;
+  
+  const totalScenes = Math.ceil(totalPages * scenesPerPage);
+  
+  // Scenes per block based on complexity (2 = Hollywood pro standard)
+  const scenesPerBlock = complexity === 'high' ? 2 : complexity === 'simple' ? 3 : 2;
+  
+  const totalBlocks = Math.ceil(totalScenes / scenesPerBlock);
+  
+  // Scene cards: 10 per call
+  const sceneCardsCallsNeeded = Math.ceil(totalScenes / 10);
+  
+  // Polish: 1 per episode or per 60 pages (film acts)
+  const polishCallsNeeded = format === 'series' 
+    ? (episodeCount || 10)
+    : Math.ceil(durationMin / 60);
+  
+  // Total: bible (1) + outline (1-2) + scene cards + script blocks + polish
+  const estimatedTotalCalls = 
+    2 +                           // Bible + Outline Master
+    sceneCardsCallsNeeded +       // Scene cards
+    totalBlocks +                 // Script blocks
+    polishCallsNeeded;            // Polish passes
+  
+  // Estimated time (average seconds per call × calls)
+  const avgSecondsPerCall = 40;
+  const estimatedTimeMinutes = Math.ceil((estimatedTotalCalls * avgSecondsPerCall) / 60);
+  
+  return {
+    totalScenes,
+    totalBlocks,
+    scenesPerBlock,
+    sceneCardsCallsNeeded,
+    polishCallsNeeded,
+    estimatedTotalCalls,
+    estimatedTimeMinutes,
+    scenesPerPage
+  };
+}
+
+/**
+ * Get scenes per page for a given genre
+ */
+export function getScenesPerPageByGenre(genre: string): number {
+  return SCENES_PER_PAGE_BY_GENRE[genre.toLowerCase()] || SCENES_PER_PAGE_BY_GENRE['default'];
+}
 
 /**
  * Get scene length distribution based on genre
@@ -328,20 +428,26 @@ export interface BatchConfig {
 
 /**
  * Calculate dynamic batch config based on complexity and quality tier
- * Now calibrated to new scene counts (30 min ≈ 27 scenes)
+ * V3.0: Corrected to use 2 scenes per block for Hollywood quality
+ * 
+ * Key changes:
+ * - scenesPerBatch: 2 (Hollywood) or 3 (simple) - never 4-6
+ * - Uses genre-based scenesPerPage for accurate calculations
  */
 export function calculateDynamicBatches(
   targets: CalculatedTargets,
   complexity: 'simple' | 'medium' | 'high',
   episodeBeats?: any[],
   durationMin?: number,
-  qualityTier: QualityTier = 'profesional'
+  qualityTier: QualityTier = 'profesional',
+  genre: string = 'drama'
 ): BatchConfig {
   const baseDuration = 45;
   const actualDuration = durationMin || baseDuration;
   
-  // Use actual scenes_per_episode if available
-  const estimatedScenes = targets.scenes_per_episode || Math.round(actualDuration * 0.9);
+  // V3.0: Use genre-based scenes per page
+  const scenesPerPage = getScenesPerPageByGenre(genre);
+  const estimatedScenes = targets.scenes_per_episode || Math.round(actualDuration * scenesPerPage);
   
   let complexityScore = complexity === 'simple' ? 20 : complexity === 'medium' ? 50 : 80;
   
@@ -358,20 +464,18 @@ export function calculateDynamicBatches(
   const tierConfig = QUALITY_TIERS[qualityTier];
   const delayMs = tierConfig.delayBetweenBatchesMs;
   
-  // Calculate batches based on target scenes
-  // Aim for 4-6 scenes per batch for best quality
+  // V3.0: Hollywood standard = 2 scenes per batch
+  // More scenes = less quality per scene
   let scenesPerBatch: number;
-  if (complexityScore <= 30) {
-    scenesPerBatch = 6;
-  } else if (complexityScore <= 60) {
-    scenesPerBatch = 5;
-  } else if (complexityScore <= 80) {
-    scenesPerBatch = 4;
+  if (qualityTier === 'hollywood' || complexityScore >= 70) {
+    scenesPerBatch = 2;  // Hollywood standard
+  } else if (complexityScore <= 30) {
+    scenesPerBatch = 3;  // Simple/fast mode
   } else {
-    scenesPerBatch = 3;
+    scenesPerBatch = 2;  // Default to quality
   }
   
-  const batchesPerEpisode = Math.max(3, Math.min(15, Math.ceil(estimatedScenes / scenesPerBatch)));
+  const batchesPerEpisode = Math.max(3, Math.min(40, Math.ceil(estimatedScenes / scenesPerBatch)));
   
   return {
     batchesPerEpisode,

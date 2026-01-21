@@ -55,32 +55,38 @@ export const MODEL_CONFIG = {
     TRANSITIONS: 'runway',   // Transiciones, abstractos
   },
   
-  // === LIMITS (V11.1: Industrial pipeline with improved timeouts) ===
+  // === LIMITS (V12: Hollywood-Grade Pipeline) ===
   LIMITS: {
-    // Token limits per request type
-    MAX_INPUT_TOKENS_SOFT: 10000,       // Conservative for reliability
-    MAX_OUTPUT_TOKENS_SOFT: 3000,       // Standard requests
-    MAX_OUTPUT_TOKENS_HARD: 6000,       // Episode final pass only
+    // Token limits per request type (INCREASED for Hollywood quality)
+    MAX_INPUT_TOKENS_SOFT: 12000,       // Increased for rich context
+    MAX_OUTPUT_TOKENS_SOFT: 4500,       // V12: 2 scenes per block
+    MAX_OUTPUT_TOKENS_HARD: 8000,       // Polish/consolidation only
     
-    // Chunking configuration (V11: overlap for entity preservation)
+    // Chunking configuration (V12: 2 scenes per block for quality)
     CHUNK_SIZE_CHARS: 8000,             // V11: 8k chars per chunk (safer)
     CHUNK_OVERLAP_CHARS: 600,           // V11: Overlap for names/relationships
     CHUNK_PAGES_EXTRACT: 15,            // PDF extraction
-    CHUNK_PAGES_WRITE: 5,               // Scene writing (1-3 scenes)
-    MAX_SCENES_PER_REQUEST: 10,
+    CHUNK_PAGES_WRITE: 2,               // V12: 2 scenes per block (Hollywood standard)
+    MAX_SCENES_PER_REQUEST: 3,          // V12: Reduced from 10 for quality
     
     // Token estimation
     CHARS_PER_TOKEN: 4,
     
-    // Timeout configuration (V11.1: INCREASED for reliability)
-    TIMEOUT_MS: 70000,                  // 70s per AI request (was 55s)
+    // Timeout configuration (V12: Task-specific for Hollywood reliability)
+    TIMEOUT_MS: 70000,                  // 70s per AI request
     STAGE_TIMEOUT_MS: 85000,            // 85s stage timeout
     RETRY_COUNT: 2,                     // Max retries per substep
     RETRY_CHUNK_REDUCTION: 0.6,         // 60% chunk on retry 1
     RETRY_CHUNK_REDUCTION_2: 0.5,       // 50% chunk on retry 2
     
-    // Per-task timeouts (V11.1: differentiated by task type)
+    // Per-task timeouts (V12: Hollywood differentiated)
     TIMEOUTS: {
+      BIBLE_MS: 90000,                  // V12: 90s for complete Bible
+      OUTLINE_MASTER_MS: 120000,        // V12: 120s for master outline (max Edge)
+      OUTLINE_EPISODE_MS: 60000,        // V12: 60s per episode outline
+      SCENE_CARDS_MS: 50000,            // V12: 50s per block of cards
+      SCRIPT_BLOCK_MS: 70000,           // V12: 70s per script block (2 scenes)
+      POLISH_MS: 80000,                 // V12: 80s for polish pass
       SUMMARIZE_MS: 70000,              // Summarize can take longer
       OUTLINE_ARC_MS: 65000,            // PART_A
       OUTLINE_EPISODES_MS: 75000,       // PART_B/C - more complex
@@ -88,7 +94,7 @@ export const MODEL_CONFIG = {
       QC_MS: 30000,                     // QC is deterministic
     },
     
-    // Model fallback chain (V11: graceful degradation)
+    // Model fallback chain (V12: graceful degradation)
     RETRY_MODELS: {
       'openai/gpt-5.2': 'openai/gpt-5',
       'openai/gpt-5': 'openai/gpt-5-mini',
@@ -96,18 +102,35 @@ export const MODEL_CONFIG = {
       'google/gemini-2.5-flash': 'google/gemini-2.5-flash-lite',
     } as Record<string, string>,
     
-    // Output limits per task type
+    // Output limits per task type (V12: Hollywood-grade)
     OUTPUT_LIMITS: {
-      BIBLE: 1800,
-      OUTLINE: 1400,
-      SCENE_LIST: 2000,
-      SINGLE_SCENE: 1500,
-      CONSOLIDATION: 6000,
+      // Level 0: Bible (single call, high density)
+      BIBLE: 6000,                      // V12: Was 1800 → 6000 for complete characters
+      
+      // Level 1: Outline Master
+      OUTLINE_MASTER: 12000,            // V12: NEW - 30+ detailed beats
+      OUTLINE: 12000,                   // Alias for compatibility
+      
+      // Level 2: Scene Cards (8-12 cards per call)
+      SCENE_CARDS: 4000,                // V12: NEW
+      SCENE_LIST: 4000,                 // Updated
+      
+      // Level 3: Script Blocks (2 scenes per block)
+      SCRIPT_BLOCK: 4500,               // V12: NEW - 2 scenes with creative room
+      SCRIPT_BLOCK_HARD: 8000,          // Only for polish/consolidation
+      SINGLE_SCENE: 2500,               // V12: Was 1500 → 2500
+      
+      // Consolidation and polish
+      CONSOLIDATION: 8000,              // Maintained
+      POLISH_EPISODE: 8000,             // V12: NEW - polish per episode
+      
+      // Other
       CHUNK_EXTRACTION: 1800,
-      GLOBAL_CONSOLIDATION: 2500,
+      GLOBAL_CONSOLIDATION: 3000,
       PRODUCER_DIRECTOR: 1400,
       MICROSHOTS: 2000,
-      THREADS: 3000,                    // V11: Thread generation
+      THREADS: 3000,
+      CONTINUITY_SUMMARY: 400,          // V12: NEW - summary between blocks
     },
   }
 } as const;
