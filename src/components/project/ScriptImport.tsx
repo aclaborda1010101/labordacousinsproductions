@@ -6355,6 +6355,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   isEnriching={enrichingOutline}
                   isUpgrading={upgradingOutline}
                   isPipelineRunning={pipelineRunning}
+                  format={format}
                   onEnrich={async () => {
                     if (!outlinePersistence.savedOutline?.id) return;
                     setEnrichingOutline(true);
@@ -6436,7 +6437,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     {qcStatus?.canGenerateEpisodes ? (
                       <>
                         <CheckCircle className="w-4 h-4 mr-2" />
-                        ✅ Aprobar y Generar Episodios
+                        {format === 'film' ? '✅ Aprobar y Generar Guión' : '✅ Aprobar y Generar Episodios'}
                       </>
                     ) : (
                       <>
@@ -6977,6 +6978,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     isEnriching={enrichingOutline}
                     isUpgrading={upgradingOutline}
                     isPipelineRunning={pipelineRunning}
+                    format={format}
                     onEnrich={async () => {
                       if (!outlinePersistence.savedOutline?.id) return;
                       setEnrichingOutline(true);

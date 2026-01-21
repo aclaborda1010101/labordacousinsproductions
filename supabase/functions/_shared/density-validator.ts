@@ -173,15 +173,15 @@ film_120min: {
   min_secondary_threads: 3
 },
 
-// Legacy Spanish name
+// Legacy Spanish name - Relaxed for typical 90-min drama
 pelicula_90min: {
-  min_characters_total: 10,
-  min_supporting_characters: 5,
+  min_characters_total: 5,       // Reduced: 2 protagonists + 1 antagonist + 2 supporting
+  min_supporting_characters: 2,   // Reduced for intimate dramas
   min_antagonists: 1,
-  min_locations: 10,
-  min_scenes_per_episode: 35,
-  min_threads_total: 3,
-  min_secondary_threads: 2
+  min_locations: 5,              // Reduced: sufficient for variety
+  min_scenes_per_episode: 20,    // Reduced: ~4.5 min average per scene
+  min_threads_total: 2,          // Reduced: A-plot + B-plot is enough
+  min_secondary_threads: 1       // One subplot is sufficient
 },
   
   // ============================================================================

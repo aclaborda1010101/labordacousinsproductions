@@ -46,6 +46,8 @@ interface OutlineWizardV11Props {
   outlineParts?: any;
   // P0.1: Saved outline for status-aware messaging
   savedOutline?: { status?: string; outline_parts?: any };
+  // Format for conditional labels
+  format?: string;
 }
 
 interface ChecklistItem {
@@ -188,6 +190,7 @@ export default function OutlineWizardV11({
   onResume,
   outlineParts,
   savedOutline,
+  format,
 }: OutlineWizardV11Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   
@@ -375,7 +378,7 @@ export default function OutlineWizardV11({
             {qcStatus.canGenerateEpisodes ? (
               <>
                 <CheckCircle className="w-4 h-4 mr-2" />
-                ✅ Aprobar y Generar Episodios
+                {format === 'film' ? '✅ Aprobar y Generar Guión' : '✅ Aprobar y Generar Episodios'}
               </>
             ) : (
               <>
