@@ -3037,8 +3037,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     setDensityGateResult(densityResult);
     
     if (densityResult.status === 'FAIL') {
-      console.warn('[DENSITY_GATE] BLOCKED:', densityResult);
+      console.error('[DENSITY_GATE] BLOCKED - Setting modal visible. Fixes required:', densityResult.required_fixes);
+      console.log('[DENSITY_GATE] Full result:', JSON.stringify(densityResult, null, 2));
+      setDensityGateResult(densityResult);
       setShowDensityGateModal(true);
+      toast.warning('Outline bloqueado por requisitos de densidad - revisa el modal');
       return; // ← BLOCK generation until density is fixed
     }
     

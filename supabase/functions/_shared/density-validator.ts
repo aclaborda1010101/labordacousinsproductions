@@ -176,7 +176,7 @@ film_120min: {
 // Legacy Spanish name - Relaxed for typical 90-min drama
 pelicula_90min: {
   min_characters_total: 5,       // Reduced: 2 protagonists + 1 antagonist + 2 supporting
-  min_supporting_characters: 2,   // Reduced for intimate dramas
+  min_supporting_characters: 1,   // Reduced: 1 ally/secondary is enough for intimate dramas
   min_antagonists: 1,
   min_locations: 5,              // Reduced: sufficient for variety
   min_scenes_per_episode: 20,    // Reduced: ~4.5 min average per scene
@@ -250,6 +250,7 @@ export function extractOutlineCounts(outline: Record<string, unknown>): OutlineC
     } else if (role.includes('antag') || role.includes('villain') || role.includes('opponent')) {
       counts.antagonists++;
     } else {
+      // Explicitly recognize ally, mentor, friend, support as supporting characters
       counts.supporting_characters++;
     }
   }
