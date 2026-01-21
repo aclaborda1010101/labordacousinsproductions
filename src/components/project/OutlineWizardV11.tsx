@@ -26,6 +26,7 @@ import {
   Sparkles,
   ChevronRight,
   RefreshCw,
+  FileDown,
 } from 'lucide-react';
 import { STAGE_CONFIG, humanizeBlocker, groupBlockers, getSuggestedAction, type PipelineStage, type QCStatus } from '@/lib/qcUtils';
 
@@ -52,6 +53,9 @@ interface OutlineWizardV11Props {
   isProjectLocked?: boolean;
   lockCountdown?: string; // "MM:SS" format
   onUnlock?: () => void;
+  // V3.2: PDF Export
+  onExportPDF?: () => void;
+  isExportingPDF?: boolean;
 }
 
 interface ChecklistItem {
@@ -199,6 +203,9 @@ export default function OutlineWizardV11({
   isProjectLocked,
   lockCountdown,
   onUnlock,
+  // V3.2: PDF Export
+  onExportPDF,
+  isExportingPDF,
 }: OutlineWizardV11Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   
@@ -224,13 +231,33 @@ export default function OutlineWizardV11({
             Estado del Outline
           </CardTitle>
           
-          {/* Stage Badge */}
-          <Badge 
-            variant="outline" 
-            className={`text-sm px-3 py-1 ${stageConfig.bgColor} ${stageConfig.borderColor} ${stageConfig.color}`}
-          >
-            {stageConfig.emoji} {stageConfig.label}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {/* Export PDF Button */}
+            {onExportPDF && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onExportPDF}
+                disabled={isExportingPDF}
+                className="bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-700 dark:text-amber-300"
+              >
+                {isExportingPDF ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <FileDown className="w-4 h-4" />
+                )}
+                <span className="ml-1.5 hidden sm:inline">Exportar PDF</span>
+              </Button>
+            )}
+            
+            {/* Stage Badge */}
+            <Badge 
+              variant="outline" 
+              className={`text-sm px-3 py-1 ${stageConfig.bgColor} ${stageConfig.borderColor} ${stageConfig.color}`}
+            >
+              {stageConfig.emoji} {stageConfig.label}
+            </Badge>
+          </div>
         </div>
         
         <CardDescription>

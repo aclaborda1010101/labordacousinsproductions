@@ -2688,6 +2688,205 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
+  // V3.2: Export Outline PDF - Comprehensive mapping with all fields
+  const handleExportOutlinePDF = useCallback(async () => {
+    // V24: Use outlineForUI for stable reference during export
+    const outline = outlineForUI;
+    if (!outline) {
+      toast.error('No hay outline para exportar');
+      return;
+    }
+    
+    setIsExportingPdf(true);
+    
+    // Yield to event loop so React paints loading state
+    await new Promise(r => setTimeout(r, 0));
+    
+    try {
+      // Extract characters from cast or main_characters
+      const chars = outline.cast || outline.main_characters || [];
+      
+      // Extract locations from main_locations or locations
+      const locs = outline.main_locations || outline.locations || [];
+      
+      // Build acts structure with beats for film
+      const buildActs = () => {
+        if (format !== 'film' || !outline.acts_summary) return undefined;
+        
+        const allBeats = outline.beats || [];
+        
+        return [
+          {
+            act_number: 1,
+            title: 'Acto I',
+            goal: outline.acts_summary.act_i_goal,
+            summary: outline.acts_summary.act_i_summary,
+            inciting_incident: outline.acts_summary.inciting_incident_summary,
+            break_point: outline.acts_summary.act_i_break,
+            beats: allBeats.filter((b: any) => b.beat_number <= 8).map((b: any) => ({
+              beat_number: b.beat_number,
+              event: b.event || b.description,
+              agent: b.agent,
+              consequence: b.consequence,
+              situation_detail: b.situation_detail,
+            })),
+          },
+          {
+            act_number: 2,
+            title: 'Acto II',
+            goal: outline.acts_summary.act_ii_goal,
+            summary: outline.acts_summary.act_ii_summary,
+            midpoint: outline.acts_summary.midpoint_summary,
+            all_is_lost: outline.acts_summary.all_is_lost_summary,
+            break_point: outline.acts_summary.act_ii_break,
+            beats: allBeats.filter((b: any) => b.beat_number > 8 && b.beat_number <= 16).map((b: any) => ({
+              beat_number: b.beat_number,
+              event: b.event || b.description,
+              agent: b.agent,
+              consequence: b.consequence,
+              situation_detail: b.situation_detail,
+            })),
+          },
+          {
+            act_number: 3,
+            title: 'Acto III',
+            goal: outline.acts_summary.act_iii_goal,
+            summary: outline.acts_summary.act_iii_summary,
+            climax: outline.acts_summary.climax_summary,
+            beats: allBeats.filter((b: any) => b.beat_number > 16).map((b: any) => ({
+              beat_number: b.beat_number,
+              event: b.event || b.description,
+              agent: b.agent,
+              consequence: b.consequence,
+              situation_detail: b.situation_detail,
+            })),
+          },
+        ];
+      };
+      
+      // Build extended synopsis from acts if primary is empty
+      const buildSynopsis = () => {
+        if (outline.synopsis) return outline.synopsis;
+        
+        // Try building from acts_summary
+        if (outline.acts_summary) {
+          const parts: string[] = [];
+          
+          // Acto I
+          if (outline.acts_summary.act_i_goal) {
+            parts.push(`ACTO I: ${outline.acts_summary.act_i_goal}`);
+          }
+          if (outline.acts_summary.inciting_incident_summary) {
+            parts.push(`Detonante: ${outline.acts_summary.inciting_incident_summary}`);
+          }
+          
+          // Acto II
+          if (outline.acts_summary.act_ii_goal) {
+            parts.push(`\nACTO II: ${outline.acts_summary.act_ii_goal}`);
+          }
+          if (outline.acts_summary.midpoint_summary) {
+            parts.push(`Midpoint: ${outline.acts_summary.midpoint_summary}`);
+          }
+          if (outline.acts_summary.all_is_lost_summary) {
+            parts.push(`Crisis: ${outline.acts_summary.all_is_lost_summary}`);
+          }
+          
+          // Acto III
+          if (outline.acts_summary.act_iii_goal) {
+            parts.push(`\nACTO III: ${outline.acts_summary.act_iii_goal}`);
+          }
+          if (outline.acts_summary.climax_summary) {
+            parts.push(`Clímax: ${outline.acts_summary.climax_summary}`);
+          }
+          
+          return parts.join('\n');
+        }
+        
+        return '';
+      };
+      
+      const outlineData: OutlinePDFData = {
+        title: outline.title || 'Sin título',
+        logline: outline.logline,
+        synopsis: buildSynopsis(),
+        genre: outline.genre,
+        tone: outline.tone,
+        format: format,
+        estimatedDuration: outline.estimated_duration || (format === 'film' ? filmDurationMin : episodeDurationMin),
+        themes: outline.themes,
+        visualStyle: outline.visual_style,
+        thematic_thread: outline.thematic_thread,
+        
+        // Full character data with want/need/flaw/arc
+        characters: chars.map((char: any) => ({
+          name: char.name,
+          role: char.role,
+          role_detail: char.role_detail,
+          description: char.description || char.bio,
+          want: char.want,
+          need: char.need,
+          flaw: char.flaw,
+          decision_key: char.decision_key,
+          arc: char.arc,
+          arc_start: char.arc_start,
+          arc_end: char.arc_end,
+        })),
+        
+        // Full location data with visual identity
+        locations: locs.map((loc: any) => ({
+          name: loc.name,
+          type: loc.type,
+          description: loc.description,
+          visual_identity: loc.visual_identity,
+          function: loc.function,
+          narrative_role: loc.narrative_role || loc.role,
+        })),
+        
+        // Acts structure with beats (for film)
+        acts: buildActs(),
+        
+        // Episodes (for series)
+        episodes: format !== 'film' && outline.episode_beats
+          ? outline.episode_beats.map((ep: any, i: number) => ({
+              episode_number: ep.episode || i + 1,
+              title: ep.title || `Episodio ${i + 1}`,
+              synopsis: ep.summary || ep.synopsis,
+            }))
+          : undefined,
+        
+        // Factions
+        factions: outline.factions?.map((f: any) => ({
+          name: f.name,
+          leader: f.leader,
+          objective: f.objective,
+          method: f.method,
+          red_line: f.red_line,
+        })),
+        
+        // Entity rules (can/cannot do)
+        entity_rules: outline.entity_rules?.map((r: any) => ({
+          entity: r.entity,
+          can_do: r.can_do,
+          cannot_do: r.cannot_do,
+          cost: r.cost,
+          dramatic_purpose: r.dramatic_purpose,
+        })),
+        
+        // Subplots and twists
+        subplots: outline.subplots,
+        plot_twists: outline.plot_twists,
+      };
+      
+      exportOutlinePDF(outlineData);
+      toast.success('PDF del outline generado');
+    } catch (err: any) {
+      console.error('[ExportPDF] Error:', err);
+      toast.error('Error al exportar PDF: ' + (err?.message || 'Error desconocido'));
+    } finally {
+      setIsExportingPdf(false);
+    }
+  }, [outlineForUI, format, filmDurationMin, episodeDurationMin]);
+
   // V8.0: Retry draft outline that failed to start
   const handleRetryDraftOutline = async () => {
     const outlineId = outlinePersistence.savedOutline?.id;
@@ -6478,6 +6677,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       toast.error(`Error al desbloquear: ${e.message}`);
                     }
                   }}
+                  onExportPDF={handleExportOutlinePDF}
+                  isExportingPDF={isExportingPdf}
                 />
 
                 {/* Time Warning */}
@@ -7113,6 +7314,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         toast.error(`Error al desbloquear: ${e.message}`);
                       }
                     }}
+                    onExportPDF={handleExportOutlinePDF}
+                    isExportingPDF={isExportingPdf}
                   />
                 )}
 
