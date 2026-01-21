@@ -410,6 +410,65 @@ export type Database = {
           },
         ]
       }
+      canon_packs: {
+        Row: {
+          act_number: number | null
+          active_cast: Json | null
+          active_props_locs: Json | null
+          continuity_locks: Json | null
+          created_at: string | null
+          episode_number: number | null
+          id: string
+          pack_type: string
+          project_id: string
+          timeline_state: Json | null
+          token_estimate: number | null
+          updated_at: string | null
+          version: number | null
+          voice_tone_rules: Json | null
+        }
+        Insert: {
+          act_number?: number | null
+          active_cast?: Json | null
+          active_props_locs?: Json | null
+          continuity_locks?: Json | null
+          created_at?: string | null
+          episode_number?: number | null
+          id?: string
+          pack_type: string
+          project_id: string
+          timeline_state?: Json | null
+          token_estimate?: number | null
+          updated_at?: string | null
+          version?: number | null
+          voice_tone_rules?: Json | null
+        }
+        Update: {
+          act_number?: number | null
+          active_cast?: Json | null
+          active_props_locs?: Json | null
+          continuity_locks?: Json | null
+          created_at?: string | null
+          episode_number?: number | null
+          id?: string
+          pack_type?: string
+          project_id?: string
+          timeline_state?: Json | null
+          token_estimate?: number | null
+          updated_at?: string | null
+          version?: number | null
+          voice_tone_rules?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canon_packs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       character_narrative: {
         Row: {
           biography: Json
@@ -2453,14 +2512,18 @@ export type Database = {
         Row: {
           block_index: number
           block_type: string
+          canon_pack_id: string | null
           completed_at: string | null
           continuity_summary: Json | null
           created_at: string | null
+          drift_warnings: number | null
           episode_number: number | null
           error_code: string | null
           error_message: string | null
           id: string
           input_context: Json | null
+          model_reason: string | null
+          model_used: string | null
           output_data: Json | null
           project_id: string
           retry_count: number | null
@@ -2472,14 +2535,18 @@ export type Database = {
         Insert: {
           block_index: number
           block_type: string
+          canon_pack_id?: string | null
           completed_at?: string | null
           continuity_summary?: Json | null
           created_at?: string | null
+          drift_warnings?: number | null
           episode_number?: number | null
           error_code?: string | null
           error_message?: string | null
           id?: string
           input_context?: Json | null
+          model_reason?: string | null
+          model_used?: string | null
           output_data?: Json | null
           project_id: string
           retry_count?: number | null
@@ -2491,14 +2558,18 @@ export type Database = {
         Update: {
           block_index?: number
           block_type?: string
+          canon_pack_id?: string | null
           completed_at?: string | null
           continuity_summary?: Json | null
           created_at?: string | null
+          drift_warnings?: number | null
           episode_number?: number | null
           error_code?: string | null
           error_message?: string | null
           id?: string
           input_context?: Json | null
+          model_reason?: string | null
+          model_used?: string | null
           output_data?: Json | null
           project_id?: string
           retry_count?: number | null
@@ -2508,6 +2579,13 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "generation_blocks_canon_pack_id_fkey"
+            columns: ["canon_pack_id"]
+            isOneToOne: false
+            referencedRelation: "canon_packs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "generation_blocks_project_id_fkey"
             columns: ["project_id"]
@@ -6191,6 +6269,10 @@ export type Database = {
           quality: number
         }[]
       }
+      get_canon_pack: {
+        Args: { p_episode_number?: number; p_project_id: string }
+        Returns: Json
+      }
       get_last_continuity_summary: {
         Args: { p_episode_number?: number; p_project_id: string }
         Returns: Json
@@ -6226,6 +6308,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_drift_warning: { Args: { p_block_id: string }; Returns: number }
       increment_user_usage: {
         Args: { p_cost: number; p_month: string; p_user_id: string }
         Returns: undefined
