@@ -485,6 +485,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [isPatchingOutline, setIsPatchingOutline] = useState(false);
   const [attemptsByBatch, setAttemptsByBatch] = useState<Record<number, number>>({});
   
+  // V15: Persist-First - Track blocked script for recovery
+  const [blockedScriptId, setBlockedScriptId] = useState<string | null>(null);
+  const [blockedScriptRunId, setBlockedScriptRunId] = useState<string | null>(null);
+  
   // V11: QC Status for visual gating
   const qcStatus = useMemo<QCStatus | null>(() => {
     if (!lightOutline) return null;
@@ -3525,6 +3529,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   errorCode === 'DENSITY_GATE_FAILED';
                 
                 if (isDensityError) {
+                  // V15: Extract script_id from error response for recovery
+                  const scriptId = errorObj?.script_id || null;
+                  const scriptRunId = errorObj?.script_run_id || null;
+                  
+                  if (scriptId) {
+                    setBlockedScriptId(scriptId);
+                    setBlockedScriptRunId(scriptRunId);
+                    console.log('[V15] Blocked script created:', { scriptId, scriptRunId });
+                  }
+                  
                   setDensityGateResult({
                     status: 'FAIL',
                     density_score: errorObj.density_score ?? errorObj.score ?? 0,
@@ -3533,9 +3547,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   });
                   setShowDensityGateModal(true);
                   
-                  // Also show toast with summary
+                  // Also show toast with summary and next action hint
+                  const nextAction = errorObj.next_action;
                   toast.error('Densidad narrativa insuficiente', {
-                    description: errorObj.human_summary || 'El outline necesita más contenido para generar el guión',
+                    description: nextAction === 'outline_patch_then_retry' 
+                      ? 'Usa el auto-fix para mejorar el outline y reintentar'
+                      : (errorObj.human_summary || 'El outline necesita más contenido para generar el guión'),
                     duration: 10000
                   });
                   

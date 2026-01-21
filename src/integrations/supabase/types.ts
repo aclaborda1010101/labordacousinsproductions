@@ -5020,32 +5020,47 @@ export type Database = {
       scripts: {
         Row: {
           created_at: string
+          episode_number: number | null
           file_url: string | null
           id: string
+          meta: Json | null
           parsed_json: Json | null
           project_id: string
           raw_text: string | null
+          script_run_id: string | null
+          script_type: string | null
           status: string | null
+          updated_at: string | null
           version: number | null
         }
         Insert: {
           created_at?: string
+          episode_number?: number | null
           file_url?: string | null
           id?: string
+          meta?: Json | null
           parsed_json?: Json | null
           project_id: string
           raw_text?: string | null
+          script_run_id?: string | null
+          script_type?: string | null
           status?: string | null
+          updated_at?: string | null
           version?: number | null
         }
         Update: {
           created_at?: string
+          episode_number?: number | null
           file_url?: string | null
           id?: string
+          meta?: Json | null
           parsed_json?: Json | null
           project_id?: string
           raw_text?: string | null
+          script_run_id?: string | null
+          script_type?: string | null
           status?: string | null
+          updated_at?: string | null
           version?: number | null
         }
         Relationships: [

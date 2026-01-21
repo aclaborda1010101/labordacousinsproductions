@@ -1141,6 +1141,74 @@ function enforceV3Schema(result: any, config: ModelConfig, bibleCharNames: Set<s
 }
 
 // =============================================================================
+// V15: PERSIST-FIRST SKELETON SCRIPT HELPER
+// Creates/updates a script record BEFORE any validation gates
+// This ensures we always have a script_id to return, even on 422 errors
+// =============================================================================
+async function persistSkeletonScript(
+  supabase: any,
+  projectId: string,
+  scriptRunId: string,
+  outline: any,
+  status: 'draft' | 'blocked_density' | 'blocked_format' | 'generating',
+  meta?: Record<string, any>
+): Promise<string> {
+  const title = outline?.title || outline?.logline?.slice(0, 50) || 'Sin título';
+  const scriptType = (outline?.format || meta?.format || 'film').toLowerCase();
+  
+  const payload = {
+    project_id: projectId,
+    script_run_id: scriptRunId,
+    script_type: scriptType,
+    episode_number: meta?.episodeNumber || null,
+    status,
+    parsed_json: {
+      title,
+      scenes: [],
+      _skeleton: true,
+      _created_at: new Date().toISOString()
+    },
+    raw_text: '',
+    meta: { 
+      ...meta, 
+      skeleton: true,
+      outline_source: outline?._source || 'unknown'
+    }
+  };
+
+  // Try upsert first (for retries with same run_id)
+  const { data, error } = await supabase
+    .from('scripts')
+    .upsert(payload, { 
+      onConflict: 'project_id,script_run_id',
+      ignoreDuplicates: false 
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    console.error('[persistSkeletonScript] Upsert failed:', error);
+    // Fallback: try insert without conflict handling
+    const { data: insertData, error: insertError } = await supabase
+      .from('scripts')
+      .insert({
+        ...payload,
+        script_run_id: crypto.randomUUID() // New run_id to avoid conflict
+      })
+      .select('id')
+      .single();
+    
+    if (insertError) {
+      throw new Error(`Failed to persist skeleton script: ${insertError.message}`);
+    }
+    return insertData.id;
+  }
+  
+  console.log('[persistSkeletonScript] Created/updated skeleton:', { id: data.id, status });
+  return data.id;
+}
+
+// =============================================================================
 // MAIN HANDLER
 // =============================================================================
 interface GenerateScriptRequest {
@@ -1171,6 +1239,9 @@ interface GenerateScriptRequest {
   // V11.2: Is this a repair attempt?
   isRepairAttempt?: boolean;
   repairBlockers?: string[];
+  // V15: Persist-First Architecture
+  scriptRunId?: string;           // UUID for this generation attempt (enables retry with same ID)
+  densityMode?: 'strict' | 'warn' | 'off';  // Controls density gate behavior
 }
 
 serve(async (req) => {
@@ -1368,12 +1439,52 @@ serve(async (req) => {
     });
 
     // =========================================================================
-    // V11.2: DENSITY GATE (DEFENSE IN DEPTH)
+    // V15: PERSIST-FIRST ARCHITECTURE
+    // Create skeleton script BEFORE any validation gates
+    // This ensures we always have a script_id to return, even on errors
+    // =========================================================================
+    const scriptRunId = request.scriptRunId || crypto.randomUUID();
+    let skeletonScriptId: string | null = null;
+    
+    if (projectId) {
+      try {
+        skeletonScriptId = await persistSkeletonScript(
+          auth.supabase,
+          projectId,
+          scriptRunId,
+          effectiveOutline,
+          'draft',
+          { 
+            qualityTier, 
+            format,
+            episodeNumber,
+            source: 'generate-script-v15'
+          }
+        );
+        console.log('[generate-script] V15: Skeleton script persisted:', skeletonScriptId);
+      } catch (skeletonError) {
+        console.warn('[generate-script] V15: Failed to persist skeleton (continuing):', skeletonError);
+        // Don't fail - skeleton is nice-to-have, not critical
+      }
+    }
+
+    // =========================================================================
+    // V15: DENSITY GATE WITH 3 MODES (strict/warn/off)
     // Only run if not a repair attempt (repair attempts focus on contract, not density)
     // =========================================================================
     const isRepairAttempt = request.isRepairAttempt || false;
     
-    if (effectiveOutline && !isRepairAttempt) {
+    // V15: Determine density mode based on tier and request
+    // hollywood = strict (production quality gate)
+    // profesional = warn (log but continue)
+    // rapido = off (skip for speed)
+    const densityMode = request.densityMode || 
+      (qualityTier === 'hollywood' ? 'strict' : 
+       qualityTier === 'rapido' ? 'off' : 'warn');
+    
+    let densityWarnings: string[] = [];
+    
+    if (effectiveOutline && !isRepairAttempt && densityMode !== 'off') {
       // V11.3: Map format to correct density profile (consistent with density-precheck)
       const formatLower = (format || '').toLowerCase();
       let densityProfileName: string = format || 'serie_drama';
@@ -1386,33 +1497,64 @@ serve(async (req) => {
       const densityCheck = validateDensity(effectiveOutline, densityProfile);
       
       if (densityCheck.status === 'FAIL') {
-        console.warn('[generate-script] DENSITY_GATE_FAILED:', {
+        console.warn('[generate-script] DENSITY_GATE:', {
+          mode: densityMode,
           score: densityCheck.score,
           fixesCount: densityCheck.required_fixes?.length || 0
         });
         
-        // Release lock if acquired
-        if (lockAcquired && projectIdForLock) {
+        // V15: Update skeleton with blocked status and density info
+        if (skeletonScriptId) {
           try {
-            await auth.supabase.rpc('release_project_lock', { p_project_id: projectIdForLock });
-          } catch { /* ignore */ }
+            await auth.supabase
+              .from('scripts')
+              .update({
+                status: 'blocked_density',
+                meta: {
+                  density_score: densityCheck.score,
+                  density_mode: densityMode,
+                  required_fixes: densityCheck.required_fixes,
+                  human_summary: densityCheck.human_summary,
+                  blocked_at: new Date().toISOString()
+                }
+              })
+              .eq('id', skeletonScriptId);
+          } catch { /* ignore update errors */ }
         }
         
-        clearTimeout(timeoutId);
-        return new Response(JSON.stringify({
-          success: false,
-          error: 'DENSITY_GATE_FAILED',
-          code: 'DENSITY_INSUFFICIENT',
-          message: 'El outline no cumple mínimos de densidad narrativa',
-          // NORMALIZATION: Use both 'score' AND 'density_score' for compatibility
-          score: densityCheck.score,
-          density_score: densityCheck.score,
-          required_fixes: densityCheck.required_fixes,
-          human_summary: densityCheck.human_summary,
-        }), { 
-          status: 422, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        });
+        if (densityMode === 'strict') {
+          // Strict mode: block generation but return script_id
+          // Release lock if acquired
+          if (lockAcquired && projectIdForLock) {
+            try {
+              await auth.supabase.rpc('release_project_lock', { p_project_id: projectIdForLock });
+            } catch { /* ignore */ }
+          }
+          
+          clearTimeout(timeoutId);
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'DENSITY_GATE_FAILED',
+            code: 'DENSITY_INSUFFICIENT',
+            message: 'El outline no cumple mínimos de densidad narrativa',
+            // V15: Include script_id for UI to show skeleton and offer fixes
+            script_id: skeletonScriptId,
+            script_run_id: scriptRunId,
+            // NORMALIZATION: Use both 'score' AND 'density_score' for compatibility
+            score: densityCheck.score,
+            density_score: densityCheck.score,
+            required_fixes: densityCheck.required_fixes,
+            human_summary: densityCheck.human_summary,
+            next_action: 'outline_patch_then_retry'
+          }), { 
+            status: 422, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          });
+        }
+        
+        // Warn mode: log and continue, but mark quality as degraded
+        densityWarnings.push(`DENSITY_WARN: score=${densityCheck.score}, fixes=${densityCheck.required_fixes?.length || 0}`);
+        console.warn('[generate-script] DENSITY_WARN (continuing):', densityCheck.score);
       }
     }
 
@@ -1533,6 +1675,24 @@ serve(async (req) => {
         status: genPre.status,
         bypassed: true
       });
+    }
+
+    // =========================================================================
+    // V15: Update skeleton to 'generating' - all gates passed
+    // =========================================================================
+    if (skeletonScriptId) {
+      try {
+        await auth.supabase
+          .from('scripts')
+          .update({ 
+            status: 'generating',
+            meta: {
+              gates_passed_at: new Date().toISOString(),
+              density_warnings: densityWarnings.length > 0 ? densityWarnings : undefined
+            }
+          })
+          .eq('id', skeletonScriptId);
+      } catch { /* ignore */ }
     }
 
     // =========================================================================
@@ -2090,8 +2250,13 @@ IDIOMA: ${language}
           bibleInjected: !!projectId,
           bibleCharacters: filteredBible.characters.length,
           bibleLocations: filteredBible.locations.length,
-          resultQuality,
-          parseWarnings: parseWarnings.length > 0 ? parseWarnings : undefined
+          // V15: Include quality degradation flags
+          resultQuality: densityWarnings.length > 0 ? 'DEGRADED' : resultQuality,
+          qa_flags: densityWarnings.length > 0 ? ['DENSITY_WARN', ...densityWarnings] : undefined,
+          parseWarnings: parseWarnings.length > 0 ? parseWarnings : undefined,
+          // V15: Include script identifiers for frontend
+          script_id: skeletonScriptId,
+          script_run_id: scriptRunId
         },
         _contract: episodeContract ? {
           episode: episodeContract.episode_number,
