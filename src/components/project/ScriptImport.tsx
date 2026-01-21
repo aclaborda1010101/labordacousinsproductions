@@ -90,7 +90,8 @@ import {
   ArrowRight,
   Crown,
   Shield,
-  GitBranch
+  GitBranch,
+  Eye
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -459,6 +460,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     substage?: string;
     retryable: boolean;
   } | null>(null);
+  
+  // V65: Partial script polling state (incremental persistence recovery)
+  const [partialScriptData, setPartialScriptData] = useState<{
+    scriptId: string;
+    scenesCount: number;
+    batchesCompleted: number;
+    totalBatches?: number;
+    lastUpdated: string;
+    status: 'generating' | 'completed' | 'failed' | 'blocked_density';
+  } | null>(null);
+  const [isPollingScript, setIsPollingScript] = useState(false);
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
   // P1 FIX: Entity materialization state (sync outline to Bible)
   const [materializingEntities, setMaterializingEntities] = useState(false);
@@ -3190,6 +3203,110 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   useEffect(() => {
     fetchScenesCount();
   }, [projectId]);
+
+  // V65: Poll for active script generation progress (incremental persistence)
+  const pollActiveScript = useCallback(async () => {
+    if (!projectId) return;
+    
+    try {
+      const { data: activeScript, error } = await supabase
+        .from('scripts')
+        .select('id, status, parsed_json, meta, updated_at')
+        .eq('project_id', projectId)
+        .in('status', ['generating', 'draft'])
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !activeScript) {
+        setPartialScriptData(null);
+        return;
+      }
+
+      const parsedJson = activeScript.parsed_json as { scenes?: any[]; _skeleton?: boolean } | null;
+      const scenes = parsedJson?.scenes || [];
+      const meta = (activeScript.meta || {}) as { blocks_completed?: number; total_blocks?: number };
+      
+      // Skip skeleton records with no actual content
+      if (parsedJson?._skeleton === true && scenes.length === 0) {
+        return;
+      }
+
+      setPartialScriptData({
+        scriptId: activeScript.id,
+        scenesCount: scenes.length,
+        batchesCompleted: meta.blocks_completed || 0,
+        totalBatches: meta.total_blocks,
+        lastUpdated: activeScript.updated_at,
+        status: activeScript.status as 'generating' | 'completed' | 'failed' | 'blocked_density'
+      });
+
+      // If there are partial scenes and no episodes list yet, reconstruct partial episode for display
+      if (scenes.length > 0 && !generatedEpisodesList.length && !pipelineRunning) {
+        const partialEpisode = {
+          episode_number: 1,
+          title: 'Generando...',
+          scenes: scenes,
+          synopsis: (parsedJson as any)?.synopsis || '',
+          total_dialogue_lines: scenes.reduce((sum: number, s: any) => 
+            sum + (s.dialogue?.length || 0), 0),
+          partial: true
+        };
+        setGeneratedEpisodesList([partialEpisode]);
+      }
+    } catch (err) {
+      console.error('[pollActiveScript] Error:', err);
+    }
+  }, [projectId, generatedEpisodesList.length, pipelineRunning]);
+
+  // V65: Start polling on mount if there's an active script generation
+  useEffect(() => {
+    const startPollingIfNeeded = async () => {
+      await pollActiveScript();
+    };
+
+    startPollingIfNeeded();
+    
+    // Cleanup on unmount
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+    };
+  }, [projectId]);
+
+  // V65: Handle polling lifecycle based on partial script status
+  useEffect(() => {
+    // Start polling if we found a generating script
+    if (partialScriptData?.status === 'generating' && !isPollingScript && !pipelineRunning) {
+      setIsPollingScript(true);
+      pollIntervalRef.current = setInterval(pollActiveScript, 5000);
+      console.log('[V65] Started script polling for:', partialScriptData.scriptId);
+    }
+    
+    // Stop polling when script is completed or failed
+    if (partialScriptData?.status === 'completed' || partialScriptData?.status === 'failed') {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+      setIsPollingScript(false);
+      
+      if (partialScriptData.status === 'completed' && partialScriptData.scenesCount > 0) {
+        toast.success('Generación completada', {
+          description: `${partialScriptData.scenesCount} escenas generadas`
+        });
+      }
+    }
+    
+    // Stop polling when main pipeline takes over
+    if (pipelineRunning && pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+      pollIntervalRef.current = null;
+      setIsPollingScript(false);
+    }
+  }, [partialScriptData?.status, partialScriptData?.scriptId, isPollingScript, pipelineRunning, pollActiveScript]);
 
   // Materialize scenes from outline
   const materializeScenesFromOutline = async (): Promise<boolean> => {
@@ -5986,6 +6103,81 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     Extracción profesional de personajes, localizaciones y escenas
                   </p>
                   <p className="text-xs text-muted-foreground/70">Puede tardar hasta 2 minutos</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* V65: PARTIAL SCRIPT PROGRESS CARD - Incremental Persistence Recovery */}
+          {partialScriptData && partialScriptData.status === 'generating' && !pipelineRunning && (
+            <Card className="border-2 border-blue-500/50 bg-blue-500/5">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                  <CardTitle className="text-sm font-medium text-blue-800">
+                    Generación en Progreso
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">{partialScriptData.scenesCount} escenas generadas</span>
+                    {partialScriptData.totalBatches && partialScriptData.totalBatches > 0 && (
+                      <span className="text-muted-foreground">
+                        Batch {partialScriptData.batchesCompleted}/{partialScriptData.totalBatches}
+                      </span>
+                    )}
+                  </div>
+                  <Progress 
+                    value={partialScriptData.totalBatches && partialScriptData.totalBatches > 0
+                      ? (partialScriptData.batchesCompleted / partialScriptData.totalBatches) * 100 
+                      : undefined
+                    } 
+                    className="h-2"
+                  />
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>
+                      Última actualización: {new Date(partialScriptData.lastUpdated).toLocaleTimeString()}
+                    </span>
+                    {isPollingScript && (
+                      <span className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                        Polling activo
+                      </span>
+                    )}
+                  </div>
+                  {/* View partial scenes button */}
+                  {partialScriptData.scenesCount > 0 && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="w-full"
+                      onClick={async () => {
+                        const { data } = await supabase
+                          .from('scripts')
+                          .select('parsed_json')
+                          .eq('id', partialScriptData.scriptId)
+                          .single();
+                        
+                        const parsedJson = data?.parsed_json as { scenes?: any[]; synopsis?: string } | null;
+                        if (parsedJson?.scenes) {
+                          const partialEpisode = {
+                            episode_number: 1,
+                            title: 'En progreso...',
+                            scenes: parsedJson.scenes,
+                            synopsis: parsedJson.synopsis || '',
+                            partial: true
+                          };
+                          setGeneratedEpisodesList([partialEpisode]);
+                          toast.info(`Mostrando ${parsedJson.scenes.length} escenas parciales`);
+                        }
+                      }}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Ver {partialScriptData.scenesCount} escenas
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
