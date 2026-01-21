@@ -1209,6 +1209,69 @@ async function persistSkeletonScript(
 }
 
 // =============================================================================
+// V15: INCREMENTAL PERSISTENCE - Append scenes after each batch
+// =============================================================================
+async function appendScenesToScript(
+  supabase: any,
+  scriptId: string,
+  newScenes: any[],
+  batchIndex: number,
+  totalBatches?: number,
+  synopsis?: string,
+  qualityTier?: string
+): Promise<void> {
+  // Fetch current script state
+  const { data: current, error: fetchError } = await supabase
+    .from('scripts')
+    .select('parsed_json, meta')
+    .eq('id', scriptId)
+    .single();
+
+  if (fetchError) {
+    console.error('[appendScenesToScript] Failed to fetch current script:', fetchError);
+    throw fetchError;
+  }
+
+  const existingScenes = current?.parsed_json?.scenes || [];
+  const updatedScenes = [...existingScenes, ...newScenes];
+
+  const { error: updateError } = await supabase
+    .from('scripts')
+    .update({
+      parsed_json: {
+        ...current.parsed_json,
+        scenes: updatedScenes,
+        synopsis: synopsis || current.parsed_json?.synopsis,
+        _skeleton: false,
+        _last_batch_index: batchIndex,
+        _last_updated: new Date().toISOString()
+      },
+      meta: {
+        ...current.meta,
+        blocks_completed: batchIndex + 1,
+        total_blocks: totalBatches,
+        scenes_count: updatedScenes.length,
+        last_persist_at: new Date().toISOString(),
+        quality_tier: qualityTier
+      },
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', scriptId);
+
+  if (updateError) {
+    console.error('[appendScenesToScript] Failed to update script:', updateError);
+    throw updateError;
+  }
+
+  console.log('[appendScenesToScript] Persisted batch:', {
+    scriptId,
+    batchIndex,
+    newScenes: newScenes.length,
+    totalScenes: updatedScenes.length
+  });
+}
+
+// =============================================================================
 // MAIN HANDLER
 // =============================================================================
 interface GenerateScriptRequest {
@@ -2098,6 +2161,31 @@ IDIOMA: ${language}
     const v3Result = enforceV3Schema(result, config, bibleCharNames);
 
     // =========================================================================
+    // V15: INCREMENTAL PERSIST - Save scenes immediately after each batch
+    // =========================================================================
+    if (skeletonScriptId && v3Result.scenes?.length > 0) {
+      try {
+        await appendScenesToScript(
+          auth.supabase,
+          skeletonScriptId,
+          v3Result.scenes,
+          batchIndex || 0,
+          totalBatches,
+          v3Result.synopsis,
+          qualityTier
+        );
+        console.log('[generate-script] V15: Scenes persisted incrementally:', {
+          scriptId: skeletonScriptId,
+          scenesCount: v3Result.scenes.length,
+          batchIndex: batchIndex || 0
+        });
+      } catch (persistError) {
+        console.error('[generate-script] V15: Failed to persist scenes (continuing):', persistError);
+        // Don't block the response - the scenes are still in the HTTP response
+      }
+    }
+
+    // =========================================================================
     // P0 FIX: ANTI-PLACEHOLDER QC - Detect and flag placeholder scenes
     // =========================================================================
     const isPlaceholderScene = (scene: any): boolean => {
@@ -2231,6 +2319,35 @@ IDIOMA: ${language}
           request.currentBatchPlan || { episode: episodeNumber || 1, batchIndex: batchIndex || 0 } as any
         )
       : null;
+
+    // =========================================================================
+    // V15: Mark script as COMPLETED on final success
+    // =========================================================================
+    if (skeletonScriptId && v3Result.scenes?.length > 0) {
+      const isFinalBatch = isLastBatch || !totalBatches || (batchIndex !== undefined && batchIndex >= (totalBatches - 1));
+      
+      try {
+        await auth.supabase
+          .from('scripts')
+          .update({
+            status: isFinalBatch ? 'completed' : 'generating',
+            meta: {
+              ...(isFinalBatch ? { completed_at: new Date().toISOString() } : {}),
+              final_scenes_count: v3Result.scenes.length,
+              quality_tier: qualityTier,
+              result_quality: resultQuality,
+              is_final_batch: isFinalBatch
+            }
+          })
+          .eq('id', skeletonScriptId);
+        
+        if (isFinalBatch) {
+          console.log('[generate-script] V15: Script marked as completed:', skeletonScriptId);
+        }
+      } catch (statusError) {
+        console.warn('[generate-script] V15: Failed to update script status:', statusError);
+      }
+    }
 
     return new Response(
       JSON.stringify({
