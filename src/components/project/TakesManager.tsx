@@ -145,11 +145,13 @@ export default function TakesManager({ shotId, onTakeSelected }: TakesManagerPro
   };
 
   const getEngineLabel = (engine: string | null) => {
+    if (!engine) return 'Unknown';
+    if (engine.toLowerCase().includes('o1') || engine.toLowerCase().includes('omni')) return 'Kling O1';
+    if (engine.includes('kling')) return 'Kling 2.0';
     switch (engine) {
       case 'veo': return 'Veo 3.1';
-      case 'kling': return 'Kling 2.0';
       case 'lovable': return 'Keyframe';
-      default: return engine || 'Unknown';
+      default: return engine;
     }
   };
 

@@ -165,21 +165,26 @@ serve(async (req) => {
     // Select mode based on quality preset
     let mode = qualityMode === 'ULTRA' ? KLING_MODE_ULTRA : KLING_MODE_CINE;
     
-    // V2.6 models only support 'pro' mode
-    if (KLING_MODEL_NAME.toLowerCase().includes('v2.6') || 
-        KLING_MODEL_NAME.toLowerCase().includes('v2-6') ||
-        KLING_MODEL_NAME.includes('V2.6')) {
-      console.log('Model v2.6 detected, forcing mode to "pro"');
+    // Detect model type
+    const isO1Model = KLING_MODEL_NAME.toLowerCase().includes('o1') || 
+                      KLING_MODEL_NAME.toLowerCase().includes('omni');
+    const isV26Model = KLING_MODEL_NAME.toLowerCase().includes('v2.6') || 
+                       KLING_MODEL_NAME.toLowerCase().includes('v2-6') ||
+                       KLING_MODEL_NAME.includes('V2.6');
+    
+    // O1 and v2.6 models require 'pro' mode
+    if (isO1Model || isV26Model) {
+      console.log(`Model ${isO1Model ? 'O1' : 'v2.6'} detected, forcing mode to "pro"`);
       mode = 'pro';
     }
 
-    console.log(`Starting Kling generation (model: ${KLING_MODEL_NAME}, mode: ${mode}, duration: ${duration}s)`);
+    console.log(`Starting Kling generation (model: ${KLING_MODEL_NAME}, mode: ${mode}, duration: ${duration}s, isO1: ${isO1Model})`);
 
     // Generate JWT token
     const token = await makeKlingJwt(KLING_ACCESS_KEY, KLING_SECRET_KEY);
 
-    // Check if model requires image2video (v2.x models typically do)
-    const requiresImage = KLING_MODEL_NAME.includes('v2');
+    // Check if model requires image2video (v2.x models do, O1 can do text2video)
+    const requiresImage = KLING_MODEL_NAME.includes('v2') && !isO1Model;
 
     // Kling v2: enforce image2video for consistent quality
     if (requiresImage && !keyframeUrl) {
