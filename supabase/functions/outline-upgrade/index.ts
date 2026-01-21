@@ -11,8 +11,8 @@ const corsHeaders = {
 // Each invocation does ONE stage, frontend loops until complete
 // ============================================================================
 
-const CHUNK_TIMEOUT_MS = 45000; // 45s budget per chunk
-const HEARTBEAT_INTERVAL_MS = 15000; // 15s keepalive
+const CHUNK_TIMEOUT_MS = 50000; // 50s budget per chunk (edge limit is ~60s)
+const HEARTBEAT_INTERVAL_MS = 10000; // 10s keepalive (more frequent)
 
 interface UpgradeStage {
   id: string;
@@ -23,9 +23,9 @@ interface UpgradeStage {
 }
 
 const UPGRADE_STAGES: UpgradeStage[] = [
-  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 6000 },
-  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 6000 },
-  { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 8000 }
+  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 3000 },
+  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 3000 },
+  { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 4000 }
 ];
 
 // Showrunner-level system prompt (shared across stages)
@@ -284,6 +284,7 @@ async function callLovableAI(
     throw new Error("LOVABLE_API_KEY not configured");
   }
 
+  // Use faster model with lower latency
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -291,11 +292,11 @@ async function callLovableAI(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "openai/gpt-5-mini", // Faster model for chunked approach
+      model: "google/gemini-2.5-flash-lite", // Fastest model for quick responses
       max_completion_tokens: maxTokens,
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
+        { role: "user", content: userPrompt + "\n\nRESPONDE SOLO CON LA HERRAMIENTA, SIN TEXTO ADICIONAL." }
       ],
       tools: [
         {
