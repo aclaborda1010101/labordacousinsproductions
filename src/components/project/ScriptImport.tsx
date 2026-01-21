@@ -3388,6 +3388,32 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const approveAndGenerateEpisodes = async () => {
     if (!lightOutline) return;
 
+    // ════════════════════════════════════════════════════════════════════════
+    // V11.3: STRUCTURAL VALIDATION - Block if outline lacks beats/acts
+    // ════════════════════════════════════════════════════════════════════════
+    const hasEpisodeBeats = Array.isArray(lightOutline.episode_beats) && lightOutline.episode_beats.length > 0;
+    const hasBeats = Array.isArray(lightOutline.beats) && lightOutline.beats.length > 0;
+    const hasActs = lightOutline.acts && typeof lightOutline.acts === 'object' && Object.keys(lightOutline.acts).length > 0;
+    const hasTurningPoints = Array.isArray(lightOutline.turning_points) && lightOutline.turning_points.length > 0;
+    const hasFilmActs = lightOutline.ACT_I || lightOutline.ACT_II || lightOutline.ACT_III;
+    
+    const hasStructure = hasEpisodeBeats || hasBeats || hasActs || hasTurningPoints || hasFilmActs;
+    
+    if (!hasStructure) {
+      console.error('[ScriptImport] BLOCKED - Outline lacks structural elements:', {
+        episode_beats: lightOutline.episode_beats?.length || 0,
+        beats: lightOutline.beats?.length || 0,
+        acts: lightOutline.acts ? Object.keys(lightOutline.acts).length : 0,
+        turning_points: lightOutline.turning_points?.length || 0,
+        hasFilmActs
+      });
+      toast.error('El outline necesita estructura narrativa', {
+        description: 'Regenera el outline o añade beats/actos para continuar'
+      });
+      return;
+    }
+    console.log('[ScriptImport] Structural validation passed:', { hasEpisodeBeats, hasBeats, hasActs, hasTurningPoints, hasFilmActs });
+
     // Proactively refresh session before starting long pipeline
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
@@ -3465,12 +3491,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       outline: lightOutline,
       startedAt: Date.now(),
       completedBatches: 0,
-      totalBatches: totalEpisodes * calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, qualityTier).batchesPerEpisode
+      totalBatches: totalEpisodes * calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, qualityTier, 'drama', format).batchesPerEpisode
     });
 
     // V3.0: Calculate dynamic batch configuration based on complexity, episode duration, AND quality tier
     const tierConfig = QUALITY_TIERS[qualityTier];
-    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, qualityTier);
+    const dynamicBatchConfig = calculateDynamicBatches(targets!, complexity, undefined, episodeDurationMin, qualityTier, 'drama', format);
     setBatchConfig(dynamicBatchConfig);
     
     const BATCHES_PER_EPISODE = dynamicBatchConfig.batchesPerEpisode;
@@ -8324,7 +8350,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     
                     {/* V3.0: Dynamic Batch Configuration Preview */}
                     {(() => {
-                      const batchPreview = calculateDynamicBatches(targets, complexity, undefined, episodeDurationMin, qualityTier);
+                      const batchPreview = calculateDynamicBatches(targets, complexity, undefined, episodeDurationMin, qualityTier, 'drama', format);
                       const tierCfg = QUALITY_TIERS[qualityTier];
                       const totalTimeMin = episodesCount * tierCfg.estimatedTimePerEpisodeMin;
                       return (
