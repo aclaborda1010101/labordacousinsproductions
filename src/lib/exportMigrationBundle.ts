@@ -256,7 +256,7 @@ export async function exportMigrationBundle(
       currentItem: `${migrations.length} migraciones incluidas`,
     });
 
-    // Phase 2: Export table data
+    // Phase 2: Export table data (memory-optimized - no JSON, only SQL)
     if (includeData) {
       const dataFolder = zip.folder('data')!;
       
@@ -270,28 +270,28 @@ export async function exportMigrationBundle(
         });
 
         try {
-          const { data: tableData } = await supabase.functions.invoke(
+          const { data: tableData, error } = await supabase.functions.invoke(
             'export-migration-bundle',
             {
               body: { action: 'export_table', table },
             }
           );
 
-          if (tableData?.sql) {
+          if (error) {
+            console.warn(`Failed to export ${table}:`, error);
+            dataFolder.file(`${table}.sql`, `-- Error exporting ${table}: ${error.message}\n`);
+          } else if (tableData?.sql) {
             dataFolder.file(`${table}.sql`, tableData.sql);
-          }
-
-          // Also save raw JSON for easier processing
-          if (tableData?.data && tableData.data.length > 0) {
-            dataFolder.file(`${table}.json`, JSON.stringify(tableData.data, null, 2));
+          } else {
+            dataFolder.file(`${table}.sql`, `-- No data in ${table}\n`);
           }
         } catch (err) {
           console.warn(`Failed to export ${table}:`, err);
           dataFolder.file(`${table}.sql`, `-- Error exporting ${table}\n`);
         }
 
-        // Small delay to avoid rate limiting
-        await new Promise(r => setTimeout(r, 100));
+        // Delay between requests to avoid memory buildup and rate limiting
+        await new Promise(r => setTimeout(r, 150));
       }
     }
 
