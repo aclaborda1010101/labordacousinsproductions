@@ -1223,6 +1223,27 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       }
     }
   }, [outlinePersistence.savedOutline, outlinePersistence.isLoading, lightOutline, ideaText]);
+
+  // V66: Auto-cleanup zombie scripts (stuck in 'generating' status > 10 minutes with no scenes)
+  useEffect(() => {
+    const cleanupZombieScripts = async () => {
+      const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+      
+      // Mark old scripts with 'generating' status as 'failed' if they have no scenes
+      const { error } = await supabase
+        .from('scripts')
+        .update({ status: 'failed' })
+        .eq('project_id', projectId)
+        .eq('status', 'generating')
+        .lt('updated_at', tenMinutesAgo);
+      
+      if (error) {
+        console.warn('[ScriptImport] V66: Error cleaning zombie scripts:', error);
+      }
+    };
+    
+    cleanupZombieScripts();
+  }, [projectId]);
   
   // V4.1: Auto-initialize ideaText from failed/stalled outline for recovery UI
   // This ensures the "Generar nuevo" button is enabled even on fresh page load
@@ -5949,14 +5970,23 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 <RefreshCw className="w-4 h-4" />
                 <span className="ml-2 hidden sm:inline">Regenerar</span>
               </Button>
-              <Button 
-                variant={scriptLocked ? "default" : "outline"} 
-                size="sm"
-                onClick={scriptLocked ? unlockScript : freezeScript}
-              >
-                {scriptLocked ? <Lock className="w-4 h-4" /> : <Snowflake className="w-4 h-4" />}
-                <span className="ml-2 hidden sm:inline">{scriptLocked ? 'Congelado' : 'Freeze'}</span>
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant={scriptLocked ? "default" : "outline"} 
+                    size="sm"
+                    onClick={scriptLocked ? unlockScript : freezeScript}
+                  >
+                    {scriptLocked ? <Lock className="w-4 h-4" /> : <Snowflake className="w-4 h-4" />}
+                    <span className="ml-2 hidden sm:inline">{scriptLocked ? 'Congelado' : 'Freeze'}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {scriptLocked 
+                    ? 'Guion bloqueado. Click para desbloquear y permitir ediciones.'
+                    : 'Bloquear versión actual antes de pasar a producción. Previene cambios accidentales.'}
+                </TooltipContent>
+              </Tooltip>
               {/* Delete Script Button */}
               <Button 
                 variant="destructive" 
@@ -8092,7 +8122,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         {/* GUION TAB (formerly SUMMARY) */}
         <TabsContent value="summary" className="space-y-4">
           {/* GENERATION IN PROGRESS - Takes priority over all other states */}
-          {(pipelineRunning || partialScriptData?.status === 'generating') ? (
+          {/* V66: Only show progress if actually generating (has scenes, recent update, or pipeline active) */}
+          {(() => {
+            const isRecentScript = partialScriptData?.lastUpdated 
+              ? (new Date().getTime() - new Date(partialScriptData.lastUpdated).getTime()) < 5 * 60 * 1000
+              : false;
+            const isActuallyGenerating = pipelineRunning || (
+              partialScriptData?.status === 'generating' && 
+              ((partialScriptData?.scenesCount ?? 0) > 0 || isRecentScript)
+            );
+            return isActuallyGenerating;
+          })() ? (
             <ScriptGenerationInProgress
               currentEpisode={currentEpisodeGenerating}
               totalEpisodes={totalEpisodesToGenerate || partialScriptData?.totalBatches || 1}
