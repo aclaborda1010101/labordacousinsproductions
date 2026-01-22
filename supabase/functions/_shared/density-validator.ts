@@ -240,7 +240,7 @@ export function extractOutlineCounts(outline: Record<string, unknown>): OutlineC
   };
 
   // Extract characters
-  const mainChars = (outline.main_characters || outline.characters || []) as any[];
+  const mainChars = (outline.main_characters || outline.characters || outline.cast || []) as any[];
   counts.characters_total = mainChars.length;
   
   for (const char of mainChars) {
@@ -259,28 +259,85 @@ export function extractOutlineCounts(outline: Record<string, unknown>): OutlineC
   const locations = (outline.main_locations || outline.locations || []) as any[];
   counts.locations = locations.length;
 
-  // Extract episodes and scenes
-  const episodeBeats = (outline.episode_beats || []) as any[];
-  counts.episodes = episodeBeats.length;
+  // ============================================================================
+  // V2: DETECT FILM ACT STRUCTURE (ACT_I, ACT_II, ACT_III)
+  // ============================================================================
+  const actI = outline.ACT_I as Record<string, unknown> | undefined;
+  const actII = outline.ACT_II as Record<string, unknown> | undefined;
+  const actIII = outline.ACT_III as Record<string, unknown> | undefined;
   
-  let totalTurningPoints = 0;
-  for (const ep of episodeBeats) {
-    // Estimate scenes per episode from turning_points, beats, or setpieces
-    const tps = (ep.turning_points || []).length;
-    totalTurningPoints += tps;
+  const hasActStructure = actI || actII || actIII;
+  
+  if (hasActStructure) {
+    // Film with 3-act structure - count beats from each act
+    const actIBeats = (actI?.beats || actI?.detailed_beats || []) as any[];
+    const actIIBeats = (actII?.beats || actII?.detailed_beats || []) as any[];
+    const actIIIBeats = (actIII?.beats || actIII?.detailed_beats || []) as any[];
     
-    // Each turning point usually needs 1-2 scenes + setup/resolution
+    const totalBeats = actIBeats.length + actIIBeats.length + actIIIBeats.length;
+    
+    console.log('[density-validator] Film act structure detected:', {
+      actI: actIBeats.length,
+      actII: actIIBeats.length,
+      actIII: actIIIBeats.length,
+      totalBeats
+    });
+    
+    // Count turning points from acts
+    let totalTurningPoints = 0;
+    
+    // ACT I turning points
+    if (actI?.inciting_incident) totalTurningPoints++;
+    if (actI?.point_of_no_return || actI?.first_plot_point) totalTurningPoints++;
+    
+    // ACT II turning points  
+    if (actII?.midpoint_reversal) totalTurningPoints++;
+    if (actII?.all_is_lost || actII?.crisis) totalTurningPoints++;
+    
+    // ACT III turning points
+    if (actIII?.climax_decision || actIII?.climax) totalTurningPoints++;
+    if (actIII?.resolution) totalTurningPoints++;
+    
+    // Estimate scenes: each beat typically generates 1-2 scenes
+    // Minimum: 20 scenes for a 90-min film (~4.5 min/scene average)
+    // With beats, estimate 2 scenes per beat for dramatic development
     const estimatedScenes = Math.max(
-      tps * 2,
-      (ep.beats || []).length,
-      8 // Minimum reasonable estimate
+      totalBeats * 2,
+      totalTurningPoints * 3,
+      20 // Absolute minimum for a film
     );
-    counts.scenes_per_episode.push(estimatedScenes);
+    
+    counts.episodes = 1; // A film is treated as 1 "episode"
+    counts.scenes_per_episode = [estimatedScenes];
+    counts.average_turning_points_per_episode = totalTurningPoints;
+    
+    console.log('[density-validator] Film scene estimate:', estimatedScenes);
+  } else {
+    // ============================================================================
+    // ORIGINAL: SERIES EPISODE STRUCTURE
+    // ============================================================================
+    const episodeBeats = (outline.episode_beats || []) as any[];
+    counts.episodes = episodeBeats.length;
+    
+    let totalTurningPoints = 0;
+    for (const ep of episodeBeats) {
+      // Estimate scenes per episode from turning_points, beats, or setpieces
+      const tps = (ep.turning_points || []).length;
+      totalTurningPoints += tps;
+      
+      // Each turning point usually needs 1-2 scenes + setup/resolution
+      const estimatedScenes = Math.max(
+        tps * 2,
+        (ep.beats || []).length,
+        8 // Minimum reasonable estimate
+      );
+      counts.scenes_per_episode.push(estimatedScenes);
+    }
+    
+    counts.average_turning_points_per_episode = counts.episodes > 0 
+      ? Math.round(totalTurningPoints / counts.episodes) 
+      : 0;
   }
-  
-  counts.average_turning_points_per_episode = counts.episodes > 0 
-    ? Math.round(totalTurningPoints / counts.episodes) 
-    : 0;
 
   // Extract threads
   const threads = (outline.threads || outline.subplots || []) as any[];
@@ -315,6 +372,18 @@ export function extractOutlineCounts(outline: Record<string, unknown>): OutlineC
       counts.primary_threads = 1; // At least one primary
       counts.secondary_threads = uniqueThreads.size - 1;
     }
+  }
+
+  // V2: Also infer threads from thematic_premise if no explicit threads
+  if (counts.threads_total === 0) {
+    // Check for thematic elements that imply threads
+    if (outline.thematic_premise) counts.threads_total++;
+    if (outline.central_question) counts.threads_total++;
+    if ((outline.character_arcs as any[])?.length > 0) {
+      counts.threads_total += Math.min((outline.character_arcs as any[]).length, 2);
+    }
+    counts.primary_threads = counts.threads_total > 0 ? 1 : 0;
+    counts.secondary_threads = Math.max(0, counts.threads_total - 1);
   }
 
   return counts;
