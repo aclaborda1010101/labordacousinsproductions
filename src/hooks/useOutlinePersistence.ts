@@ -270,6 +270,12 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         console.log('[useOutlinePersistence] V8: Loaded outline with normalized fields:', data.id, 'chars:', normalizedOutlineJson.main_characters?.length, 'locs:', normalizedOutlineJson.main_locations?.length);
         return outline;
       }
+
+      // V25.1: If there are no outlines for this project, clear any stale local state.
+      // Without this, UI can keep a deleted outline in memory and trigger downstream calls
+      // (e.g., materialize-entities) that will 404 and be reported as runtime errors.
+      setSavedOutline(null);
+      return null;
     } catch (e) {
       console.error('[useOutlinePersistence] Unexpected error:', e);
       setError(e instanceof Error ? e.message : 'Unknown error');
