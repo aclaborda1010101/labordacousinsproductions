@@ -123,6 +123,25 @@ Antes del diálogo, describe:
 - Ritmo de la escena (tenso, incómodo, absurdo, íntimo)
 - Qué está en juego en ese momento
 
+✅ EJEMPLO DE DESCRIPCIÓN CORRECTA (8-12 líneas - OBLIGATORIO):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+La luz de la mañana entra oblicua por las persianas rotas del motel. 
+JOHN está sentado en el borde de la cama, de espaldas a la puerta. 
+Sus manos tiemblan ligeramente mientras sostiene una fotografía 
+arrugada de su hija. El ventilador del techo gira con un chirrido 
+rítmico que marca los segundos como un metrónomo lento.
+
+En la mesita de noche: una pistola desmontada, un vaso de whiskey 
+vacío, tres casquillos de bala dispersos. MARÍA está de pie junto 
+a la ventana, los brazos cruzados sobre el pecho, mirando el 
+aparcamiento vacío. Su reflejo en el cristal muestra ojos enrojecidos.
+
+Ninguno se ha mirado desde hace veinte minutos. El silencio pesa 
+como plomo entre ellos. La conversación que ninguno quiere empezar 
+flota en el aire viciado de humo de tabaco.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Este nivel de detalle es OBLIGATORIO para CADA escena.
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 DIÁLOGOS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -298,8 +317,12 @@ const V3_OUTPUT_SCHEMA = {
             standardized_location: { type: "string" },
             standardized_time: { type: "string", enum: ["DAY", "NIGHT", "DAWN", "DUSK"] },
             location_type: { type: "string", enum: ["INT", "EXT", "INT/EXT"] },
-            action_summary: { type: "string" },
-            raw_content: { type: "string", description: "Formatted screenplay text for this scene" },
+            action_summary: { type: "string", description: "Dramatic summary of the scene (30-60 words)" },
+            raw_content: { 
+              type: "string", 
+              description: "SITUATION DESCRIPTION: 8-12 lines minimum (300+ characters) describing atmosphere, blocking, emotional state, and stakes. This is the formatted screenplay text for this scene.",
+              minLength: 300
+            },
             technical_metadata: {
               type: "object",
               properties: {
@@ -1217,6 +1240,32 @@ async function persistSkeletonScript(
 // =============================================================================
 // V15: INCREMENTAL PERSISTENCE - Append scenes after each batch
 // =============================================================================
+// =============================================================================
+// UNICODE SANITIZATION - Remove null characters that Postgres rejects
+// =============================================================================
+function sanitizeForPostgres(text: string | null | undefined): string {
+  if (!text) return '';
+  // Remove null characters (\u0000) that cause Postgres error 22P05
+  return text.replace(/\u0000/g, '').replace(/\x00/g, '');
+}
+
+function sanitizeScene(scene: any): any {
+  return {
+    ...scene,
+    raw_content: sanitizeForPostgres(scene.raw_content),
+    action_summary: sanitizeForPostgres(scene.action_summary),
+    slugline: sanitizeForPostgres(scene.slugline),
+    mood: sanitizeForPostgres(scene.mood),
+    conflict: sanitizeForPostgres(scene.conflict),
+    dialogue: scene.dialogue?.map((d: any) => ({
+      ...d,
+      line: sanitizeForPostgres(d.line),
+      character: sanitizeForPostgres(d.character),
+      parenthetical: sanitizeForPostgres(d.parenthetical)
+    })) || []
+  };
+}
+
 async function appendScenesToScript(
   supabase: any,
   scriptId: string,
@@ -1226,6 +1275,10 @@ async function appendScenesToScript(
   synopsis?: string,
   qualityTier?: string
 ): Promise<void> {
+  // Sanitize all scenes before persisting
+  const sanitizedScenes = newScenes.map(sanitizeScene);
+  const sanitizedSynopsis = sanitizeForPostgres(synopsis);
+  
   // Fetch current script state
   const { data: current, error: fetchError } = await supabase
     .from('scripts')
@@ -1239,7 +1292,7 @@ async function appendScenesToScript(
   }
 
   const existingScenes = current?.parsed_json?.scenes || [];
-  const updatedScenes = [...existingScenes, ...newScenes];
+  const updatedScenes = [...existingScenes, ...sanitizedScenes];
 
   const { error: updateError } = await supabase
     .from('scripts')
@@ -1247,7 +1300,7 @@ async function appendScenesToScript(
       parsed_json: {
         ...current.parsed_json,
         scenes: updatedScenes,
-        synopsis: synopsis || current.parsed_json?.synopsis,
+        synopsis: sanitizedSynopsis || current.parsed_json?.synopsis,
         _skeleton: false,
         _last_batch_index: batchIndex,
         _last_updated: new Date().toISOString()

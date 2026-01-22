@@ -528,11 +528,54 @@ function validateFactionRules(
 }
 
 // ============================================================================
-// V11.3: SCENE DEPTH VALIDATION
+// V11.3: SCENE DEPTH VALIDATION - Hollywood Standard (8-12 lines per scene)
 // ============================================================================
 
-const MINIMUM_RAW_CONTENT_LENGTH = 300; // ~6-8 lines of rich description
+const MINIMUM_RAW_CONTENT_LENGTH = 300; // ~8-12 lines of rich description (Hollywood standard)
+const MINIMUM_RAW_CONTENT_LINES = 8;    // Minimum 8 lines per scene description
 const MINIMUM_ACTION_SUMMARY_LENGTH = 80; // At least 1-2 sentences
+const MINIMUM_WORDS_PER_SCENE = 80;     // Minimum word count for meaningful description
+
+/**
+ * V15: Validate scene description density meets Hollywood standards.
+ * Returns warnings for scenes that don't meet the 8-12 line minimum.
+ */
+export function validateSceneDescriptionDensity(
+  scene: Record<string, unknown>,
+  sceneIndex: number
+): { valid: boolean; warning?: string } {
+  const rawContent = (scene.raw_content as string) || '';
+  const sceneNum = scene.scene_number || (sceneIndex + 1);
+  
+  // Count actual content lines (non-empty, non-whitespace)
+  const lines = rawContent.split('\n').filter(l => l.trim().length > 0).length;
+  const wordCount = rawContent.split(/\s+/).filter(w => w.length > 0).length;
+  const charCount = rawContent.length;
+  
+  // Check against Hollywood standards
+  if (charCount < MINIMUM_RAW_CONTENT_LENGTH) {
+    return {
+      valid: false,
+      warning: `SCENE_${sceneNum}_DESCRIPTION_SHORT: ${charCount}/${MINIMUM_RAW_CONTENT_LENGTH} chars (need ${MINIMUM_RAW_CONTENT_LENGTH}+)`
+    };
+  }
+  
+  if (lines < MINIMUM_RAW_CONTENT_LINES) {
+    return {
+      valid: false,
+      warning: `SCENE_${sceneNum}_DESCRIPTION_SHALLOW: ${lines}/${MINIMUM_RAW_CONTENT_LINES} lines (Hollywood standard: 8-12 lines)`
+    };
+  }
+  
+  if (wordCount < MINIMUM_WORDS_PER_SCENE) {
+    return {
+      valid: false,
+      warning: `SCENE_${sceneNum}_WORD_COUNT_LOW: ${wordCount}/${MINIMUM_WORDS_PER_SCENE} words`
+    };
+  }
+  
+  return { valid: true };
+}
 
 // ============================================================================
 // V14: LITERARY SCRIPT QC - Anti-Impoverishment Validation (GENERIC)
@@ -560,7 +603,8 @@ function hasActionVerbs(text: string): boolean {
 // V14: runLiteraryScriptQC moved to V15 section below (unified with runNarrativeMaturityQC)
 
 /**
- * Validate that scenes have sufficient depth (not just placeholders).
+ * V15: Validate that scenes have sufficient depth (not just placeholders).
+ * Uses Hollywood standard validation for description density.
  * Returns list of issues for scenes that are too shallow.
  */
 function validateSceneDepth(script: Record<string, unknown>): string[] {
@@ -570,13 +614,13 @@ function validateSceneDepth(script: Record<string, unknown>): string[] {
   for (let i = 0; i < scenes.length; i++) {
     const scene = scenes[i];
     const sceneNum = scene.scene_number || (i + 1);
-    const rawContent = (scene.raw_content as string) || '';
     const actionSummary = (scene.action_summary as string) || '';
     const slugline = (scene.slugline as string) || '';
     
-    // Check raw_content depth
-    if (rawContent.length < MINIMUM_RAW_CONTENT_LENGTH) {
-      issues.push(`Scene ${sceneNum} raw_content too shallow: ${rawContent.length}/${MINIMUM_RAW_CONTENT_LENGTH} chars`);
+    // V15: Use Hollywood standard density validation
+    const densityResult = validateSceneDescriptionDensity(scene, i);
+    if (!densityResult.valid && densityResult.warning) {
+      issues.push(densityResult.warning);
     }
     
     // Check action_summary depth
@@ -595,6 +639,7 @@ function validateSceneDepth(script: Record<string, unknown>): string[] {
       'según outline'
     ];
     
+    const rawContent = (scene.raw_content as string) || '';
     const combinedText = (slugline + ' ' + actionSummary + ' ' + rawContent).toLowerCase();
     for (const pattern of vaguePatterns) {
       if (combinedText.includes(pattern)) {

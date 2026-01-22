@@ -5414,28 +5414,63 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     }
   };
 
-  // Hollywood workflow step computation
-  const workflowStep = (() => {
-    if (!generatedScript && !lightOutline) return 'idea'; // Step 1: Write/Import
-    if (lightOutline && !outlineApproved) return 'review'; // Step 2: Review outline (Outline)
-    
-    // Check if dialogues are missing
-    const hasEpisodes = generatedScript?.episodes?.length > 0;
-    const needsDialogues = hasEpisodes && generatedScript.episodes.some((ep: any) =>
-      ep.scenes?.some((s: any) => !s.dialogue || s.dialogue.length === 0)
-    );
-    if (needsDialogues) return 'script'; // Step 3: Script generated (needs dialogues)
-    
-    if (hasEpisodes) return 'production'; // Step 4: Ready for production
-    return 'idea';
-  })();
-  
+  // Hollywood workflow step computation with generation-aware states
   const workflowSteps = [
     { id: 'idea', label: 'Idea', description: 'Escribe tu idea o importa guion' },
     { id: 'review', label: 'Outline', description: 'Revisa y aprueba la estructura' },
     { id: 'script', label: 'Guion generado', description: 'Episodios y diálogos completos' },
     { id: 'production', label: 'Producción', description: 'Generar shots y microshots' },
   ];
+  
+  // Get status for each step: 'completed' | 'running' | 'active' | 'pending'
+  const getStepStatus = (stepId: string): 'completed' | 'running' | 'active' | 'pending' => {
+    const hasOutline = !!lightOutline;
+    const hasScript = generatedScript?.episodes?.length > 0;
+    const isOutlineComplete = outlineApproved;
+    const isScriptComplete = hasScript && generatedScript?.episodes?.every((ep: any) =>
+      ep.scenes?.every((s: any) => s.dialogue && s.dialogue.length > 0)
+    );
+    
+    switch (stepId) {
+      case 'idea':
+        // Idea step: completed if we have outline or script
+        if (hasOutline || hasScript) return 'completed';
+        if (generatingOutline) return 'running';
+        return 'active';
+        
+      case 'review':
+        // Outline step: completed if approved, running if generating outline
+        if (isOutlineComplete || hasScript) return 'completed';
+        if (generatingOutline) return 'running';
+        if (hasOutline) return 'active';
+        return 'pending';
+        
+      case 'script':
+        // Script step: completed if script is complete, running if generating
+        if (isScriptComplete) return 'completed';
+        if (pipelineRunning || partialScriptData?.status === 'generating') return 'running';
+        if (hasScript) return 'active';
+        if (isOutlineComplete) return 'pending';
+        return 'pending';
+        
+      case 'production':
+        // Production step: active if script is complete
+        if (isScriptComplete) return 'active';
+        return 'pending';
+        
+      default:
+        return 'pending';
+    }
+  };
+  
+  // For backwards compatibility, compute workflowStep from the first active/running step
+  const workflowStep = (() => {
+    for (const step of workflowSteps) {
+      const status = getStepStatus(step.id);
+      if (status === 'running' || status === 'active') return step.id;
+    }
+    return 'idea';
+  })();
   
   const currentStepIndex = workflowSteps.findIndex(s => s.id === workflowStep);
 
@@ -5473,9 +5508,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-4 overflow-x-auto pb-2">
               {workflowSteps.map((step, i) => {
-                const isActive = step.id === workflowStep;
-                const isCompleted = i < currentStepIndex;
-                const isPending = i > currentStepIndex;
+                const stepStatus = getStepStatus(step.id);
+                const isActive = stepStatus === 'active';
+                const isRunning = stepStatus === 'running';
+                const isCompleted = stepStatus === 'completed';
+                const isPending = stepStatus === 'pending';
                 
                 // Map workflow step to tab for navigation
                 const stepToTab: Record<string, string> = {
@@ -5500,21 +5537,29 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     <div className={`
                       w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
                       ${isActive ? 'bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2' : ''}
+                      ${isRunning ? 'bg-amber-500 text-white ring-2 ring-amber-500/30 ring-offset-2' : ''}
                       ${isCompleted ? 'bg-green-500 text-white' : ''}
                       ${isPending ? 'bg-muted text-muted-foreground' : ''}
                     `}>
-                      {isCompleted ? <CheckCircle className="w-4 h-4" /> : i + 1}
+                      {isCompleted ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : isRunning ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        i + 1
+                      )}
                     </div>
-                    <div className={`hidden sm:block ${isActive ? '' : 'opacity-60'}`}>
-                      <p className={`text-sm font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    <div className={`hidden sm:block ${isActive || isRunning ? '' : 'opacity-60'}`}>
+                      <p className={`text-sm font-medium ${isActive || isRunning ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {step.label}
+                        {isRunning && <span className="text-amber-600 ml-1">...</span>}
                       </p>
-                      {isActive && (
+                      {(isActive || isRunning) && (
                         <p className="text-xs text-muted-foreground">{step.description}</p>
                       )}
                     </div>
                     {i < workflowSteps.length - 1 && (
-                      <div className={`w-8 h-0.5 ${isCompleted ? 'bg-green-500' : 'bg-muted'}`} />
+                      <div className={`w-8 h-0.5 ${isCompleted ? 'bg-green-500' : isRunning ? 'bg-amber-500/50' : 'bg-muted'}`} />
                     )}
                   </div>
                 );
