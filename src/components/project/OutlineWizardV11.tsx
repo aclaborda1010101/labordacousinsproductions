@@ -220,7 +220,19 @@ export default function OutlineWizardV11({
   
   const isLoading = isEnriching || isUpgrading || isPipelineRunning;
   
-  if (!outline || !qcStatus) return null;
+  if (!outline || !qcStatus) {
+    return (
+      <Card className="border-dashed border-2 border-muted">
+        <CardContent className="py-12 text-center">
+          <Sparkles className="w-10 h-10 mx-auto mb-3 text-muted-foreground/40" />
+          <h3 className="font-semibold text-lg mb-2 text-muted-foreground">Cargando estado del outline...</h3>
+          <p className="text-sm text-muted-foreground/70 max-w-md mx-auto">
+            Si no aparece nada, genera un outline desde la pestaña "Idea".
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className={`border-2 ${stageConfig.borderColor} ${stageConfig.bgColor}`}>
