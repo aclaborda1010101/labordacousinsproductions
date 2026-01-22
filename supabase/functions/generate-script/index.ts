@@ -1584,6 +1584,55 @@ serve(async (req) => {
     });
 
     // =========================================================================
+    // V67: BATCH CONTINUITY VALIDATION
+    // Ensures batch N doesn't start if batch N-1 scenes are missing
+    // Prevents orphaned batches and inconsistent state
+    // =========================================================================
+    if (batchIndex && batchIndex > 0 && projectId) {
+      const { data: existingScenes } = await auth.supabase
+        .from('scenes')
+        .select('scene_number')
+        .eq('project_id', projectId)
+        .order('scene_number', { ascending: false })
+        .limit(1);
+      
+      const lastSceneNumber = existingScenes?.[0]?.scene_number ?? 0;
+      const expectedScenesBeforeBatch = batchIndex * scenesPerBatch;
+      
+      // Allow some tolerance (80% of expected scenes)
+      const minRequiredScenes = Math.floor(expectedScenesBeforeBatch * 0.8);
+      
+      if (lastSceneNumber < minRequiredScenes) {
+        console.warn('[generate-script] V67: Batch discontinuity detected', {
+          batchIndex,
+          lastSceneNumber,
+          expectedScenesBeforeBatch,
+          minRequiredScenes
+        });
+        
+        // Release lock if acquired
+        if (lockAcquired && projectIdForLock) {
+          try {
+            await auth.supabase.rpc('release_project_lock', { p_project_id: projectIdForLock });
+          } catch { /* ignore */ }
+        }
+        
+        clearTimeout(timeoutId);
+        return new Response(JSON.stringify({
+          error: 'BATCH_DISCONTINUITY',
+          code: 'BATCH_DISCONTINUITY',
+          message: `Batch ${batchIndex + 1} no puede ejecutarse: faltan escenas de batches anteriores`,
+          details: {
+            batchIndex,
+            lastSceneNumber,
+            expectedScenesBeforeBatch,
+            minRequiredScenes
+          },
+          next_action: 'restart_from_batch_0'
+        }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+    }
+    // =========================================================================
     // V15: PERSIST-FIRST ARCHITECTURE
     // Create skeleton script BEFORE any validation gates
     // This ensures we always have a script_id to return, even on errors

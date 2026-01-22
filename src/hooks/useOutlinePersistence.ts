@@ -18,6 +18,7 @@ export interface PersistedOutline {
   outline_json: Record<string, unknown>;
   outline_parts?: Json; // V4.4: Phased generation parts data (uses Json for Supabase compat)
   quality: string;
+  quality_tier?: string; // V67: User-selected quality tier (rapido, profesional, hollywood)
   qc_issues: string[];
   status: 'generating' | 'draft' | 'approved' | 'rejected' | 'error' | 'queued' | 'completed' | 'timeout' | 'failed' | 'stalled' | 'obsolete';
   idea?: string;
@@ -369,6 +370,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         const outline: PersistedOutline = {
           ...data,
           outline_json: data.outline_json as Record<string, unknown>,
+          quality_tier: (data as any).quality_tier ?? undefined, // V67: Include persisted tier
           qc_issues: Array.isArray(data.qc_issues) ? data.qc_issues as string[] : [],
           status: data.status as PersistedOutline['status'],
           stage: data.stage ?? null,
@@ -505,6 +507,7 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
         project_id: projectId,
         outline_json: {}, // Empty initially
         quality: 'generating',
+        quality_tier: params.qualityTier || 'profesional', // V67: Persist tier to DB
         qc_issues: [],
         idea: params.idea,
         genre: params.genre,
