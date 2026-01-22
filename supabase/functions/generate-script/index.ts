@@ -1399,8 +1399,30 @@ serve(async (req) => {
 
       // =======================================================================
       // V3.0 PROJECT LOCKING - Prevent concurrent generation on same project
+      // V66: Auto-release expired locks before attempting to acquire
       // =======================================================================
       projectIdForLock = request.projectId;
+      
+      // V66: Check for and auto-release expired locks
+      const { data: existingLock } = await auth.supabase
+        .from('project_locks')
+        .select('expires_at, lock_reason, created_at')
+        .eq('project_id', request.projectId)
+        .maybeSingle();
+      
+      if (existingLock) {
+        const now = new Date();
+        const expiresAt = new Date(existingLock.expires_at);
+        
+        if (expiresAt < now) {
+          // Lock is expired - auto-release it
+          console.log('[generate-script] V66: Auto-releasing expired lock for project:', request.projectId);
+          await auth.supabase
+            .from('project_locks')
+            .delete()
+            .eq('project_id', request.projectId);
+        }
+      }
       
       // V3.1: Reduced lock duration from 600s to 180s to prevent stale locks
       // If generation times out, lock expires faster and project becomes unblocked sooner
@@ -1418,14 +1440,14 @@ serve(async (req) => {
         console.log('[generate-script] Project busy, lock not acquired:', request.projectId);
         
         // Get retry info from existing lock
-        const { data: existingLock } = await auth.supabase
+        const { data: currentLock } = await auth.supabase
           .from('project_locks')
           .select('expires_at, lock_reason')
           .eq('project_id', request.projectId)
           .single();
 
-        const retryAfterSec = existingLock?.expires_at
-          ? Math.max(10, Math.floor((new Date(existingLock.expires_at).getTime() - Date.now()) / 1000))
+        const retryAfterSec = currentLock?.expires_at
+          ? Math.max(10, Math.floor((new Date(currentLock.expires_at).getTime() - Date.now()) / 1000))
           : 60;
 
         clearTimeout(timeoutId);
@@ -1434,7 +1456,7 @@ serve(async (req) => {
             code: 'PROJECT_BUSY',
             message: 'Este proyecto ya está generando un guión.',
             retry_after_seconds: retryAfterSec,
-            lock_reason: existingLock?.lock_reason || 'script_generation'
+            lock_reason: currentLock?.lock_reason || 'script_generation'
           }),
           { 
             status: 409, 
