@@ -272,8 +272,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [useDirectGeneration, setUseDirectGeneration] = useState(true);
   
   // V70: Use new Narrative System (narrative-decide + scene-worker)
-  // Default to TRUE - the v70 system is more stable and has validation/repair
-  const [useNarrativeSystem, setUseNarrativeSystem] = useState(true);
+  // FORCED to TRUE - v70 is now the only active motor
+  // Legacy generate-script path has been deprecated
+  const useNarrativeSystem = true; // No longer toggleable
   
   // V3.0: Disable narrative density (let AI generate based purely on user idea)
   const [disableDensity, setDisableDensity] = useState(true); // Default: OFF (no density constraints)
@@ -3543,8 +3544,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, [projectId, lightOutline, bibleCharacters.length, bibleLocations.length, bibleLoading, outlinePersistence.savedOutline, outlinePersistence.isLoading]);
 
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
-  // V11.2: Now includes DENSITY GATE + BATCH PLANNER + STATE ACCUMULATION
+  // V70: THIS FUNCTION IS DEPRECATED - Use NarrativeGenerationPanel instead
+  // Keeping the function for compatibility but it will block execution
   const approveAndGenerateEpisodes = async () => {
+    // V70 GUARD: Block legacy path - all generation must go through narrative-decide
+    console.warn('[DEPRECATED] approveAndGenerateEpisodes called - v70 should use NarrativeGenerationPanel');
+    toast.error('Esta función está desactivada. Usa el panel de Sistema Narrativo v70.');
+    return;
+
+    // Legacy code below is unreachable but kept for reference
     if (!lightOutline) return;
 
     // ════════════════════════════════════════════════════════════════════════
@@ -8382,30 +8390,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 />
               )}
 
-              {/* V70: Narrative System Toggle */}
+              {/* V70: Narrative System - Always Active (no toggle) */}
               <div className="flex items-center justify-center gap-4 pt-4 pb-2">
-                <div className="flex items-center gap-2">
-                  <Switch
-                    id="narrative-system"
-                    checked={useNarrativeSystem}
-                    onCheckedChange={setUseNarrativeSystem}
-                  />
-                  <Label htmlFor="narrative-system" className="text-sm cursor-pointer">
-                    Sistema Narrativo v70 (Beta)
-                  </Label>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="w-4 h-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
-                      <p>Usa el nuevo sistema con persistencia y contexto narrativo inteligente. Más estable y sin pérdida de estado.</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+                <Badge variant="outline" className="text-xs">
+                  <Zap className="h-3 w-3 mr-1" />
+                  Sistema Narrativo v70 Activo
+                </Badge>
               </div>
 
-              {/* V70: New Narrative Generation Panel */}
-              {useNarrativeSystem && outlineApproved && (
+              {/* V70: Narrative Generation Panel - Only Path for Script Generation */}
+              {outlineApproved && (
                 <NarrativeGenerationPanel
                   projectId={projectId}
                   outline={lightOutline}
@@ -8425,30 +8419,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 />
               )}
 
-              {/* Legacy Quick Actions for Outline */}
-              {!useNarrativeSystem && (
-                <div className="flex flex-wrap gap-3 justify-center pt-4">
-                  {outlineApproved && !pipelineRunning && (
-                    <Button 
-                      variant="lime" 
-                      size="lg"
-                      onClick={() => {
-                        approveAndGenerateEpisodes();
-                        setActiveTab('summary');
-                      }}
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generar Guion Completo
-                    </Button>
-                  )}
-                  {pipelineRunning && (
-                    <Button variant="outline" size="lg" disabled>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generando...
-                    </Button>
-                  )}
-                </div>
-              )}
+              {/* Legacy path completely removed - v70 is the only motor */}
             </>
           )}
         </TabsContent>
