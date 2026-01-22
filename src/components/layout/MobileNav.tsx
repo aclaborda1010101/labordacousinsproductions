@@ -31,7 +31,7 @@ export function MobileNav({ onMenuClick }: MobileNavProps) {
                 to={item.href}
                 className="flex flex-col items-center justify-center gap-0.5 -mt-4"
               >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-lg shadow-primary/30">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-lg shadow-primary/30">
                   <Icon className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <span className="text-[10px] text-muted-foreground mt-1">{item.label}</span>

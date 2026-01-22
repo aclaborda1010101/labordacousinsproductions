@@ -6,7 +6,8 @@ import {
   XCircle, 
   Loader2,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Zap
 } from "lucide-react";
 
 interface EpisodeStatus {
@@ -66,21 +67,26 @@ export function ScriptGenerationOverlay({
 
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-lg space-y-8">
+      <div className="w-full max-w-lg space-y-8 animate-fade-in">
         {/* Animated Header */}
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            {/* Spinning border */}
-            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-500 animate-spin" 
-                 style={{ width: '80px', height: '80px', margin: '-4px' }} />
+            {/* Spinning border - verde lima */}
+            <div 
+              className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" 
+              style={{ width: '88px', height: '88px', margin: '-8px' }} 
+            />
+            {/* Glow effect */}
+            <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl animate-pulse-glow" 
+                 style={{ width: '80px', height: '80px' }} />
             {/* Icon container */}
-            <div className="w-[72px] h-[72px] rounded-full bg-blue-500/20 flex items-center justify-center">
-              <Sparkles className="w-8 h-8 text-blue-500 animate-pulse" />
+            <div className="relative w-[72px] h-[72px] rounded-full bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow">
+              <Zap className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
           
           <div className="text-center space-y-1">
-            <h2 className="text-xl font-semibold">Generando Guion</h2>
+            <h2 className="text-2xl font-bold text-foreground">Generando Guion</h2>
             <p className="text-sm text-muted-foreground">{getPhaseLabel()}</p>
           </div>
         </div>
@@ -88,19 +94,27 @@ export function ScriptGenerationOverlay({
         {/* Main Progress */}
         <div className="space-y-4">
           <div className="text-center">
-            <span className="text-5xl font-bold text-primary">{progress}%</span>
+            <span className="text-6xl font-bold text-gradient-lime">{progress}%</span>
           </div>
           
-          <Progress value={progress} className="h-3" />
+          <div className="relative">
+            <Progress value={progress} className="h-3" />
+            {/* Shimmer effect on progress bar */}
+            <div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
           
           {/* Time Info */}
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              Transcurrido: {formatElapsed(elapsedSeconds)}
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4" />
+              {formatElapsed(elapsedSeconds)}
             </span>
-            <span>
-              Restante: {formatDuration(estimatedRemainingMs)}
+            <span className="flex items-center gap-1.5">
+              <span className="text-xs uppercase tracking-wide">Restante:</span>
+              {formatDuration(estimatedRemainingMs)}
             </span>
           </div>
         </div>
@@ -108,7 +122,7 @@ export function ScriptGenerationOverlay({
         {/* Episode Pills */}
         {totalEpisodes > 0 && (
           <div className="space-y-3">
-            <p className="text-xs text-center text-muted-foreground font-medium uppercase tracking-wide">
+            <p className="text-xs text-center text-muted-foreground font-medium uppercase tracking-wider">
               Episodios ({completedCount}/{totalEpisodes})
             </p>
             <div className="flex justify-center gap-2 flex-wrap">
@@ -123,10 +137,10 @@ export function ScriptGenerationOverlay({
                   <div
                     key={i}
                     className={`
-                      w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all
-                      ${isCompleted ? 'bg-green-500 text-white' : ''}
+                      w-11 h-11 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300
+                      ${isCompleted ? 'bg-success text-success-foreground shadow-md' : ''}
                       ${hasError ? 'bg-destructive text-destructive-foreground' : ''}
-                      ${isCurrentlyGenerating ? 'bg-blue-500 text-white animate-pulse ring-2 ring-blue-300' : ''}
+                      ${isCurrentlyGenerating ? 'bg-primary text-primary-foreground animate-pulse ring-2 ring-primary/50 shadow-glow' : ''}
                       ${!isCompleted && !isCurrentlyGenerating && !hasError ? 'bg-muted text-muted-foreground' : ''}
                     `}
                     title={hasError ? `Error: ${episodeData?.error}` : undefined}
@@ -145,7 +159,7 @@ export function ScriptGenerationOverlay({
               })}
             </div>
             {errorCount > 0 && (
-              <p className="text-xs text-center text-destructive">
+              <p className="text-xs text-center text-destructive font-medium">
                 {errorCount} episodio(s) con error
               </p>
             )}
@@ -153,8 +167,9 @@ export function ScriptGenerationOverlay({
         )}
 
         {/* Background Mode Notice */}
-        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-          <p className="text-sm text-blue-600 dark:text-blue-400 text-center">
+        <div className="p-4 bg-primary/10 rounded-xl border border-primary/20">
+          <p className="text-sm text-foreground text-center">
+            <Sparkles className="w-4 h-4 inline-block mr-1.5 text-primary" />
             Puedes continuar navegando. La generación seguirá en segundo plano.
           </p>
         </div>
@@ -162,17 +177,19 @@ export function ScriptGenerationOverlay({
         {/* Actions */}
         <div className="flex gap-3 justify-center">
           <Button
-            variant="outline"
+            variant="lime"
             onClick={onContinueInBackground}
             className="gap-2"
+            size="lg"
           >
-            Continuar en segundo plano
+            Continuar navegando
             <ArrowRight className="w-4 h-4" />
           </Button>
           <Button
-            variant="destructive"
-            size="sm"
+            variant="ghost"
+            size="lg"
             onClick={onCancel}
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
           >
             <XCircle className="w-4 h-4 mr-2" />
             Cancelar

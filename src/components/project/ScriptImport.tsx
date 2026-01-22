@@ -5893,33 +5893,43 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       {/* Pipeline Status - Hidden for cleaner UI */}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        {/* Simplified 5-tab structure */}
+        {/* ManIAS Lab 2.0 - 6-tab structure: Idea → Outline → Guion → Producción → Mejoras → Histórico */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
-        <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-5 sm:w-full h-auto sm:h-10 gap-1 sm:gap-0">
-            <TabsTrigger value="generate" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
-              <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Guion
+          <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-6 sm:w-full h-auto sm:h-11 gap-1 sm:gap-0 bg-muted/50 p-1">
+            <TabsTrigger value="generate" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Idea</span>
+              <span className="xs:hidden">💡</span>
             </TabsTrigger>
-            <TabsTrigger value="summary" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+            <TabsTrigger value="outline" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Outline</span>
+              <span className="xs:hidden">📋</span>
+            </TabsTrigger>
+            <TabsTrigger value="summary" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Resumen
+              <span className="hidden xs:inline">Guion</span>
+              <span className="xs:hidden">📖</span>
             </TabsTrigger>
-            <TabsTrigger value="production" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+            <TabsTrigger value="production" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Producción
+              <span className="hidden xs:inline">Producción</span>
+              <span className="xs:hidden">🎬</span>
             </TabsTrigger>
-            <TabsTrigger value="doctor" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+            <TabsTrigger value="doctor" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Mejoras
+              <span className="hidden xs:inline">Mejoras</span>
+              <span className="xs:hidden">🔧</span>
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2">
+            <TabsTrigger value="history" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Histórico
+              <span className="hidden xs:inline">Histórico</span>
+              <span className="xs:hidden">📜</span>
             </TabsTrigger>
           </TabsList>
         </div>
 
-        {/* GUION TAB - Merged Generate + Import */}
+        {/* IDEA TAB - Idea input + Import script */}
         <TabsContent value="generate" className="space-y-4">
           {/* Project Data Status - Shows what's in backend */}
           <ProjectDataStatus
@@ -8460,7 +8470,142 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           )}
         </TabsContent>
 
-        {/* SUMMARY TAB */}
+        {/* OUTLINE TAB - View and manage the generated outline */}
+        <TabsContent value="outline" className="space-y-4">
+          {!lightOutline ? (
+            <Card className="border-dashed">
+              <CardContent className="py-16 text-center">
+                <GitBranch className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+                <h3 className="font-semibold text-lg mb-2">Sin Outline</h3>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                  Primero escribe tu idea en la pestaña "Idea" y genera un outline para ver la estructura de tu historia aquí.
+                </p>
+                <Button variant="outline" onClick={() => setActiveTab('generate')}>
+                  <Lightbulb className="w-4 h-4 mr-2" />
+                  Ir a Idea
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* Outline Wizard */}
+              <OutlineWizardV11
+                outline={lightOutline}
+                qcStatus={qcStatus}
+                isEnriching={enrichingOutline}
+                isUpgrading={upgradingOutline}
+                isPipelineRunning={pipelineRunning}
+                format={format}
+                onEnrich={async () => {
+                  if (!outlinePersistence.savedOutline?.id) return;
+                  setEnrichingOutline(true);
+                  try {
+                    const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                      outline_id: outlinePersistence.savedOutline.id
+                    });
+                    if (error) throw error;
+                    await outlinePersistence.refreshOutline();
+                    const refreshedOutline = outlinePersistence.savedOutline?.outline_json;
+                    if (refreshedOutline && typeof refreshedOutline === 'object' && Object.keys(refreshedOutline).length > 0) {
+                      setLightOutline(refreshedOutline as any);
+                    } else if (data?.outline) {
+                      setLightOutline(data.outline);
+                    }
+                    toast.success('Outline enriquecido con facciones, reglas y setpieces');
+                  } catch (err) {
+                    toast.error('Error al enriquecer: ' + (err as Error).message);
+                  } finally {
+                    setEnrichingOutline(false);
+                  }
+                }}
+                onThreads={async () => {
+                  if (!outlinePersistence.savedOutline?.id) return;
+                  setEnrichingOutline(true);
+                  try {
+                    const { data, error } = await invokeAuthedFunction('outline-enrich', {
+                      outline_id: outlinePersistence.savedOutline.id,
+                      enrich_mode: 'threads'
+                    });
+                    if (error) throw error;
+                    await outlinePersistence.refreshOutline();
+                    const refreshedOutline = outlinePersistence.savedOutline?.outline_json;
+                    if (refreshedOutline && typeof refreshedOutline === 'object' && Object.keys(refreshedOutline).length > 0) {
+                      setLightOutline(refreshedOutline as any);
+                    } else if (data?.outline) {
+                      setLightOutline(data.outline);
+                    }
+                    toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
+                  } catch (err) {
+                    toast.error('Error al generar threads: ' + (err as Error).message);
+                  } finally {
+                    setEnrichingOutline(false);
+                  }
+                }}
+                onShowrunner={handleUpgradeToShowrunner}
+                onGenerateEpisodes={approveAndGenerateEpisodes}
+                isStaleGenerating={outlinePersistence.isStaleGenerating}
+                canResume={outlinePersistence.canResume}
+                onResume={async () => {
+                  const result = await outlinePersistence.resumeGeneration();
+                  if (result.success) {
+                    toast.info('Reanudando generación desde el último paso...');
+                  } else if (result.errorCode === 'MAX_ATTEMPTS_EXCEEDED') {
+                    toast.error('Máximo de intentos alcanzado. Regenera el outline.');
+                  } else {
+                    toast.error('Error al reanudar la generación');
+                  }
+                }}
+                outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
+                savedOutline={outlinePersistence.savedOutline}
+                isProjectLocked={isProjectLocked}
+                lockCountdown={lockRemainingSeconds > 0 ? formatLockCountdown(lockRemainingSeconds) : undefined}
+                onUnlock={async () => {
+                  try {
+                    await invokeAuthedFunction('force-unlock-project', { project_id: projectId });
+                    toast.success('Proyecto desbloqueado');
+                  } catch (err) {
+                    toast.error('Error al desbloquear');
+                  }
+                }}
+                onExportPDF={handleExportOutlinePDF}
+                isExportingPDF={isExportingPdf}
+              />
+
+              {/* Threads Display */}
+              {lightOutline?.threads && (
+                <ThreadsDisplay 
+                  threads={lightOutline.threads} 
+                  episodeBeats={lightOutline.episode_beats || []}
+                />
+              )}
+
+              {/* Quick Actions for Outline */}
+              <div className="flex flex-wrap gap-3 justify-center pt-4">
+                {outlineApproved && !pipelineRunning && (
+                  <Button 
+                    variant="lime" 
+                    size="lg"
+                    onClick={() => {
+                      approveAndGenerateEpisodes();
+                      setActiveTab('summary');
+                    }}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generar Guion Completo
+                  </Button>
+                )}
+                {pipelineRunning && (
+                  <Button variant="outline" size="lg" disabled>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generando...
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+        </TabsContent>
+
+        {/* GUION TAB (formerly SUMMARY) */}
         <TabsContent value="summary" className="space-y-4">
           {!generatedScript ? (
             <Card>
