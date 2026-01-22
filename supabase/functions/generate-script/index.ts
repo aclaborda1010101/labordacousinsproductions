@@ -1635,6 +1635,14 @@ serve(async (req) => {
     if (formatUpper === 'FILM' || formatUpper === 'PELÍCULA' || formatUpper === 'PELICULA') {
       const outlineBlob = JSON.stringify(effectiveOutline ?? {});
       
+      // V14.3: Check if outline has proper 3-act film structure
+      const hasProperFilmStructure = Boolean(
+        effectiveOutline?.ACT_I || 
+        effectiveOutline?.ACT_II || 
+        effectiveOutline?.ACT_III ||
+        effectiveOutline?._film_structure === true
+      );
+      
       // V14.1: Detect if "episodes" are actually acts in disguise (legacy format)
       // Check both title pattern AND explicit 'act' field
       const episodesArray = effectiveOutline?.episodes || [];
@@ -1653,9 +1661,15 @@ serve(async (req) => {
         console.log('[generate-script] FORMAT_GATE: Episodes detected as acts in disguise, allowing FILM generation');
       }
       
-      // V14.2: Only flag as series artifacts if episodes are NOT acts in disguise
-      // AND contain actual series-specific patterns (not just the "episodes" key which FILM uses for acts)
-      let hasSeriesArtifacts = !episodesAreActsInDisguise && (
+      if (hasProperFilmStructure) {
+        console.log('[generate-script] FORMAT_GATE: Proper 3-act film structure detected, bypassing series artifact check');
+      }
+      
+      // V14.2: Only flag as series artifacts if:
+      // - Episodes are NOT acts in disguise
+      // - AND outline does NOT have proper 3-act structure (ACT_I/II/III or _film_structure)
+      // - AND contains actual series-specific patterns
+      let hasSeriesArtifacts = !episodesAreActsInDisguise && !hasProperFilmStructure && (
         /season_episodes/i.test(outlineBlob) || 
         /season_arc/i.test(outlineBlob) ||
         /episode_beats/i.test(outlineBlob) ||
