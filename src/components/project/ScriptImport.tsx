@@ -5430,7 +5430,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   })();
   
   const workflowSteps = [
-    { id: 'idea', label: 'Guion', description: 'Genera o importa tu guion' },
+    { id: 'idea', label: 'Idea', description: 'Escribe tu idea o importa guion' },
     { id: 'review', label: 'Outline', description: 'Revisa y aprueba la estructura' },
     { id: 'script', label: 'Guion generado', description: 'Episodios y diálogos completos' },
     { id: 'production', label: 'Producción', description: 'Generar shots y microshots' },
@@ -5479,7 +5479,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 // Map workflow step to tab for navigation
                 const stepToTab: Record<string, string> = {
                   'idea': 'generate',
-                  'review': 'generate',
+                  'review': 'outline',
                   'script': 'summary',
                   'production': 'production',
                 };
@@ -7024,298 +7024,43 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           )}
 
-          {/* APPROVED OUTLINE WITHOUT SCRIPT - Show content + CTA to generate */}
+          {/* NOTE: Approved outline content moved to "Outline" tab for cleaner separation */}
+          {/* If user has approved outline, show a brief nudge to go to Outline tab */}
           {lightOutline && outlineApproved && !generatedScript && !pipelineRunning && (
-            <Card className="border-2 border-green-500/50 bg-green-500/5">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  Outline Aprobado
-                </CardTitle>
-                <CardDescription>
-                  Tu outline está listo. Ahora puedes generar el guion completo.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Title & Logline */}
-                <div className="p-4 bg-background rounded-lg border">
-                  <h3 className="font-bold text-xl mb-2">{lightOutline.title}</h3>
-                  <p className="text-muted-foreground italic">{lightOutline.logline}</p>
-                  <div className="flex gap-2 mt-3">
-                    {lightOutline.genre && <Badge variant="secondary">{lightOutline.genre}</Badge>}
-                    {lightOutline.tone && <Badge variant="outline">{lightOutline.tone}</Badge>}
+            <Card className="border-primary/30 bg-primary/5">
+              <CardContent className="py-6">
+                <div className="flex items-center gap-4">
+                  <CheckCircle className="w-8 h-8 text-green-500 shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold">Outline Aprobado</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Ve a la pestaña "Outline" para ver los detalles y generar el guion completo.
+                    </p>
                   </div>
-                </div>
-
-                {/* Synopsis */}
-                {lightOutline.synopsis && (
-                  <div>
-                    <Label className="text-xs uppercase text-muted-foreground">Sinopsis</Label>
-                    <p className="text-sm mt-1">{lightOutline.synopsis}</p>
-                  </div>
-                )}
-
-                {/* Characters */}
-                <div>
-                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Personajes {bibleLoading || materializingEntities ? '' : `(${outlineForUI?.main_characters?.length || 0})`}
-                  </Label>
-                  <div className="grid gap-2 md:grid-cols-2">
-                    {(outlineForUI?.main_characters ?? []).map((char: any, i: number) => {
-                      const role = char.role || '';
-                      const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
-                      // V22: Use normalized description (already populated by normalizeOutlineForDisplay)
-                      const charDescription = char.description || getCharacterDescription(char);
-                      return (
-                        <div key={i} className="p-2 bg-muted/30 rounded border">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge variant={variant}>{char.name}</Badge>
-                            {role && <span className="text-xs text-muted-foreground">{role}</span>}
-                          </div>
-                          {charDescription && (
-                            <p className="text-xs text-muted-foreground mt-1">{charDescription}</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Locations */}
-                <div>
-                  <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                    Localizaciones {bibleLoading || materializingEntities ? '' : `(${outlineForUI?.main_locations?.length || 0})`}
-                  </Label>
-                  <div className="grid gap-2 md:grid-cols-2">
-                    {(outlineForUI?.main_locations ?? []).map((loc: any, i: number) => {
-                      // V22: Use normalized description (already populated by normalizeOutlineForDisplay)
-                      const locDescription = loc.description || getLocationDescription(loc);
-                      return (
-                        <div key={i} className="p-2 bg-muted/30 rounded border">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge variant="outline">{loc.name}</Badge>
-                            {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
-                          </div>
-                          {locDescription && (
-                            <p className="text-xs text-muted-foreground mt-1">{locDescription}</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* V7: FILM vs SERIES structure (simple view) */}
-                {format === 'film' ? (
-                  <div>
-                    <Label className="text-xs uppercase text-muted-foreground mb-2 block flex items-center gap-2">
-                      <Film className="w-3 h-3" />
-                      Estructura de 3 Actos
-                    </Label>
-                    <div className="grid gap-2 md:grid-cols-3">
-                      <div className="p-2 bg-green-500/10 rounded border border-green-500/30">
-                        <span className="text-xs font-medium text-green-600 dark:text-green-400 block">Acto I</span>
-                        <p className="text-xs text-muted-foreground">{lightOutline.acts_summary?.act_i_goal || 'Setup'}</p>
-                      </div>
-                      <div className="p-2 bg-amber-500/10 rounded border border-amber-500/30">
-                        <span className="text-xs font-medium text-amber-600 dark:text-amber-400 block">Acto II</span>
-                        <p className="text-xs text-muted-foreground">{lightOutline.acts_summary?.act_ii_goal || 'Confrontación'}</p>
-                      </div>
-                      <div className="p-2 bg-red-500/10 rounded border border-red-500/30">
-                        <span className="text-xs font-medium text-red-600 dark:text-red-400 block">Acto III</span>
-                        <p className="text-xs text-muted-foreground">{lightOutline.acts_summary?.act_iii_goal || 'Resolución'}</p>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <Label className="text-xs uppercase text-muted-foreground mb-2 block">
-                      Episodios ({lightOutline.episode_beats?.length || 0})
-                    </Label>
-                    <div className="space-y-2">
-                      {lightOutline.episode_beats?.map((ep: any, idx: number) => (
-                        <div key={ep.episode || idx} className="p-2 bg-muted/30 rounded border">
-                          <span className="font-medium text-sm">Ep {ep.episode}: {ep.title}</span>
-                          {ep.summary && <p className="text-xs text-muted-foreground mt-1">{ep.summary}</p>}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* V11 Wizard for approved outlines */}
-                {qcStatus && (
-                  <OutlineWizardV11
-                    outline={lightOutline}
-                    qcStatus={qcStatus}
-                    isEnriching={enrichingOutline}
-                    isUpgrading={upgradingOutline}
-                    isPipelineRunning={pipelineRunning}
-                    format={format}
-                    onEnrich={async () => {
-                      if (!outlinePersistence.savedOutline?.id) return;
-                      setEnrichingOutline(true);
-                      try {
-                        const { data, error } = await invokeAuthedFunction('outline-enrich', {
-                          outline_id: outlinePersistence.savedOutline.id
-                        });
-                        if (error) throw error;
-                        await outlinePersistence.refreshOutline();
-                        if (data?.outline) setLightOutline(data.outline);
-                        toast.success('Outline enriquecido con facciones, reglas y setpieces');
-                      } catch (err) {
-                        toast.error('Error al enriquecer: ' + (err as Error).message);
-                      } finally {
-                        setEnrichingOutline(false);
-                      }
-                    }}
-                    onThreads={async () => {
-                      if (!outlinePersistence.savedOutline?.id) return;
-                      setEnrichingOutline(true);
-                      try {
-                        const { data, error } = await invokeAuthedFunction('outline-enrich', {
-                          outline_id: outlinePersistence.savedOutline.id,
-                          enrich_mode: 'threads'
-                        });
-                        if (error) throw error;
-                        await outlinePersistence.refreshOutline();
-                        if (data?.outline) setLightOutline(data.outline);
-                        toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
-                      } catch (err) {
-                        toast.error('Error al generar threads: ' + (err as Error).message);
-                      } finally {
-                        setEnrichingOutline(false);
-                      }
-                    }}
-                    onShowrunner={handleUpgradeToShowrunner}
-                    onGenerateEpisodes={approveAndGenerateEpisodes}
-                    isStaleGenerating={outlinePersistence.isStaleGenerating}
-                    canResume={outlinePersistence.canResume}
-                    onResume={async () => {
-                      const result = await outlinePersistence.resumeGeneration();
-                      if (result.success) {
-                        toast.info('Reanudando generación desde el último paso...');
-                      } else if (result.errorCode === 'MAX_ATTEMPTS_EXCEEDED') {
-                        toast.error('Máximo de intentos alcanzado. Regenera el outline.');
-                      } else {
-                        toast.error('Error al reanudar la generación');
-                      }
-                    }}
-                    outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
-                    savedOutline={outlinePersistence.savedOutline}
-                    isProjectLocked={isProjectLocked}
-                    lockCountdown={lockRemainingSeconds > 0 ? formatLockCountdown(lockRemainingSeconds) : undefined}
-                    onUnlock={async () => {
-                      try {
-                        const { error } = await invokeAuthedFunction('force-unlock-project', { projectId });
-                        if (error) throw error;
-                        setProjectLockInfo(null);
-                        toast.success('Proyecto desbloqueado');
-                      } catch (e: any) {
-                        toast.error(`Error al desbloquear: ${e.message}`);
-                      }
-                    }}
-                    onExportPDF={handleExportOutlinePDF}
-                    isExportingPDF={isExportingPdf}
-                  />
-                )}
-
-                {/* CTA Buttons */}
-                <div className="flex gap-3 flex-wrap pt-4 border-t">
-                  <Button 
-                    variant="lime" 
-                    size="lg"
-                    className="flex-1 min-w-[200px]"
-                    onClick={approveAndGenerateEpisodes}
-                    disabled={pipelineRunning || !qcStatus?.canGenerateEpisodes}
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generar Guion Completo
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={async () => {
-                      if (outlinePersistence.savedOutline?.id) {
-                        await outlinePersistence.saveOutline({
-                          outline: lightOutline,
-                          quality: outlinePersistence.savedOutline.quality || 'light',
-                          status: 'completed'
-                        });
-                        setOutlineApproved(false);
-                        toast.info('Outline vuelto a estado de revisión');
-                      }
-                    }}
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Volver a Revisar
+                  <Button variant="lime" onClick={() => setActiveTab('outline')}>
+                    <GitBranch className="w-4 h-4 mr-2" />
+                    Ver Outline
                   </Button>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          {/* EPISODE GENERATION PROGRESS - Clean Commercial UI */}
+          {/* NOTE: Generation progress moved to Guion tab */}
           {pipelineRunning && (
-            <Card className="border-2 border-blue-500/50 bg-blue-500/5">
-              <CardContent className="pt-6 space-y-4">
-                {/* Main Progress Display */}
-                <div className="text-center space-y-2">
-                  <div className="text-4xl font-bold text-primary">
-                    {pipelineProgress}%
+            <Card className="border-blue-500/30 bg-blue-500/5">
+              <CardContent className="py-6">
+                <div className="flex items-center gap-4">
+                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold">Generación en Curso</h3>
+                    <p className="text-sm text-muted-foreground">
+                      El guion se está generando. Ve a la pestaña "Guion generado" para ver el progreso.
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {pipelineProgress < 100 
-                      ? `Generando guion • ${formatDurationMs(getEstimatedRemainingMs())} restante`
-                      : 'Finalizando...'}
-                  </p>
-                </div>
-                
-                <Progress value={pipelineProgress} className="h-3" />
-                
-                {/* Episode Pills - Visual Progress */}
-                <div className="space-y-2">
-                  <p className="text-xs text-center text-muted-foreground font-medium uppercase tracking-wide">Episodios</p>
-                  <div className="flex justify-center gap-1 flex-wrap">
-                    {Array.from({ length: totalEpisodesToGenerate }, (_, i) => {
-                      const epNum = i + 1;
-                      const isCompleted = generatedEpisodesList.some(ep => ep.episode_number === epNum);
-                      const isCurrentlyGenerating = currentEpisodeGenerating === epNum;
-                      const hasError = generatedEpisodesList.find(ep => ep.episode_number === epNum)?.error;
-                      
-                      return (
-                        <div
-                          key={i}
-                          className={`
-                            w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all
-                            ${isCompleted && !hasError ? 'bg-green-500 text-white' : ''}
-                            ${hasError ? 'bg-red-500 text-white' : ''}
-                            ${isCurrentlyGenerating ? 'bg-blue-500 text-white animate-pulse' : ''}
-                            ${!isCompleted && !isCurrentlyGenerating ? 'bg-muted text-muted-foreground' : ''}
-                          `}
-                        >
-                          {isCompleted && !hasError ? <CheckCircle className="w-4 h-4" /> : epNum}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                
-                {/* Background Mode Notice */}
-                <div className="p-2 bg-blue-500/10 rounded border border-blue-500/20">
-                  <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center justify-center gap-2">
-                    <Rocket className="w-3 h-3" />
-                    Puedes navegar libremente. La generación continúa en segundo plano.
-                  </p>
-                </div>
-
-                <div className="flex justify-center">
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={cancelGeneration}
-                  >
-                    <XCircle className="w-4 h-4 mr-2" />
-                    Cancelar
+                  <Button variant="outline" onClick={() => setActiveTab('summary')}>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Ver Progreso
                   </Button>
                 </div>
               </CardContent>
