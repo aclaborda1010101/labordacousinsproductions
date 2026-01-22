@@ -647,6 +647,21 @@ serve(async (req) => {
     const outlineNeedsThreadUsage = !outline.episode_beats?.every((ep: any) => ep.thread_usage?.A && ep.thread_usage?.crossover_event);
 
     let enrichedOutline = { ...outline };
+    
+    // V5: CRITICAL - Preserve FILM structure fields (ACT_I/II/III, beats, _film_structure)
+    // These are lost by spread if not explicitly preserved during enrichment
+    if (outline.ACT_I || outline.ACT_II || outline.ACT_III) {
+      enrichedOutline.ACT_I = outline.ACT_I;
+      enrichedOutline.ACT_II = outline.ACT_II;
+      enrichedOutline.ACT_III = outline.ACT_III;
+      enrichedOutline._film_structure = true;
+      console.log('[outline-enrich] V5: Preserved ACT_I/II/III from original outline');
+    }
+    if (outline.beats && Array.isArray(outline.beats) && outline.beats.length > 0) {
+      enrichedOutline.beats = outline.beats;
+      console.log(`[outline-enrich] V5: Preserved ${outline.beats.length} beats from original outline`);
+    }
+    
     let progress = 20;
 
     // ========================================================================
