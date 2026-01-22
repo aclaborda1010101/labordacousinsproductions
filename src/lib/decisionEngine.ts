@@ -190,14 +190,8 @@ export async function getTelemetrySummary(
 
   const { data: runs } = await runsQuery;
 
-  // Fetch editorial events for override tracking
-  const { data: events } = await supabase
-    .from('editorial_events')
-    .select('event_type, payload')
-    .eq('project_id', projectId)
-    .eq('asset_type', assetType === 'script_import' ? 'script' : assetType)
-    .order('created_at', { ascending: false })
-    .limit(50);
+  // editorial_events table removed - use empty data
+  const events: Array<{ event_type: string; payload: unknown }> = [];
 
   if (!runs || runs.length === 0) {
     return {
@@ -814,7 +808,8 @@ export async function logDecisionEvent(
   }
 ): Promise<void> {
   try {
-    await supabase.from('editorial_events').insert([{
+    // editorial_events table removed - log to console only
+    console.log('[DecisionEngine] Event:', eventType, {
       project_id: projectId,
       asset_type: assetType === 'script_import' ? 'script' : assetType,
       event_type: eventType,

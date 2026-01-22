@@ -6,10 +6,12 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 
+export type EditorialProjectPhase = 'ideation' | 'development' | 'production' | 'post';
+
 export interface EditorialProject {
   id: string;
   name: string;
-  phase: 'ideation' | 'development' | 'production' | 'post';
+  phase: EditorialProjectPhase;
   ownerId: string;
   createdAt: string;
   updatedAt: string;
@@ -58,12 +60,13 @@ export function useEditorialMVP() {
     console.log('[useEditorialMVP] asset_locations table removed');
   }, []);
 
-  const createProject = useCallback(async (name: string) => {
+  // Accept both arguments for backwards compatibility
+  const createProject = useCallback(async (name: string, _phase?: EditorialProjectPhase): Promise<string | null> => {
     console.log('[useEditorialMVP] editorial_projects table removed');
     return null;
   }, []);
 
-  const updateProjectPhase = useCallback(async (id: string, phase: EditorialProject['phase']) => {
+  const updateProjectPhase = useCallback(async (id: string, phase: EditorialProjectPhase) => {
     console.log('[useEditorialMVP] editorial_projects table removed');
   }, []);
 
@@ -91,6 +94,7 @@ export function useEditorialMVP() {
     characters,
     locations,
     loading,
+    isLoading: loading, // Alias for backwards compatibility
     loadProjects,
     loadProject,
     loadCharacters,

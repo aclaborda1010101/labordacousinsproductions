@@ -74,15 +74,8 @@ async function logAutoRegenerateEvent(
   fromRunId: string,
   toRunId: string
 ): Promise<void> {
-  try {
-    await supabase.from('editorial_events').insert({
-      project_id: projectId,
-      event_type: 'auto_regenerated',
-      asset_type: 'generation',
-      run_id: toRunId,
-      payload: { reason, fromRunId, toRunId }
-    });
-  } catch (e) {
+    // editorial_events table removed - log to console only
+    console.log('[generateRun] auto_regenerated:', { projectId, reason, fromRunId, toRunId });
     console.warn('[generateRun] Failed to log auto_regenerated event:', e);
   }
 }
