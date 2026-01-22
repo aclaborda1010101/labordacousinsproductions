@@ -243,7 +243,7 @@ serve(async (req) => {
         id: jobId,
         project_id: projectId,
         type: 'scene_generation',
-        status: 'pending',
+        status: 'queued',
         payload: {
           scene_intent_id: intentIdMap.get(intent.scene_number) || null,
           scene_number: intent.scene_number,
