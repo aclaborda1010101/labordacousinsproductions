@@ -3021,10 +3021,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
       if (hasChars && hasLocs) return true;
 
+      // V25: If there is no persisted outline record, do NOT call the backend.
+      // A 404 here is expected (and gets reported as a runtime error by telemetry).
+      const savedOutline = outlinePersistence.savedOutline;
+      if (!savedOutline?.id) {
+        toast.info('Genera un outline primero.');
+        return false;
+      }
+
       // V24: Don't attempt if outline is still generating and scaffold isn't ready
-      const outlineStatus = outlinePersistence.savedOutline?.status;
-      const outlineProgress = outlinePersistence.savedOutline?.progress || 0;
-      const hasScaffold = !!(outlinePersistence.savedOutline?.outline_parts as any)?.film_scaffold?.data;
+      const outlineStatus = savedOutline.status;
+      const outlineProgress = savedOutline.progress || 0;
+      const hasScaffold = !!(savedOutline.outline_parts as any)?.film_scaffold?.data;
       
       if ((outlineStatus === 'generating' || outlineStatus === 'queued') && !hasScaffold && outlineProgress < 20) {
         console.log('[ensureBibleMaterialized] Outline generating without scaffold, skipping materialization');
@@ -3034,7 +3042,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       toast.info('Sincronizando personajes y locaciones del outline...');
 
       // V24: Pass outlineId if available for targeted materialization
-      const outlineId = outlinePersistence.savedOutline?.id;
+      const outlineId = savedOutline.id;
       const { data, error } = await supabase.functions.invoke('materialize-entities', {
         body: { projectId, source: 'outline', outlineId }
       });
@@ -6318,8 +6326,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       onClick={async () => {
                         setMaterializingEntities(true);
                         try {
+                          // V25: Avoid calling backend when there is no persisted outline (prevents noisy 404 telemetry)
+                          const savedOutline = outlinePersistence.savedOutline;
+                          if (!savedOutline?.id) {
+                            toast.info('Genera un outline primero antes de sincronizar.');
+                            return;
+                          }
+
                           const { data, error } = await supabase.functions.invoke('materialize-entities', {
-                            body: { projectId, source: 'outline' }
+                            body: { projectId, source: 'outline', outlineId: savedOutline.id }
                           });
 
                           // Use robust helper to detect NO_OUTLINE_FOUND
