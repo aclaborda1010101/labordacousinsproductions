@@ -8399,8 +8399,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </Badge>
               </div>
 
-              {/* V70: Narrative Generation Panel - Only Path for Script Generation */}
-              {outlineApproved && (
+              {/* V70: Narrative Generation Panel - Always available when outline exists */}
+              {lightOutline && (
                 <NarrativeGenerationPanel
                   projectId={projectId}
                   outline={lightOutline}
