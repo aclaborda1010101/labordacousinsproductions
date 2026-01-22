@@ -84,6 +84,19 @@ export default {
           p1: "hsl(var(--priority-p1))",
           p2: "hsl(var(--priority-p2))",
         },
+        lime: {
+          DEFAULT: "hsl(68, 100%, 50%)",
+          50: "hsl(68, 100%, 95%)",
+          100: "hsl(68, 100%, 85%)",
+          200: "hsl(68, 100%, 75%)",
+          300: "hsl(68, 100%, 65%)",
+          400: "hsl(68, 100%, 55%)",
+          500: "hsl(68, 100%, 50%)",
+          600: "hsl(68, 100%, 45%)",
+          700: "hsl(68, 100%, 40%)",
+          800: "hsl(68, 100%, 30%)",
+          900: "hsl(68, 100%, 20%)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -116,6 +129,10 @@ export default {
           from: { opacity: "0", transform: "scale(0.95)" },
           to: { opacity: "1", transform: "scale(1)" },
         },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px hsl(68 100% 50% / 0.3)" },
+          "50%": { boxShadow: "0 0 40px hsl(68 100% 50% / 0.5)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -123,6 +140,7 @@ export default {
         "fade-in": "fade-in 0.4s ease-out forwards",
         "slide-in-right": "slide-in-right 0.3s ease-out forwards",
         "scale-in": "scale-in 0.2s ease-out forwards",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
       },
     },
   },
