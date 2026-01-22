@@ -243,11 +243,27 @@ export function extractOutlineCounts(outline: Record<string, unknown>): OutlineC
   const mainChars = (outline.main_characters || outline.characters || outline.cast || []) as any[];
   counts.characters_total = mainChars.length;
   
+  // Keywords that indicate functional antagonist role
+  const antagonistKeywords = [
+    'antag', 'villain', 'opponent', 'enemy', 'bully', 
+    'racis', 'homofob', 'cruel', 'discrimin', 'abusiv',
+    'toxic', 'opres', 'tirano', 'manip', 'hostil', 'xenofob',
+    'acosador', 'maltrat', 'agresor'
+  ];
+
   for (const char of mainChars) {
     const role = (char.role || char.character_role || '').toLowerCase();
+    const name = (char.name || '').toLowerCase();
+    const description = (char.description || char.bio || '').toLowerCase();
+    const flaw = (char.flaw || char.defect || '').toLowerCase();
+    
+    // Combine text fields to search for antagonist signals
+    const combinedText = `${role} ${name} ${description} ${flaw}`;
+    const isAntagonistByKeyword = antagonistKeywords.some(kw => combinedText.includes(kw));
+    
     if (role.includes('protag') || role === 'main' || role === 'principal') {
       counts.protagonists++;
-    } else if (role.includes('antag') || role.includes('villain') || role.includes('opponent')) {
+    } else if (role.includes('antag') || role.includes('villain') || role.includes('opponent') || isAntagonistByKeyword) {
       counts.antagonists++;
     } else {
       // Explicitly recognize ally, mentor, friend, support as supporting characters
