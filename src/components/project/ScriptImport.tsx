@@ -8157,7 +8157,101 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     </div>
                   )}
 
-                  {/* Episode beats (for series) or Acts (for film) */}
+                  {/* FACTIONS - Collapsible */}
+                  {outlineForUI?.factions?.length > 0 && (
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center gap-2 w-full text-left py-2 hover:bg-muted/30 rounded px-2 -mx-2">
+                        <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
+                        <Label className="text-xs uppercase text-muted-foreground cursor-pointer">
+                          Facciones ({outlineForUI.factions.length})
+                        </Label>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 space-y-2">
+                        {outlineForUI.factions.map((f: any, i: number) => (
+                          <div key={i} className="p-2 bg-muted/30 rounded border text-sm">
+                            <div className="font-medium">{f.name}</div>
+                            {f.objective && <p className="text-xs text-muted-foreground">Objetivo: {f.objective}</p>}
+                            {f.leader && <p className="text-xs text-muted-foreground">Líder: {f.leader}</p>}
+                            {f.members?.length > 0 && (
+                              <p className="text-xs text-muted-foreground">Miembros: {f.members.join(', ')}</p>
+                            )}
+                          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+
+                  {/* ENTITY RULES - Collapsible */}
+                  {(outlineForUI?.entity_rules?.length > 0 || outlineForUI?.entity_rules?.rules?.length > 0) && (
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center gap-2 w-full text-left py-2 hover:bg-muted/30 rounded px-2 -mx-2">
+                        <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
+                        <Label className="text-xs uppercase text-muted-foreground cursor-pointer">
+                          Reglas Operativas ({(outlineForUI.entity_rules?.length || outlineForUI.entity_rules?.rules?.length || 0)})
+                        </Label>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 space-y-2">
+                        {(outlineForUI.entity_rules?.rules || outlineForUI.entity_rules || []).map((r: any, i: number) => (
+                          <div key={i} className="p-2 bg-muted/30 rounded border text-sm">
+                            <div className="font-medium">{r.entity || r.name}</div>
+                            {r.can_do && <p className="text-xs text-green-600 dark:text-green-400">✓ Puede: {r.can_do}</p>}
+                            {r.cannot_do && <p className="text-xs text-red-600 dark:text-red-400">✗ No puede: {r.cannot_do}</p>}
+                            {r.rule && <p className="text-xs text-muted-foreground">{r.rule}</p>}
+                          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+
+                  {/* TURNING POINTS - Collapsible */}
+                  {outlineForUI?.turning_points?.length > 0 && (
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center gap-2 w-full text-left py-2 hover:bg-muted/30 rounded px-2 -mx-2">
+                        <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
+                        <Label className="text-xs uppercase text-muted-foreground cursor-pointer">
+                          Puntos de Giro ({outlineForUI.turning_points.length})
+                        </Label>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 space-y-2">
+                        {outlineForUI.turning_points.map((tp: any, i: number) => (
+                          <div key={i} className="p-2 bg-amber-500/10 rounded border border-amber-500/30 text-sm">
+                            <div className="font-medium text-amber-700 dark:text-amber-400">
+                              {tp.name || tp.title || `Punto ${i + 1}`}
+                            </div>
+                            {tp.description && <p className="text-xs text-muted-foreground">{tp.description}</p>}
+                            {tp.episode && <p className="text-xs text-muted-foreground">Episodio: {tp.episode}</p>}
+                          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+
+                  {/* SETPIECES - Collapsible */}
+                  {outlineForUI?.setpieces?.length > 0 && (
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center gap-2 w-full text-left py-2 hover:bg-muted/30 rounded px-2 -mx-2">
+                        <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
+                        <Label className="text-xs uppercase text-muted-foreground cursor-pointer">
+                          Setpieces ({outlineForUI.setpieces.length})
+                        </Label>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 space-y-2">
+                        {outlineForUI.setpieces.map((s: any, i: number) => (
+                          <div key={i} className="p-2 bg-purple-500/10 rounded border border-purple-500/30 text-sm">
+                            <div className="font-medium text-purple-700 dark:text-purple-400">
+                              {s.name || s.title}
+                            </div>
+                            {s.stakes && <p className="text-xs text-muted-foreground">Stakes: {s.stakes}</p>}
+                            {s.participants?.length > 0 && (
+                              <p className="text-xs text-muted-foreground">
+                                Participantes: {s.participants.join(', ')}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
                   {format === 'film' && outlineForUI?.acts_summary ? (
                     <div>
                       <Label className="text-xs uppercase text-muted-foreground mb-2 block flex items-center gap-2">
@@ -8322,6 +8416,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   onComplete={() => {
                     toast.success('¡Generación completada con Sistema Narrativo!');
                     onScenesCreated?.();
+                  }}
+                  onGenerationStarted={() => {
+                    // Navigate immediately to script workspace
+                    navigate(`/projects/${projectId}/script`);
+                    toast.info('Generando guion... Puedes ver el progreso en tiempo real.');
                   }}
                 />
               )}

@@ -36,6 +36,8 @@ interface NarrativeGenerationPanelProps {
   qualityTier?: string;
   format?: 'film' | 'series' | 'ad';
   onComplete?: () => void;
+  /** Called immediately when generation starts - use for navigation */
+  onGenerationStarted?: () => void;
 }
 
 export function NarrativeGenerationPanel({
@@ -46,6 +48,7 @@ export function NarrativeGenerationPanel({
   qualityTier = 'profesional',
   format = 'series',
   onComplete,
+  onGenerationStarted,
 }: NarrativeGenerationPanelProps) {
   const [showIntents, setShowIntents] = useState(false);
 
@@ -69,14 +72,17 @@ export function NarrativeGenerationPanel({
     },
   });
 
-  const handleStart = () => {
-    startGeneration({
+  const handleStart = async () => {
+    // Start generation
+    await startGeneration({
       outline,
       episodeNumber,
       language,
       qualityTier,
       format,
     });
+    // Notify parent immediately for navigation
+    onGenerationStarted?.();
   };
 
   const getStatusIcon = (status: SceneIntent['status']) => {

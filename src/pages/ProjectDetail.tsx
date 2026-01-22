@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { BatchProgressBadge } from '@/components/project/BatchProgressBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useActiveGeneration } from '@/hooks/useActiveGeneration';
 import { 
   Book, 
   FileText,
@@ -23,7 +24,8 @@ import {
   Box,
   ChevronDown,
   Menu,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import PropsComponent from '@/components/project/Props';
 import { cn } from '@/lib/utils';
@@ -145,6 +147,9 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [bibliaExpanded, setBibliaExpanded] = useState(true);
 
+  // Active generation state (derived from DB, not stored locally)
+  const activeGeneration = useActiveGeneration(projectId);
+
   const currentPath = location.pathname.replace(`/projects/${projectId}`, '') || '';
   const bibleReady = project.bible_completeness_score >= 85;
   const currentSection = getCurrentSectionLabel(currentPath);
@@ -158,6 +163,20 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
   return (
     <>
       <PageHeader title={project.title} description={`${formatLabel} • ${project.episodes_count} episodios`}>
+        {/* Active Generation Badge */}
+        {activeGeneration && activeGeneration.phase !== 'completed' && activeGeneration.phase !== 'idle' && (
+          <Badge 
+            className="animate-pulse bg-primary/20 text-primary border-primary/30 cursor-pointer" 
+            onClick={() => navigate(`/projects/${projectId}/script`)}
+          >
+            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+            {activeGeneration.phaseLabel}
+            <span className="ml-1 text-xs opacity-70">
+              ({activeGeneration.completedScenes}/{activeGeneration.totalScenes})
+            </span>
+          </Badge>
+        )}
+        
         {/* Mobile: Sheet menu */}
         <div className="sm:hidden">
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
