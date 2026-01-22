@@ -272,7 +272,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [useDirectGeneration, setUseDirectGeneration] = useState(true);
   
   // V70: Use new Narrative System (narrative-decide + scene-worker)
-  const [useNarrativeSystem, setUseNarrativeSystem] = useState(false);
+  // Default to TRUE - the v70 system is more stable and has validation/repair
+  const [useNarrativeSystem, setUseNarrativeSystem] = useState(true);
   
   // V3.0: Disable narrative density (let AI generate based purely on user idea)
   const [disableDensity, setDisableDensity] = useState(true); // Default: OFF (no density constraints)
