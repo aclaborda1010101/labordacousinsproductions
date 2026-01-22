@@ -1617,30 +1617,27 @@ serve(async (req) => {
     });
 
     // =========================================================================
-    // V67: BATCH CONTINUITY VALIDATION
-    // Ensures batch N doesn't start if batch N-1 scenes are missing
-    // Prevents orphaned batches and inconsistent state
+    // V70: BATCH CONTINUITY VALIDATION (FIXED)
+    // Uses previousScenes from payload instead of querying empty DB table
+    // This fixes the BATCH_DISCONTINUITY errors caused by V67
     // =========================================================================
-    if (batchIndex && batchIndex > 0 && projectId) {
-      const { data: existingScenes } = await auth.supabase
-        .from('scenes')
-        .select('scene_number')
-        .eq('project_id', projectId)
-        .order('scene_number', { ascending: false })
-        .limit(1);
+    if (batchIndex && batchIndex > 0) {
+      const prevScenes = request.previousScenes || [];
+      const prevMaxSceneNumber = prevScenes.length > 0 
+        ? Math.max(...prevScenes.map((s: any) => s.scene_number || s.sceneNumber || 0))
+        : 0;
       
-      const lastSceneNumber = existingScenes?.[0]?.scene_number ?? 0;
       const expectedScenesBeforeBatch = batchIndex * scenesPerBatch;
-      
-      // Allow some tolerance (80% of expected scenes)
       const minRequiredScenes = Math.floor(expectedScenesBeforeBatch * 0.8);
       
-      if (lastSceneNumber < minRequiredScenes) {
-        console.warn('[generate-script] V67: Batch discontinuity detected', {
+      // V70: Only block if payload is truly empty AND we're past batch 0
+      if (prevMaxSceneNumber < minRequiredScenes && prevScenes.length === 0) {
+        console.warn('[generate-script] V70: Batch discontinuity - no scenes in payload', {
           batchIndex,
-          lastSceneNumber,
+          prevMaxSceneNumber,
           expectedScenesBeforeBatch,
-          minRequiredScenes
+          minRequiredScenes,
+          prevScenesLength: prevScenes.length
         });
         
         // Release lock if acquired
@@ -1654,15 +1651,24 @@ serve(async (req) => {
         return new Response(JSON.stringify({
           error: 'BATCH_DISCONTINUITY',
           code: 'BATCH_DISCONTINUITY',
-          message: `Batch ${batchIndex + 1} no puede ejecutarse: faltan escenas de batches anteriores`,
+          message: `Batch ${batchIndex + 1} no puede ejecutarse: no hay escenas previas en payload`,
           details: {
             batchIndex,
-            lastSceneNumber,
+            prevMaxSceneNumber,
             expectedScenesBeforeBatch,
-            minRequiredScenes
+            minRequiredScenes,
+            prevScenesLength: prevScenes.length
           },
           next_action: 'restart_from_batch_0'
         }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      } else if (prevMaxSceneNumber < minRequiredScenes) {
+        // V70: Warn but continue if payload has some scenes
+        console.warn('[generate-script] V70: Low scene count but payload has scenes, continuing', {
+          batchIndex,
+          prevMaxSceneNumber,
+          minRequiredScenes,
+          prevScenesLength: prevScenes.length
+        });
       }
     }
     // =========================================================================

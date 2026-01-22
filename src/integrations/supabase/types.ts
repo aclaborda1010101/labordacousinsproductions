@@ -2104,6 +2104,86 @@ export type Database = {
           },
         ]
       }
+      narrative_state: {
+        Row: {
+          active_threads: Json | null
+          canon_facts: Json | null
+          character_arcs: Json | null
+          created_at: string | null
+          current_phase: string
+          emotional_delta: string | null
+          forbidden_actions: Json | null
+          format: string
+          id: string
+          last_unit_summary: string | null
+          locked_facts: Json | null
+          narrative_goal: string | null
+          open_threads: Json | null
+          pacing_meter: number | null
+          project_id: string
+          resolved_threads: Json | null
+          scenes_generated: number | null
+          unit_ref: string
+          unit_type: string
+          unresolved_questions: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_threads?: Json | null
+          canon_facts?: Json | null
+          character_arcs?: Json | null
+          created_at?: string | null
+          current_phase?: string
+          emotional_delta?: string | null
+          forbidden_actions?: Json | null
+          format: string
+          id?: string
+          last_unit_summary?: string | null
+          locked_facts?: Json | null
+          narrative_goal?: string | null
+          open_threads?: Json | null
+          pacing_meter?: number | null
+          project_id: string
+          resolved_threads?: Json | null
+          scenes_generated?: number | null
+          unit_ref?: string
+          unit_type?: string
+          unresolved_questions?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_threads?: Json | null
+          canon_facts?: Json | null
+          character_arcs?: Json | null
+          created_at?: string | null
+          current_phase?: string
+          emotional_delta?: string | null
+          forbidden_actions?: Json | null
+          format?: string
+          id?: string
+          last_unit_summary?: string | null
+          locked_facts?: Json | null
+          narrative_goal?: string | null
+          open_threads?: Json | null
+          pacing_meter?: number | null
+          project_id?: string
+          resolved_threads?: Json | null
+          scenes_generated?: number | null
+          unit_ref?: string
+          unit_type?: string
+          unresolved_questions?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "narrative_state_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -2932,6 +3012,88 @@ export type Database = {
           },
           {
             foreignKeyName: "scene_camera_plan_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scene_intent: {
+        Row: {
+          characters_involved: Json | null
+          constraints: Json | null
+          created_at: string | null
+          emotional_turn: string | null
+          episode_number: number | null
+          id: string
+          information_hidden: Json | null
+          information_revealed: Json | null
+          intent_summary: string
+          job_id: string | null
+          narrative_state_id: string | null
+          project_id: string
+          scene_id: string | null
+          scene_number: number
+          status: string | null
+          thread_to_advance: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          characters_involved?: Json | null
+          constraints?: Json | null
+          created_at?: string | null
+          emotional_turn?: string | null
+          episode_number?: number | null
+          id?: string
+          information_hidden?: Json | null
+          information_revealed?: Json | null
+          intent_summary: string
+          job_id?: string | null
+          narrative_state_id?: string | null
+          project_id: string
+          scene_id?: string | null
+          scene_number: number
+          status?: string | null
+          thread_to_advance?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          characters_involved?: Json | null
+          constraints?: Json | null
+          created_at?: string | null
+          emotional_turn?: string | null
+          episode_number?: number | null
+          id?: string
+          information_hidden?: Json | null
+          information_revealed?: Json | null
+          intent_summary?: string
+          job_id?: string | null
+          narrative_state_id?: string | null
+          project_id?: string
+          scene_id?: string | null
+          scene_number?: number
+          status?: string | null
+          thread_to_advance?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scene_intent_narrative_state_id_fkey"
+            columns: ["narrative_state_id"]
+            isOneToOne: false
+            referencedRelation: "narrative_state"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_intent_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_intent_scene_id_fkey"
             columns: ["scene_id"]
             isOneToOne: false
             referencedRelation: "scenes"
