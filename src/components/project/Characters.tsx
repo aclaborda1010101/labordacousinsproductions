@@ -171,17 +171,13 @@ export default function Characters({ projectId }: CharactersProps) {
     if (charsData) {
       // Fetch outfits for each character, sorted by sort_order
       const charsWithOutfits = await Promise.all(charsData.map(async (char) => {
-        const { data: outfits } = await supabase
-          .from('character_outfits')
-          .select('*')
-          .eq('character_id', char.id)
-          .order('sort_order');
+        // character_outfits table was removed - outfits now stored in wardrobe table
         return { 
           ...char, 
           turnaround_urls: char.turnaround_urls as Record<string, string> | null,
           expressions: char.expressions as Record<string, string> | null,
           profile_json: char.profile_json as Character['profile_json'],
-          outfits: (outfits || []) as CharacterOutfit[]
+          outfits: [] as CharacterOutfit[]
         };
       }));
       setCharacters(charsWithOutfits as Character[]);
@@ -806,64 +802,24 @@ export default function Characters({ projectId }: CharactersProps) {
         toast.error('Error al generar vestuario. Inténtalo de nuevo.');
       }
     } else {
-      const { error } = await supabase
-        .from('character_outfits')
-        .insert({
-          character_id: characterId,
-          name: outfitForm.name.trim(),
-          description: outfitForm.description || null,
-        });
-
-      if (error) {
-        toast.error('Error al añadir vestuario');
-      } else {
-        toast.success('Vestuario añadido');
-        setOutfitForm({ name: '', description: '', referenceImage: null });
-        setShowOutfitDialog(null);
-        fetchCharacters();
-      }
+      // character_outfits table removed - using wardrobe table now
+      // TODO: Migrate to wardrobe table for outfit management
+      toast.info('El sistema de vestuario está siendo migrado');
     }
     setSaving(false);
   };
 
+  // character_outfits table removed - using wardrobe table now
   const deleteOutfit = async (outfitId: string) => {
-    const { error } = await supabase.from('character_outfits').delete().eq('id', outfitId);
-    if (error) {
-      toast.error('Error al eliminar vestuario');
-    } else {
-      toast.success('Vestuario eliminado');
-      fetchCharacters();
-    }
+    toast.info('El sistema de vestuario está siendo migrado');
   };
 
   const setDefaultOutfit = async (outfitId: string) => {
-    const { error } = await supabase.from('character_outfits').update({ is_default: true }).eq('id', outfitId);
-    if (error) {
-      toast.error('Error al establecer outfit por defecto');
-    } else {
-      toast.success('Outfit establecido como principal');
-      fetchCharacters();
-    }
+    toast.info('El sistema de vestuario está siendo migrado');
   };
 
   const moveOutfit = async (characterId: string, outfitId: string, direction: 'up' | 'down') => {
-    const character = characters.find(c => c.id === characterId);
-    if (!character?.outfits) return;
-
-    const currentIndex = character.outfits.findIndex(o => o.id === outfitId);
-    if (currentIndex === -1) return;
-
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= character.outfits.length) return;
-
-    // Swap sort orders
-    const currentOutfit = character.outfits[currentIndex];
-    const swapOutfit = character.outfits[newIndex];
-
-    await supabase.from('character_outfits').update({ sort_order: newIndex }).eq('id', currentOutfit.id);
-    await supabase.from('character_outfits').update({ sort_order: currentIndex }).eq('id', swapOutfit.id);
-    
-    fetchCharacters();
+    toast.info('El sistema de vestuario está siendo migrado');
   };
 
   const getRoleLabel = (role: string) => {
@@ -920,18 +876,8 @@ export default function Characters({ projectId }: CharactersProps) {
       
       if (charError) throw charError;
       
-      // Duplicate outfits
-      if (character.outfits && character.outfits.length > 0) {
-        const outfitInserts = character.outfits.map(o => ({
-          character_id: newChar.id,
-          name: o.name,
-          description: o.description,
-          sort_order: o.sort_order,
-          is_default: o.is_default,
-        }));
-        
-        await supabase.from('character_outfits').insert(outfitInserts);
-      }
+      // Note: character_outfits table removed - outfits are no longer duplicated
+      // Outfits should be managed through wardrobe table in the future
       
       toast.success('Personaje duplicado correctamente');
       fetchCharacters();

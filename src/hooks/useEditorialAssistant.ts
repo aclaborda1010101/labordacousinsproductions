@@ -155,15 +155,8 @@ export function useEditorialAssistant({
     payload?: Record<string, unknown>
   ) => {
     try {
-      // Use raw insert to avoid type issues with new table
-      await supabase.from('editorial_events').insert([{
-        project_id: projectId,
-        run_id: currentRunId || null,
-        asset_type: assetType,
-        event_type: eventType,
-        suggestion_id: suggestionId || null,
-        payload: payload || {}
-      }] as any);
+      // editorial_events table removed - log to console instead
+      console.log('[EditorialAssistant] Event:', { projectId, assetType, eventType, suggestionId, payload });
     } catch (err) {
       console.error('[useEditorialAssistant] Error logging event:', err);
     }

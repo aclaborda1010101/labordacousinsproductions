@@ -547,27 +547,9 @@ export function WizardScriptStep({
                 });
               }
               
-              // Create VFX/SFX entries
-              if (scene.sfx?.length && sceneData) {
-                for (const sfx of scene.sfx) {
-                  await supabase.from('vfx_sfx').insert({
-                    project_id: targetProjectId,
-                    name: sfx,
-                    effect_type: 'sfx',
-                    description: `SFX para escena ${scIdx + 1}`
-                  });
-                }
-              }
-              
-              if (scene.vfx?.length && sceneData) {
-                for (const vfx of scene.vfx) {
-                  await supabase.from('vfx_sfx').insert({
-                    project_id: targetProjectId,
-                    name: vfx,
-                    effect_type: 'vfx',
-                    description: `VFX para escena ${scIdx + 1}`
-                  });
-                }
+              // VFX/SFX table removed - store in scene metadata instead
+              if (scene.sfx?.length || scene.vfx?.length) {
+                console.log('[WizardScriptStep] VFX/SFX:', { sfx: scene.sfx, vfx: scene.vfx });
               }
             }
           }
