@@ -160,6 +160,7 @@ import { useOutlinePersistence } from '@/hooks/useOutlinePersistence';
 import { getStageInfo, deriveProgress } from '@/lib/outlineStages';
 import OutlineStatusPanel from './OutlineStatusPanel';
 import { ScriptGenerationOverlay } from './ScriptGenerationOverlay';
+import { ScriptGenerationInProgress } from './ScriptGenerationInProgress';
 import ProjectDataStatus from './ProjectDataStatus';
 import {
   hydrateCharacters,
@@ -8035,7 +8036,50 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         {/* GUION TAB (formerly SUMMARY) */}
         <TabsContent value="summary" className="space-y-4">
-          {!generatedScript ? (
+          {/* GENERATION IN PROGRESS - Takes priority over all other states */}
+          {(pipelineRunning || partialScriptData?.status === 'generating') ? (
+            <ScriptGenerationInProgress
+              currentEpisode={currentEpisodeGenerating}
+              totalEpisodes={totalEpisodesToGenerate || partialScriptData?.totalBatches || 1}
+              progress={pipelineProgress || (partialScriptData?.totalBatches 
+                ? Math.round((partialScriptData.batchesCompleted / partialScriptData.totalBatches) * 100)
+                : 0)}
+              elapsedSeconds={scriptElapsedSeconds}
+              currentBatch={partialScriptData?.batchesCompleted}
+              totalBatches={partialScriptData?.totalBatches}
+              qualityTier={qualityTier}
+              scenesGenerated={partialScriptData?.scenesCount}
+              onCancel={() => {
+                if (cancelController) {
+                  cancelController.abort();
+                }
+                setPipelineRunning(false);
+                clearPipelineState();
+                toast.info('Generación cancelada');
+              }}
+              onViewPartial={partialScriptData?.scenesCount && partialScriptData.scenesCount > 0 ? async () => {
+                const { data } = await supabase
+                  .from('scripts')
+                  .select('parsed_json')
+                  .eq('id', partialScriptData.scriptId)
+                  .single();
+                
+                const parsedJson = data?.parsed_json as { scenes?: any[]; synopsis?: string } | null;
+                if (parsedJson?.scenes) {
+                  const partialEpisode = {
+                    episode_number: 1,
+                    title: 'En progreso...',
+                    scenes: parsedJson.scenes,
+                    synopsis: parsedJson.synopsis || '',
+                    partial: true
+                  };
+                  setGeneratedEpisodesList([partialEpisode]);
+                  toast.info(`Mostrando ${parsedJson.scenes.length} escenas parciales`);
+                }
+              } : undefined}
+              partialScenesCount={partialScriptData?.scenesCount}
+            />
+          ) : !generatedScript ? (
             <Card>
               <CardContent className="py-12 text-center">
                 {lightOutline ? (
