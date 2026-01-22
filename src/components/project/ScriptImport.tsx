@@ -2752,6 +2752,26 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         );
         
         if (error) {
+          // V71: invokeWithTimeout returns non-2xx responses as InvokeFunctionError (data=null).
+          // Treat 409 IN_PROGRESS as a non-error state (another upgrade process is already running).
+          if (error instanceof InvokeFunctionError && error.status === 409) {
+            const body = error.bodyJson as any;
+            if (body?.error_code === 'IN_PROGRESS') {
+              console.log('[ScriptImport] Upgrade already in progress (409), exiting gracefully...', {
+                retry_after_ms: body?.retry_after_ms,
+                heartbeat_age_ms: body?.heartbeat_age_ms,
+              });
+
+              toast.info('Mejora en progreso', {
+                description: 'Tu outline se está mejorando. Continúa automáticamente.',
+                duration: 5000,
+              });
+
+              await outlinePersistence.refreshOutline();
+              return;
+            }
+          }
+
           lastError = error.message || 'Error desconocido';
           break;
         }
