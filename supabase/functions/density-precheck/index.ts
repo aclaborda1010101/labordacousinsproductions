@@ -165,21 +165,14 @@ serve(async (req) => {
       recommendations
     };
 
-    // Log the check (fire and forget)
-    try {
-      await supabase.from('editorial_events').insert({
-        project_id: projectId,
-        event_type: 'density_precheck',
-        asset_type: 'outline',
-        payload: {
-          status: checkResult.status,
-          score: checkResult.score,
-          fixes_count: checkResult.required_fixes.length,
-          profile_used: profileName,
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch { /* ignore */ }
+    // Log the check (console only - editorial_events table removed)
+    console.log('[density-precheck] Event:', {
+      project_id: projectId,
+      status: checkResult.status,
+      score: checkResult.score,
+      fixes_count: checkResult.required_fixes.length,
+      profile_used: profileName
+    });
 
     return new Response(
       JSON.stringify(response),
