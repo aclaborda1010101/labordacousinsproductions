@@ -1379,7 +1379,8 @@ serve(async (req) => {
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 180000);
+  // V3.2: Increased timeout from 180s to 240s (4 minutes) to prevent AbortError on complex batches
+  const timeoutId = setTimeout(() => controller.abort(), 240000);
 
   // Track if we acquired a lock (for cleanup in finally)
   let lockAcquired = false;
