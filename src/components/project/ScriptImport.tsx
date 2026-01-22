@@ -348,7 +348,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const isOutlineOperationInProgress = useRef(false);
   
   // Background task tracking for global progress visibility
-  const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
+  const { addTask, updateTask, completeTask, failTask, tasks: activeTasks } = useBackgroundTasks();
   const [scriptTaskId, setScriptTaskId] = useState<string | null>(null);
   // Timing model (aprende tiempos reales para estimar ETA)
   const [timingModel, setTimingModel] = useState(() => loadScriptTimingModel());
@@ -1266,6 +1266,53 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     
     cleanupZombieScripts();
   }, [projectId]);
+  
+  // V68: Restore generation state from remote when component mounts or partialScriptData changes
+  useEffect(() => {
+    if (!partialScriptData) return;
+    if (pipelineRunning) return; // Already tracking locally
+    
+    if (partialScriptData.status === 'generating') {
+      const minutesSinceUpdate = (Date.now() - new Date(partialScriptData.lastUpdated).getTime()) / 60000;
+      
+      if (minutesSinceUpdate < 10) {
+        // V68: Script is actively generating - restore UI state
+        console.log('[ScriptImport] V68: Restoring generating state from DB:', {
+          scriptId: partialScriptData.scriptId,
+          minutesSinceUpdate: Math.round(minutesSinceUpdate),
+          scenesCount: partialScriptData.scenesCount
+        });
+        setPipelineRunning(true);
+        setCurrentScriptId(partialScriptData.scriptId);
+        
+        // Check for active background task
+        const hasActiveTask = activeTasks.some(
+          t => t.type === 'script_generation' && 
+               t.projectId === projectId && 
+               (t.status === 'running' || t.status === 'pending')
+        );
+        
+        if (!hasActiveTask) {
+          // No task tracking - script was started but task not created or lost
+          console.log('[ScriptImport] V68: No active task found, generation may have crashed');
+        }
+      } else if (minutesSinceUpdate >= 10 && !scriptStuckInfo?.isStuck) {
+        // V68: Script is stuck - trigger stuck detection UI
+        console.log('[ScriptImport] V68: Stuck script detected:', {
+          scriptId: partialScriptData.scriptId,
+          minutesSinceUpdate: Math.round(minutesSinceUpdate),
+          scenesCount: partialScriptData.scenesCount
+        });
+        setScriptStuckInfo({
+          isStuck: true,
+          scriptId: partialScriptData.scriptId,
+          lastUpdated: new Date(partialScriptData.lastUpdated),
+          scenesCount: partialScriptData.scenesCount ?? 0,
+          minutesSinceUpdate: Math.round(minutesSinceUpdate)
+        });
+      }
+    }
+  }, [partialScriptData, pipelineRunning, projectId, activeTasks, scriptStuckInfo]);
   
   // V4.1: Auto-initialize ideaText from failed/stalled outline for recovery UI
   // This ensures the "Generar nuevo" button is enabled even on fresh page load
@@ -8347,10 +8394,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           {/* GENERATION IN PROGRESS - Takes priority over all other states */}
           {/* V66: Only show progress if actually generating (has scenes, recent update, or pipeline active) */}
           {(() => {
+            // V68: Improved detection with background task integration
             const isRecentScript = partialScriptData?.lastUpdated 
-              ? (new Date().getTime() - new Date(partialScriptData.lastUpdated).getTime()) < 5 * 60 * 1000
+              ? (new Date().getTime() - new Date(partialScriptData.lastUpdated).getTime()) < 10 * 60 * 1000 // Extended to 10 min
               : false;
-            const isActuallyGenerating = pipelineRunning || (
+            
+            // Check if we have an active background task for this project
+            const hasActiveTask = activeTasks.some(
+              t => t.type === 'script_generation' && 
+                   t.projectId === projectId && 
+                   (t.status === 'running' || t.status === 'pending')
+            );
+            
+            const isActuallyGenerating = pipelineRunning || hasActiveTask || (
               partialScriptData?.status === 'generating' && 
               ((partialScriptData?.scenesCount ?? 0) > 0 || isRecentScript)
             );
