@@ -3547,9 +3547,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // V70: THIS FUNCTION IS DEPRECATED - Use NarrativeGenerationPanel instead
   // Keeping the function for compatibility but it will block execution
   const approveAndGenerateEpisodes = async () => {
-    // V70 GUARD: Block legacy path - all generation must go through narrative-decide
-    console.warn('[DEPRECATED] approveAndGenerateEpisodes called - v70 should use NarrativeGenerationPanel');
-    toast.error('Esta función está desactivada. Usa el panel de Sistema Narrativo v70.');
+    // V70: Redirect to the new narrative system - no more legacy execution
+    console.log('[v70] Redirecting to narrative system via /script');
+    navigate(`/projects/${projectId}/script`);
+    toast.info('Ve a la pestaña "Producción" y usa el panel de Sistema Narrativo v70 para generar.');
     return;
 
     // Legacy code below is unreachable but kept for reference
@@ -4527,10 +4528,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       
       if (errorMsg.includes('PARSE_FAILED') || errorMsg.includes('Cannot coerce')) {
         toast.error('Error al procesar respuesta del AI', {
-          description: 'El modelo no devolvió un guion válido. Intenta regenerar.',
+          description: 'El modelo no devolvió un guion válido. Usa el panel v70 para reintentar.',
           action: {
-            label: 'Regenerar',
-            onClick: () => approveAndGenerateEpisodes()
+            label: 'Ir a Producción',
+            onClick: () => navigate(`/projects/${projectId}/script`)
           },
           duration: 15000
         });
@@ -8458,12 +8459,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       
                       setScriptStuckInfo(null);
                       setPartialScriptData(null);
-                      toast.success('Estado limpiado. Puedes reintentar la generación.');
+                      toast.success('Estado limpiado. Usa el panel v70 para reiniciar.');
                       
-                      // Optionally auto-restart
-                      if (outlineApproved) {
-                        approveAndGenerateEpisodes();
-                      }
+                      // V70: Navigate to script tab instead of calling legacy
+                      setActiveTab('generate');
                     }}
                     variant="default"
                   >
