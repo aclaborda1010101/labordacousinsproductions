@@ -66,7 +66,7 @@ export function ScriptGenerationOverlay({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-8 animate-fade-in">
         {/* Animated Header */}
         <div className="flex flex-col items-center gap-4">

@@ -111,11 +111,9 @@ export function AppLayout({ children }: AppLayoutProps) {
         collapsed && !isMobile ? "px-3 justify-center" : "px-4 lg:px-5"
       )}>
         <Link to="/dashboard" className="flex items-center gap-3 group flex-1" onClick={() => isMobile && setMobileOpen(false)}>
-          <img 
-            src="/MANIAS.png" 
-            alt="ManIAS Lab" 
-            className="w-10 h-10 rounded-xl object-contain flex-shrink-0"
-          />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow flex-shrink-0">
+            <Zap className="w-5 h-5 text-primary-foreground" />
+          </div>
           {(!collapsed || isMobile) && (
             <div className="flex flex-col">
               <span className="font-bold text-foreground tracking-tight text-base leading-none">ManIAS</span>
@@ -336,71 +334,66 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       )}
 
-      {/* Footer section - Language + Logout + User */}
-      <div className={cn(
-        "border-t border-sidebar-border",
-        collapsed && !isMobile && "px-2"
-      )}>
-        {/* Language selector */}
-        {(!collapsed || isMobile) && (
-          <div className="px-3 py-2">
-            <LanguageSelector />
+      {/* Footer section - Single row: Avatar+Name | Language | Logout */}
+      <div className="border-t border-sidebar-border p-3">
+        {collapsed && !isMobile ? (
+          /* Collapsed: stack icons vertically */
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-sidebar-accent flex items-center justify-center">
+              <Users className="w-4 h-4 text-sidebar-foreground" />
+            </div>
+            <LanguageSelector compact />
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={handleSignOut} 
+              title={t.nav.signOut}
+              className="w-8 h-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
           </div>
-        )}
-        
-        {/* Separator */}
-        <div className="border-t border-sidebar-border/50" />
-        
-        {/* Logout button - Separate and clear */}
-        <div className={cn("px-3 py-2", collapsed && !isMobile && "px-2")}>
-          <Button 
-            variant="ghost" 
-            onClick={handleSignOut} 
-            title={t.nav.signOut}
-            className={cn(
-              "w-full justify-start gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10",
-              collapsed && !isMobile && "justify-center px-2"
-            )}
-          >
-            <LogOut className="w-4 h-4" />
-            {(!collapsed || isMobile) && <span>Cerrar sesión</span>}
-          </Button>
-        </div>
-        
-        {/* Separator */}
-        <div className="border-t border-sidebar-border/50" />
-        
-        {/* User profile */}
-        <div className={cn(
-          "p-3 flex items-center gap-3",
-          collapsed && !isMobile && "flex-col px-2"
-        )}>
-          <div className="w-9 h-9 rounded-full bg-sidebar-accent flex items-center justify-center flex-shrink-0">
-            <Users className="w-4 h-4 text-sidebar-foreground" />
-          </div>
-          {(!collapsed || isMobile) && (
+        ) : (
+          /* Expanded: single horizontal row */
+          <div className="flex items-center gap-3">
+            {/* User avatar + name */}
+            <div className="w-9 h-9 rounded-full bg-sidebar-accent flex items-center justify-center flex-shrink-0">
+              <Users className="w-4 h-4 text-sidebar-foreground" />
+            </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">
                 {user?.email?.split('@')[0] || 'User'}
               </p>
-              <p className="text-xs text-muted-foreground truncate">{t.team.roles.producer}</p>
             </div>
-          )}
-        </div>
+            
+            {/* Vertical separator */}
+            <div className="w-px h-6 bg-sidebar-border/50" />
+            
+            {/* Language + Logout */}
+            <LanguageSelector compact />
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={handleSignOut} 
+              title={t.nav.signOut}
+              className="w-8 h-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );
 
   return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
-      {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-sidebar/95 backdrop-blur-lg border-b border-sidebar-border z-50 flex items-center px-4 gap-3">
+      {/* Mobile Header - z-60 to stay above overlays */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-sidebar/95 backdrop-blur-lg border-b border-sidebar-border z-[60] flex items-center px-4 gap-3">
         <Link to="/dashboard" className="flex items-center gap-2 flex-1">
-          <img 
-            src="/MANIAS.png" 
-            alt="ManIAS Lab" 
-            className="w-8 h-8 rounded-lg object-contain"
-          />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow">
+            <Zap className="w-4 h-4 text-primary-foreground" />
+          </div>
           <div className="flex flex-col">
             <span className="font-bold text-foreground text-sm leading-none">ManIAS</span>
             <span className="text-[8px] text-primary font-medium tracking-widest">LAB.</span>
