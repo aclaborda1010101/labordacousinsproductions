@@ -893,23 +893,54 @@ async function callLovableAI(
     ? { max_completion_tokens: config.maxTokens }
     : { max_tokens: config.maxTokens }; // Gemini uses max_tokens
 
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      ...tokenParam,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      tools: [{ type: "function", function: V3_OUTPUT_SCHEMA }],
-      tool_choice: { type: "function", function: { name: V3_OUTPUT_SCHEMA.name } }
-    }),
-    signal
+  // V68: Log before AI call for debugging silent failures
+  console.log('[callLovableAI] Starting fetch to Lovable AI Gateway', {
+    model,
+    maxTokens: config.maxTokens,
+    episodeNumber,
+    scenesPerBatch,
+    promptSystemLength: systemPrompt.length,
+    promptUserLength: userPrompt.length
+  });
+
+  let response: Response;
+  try {
+    response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        ...tokenParam,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        tools: [{ type: "function", function: V3_OUTPUT_SCHEMA }],
+        tool_choice: { type: "function", function: { name: V3_OUTPUT_SCHEMA.name } }
+      }),
+      signal
+    });
+  } catch (fetchError: any) {
+    // V68: Detailed logging for fetch failures
+    console.error('[callLovableAI] Fetch failed:', {
+      name: fetchError.name,
+      message: fetchError.message,
+      cause: fetchError.cause,
+      isAbort: fetchError.name === 'AbortError'
+    });
+    
+    if (fetchError.name === 'AbortError') {
+      throw new Error('AI_TIMEOUT: La llamada al modelo excedió el tiempo límite');
+    }
+    throw fetchError;
+  }
+
+  console.log('[callLovableAI] Response received:', {
+    status: response.status,
+    ok: response.ok
   });
 
   // Handle rate limits and payment required
@@ -1385,6 +1416,8 @@ serve(async (req) => {
   // Track if we acquired a lock (for cleanup in finally)
   let lockAcquired = false;
   let projectIdForLock: string | null = null;
+  // V68: Track skeleton script for crash cleanup in finally
+  let skeletonScriptId: string | null = null;
 
   try {
     const request: GenerateScriptRequest = await req.json();
@@ -1638,7 +1671,7 @@ serve(async (req) => {
     // This ensures we always have a script_id to return, even on errors
     // =========================================================================
     const scriptRunId = request.scriptRunId || crypto.randomUUID();
-    let skeletonScriptId: string | null = null;
+    // Note: skeletonScriptId is declared at handler scope for finally block access
     
     if (projectId) {
       try {
@@ -2295,8 +2328,25 @@ IDIOMA: ${language}
       ? `${HOLLYWOOD_FILM_PROMPT}\n\n${narrativeProfileBlock}`
       : V3_SYMMETRIC_PROMPT;
     
+    // V68: Enhanced logging before AI call
+    console.log('[generate-script] Calling Lovable AI Gateway', {
+      model: config.apiModel,
+      episodeNumber,
+      batchIndex,
+      scenesPerBatch,
+      qualityTier,
+      systemPromptLength: systemPrompt.length,
+      userPromptLength: userPrompt.length
+    });
+    
     // Call Lovable AI Gateway with hardened parsing
     const llmResult = await callLovableAI(systemPrompt, userPrompt, config, controller.signal, episodeNumber, scenesPerBatch);
+    
+    console.log('[generate-script] AI Gateway response processed', {
+      scenesCount: llmResult.result?.scenes?.length ?? 0,
+      hasWarnings: llmResult.parseWarnings.length > 0,
+      warnings: llmResult.parseWarnings.slice(0, 3)
+    });
 
     clearTimeout(timeoutId);
 
@@ -2580,6 +2630,48 @@ IDIOMA: ${language}
       } catch (releaseError) {
         // Don't fail the response if lock release fails - it will expire anyway
         console.warn('[generate-script] Failed to release lock (will expire):', releaseError);
+      }
+    }
+    
+    // V68: Mark skeleton script as failed if we crashed without completing
+    // This helps frontend detect stuck generations
+    if (skeletonScriptId && auth?.supabase) {
+      try {
+        // Only mark as failed if still in 'generating' status (not already completed/failed)
+        const { data: currentScript } = await auth.supabase
+          .from('scripts')
+          .select('status')
+          .eq('id', skeletonScriptId)
+          .single();
+        
+        if (currentScript?.status === 'generating') {
+          // Check if we have scenes - if yes, it's a partial success not a crash
+          const { data: scenesCheck } = await auth.supabase
+            .from('scripts')
+            .select('parsed_json')
+            .eq('id', skeletonScriptId)
+            .single();
+          
+          const scenesCount = (scenesCheck?.parsed_json as any)?.scenes?.length ?? 0;
+          
+          if (scenesCount === 0) {
+            // No scenes generated - mark as failed
+            await auth.supabase
+              .from('scripts')
+              .update({ 
+                status: 'failed',
+                meta: { 
+                  crash_detected: true, 
+                  crashed_at: new Date().toISOString(),
+                  reason: 'Edge function completed without generating scenes'
+                }
+              })
+              .eq('id', skeletonScriptId);
+            console.log('[generate-script] V68: Marked crashed script as failed:', skeletonScriptId);
+          }
+        }
+      } catch (crashCheckError) {
+        console.warn('[generate-script] V68: Could not check/mark crashed script:', crashCheckError);
       }
     }
   }
