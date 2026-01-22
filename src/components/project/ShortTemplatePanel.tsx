@@ -164,7 +164,7 @@ export function ShortTemplatePanel({
 
           {/* Action buttons */}
           {!isComplete && (
-            <Button onClick={onGenerateForStep} className="w-full" variant="gold">
+            <Button onClick={onGenerateForStep} className="w-full" variant="lime">
               <Sparkles className="h-4 w-4 mr-2" />
               Generar: {currentStep?.label}
             </Button>

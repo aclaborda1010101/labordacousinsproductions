@@ -55,11 +55,11 @@ const taskTypeIcons: Record<TaskType, string> = {
 function TaskStatusIcon({ status }: { status: TaskStatus }) {
   switch (status) {
     case 'running':
-      return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
+      return <Loader2 className="h-4 w-4 animate-spin text-primary" />;
     case 'pending':
       return <Clock className="h-4 w-4 text-muted-foreground" />;
     case 'completed':
-      return <Check className="h-4 w-4 text-green-500" />;
+      return <Check className="h-4 w-4 text-success" />;
     case 'failed':
       return <AlertCircle className="h-4 w-4 text-destructive" />;
     case 'cancelled':
@@ -140,14 +140,13 @@ function TaskItem({ task, onRemove, onCancel }: { task: BackgroundTask; onRemove
           )}
           
           {task.status === 'completed' && (
-            <div className="text-xs text-green-600 mt-1">
+            <div className="text-xs text-success mt-1">
               <span>Completado {formatDistanceToNow(new Date(task.completedAt || task.updatedAt), { 
                 addSuffix: true, 
                 locale: es 
               })}</span>
-              {/* V49: Show script generation results */}
               {task.type === 'script_generation' && task.result?.scenesCount && (
-                <span className="ml-1 text-green-500/80">
+                <span className="ml-1 text-success/80">
                   • {task.result.episodesGenerated}/{task.result.totalEpisodes} eps, {task.result.scenesCount} escenas
                 </span>
               )}
@@ -232,17 +231,17 @@ export function TaskNotificationCenter() {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {activeTasks.length > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center animate-pulse">
+            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center animate-pulse-glow">
               {activeTasks.length}
             </span>
           )}
           {hasUnread && activeTasks.length === 0 && (
-            <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-destructive" />
+            <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary" />
           )}
         </Button>
       </SheetTrigger>
       
-      <SheetContent side="right" className="w-full sm:max-w-md p-0 z-[100]">
+      <SheetContent side="right" className="w-full sm:max-w-md p-0 z-[100] border-l border-border">
         <SheetHeader className="p-4 border-b bg-muted/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

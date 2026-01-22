@@ -329,7 +329,7 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button variant="gold" onClick={handleSave} disabled={saving}>
+          <Button variant="lime" onClick={handleSave} disabled={saving}>
             {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
             Guardar Cambios
           </Button>

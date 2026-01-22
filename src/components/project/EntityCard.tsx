@@ -83,7 +83,7 @@ export function EntityCard({
       badge: null,
       actionLabel: 'Generar',
       actionIcon: <Wand2 className="w-4 h-4 mr-2" />,
-      actionVariant: 'gold' as const,
+      actionVariant: 'lime' as const,
     },
     generated: {
       badge: <Badge variant="outline" className="gap-1"><Check className="w-3 h-3" />Generado</Badge>,
@@ -92,13 +92,13 @@ export function EntityCard({
       actionVariant: 'default' as const,
     },
     accepted: {
-      badge: <Badge className="bg-green-600 gap-1"><Check className="w-3 h-3" />Aceptado</Badge>,
+      badge: <Badge className="bg-success gap-1"><Check className="w-3 h-3" />Aceptado</Badge>,
       actionLabel: 'Marcar como canon ⭐',
       actionIcon: <Star className="w-4 h-4 mr-2" />,
       actionVariant: 'outline' as const,
     },
     canon: {
-      badge: <Badge className="bg-amber-500 gap-1"><Star className="w-3 h-3" />Canon</Badge>,
+      badge: <Badge className="bg-primary text-primary-foreground gap-1"><Star className="w-3 h-3" />Canon</Badge>,
       actionLabel: 'Mejorar',
       actionIcon: <RotateCcw className="w-4 h-4 mr-2" />,
       actionVariant: 'outline' as const,

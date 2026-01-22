@@ -385,7 +385,7 @@ export function KeyframesPanel({
         </ScrollArea>
 
         <Button
-          variant="gold"
+          variant="lime"
           size="sm"
           className="w-full mt-2"
           onClick={generateAllKeyframes}

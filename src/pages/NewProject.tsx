@@ -286,7 +286,7 @@ export default function NewProject() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={discardDraft}>Descartar</Button>
-                <Button variant="gold" size="sm" onClick={restoreDraft}>Restaurar</Button>
+                <Button variant="lime" size="sm" onClick={restoreDraft}>Restaurar</Button>
               </div>
             </div>
           )}
@@ -493,7 +493,7 @@ export default function NewProject() {
                 <ArrowLeft className="w-4 h-4 mr-2" />Atrás
               </Button>
               
-              <Button variant="gold" onClick={handleNext} disabled={!canProceed() || saving}>
+              <Button variant="lime" onClick={handleNext} disabled={!canProceed() || saving}>
                 {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                 {currentStep === 3 ? 'Crear Proyecto y Configurar Guion' : 'Siguiente'}
                 <ArrowRight className="w-4 h-4 ml-2" />
