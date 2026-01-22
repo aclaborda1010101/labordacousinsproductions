@@ -307,36 +307,71 @@ serve(async (req) => {
       });
     }
 
-    // Action: Export single table data
+    // Action: Export single table data (memory-optimized)
     if (action === 'export_table' && table) {
-      const { data, error } = await supabase
-        .from(table)
-        .select('*')
-        .limit(50000);
+      // Use smaller batch size to avoid memory issues
+      const BATCH_SIZE = 1000;
+      let allData: any[] = [];
+      let hasMore = true;
+      let offset = 0;
+      
+      try {
+        // Paginate to avoid memory overflow
+        while (hasMore && offset < 10000) { // Max 10k rows per table
+          const { data, error } = await supabase
+            .from(table)
+            .select('*')
+            .range(offset, offset + BATCH_SIZE - 1);
 
-      if (error) {
-        // Table might not exist or be empty
+          if (error) {
+            return new Response(JSON.stringify({
+              table,
+              data: [],
+              count: 0,
+              sql: `-- Error: ${error.message}\n`,
+              error: error.message,
+            }), {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
+
+          if (!data || data.length === 0) {
+            hasMore = false;
+          } else {
+            allData = allData.concat(data);
+            offset += BATCH_SIZE;
+            if (data.length < BATCH_SIZE) {
+              hasMore = false;
+            }
+          }
+        }
+
+        // Generate INSERT statements in batches to reduce memory
+        const inserts = generateInsertStatements(table, allData);
+        
+        // Clear data array before returning to free memory
+        const count = allData.length;
+        allData = []; // Free memory
+
+        return new Response(JSON.stringify({
+          table,
+          count,
+          sql: inserts,
+          // Don't return raw data to save memory - just SQL
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } catch (err) {
         return new Response(JSON.stringify({
           table,
           data: [],
           count: 0,
-          error: error.message,
+          sql: `-- Error exporting ${table}\n`,
+          error: err instanceof Error ? err.message : 'Unknown error',
         }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-
-      // Generate INSERT statements
-      const inserts = generateInsertStatements(table, data || []);
-
-      return new Response(JSON.stringify({
-        table,
-        data: data || [],
-        count: data?.length || 0,
-        sql: inserts,
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
     }
 
     // Action: Get schema info
