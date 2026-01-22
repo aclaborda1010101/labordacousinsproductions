@@ -10,6 +10,7 @@ import {
   AnimationType,
   VisualStyle,
   UserLevel,
+  AssetCategory,
   getStyleDecision,
   getVisibility,
   FORMAT_PROFILES,
@@ -112,10 +113,10 @@ export function useEditorialKnowledgeBase(
 
   // Computed style decision
   const styleDecision = useMemo(() => {
-    // Map assetType to valid AssetCategory
-    const validAssetTypes = ['character', 'location', 'scene', 'shot'] as const;
-    const mappedAssetType = validAssetTypes.includes(assetType as any)
-      ? (assetType as 'character' | 'location' | 'scene' | 'shot')
+    // Map assetType to valid AssetCategory (only character/location are valid)
+    const validAssetTypes: AssetCategory[] = ['character', 'location'];
+    const mappedAssetType: AssetCategory = validAssetTypes.includes(assetType as AssetCategory)
+      ? (assetType as AssetCategory)
       : 'character';
 
     return getStyleDecision(

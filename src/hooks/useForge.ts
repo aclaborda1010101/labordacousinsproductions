@@ -235,6 +235,7 @@ export function useForge(options: UseForgeOptions) {
     clearConversation,
     abortGeneration,
     toggleVoice,
+    loadAnalytics,
     refreshAnalytics: loadAnalytics,
   };
 }

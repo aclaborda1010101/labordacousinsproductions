@@ -74,10 +74,8 @@ async function logAutoRegenerateEvent(
   fromRunId: string,
   toRunId: string
 ): Promise<void> {
-    // editorial_events table removed - log to console only
-    console.log('[generateRun] auto_regenerated:', { projectId, reason, fromRunId, toRunId });
-    console.warn('[generateRun] Failed to log auto_regenerated event:', e);
-  }
+  // editorial_events table removed - log to console only
+  console.log('[generateRun] auto_regenerated:', { projectId, reason, fromRunId, toRunId });
 }
 
 /**

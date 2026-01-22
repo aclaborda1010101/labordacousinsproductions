@@ -828,7 +828,7 @@ export async function logDecisionEvent(
         chainLimitReached: decisionPack.chainLimitReached,
         ...userChoice
       }
-    }] as any);
+    });
   } catch (err) {
     console.error('[DecisionEngine] Error logging event:', err);
   }

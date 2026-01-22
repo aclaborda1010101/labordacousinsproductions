@@ -893,16 +893,8 @@ export default function Characters({ projectId }: CharactersProps) {
   const handleExportPack = async (character: Character) => {
     setExporting(character.id);
     try {
-      const blob = await exportCharacterPackZip(character.id, character.name);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${character.name.replace(/[^a-z0-9]/gi, '_')}_pack.zip`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      toast.success('Character Pack exportado');
+      await exportCharacterPackZip(character.id, character.name);
+      // exportCharacterPackZip handles its own download and toast notifications
     } catch (error) {
       console.error('Error exporting pack:', error);
       toast.error('Error al exportar pack');

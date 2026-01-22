@@ -322,21 +322,11 @@ export async function logRecommendationEvent(
   selectedPreset?: string
 ): Promise<void> {
   // editorial_events table removed - log to console only
-  console.log('[MotorSelector] Event:', eventType, { projectId, assetType });
-      asset_type: assetType,
-      event_type: eventType,
-      payload: {
-        recommendedEngine: recommendation?.recommendedEngine,
-        recommendedPreset: recommendation?.recommendedPreset,
-        confidence: recommendation?.confidence,
-        basedOnRuns: recommendation?.basedOnRuns,
-        acceptRate: recommendation?.acceptRate,
-        avgRegenerations: recommendation?.avgRegenerations,
-        selectedEngine,
-        selectedPreset
-      }
-    });
-  } catch (err) {
-    console.error('[MotorSelector] Error logging event:', err);
-  }
+  console.log('[MotorSelector] Event:', eventType, {
+    projectId,
+    assetType,
+    recommendation,
+    selectedEngine,
+    selectedPreset
+  });
 }

@@ -264,14 +264,7 @@ async function logTemplateEvent(
   payload: { templateId?: string; fromIndex?: number; toIndex?: number }
 ): Promise<void> {
   // editorial_events table removed - log to console only
-  console.log('[ShortTemplates] Event:', eventType, { projectId });
-      event_type: eventType,
-      asset_type: 'template',
-      payload: payload as Json,
-    }]);
-  } catch (err) {
-    console.error('[ShortTemplates] Error logging event:', err);
-  }
+  console.log('[ShortTemplates] Event:', eventType, { projectId, ...payload });
 }
 
 export async function logTemplateShown(projectId: string, templateId: string): Promise<void> {
