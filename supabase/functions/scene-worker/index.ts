@@ -23,6 +23,7 @@ const corsHeaders = {
 
 interface SceneWorkerRequest {
   jobId?: string;
+  job_id?: string;  // V71: Accept snake_case from frontend
   sceneIntentId?: string;
   projectId?: string;
   // For manual invocation without job
@@ -61,9 +62,12 @@ serve(async (req) => {
     let sceneIntent: any = null;
     let narrativeState: any = null;
 
-    if (request.jobId) {
+    // V71: Accept both jobId and job_id for compatibility
+    const effectiveJobId = request.jobId || request.job_id;
+    
+    if (effectiveJobId) {
       // Load from job
-      jobId = request.jobId;
+      jobId = effectiveJobId;
       
       const { data: job, error: jobError } = await auth.supabase
         .from('jobs')
