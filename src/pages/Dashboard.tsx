@@ -212,7 +212,7 @@ export default function Dashboard() {
       )}
 
       <PageHeader title={t.dashboard.title} description={t.dashboard.subtitle}>
-        <Button variant="gold" size="sm" asChild className="hidden sm:inline-flex">
+        <Button variant="lime" size="sm" asChild className="hidden sm:inline-flex">
           <Link to="/projects/new">
             <Plus className="w-4 h-4" />
             {t.projects.newProject}
@@ -307,7 +307,7 @@ export default function Dashboard() {
                 </div>
               ) : projects.length === 0 ? (
                 <div className="rounded-xl bg-card border border-border/50 p-6 lg:p-10 text-center">
-                  <div className="w-12 lg:w-16 h-12 lg:h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center mx-auto mb-3 lg:mb-4">
+                  <div className="w-12 lg:w-16 h-12 lg:h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-[hsl(80,100%,40%)]/20 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                     <Sparkles className="w-6 lg:w-8 h-6 lg:h-8 text-primary" />
                   </div>
                   <h3 className="text-base lg:text-lg font-semibold text-foreground mb-2">
@@ -316,7 +316,7 @@ export default function Dashboard() {
                   <p className="text-muted-foreground mb-4 lg:mb-6 max-w-md mx-auto text-xs lg:text-sm">
                     {t.dashboard.createFirstDesc}
                   </p>
-                  <Button variant="gold" size="sm" asChild>
+                  <Button variant="lime" size="sm" asChild>
                     <Link to="/projects/new">
                       <Plus className="w-4 h-4" />
                       {t.projects.newProject}

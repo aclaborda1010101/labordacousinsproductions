@@ -452,7 +452,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <MobileNav onMenuOpen={() => setMobileOpen(true)} />
+      <MobileNav onMenuClick={() => setMobileOpen(true)} />
     </div>
   );
 }
