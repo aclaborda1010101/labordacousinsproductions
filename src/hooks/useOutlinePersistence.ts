@@ -221,6 +221,10 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
               format: scaffold?.format || 'FILM',
               // V10: Preserve _film_structure from outline_json if exists (FILM projects)
               _film_structure: (data.outline_json as any)?._film_structure || null,
+              // V11: Preserve ACT_I/II/III from outline_json for FILM projects (prevents enrich revert bug)
+              ACT_I: (data.outline_json as any)?.ACT_I || scaffold?.ACT_I,
+              ACT_II: (data.outline_json as any)?.ACT_II || scaffold?.ACT_II,
+              ACT_III: (data.outline_json as any)?.ACT_III || scaffold?.ACT_III,
             };
           }
         }

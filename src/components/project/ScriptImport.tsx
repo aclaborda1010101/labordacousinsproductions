@@ -6908,8 +6908,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         outline_id: outlinePersistence.savedOutline.id
                       });
                       if (error) throw error;
+                      // V5: Refresh from DB FIRST, then use DB as source of truth (prevents revert bug)
                       await outlinePersistence.refreshOutline();
-                      if (data?.outline) setLightOutline(data.outline);
+                      // V5: Use refreshed DB data as source of truth, not edge function response
+                      const refreshedOutline = outlinePersistence.savedOutline?.outline_json;
+                      if (refreshedOutline && typeof refreshedOutline === 'object' && Object.keys(refreshedOutline).length > 0) {
+                        setLightOutline(refreshedOutline as any);
+                      } else if (data?.outline) {
+                        // Fallback to edge response only if DB refresh failed
+                        setLightOutline(data.outline);
+                      }
                       toast.success('Outline enriquecido con facciones, reglas y setpieces');
                     } catch (err) {
                       toast.error('Error al enriquecer: ' + (err as Error).message);
@@ -6926,8 +6934,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                         enrich_mode: 'threads'
                       });
                       if (error) throw error;
+                      // V5: Refresh from DB FIRST, then use DB as source of truth
                       await outlinePersistence.refreshOutline();
-                      if (data?.outline) setLightOutline(data.outline);
+                      const refreshedOutline = outlinePersistence.savedOutline?.outline_json;
+                      if (refreshedOutline && typeof refreshedOutline === 'object' && Object.keys(refreshedOutline).length > 0) {
+                        setLightOutline(refreshedOutline as any);
+                      } else if (data?.outline) {
+                        setLightOutline(data.outline);
+                      }
                       toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
                     } catch (err) {
                       toast.error('Error al generar threads: ' + (err as Error).message);
