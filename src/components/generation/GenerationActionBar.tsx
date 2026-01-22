@@ -132,7 +132,7 @@ export function GenerationActionBar({
             onClick={onGenerate}
             disabled={isGenerating}
             className="flex-1"
-            variant="gold"
+            variant="lime"
           >
             {isGenerating ? (
               <>

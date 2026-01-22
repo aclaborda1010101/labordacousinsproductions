@@ -422,7 +422,7 @@ export default function OutlineWizardV11({
           
           {/* Generate Episodes Button */}
           <Button
-            variant="gold"
+            variant="lime"
             size="lg"
             className="w-full"
             onClick={onGenerateEpisodes}

@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Clapperboard, Loader2 } from 'lucide-react';
+import { Zap, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -67,7 +67,7 @@ export default function Auth() {
             toast.error(error.message);
           }
         } else {
-          toast.success('¡Cuenta creada! Bienvenido a CINEFORGE.');
+          toast.success('¡Cuenta creada! Bienvenido a ManIAS Lab.');
         }
       } else {
         const { error } = await signIn(email, password);
@@ -97,18 +97,18 @@ export default function Auth() {
         
         <div className="relative z-10 flex flex-col justify-center px-16">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-glow animate-pulse-glow">
-              <Clapperboard className="w-8 h-8 text-primary-foreground" />
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow animate-pulse-glow">
+              <Zap className="w-8 h-8 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">LC Studio</h1>
-              <p className="text-muted-foreground">Fábrica de Blockbusters</p>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">ManIAS</h1>
+              <p className="text-primary text-sm font-medium tracking-widest">LAB.</p>
             </div>
           </div>
           
           <h2 className="text-4xl font-bold text-foreground leading-tight mb-4">
             Crea Producciones<br />
-            <span className="text-gradient-gold">Calidad Cine</span> con IA
+            <span className="text-gradient-lime">Calidad Cine</span> con IA
           </h2>
           
           <p className="text-lg text-muted-foreground max-w-md">
@@ -134,11 +134,12 @@ export default function Auth() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-glow">
-              <Clapperboard className="w-6 h-6 text-primary-foreground" />
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow">
+              <Zap className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <span className="text-xl font-bold text-foreground">LC Studio</span>
+              <span className="text-xl font-bold text-foreground">ManIAS</span>
+              <span className="text-primary text-xs font-medium tracking-widest ml-1">LAB.</span>
             </div>
           </div>
 
@@ -200,7 +201,7 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                variant="gold"
+                variant="lime"
                 size="lg"
                 className="w-full"
                 disabled={loading}

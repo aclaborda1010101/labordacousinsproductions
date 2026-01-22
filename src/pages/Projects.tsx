@@ -106,7 +106,7 @@ export default function Projects() {
   return (
     <AppLayout>
       <PageHeader title="Proyectos" description="Gestiona tus producciones">
-        <Button variant="gold" size="sm" asChild className="hidden sm:inline-flex">
+        <Button variant="lime" size="sm" asChild className="hidden sm:inline-flex">
           <Link to="/projects/new">
             <Plus className="w-4 h-4" />
             Nuevo Proyecto
@@ -170,7 +170,7 @@ export default function Projects() {
                 {search ? 'Intenta con otro término de búsqueda' : 'Crea tu primera producción para comenzar'}
               </p>
               {!search && (
-                <Button variant="gold" size="sm" asChild>
+                <Button variant="lime" size="sm" asChild>
                   <Link to="/projects/new">
                     <Plus className="w-4 h-4" />
                     Nuevo Proyecto

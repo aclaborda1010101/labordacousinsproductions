@@ -609,7 +609,7 @@ export default function VisualBibleSetup({ projectId, onComplete }: VisualBibleS
         <div className="flex justify-center">
           <Button
             size="lg"
-            variant="gold"
+            variant="lime"
             onClick={handleSave}
             disabled={(!selectedPreset && !customAnalysis) || isSaving}
             className="min-w-[200px]"

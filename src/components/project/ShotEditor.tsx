@@ -2016,7 +2016,7 @@ export default function ShotEditor({
             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
             Guardar
           </Button>
-          <Button variant="gold" onClick={generateVideo} disabled={generating || saving}>
+          <Button variant="lime" onClick={generateVideo} disabled={generating || saving}>
             {generating ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />

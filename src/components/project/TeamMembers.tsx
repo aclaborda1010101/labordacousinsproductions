@@ -86,7 +86,7 @@ export default function TeamMembers({ projectId, ownerId }: TeamMembersProps) {
         <div><h2 className="text-xl font-semibold text-foreground">{t.team.title}</h2><p className="text-sm text-muted-foreground mt-1">{t.team.subtitle}</p></div>
         {isOwner && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild><Button variant="gold"><UserPlus className="w-4 h-4 mr-2" />{t.team.inviteMember}</Button></DialogTrigger>
+            <DialogTrigger asChild><Button variant="lime"><UserPlus className="w-4 h-4 mr-2" />{t.team.inviteMember}</Button></DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>{t.team.inviteMember}</DialogTitle><DialogDescription>{t.team.inviteCollaborators}</DialogDescription></DialogHeader>
               <div className="space-y-4 py-4">
@@ -96,7 +96,7 @@ export default function TeamMembers({ projectId, ownerId }: TeamMembersProps) {
                   <div className="text-xs text-muted-foreground mt-2"><p className="font-medium mb-1">{t.team.permissions}:</p><ul className="list-disc list-inside space-y-0.5">{ROLE_CONFIG[inviteRole].permissions.map((perm, i) => <li key={i}>{perm}</li>)}</ul></div>
                 </div>
               </div>
-              <DialogFooter><Button variant="outline" onClick={() => setDialogOpen(false)}>{t.common.cancel}</Button><Button variant="gold" onClick={inviteMember} disabled={inviting}>{inviting ? t.team.inviting : t.team.sendInvite}</Button></DialogFooter>
+              <DialogFooter><Button variant="outline" onClick={() => setDialogOpen(false)}>{t.common.cancel}</Button><Button variant="lime" onClick={inviteMember} disabled={inviting}>{inviting ? t.team.inviting : t.team.sendInvite}</Button></DialogFooter>
             </DialogContent>
           </Dialog>
         )}

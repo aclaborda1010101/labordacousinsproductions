@@ -129,7 +129,7 @@ export default function NextStepNavigator({
                 {nextStep.label}
               </p>
             </div>
-            <Button variant="gold" onClick={handleNavigate}>
+            <Button variant="lime" onClick={handleNavigate}>
               <span className="sm:hidden">{nextStep.label}</span>
               <span className="hidden sm:inline">Continuar</span>
               <ArrowRight className="w-4 h-4 ml-2" />

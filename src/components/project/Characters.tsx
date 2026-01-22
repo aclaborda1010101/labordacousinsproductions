@@ -953,7 +953,7 @@ export default function Characters({ projectId }: CharactersProps) {
               Generar Todos
             </Button>
           )}
-          <Button variant="gold" onClick={() => setShowCreationWizard(true)}>
+          <Button variant="lime" onClick={() => setShowCreationWizard(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Crear Personaje
           </Button>

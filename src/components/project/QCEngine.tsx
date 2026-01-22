@@ -199,7 +199,7 @@ export default function QCEngine({ projectId }: QCEngineProps) {
           <h2 className="text-xl font-semibold text-foreground">{t.qcEngine.title}</h2>
           <p className="text-sm text-muted-foreground mt-1">{t.qcEngine.subtitle}</p>
         </div>
-        <Button variant="gold" onClick={runQCCheck} disabled={running}>
+        <Button variant="lime" onClick={runQCCheck} disabled={running}>
           <RefreshCw className={`w-4 h-4 mr-2 ${running ? 'animate-spin' : ''}`} />
           {running ? t.qcEngine.analyzing : t.qcEngine.runQCCheck}
         </Button>

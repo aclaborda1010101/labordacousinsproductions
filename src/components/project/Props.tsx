@@ -384,7 +384,7 @@ export default function Props({ projectId }: PropsComponentProps) {
               Generar Todos
             </Button>
           )}
-          <Button variant="gold" onClick={() => setShowAddDialog(true)}>
+          <Button variant="lime" onClick={() => setShowAddDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Añadir Prop
           </Button>
