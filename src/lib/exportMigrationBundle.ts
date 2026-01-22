@@ -11,12 +11,11 @@ export interface ExportProgress {
 
 export type ProgressCallback = (progress: ExportProgress) => void;
 
-// Fetch all migration files from the repo
-const MIGRATION_FILES_INFO = `
-This folder contains the SQL migrations that define the database schema.
-Run these in order using: supabase db push
-Or apply directly with: psql $DATABASE_URL -f <filename>
-`;
+// Import all migration files using Vite's glob import
+const migrationModules = import.meta.glob<string>(
+  '/supabase/migrations/*.sql',
+  { query: '?raw', import: 'default', eager: true }
+);
 
 // List of edge functions to include
 const EDGE_FUNCTIONS = [
@@ -158,6 +157,25 @@ const SHARED_FILES = [
   'v3-enterprise.ts',
 ];
 
+// Get migrations from the glob import
+function getMigrations(): Array<{ name: string; content: string }> {
+  const migrations: Array<{ name: string; content: string }> = [];
+  
+  for (const [path, content] of Object.entries(migrationModules)) {
+    // Extract filename from path like "/supabase/migrations/20260101194550_xxx.sql"
+    const fileName = path.split('/').pop() || path;
+    migrations.push({
+      name: fileName,
+      content: content as string,
+    });
+  }
+  
+  // Sort by filename (which starts with timestamp)
+  migrations.sort((a, b) => a.name.localeCompare(b.name));
+  
+  return migrations;
+}
+
 export async function exportMigrationBundle(
   onProgress: ProgressCallback,
   options: {
@@ -198,6 +216,9 @@ export async function exportMigrationBundle(
       }
     );
 
+    // Get migrations from local project files (via Vite glob import)
+    const migrations = getMigrations();
+    
     // Add README
     zip.file('README.md', templates?.readme || '# LC Studio Migration Bundle');
     
@@ -205,11 +226,12 @@ export async function exportMigrationBundle(
     const manifest = {
       exportType: 'migration_bundle',
       exportedAt: new Date().toISOString(),
-      version: '1.0',
+      version: '2.0',
       source: 'lovable-cloud',
       tables: tables.length,
       buckets: buckets.length,
       edgeFunctions: EDGE_FUNCTIONS.length,
+      migrations: migrations.length,
     };
     zip.file('manifest.json', JSON.stringify(manifest, null, 2));
 
@@ -217,29 +239,21 @@ export async function exportMigrationBundle(
     const configFolder = zip.folder('config')!;
     configFolder.file('secrets.template.env', templates?.secretsTemplate || '');
 
-    // Phase 1.5: Fetch and add migrations
+    // Phase 1.5: Add migrations from local project files
     onProgress({
       phase: 'migrations',
       current: 0,
-      total: 1,
-      currentItem: 'Obteniendo migraciones...',
+      total: migrations.length,
+      currentItem: 'Agregando migraciones del proyecto...',
     });
 
-    const { data: migrationsData } = await supabase.functions.invoke(
-      'export-migration-bundle',
-      {
-        body: { action: 'get_migrations' },
-      }
-    );
-
     const migrationsFolder = zip.folder('migrations')!;
-    const migrations = migrationsData?.migrations || [];
     
     for (let i = 0; i < migrations.length; i++) {
       const mig = migrations[i];
       migrationsFolder.file(mig.name, mig.content);
       
-      if (i % 10 === 0) {
+      if (i % 10 === 0 || i === migrations.length - 1) {
         onProgress({
           phase: 'migrations',
           current: i + 1,
@@ -413,9 +427,6 @@ supabase functions deploy --all
 The actual source code is in your project's \`supabase/functions/\` directory.
 Copy those files here before deploying to your new Supabase project.
 `);
-
-    // Note: migrations already added in phase 1.5, just add functions README
-    // Phase 5: Compress
 
     // Phase 5: Compress
     onProgress({
