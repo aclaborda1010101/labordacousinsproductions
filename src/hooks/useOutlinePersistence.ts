@@ -232,6 +232,19 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
           console.log('[useOutlinePersistence] V10: Copied acts_summary from scaffold');
         }
         
+        // V26: FILM - Sintetizar acts_summary desde ACT_I/II/III si aún falta
+        if (!(outlineJson as any)?.acts_summary) {
+          const actI = (outlineJson as any)?.ACT_I || (data.outline_json as any)?.ACT_I;
+          const actII = (outlineJson as any)?.ACT_II || (data.outline_json as any)?.ACT_II;
+          const actIII = (outlineJson as any)?.ACT_III || (data.outline_json as any)?.ACT_III;
+          
+          if (actI || actII || actIII) {
+            const { synthesizeActsSummary } = await import('@/lib/outlineEntityDisplay');
+            (outlineJson as any).acts_summary = synthesizeActsSummary(actI, actII, actIII);
+            console.log('[useOutlinePersistence] V26: Synthesized acts_summary from ACT_I/II/III');
+          }
+        }
+        
         // V10: FILM - Preserve _film_structure from original outline_json
         const originalFilmStructure = (data.outline_json as any)?._film_structure;
         if (originalFilmStructure && !(outlineJson as any)?._film_structure) {

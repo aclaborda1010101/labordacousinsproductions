@@ -175,11 +175,81 @@ export function normalizeOutlineForDisplay(outline: any): any {
     });
   }
   
+  // V26: Sintetizar acts_summary para películas si falta pero tiene ACT_I/II/III
+  let acts_summary = outline.acts_summary;
+  if (!acts_summary) {
+    const actI = outline.ACT_I;
+    const actII = outline.ACT_II;
+    const actIII = outline.ACT_III;
+    
+    if (actI || actII || actIII) {
+      // Import at runtime to avoid circular dependency
+      acts_summary = synthesizeActsSummaryInternal(actI, actII, actIII);
+      console.log('[outlineEntityDisplay] V26: Synthesized acts_summary from ACT_I/II/III');
+    }
+  }
+  
   return {
     ...outline,
     main_characters,
     main_locations,
+    acts_summary,
   };
+}
+
+// Internal version to avoid circular dependency - mirrors synthesizeActsSummary
+function synthesizeActsSummaryInternal(
+  actI: any,
+  actII: any,
+  actIII: any
+): Record<string, string> {
+  const summary: Record<string, string> = {};
+  
+  if (actI) {
+    summary.act_i_goal = actI.title || actI.dramatic_goal || actI.summary || 'Planteamiento';
+    const inciting = actI.inciting_incident;
+    if (inciting?.event) {
+      summary.inciting_incident_summary = inciting.event;
+    } else {
+      const beats = actI.beats || [];
+      const firstBeat = beats[0];
+      if (firstBeat?.event) {
+        summary.inciting_incident_summary = firstBeat.event;
+      } else if (firstBeat?.observable_event) {
+        summary.inciting_incident_summary = firstBeat.observable_event;
+      }
+    }
+  }
+  
+  if (actII) {
+    summary.act_ii_goal = actII.title || actII.dramatic_goal || actII.summary || 'Confrontación';
+    const midpoint = actII.midpoint_reversal;
+    if (midpoint?.event) {
+      summary.midpoint_summary = midpoint.event;
+    } else if (midpoint?.observable_event) {
+      summary.midpoint_summary = midpoint.observable_event;
+    } else if (actII.summary) {
+      summary.midpoint_summary = actII.summary;
+    }
+  }
+  
+  if (actIII) {
+    summary.act_iii_goal = actIII.title || actIII.dramatic_goal || actIII.summary || 'Resolución';
+    const climax = actIII.climax_decision;
+    if (climax?.event) {
+      summary.climax_summary = climax.event;
+    } else if (climax?.observable_event) {
+      summary.climax_summary = climax.observable_event;
+    } else if (actIII.climax) {
+      summary.climax_summary = actIII.climax;
+    } else if (actIII.resolution) {
+      summary.climax_summary = actIII.resolution;
+    } else if (actIII.summary) {
+      summary.climax_summary = actIII.summary;
+    }
+  }
+  
+  return summary;
 }
 
 /**
@@ -216,4 +286,71 @@ export function buildLocationDescription(loc: any): string {
   if (loc.role && loc.role.trim()) return loc.role.trim();
   
   return '';
+}
+
+/**
+ * V26: Sintetiza acts_summary desde la estructura ACT_I/II/III cuando falta.
+ * Extrae los campos clave que el QC necesita para validar películas.
+ */
+export function synthesizeActsSummary(
+  actI: Record<string, unknown> | undefined,
+  actII: Record<string, unknown> | undefined,
+  actIII: Record<string, unknown> | undefined
+): Record<string, string> {
+  const summary: Record<string, string> = {};
+  
+  // ACT I: Buscar inciting incident en beats o campos directos
+  if (actI) {
+    summary.act_i_goal = (actI.title as string) || (actI.dramatic_goal as string) || (actI.summary as string) || 'Planteamiento';
+    
+    // Buscar el incidente incitador en el primer beat o campo directo
+    const inciting = actI.inciting_incident as Record<string, unknown>;
+    if (inciting?.event) {
+      summary.inciting_incident_summary = inciting.event as string;
+    } else {
+      const beats = actI.beats as Array<Record<string, unknown>> || [];
+      const firstBeat = beats[0];
+      if (firstBeat?.event) {
+        summary.inciting_incident_summary = firstBeat.event as string;
+      } else if (firstBeat?.observable_event) {
+        summary.inciting_incident_summary = firstBeat.observable_event as string;
+      }
+    }
+  }
+  
+  // ACT II: Buscar midpoint
+  if (actII) {
+    summary.act_ii_goal = (actII.title as string) || (actII.dramatic_goal as string) || (actII.summary as string) || 'Confrontación';
+    
+    // Buscar midpoint_reversal directo o en estructura
+    const midpoint = actII.midpoint_reversal as Record<string, unknown>;
+    if (midpoint?.event) {
+      summary.midpoint_summary = midpoint.event as string;
+    } else if (midpoint?.observable_event) {
+      summary.midpoint_summary = midpoint.observable_event as string;
+    } else if (actII.summary) {
+      summary.midpoint_summary = actII.summary as string;
+    }
+  }
+  
+  // ACT III: Buscar climax
+  if (actIII) {
+    summary.act_iii_goal = (actIII.title as string) || (actIII.dramatic_goal as string) || (actIII.summary as string) || 'Resolución';
+    
+    // Buscar climax_decision o resolution
+    const climax = actIII.climax_decision as Record<string, unknown>;
+    if (climax?.event) {
+      summary.climax_summary = climax.event as string;
+    } else if (climax?.observable_event) {
+      summary.climax_summary = climax.observable_event as string;
+    } else if (actIII.climax) {
+      summary.climax_summary = actIII.climax as string;
+    } else if (actIII.resolution) {
+      summary.climax_summary = actIII.resolution as string;
+    } else if (actIII.summary) {
+      summary.climax_summary = actIII.summary as string;
+    }
+  }
+  
+  return summary;
 }
