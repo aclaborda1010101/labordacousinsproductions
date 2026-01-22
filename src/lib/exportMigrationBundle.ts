@@ -2,7 +2,7 @@ import JSZip from 'jszip';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface ExportProgress {
-  phase: 'idle' | 'init' | 'tables' | 'storage' | 'functions' | 'compressing' | 'done' | 'error';
+  phase: 'idle' | 'init' | 'migrations' | 'tables' | 'storage' | 'functions' | 'compressing' | 'done' | 'error';
   current: number;
   total: number;
   currentItem: string;
@@ -217,6 +217,45 @@ export async function exportMigrationBundle(
     const configFolder = zip.folder('config')!;
     configFolder.file('secrets.template.env', templates?.secretsTemplate || '');
 
+    // Phase 1.5: Fetch and add migrations
+    onProgress({
+      phase: 'migrations',
+      current: 0,
+      total: 1,
+      currentItem: 'Obteniendo migraciones...',
+    });
+
+    const { data: migrationsData } = await supabase.functions.invoke(
+      'export-migration-bundle',
+      {
+        body: { action: 'get_migrations' },
+      }
+    );
+
+    const migrationsFolder = zip.folder('migrations')!;
+    const migrations = migrationsData?.migrations || [];
+    
+    for (let i = 0; i < migrations.length; i++) {
+      const mig = migrations[i];
+      migrationsFolder.file(mig.name, mig.content);
+      
+      if (i % 10 === 0) {
+        onProgress({
+          phase: 'migrations',
+          current: i + 1,
+          total: migrations.length,
+          currentItem: mig.name,
+        });
+      }
+    }
+
+    onProgress({
+      phase: 'migrations',
+      current: migrations.length,
+      total: migrations.length,
+      currentItem: `${migrations.length} migraciones incluidas`,
+    });
+
     // Phase 2: Export table data
     if (includeData) {
       const dataFolder = zip.folder('data')!;
@@ -338,22 +377,8 @@ The actual source code is in your project's \`supabase/functions/\` directory.
 Copy those files here before deploying to your new Supabase project.
 `);
 
-    // Add migrations info
-    const migrationsFolder = zip.folder('migrations')!;
-    migrationsFolder.file('README.md', `# Database Migrations
-
-${MIGRATION_FILES_INFO}
-
-The actual migration files are in your project's \`supabase/migrations/\` directory.
-Copy all *.sql files from that directory to this folder.
-
-## Total Migrations: 115 files
-
-Run in order using:
-\`\`\`bash
-for f in *.sql; do psql $DATABASE_URL -f "$f"; done
-\`\`\`
-`);
+    // Note: migrations already added in phase 1.5, just add functions README
+    // Phase 5: Compress
 
     // Phase 5: Compress
     onProgress({

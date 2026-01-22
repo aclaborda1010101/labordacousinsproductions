@@ -31,6 +31,7 @@ interface MigrationExportProps {
 const PHASE_LABELS: Record<ExportProgress['phase'], string> = {
   idle: 'Listo para exportar',
   init: 'Inicializando...',
+  migrations: 'Exportando migraciones',
   tables: 'Exportando tablas',
   storage: 'Listando storage',
   functions: 'Preparando functions',
@@ -42,6 +43,7 @@ const PHASE_LABELS: Record<ExportProgress['phase'], string> = {
 const PHASE_ICONS: Record<ExportProgress['phase'], React.ReactNode> = {
   idle: <Package className="w-4 h-4" />,
   init: <Loader2 className="w-4 h-4 animate-spin" />,
+  migrations: <FileCode className="w-4 h-4" />,
   tables: <Database className="w-4 h-4" />,
   storage: <HardDrive className="w-4 h-4" />,
   functions: <Code className="w-4 h-4" />,
