@@ -44,6 +44,7 @@ import OutlineWizardV11 from './OutlineWizardV11';
 import ThreadsDisplay from './ThreadsDisplay';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { DensityProfileSelector } from './DensityProfileSelector';
+import NarrativeGenerationPanel from './NarrativeGenerationPanel';
 import { 
   FileText, 
   Wand2, 
@@ -269,6 +270,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // V4.0: Use direct generation mode (new architecture)
   const [useDirectGeneration, setUseDirectGeneration] = useState(true);
+  
+  // V70: Use new Narrative System (narrative-decide + scene-worker)
+  const [useNarrativeSystem, setUseNarrativeSystem] = useState(false);
   
   // V3.0: Disable narrative density (let AI generate based purely on user idea)
   const [disableDensity, setDisableDensity] = useState(true); // Default: OFF (no density constraints)
@@ -8283,28 +8287,68 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 />
               )}
 
-              {/* Quick Actions for Outline */}
-              <div className="flex flex-wrap gap-3 justify-center pt-4">
-                {outlineApproved && !pipelineRunning && (
-                  <Button 
-                    variant="lime" 
-                    size="lg"
-                    onClick={() => {
-                      approveAndGenerateEpisodes();
-                      setActiveTab('summary');
-                    }}
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generar Guion Completo
-                  </Button>
-                )}
-                {pipelineRunning && (
-                  <Button variant="outline" size="lg" disabled>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generando...
-                  </Button>
-                )}
+              {/* V70: Narrative System Toggle */}
+              <div className="flex items-center justify-center gap-4 pt-4 pb-2">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    id="narrative-system"
+                    checked={useNarrativeSystem}
+                    onCheckedChange={setUseNarrativeSystem}
+                  />
+                  <Label htmlFor="narrative-system" className="text-sm cursor-pointer">
+                    Sistema Narrativo v70 (Beta)
+                  </Label>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-4 h-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>Usa el nuevo sistema con persistencia y contexto narrativo inteligente. Más estable y sin pérdida de estado.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </div>
+
+              {/* V70: New Narrative Generation Panel */}
+              {useNarrativeSystem && outlineApproved && (
+                <NarrativeGenerationPanel
+                  projectId={projectId}
+                  outline={lightOutline}
+                  episodeNumber={1}
+                  language={language}
+                  qualityTier={qualityTier}
+                  format={format}
+                  onComplete={() => {
+                    toast.success('¡Generación completada con Sistema Narrativo!');
+                    onScenesCreated?.();
+                  }}
+                />
+              )}
+
+              {/* Legacy Quick Actions for Outline */}
+              {!useNarrativeSystem && (
+                <div className="flex flex-wrap gap-3 justify-center pt-4">
+                  {outlineApproved && !pipelineRunning && (
+                    <Button 
+                      variant="lime" 
+                      size="lg"
+                      onClick={() => {
+                        approveAndGenerateEpisodes();
+                        setActiveTab('summary');
+                      }}
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Generar Guion Completo
+                    </Button>
+                  )}
+                  {pipelineRunning && (
+                    <Button variant="outline" size="lg" disabled>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Generando...
+                    </Button>
+                  )}
+                </div>
+              )}
             </>
           )}
         </TabsContent>
