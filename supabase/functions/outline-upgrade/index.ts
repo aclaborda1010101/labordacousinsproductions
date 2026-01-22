@@ -21,12 +21,13 @@ interface UpgradeStage {
   progressStart: number;
   progressEnd: number;
   maxTokens: number;
+  useDirectJson: boolean; // true = no tools, use response_format: json_object
 }
 
 const UPGRADE_STAGES: UpgradeStage[] = [
-  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 2000 },
-  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 2500 },
-  { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 3500 }
+  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 2000, useDirectJson: true },
+  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 2500, useDirectJson: true },
+  { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 3500, useDirectJson: false }
 ];
 
 // Showrunner-level system prompt (shared across stages)
@@ -136,42 +137,79 @@ const EPISODE_ENRICH_SCHEMA = {
 // Stage-specific prompts
 // ============================================================================
 
-function buildStagePrompt(stageId: string, outline: any, originalText: string): string {
+function buildStagePrompt(stageId: string, outline: any, originalText: string, useDirectJson: boolean): string {
   const outlineStr = JSON.stringify(outline, null, 2);
   
   switch (stageId) {
     case 'season_arc':
-      return `OUTLINE:
+      // Modo JSON directo - prompt explícito sin referencia a tools
+      return `OUTLINE BASE:
 ${outlineStr}
 
-GENERA ARCO DE TEMPORADA:
-1. Protagonista: inicio → quiebre → final
-2. Midpoint: episodio y evento clave  
-3. Pregunta temática y respuesta
-4. Reglas de mitología (si aplica): qué puede/no puede cada entidad
+GENERA EL ARCO DE TEMPORADA en JSON EXACTO con esta estructura:
 
-Usa deliver_season_arc. SOLO JSON.`;
+{
+  "season_arc": {
+    "protagonist_name": "nombre del protagonista principal",
+    "protagonist_start": "estado emocional/situacional al inicio",
+    "protagonist_break": "momento de quiebre que lo transforma",
+    "protagonist_end": "en quién se convierte al final",
+    "midpoint_episode": número_de_episodio,
+    "midpoint_event": "evento clave del midpoint",
+    "midpoint_consequence": "consecuencia inmediata del midpoint",
+    "thematic_question": "la pregunta central que explora la temporada",
+    "thematic_answer": "la respuesta que da el final"
+  },
+  "mythology_rules": [
+    {
+      "entity": "nombre de entidad sobrenatural/tecnológica (si aplica)",
+      "nature": "qué es esta entidad",
+      "can_do": ["capacidad 1", "capacidad 2"],
+      "cannot_do": ["limitación 1", "limitación 2"],
+      "weakness": "punto débil",
+      "dramatic_purpose": "para qué sirve dramáticamente"
+    }
+  ]
+}
+
+REGLAS ESTRICTAS:
+- Devuelve ÚNICAMENTE el JSON, sin texto antes ni después
+- NO uses markdown, backticks, ni explicaciones
+- Si la historia tiene elementos fantásticos/sobrenaturales, mythology_rules es obligatorio
+- Si es realista, mythology_rules puede ser array vacío []
+- midpoint_episode debe ser un número, no texto`;
 
     case 'character_arcs':
+      // Modo JSON directo
       return `OUTLINE ACTUAL (con arco de temporada):
 ${outlineStr}
 
-TAREA: Define ARCOS DRAMÁTICOS para cada personaje principal.
+GENERA LOS ARCOS DE PERSONAJES en JSON EXACTO:
 
-Para cada personaje:
-- arc_type: redención, caída, transformación, o revelación
-- arc_start: Quién es al inicio
-- arc_catalyst: Qué evento inicia su cambio
-- arc_midpoint: Su estado en el midpoint de la temporada
-- arc_end: Quién es al final
-- key_relationship: Relación más importante para su arco
-- internal_conflict: Su lucha interna principal
+{
+  "character_arcs": [
+    {
+      "name": "nombre del personaje",
+      "role": "protagonista/antagonista/soporte",
+      "arc_type": "redención/caída/transformación/revelación",
+      "arc_start": "quién es al inicio de la temporada",
+      "arc_catalyst": "evento que inicia su cambio",
+      "arc_midpoint": "su estado en el midpoint",
+      "arc_end": "quién es al final de la temporada",
+      "key_relationship": "relación más importante para su arco",
+      "internal_conflict": "su lucha interna principal"
+    }
+  ]
+}
 
-IMPORTANTE: Los arcos deben conectar con el season_arc y el midpoint ya definidos.
-
-Usa la herramienta deliver_character_arcs.`;
+REGLAS ESTRICTAS:
+- Devuelve ÚNICAMENTE el JSON, sin texto antes ni después
+- NO uses markdown, backticks, ni explicaciones
+- Incluye todos los personajes principales mencionados en el outline
+- Los arcos deben conectar con el season_arc y midpoint ya definidos`;
 
     case 'episode_enrich':
+      // Modo tools - mantiene referencia a herramienta
       return `OUTLINE ACTUAL (con arcos de personajes):
 ${outlineStr}
 
@@ -192,7 +230,7 @@ IMPORTANTE:
 - Episodios 4-6: Conflicto grupal/institucional
 - Episodios 7+: Conflicto civilizatorio/existencial
 
-Usa la herramienta deliver_episode_enrichment.`;
+Usa la herramienta deliver_episode_enrichment. SOLO JSON, sin explicaciones.`;
 
     default:
       throw new Error(`Unknown stage: ${stageId}`);
@@ -268,7 +306,8 @@ async function callLovableAI(
   maxTokens: number,
   toolName: string,
   toolSchema: any,
-  _signal?: AbortSignal // Parent signal (for full abort)
+  _signal?: AbortSignal, // Parent signal (for full abort)
+  useDirectJson: boolean = false // NEW: Use JSON mode instead of tools
 ): Promise<any> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) {
@@ -283,8 +322,12 @@ async function callLovableAI(
     const modelTimeout = setTimeout(() => modelController.abort(), timeoutMs);
 
     try {
-      console.log(`[outline-upgrade] Trying model: ${model} (timeout: ${timeoutMs}ms)`);
-      const result = await callWithModel(model, systemPrompt, userPrompt, maxTokens, toolName, toolSchema, LOVABLE_API_KEY, modelController.signal);
+      console.log(`[outline-upgrade] Trying model: ${model} (timeout: ${timeoutMs}ms, directJson: ${useDirectJson})`);
+      const result = await callWithModel(
+        model, systemPrompt, userPrompt, maxTokens, 
+        toolName, toolSchema, LOVABLE_API_KEY, 
+        modelController.signal, useDirectJson
+      );
       clearTimeout(modelTimeout);
       return result;
     } catch (e: any) {
@@ -296,9 +339,9 @@ async function callLovableAI(
       if (e.message?.includes("RATE_LIMIT") || e.message?.includes("CREDITS_EXHAUSTED")) {
         throw e;
       }
-      // Skip to next model on timeout or malformed response
-      if (e.name === "AbortError" || e.message?.includes("MALFORMED")) {
-        console.log(`[outline-upgrade] Model ${model} timed out or malformed, trying next...`);
+      // Skip to next model on timeout, malformed response, or validation error
+      if (e.name === "AbortError" || e.message?.includes("MALFORMED") || e.message?.includes("VALIDATION_ERROR")) {
+        console.log(`[outline-upgrade] Model ${model} failed (${e.message?.slice(0, 50)}), trying next...`);
         continue;
       }
       // Continue to next model in chain
@@ -316,11 +359,43 @@ async function callWithModel(
   toolName: string,
   toolSchema: any,
   apiKey: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  useDirectJson: boolean = false
 ): Promise<any> {
   // Use max_completion_tokens for OpenAI models, max_tokens for others
   const isOpenAI = model.startsWith("openai/");
   const tokenField = isOpenAI ? "max_completion_tokens" : "max_tokens";
+
+  // Build request body based on mode
+  const requestBody: any = {
+    model,
+    [tokenField]: maxTokens,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ]
+  };
+
+  if (useDirectJson) {
+    // Direct JSON mode - no tools, use response_format
+    requestBody.response_format = { type: "json_object" };
+    console.log(`[outline-upgrade] Using direct JSON mode for ${toolName}`);
+  } else {
+    // Tool calling mode - for deterministic stages
+    requestBody.tools = [
+      {
+        type: "function",
+        function: {
+          name: toolName,
+          description: `Deliver ${toolName} data as JSON`,
+          parameters: toolSchema
+        }
+      }
+    ];
+    requestBody.tool_choice = { type: "function", function: { name: toolName } };
+    // Add instruction for tool mode only
+    requestBody.messages[1].content += "\n\nRESPONDE SOLO CON LA HERRAMIENTA. NO incluyas texto, explicaciones ni markdown.";
+  }
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -328,25 +403,7 @@ async function callWithModel(
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      model,
-      [tokenField]: maxTokens,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt + "\n\nRESPONDE SOLO CON LA HERRAMIENTA. NO incluyas texto, explicaciones ni markdown." }
-      ],
-      tools: [
-        {
-          type: "function",
-          function: {
-            name: toolName,
-            description: `Deliver ${toolName} data as JSON`,
-            parameters: toolSchema
-          }
-        }
-      ],
-      tool_choice: { type: "function", function: { name: toolName } }
-    }),
+    body: JSON.stringify(requestBody),
     signal
   });
 
@@ -365,12 +422,14 @@ async function callWithModel(
 
   const data = await response.json();
   
-  // Check for malformed function call (Gemini-specific error)
-  const choice = data?.choices?.[0];
-  if (choice?.native_finish_reason === "MALFORMED_FUNCTION_CALL" || 
-      choice?.finish_reason === "error") {
-    console.warn(`[outline-upgrade] ${model} returned MALFORMED_FUNCTION_CALL, trying next model`);
-    throw new Error("MALFORMED_FUNCTION_CALL: Model produced invalid tool call");
+  // Check for malformed function call (only in tool mode)
+  if (!useDirectJson) {
+    const choice = data?.choices?.[0];
+    if (choice?.native_finish_reason === "MALFORMED_FUNCTION_CALL" || 
+        choice?.finish_reason === "error") {
+      console.warn(`[outline-upgrade] ${model} returned MALFORMED_FUNCTION_CALL, trying next model`);
+      throw new Error("MALFORMED_FUNCTION_CALL: Model produced invalid tool call");
+    }
   }
   
   // Use canonical extractor for robustness
@@ -379,10 +438,17 @@ async function callWithModel(
   
   if (extraction.text) {
     try {
-      return JSON.parse(extraction.text);
-    } catch (e) {
-      console.error("Failed to parse extracted text:", e, "text:", extraction.text?.slice(0, 200));
-      throw new Error("PARSE_ERROR: Invalid JSON from AI response");
+      const parsed = JSON.parse(extraction.text);
+      
+      // Validate response structure based on stage
+      if (useDirectJson) {
+        validateDirectJsonResponse(toolName, parsed);
+      }
+      
+      return parsed;
+    } catch (e: any) {
+      console.error("Failed to parse/validate:", e.message, "text:", extraction.text?.slice(0, 200));
+      throw new Error(`PARSE_ERROR: ${e.message}`);
     }
   }
 
@@ -394,6 +460,45 @@ async function callWithModel(
   });
   
   throw new Error("NO_RESPONSE: No valid response from AI");
+}
+
+/**
+ * Validates the structure of direct JSON responses (non-tool mode)
+ * Throws VALIDATION_ERROR if structure is invalid, allowing retry with next model
+ */
+function validateDirectJsonResponse(toolName: string, parsed: any): void {
+  if (toolName === 'deliver_season_arc') {
+    if (!parsed.season_arc || typeof parsed.season_arc !== 'object') {
+      throw new Error("VALIDATION_ERROR: Missing or invalid 'season_arc' object");
+    }
+    const arc = parsed.season_arc;
+    if (!arc.protagonist_name || typeof arc.protagonist_name !== 'string') {
+      throw new Error("VALIDATION_ERROR: season_arc.protagonist_name is required");
+    }
+    if (!arc.protagonist_start || !arc.protagonist_end) {
+      throw new Error("VALIDATION_ERROR: season_arc must have protagonist_start and protagonist_end");
+    }
+    // Ensure mythology_rules exists (even if empty)
+    if (!parsed.mythology_rules) {
+      parsed.mythology_rules = [];
+    }
+    console.log(`[outline-upgrade] season_arc validation passed: protagonist=${arc.protagonist_name}`);
+  }
+  
+  if (toolName === 'deliver_character_arcs') {
+    if (!parsed.character_arcs || !Array.isArray(parsed.character_arcs)) {
+      throw new Error("VALIDATION_ERROR: Missing or invalid 'character_arcs' array");
+    }
+    if (parsed.character_arcs.length === 0) {
+      throw new Error("VALIDATION_ERROR: character_arcs array is empty");
+    }
+    for (const arc of parsed.character_arcs) {
+      if (!arc.name || !arc.arc_start || !arc.arc_end) {
+        throw new Error(`VALIDATION_ERROR: character arc missing required fields (name, arc_start, arc_end)`);
+      }
+    }
+    console.log(`[outline-upgrade] character_arcs validation passed: ${parsed.character_arcs.length} arcs`);
+  }
 }
 
 // ============================================================================
@@ -493,14 +598,15 @@ serve(async (req) => {
       // Get original text for context
       const originalText = outline.idea || outline.summary_text || "";
 
-      // 7. Call AI for this stage
+      // 7. Call AI for this stage (with mode flag)
       const stageResult = await callLovableAI(
         SHOWRUNNER_SYSTEM,
-        buildStagePrompt(pendingStage.id, outline.outline_json, originalText),
+        buildStagePrompt(pendingStage.id, outline.outline_json, originalText, pendingStage.useDirectJson),
         pendingStage.maxTokens,
         getToolNameForStage(pendingStage.id),
         getSchemaForStage(pendingStage.id),
-        controller.signal
+        controller.signal,
+        pendingStage.useDirectJson // Pass the flag to use direct JSON mode
       );
 
       clearTimeout(timeoutId);
