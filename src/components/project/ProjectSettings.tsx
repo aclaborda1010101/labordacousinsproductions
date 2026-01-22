@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, Settings, Trash2, Palette, Wrench, Lock, Unlock } from 'lucide-react';
+import { Loader2, Settings, Trash2, Palette, Wrench, Lock, Unlock, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Separator } from '@/components/ui/separator';
@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
 import { DeveloperModeModal } from '@/components/developer/DeveloperModeModal';
+import { MigrationExport } from './MigrationExport';
 import {
   FormatProfile,
   AnimationType,
@@ -283,6 +284,16 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
                 {isDeveloperMode ? 'Activo' : 'Bloqueado'}
               </Badge>
             </Button>
+          </div>
+
+          {/* Migration Export */}
+          <Separator />
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold flex items-center gap-2">
+              <Database className="w-4 h-4" />
+              Backup / Migración
+            </h4>
+            <MigrationExport projectTitle={project.title.replace(/\s+/g, '-').toLowerCase()} />
           </div>
           
           {/* Danger Zone */}

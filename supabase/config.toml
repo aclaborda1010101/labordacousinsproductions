@@ -327,3 +327,11 @@ verify_jwt = false
 [functions.producer-notes]
 # Gateway JWT disabled; function enforces auth internally
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXPORT / MIGRATION (Data Export Tools)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.export-migration-bundle]
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
