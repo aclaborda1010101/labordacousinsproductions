@@ -222,20 +222,37 @@ serve(async (req) => {
       })
       .eq('id', narrativeState.id);
 
-    // 10. Create jobs for scene-worker (using existing jobs table)
-    const jobsToInsert = intentsToInsert.map((intent, idx) => ({
-      id: crypto.randomUUID(),
-      project_id: projectId,
-      type: 'scene_generation',
-      status: 'pending',
-      payload: {
-        scene_intent_id: null, // Will be updated after insert
-        scene_number: intent.scene_number,
-        episode_number: episodeNumber,
-        narrative_state_id: narrativeState.id
-      },
-      created_at: new Date().toISOString()
-    }));
+    // 10. Create jobs for scene-worker - now with proper IDs returned
+    // First, get the inserted intent IDs
+    const { data: insertedIntents } = await auth.supabase
+      .from('scene_intent')
+      .select('id, scene_number')
+      .eq('project_id', projectId)
+      .eq('episode_number', episodeNumber)
+      .in('scene_number', intentsToInsert.map(i => i.scene_number));
+
+    const intentIdMap = new Map(
+      (insertedIntents || []).map(i => [i.scene_number, i.id])
+    );
+
+    const jobIds: string[] = [];
+    const jobsToInsert = intentsToInsert.map((intent) => {
+      const jobId = crypto.randomUUID();
+      jobIds.push(jobId);
+      return {
+        id: jobId,
+        project_id: projectId,
+        type: 'scene_generation',
+        status: 'pending',
+        payload: {
+          scene_intent_id: intentIdMap.get(intent.scene_number) || null,
+          scene_number: intent.scene_number,
+          episode_number: episodeNumber,
+          narrative_state_id: narrativeState.id
+        },
+        created_at: new Date().toISOString()
+      };
+    });
 
     if (jobsToInsert.length > 0) {
       await auth.supabase.from('jobs').insert(jobsToInsert);
@@ -256,7 +273,7 @@ serve(async (req) => {
         scenes_planned: intentsToInsert.length,
         next_narrative_goal: nextGoal,
         active_threads: newActiveThreads,
-        jobs_created: jobsToInsert.length,
+        jobs_created: jobIds,  // Now returns array of UUIDs instead of count
         narrative_state_id: narrativeState.id,
         duration_ms: durationMs
       }

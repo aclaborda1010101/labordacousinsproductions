@@ -372,17 +372,23 @@ export function useNarrativeGeneration({
         totalScenes: data.scenes_planned || prev.totalScenes,
       }));
 
-      toast.success(`${data.scenes_planned || 0} escenas planificadas`);
+      // V71: Handle jobs_created as array of UUIDs
+      const jobsCreated: string[] = Array.isArray(data.jobs_created) 
+        ? data.jobs_created 
+        : [];
+      const scenesPlanned = data.scenes_planned || jobsCreated.length || 0;
+      
+      toast.success(`${scenesPlanned} escenas planificadas`);
 
       // Step 2: Trigger scene-worker for each pending scene_intent
       // The scene-worker will be triggered via jobs table
       // Frontend observes via Realtime subscriptions
       
-      if (data.jobs_created && data.jobs_created.length > 0) {
-        toast.info(`Generando ${data.jobs_created.length} escenas...`);
+      if (jobsCreated.length > 0) {
+        toast.info(`Generando ${jobsCreated.length} escenas...`);
         
         // Process jobs sequentially to avoid overwhelming the backend
-        for (const jobId of data.jobs_created) {
+        for (const jobIdToProcess of jobsCreated) {
           if (abortControllerRef.current?.signal.aborted) {
             console.log('[NarrativeGen] Aborted by user');
             break;
@@ -390,7 +396,7 @@ export function useNarrativeGeneration({
 
           try {
             const { error: workerError } = await invokeAuthedFunction('scene-worker', {
-              job_id: jobId,
+              job_id: jobIdToProcess,
             });
 
             if (workerError) {
