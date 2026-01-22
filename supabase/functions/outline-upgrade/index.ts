@@ -25,8 +25,8 @@ interface UpgradeStage {
 }
 
 const UPGRADE_STAGES: UpgradeStage[] = [
-  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 2000, useDirectJson: true },
-  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 2500, useDirectJson: true },
+  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 1000, useDirectJson: true },
+  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 1500, useDirectJson: true },
   { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 3500, useDirectJson: false }
 ];
 
@@ -45,6 +45,7 @@ Piensas como un arquitecto narrativo:
 // Stage-specific schemas (smaller = faster)
 // ============================================================================
 
+// ATOMIC SCHEMA: Keywords only, no long text (prevents JSON parse errors)
 const SEASON_ARC_SCHEMA = {
   type: "object",
   properties: {
@@ -52,16 +53,15 @@ const SEASON_ARC_SCHEMA = {
       type: "object",
       properties: {
         protagonist_name: { type: "string" },
-        protagonist_start: { type: "string", description: "Estado emocional/situacional al inicio" },
-        protagonist_break: { type: "string", description: "El momento de quiebre que lo transforma" },
-        protagonist_end: { type: "string", description: "En quién se convierte al final" },
+        protagonist_start_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
+        protagonist_break_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
+        protagonist_end_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
         midpoint_episode: { type: "number" },
-        midpoint_event: { type: "string" },
-        midpoint_consequence: { type: "string" },
-        thematic_question: { type: "string" },
-        thematic_answer: { type: "string" }
+        midpoint_event_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
+        thematic_question_short: { type: "string" },
+        thematic_answer_short: { type: "string" }
       },
-      required: ["protagonist_name", "protagonist_start", "protagonist_break", "protagonist_end", "midpoint_event", "thematic_question"]
+      required: ["protagonist_name", "protagonist_start_keywords", "protagonist_end_keywords", "thematic_question_short"]
     },
     mythology_rules: {
       type: "array",
@@ -69,11 +69,10 @@ const SEASON_ARC_SCHEMA = {
         type: "object",
         properties: {
           entity: { type: "string" },
-          nature: { type: "string" },
-          can_do: { type: "array", items: { type: "string" } },
-          cannot_do: { type: "array", items: { type: "string" } },
-          weakness: { type: "string" },
-          dramatic_purpose: { type: "string" }
+          nature_short: { type: "string" },
+          can_do: { type: "array", items: { type: "string" }, maxItems: 3 },
+          cannot_do: { type: "array", items: { type: "string" }, maxItems: 3 },
+          weakness_short: { type: "string" }
         },
         required: ["entity", "can_do", "cannot_do"]
       }
@@ -82,6 +81,7 @@ const SEASON_ARC_SCHEMA = {
   required: ["season_arc"]
 };
 
+// ATOMIC SCHEMA: Keywords only, no long text
 const CHARACTER_ARCS_SCHEMA = {
   type: "object",
   properties: {
@@ -92,15 +92,14 @@ const CHARACTER_ARCS_SCHEMA = {
         properties: {
           name: { type: "string" },
           role: { type: "string" },
-          arc_type: { type: "string", description: "Tipo: redención, caída, transformación, revelación" },
-          arc_start: { type: "string" },
-          arc_catalyst: { type: "string" },
-          arc_midpoint: { type: "string" },
-          arc_end: { type: "string" },
+          arc_type: { type: "string" },
+          arc_start_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
+          arc_catalyst_keywords: { type: "array", items: { type: "string" }, maxItems: 3 },
+          arc_end_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
           key_relationship: { type: "string" },
-          internal_conflict: { type: "string" }
+          internal_conflict_short: { type: "string" }
         },
-        required: ["name", "role", "arc_start", "arc_end"]
+        required: ["name", "role", "arc_start_keywords", "arc_end_keywords"]
       }
     }
   },
@@ -142,71 +141,81 @@ function buildStagePrompt(stageId: string, outline: any, originalText: string, u
   
   switch (stageId) {
     case 'season_arc':
-      // Modo JSON directo - prompt explícito sin referencia a tools
+      // ATOMIC JSON: Keywords only, prevents parse errors in long outputs
       return `OUTLINE BASE:
 ${outlineStr}
 
-GENERA EL ARCO DE TEMPORADA en JSON EXACTO con esta estructura:
+GENERA ARCO DE TEMPORADA en JSON COMPACTO.
+
+REGLA CRÍTICA: Usa KEYWORDS cortas (2-4 palabras cada una), NO párrafos ni frases largas.
 
 {
   "season_arc": {
-    "protagonist_name": "nombre del protagonista principal",
-    "protagonist_start": "estado emocional/situacional al inicio",
-    "protagonist_break": "momento de quiebre que lo transforma",
-    "protagonist_end": "en quién se convierte al final",
-    "midpoint_episode": número_de_episodio,
-    "midpoint_event": "evento clave del midpoint",
-    "midpoint_consequence": "consecuencia inmediata del midpoint",
-    "thematic_question": "la pregunta central que explora la temporada",
-    "thematic_answer": "la respuesta que da el final"
+    "protagonist_name": "nombre",
+    "protagonist_start_keywords": ["keyword1", "keyword2", "keyword3"],
+    "protagonist_break_keywords": ["keyword1", "keyword2"],
+    "protagonist_end_keywords": ["keyword1", "keyword2", "keyword3"],
+    "midpoint_episode": número,
+    "midpoint_event_keywords": ["keyword1", "keyword2"],
+    "thematic_question_short": "pregunta en máximo 8 palabras",
+    "thematic_answer_short": "respuesta en máximo 8 palabras"
   },
   "mythology_rules": [
     {
-      "entity": "nombre de entidad sobrenatural/tecnológica (si aplica)",
-      "nature": "qué es esta entidad",
-      "can_do": ["capacidad 1", "capacidad 2"],
-      "cannot_do": ["limitación 1", "limitación 2"],
-      "weakness": "punto débil",
-      "dramatic_purpose": "para qué sirve dramáticamente"
+      "entity": "nombre",
+      "nature_short": "qué es en 4 palabras",
+      "can_do": ["acción1", "acción2"],
+      "cannot_do": ["limitación1", "limitación2"],
+      "weakness_short": "debilidad en 4 palabras"
     }
   ]
 }
 
-REGLAS ESTRICTAS:
-- Devuelve ÚNICAMENTE el JSON, sin texto antes ni después
-- NO uses markdown, backticks, ni explicaciones
-- Si la historia tiene elementos fantásticos/sobrenaturales, mythology_rules es obligatorio
-- Si es realista, mythology_rules puede ser array vacío []
-- midpoint_episode debe ser un número, no texto`;
+EJEMPLOS CORRECTOS:
+- protagonist_start_keywords: ["cansado", "desconfiado", "aislado"]
+- thematic_question_short: "¿Puede redimirse quien ha matado?"
+- midpoint_event_keywords: ["traición", "revelación", "huida"]
+- nature_short: "espíritu ancestral vengativo"
+
+PROHIBIDO:
+- Frases de más de 5 palabras
+- Explicaciones o contexto
+- Texto fuera del JSON
+- Markdown o backticks
+
+Si es realista sin elementos fantásticos, mythology_rules = []`;
 
     case 'character_arcs':
-      // Modo JSON directo
-      return `OUTLINE ACTUAL (con arco de temporada):
+      // ATOMIC JSON: Keywords only
+      return `OUTLINE ACTUAL:
 ${outlineStr}
 
-GENERA LOS ARCOS DE PERSONAJES en JSON EXACTO:
+GENERA ARCOS DE PERSONAJES en JSON COMPACTO.
+
+REGLA CRÍTICA: Usa KEYWORDS cortas (2-4 palabras), NO párrafos.
 
 {
   "character_arcs": [
     {
-      "name": "nombre del personaje",
+      "name": "nombre",
       "role": "protagonista/antagonista/soporte",
       "arc_type": "redención/caída/transformación/revelación",
-      "arc_start": "quién es al inicio de la temporada",
-      "arc_catalyst": "evento que inicia su cambio",
-      "arc_midpoint": "su estado en el midpoint",
-      "arc_end": "quién es al final de la temporada",
-      "key_relationship": "relación más importante para su arco",
-      "internal_conflict": "su lucha interna principal"
+      "arc_start_keywords": ["keyword1", "keyword2"],
+      "arc_catalyst_keywords": ["keyword1", "keyword2"],
+      "arc_end_keywords": ["keyword1", "keyword2"],
+      "key_relationship": "nombre de relación",
+      "internal_conflict_short": "conflicto en 5-7 palabras"
     }
   ]
 }
 
-REGLAS ESTRICTAS:
-- Devuelve ÚNICAMENTE el JSON, sin texto antes ni después
-- NO uses markdown, backticks, ni explicaciones
-- Incluye todos los personajes principales mencionados en el outline
-- Los arcos deben conectar con el season_arc y midpoint ya definidos`;
+EJEMPLOS CORRECTOS:
+- arc_start_keywords: ["ambicioso", "manipulador", "solitario"]
+- arc_end_keywords: ["humilde", "conectado", "en paz"]
+- internal_conflict_short: "lealtad a familia vs ambición"
+
+PROHIBIDO frases largas o explicaciones.
+Incluye TODOS los personajes principales del outline.`;
 
     case 'episode_enrich':
       // Modo tools - mantiene referencia a herramienta
@@ -475,29 +484,43 @@ function validateDirectJsonResponse(toolName: string, parsed: any): void {
     if (!arc.protagonist_name || typeof arc.protagonist_name !== 'string') {
       throw new Error("VALIDATION_ERROR: season_arc.protagonist_name is required");
     }
-    if (!arc.protagonist_start || !arc.protagonist_end) {
-      throw new Error("VALIDATION_ERROR: season_arc must have protagonist_start and protagonist_end");
+    // Validate keyword arrays exist (new atomic structure)
+    if (!Array.isArray(arc.protagonist_start_keywords) || arc.protagonist_start_keywords.length === 0) {
+      throw new Error("VALIDATION_ERROR: protagonist_start_keywords must be non-empty array");
+    }
+    if (!Array.isArray(arc.protagonist_end_keywords) || arc.protagonist_end_keywords.length === 0) {
+      throw new Error("VALIDATION_ERROR: protagonist_end_keywords must be non-empty array");
+    }
+    if (!arc.thematic_question_short) {
+      throw new Error("VALIDATION_ERROR: thematic_question_short is required");
     }
     // Ensure mythology_rules exists (even if empty)
     if (!parsed.mythology_rules) {
       parsed.mythology_rules = [];
     }
-    console.log(`[outline-upgrade] season_arc validation passed: protagonist=${arc.protagonist_name}`);
+    console.log(`[outline-upgrade] season_arc validated OK: protagonist=${arc.protagonist_name}, keywords=${arc.protagonist_start_keywords.length}`);
   }
   
   if (toolName === 'deliver_character_arcs') {
-    if (!parsed.character_arcs || !Array.isArray(parsed.character_arcs)) {
-      throw new Error("VALIDATION_ERROR: Missing or invalid 'character_arcs' array");
+    if (!Array.isArray(parsed.character_arcs)) {
+      throw new Error("VALIDATION_ERROR: character_arcs must be an array");
     }
     if (parsed.character_arcs.length === 0) {
-      throw new Error("VALIDATION_ERROR: character_arcs array is empty");
+      throw new Error("VALIDATION_ERROR: character_arcs cannot be empty");
     }
     for (const arc of parsed.character_arcs) {
-      if (!arc.name || !arc.arc_start || !arc.arc_end) {
-        throw new Error(`VALIDATION_ERROR: character arc missing required fields (name, arc_start, arc_end)`);
+      if (!arc.name || !arc.role) {
+        throw new Error("VALIDATION_ERROR: Each character arc must have name and role");
+      }
+      // Validate keyword arrays (new atomic structure)
+      if (!Array.isArray(arc.arc_start_keywords) || arc.arc_start_keywords.length === 0) {
+        throw new Error(`VALIDATION_ERROR: ${arc.name} missing arc_start_keywords`);
+      }
+      if (!Array.isArray(arc.arc_end_keywords) || arc.arc_end_keywords.length === 0) {
+        throw new Error(`VALIDATION_ERROR: ${arc.name} missing arc_end_keywords`);
       }
     }
-    console.log(`[outline-upgrade] character_arcs validation passed: ${parsed.character_arcs.length} arcs`);
+    console.log(`[outline-upgrade] character_arcs validated OK: ${parsed.character_arcs.length} characters`);
   }
 }
 
