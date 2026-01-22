@@ -247,22 +247,37 @@ serve(async (req) => {
     }
 
     // 8. Persist scene to DB
+    // NOTE: The scenes table uses parsed_json for detailed content (action, dialogues)
+    // and summary for quick display. Fields like 'description' and 'dialogues' 
+    // don't exist as direct columns.
     const sceneData = {
       project_id: projectId,
-      scene_number: sceneIntent.scene_number,
-      episode_id: null, // TODO: link to episode
+      episode_no: sceneIntent.episode_number || 1,
+      scene_no: sceneIntent.scene_number,
       slugline: generatedScene.slugline,
-      summary: generatedScene.summary || generatedScene.description.slice(0, 200),
-      description: generatedScene.description,
-      dialogues: generatedScene.dialogues || [],
-      scene_beat: generatedScene.scene_beat || sceneIntent.intent_summary,
-      emotional_value: generatedScene.emotional_value || 0,
-      duration_estimate_sec: generatedScene.duration_estimate_sec || 60,
-      status: 'draft',
-      meta: {
+      summary: generatedScene.summary || generatedScene.description?.slice(0, 500) || '',
+      objective: sceneIntent.intent_summary,
+      // Store rich content in parsed_json for SceneScreenplayView
+      parsed_json: {
+        action: generatedScene.description || '',
+        description: generatedScene.description || '',
+        dialogues: (generatedScene.dialogues || []).map((d: any) => ({
+          character: d.character,
+          line: d.line,
+          parenthetical: d.parenthetical || ''
+        })),
+        scene_beat: generatedScene.scene_beat || sceneIntent.intent_summary,
+        emotional_value: generatedScene.emotional_value || 0,
+        duration_estimate_sec: generatedScene.duration_estimate_sec || 60,
+        mood: sceneIntent.emotional_turn || '',
+        thread_advanced: sceneIntent.thread_to_advance,
+        characters_involved: sceneIntent.characters_involved || []
+      },
+      metadata: {
         generated_by: 'scene-worker-v70',
         intent_id: sceneIntent.id,
-        narrative_state_id: narrativeState?.id
+        narrative_state_id: narrativeState?.id,
+        quality_tier: 'hollywood'
       }
     };
 
@@ -315,16 +330,18 @@ serve(async (req) => {
         strategy: validationResult.data?.repair_strategy
       });
 
-      // Update scene meta with validation info
+      // Update scene metadata with validation info
       await auth.supabase
         .from('scenes')
         .update({
-          meta: {
-            ...(sceneData.meta || {}),
+          metadata: {
+            ...(sceneData.metadata || {}),
             validation_score: validationResult.data?.score,
             validation_status: validationResult.data?.valid ? 'valid' : 'needs_repair',
             validation_issues: validationResult.data?.issues
-          }
+          },
+          validation_score: validationResult.data?.score,
+          validation_status: validationResult.data?.valid ? 'valid' : 'needs_repair'
         })
         .eq('id', insertedScene.id);
 

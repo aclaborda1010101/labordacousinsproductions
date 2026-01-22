@@ -47,7 +47,37 @@ export function SceneScreenplayView({
   const fetchSceneScreenplay = async () => {
     setLoading(true);
     try {
-      // Fetch the latest script for this project
+      // PRIORITY 1: Try to get data from scenes table (v70 system stores here)
+      const { data: sceneRow } = await supabase
+        .from('scenes')
+        .select('slugline, summary, parsed_json, objective, metadata')
+        .eq('project_id', projectId)
+        .eq('episode_no', episodeNo)
+        .eq('scene_no', sceneNo)
+        .maybeSingle();
+
+      if (sceneRow) {
+        const parsedJson = sceneRow.parsed_json as any;
+        if (parsedJson?.action || parsedJson?.dialogues?.length > 0 || sceneRow.summary) {
+          setSceneData({
+            slugline: sceneRow.slugline || `SECUENCIA ${sceneNo}`,
+            action: parsedJson?.action || parsedJson?.description || '',
+            summary: sceneRow.summary || '',
+            dialogues: (parsedJson?.dialogues || parsedJson?.dialogue || []).map((d: any) => ({
+              character: d.character || 'PERSONAJE',
+              line: d.line || d.text || '',
+              parenthetical: d.parenthetical || ''
+            })),
+            mood: parsedJson?.mood,
+            music_cue: parsedJson?.music_cue,
+            sfx_cue: parsedJson?.sfx_cue
+          });
+          setLoading(false);
+          return; // Found in scenes table, no need to check scripts
+        }
+      }
+
+      // PRIORITY 2: Fallback to scripts.parsed_json (legacy system)
       const { data: script, error } = await supabase
         .from('scripts')
         .select('parsed_json')
@@ -88,34 +118,6 @@ export function SceneScreenplayView({
               sfx_cue: scene.sfx_cue
             });
           }
-        }
-      }
-
-      // Fallback: Try to get data from the scenes table parsed_json
-      if (!sceneData) {
-        const { data: sceneRow } = await supabase
-          .from('scenes')
-          .select('slugline, summary, parsed_json')
-          .eq('project_id', projectId)
-          .eq('episode_no', episodeNo)
-          .eq('scene_no', sceneNo)
-          .maybeSingle();
-
-        if (sceneRow) {
-          const parsedJson = sceneRow.parsed_json as any;
-          setSceneData({
-            slugline: sceneRow.slugline || `SECUENCIA ${sceneNo}`,
-            action: parsedJson?.action || '',
-            summary: sceneRow.summary || '',
-            dialogues: (parsedJson?.dialogue || []).map((d: any) => ({
-              character: d.character || 'PERSONAJE',
-              line: d.line || d.text || '',
-              parenthetical: d.parenthetical || ''
-            })),
-            mood: parsedJson?.mood,
-            music_cue: parsedJson?.music_cue,
-            sfx_cue: parsedJson?.sfx_cue
-          });
         }
       }
     } catch (err) {

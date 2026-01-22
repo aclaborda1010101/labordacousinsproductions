@@ -128,6 +128,7 @@ export function useNarrativeGeneration({
   
   // Refs
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const isGeneratingRef = useRef(false); // Ref to prevent race conditions
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // ============================================================================
@@ -318,6 +319,28 @@ export function useNarrativeGeneration({
   }) => {
     const { outline, episodeNumber, language = 'es-ES', qualityTier = 'profesional', format = 'series' } = params;
 
+    // PROTECTION: Prevent multiple simultaneous generations
+    if (isGeneratingRef.current) {
+      toast.warning('Ya hay una generación en progreso');
+      return;
+    }
+    
+    // Check if there's an ongoing generation in the database
+    const { data: existingIntents } = await supabase
+      .from('scene_intent')
+      .select('id, status')
+      .eq('project_id', projectId)
+      .in('status', ['pending', 'planning', 'writing', 'repairing'])
+      .limit(1);
+    
+    if (existingIntents && existingIntents.length > 0) {
+      toast.warning('Hay escenas pendientes de la última generación. Usa "Reiniciar" para empezar de nuevo.');
+      // Load existing state instead
+      await loadInitialState();
+      return;
+    }
+
+    isGeneratingRef.current = true;
     setIsGenerating(true);
     setProgress(prev => ({ ...prev, phase: 'planning', error: null }));
     
@@ -408,6 +431,7 @@ export function useNarrativeGeneration({
       toast.error('Error en generación', { description: errorMsg });
       onError?.(errorMsg);
     } finally {
+      isGeneratingRef.current = false;
       setIsGenerating(false);
     }
   }, [projectId, loadInitialState, onComplete, onError]);
