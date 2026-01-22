@@ -293,7 +293,7 @@ serve(async (req) => {
       });
     }
 
-    const { action, table } = await req.json();
+    const { action, table, offset, limit } = await req.json();
 
     // Action: Get table list
     if (action === 'list_tables') {
@@ -307,65 +307,70 @@ serve(async (req) => {
       });
     }
 
-    // Action: Export single table data (memory-optimized)
+    // Action: Export single table data (chunked to avoid WORKER_LIMIT / memory issues)
     if (action === 'export_table' && table) {
-      // Use smaller batch size to avoid memory issues
-      const BATCH_SIZE = 1000;
-      let allData: any[] = [];
-      let hasMore = true;
-      let offset = 0;
-      
+      const LARGE_PAYLOAD_TABLES = new Set([
+        'scripts',
+        'project_bibles',
+        'project_outlines',
+        'generation_blocks',
+        'generation_history',
+        'editorial_source_central',
+      ]);
+
+      const safeOffset = typeof offset === 'number' && Number.isFinite(offset) && offset >= 0 ? Math.floor(offset) : 0;
+
+      const defaultLimit = LARGE_PAYLOAD_TABLES.has(table) ? 1 : 200;
+      const requestedLimit = typeof limit === 'number' && Number.isFinite(limit) ? Math.floor(limit) : defaultLimit;
+      const safeLimit = Math.min(Math.max(requestedLimit, 1), 1000);
+
       try {
-        // Paginate to avoid memory overflow
-        while (hasMore && offset < 10000) { // Max 10k rows per table
-          const { data, error } = await supabase
-            .from(table)
-            .select('*')
-            .range(offset, offset + BATCH_SIZE - 1);
+        const { data, error } = await supabase
+          .from(table)
+          .select('*')
+          .range(safeOffset, safeOffset + safeLimit - 1);
 
-          if (error) {
-            return new Response(JSON.stringify({
-              table,
-              data: [],
-              count: 0,
-              sql: `-- Error: ${error.message}\n`,
-              error: error.message,
-            }), {
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
-          }
-
-          if (!data || data.length === 0) {
-            hasMore = false;
-          } else {
-            allData = allData.concat(data);
-            offset += BATCH_SIZE;
-            if (data.length < BATCH_SIZE) {
-              hasMore = false;
-            }
-          }
+        if (error) {
+          console.error(`[export_table] ${table} offset=${safeOffset} limit=${safeLimit} error=${error.message}`);
+          return new Response(JSON.stringify({
+            table,
+            offset: safeOffset,
+            limit: safeLimit,
+            count: 0,
+            done: true,
+            nextOffset: null,
+            sql: `-- Error: ${error.message}\n`,
+            error: error.message,
+          }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
         }
 
-        // Generate INSERT statements in batches to reduce memory
-        const inserts = generateInsertStatements(table, allData);
-        
-        // Clear data array before returning to free memory
-        const count = allData.length;
-        allData = []; // Free memory
+        const rows = data || [];
+        const sql = generateInsertStatements(table, rows);
+        const done = rows.length < safeLimit;
+        const nextOffset = done ? null : safeOffset + safeLimit;
 
         return new Response(JSON.stringify({
           table,
-          count,
-          sql: inserts,
-          // Don't return raw data to save memory - just SQL
+          offset: safeOffset,
+          limit: safeLimit,
+          count: rows.length,
+          done,
+          nextOffset,
+          sql,
         }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       } catch (err) {
+        console.error(`[export_table] ${table} offset=${safeOffset} limit=${safeLimit} fatal`, err);
         return new Response(JSON.stringify({
           table,
-          data: [],
+          offset: safeOffset,
+          limit: safeLimit,
           count: 0,
+          done: true,
+          nextOffset: null,
           sql: `-- Error exporting ${table}\n`,
           error: err instanceof Error ? err.message : 'Unknown error',
         }), {

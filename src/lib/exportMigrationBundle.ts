@@ -256,42 +256,79 @@ export async function exportMigrationBundle(
       currentItem: `${migrations.length} migraciones incluidas`,
     });
 
-    // Phase 2: Export table data (memory-optimized - no JSON, only SQL)
+    // Phase 2: Export table data (chunked to avoid WORKER_LIMIT)
     if (includeData) {
       const dataFolder = zip.folder('data')!;
-      
+
+      const LARGE_PAYLOAD_TABLES = new Set([
+        'scripts',
+        'project_bibles',
+        'project_outlines',
+        'generation_blocks',
+        'generation_history',
+        'editorial_source_central',
+      ]);
+
       for (let i = 0; i < tables.length; i++) {
         const table = tables[i];
+        const perChunkLimit = LARGE_PAYLOAD_TABLES.has(table) ? 1 : 200;
+
         onProgress({
           phase: 'tables',
           current: i + 1,
           total: tables.length,
-          currentItem: table,
+          currentItem: `${table} (0)`
         });
 
-        try {
-          const { data: tableData, error } = await supabase.functions.invoke(
-            'export-migration-bundle',
-            {
-              body: { action: 'export_table', table },
-            }
-          );
+        let offset = 0;
+        let part = 1;
 
-          if (error) {
-            console.warn(`Failed to export ${table}:`, error);
-            dataFolder.file(`${table}.sql`, `-- Error exporting ${table}: ${error.message}\n`);
-          } else if (tableData?.sql) {
-            dataFolder.file(`${table}.sql`, tableData.sql);
-          } else {
-            dataFolder.file(`${table}.sql`, `-- No data in ${table}\n`);
+        while (true) {
+          try {
+            const { data: chunk, error } = await supabase.functions.invoke(
+              'export-migration-bundle',
+              {
+                body: { action: 'export_table', table, offset, limit: perChunkLimit },
+              }
+            );
+
+            if (error || chunk?.error) {
+              const msg = error?.message || chunk?.error || 'Unknown error';
+              console.warn(`Failed to export ${table} (offset ${offset}):`, msg);
+              dataFolder.file(`${table}.part${String(part).padStart(4, '0')}.sql`, `-- Error exporting ${table} offset=${offset}: ${msg}\n`);
+              break;
+            }
+
+            const sql = chunk?.sql || `-- No data in ${table}\n`;
+            const count = chunk?.count || 0;
+
+            dataFolder.file(`${table}.part${String(part).padStart(4, '0')}.sql`, sql);
+
+            onProgress({
+              phase: 'tables',
+              current: i + 1,
+              total: tables.length,
+              currentItem: `${table} (chunk ${part}, rows ${count})`,
+            });
+
+            if (count === 0 || chunk?.done || chunk?.nextOffset == null) {
+              break;
+            }
+
+            offset = chunk.nextOffset;
+            part += 1;
+
+            // Delay between requests (helps reduce transient WORKER_LIMIT)
+            await new Promise(r => setTimeout(r, 350));
+          } catch (err) {
+            console.warn(`Failed to export ${table} (offset ${offset}):`, err);
+            dataFolder.file(`${table}.part${String(part).padStart(4, '0')}.sql`, `-- Error exporting ${table} offset=${offset}\n`);
+            break;
           }
-        } catch (err) {
-          console.warn(`Failed to export ${table}:`, err);
-          dataFolder.file(`${table}.sql`, `-- Error exporting ${table}\n`);
         }
 
-        // Delay between requests to avoid memory buildup and rate limiting
-        await new Promise(r => setTimeout(r, 150));
+        // small breather between tables
+        await new Promise(r => setTimeout(r, 500));
       }
     }
 
