@@ -3989,6 +3989,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setGeneratedEpisodesList([...episodes]);
 
         // V11.1: Incremental persistence - save after each episode to prevent data loss
+        // V66: Script Reuse - Always update existing script, never create zombies
         try {
           const partialScreenplay = {
             title: lightOutline.title,
@@ -4000,13 +4001,45 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             total_episodes: totalEpisodes,
           };
           
-          if (currentScriptId) {
+          // V66: If no currentScriptId, check for existing 'generating' script to reuse
+          let scriptIdToUse = currentScriptId;
+          if (!scriptIdToUse) {
+            const { data: existingGenerating } = await supabase
+              .from('scripts')
+              .select('id, created_at')
+              .eq('project_id', projectId)
+              .eq('status', 'generating')
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            
+            if (existingGenerating) {
+              const ageMs = Date.now() - new Date(existingGenerating.created_at).getTime();
+              const ZOMBIE_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
+              
+              if (ageMs < ZOMBIE_THRESHOLD_MS) {
+                // Reuse recent generating script
+                scriptIdToUse = existingGenerating.id;
+                setCurrentScriptId(scriptIdToUse);
+                console.log(`[ScriptImport] V66: Reusing existing generating script: ${scriptIdToUse}`);
+              } else {
+                // Zombie script - mark as failed before creating new one
+                await supabase
+                  .from('scripts')
+                  .update({ status: 'error', updated_at: new Date().toISOString() })
+                  .eq('id', existingGenerating.id);
+                console.log(`[ScriptImport] V66: Marked zombie script as error: ${existingGenerating.id}`);
+              }
+            }
+          }
+          
+          if (scriptIdToUse) {
             await supabase.from('scripts')
               .update({
                 parsed_json: partialScreenplay as any,
                 status: 'generating',
               })
-              .eq('id', currentScriptId);
+              .eq('id', scriptIdToUse);
             console.log(`[ScriptImport] Incremental save: ${episodes.length}/${totalEpisodes} episodes (update)`);
           } else {
             const { data: inserted } = await supabase.from('scripts')
