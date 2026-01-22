@@ -1,8 +1,10 @@
 /**
- * RESCUE-BLOCK V1.0
+ * RESCUE-BLOCK V1.1
  * 
  * Part of the Writer's Room Hollywood Pipeline (P1: Rescue Pass)
  * Fixes specific drift violations without rewriting the entire block
+ * 
+ * V1.1: Added provider health fallback - if OpenAI is down, falls back to Gemini 3
  * 
  * Input: Original block + Drift violations + Canon Pack
  * Output: Corrected block with minimal changes
@@ -12,6 +14,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireAuthOrDemo, requireProjectAccess } from "../_shared/auth.ts";
 import { buildTokenLimit, MODEL_CONFIG } from "../_shared/model-config.ts";
+import { getProviderHealth, recordProviderResult, getProviderFromModel } from "../_shared/provider-health.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -112,20 +115,30 @@ Responde SOLO con el JSON.
 }
 
 // =============================================================================
-// AI CALL (uses gpt-5.2 for best quality rescue)
+// AI CALL (uses gpt-5.2 for best quality rescue, fallback to Gemini 3 if unavailable)
 // =============================================================================
 
-async function callAI(prompt: string, timeout = 80000): Promise<any> {
+async function callAI(prompt: string, supabase: any, timeout = 80000): Promise<any> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) {
     throw new Error('LOVABLE_API_KEY not configured');
   }
 
   const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
-  const model = 'openai/gpt-5.2'; // Best model for rescue quality
+  
+  // V1.1: Check provider health and select model accordingly
+  const providerHealth = await getProviderHealth(supabase);
+  
+  // Rescue prefers GPT-5.2 for quality, but fallback to Gemini 3 if OpenAI is down
+  const model = providerHealth.openaiOk 
+    ? 'openai/gpt-5.2' 
+    : 'google/gemini-3-flash-preview';
+  
+  console.log(`[rescue-block] Using model: ${model} (openaiOk: ${providerHealth.openaiOk}, geminiOk: ${providerHealth.geminiOk})`);
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const startTime = Date.now();
 
   try {
     const response = await fetch(AI_GATEWAY_URL, {
@@ -146,13 +159,19 @@ async function callAI(prompt: string, timeout = 80000): Promise<any> {
     });
 
     clearTimeout(timeoutId);
+    const latencyMs = Date.now() - startTime;
 
     if (!response.ok) {
       const errorText = await response.text();
+      // Record failure for circuit breaker
+      await recordProviderResult(supabase, getProviderFromModel(model), false, errorText, latencyMs, model);
       throw new Error(`AI Gateway error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    
+    // Record success for circuit breaker
+    await recordProviderResult(supabase, getProviderFromModel(model), true, undefined, latencyMs, model);
     
     let content = data.choices?.[0]?.message?.content || '';
     
@@ -164,6 +183,11 @@ async function callAI(prompt: string, timeout = 80000): Promise<any> {
     return JSON.parse(jsonMatch[0]);
   } catch (error: any) {
     clearTimeout(timeoutId);
+    const latencyMs = Date.now() - startTime;
+    
+    // Record failure for circuit breaker
+    await recordProviderResult(supabase, getProviderFromModel(model), false, error.message, latencyMs, model);
+    
     if (error.name === 'AbortError') {
       throw new Error('AI_TIMEOUT: Request exceeded timeout');
     }
@@ -235,7 +259,7 @@ serve(async (req) => {
 
     let rescueResult: any;
     try {
-      rescueResult = await callAI(prompt);
+      rescueResult = await callAI(prompt, supabase);
     } catch (aiError: any) {
       console.error('[rescue-block] AI error:', aiError);
       return new Response(

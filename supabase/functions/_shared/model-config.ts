@@ -13,11 +13,20 @@
 export const MODEL_CONFIG = {
   // === ESCRITURA (máxima calidad narrativa) ===
   SCRIPT: {
-    HOLLYWOOD: 'openai/gpt-5.2',      // Bible, Outline, Guion final
-    PROFESIONAL: 'openai/gpt-5',       // Rewrites, variaciones
-    RAPIDO: 'openai/gpt-5-mini',       // Borradores, beat-sheets
-    NANO: 'openai/gpt-5-nano',         // Loglines, títulos, sinopsis cortas
-    FALLBACK: 'google/gemini-2.5-flash', // Emergencia / inputs muy largos
+    HOLLYWOOD: 'openai/gpt-5.2',        // Bible, Outline, Guion final
+    PROFESIONAL: 'openai/gpt-5',         // Rewrites, variaciones
+    RAPIDO: 'openai/gpt-5-mini',         // Borradores, beat-sheets
+    NANO: 'openai/gpt-5-nano',           // Loglines, títulos, sinopsis cortas
+    FALLBACK: 'google/gemini-2.5-flash', // Emergencia estable
+    // V2: Gemini 3 Flash Preview como workhorse para contexto grande y evitar timeouts
+    WORKHORSE: 'google/gemini-3-flash-preview',
+  },
+  
+  // === CONTEXT THRESHOLDS (for model selection) ===
+  CONTEXT_THRESHOLDS: {
+    HUGE: 120_000,    // Use Gemini workhorse unconditionally
+    LARGE: 60_000,    // Prefer Gemini workhorse
+    MEDIUM: 15_000,   // Consider upgrading from mini
   },
   
   // === ANÁLISIS (precisión JSON, no creatividad) ===
