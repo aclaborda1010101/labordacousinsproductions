@@ -410,13 +410,8 @@ export default function CharacterPackMVP({
         completed++;
       }
 
-      // Log telemetry
-      await supabase.from('editorial_events').insert({
-        project_id: projectId,
-        event_type: 'character_pack_full_autogen',
-        asset_type: 'character',
-        payload: { characterId, characterName, slotsGenerated: completed },
-      });
+      // Log telemetry (using generation_logs instead of removed editorial_events)
+      console.log('[CharacterPackMVP] Pack generated:', { characterId, characterName, slotsGenerated: completed });
 
       completeTask(taskId, { slotsGenerated: completed });
       toast.success('¡Pack de 12 modelos creado!');

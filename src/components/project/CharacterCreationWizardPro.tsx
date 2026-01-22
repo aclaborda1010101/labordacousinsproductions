@@ -185,14 +185,16 @@ export function CharacterCreationWizardPro({
 
       if (error) throw error;
 
-      // If reference image was uploaded, create a reference anchor
+      // If reference image was uploaded, create a reference anchor and ref slot
       if (referenceUrl && newChar) {
-        await supabase.from('character_reference_anchors').insert({
+        // Create reference anchor in the new table
+        await supabase.from('reference_anchors').insert({
           character_id: newChar.id,
-          anchor_type: 'user_upload',
+          anchor_type: 'identity_primary',
           image_url: referenceUrl,
-          is_primary: true,
-          influence_weight: 0.8,
+          priority: 1,
+          is_active: true,
+          approved: true,
         });
 
         // Also create a ref slot
