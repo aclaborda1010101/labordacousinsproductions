@@ -45,6 +45,19 @@ export async function aiFetch({
     JSON.stringify(payload, (_k, v) => (v === undefined ? null : v))
   );
 
+  // Convert max_tokens to max_completion_tokens for OpenAI GPT-5.x models
+  const model = typeof safePayload.model === "string" ? safePayload.model : "";
+  if (model.startsWith("openai/gpt-5") && safePayload.max_tokens && !safePayload.max_completion_tokens) {
+    safePayload.max_completion_tokens = safePayload.max_tokens;
+    delete safePayload.max_tokens;
+  }
+
+  // Remove unsupported temperature for OpenAI GPT-5 mini/nano models
+  // These models only support default temperature (1)
+  if ((model === "openai/gpt-5-mini" || model === "openai/gpt-5-nano") && safePayload.temperature !== undefined) {
+    delete safePayload.temperature;
+  }
+
   const startedAt = Date.now();
   const res = await fetch(url, {
     method: "POST",
