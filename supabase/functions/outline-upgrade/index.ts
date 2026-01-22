@@ -592,7 +592,7 @@ serve(async (req) => {
       ? Date.now() - new Date(outline.heartbeat_at).getTime()
       : Infinity;
     
-    if (outline.status === 'upgrading' && heartbeatAge < HEARTBEAT_STALE_THRESHOLD_MS) {
+    if (outline.status === 'generating' && heartbeatAge < HEARTBEAT_STALE_THRESHOLD_MS) {
       console.log(`[outline-upgrade] Concurrent run detected, heartbeat age: ${heartbeatAge}ms`);
       return new Response(
         JSON.stringify({ 
@@ -638,7 +638,7 @@ serve(async (req) => {
 
     // 4. Update status to upgrading (using correct column names)
     const { error: statusErr } = await supabase.from("project_outlines").update({
-      status: "upgrading",
+      status: "generating",
       substage: pendingStage.id,
       progress: pendingStage.progressStart,
       heartbeat_at: new Date().toISOString(),
@@ -714,7 +714,7 @@ serve(async (req) => {
       // 10. Save progress (V3: use correct column names, check for errors)
       const { error: saveErr } = await supabase.from("project_outlines").update({
         outline_json: mergedOutline,
-        status: isComplete ? "completed" : "upgrading",
+        status: isComplete ? "completed" : "generating",
         quality: isComplete ? "showrunner" : outline.quality,
         stage: isComplete ? "done" : "showrunner",
         substage: isComplete ? "done" : nextStage?.id,
