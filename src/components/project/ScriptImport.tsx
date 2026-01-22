@@ -3344,6 +3344,14 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     const autoMaterializeIfNeeded = async () => {
       if (!projectId || !lightOutline) return;
       
+      // V25: Check if database outline exists before attempting to materialize
+      // This prevents race conditions where stale lightOutline triggers API calls after deletion
+      const dbOutline = outlinePersistence.savedOutline;
+      if (!dbOutline || outlinePersistence.isLoading) {
+        console.log('[AutoMaterialize] Skipped - no saved outline in persistence (post-delete state)');
+        return;
+      }
+      
       // Check if outline has entities worth syncing
       const outlineHasChars = (lightOutline.main_characters?.length ?? 0) > 0;
       const outlineHasLocs = (lightOutline.main_locations?.length ?? 0) > 0;
@@ -3359,8 +3367,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         console.log('[AutoMaterialize] Bible empty but outline has entities, syncing in background...');
         setMaterializingEntities(true);
         try {
+          // V25: Pass outlineId for targeted materialization
           const { data, error } = await supabase.functions.invoke('materialize-entities', {
-            body: { projectId, source: 'outline' }
+            body: { projectId, source: 'outline', outlineId: dbOutline.id }
           });
           
           // Gracefully handle NO_OUTLINE_FOUND - this is expected after deletion
@@ -3381,7 +3390,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     };
     
     autoMaterializeIfNeeded();
-  }, [projectId, lightOutline, bibleCharacters.length, bibleLocations.length, bibleLoading]);
+  }, [projectId, lightOutline, bibleCharacters.length, bibleLocations.length, bibleLoading, outlinePersistence.savedOutline, outlinePersistence.isLoading]);
 
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
   // V11.2: Now includes DENSITY GATE + BATCH PLANNER + STATE ACCUMULATION
