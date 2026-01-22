@@ -79,14 +79,19 @@ export function sleep(ms: number): Promise<void> {
 
 /**
  * Check if an error is retryable (rate limit or server error)
+ * V3.2: Explicitly excludes 409 (PROJECT_BUSY) from retryable errors
  */
 export function isRetryableError(error: unknown): boolean {
   if (error instanceof Response) {
+    // V3.2: 409 is NOT retryable - it indicates a lock/conflict that won't resolve with retry
+    if (error.status === 409) return false;
     return error.status === 429 || error.status >= 500;
   }
   
   if (error && typeof error === 'object' && 'status' in error) {
     const status = (error as { status: number }).status;
+    // V3.2: 409 is NOT retryable
+    if (status === 409) return false;
     return status === 429 || status >= 500;
   }
 

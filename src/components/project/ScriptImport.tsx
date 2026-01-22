@@ -3672,12 +3672,22 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 });
               };
 
+              // V3.2: Enhanced retry logic with 409 exclusion to prevent race condition spam
               const { data, error } = await retryWithBackoff(invokeBatch, {
                 maxRetries: 2,
                 initialDelayMs: 1500,
                 maxDelayMs: 12000,
                 retryOn: (e) => {
                   if (controller.signal.aborted) return false;
+                  
+                  // V3.2: NEVER retry 409 PROJECT_BUSY - this causes the race condition spam loop
+                  const errAny = e as any;
+                  const status = errAny?.status || errAny?.response?.status;
+                  if (status === 409 || errAny?.code === 'PROJECT_BUSY') {
+                    console.log('[retryOn] Skipping retry for 409 PROJECT_BUSY');
+                    return false;
+                  }
+                  
                   return (
                     isRetryableError(e) ||
                     (e instanceof Error &&
