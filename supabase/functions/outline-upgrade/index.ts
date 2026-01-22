@@ -272,6 +272,13 @@ function startHeartbeat(
 // AI call with timeout
 // ============================================================================
 
+// Model fallback chain for reliability
+const MODEL_CHAIN = [
+  "google/gemini-2.5-flash",
+  "openai/gpt-5-mini",
+  "google/gemini-2.5-flash-lite"
+];
+
 async function callLovableAI(
   systemPrompt: string,
   userPrompt: string,
@@ -285,28 +292,61 @@ async function callLovableAI(
     throw new Error("LOVABLE_API_KEY not configured");
   }
 
-  // Use Gemini Flash (faster + more reliable than lite for structured output)
-  const model = "google/gemini-2.5-flash";
-  
+  let lastError: Error | null = null;
+
+  for (const model of MODEL_CHAIN) {
+    try {
+      console.log(`[outline-upgrade] Trying model: ${model}`);
+      const result = await callWithModel(model, systemPrompt, userPrompt, maxTokens, toolName, toolSchema, LOVABLE_API_KEY, signal);
+      return result;
+    } catch (e: any) {
+      lastError = e;
+      console.warn(`[outline-upgrade] Model ${model} failed:`, e.message);
+      
+      // Don't retry on rate limits or credit issues
+      if (e.message?.includes("RATE_LIMIT") || e.message?.includes("CREDITS_EXHAUSTED")) {
+        throw e;
+      }
+      // Continue to next model in chain
+    }
+  }
+
+  throw lastError || new Error("NO_RESPONSE: All models failed");
+}
+
+async function callWithModel(
+  model: string,
+  systemPrompt: string,
+  userPrompt: string,
+  maxTokens: number,
+  toolName: string,
+  toolSchema: any,
+  apiKey: string,
+  signal?: AbortSignal
+): Promise<any> {
+  // Use max_completion_tokens for OpenAI models, max_tokens for others
+  const isOpenAI = model.startsWith("openai/");
+  const tokenField = isOpenAI ? "max_completion_tokens" : "max_tokens";
+
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+      "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       model,
-      max_tokens: maxTokens, // Gemini uses max_tokens, not max_completion_tokens
+      [tokenField]: maxTokens,
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt + "\n\nRESPONDE SOLO CON LA HERRAMIENTA, SIN TEXTO ADICIONAL." }
+        { role: "user", content: userPrompt + "\n\nRESPONDE SOLO CON LA HERRAMIENTA. NO incluyas texto, explicaciones ni markdown." }
       ],
       tools: [
         {
           type: "function",
           function: {
             name: toolName,
-            description: `Deliver ${toolName} data`,
+            description: `Deliver ${toolName} data as JSON`,
             parameters: toolSchema
           }
         }
@@ -330,6 +370,14 @@ async function callLovableAI(
   }
 
   const data = await response.json();
+  
+  // Check for malformed function call (Gemini-specific error)
+  const choice = data?.choices?.[0];
+  if (choice?.native_finish_reason === "MALFORMED_FUNCTION_CALL" || 
+      choice?.finish_reason === "error") {
+    console.warn(`[outline-upgrade] ${model} returned MALFORMED_FUNCTION_CALL, trying next model`);
+    throw new Error("MALFORMED_FUNCTION_CALL: Model produced invalid tool call");
+  }
   
   // Use canonical extractor for robustness
   const extraction = extractModelText(data);
