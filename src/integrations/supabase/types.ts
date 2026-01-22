@@ -2292,6 +2292,7 @@ export type Database = {
           project_id: string
           qc_issues: Json | null
           quality: string | null
+          quality_tier: string | null
           stage: string | null
           status: string | null
           substage: string | null
@@ -2321,6 +2322,7 @@ export type Database = {
           project_id: string
           qc_issues?: Json | null
           quality?: string | null
+          quality_tier?: string | null
           stage?: string | null
           status?: string | null
           substage?: string | null
@@ -2350,6 +2352,7 @@ export type Database = {
           project_id?: string
           qc_issues?: Json | null
           quality?: string | null
+          quality_tier?: string | null
           stage?: string | null
           status?: string | null
           substage?: string | null

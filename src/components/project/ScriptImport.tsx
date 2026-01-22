@@ -477,6 +477,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [isPollingScript, setIsPollingScript] = useState(false);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
+  // V67: Script stuck detection state
+  const [scriptStuckInfo, setScriptStuckInfo] = useState<{
+    isStuck: boolean;
+    scriptId: string;
+    lastUpdated: Date;
+    scenesCount: number;
+    minutesSinceUpdate: number;
+  } | null>(null);
+  
   // P1 FIX: Entity materialization state (sync outline to Bible)
   const [materializingEntities, setMaterializingEntities] = useState(false);
   
@@ -1066,6 +1075,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       if (saved.idea) setIdeaText(saved.idea);
       if (saved.genre) setGenre(saved.genre);
       if (saved.tone) setTone(saved.tone);
+      // V67: Restore quality tier from DB (source of truth over localStorage)
+      if ((saved as any).quality_tier) {
+        setQualityTier(migrateQualityTier((saved as any).quality_tier));
+        console.log('[ScriptImport] V67: Restored qualityTier from DB:', (saved as any).quality_tier);
+      }
       
       // V6: Also sync outlineApproved state based on persisted status
       if (status === 'approved') {
@@ -3338,12 +3352,33 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, [projectId]);
 
   // V65: Handle polling lifecycle based on partial script status
+  // V67: Enhanced with stuck detection
   useEffect(() => {
     // Start polling if we found a generating script
     if (partialScriptData?.status === 'generating' && !isPollingScript && !pipelineRunning) {
       setIsPollingScript(true);
       pollIntervalRef.current = setInterval(pollActiveScript, 5000);
       console.log('[V65] Started script polling for:', partialScriptData.scriptId);
+    }
+    
+    // V67: Detect stuck scripts (generating for > 10 minutes without local pipeline)
+    if (partialScriptData?.status === 'generating' && !pipelineRunning) {
+      const lastUpdated = new Date(partialScriptData.lastUpdated);
+      const minutesSinceUpdate = (Date.now() - lastUpdated.getTime()) / (60 * 1000);
+      
+      if (minutesSinceUpdate > 10) {
+        setScriptStuckInfo({
+          isStuck: true,
+          scriptId: partialScriptData.scriptId,
+          lastUpdated,
+          scenesCount: partialScriptData.scenesCount,
+          minutesSinceUpdate: Math.round(minutesSinceUpdate),
+        });
+      } else {
+        setScriptStuckInfo(null);
+      }
+    } else {
+      setScriptStuckInfo(null);
     }
     
     // Stop polling when script is completed or failed
@@ -3353,6 +3388,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         pollIntervalRef.current = null;
       }
       setIsPollingScript(false);
+      setScriptStuckInfo(null);
       
       if (partialScriptData.status === 'completed' && partialScriptData.scenesCount > 0) {
         toast.success('Generación completada', {
@@ -3366,8 +3402,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       clearInterval(pollIntervalRef.current);
       pollIntervalRef.current = null;
       setIsPollingScript(false);
+      setScriptStuckInfo(null);
     }
-  }, [partialScriptData?.status, partialScriptData?.scriptId, isPollingScript, pipelineRunning, pollActiveScript]);
+  }, [partialScriptData?.status, partialScriptData?.scriptId, partialScriptData?.lastUpdated, isPollingScript, pipelineRunning, pollActiveScript]);
 
   // Materialize scenes from outline
   const materializeScenesFromOutline = async (): Promise<boolean> => {
@@ -8192,6 +8229,121 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
         {/* GUION TAB (formerly SUMMARY) */}
         <TabsContent value="summary" className="space-y-4">
+          {/* V67: SCRIPT STUCK RECOVERY UI - Shows when script generation is stuck */}
+          {scriptStuckInfo?.isStuck && !pipelineRunning && (
+            <Card className="border-2 border-orange-500/50 bg-orange-500/10">
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <AlertTriangle className="w-6 h-6 text-orange-600 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-orange-700 dark:text-orange-400">
+                      Generación de guion detenida
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      El proceso no ha avanzado en {scriptStuckInfo.minutesSinceUpdate} minutos.
+                      {scriptStuckInfo.scenesCount > 0 && ` Hay ${scriptStuckInfo.scenesCount} escenas parciales disponibles.`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Button 
+                    onClick={async () => {
+                      // Clean up and restart
+                      await supabase
+                        .from('scripts')
+                        .update({ status: 'failed' })
+                        .eq('id', scriptStuckInfo.scriptId);
+                      
+                      await supabase
+                        .from('project_locks')
+                        .delete()
+                        .eq('project_id', projectId);
+                      
+                      setScriptStuckInfo(null);
+                      setPartialScriptData(null);
+                      toast.success('Estado limpiado. Puedes reintentar la generación.');
+                      
+                      // Optionally auto-restart
+                      if (outlineApproved) {
+                        approveAndGenerateEpisodes();
+                      }
+                    }}
+                    variant="default"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Reiniciar generación
+                  </Button>
+                  <Button 
+                    onClick={async () => {
+                      // Just mark as failed
+                      await supabase
+                        .from('scripts')
+                        .update({ status: 'failed' })
+                        .eq('id', scriptStuckInfo.scriptId);
+                      
+                      await supabase
+                        .from('project_locks')
+                        .delete()
+                        .eq('project_id', projectId);
+                      
+                      setScriptStuckInfo(null);
+                      setPartialScriptData(null);
+                      toast.info('Script descartado');
+                    }}
+                    variant="outline"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Descartar y empezar de nuevo
+                  </Button>
+                  {scriptStuckInfo.scenesCount > 0 && (
+                    <Button 
+                      onClick={async () => {
+                        // Mark as completed (partial)
+                        await supabase
+                          .from('scripts')
+                          .update({ status: 'draft' })
+                          .eq('id', scriptStuckInfo.scriptId);
+                        
+                        await supabase
+                          .from('project_locks')
+                          .delete()
+                          .eq('project_id', projectId);
+                        
+                        // Load partial scenes
+                        const { data } = await supabase
+                          .from('scripts')
+                          .select('parsed_json')
+                          .eq('id', scriptStuckInfo.scriptId)
+                          .single();
+                        
+                        const parsedJson = data?.parsed_json as { scenes?: any[]; synopsis?: string } | null;
+                        if (parsedJson?.scenes && parsedJson.scenes.length > 0) {
+                          const partialEpisode = {
+                            episode_number: 1,
+                            title: 'Parcial',
+                            scenes: parsedJson.scenes,
+                            synopsis: parsedJson.synopsis || '',
+                            partial: true
+                          };
+                          setGeneratedEpisodesList([partialEpisode]);
+                          setGeneratedScript(parsedJson);
+                          toast.success(`Conservando ${parsedJson.scenes.length} escenas parciales`);
+                        }
+                        
+                        setScriptStuckInfo(null);
+                        setPartialScriptData(null);
+                      }}
+                      variant="secondary"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Conservar escenas parciales
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
           {/* GENERATION IN PROGRESS - Takes priority over all other states */}
           {/* V66: Only show progress if actually generating (has scenes, recent update, or pipeline active) */}
           {(() => {
@@ -8202,7 +8354,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               partialScriptData?.status === 'generating' && 
               ((partialScriptData?.scenesCount ?? 0) > 0 || isRecentScript)
             );
-            return isActuallyGenerating;
+            return isActuallyGenerating && !scriptStuckInfo?.isStuck;
           })() ? (
             <ScriptGenerationInProgress
               currentEpisode={currentEpisodeGenerating}
