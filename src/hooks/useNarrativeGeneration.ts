@@ -401,14 +401,49 @@ export function useNarrativeGeneration({
 
             if (workerError) {
               console.error('[NarrativeGen] scene-worker error:', workerError);
-              // Continue with next job, don't fail completely
             }
-          } catch (jobErr) {
-            console.error('[NarrativeGen] Error invoking scene-worker:', jobErr);
+          } catch (err) {
+            console.error('[NarrativeGen] Failed to invoke scene-worker:', err);
           }
 
-          // Small delay between workers to prevent rate limiting
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between jobs
+        }
+      } else if (scenesPlanned > 0) {
+        // V71 Fallback: Jobs weren't created but scene_intents exist
+        // Invoke scene-worker directly with sceneIntentId
+        console.log('[NarrativeGen] No jobs returned, falling back to direct intent processing');
+        
+        const { data: pendingIntents } = await supabase
+          .from('scene_intent')
+          .select('id, scene_number')
+          .eq('project_id', projectId)
+          .eq('status', 'pending')
+          .order('scene_number', { ascending: true });
+        
+        if (pendingIntents && pendingIntents.length > 0) {
+          toast.info(`Procesando ${pendingIntents.length} escenas directamente...`);
+          
+          for (const intent of pendingIntents) {
+            if (abortControllerRef.current?.signal.aborted) {
+              console.log('[NarrativeGen] Aborted by user');
+              break;
+            }
+
+            try {
+              const { error: workerError } = await invokeAuthedFunction('scene-worker', {
+                sceneIntentId: intent.id,
+                projectId,
+              });
+
+              if (workerError) {
+                console.error('[NarrativeGen] scene-worker fallback error:', workerError);
+              }
+            } catch (err) {
+              console.error('[NarrativeGen] Failed to invoke scene-worker (fallback):', err);
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
         }
       }
 
