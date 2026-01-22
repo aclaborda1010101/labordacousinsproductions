@@ -255,7 +255,22 @@ serve(async (req) => {
     });
 
     if (jobsToInsert.length > 0) {
-      await auth.supabase.from('jobs').insert(jobsToInsert);
+      console.log('[narrative-decide] Inserting jobs:', {
+        count: jobsToInsert.length,
+        jobIds: jobIds,
+        samplePayload: jobsToInsert[0]?.payload
+      });
+      
+      const { error: jobsError } = await auth.supabase
+        .from('jobs')
+        .insert(jobsToInsert);
+
+      if (jobsError) {
+        console.error('[narrative-decide] Failed to insert jobs:', jobsError);
+        // Jobs failed but scene_intents exist - frontend can use fallback
+      } else {
+        console.log('[narrative-decide] Jobs inserted successfully:', jobIds.length);
+      }
     }
 
     const durationMs = Date.now() - startTime;
