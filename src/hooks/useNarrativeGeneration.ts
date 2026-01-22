@@ -54,9 +54,28 @@ export interface SceneIntent {
   characters_involved: any[];
   thread_to_advance: string | null;
   constraints: Record<string, any>;
-  status: 'pending' | 'writing' | 'written' | 'validated' | 'failed';
+  status: 'pending' | 'planning' | 'planned' | 'writing' | 'written' | 'needs_repair' | 'repairing' | 'validated' | 'rejected' | 'failed';
   job_id: string | null;
   scene_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SceneRepair {
+  id: string;
+  scene_id: string;
+  scene_intent_id: string | null;
+  project_id: string;
+  scene_number: number;
+  episode_number: number;
+  issues: string[];
+  failed_checks: any[];
+  validation_score: number;
+  strategy: 'rewrite' | 'partial' | 'accept_degraded';
+  attempts: number;
+  max_attempts: number;
+  status: 'pending' | 'repairing' | 'done' | 'failed' | 'rejected';
+  repair_log: any[];
   created_at: string;
   updated_at: string;
 }
@@ -64,9 +83,12 @@ export interface SceneIntent {
 export interface GenerationProgress {
   totalScenes: number;
   completedScenes: number;
+  validatedScenes: number;
+  repairingScenes: number;
+  failedScenes: number;
   currentScene: number | null;
   currentEpisode: number | null;
-  phase: 'idle' | 'planning' | 'generating' | 'completed' | 'failed';
+  phase: 'idle' | 'planning' | 'generating' | 'validating' | 'repairing' | 'completed' | 'failed';
   error: string | null;
 }
 
@@ -90,9 +112,13 @@ export function useNarrativeGeneration({
   // State
   const [narrativeState, setNarrativeState] = useState<NarrativeState | null>(null);
   const [sceneIntents, setSceneIntents] = useState<SceneIntent[]>([]);
+  const [sceneRepairs, setSceneRepairs] = useState<SceneRepair[]>([]);
   const [progress, setProgress] = useState<GenerationProgress>({
     totalScenes: 0,
     completedScenes: 0,
+    validatedScenes: 0,
+    repairingScenes: 0,
+    failedScenes: 0,
     currentScene: null,
     currentEpisode: null,
     phase: 'idle',
@@ -180,6 +206,49 @@ export function useNarrativeGeneration({
           console.log('[NarrativeGen] narrative_state change:', payload);
           if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
             setNarrativeState(payload.new as NarrativeState);
+          }
+        }
+      )
+      // Listen to scene_repairs for validation system
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'scene_repairs',
+          filter: `project_id=eq.${projectId}`,
+        },
+        (payload) => {
+          console.log('[NarrativeGen] scene_repairs change:', payload);
+          
+          if (payload.eventType === 'INSERT') {
+            const newRepair = payload.new as SceneRepair;
+            setSceneRepairs(prev => [...prev, newRepair]);
+            setProgress(prev => ({
+              ...prev,
+              repairingScenes: prev.repairingScenes + 1,
+              phase: 'repairing',
+            }));
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedRepair = payload.new as SceneRepair;
+            setSceneRepairs(prev =>
+              prev.map(r => r.id === updatedRepair.id ? updatedRepair : r)
+            );
+            
+            // Update progress based on repair status
+            if (updatedRepair.status === 'done') {
+              setProgress(prev => ({
+                ...prev,
+                repairingScenes: Math.max(0, prev.repairingScenes - 1),
+                validatedScenes: prev.validatedScenes + 1,
+              }));
+            } else if (updatedRepair.status === 'failed' || updatedRepair.status === 'rejected') {
+              setProgress(prev => ({
+                ...prev,
+                repairingScenes: Math.max(0, prev.repairingScenes - 1),
+                failedScenes: prev.failedScenes + 1,
+              }));
+            }
           }
         }
       )
@@ -377,9 +446,13 @@ export function useNarrativeGeneration({
 
       setNarrativeState(null);
       setSceneIntents([]);
+      setSceneRepairs([]);
       setProgress({
         totalScenes: 0,
         completedScenes: 0,
+        validatedScenes: 0,
+        repairingScenes: 0,
+        failedScenes: 0,
         currentScene: null,
         currentEpisode: null,
         phase: 'idle',

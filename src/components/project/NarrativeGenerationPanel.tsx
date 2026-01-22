@@ -98,9 +98,14 @@ export function NarrativeGenerationPanel({
   const getStatusBadge = (status: SceneIntent['status']) => {
     const variants: Record<SceneIntent['status'], { className: string; label: string }> = {
       pending: { className: 'bg-muted text-muted-foreground', label: 'Pendiente' },
+      planning: { className: 'bg-blue-500/20 text-blue-600', label: 'Planificando' },
+      planned: { className: 'bg-blue-500/20 text-blue-600', label: 'Planificada' },
       writing: { className: 'bg-primary/20 text-primary', label: 'Escribiendo' },
       written: { className: 'bg-green-500/20 text-green-600', label: 'Escrita' },
-      validated: { className: 'bg-green-500/20 text-green-600', label: 'Validada' },
+      needs_repair: { className: 'bg-amber-500/20 text-amber-600', label: 'Reparando' },
+      repairing: { className: 'bg-amber-500/20 text-amber-600', label: 'Reparando...' },
+      validated: { className: 'bg-green-600/20 text-green-700', label: 'Validada ✓' },
+      rejected: { className: 'bg-destructive/20 text-destructive', label: 'Rechazada' },
       failed: { className: 'bg-destructive/20 text-destructive', label: 'Error' },
     };
     const v = variants[status];

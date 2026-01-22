@@ -3101,6 +3101,95 @@ export type Database = {
           },
         ]
       }
+      scene_repairs: {
+        Row: {
+          attempts: number | null
+          created_at: string | null
+          episode_number: number | null
+          failed_checks: Json | null
+          id: string
+          issues: Json
+          max_attempts: number | null
+          project_id: string
+          repair_log: Json | null
+          repaired_scene_id: string | null
+          scene_id: string | null
+          scene_intent_id: string | null
+          scene_number: number | null
+          status: string | null
+          strategy: string | null
+          updated_at: string | null
+          validation_score: number | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string | null
+          episode_number?: number | null
+          failed_checks?: Json | null
+          id?: string
+          issues?: Json
+          max_attempts?: number | null
+          project_id: string
+          repair_log?: Json | null
+          repaired_scene_id?: string | null
+          scene_id?: string | null
+          scene_intent_id?: string | null
+          scene_number?: number | null
+          status?: string | null
+          strategy?: string | null
+          updated_at?: string | null
+          validation_score?: number | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string | null
+          episode_number?: number | null
+          failed_checks?: Json | null
+          id?: string
+          issues?: Json
+          max_attempts?: number | null
+          project_id?: string
+          repair_log?: Json | null
+          repaired_scene_id?: string | null
+          scene_id?: string | null
+          scene_intent_id?: string | null
+          scene_number?: number | null
+          status?: string | null
+          strategy?: string | null
+          updated_at?: string | null
+          validation_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scene_repairs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_repairs_repaired_scene_id_fkey"
+            columns: ["repaired_scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_repairs_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_repairs_scene_intent_id_fkey"
+            columns: ["scene_intent_id"]
+            isOneToOne: false
+            referencedRelation: "scene_intent"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scene_technical_docs: {
         Row: {
           cameras: Json | null
@@ -3198,6 +3287,8 @@ export type Database = {
           technical_notes: string | null
           time_of_day: string | null
           updated_at: string
+          validation_score: number | null
+          validation_status: string | null
           visual_fx_cues: string[] | null
           visual_style: string | null
           visual_style_source: string | null
@@ -3243,6 +3334,8 @@ export type Database = {
           technical_notes?: string | null
           time_of_day?: string | null
           updated_at?: string
+          validation_score?: number | null
+          validation_status?: string | null
           visual_fx_cues?: string[] | null
           visual_style?: string | null
           visual_style_source?: string | null
@@ -3288,6 +3381,8 @@ export type Database = {
           technical_notes?: string | null
           time_of_day?: string | null
           updated_at?: string
+          validation_score?: number | null
+          validation_status?: string | null
           visual_fx_cues?: string[] | null
           visual_style?: string | null
           visual_style_source?: string | null
