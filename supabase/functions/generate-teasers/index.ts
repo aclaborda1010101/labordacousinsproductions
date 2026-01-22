@@ -252,7 +252,7 @@ Los tiempos de cada plano DEBEN sumar exactamente 60s y 30s respectivamente.`;
       },
       body: JSON.stringify({
         model: 'google/gemini-3-flash-preview',
-        max_completion_tokens: 4000,
+        max_tokens: 4000, // Gemini uses max_tokens, NOT max_completion_tokens
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }

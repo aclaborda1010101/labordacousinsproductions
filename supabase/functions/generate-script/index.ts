@@ -864,6 +864,12 @@ async function callLovableAI(
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
 
+  // V2: Auto-map token parameter based on model
+  const model = config.apiModel;
+  const tokenParam = model.startsWith('openai/') || model.includes('gpt')
+    ? { max_completion_tokens: config.maxTokens }
+    : { max_tokens: config.maxTokens }; // Gemini uses max_tokens
+
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -871,8 +877,8 @@ async function callLovableAI(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: config.apiModel,
-      max_completion_tokens: config.maxTokens,
+      model,
+      ...tokenParam,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
