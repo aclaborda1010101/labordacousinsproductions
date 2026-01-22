@@ -12,8 +12,8 @@ const corsHeaders = {
 // Each invocation does ONE stage, frontend loops until complete
 // ============================================================================
 
-const CHUNK_TIMEOUT_MS = 50000; // 50s budget per chunk (edge limit is ~60s)
-const HEARTBEAT_INTERVAL_MS = 10000; // 10s keepalive (more frequent)
+const CHUNK_TIMEOUT_MS = 85000; // 85s budget per chunk (edge limit ~120s, leaving margin)
+const HEARTBEAT_INTERVAL_MS = 8000; // 8s keepalive (frequent to avoid zombie detection)
 
 interface UpgradeStage {
   id: string;
@@ -24,9 +24,9 @@ interface UpgradeStage {
 }
 
 const UPGRADE_STAGES: UpgradeStage[] = [
-  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 3000 },
-  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 3000 },
-  { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 4000 }
+  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 2000 },
+  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 2500 },
+  { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 3500 }
 ];
 
 // Showrunner-level system prompt (shared across stages)
@@ -141,33 +141,16 @@ function buildStagePrompt(stageId: string, outline: any, originalText: string): 
   
   switch (stageId) {
     case 'season_arc':
-      return `OUTLINE ACTUAL:
+      return `OUTLINE:
 ${outlineStr}
 
-MATERIAL ORIGINAL:
-${originalText}
+GENERA ARCO DE TEMPORADA:
+1. Protagonista: inicio → quiebre → final
+2. Midpoint: episodio y evento clave  
+3. Pregunta temática y respuesta
+4. Reglas de mitología (si aplica): qué puede/no puede cada entidad
 
-TAREA: Define el ARCO DE LA TEMPORADA COMPLETA.
-
-REQUISITOS:
-1. ARCO DEL PROTAGONISTA:
-   - Estado inicial (quién es al empezar)
-   - Punto de quiebre (qué lo transforma)
-   - Estado final (en quién se convierte)
-
-2. MIDPOINT de la temporada:
-   - El momento donde "no hay vuelta atrás"
-   - El giro que redefine el conflicto central
-
-3. PREGUNTA TEMÁTICA:
-   - La pregunta filosófica que explora la temporada
-   - Cómo responde la serie a esa pregunta
-
-4. REGLAS DE MITOLOGÍA (si aplica):
-   - Para cada entidad especial, define qué PUEDE y qué NO PUEDE hacer
-   - Límites narrativos que dan tensión
-
-Usa la herramienta deliver_season_arc.`;
+Usa deliver_season_arc. SOLO JSON.`;
 
     case 'character_arcs':
       return `OUTLINE ACTUAL (con arco de temporada):
@@ -272,11 +255,11 @@ function startHeartbeat(
 // AI call with timeout
 // ============================================================================
 
-// Model fallback chain for reliability
+// Model fallback chain with individual timeouts per model
 const MODEL_CHAIN = [
-  "google/gemini-2.5-flash",
-  "openai/gpt-5-mini",
-  "google/gemini-2.5-flash-lite"
+  { model: "google/gemini-2.5-flash", timeoutMs: 35000 },
+  { model: "openai/gpt-5-mini", timeoutMs: 30000 },
+  { model: "google/gemini-2.5-flash-lite", timeoutMs: 25000 }
 ];
 
 async function callLovableAI(
@@ -285,7 +268,7 @@ async function callLovableAI(
   maxTokens: number,
   toolName: string,
   toolSchema: any,
-  signal?: AbortSignal
+  _signal?: AbortSignal // Parent signal (for full abort)
 ): Promise<any> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) {
@@ -294,18 +277,29 @@ async function callLovableAI(
 
   let lastError: Error | null = null;
 
-  for (const model of MODEL_CHAIN) {
+  for (const { model, timeoutMs } of MODEL_CHAIN) {
+    // Create individual AbortController per model attempt
+    const modelController = new AbortController();
+    const modelTimeout = setTimeout(() => modelController.abort(), timeoutMs);
+
     try {
-      console.log(`[outline-upgrade] Trying model: ${model}`);
-      const result = await callWithModel(model, systemPrompt, userPrompt, maxTokens, toolName, toolSchema, LOVABLE_API_KEY, signal);
+      console.log(`[outline-upgrade] Trying model: ${model} (timeout: ${timeoutMs}ms)`);
+      const result = await callWithModel(model, systemPrompt, userPrompt, maxTokens, toolName, toolSchema, LOVABLE_API_KEY, modelController.signal);
+      clearTimeout(modelTimeout);
       return result;
     } catch (e: any) {
+      clearTimeout(modelTimeout);
       lastError = e;
       console.warn(`[outline-upgrade] Model ${model} failed:`, e.message);
       
       // Don't retry on rate limits or credit issues
       if (e.message?.includes("RATE_LIMIT") || e.message?.includes("CREDITS_EXHAUSTED")) {
         throw e;
+      }
+      // Skip to next model on timeout or malformed response
+      if (e.name === "AbortError" || e.message?.includes("MALFORMED")) {
+        console.log(`[outline-upgrade] Model ${model} timed out or malformed, trying next...`);
+        continue;
       }
       // Continue to next model in chain
     }

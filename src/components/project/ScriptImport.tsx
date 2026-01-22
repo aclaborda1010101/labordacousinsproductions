@@ -2748,7 +2748,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         const { data, error } = await invokeWithTimeout<any>(
           'outline-upgrade',
           { outline_id: outlineId },
-          { timeoutMs: 90000 } // 90s timeout per stage (45s AI + buffer)
+          { timeoutMs: 120000 } // 120s timeout per stage (85s AI + buffer for model fallback)
         );
         
         if (error) {
