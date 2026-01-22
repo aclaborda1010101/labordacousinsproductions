@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { extractModelText, logExtractionDiagnostic } from "../_shared/extract-model-text.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -284,7 +285,9 @@ async function callLovableAI(
     throw new Error("LOVABLE_API_KEY not configured");
   }
 
-  // Use faster model with lower latency
+  // Use Gemini Flash (faster + more reliable than lite for structured output)
+  const model = "google/gemini-2.5-flash";
+  
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -292,8 +295,8 @@ async function callLovableAI(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash-lite", // Fastest model for quick responses
-      max_completion_tokens: maxTokens,
+      model,
+      max_tokens: maxTokens, // Gemini uses max_tokens, not max_completion_tokens
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt + "\n\nRESPONDE SOLO CON LA HERRAMIENTA, SIN TEXTO ADICIONAL." }
@@ -328,30 +331,26 @@ async function callLovableAI(
 
   const data = await response.json();
   
-  // Extract tool call result
-  const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-  if (toolCall?.function?.arguments) {
+  // Use canonical extractor for robustness
+  const extraction = extractModelText(data);
+  logExtractionDiagnostic(extraction, { phase: 'outline-upgrade', model });
+  
+  if (extraction.text) {
     try {
-      return JSON.parse(toolCall.function.arguments);
+      return JSON.parse(extraction.text);
     } catch (e) {
-      console.error("Failed to parse tool arguments:", e);
-      throw new Error("PARSE_ERROR: Invalid response format from AI");
+      console.error("Failed to parse extracted text:", e, "text:", extraction.text?.slice(0, 200));
+      throw new Error("PARSE_ERROR: Invalid JSON from AI response");
     }
   }
 
-  // Fallback: try to extract JSON from content
-  const content = data.choices?.[0]?.message?.content;
-  if (content) {
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      try {
-        return JSON.parse(jsonMatch[0]);
-      } catch {
-        throw new Error("PARSE_ERROR: Could not parse JSON from response");
-      }
-    }
-  }
-
+  // If extractor failed, log full response for debugging
+  console.error("NO_RESPONSE: extraction failed", {
+    strategy: extraction.strategy,
+    rawType: extraction.rawType,
+    responsePreview: JSON.stringify(data).slice(0, 500)
+  });
+  
   throw new Error("NO_RESPONSE: No valid response from AI");
 }
 
