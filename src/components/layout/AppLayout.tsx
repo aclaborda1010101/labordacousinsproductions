@@ -17,7 +17,6 @@ import {
   Film, 
   Home, 
   FolderKanban, 
-  Clapperboard,
   Users,
   LogOut,
   Play,
@@ -31,7 +30,8 @@ import {
   X,
   Settings,
   Loader2,
-  RefreshCw
+  RefreshCw,
+  Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -105,19 +105,19 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
-      {/* Logo + Close/Collapse */}
+      {/* Logo ManIAS Lab */}
       <div className={cn(
-        "h-14 lg:h-16 flex items-center border-b border-sidebar-border",
-        collapsed && !isMobile ? "px-3 justify-center" : "px-4 lg:px-6"
+        "h-16 flex items-center border-b border-sidebar-border",
+        collapsed && !isMobile ? "px-3 justify-center" : "px-4 lg:px-5"
       )}>
         <Link to="/dashboard" className="flex items-center gap-3 group flex-1" onClick={() => isMobile && setMobileOpen(false)}>
-          <div className="w-8 lg:w-9 h-8 lg:h-9 rounded-lg bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-glow flex-shrink-0">
-            <Clapperboard className="w-4 lg:w-5 h-4 lg:h-5 text-primary-foreground" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow flex-shrink-0">
+            <Zap className="w-5 h-5 text-primary-foreground" />
           </div>
           {(!collapsed || isMobile) && (
-            <div>
-              <span className="font-bold text-foreground tracking-tight text-sm lg:text-base">LC</span>
-              <span className="text-[10px] lg:text-xs text-muted-foreground block -mt-0.5">Studio</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-foreground tracking-tight text-base leading-none">ManIAS</span>
+              <span className="text-[10px] text-primary font-medium tracking-widest">LAB.</span>
             </div>
           )}
         </Link>
@@ -139,7 +139,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Developer Mode Badge */}
       {isDeveloperMode && (!collapsed || isMobile) && (
         <div className="px-3 py-2">
-          <Badge className="w-full justify-center gap-1 bg-amber-500/20 text-amber-500 border-amber-500/30 hover:bg-amber-500/30 text-xs">
+          <Badge className="w-full justify-center gap-1 bg-primary/20 text-primary border-primary/30 hover:bg-primary/30 text-xs">
             <Wrench className="w-3 h-3" />
             Developer Mode
           </Badge>
@@ -147,8 +147,8 @@ export function AppLayout({ children }: AppLayoutProps) {
       )}
       {isDeveloperMode && collapsed && !isMobile && (
         <div className="px-2 py-2 flex justify-center">
-          <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center" title="Developer Mode Active">
-            <Wrench className="w-4 h-4 text-amber-500" />
+          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center" title="Developer Mode Active">
+            <Wrench className="w-4 h-4 text-primary" />
           </div>
         </div>
       )}
@@ -300,7 +300,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <Link
             to="/projects/new"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-primary/10 to-amber-500/10 border border-primary/20 text-foreground"
+            className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-primary/10 to-[hsl(80,100%,40%)]/10 border border-primary/20 text-foreground"
           >
             <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center">
               <Plus className="w-4 h-4 text-primary" />
@@ -327,47 +327,54 @@ export function AppLayout({ children }: AppLayoutProps) {
             ) : (
               <>
                 <PanelLeftClose className="w-4 h-4 mr-2" />
-                <span>Colapsar menú</span>
+                <span>Colapsar</span>
               </>
             )}
           </Button>
         </div>
       )}
 
-      {/* User section */}
+      {/* User section - Reorganized */}
       <div className={cn(
-        "p-3 lg:p-4 border-t border-sidebar-border",
+        "p-3 border-t border-sidebar-border",
         collapsed && !isMobile && "px-2"
       )}>
+        {/* Language and Settings row */}
         {(!collapsed || isMobile) && (
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-full bg-sidebar-accent flex items-center justify-center flex-shrink-0">
-              <Users className="w-4 h-4 text-sidebar-foreground" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">
-                {user?.email?.split('@')[0] || 'User'}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">{t.team.roles.producer}</p>
-            </div>
+          <div className="flex items-center gap-2 mb-3">
+            <LanguageSelector />
+            {isMobile && (
+              <Button variant="ghost" size="icon" className="shrink-0" title="Configuración">
+                <Settings className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         )}
+        
+        {/* User info + Sign Out */}
         <div className={cn(
-          "flex gap-2",
-          collapsed && !isMobile && "flex-col items-center"
+          "flex items-center gap-3",
+          collapsed && !isMobile && "flex-col"
         )}>
-          {(!collapsed || isMobile) && <LanguageSelector />}
-          {isMobile && (
-            <Button variant="ghost" size="icon" className="shrink-0" title="Configuración">
-              <Settings className="w-4 h-4" />
-            </Button>
+          {(!collapsed || isMobile) && (
+            <>
+              <div className="w-9 h-9 rounded-full bg-sidebar-accent flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 text-sidebar-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">
+                  {user?.email?.split('@')[0] || 'User'}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">{t.team.roles.producer}</p>
+              </div>
+            </>
           )}
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={handleSignOut} 
             title={t.nav.signOut}
-            className={cn(collapsed && !isMobile ? "w-full" : "", "shrink-0")}
+            className="shrink-0 hover:bg-destructive/20 hover:text-destructive"
           >
             <LogOut className="w-4 h-4" />
           </Button>
@@ -378,13 +385,16 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
-      {/* Mobile Header - Simplified */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-12 bg-sidebar/95 backdrop-blur-lg border-b border-sidebar-border z-50 flex items-center px-3 gap-2">
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-sidebar/95 backdrop-blur-lg border-b border-sidebar-border z-50 flex items-center px-4 gap-3">
         <Link to="/dashboard" className="flex items-center gap-2 flex-1">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center">
-            <Clapperboard className="w-3.5 h-3.5 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow">
+            <Zap className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="font-bold text-foreground text-sm">LC Studio</span>
+          <div className="flex flex-col">
+            <span className="font-bold text-foreground text-sm leading-none">ManIAS</span>
+            <span className="text-[8px] text-primary font-medium tracking-widest">LAB.</span>
+          </div>
         </Link>
         <TaskNotificationCenter />
       </div>
@@ -409,7 +419,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Main content */}
       <main className={cn(
         "flex-1 flex flex-col overflow-hidden",
-        "pt-12 pb-16 lg:pt-0 lg:pb-0", // Mobile: header + bottom nav space
+        "pt-14 pb-16 lg:pt-0 lg:pb-0", // Mobile: header + bottom nav space
         collapsed ? "lg:ml-16" : "lg:ml-72"
       )}>
         {/* Backend Status Banner */}
@@ -435,12 +445,14 @@ export function AppLayout({ children }: AppLayoutProps) {
             </span>
           </button>
         )}
-        {children}
+
+        <div className="flex-1 overflow-auto">
+          {children}
+        </div>
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <MobileNav onMenuClick={() => setMobileOpen(true)} />
+      <MobileNav onMenuOpen={() => setMobileOpen(true)} />
     </div>
   );
 }
-
