@@ -2555,6 +2555,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         }
       }
 
+      // V25.1: Keep outline persistence in sync with DB after destructive deletes.
+      // Without this, an outline deleted from DB can remain in memory and trigger
+      // downstream calls (e.g., materialize-entities) that 404.
+      try {
+        outlinePersistence.stopPolling?.();
+        await outlinePersistence.refreshOutline();
+      } catch (e) {
+        console.warn('[DeleteAll] Failed to refresh outline persistence:', e);
+      }
+
       // Clear local state
       setLightOutline(null);
       setOutlineApproved(false);
