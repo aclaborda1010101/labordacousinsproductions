@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -5822,7 +5823,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         <div>
           <h2 className="text-lg sm:text-xl font-semibold text-foreground">Guion</h2>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Flujo Hollywood: Guion → Resumen → Producción → Mejoras
+            Idea → Outline → Guion → Producción
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -5836,6 +5837,34 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             <span className="ml-2 hidden sm:inline">Editar Biblia</span>
           </Button>
           
+          {/* More Options Dropdown - Mejoras & Histórico */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Settings2 className="w-4 h-4" />
+                <span className="ml-2 hidden sm:inline">Más</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setActiveTab('doctor')}>
+                <Stethoscope className="w-4 h-4 mr-2" />
+                Mejoras (Script Doctor)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                loadScriptHistory();
+                setActiveTab('history');
+              }}>
+                <History className="w-4 h-4 mr-2" />
+                Histórico
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate(`/projects/${projectId}/`)}>
+                <Book className="w-4 h-4 mr-2" />
+                Editar Biblia
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
           {generatedScript && (
             <>
               {/* Regenerate Script Button */}
@@ -5843,7 +5872,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 variant="outline" 
                 size="sm"
                 onClick={() => {
-                  // Reset states to allow regeneration
                   setGeneratedScript(null);
                   setOutlineApproved(false);
                   setLightOutline(null);
@@ -5851,10 +5879,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   clearPipelineState();
                   setActiveTab('generate');
                   
-                  // Auto-regenerate if we have an idea saved
                   if (ideaText.trim()) {
                     toast.info('Regenerando outline con tu idea original...');
-                    // Use setTimeout to allow state updates before calling generateOutlineDirect
                     setTimeout(() => {
                       generateOutlineDirect();
                     }, 100);
@@ -5893,9 +5919,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       {/* Pipeline Status - Hidden for cleaner UI */}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        {/* ManIAS Lab 2.0 - 6-tab structure: Idea → Outline → Guion → Producción → Mejoras → Histórico */}
+        {/* ManIAS Lab 2.0 - 4-tab structure: Idea → Outline → Guion → Producción */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
-          <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-6 sm:w-full h-auto sm:h-11 gap-1 sm:gap-0 bg-muted/50 p-1">
+          <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-4 sm:w-full h-auto sm:h-11 gap-1 sm:gap-0 bg-muted/50 p-1">
             <TabsTrigger value="generate" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="hidden xs:inline">Idea</span>
@@ -5915,16 +5941,6 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="hidden xs:inline">Producción</span>
               <span className="xs:hidden">🎬</span>
-            </TabsTrigger>
-            <TabsTrigger value="doctor" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Mejoras</span>
-              <span className="xs:hidden">🔧</span>
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Histórico</span>
-              <span className="xs:hidden">📜</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -7007,452 +7023,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </div>
                 </div>
 
-                {/* Legacy Action Buttons (hidden by default, wizard handles this) */}
-                <div className="flex flex-wrap gap-3 pt-4 border-t">
-                  <Button 
-                    variant="gold" 
-                    size="lg"
-                    className="flex-1 min-w-[200px]"
-                    onClick={approveAndGenerateEpisodes}
-                    disabled={pipelineRunning || upgradingOutline || !qcStatus?.canGenerateEpisodes}
-                  >
-                    {qcStatus?.canGenerateEpisodes ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        {format === 'film' ? '✅ Aprobar y Generar Guión' : '✅ Aprobar y Generar Episodios'}
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="w-4 h-4 mr-2" />
-                        🔒 Completa el outline primero
-                      </>
-                    )}
-                  </Button>
-                  
-                  {/* Showrunner Upgrade Button - Only show if not already showrunner */}
-                  {outlinePersistence.savedOutline?.quality !== 'showrunner' && (
-                    <Button 
-                      variant="secondary"
-                      onClick={handleUpgradeToShowrunner}
-                      disabled={generatingOutline || pipelineRunning || upgradingOutline}
-                      className="bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/30 text-purple-700 dark:text-purple-300"
-                    >
-                      {upgradingOutline ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Mejorando...
-                        </>
-                      ) : (
-                        <>
-                          <Crown className="w-4 h-4 mr-2" />
-                          Mejorar (Showrunner)
-                        </>
-                      )}
-                    </Button>
-                  )}
-                  
-                  {/* Badge if already showrunner */}
-                  {outlinePersistence.savedOutline?.quality === 'showrunner' && (
-                    <Badge variant="outline" className="h-10 px-4 bg-purple-500/10 border-purple-500/50 text-purple-600 dark:text-purple-400 flex items-center gap-2">
-                      <Crown className="w-3 h-3" />
-                      Nivel Showrunner
-                    </Badge>
-                  )}
-                  
-                  {/* Enrichment Button - Add Operational Meat */}
-                  {/* V49: Check content, not just quality label - hide if already has operational content */}
-                  {(() => {
-                    const quality = outlinePersistence.savedOutline?.quality;
-                    // Hide if quality is enriched, threaded, or showrunner
-                    if (quality === 'enriched' || quality === 'threaded' || quality === 'showrunner') return null;
-                    // Also hide if outline already has operational content (factions, entity_rules, setpieces)
-                    const hasFactions = Array.isArray(lightOutline?.factions) && lightOutline.factions.length >= 2;
-                    const hasEntityRules = Array.isArray(lightOutline?.entity_rules) && lightOutline.entity_rules.length > 0;
-                    const hasSetpieces = Array.isArray(lightOutline?.episode_beats) && lightOutline.episode_beats.some((ep: any) => ep?.setpiece?.stakes);
-                    if (hasFactions || hasEntityRules || hasSetpieces) return null;
-                    
-                    return (
-                      <Button 
-                        variant="outline"
-                        onClick={async () => {
-                          if (!outlinePersistence.savedOutline?.id) return;
-                          setEnrichingOutline(true);
-                          try {
-                            const { data, error } = await invokeAuthedFunction('outline-enrich', {
-                              outline_id: outlinePersistence.savedOutline.id
-                            });
-                            if (error) throw error;
-                            await outlinePersistence.refreshOutline();
-                            if (data?.outline) setLightOutline(data.outline);
-                            toast.success('Outline enriquecido con facciones, reglas y setpieces');
-                          } catch (err) {
-                            toast.error('Error al enriquecer: ' + (err as Error).message);
-                          } finally {
-                            setEnrichingOutline(false);
-                          }
-                        }}
-                        disabled={generatingOutline || pipelineRunning || upgradingOutline || enrichingOutline}
-                        className="bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
-                      >
-                        {enrichingOutline ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Enriqueciendo...
-                          </>
-                        ) : (
-                          <>
-                            <Zap className="w-4 h-4 mr-2" />
-                            Añadir Carne Operativa
-                          </>
-                        )}
-                      </Button>
-                    );
-                  })()}
-                  
-                  {/* Badge if has operational content (enriched, threaded, or showrunner) */}
-                  {/* V49: Show badge based on content OR quality label */}
-                  {(() => {
-                    const quality = outlinePersistence.savedOutline?.quality;
-                    const hasFactions = Array.isArray(lightOutline?.factions) && lightOutline.factions.length >= 2;
-                    const hasEntityRules = Array.isArray(lightOutline?.entity_rules) && lightOutline.entity_rules.length > 0;
-                    const hasSetpieces = Array.isArray(lightOutline?.episode_beats) && lightOutline.episode_beats.some((ep: any) => ep?.setpiece?.stakes);
-                    const hasOperationalContent = hasFactions || hasEntityRules || hasSetpieces;
-                    
-                    if (quality === 'enriched' || (hasOperationalContent && quality !== 'threaded' && quality !== 'showrunner')) {
-                      return (
-                        <Badge variant="outline" className="h-10 px-4 bg-emerald-500/10 border-emerald-500/50 text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                          <Zap className="w-3 h-3" />
-                          Operativo
-                        </Badge>
-                      );
-                    }
-                    return null;
-                  })()}
-                  
-                  {/* V11: Threads Button - Add Narrative Lanes */}
-                  {(outlinePersistence.savedOutline?.quality === 'enriched' || outlinePersistence.savedOutline?.quality === 'showrunner') && 
-                   (!lightOutline?.threads || lightOutline.threads.length < 5 || 
-                    !lightOutline?.episode_beats?.every((ep: any) => ep.thread_usage?.A)) && (
-                    <Button 
-                      variant="outline"
-                      onClick={async () => {
-                        if (!outlinePersistence.savedOutline?.id) return;
-                        setEnrichingOutline(true);
-                        try {
-                          const { data, error } = await invokeAuthedFunction('outline-enrich', {
-                            outline_id: outlinePersistence.savedOutline.id,
-                            enrich_mode: 'threads'
-                          });
-                          if (error) throw error;
-                          await outlinePersistence.refreshOutline();
-                          if (data?.outline) setLightOutline(data.outline);
-                          toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
-                        } catch (err) {
-                          toast.error('Error al generar threads: ' + (err as Error).message);
-                        } finally {
-                          setEnrichingOutline(false);
-                        }
-                      }}
-                      disabled={generatingOutline || pipelineRunning || upgradingOutline || enrichingOutline}
-                      className="bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/30 text-indigo-700 dark:text-indigo-300"
-                    >
-                      {enrichingOutline ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Generando threads...
-                        </>
-                      ) : (
-                        <>
-                          <GitBranch className="w-4 h-4 mr-2" />
-                          Añadir Threads ({lightOutline?.threads?.length || 0}/5-8)
-                        </>
-                      )}
-                    </Button>
-                  )}
-                  
-                  {/* Badge if threaded */}
-                  {outlinePersistence.savedOutline?.quality === 'threaded' && (
-                    <Badge variant="outline" className="h-10 px-4 bg-indigo-500/10 border-indigo-500/50 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
-                      <GitBranch className="w-3 h-3" />
-                      Threads V11
-                    </Badge>
-                  )}
-                  
-                  {/* Export PDF Button - Comprehensive mapping with try/catch */}
-                  <Button 
-                    variant="outline"
-                    disabled={isExportingPdf}
-                    onClick={async () => {
-                      // V24: Use outlineForUI for stable reference during export
-                      const outline = outlineForUI;
-                      if (!outline) {
-                        toast.error('No hay outline para exportar');
-                        return;
-                      }
-                      
-                      setIsExportingPdf(true);
-                      
-                      // Yield to event loop so React paints loading state
-                      await new Promise(r => setTimeout(r, 0));
-                      
-                      try {
-                        // Extract characters from cast or main_characters
-                        const chars = outline.cast || outline.main_characters || [];
-                        
-                        // Extract locations from main_locations or locations
-                        const locs = outline.main_locations || outline.locations || [];
-                        
-                        // Build acts structure with beats for film
-                        const buildActs = () => {
-                          if (format !== 'film' || !outline.acts_summary) return undefined;
-                          
-                          const allBeats = outline.beats || [];
-                          
-                          return [
-                            {
-                              act_number: 1,
-                              title: 'Acto I',
-                              goal: outline.acts_summary.act_i_goal,
-                              summary: outline.acts_summary.act_i_summary,
-                              inciting_incident: outline.acts_summary.inciting_incident_summary,
-                              break_point: outline.acts_summary.act_i_break,
-                              beats: allBeats.filter((b: any) => b.beat_number <= 8).map((b: any) => ({
-                                beat_number: b.beat_number,
-                                event: b.event || b.description,
-                                agent: b.agent,
-                                consequence: b.consequence,
-                                situation_detail: b.situation_detail,
-                              })),
-                            },
-                            {
-                              act_number: 2,
-                              title: 'Acto II',
-                              goal: outline.acts_summary.act_ii_goal,
-                              summary: outline.acts_summary.act_ii_summary,
-                              midpoint: outline.acts_summary.midpoint_summary,
-                              all_is_lost: outline.acts_summary.all_is_lost_summary,
-                              break_point: outline.acts_summary.act_ii_break,
-                              beats: allBeats.filter((b: any) => b.beat_number > 8 && b.beat_number <= 16).map((b: any) => ({
-                                beat_number: b.beat_number,
-                                event: b.event || b.description,
-                                agent: b.agent,
-                                consequence: b.consequence,
-                                situation_detail: b.situation_detail,
-                              })),
-                            },
-                            {
-                              act_number: 3,
-                              title: 'Acto III',
-                              goal: outline.acts_summary.act_iii_goal,
-                              summary: outline.acts_summary.act_iii_summary,
-                              climax: outline.acts_summary.climax_summary,
-                              beats: allBeats.filter((b: any) => b.beat_number > 16).map((b: any) => ({
-                                beat_number: b.beat_number,
-                                event: b.event || b.description,
-                                agent: b.agent,
-                                consequence: b.consequence,
-                                situation_detail: b.situation_detail,
-                              })),
-                            },
-                          ];
-                        };
-                        
-                        // Build synopsis from acts_summary if not available
-                        const buildSynopsis = (): string => {
-                          if (outline.synopsis) return outline.synopsis;
-                          
-                          if (outline.acts_summary) {
-                            const parts: string[] = [];
-                            
-                            // Acto I
-                            if (outline.acts_summary.act_i_goal) {
-                              parts.push(`ACTO I: ${outline.acts_summary.act_i_goal}`);
-                            }
-                            if (outline.acts_summary.inciting_incident_summary) {
-                              parts.push(`Detonante: ${outline.acts_summary.inciting_incident_summary}`);
-                            }
-                            if (outline.acts_summary.act_i_break) {
-                              parts.push(`Quiebre: ${outline.acts_summary.act_i_break}`);
-                            }
-                            
-                            // Acto II
-                            if (outline.acts_summary.act_ii_goal) {
-                              parts.push(`\nACTO II: ${outline.acts_summary.act_ii_goal}`);
-                            }
-                            if (outline.acts_summary.midpoint_summary) {
-                              parts.push(`Midpoint: ${outline.acts_summary.midpoint_summary}`);
-                            }
-                            if (outline.acts_summary.all_is_lost_summary) {
-                              parts.push(`Crisis: ${outline.acts_summary.all_is_lost_summary}`);
-                            }
-                            
-                            // Acto III
-                            if (outline.acts_summary.act_iii_goal) {
-                              parts.push(`\nACTO III: ${outline.acts_summary.act_iii_goal}`);
-                            }
-                            if (outline.acts_summary.climax_summary) {
-                              parts.push(`Clímax: ${outline.acts_summary.climax_summary}`);
-                            }
-                            
-                            return parts.join('\n');
-                          }
-                          
-                          return '';
-                        };
-                        
-                        const outlineData: OutlinePDFData = {
-                          title: outline.title || 'Sin título',
-                          logline: outline.logline,
-                          synopsis: buildSynopsis(),
-                          genre: outline.genre,
-                          tone: outline.tone,
-                          format: format,
-                          estimatedDuration: outline.estimated_duration || (format === 'film' ? filmDurationMin : episodeDurationMin),
-                          themes: outline.themes,
-                          visualStyle: outline.visual_style,
-                          thematic_thread: outline.thematic_thread,
-                          
-                          // Full character data with want/need/flaw/arc
-                          characters: chars.map((char: any) => ({
-                            name: char.name,
-                            role: char.role,
-                            role_detail: char.role_detail,
-                            description: char.description || char.bio,
-                            want: char.want,
-                            need: char.need,
-                            flaw: char.flaw,
-                            decision_key: char.decision_key,
-                            arc: char.arc,
-                            arc_start: char.arc_start,
-                            arc_end: char.arc_end,
-                          })),
-                          
-                          // Full location data with visual identity
-                          locations: locs.map((loc: any) => ({
-                            name: loc.name,
-                            type: loc.type,
-                            description: loc.description,
-                            visual_identity: loc.visual_identity,
-                            function: loc.function,
-                            narrative_role: loc.narrative_role || loc.role,
-                          })),
-                          
-                          // Acts structure with beats (for film)
-                          acts: buildActs(),
-                          
-                          // Episodes (for series)
-                          episodes: format !== 'film' && outline.episode_beats
-                            ? outline.episode_beats.map((ep: any, i: number) => ({
-                                episode_number: ep.episode || i + 1,
-                                title: ep.title || `Episodio ${i + 1}`,
-                                synopsis: ep.summary || ep.synopsis,
-                              }))
-                            : undefined,
-                          
-                          // Factions
-                          factions: outline.factions?.map((f: any) => ({
-                            name: f.name,
-                            leader: f.leader,
-                            objective: f.objective,
-                            method: f.method,
-                            red_line: f.red_line,
-                          })),
-                          
-                          // Entity rules (can/cannot do)
-                          entity_rules: outline.entity_rules?.map((r: any) => ({
-                            entity: r.entity,
-                            can_do: r.can_do,
-                            cannot_do: r.cannot_do,
-                            cost: r.cost,
-                            dramatic_purpose: r.dramatic_purpose,
-                          })),
-                          
-                          // Subplots and twists
-                          subplots: outline.subplots,
-                          plot_twists: outline.plot_twists,
-                        };
-                        
-                        exportOutlinePDF(outlineData);
-                        toast.success('PDF del outline generado');
-                      } catch (err: any) {
-                        console.error('[ExportPDF] Error:', err);
-                        toast.error('Error al exportar PDF: ' + (err?.message || 'Error desconocido'));
-                      } finally {
-                        setIsExportingPdf(false);
-                      }
-                    }}
-                    className="gap-2"
-                  >
-                    {isExportingPdf ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Download className="w-4 h-4" />
-                    )}
-                    {isExportingPdf ? 'Generando...' : 'Exportar PDF'}
-                  </Button>
-                  
-                  <Button 
-                    variant="outline"
-                    onClick={regenerateOutline}
-                    disabled={generatingOutline || upgradingOutline}
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Regenerar
-                  </Button>
-                  <Button 
-                    variant="destructive"
-                    onClick={handleDeleteOutline}
-                    disabled={pipelineRunning || generatingOutline || upgradingOutline || deletingAllData}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Borrar
-                  </Button>
-                  
-                  {/* DELETE ALL - Nuclear reset */}
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button 
-                        variant="outline"
-                        className="border-destructive/50 text-destructive hover:bg-destructive/10"
-                        disabled={pipelineRunning || generatingOutline || deletingAllData}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Borrar TODO
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle className="flex items-center gap-2 text-destructive">
-                          <AlertTriangle className="w-5 h-5" />
-                          ¿Borrar TODO y empezar de cero?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription className="space-y-3">
-                          <p>Esta acción eliminará permanentemente:</p>
-                          <ul className="list-disc pl-6 text-sm space-y-1">
-                            <li>Outline y estructura narrativa</li>
-                            <li>Todos los guiones y escenas</li>
-                            <li>Personajes, locaciones y props</li>
-                            <li>Storyboards y renders</li>
-                            <li>Histórico de generaciones</li>
-                          </ul>
-                          <p className="font-medium text-destructive pt-2">
-                            El proyecto se mantendrá, pero completamente vacío. Esta acción NO se puede deshacer.
-                          </p>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction 
-                          onClick={handleDeleteAllProjectData}
-                          className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                        >
-                          {deletingAllData && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-                          Sí, borrar TODO
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
+                {/* Action buttons handled by OutlineWizardV11 component */}
               </CardContent>
             </Card>
           )}
