@@ -209,11 +209,11 @@ serve(async (req) => {
     });
 
     // 5. Call AI to write the scene
-    const LOVABLE_API_URL = Deno.env.get('LOVABLE_API_URL') || 'https://api.lovable.dev/v1/chat/completions';
+    const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY') || '';
 
     const aiResponse = await aiFetch({
-      url: LOVABLE_API_URL,
+      url: AI_GATEWAY_URL,
       apiKey: LOVABLE_API_KEY,
       payload: {
         model: MODEL_CONFIG.SCRIPT.HOLLYWOOD,
