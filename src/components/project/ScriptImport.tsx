@@ -344,10 +344,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [currentStepLabel, setCurrentStepLabel] = useState<string>('');
   const [backgroundGeneration, setBackgroundGeneration] = useState(false);
   
+  // V67: Ref to prevent tab auto-switch during outline operations
+  const isOutlineOperationInProgress = useRef(false);
+  
   // Background task tracking for global progress visibility
   const { addTask, updateTask, completeTask, failTask } = useBackgroundTasks();
   const [scriptTaskId, setScriptTaskId] = useState<string | null>(null);
-
   // Timing model (aprende tiempos reales para estimar ETA)
   const [timingModel, setTimingModel] = useState(() => loadScriptTimingModel());
   const [episodeStartedAtMs, setEpisodeStartedAtMs] = useState<number | null>(null);
@@ -1194,6 +1196,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // V10.3+: Fallback to load outline from persistence when completed/approved but lightOutline is empty
   // This ensures that if the user refreshes or the polling callback misses setting state, we still recover
   useEffect(() => {
+    // V67: Skip recovery during active outline operations to prevent tab interference
+    if (isOutlineOperationInProgress.current) {
+      console.log('[ScriptImport] Skipping recovery - outline operation in progress');
+      return;
+    }
+    
     const outline = outlinePersistence.savedOutline;
     const status = outline?.status;
     const isTerminalSuccess = status === 'completed' || status === 'approved';
@@ -1428,7 +1436,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             if (parsed.teasers) {
               setGeneratedTeasers(parsed.teasers);
             }
-            setActiveTab('summary');
+            // V67: Only auto-switch tab on initial load, not during operations
+            if (!isOutlineOperationInProgress.current && activeTab === 'generate') {
+              setActiveTab('summary');
+            }
           }
         }
       }
@@ -2643,6 +2654,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       return;
     }
     
+    // V67: Lock tab navigation during operation
+    isOutlineOperationInProgress.current = true;
+    const preservedTab = activeTab;
+    
     setUpgradingOutline(true);
     
     const STAGE_LABELS: Record<string, string> = {
@@ -2745,6 +2760,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       }
     } finally {
       setUpgradingOutline(false);
+      // V67: Unlock and restore tab if it changed unexpectedly
+      isOutlineOperationInProgress.current = false;
+      if (activeTab !== preservedTab) {
+        setActiveTab(preservedTab);
+      }
     }
   };
 
@@ -7012,6 +7032,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   format={format}
                   onEnrich={async () => {
                     if (!outlinePersistence.savedOutline?.id) return;
+                    // V67: Lock tab navigation during operation
+                    isOutlineOperationInProgress.current = true;
+                    const preservedTab = activeTab;
                     setEnrichingOutline(true);
                     try {
                       const { data, error } = await invokeAuthedFunction('outline-enrich', {
@@ -7033,10 +7056,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       toast.error('Error al enriquecer: ' + (err as Error).message);
                     } finally {
                       setEnrichingOutline(false);
+                      // V67: Unlock and restore tab if it changed unexpectedly
+                      isOutlineOperationInProgress.current = false;
+                      if (activeTab !== preservedTab) {
+                        setActiveTab(preservedTab);
+                      }
                     }
                   }}
                   onThreads={async () => {
                     if (!outlinePersistence.savedOutline?.id) return;
+                    // V67: Lock tab navigation during operation
+                    isOutlineOperationInProgress.current = true;
+                    const preservedTab = activeTab;
                     setEnrichingOutline(true);
                     try {
                       const { data, error } = await invokeAuthedFunction('outline-enrich', {
@@ -7057,6 +7088,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       toast.error('Error al generar threads: ' + (err as Error).message);
                     } finally {
                       setEnrichingOutline(false);
+                      // V67: Unlock and restore tab if it changed unexpectedly
+                      isOutlineOperationInProgress.current = false;
+                      if (activeTab !== preservedTab) {
+                        setActiveTab(preservedTab);
+                      }
                     }
                   }}
                   onShowrunner={handleUpgradeToShowrunner}
