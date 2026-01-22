@@ -133,8 +133,8 @@ export function AppLayout({ children }: AppLayoutProps) {
           </button>
         )}
         
-        {/* Desktop notifications */}
-        {!isMobile && !collapsed && <TaskNotificationCenter />}
+        {/* Desktop notifications - always visible */}
+        {!isMobile && <TaskNotificationCenter />}
       </div>
 
       {/* Developer Mode Badge */}
