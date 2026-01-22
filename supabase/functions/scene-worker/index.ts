@@ -286,6 +286,53 @@ serve(async (req) => {
       })
       .eq('id', sceneIntent.id);
 
+    // 9.5 VALIDATION: Call narrative-validate to check scene quality
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    let validationResult: any = null;
+    
+    try {
+      const validateResponse = await fetch(
+        `${supabaseUrl}/functions/v1/narrative-validate`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': req.headers.get('Authorization') || '',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            project_id: projectId,
+            scene_id: insertedScene.id
+          })
+        }
+      );
+
+      validationResult = await validateResponse.json();
+      
+      console.log('[scene-worker] Validation result:', {
+        scene_id: insertedScene.id,
+        valid: validationResult.data?.valid,
+        score: validationResult.data?.score,
+        strategy: validationResult.data?.repair_strategy
+      });
+
+      // Update scene meta with validation info
+      await auth.supabase
+        .from('scenes')
+        .update({
+          meta: {
+            ...(sceneData.meta || {}),
+            validation_score: validationResult.data?.score,
+            validation_status: validationResult.data?.valid ? 'valid' : 'needs_repair',
+            validation_issues: validationResult.data?.issues
+          }
+        })
+        .eq('id', insertedScene.id);
+
+    } catch (validationError) {
+      console.warn('[scene-worker] Validation failed (non-blocking):', validationError);
+      // Continue anyway - validation failure shouldn't block scene creation
+    }
+
     // 10. Update narrative_state
     if (narrativeState) {
       const newScenesGenerated = (narrativeState.scenes_generated || 0) + 1;
