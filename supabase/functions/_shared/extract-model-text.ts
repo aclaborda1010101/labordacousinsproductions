@@ -1,13 +1,14 @@
 // ============================================================================
-// V17: CANONICAL MODEL TEXT EXTRACTOR
+// V18: CANONICAL MODEL TEXT EXTRACTOR
 // ============================================================================
 // Handles all common response formats from AI models to extract the text content.
 // This prevents "Empty or non-string input" errors caused by unexpected response shapes.
+// V18: Added support for more OpenAI/GPT-5 response variants
 // ============================================================================
 
 export interface ExtractionResult {
   text: string | null;
-  strategy: 'toolArgs' | 'toolArgs.arguments' | 'output_text' | 'choices.content.string' | 'choices.content.blocks' | 'choices.content.tool_use' | 'alt.content' | 'none';
+  strategy: 'toolArgs' | 'toolArgs.arguments' | 'output_text' | 'choices.content.string' | 'choices.content.blocks' | 'choices.content.tool_use' | 'direct.content' | 'alt.content' | 'none';
   rawType: string;
   preview: string | null;
 }
@@ -50,7 +51,7 @@ export function extractModelText(resp: any): ExtractionResult {
     return { text: outText, strategy: 'output_text', rawType, preview: outText.slice(0, 300) };
   }
 
-  // 4) OpenAI choices content as string
+  // 4) OpenAI choices content as string (most common for json_object mode)
   const c1 = resp?.choices?.[0]?.message?.content;
   if (typeof c1 === 'string' && c1.trim()) {
     return { text: c1, strategy: 'choices.content.string', rawType, preview: c1.slice(0, 300) };
@@ -62,6 +63,12 @@ export function extractModelText(resp: any): ExtractionResult {
     const textBlock = c1.find((b: any) => b?.type === 'text' && typeof b?.text === 'string' && b.text.trim());
     if (textBlock) {
       return { text: textBlock.text, strategy: 'choices.content.blocks', rawType, preview: textBlock.text.slice(0, 300) };
+    }
+    
+    // Try output_text blocks (some gateways use this)
+    const outputBlock = c1.find((b: any) => b?.type === 'output_text' && typeof b?.text === 'string' && b.text.trim());
+    if (outputBlock) {
+      return { text: outputBlock.text, strategy: 'choices.content.blocks', rawType, preview: outputBlock.text.slice(0, 300) };
     }
     
     // Try tool_use blocks (Anthropic style)
@@ -78,7 +85,7 @@ export function extractModelText(resp: any): ExtractionResult {
   if (Array.isArray(resp?.content)) {
     const textBlock = resp.content.find((b: any) => b?.type === 'text' && typeof b?.text === 'string' && b.text.trim());
     if (textBlock) {
-      return { text: textBlock.text, strategy: 'choices.content.blocks', rawType, preview: textBlock.text.slice(0, 300) };
+      return { text: textBlock.text, strategy: 'direct.content', rawType, preview: textBlock.text.slice(0, 300) };
     }
     
     const toolBlock = resp.content.find((b: any) => b?.type === 'tool_use' && b?.input);
@@ -89,9 +96,14 @@ export function extractModelText(resp: any): ExtractionResult {
       }
     }
   }
+  
+  // 7) Direct string content (some simplified responses)
+  if (typeof resp?.content === 'string' && resp.content.trim()) {
+    return { text: resp.content, strategy: 'direct.content', rawType, preview: resp.content.slice(0, 300) };
+  }
 
-  // 7) Fallback: common alternative fields
-  const alt = resp?.content ?? resp?.message?.content ?? resp?.text ?? resp?.response?.text;
+  // 8) Fallback: common alternative fields
+  const alt = resp?.message?.content ?? resp?.text ?? resp?.response?.text ?? resp?.result;
   if (typeof alt === 'string' && alt.trim()) {
     return { text: alt, strategy: 'alt.content', rawType, preview: alt.slice(0, 300) };
   }

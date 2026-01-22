@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { extractModelText, logExtractionDiagnostic } from "../_shared/extract-model-text.ts";
+import { parseJsonRobust } from "../_shared/parse-json-robust.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,12 +9,13 @@ const corsHeaders = {
 };
 
 // ============================================================================
-// V2: Chunked upgrade with heartbeat (avoids 60s Edge timeout)
+// V3: Atomic JSON contract (IDs only, no prose) + robust parsing + concurrency guard
 // Each invocation does ONE stage, frontend loops until complete
 // ============================================================================
 
 const CHUNK_TIMEOUT_MS = 85000; // 85s budget per chunk (edge limit ~120s, leaving margin)
 const HEARTBEAT_INTERVAL_MS = 8000; // 8s keepalive (frequent to avoid zombie detection)
+const HEARTBEAT_STALE_THRESHOLD_MS = 60000; // 60s - if heartbeat older, allow new run
 
 interface UpgradeStage {
   id: string;
@@ -24,9 +26,10 @@ interface UpgradeStage {
   useDirectJson: boolean; // true = no tools, use response_format: json_object
 }
 
+// REDUCED TOKENS: Atomic JSON needs far fewer tokens
 const UPGRADE_STAGES: UpgradeStage[] = [
-  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 1000, useDirectJson: true },
-  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 1500, useDirectJson: true },
+  { id: 'season_arc', label: 'Arco de temporada', progressStart: 10, progressEnd: 40, maxTokens: 600, useDirectJson: true },
+  { id: 'character_arcs', label: 'Arcos de personajes', progressStart: 40, progressEnd: 70, maxTokens: 800, useDirectJson: true },
   { id: 'episode_enrich', label: 'Enriquecimiento de episodios', progressStart: 70, progressEnd: 100, maxTokens: 3500, useDirectJson: false }
 ];
 
@@ -45,65 +48,68 @@ Piensas como un arquitecto narrativo:
 // Stage-specific schemas (smaller = faster)
 // ============================================================================
 
-// ATOMIC SCHEMA: Keywords only, no long text (prevents JSON parse errors)
+// ============================================================================
+// V3 ATOMIC SCHEMA: IDs and codes ONLY - no prose, no narrative text
+// This prevents JSON parse errors from unterminated strings
+// ============================================================================
+
 const SEASON_ARC_SCHEMA = {
   type: "object",
   properties: {
-    season_arc: {
-      type: "object",
-      properties: {
-        protagonist_name: { type: "string" },
-        protagonist_start_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
-        protagonist_break_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
-        protagonist_end_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
-        midpoint_episode: { type: "number" },
-        midpoint_event_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
-        thematic_question_short: { type: "string" },
-        thematic_answer_short: { type: "string" }
-      },
-      required: ["protagonist_name", "protagonist_start_keywords", "protagonist_end_keywords", "thematic_question_short"]
-    },
-    mythology_rules: {
+    season_theme_code: { type: "string" }, // e.g. "POWER_DECAY", "REDEMPTION_IMPOSSIBLE"
+    season_promise_code: { type: "string" }, // e.g. "DESCENT_CONSEQUENCES", "RISE_FALL"
+    acts: {
       type: "array",
       items: {
         type: "object",
         properties: {
-          entity: { type: "string" },
-          nature_short: { type: "string" },
-          can_do: { type: "array", items: { type: "string" }, maxItems: 3 },
-          cannot_do: { type: "array", items: { type: "string" }, maxItems: 3 },
-          weakness_short: { type: "string" }
+          act: { type: "number" },
+          goal_id: { type: "string" }, // e.g. "ACT1_ESTABLISH_WORLD"
+          turning_point_ids: { type: "array", items: { type: "string" } } // e.g. ["TP1_INCITING", "TP2_BREAK"]
         },
-        required: ["entity", "can_do", "cannot_do"]
+        required: ["act", "goal_id"]
       }
-    }
+    },
+    protagonist_ref: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        start_state_id: { type: "string" }, // e.g. "WEARY_ISOLATED"
+        midpoint_state_id: { type: "string" }, // e.g. "CONFLICTED_HOPEFUL"
+        end_state_id: { type: "string" } // e.g. "TRANSFORMED_CONNECTED"
+      },
+      required: ["name", "start_state_id", "end_state_id"]
+    },
+    thematic_code: { type: "string" }, // e.g. "CAN_KILLER_REDEEM"
+    midpoint_episode: { type: "number" },
+    mythology_rule_ids: { type: "array", items: { type: "string" } } // e.g. ["MYTH_ANCESTRAL_SPIRITS"]
   },
-  required: ["season_arc"]
+  required: ["season_theme_code", "acts", "protagonist_ref", "thematic_code"]
 };
 
-// ATOMIC SCHEMA: Keywords only, no long text
+// V3 ATOMIC SCHEMA: IDs and codes ONLY
 const CHARACTER_ARCS_SCHEMA = {
   type: "object",
   properties: {
-    character_arcs: {
+    character_arc_refs: {
       type: "array",
       items: {
         type: "object",
         properties: {
           name: { type: "string" },
-          role: { type: "string" },
-          arc_type: { type: "string" },
-          arc_start_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
-          arc_catalyst_keywords: { type: "array", items: { type: "string" }, maxItems: 3 },
-          arc_end_keywords: { type: "array", items: { type: "string" }, maxItems: 4 },
-          key_relationship: { type: "string" },
-          internal_conflict_short: { type: "string" }
+          role_code: { type: "string" }, // "PROTAGONIST", "ANTAGONIST", "ALLY", "MENTOR"
+          arc_type_code: { type: "string" }, // "REDEMPTION", "FALL", "REVELATION", "GROWTH"
+          start_state_id: { type: "string" }, // e.g. "AMBITIOUS_ISOLATED"
+          catalyst_id: { type: "string" }, // e.g. "BETRAYAL_DISCOVERY"
+          end_state_id: { type: "string" }, // e.g. "HUMBLE_CONNECTED"
+          key_relationship_id: { type: "string" }, // e.g. "REL_PROTAGONIST_MENTOR"
+          conflict_id: { type: "string" } // e.g. "LOYALTY_VS_AMBITION"
         },
-        required: ["name", "role", "arc_start_keywords", "arc_end_keywords"]
+        required: ["name", "role_code", "arc_type_code", "start_state_id", "end_state_id"]
       }
     }
   },
-  required: ["character_arcs"]
+  required: ["character_arc_refs"]
 };
 
 const EPISODE_ENRICH_SCHEMA = {
@@ -141,81 +147,79 @@ function buildStagePrompt(stageId: string, outline: any, originalText: string, u
   
   switch (stageId) {
     case 'season_arc':
-      // ATOMIC JSON: Keywords only, prevents parse errors in long outputs
-      return `OUTLINE BASE:
+      // V3 ATOMIC: IDs and codes ONLY - zero prose
+      return `OUTLINE:
 ${outlineStr}
 
-GENERA ARCO DE TEMPORADA en JSON COMPACTO.
+OUTPUT: JSON con SOLO IDs/códigos. PROHIBIDO texto largo.
 
-REGLA CRÍTICA: Usa KEYWORDS cortas (2-4 palabras cada una), NO párrafos ni frases largas.
-
+FORMATO EXACTO:
 {
-  "season_arc": {
-    "protagonist_name": "nombre",
-    "protagonist_start_keywords": ["keyword1", "keyword2", "keyword3"],
-    "protagonist_break_keywords": ["keyword1", "keyword2"],
-    "protagonist_end_keywords": ["keyword1", "keyword2", "keyword3"],
-    "midpoint_episode": número,
-    "midpoint_event_keywords": ["keyword1", "keyword2"],
-    "thematic_question_short": "pregunta en máximo 8 palabras",
-    "thematic_answer_short": "respuesta en máximo 8 palabras"
+  "season_theme_code": "CODIGO_TEMA",
+  "season_promise_code": "CODIGO_PROMESA",
+  "acts": [
+    {"act": 1, "goal_id": "ACT1_GOAL_ID", "turning_point_ids": ["TP1", "TP2"]},
+    {"act": 2, "goal_id": "ACT2_GOAL_ID", "turning_point_ids": ["TP3"]},
+    {"act": 3, "goal_id": "ACT3_GOAL_ID", "turning_point_ids": ["TP4", "TP5"]}
+  ],
+  "protagonist_ref": {
+    "name": "Nombre",
+    "start_state_id": "ESTADO_INICIO",
+    "midpoint_state_id": "ESTADO_MEDIO",
+    "end_state_id": "ESTADO_FIN"
   },
-  "mythology_rules": [
-    {
-      "entity": "nombre",
-      "nature_short": "qué es en 4 palabras",
-      "can_do": ["acción1", "acción2"],
-      "cannot_do": ["limitación1", "limitación2"],
-      "weakness_short": "debilidad en 4 palabras"
-    }
-  ]
+  "thematic_code": "PREGUNTA_TEMATICA",
+  "midpoint_episode": 5,
+  "mythology_rule_ids": []
 }
 
-EJEMPLOS CORRECTOS:
-- protagonist_start_keywords: ["cansado", "desconfiado", "aislado"]
-- thematic_question_short: "¿Puede redimirse quien ha matado?"
-- midpoint_event_keywords: ["traición", "revelación", "huida"]
-- nature_short: "espíritu ancestral vengativo"
+CÓDIGOS VÁLIDOS (ejemplos):
+- season_theme_code: POWER_CORRUPTION, REDEMPTION_IMPOSSIBLE, FAMILY_DUTY, IDENTITY_LOSS
+- goal_id: ACT1_ESTABLISH, ACT2_ESCALATE, ACT3_RESOLVE
+- turning_point_ids: TP_INCITING, TP_BETRAYAL, TP_REVELATION, TP_CRISIS
+- start_state_id: WEARY_ISOLATED, AMBITIOUS_NAIVE, BROKEN_HOPELESS
+- thematic_code: CAN_MONSTER_LOVE, PRICE_OF_POWER, FAMILY_OR_SELF
 
-PROHIBIDO:
-- Frases de más de 5 palabras
-- Explicaciones o contexto
-- Texto fuera del JSON
-- Markdown o backticks
-
-Si es realista sin elementos fantásticos, mythology_rules = []`;
+REGLAS:
+- IDs en SCREAMING_SNAKE_CASE
+- Sin espacios ni caracteres especiales
+- mythology_rule_ids = [] si no hay elementos fantásticos
+- SOLO JSON, sin texto adicional`;
 
     case 'character_arcs':
-      // ATOMIC JSON: Keywords only
-      return `OUTLINE ACTUAL:
+      // V3 ATOMIC: IDs and codes ONLY
+      return `OUTLINE:
 ${outlineStr}
 
-GENERA ARCOS DE PERSONAJES en JSON COMPACTO.
+OUTPUT: JSON con SOLO IDs/códigos. PROHIBIDO texto.
 
-REGLA CRÍTICA: Usa KEYWORDS cortas (2-4 palabras), NO párrafos.
-
+FORMATO EXACTO:
 {
-  "character_arcs": [
+  "character_arc_refs": [
     {
-      "name": "nombre",
-      "role": "protagonista/antagonista/soporte",
-      "arc_type": "redención/caída/transformación/revelación",
-      "arc_start_keywords": ["keyword1", "keyword2"],
-      "arc_catalyst_keywords": ["keyword1", "keyword2"],
-      "arc_end_keywords": ["keyword1", "keyword2"],
-      "key_relationship": "nombre de relación",
-      "internal_conflict_short": "conflicto en 5-7 palabras"
+      "name": "Nombre",
+      "role_code": "PROTAGONIST",
+      "arc_type_code": "REDEMPTION",
+      "start_state_id": "ESTADO_INICIO",
+      "catalyst_id": "EVENTO_CATALIZADOR",
+      "end_state_id": "ESTADO_FIN",
+      "key_relationship_id": "REL_CON_QUIEN",
+      "conflict_id": "CONFLICTO_INTERNO"
     }
   ]
 }
 
-EJEMPLOS CORRECTOS:
-- arc_start_keywords: ["ambicioso", "manipulador", "solitario"]
-- arc_end_keywords: ["humilde", "conectado", "en paz"]
-- internal_conflict_short: "lealtad a familia vs ambición"
+CÓDIGOS VÁLIDOS:
+- role_code: PROTAGONIST, ANTAGONIST, ALLY, MENTOR, LOVE_INTEREST, RIVAL
+- arc_type_code: REDEMPTION, FALL, REVELATION, GROWTH, CORRUPTION, SACRIFICE
+- start_state_id: AMBITIOUS_NAIVE, BROKEN_CYNICAL, LOYAL_BLIND, POWERFUL_ARROGANT
+- catalyst_id: BETRAYAL, LOSS, DISCOVERY, CRISIS, TEMPTATION
+- conflict_id: DUTY_VS_DESIRE, LOYALTY_VS_TRUTH, POWER_VS_LOVE, SELF_VS_FAMILY
 
-PROHIBIDO frases largas o explicaciones.
-Incluye TODOS los personajes principales del outline.`;
+REGLAS:
+- IDs en SCREAMING_SNAKE_CASE
+- Incluye TODOS los personajes del outline
+- SOLO JSON`;
 
     case 'episode_enrich':
       // Modo tools - mantiene referencia a herramienta
@@ -446,19 +450,28 @@ async function callWithModel(
   logExtractionDiagnostic(extraction, { phase: 'outline-upgrade', model });
   
   if (extraction.text) {
-    try {
-      const parsed = JSON.parse(extraction.text);
-      
-      // Validate response structure based on stage
-      if (useDirectJson) {
-        validateDirectJsonResponse(toolName, parsed);
-      }
-      
-      return parsed;
-    } catch (e: any) {
-      console.error("Failed to parse/validate:", e.message, "text:", extraction.text?.slice(0, 200));
-      throw new Error(`PARSE_ERROR: ${e.message}`);
+    // V3: Use robust JSON parser instead of raw JSON.parse
+    const parseResult = parseJsonRobust(extraction.text, `outline-upgrade:${toolName}`);
+    
+    if (!parseResult.ok || !parseResult.json) {
+      console.error("Robust parse failed:", parseResult.error, "strategy:", parseResult.strategy);
+      console.error("Raw text preview:", extraction.text?.slice(0, 300));
+      throw new Error(`PARSE_ERROR: ${parseResult.error || 'Invalid JSON structure'}`);
     }
+    
+    // Log if we had to repair the JSON
+    if (parseResult.warnings?.length > 0) {
+      console.warn(`[outline-upgrade] JSON repaired with warnings:`, parseResult.warnings);
+    }
+    
+    const parsed = parseResult.json;
+    
+    // Validate response structure based on stage
+    if (useDirectJson) {
+      validateDirectJsonResponse(toolName, parsed);
+    }
+    
+    return parsed;
   }
 
   // If extractor failed, log full response for debugging
@@ -475,52 +488,52 @@ async function callWithModel(
  * Validates the structure of direct JSON responses (non-tool mode)
  * Throws VALIDATION_ERROR if structure is invalid, allowing retry with next model
  */
+/**
+ * V3: Validates atomic JSON structure (IDs/codes only, no prose)
+ */
 function validateDirectJsonResponse(toolName: string, parsed: any): void {
   if (toolName === 'deliver_season_arc') {
-    if (!parsed.season_arc || typeof parsed.season_arc !== 'object') {
-      throw new Error("VALIDATION_ERROR: Missing or invalid 'season_arc' object");
+    // V3: Validate new atomic structure
+    if (!parsed.season_theme_code || typeof parsed.season_theme_code !== 'string') {
+      throw new Error("VALIDATION_ERROR: season_theme_code is required");
     }
-    const arc = parsed.season_arc;
-    if (!arc.protagonist_name || typeof arc.protagonist_name !== 'string') {
-      throw new Error("VALIDATION_ERROR: season_arc.protagonist_name is required");
+    if (!parsed.protagonist_ref || typeof parsed.protagonist_ref !== 'object') {
+      throw new Error("VALIDATION_ERROR: protagonist_ref object is required");
     }
-    // Validate keyword arrays exist (new atomic structure)
-    if (!Array.isArray(arc.protagonist_start_keywords) || arc.protagonist_start_keywords.length === 0) {
-      throw new Error("VALIDATION_ERROR: protagonist_start_keywords must be non-empty array");
+    const prot = parsed.protagonist_ref;
+    if (!prot.name || !prot.start_state_id || !prot.end_state_id) {
+      throw new Error("VALIDATION_ERROR: protagonist_ref must have name, start_state_id, end_state_id");
     }
-    if (!Array.isArray(arc.protagonist_end_keywords) || arc.protagonist_end_keywords.length === 0) {
-      throw new Error("VALIDATION_ERROR: protagonist_end_keywords must be non-empty array");
+    if (!parsed.thematic_code) {
+      throw new Error("VALIDATION_ERROR: thematic_code is required");
     }
-    if (!arc.thematic_question_short) {
-      throw new Error("VALIDATION_ERROR: thematic_question_short is required");
+    if (!Array.isArray(parsed.acts) || parsed.acts.length === 0) {
+      throw new Error("VALIDATION_ERROR: acts array is required");
     }
-    // Ensure mythology_rules exists (even if empty)
-    if (!parsed.mythology_rules) {
-      parsed.mythology_rules = [];
+    // Ensure mythology_rule_ids exists
+    if (!parsed.mythology_rule_ids) {
+      parsed.mythology_rule_ids = [];
     }
-    console.log(`[outline-upgrade] season_arc validated OK: protagonist=${arc.protagonist_name}, keywords=${arc.protagonist_start_keywords.length}`);
+    console.log(`[outline-upgrade] season_arc V3 validated: theme=${parsed.season_theme_code}, protagonist=${prot.name}`);
   }
   
   if (toolName === 'deliver_character_arcs') {
-    if (!Array.isArray(parsed.character_arcs)) {
-      throw new Error("VALIDATION_ERROR: character_arcs must be an array");
+    // V3: Validate new atomic structure
+    if (!Array.isArray(parsed.character_arc_refs)) {
+      throw new Error("VALIDATION_ERROR: character_arc_refs must be an array");
     }
-    if (parsed.character_arcs.length === 0) {
-      throw new Error("VALIDATION_ERROR: character_arcs cannot be empty");
+    if (parsed.character_arc_refs.length === 0) {
+      throw new Error("VALIDATION_ERROR: character_arc_refs cannot be empty");
     }
-    for (const arc of parsed.character_arcs) {
-      if (!arc.name || !arc.role) {
-        throw new Error("VALIDATION_ERROR: Each character arc must have name and role");
+    for (const arc of parsed.character_arc_refs) {
+      if (!arc.name || !arc.role_code || !arc.arc_type_code) {
+        throw new Error(`VALIDATION_ERROR: Character arc missing name, role_code, or arc_type_code`);
       }
-      // Validate keyword arrays (new atomic structure)
-      if (!Array.isArray(arc.arc_start_keywords) || arc.arc_start_keywords.length === 0) {
-        throw new Error(`VALIDATION_ERROR: ${arc.name} missing arc_start_keywords`);
-      }
-      if (!Array.isArray(arc.arc_end_keywords) || arc.arc_end_keywords.length === 0) {
-        throw new Error(`VALIDATION_ERROR: ${arc.name} missing arc_end_keywords`);
+      if (!arc.start_state_id || !arc.end_state_id) {
+        throw new Error(`VALIDATION_ERROR: ${arc.name} missing start_state_id or end_state_id`);
       }
     }
-    console.log(`[outline-upgrade] character_arcs validated OK: ${parsed.character_arcs.length} characters`);
+    console.log(`[outline-upgrade] character_arcs V3 validated: ${parsed.character_arc_refs.length} characters`);
   }
 }
 
@@ -574,19 +587,42 @@ serve(async (req) => {
       );
     }
 
+    // 2b. V3: CONCURRENCY GUARD - Check if another process is actively running
+    const heartbeatAge = outline.heartbeat_at 
+      ? Date.now() - new Date(outline.heartbeat_at).getTime()
+      : Infinity;
+    
+    if (outline.status === 'upgrading' && heartbeatAge < HEARTBEAT_STALE_THRESHOLD_MS) {
+      console.log(`[outline-upgrade] Concurrent run detected, heartbeat age: ${heartbeatAge}ms`);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error_code: 'IN_PROGRESS',
+          error: `Upgrade already in progress (heartbeat ${Math.round(heartbeatAge/1000)}s ago)`,
+          retry_after_ms: HEARTBEAT_STALE_THRESHOLD_MS - heartbeatAge
+        }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // 3. Detect pending stage from _upgrade_parts
     const upgradeParts = outline.outline_json?._upgrade_parts || {};
     const pendingStage = UPGRADE_STAGES.find(s => !upgradeParts[s.id]?.done);
     
     if (!pendingStage) {
       // All stages done, mark as showrunner
-      await supabase.from("project_outlines").update({
+      const { error: updateErr } = await supabase.from("project_outlines").update({
         quality: "showrunner",
         status: "completed",
         stage: "done",
         progress: 100,
         updated_at: new Date().toISOString()
       }).eq("id", outline_id);
+      
+      if (updateErr) {
+        console.error("[outline-upgrade] Failed to mark complete:", updateErr);
+        throw new Error(`DB_ERROR: ${updateErr.message}`);
+      }
 
       return new Response(
         JSON.stringify({ 
@@ -600,15 +636,21 @@ serve(async (req) => {
 
     console.log(`[outline-upgrade] Starting stage: ${pendingStage.id} for outline ${outline_id}`);
 
-    // 4. Update status to upgrading
-    await supabase.from("project_outlines").update({
+    // 4. Update status to upgrading (using correct column names)
+    const { error: statusErr } = await supabase.from("project_outlines").update({
       status: "upgrading",
       substage: pendingStage.id,
       progress: pendingStage.progressStart,
       heartbeat_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      error_message: null
+      error_detail: null,
+      error_code: null
     }).eq("id", outline_id);
+    
+    if (statusErr) {
+      console.error("[outline-upgrade] Failed to update status:", statusErr);
+      throw new Error(`DB_ERROR: ${statusErr.message}`);
+    }
 
     // 5. Start heartbeat
     const heartbeat = startHeartbeat(supabase, outline_id, pendingStage.id, pendingStage.progressStart);
@@ -669,8 +711,8 @@ serve(async (req) => {
       const nextStage = UPGRADE_STAGES.find(s => !mergedOutline._upgrade_parts[s.id]?.done);
       const isComplete = !nextStage;
 
-      // 10. Save progress
-      await supabase.from("project_outlines").update({
+      // 10. Save progress (V3: use correct column names, check for errors)
+      const { error: saveErr } = await supabase.from("project_outlines").update({
         outline_json: mergedOutline,
         status: isComplete ? "completed" : "upgrading",
         quality: isComplete ? "showrunner" : outline.quality,
@@ -678,8 +720,16 @@ serve(async (req) => {
         substage: isComplete ? "done" : nextStage?.id,
         progress: isComplete ? 100 : pendingStage.progressEnd,
         updated_at: new Date().toISOString(),
-        error_message: null
+        error_detail: null,
+        error_code: null
       }).eq("id", outline_id);
+      
+      if (saveErr) {
+        console.error("[outline-upgrade] CRITICAL: Failed to persist stage result:", saveErr);
+        throw new Error(`DB_PERSIST_ERROR: ${saveErr.message}`);
+      }
+      
+      console.log(`[outline-upgrade] Stage ${pendingStage.id} persisted successfully, next: ${nextStage?.id || 'COMPLETE'}`);
 
       return new Response(
         JSON.stringify({
@@ -696,25 +746,27 @@ serve(async (req) => {
       heartbeat.stop();
       console.error(`[outline-upgrade] Stage ${pendingStage.id} failed:`, stageError);
 
-      // Save error but don't revert prior progress
-      await supabase.from("project_outlines").update({
-        status: "error",
-        error_message: stageError.message || "Stage failed",
-        updated_at: new Date().toISOString()
-      }).eq("id", outline_id);
-
-      // Determine error type for frontend
-      const errMsg = stageError.message || "";
+      // Save error but don't revert prior progress (V3: use correct column names)
+      const errMsg = stageError.message || "Stage failed";
       let errorCode = "STAGE_FAILED";
       if (errMsg.includes("RATE_LIMIT")) errorCode = "RATE_LIMIT";
       if (errMsg.includes("CREDITS_EXHAUSTED")) errorCode = "CREDITS_EXHAUSTED";
       if (errMsg.includes("PARSE_ERROR")) errorCode = "PARSE_ERROR";
+      if (errMsg.includes("VALIDATION_ERROR")) errorCode = "VALIDATION_ERROR";
+      if (errMsg.includes("DB_")) errorCode = "DB_ERROR";
       if (stageError.name === "AbortError") errorCode = "TIMEOUT";
+      
+      await supabase.from("project_outlines").update({
+        status: "error",
+        error_detail: errMsg,
+        error_code: errorCode,
+        updated_at: new Date().toISOString()
+      }).eq("id", outline_id);
 
       return new Response(
         JSON.stringify({ 
           success: false,
-          error: stageError.message,
+          error: errMsg,
           error_code: errorCode,
           stage_failed: pendingStage.id
         }),
