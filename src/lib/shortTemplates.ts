@@ -263,9 +263,8 @@ async function logTemplateEvent(
   eventType: 'template_shown' | 'template_applied' | 'template_step_advanced',
   payload: { templateId?: string; fromIndex?: number; toIndex?: number }
 ): Promise<void> {
-  try {
-    await supabase.from('editorial_events').insert([{
-      project_id: projectId,
+  // editorial_events table removed - log to console only
+  console.log('[ShortTemplates] Event:', eventType, { projectId });
       event_type: eventType,
       asset_type: 'template',
       payload: payload as Json,

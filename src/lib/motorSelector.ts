@@ -321,9 +321,8 @@ export async function logRecommendationEvent(
   selectedEngine?: string,
   selectedPreset?: string
 ): Promise<void> {
-  try {
-    await supabase.from('editorial_events').insert({
-      project_id: projectId,
+  // editorial_events table removed - log to console only
+  console.log('[MotorSelector] Event:', eventType, { projectId, assetType });
       asset_type: assetType,
       event_type: eventType,
       payload: {

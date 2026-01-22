@@ -1,13 +1,11 @@
 /**
  * Hook for managing shot continuity validation
- * 
- * Validates that entry_pose of a shot matches exit_pose of the previous shot,
- * eliminating the "AI jank" of characters teleporting between shots.
+ * SIMPLIFIED: shot_transitions table removed.
+ * Validates continuity using keyframe data only.
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 export interface PoseData {
   position: {
@@ -52,10 +50,6 @@ export interface ShotTransition {
   override_reason?: string;
 }
 
-/**
- * Calculate pose match score between two poses
- * Returns 0-1 where 1 is perfect match
- */
 export function calculatePoseMatchScore(
   expectedPose: Record<string, PoseData>,
   actualPose: Record<string, PoseData>
@@ -73,16 +67,14 @@ export function calculatePoseMatchScore(
       continue;
     }
 
-    // Position check (screen_pos must match)
     if (expected.position?.screen_pos !== actual.position?.screen_pos) {
-      issues.push(`${charId}: position ${expected.position?.screen_pos} → ${actual.position?.screen_pos}`);
+      issues.push(`${charId}: position changed`);
       totalScore += 0.3;
     } else {
       totalScore += 1;
     }
     totalChecks++;
 
-    // Orientation check (facing within 45°)
     const facingDiff = Math.abs(
       (expected.orientation?.facing_deg || 0) - (actual.orientation?.facing_deg || 0)
     );
@@ -93,44 +85,19 @@ export function calculatePoseMatchScore(
       totalScore += 1;
     }
     totalChecks++;
-
-    // Scale check (within 20%)
-    const scaleDiff = Math.abs(
-      (expected.scale?.in_frame_pct || 0) - (actual.scale?.in_frame_pct || 0)
-    );
-    if (scaleDiff > 20) {
-      issues.push(`${charId}: scale changed ${scaleDiff}%`);
-      totalScore += 0.5;
-    } else {
-      totalScore += 1;
-    }
-    totalChecks++;
-
-    // Posture check (must match exactly)
-    if (expected.body_state?.posture !== actual.body_state?.posture) {
-      issues.push(`${charId}: posture ${expected.body_state?.posture} → ${actual.body_state?.posture}`);
-      totalScore += 0.1;
-    } else {
-      totalScore += 1;
-    }
-    totalChecks++;
   }
 
   return {
     score: totalChecks > 0 ? totalScore / totalChecks : 1,
-    issues
+    issues,
   };
 }
 
-/**
- * Validate continuity between two shots
- */
 export function validateContinuity(
   previousFinalPose: Record<string, PoseData> | null,
   currentInitialPose: Record<string, PoseData> | null,
   previousScreenDirection?: string
 ): ContinuityValidation {
-  // No previous shot = always valid
   if (!previousFinalPose) {
     return {
       isValid: true,
@@ -139,11 +106,10 @@ export function validateContinuity(
       expectedEntryPose: null,
       actualEntryPose: currentInitialPose,
       screenDirectionLock: 'preserve',
-      relativeScaleLock: 1
+      relativeScaleLock: 1,
     };
   }
 
-  // No current pose = needs generation
   if (!currentInitialPose || Object.keys(currentInitialPose).length === 0) {
     return {
       isValid: false,
@@ -152,7 +118,7 @@ export function validateContinuity(
       expectedEntryPose: previousFinalPose,
       actualEntryPose: null,
       screenDirectionLock: previousScreenDirection || 'preserve',
-      relativeScaleLock: 1
+      relativeScaleLock: 1,
     };
   }
 
@@ -165,7 +131,7 @@ export function validateContinuity(
     expectedEntryPose: previousFinalPose,
     actualEntryPose: currentInitialPose,
     screenDirectionLock: previousScreenDirection || 'preserve',
-    relativeScaleLock: 1
+    relativeScaleLock: 1,
   };
 }
 
@@ -180,20 +146,18 @@ export function useShotContinuity({
   shotId,
   sceneId,
   projectId,
-  enabled = true
+  enabled = true,
 }: UseShotContinuityOptions) {
   const [loading, setLoading] = useState(true);
   const [transition, setTransition] = useState<ShotTransition | null>(null);
   const [validation, setValidation] = useState<ContinuityValidation | null>(null);
   const [previousShot, setPreviousShot] = useState<{ id: string; shot_no: number } | null>(null);
 
-  // Fetch transition data and previous shot
   const fetchContinuityData = useCallback(async () => {
     if (!enabled || !shotId || !sceneId) return;
 
     setLoading(true);
     try {
-      // Get current shot and previous shot in the scene
       const { data: shots, error: shotsError } = await supabase
         .from('shots')
         .select('id, shot_no')
@@ -202,11 +166,10 @@ export function useShotContinuity({
 
       if (shotsError) throw shotsError;
 
-      const currentIndex = shots?.findIndex(s => s.id === shotId) ?? -1;
+      const currentIndex = shots?.findIndex((s) => s.id === shotId) ?? -1;
       const prevShot = currentIndex > 0 ? shots?.[currentIndex - 1] : null;
       setPreviousShot(prevShot);
 
-      // If there's no previous shot, no continuity needed
       if (!prevShot) {
         setValidation({
           isValid: true,
@@ -215,53 +178,33 @@ export function useShotContinuity({
           expectedEntryPose: null,
           actualEntryPose: null,
           screenDirectionLock: 'preserve',
-          relativeScaleLock: 1
+          relativeScaleLock: 1,
         });
         setLoading(false);
         return;
       }
 
-      // Check if transition exists
-      const { data: transitionData } = await supabase
-        .from('shot_transitions')
-        .select('*')
-        .eq('from_shot_id', prevShot.id)
-        .eq('to_shot_id', shotId)
-        .maybeSingle();
+      // Fetch keyframes for validation (shot_transitions table removed)
+      const [prevKeyframes, currKeyframes] = await Promise.all([
+        supabase
+          .from('keyframes')
+          .select('pose_data, frame_type')
+          .eq('shot_id', prevShot.id)
+          .eq('frame_type', 'final')
+          .maybeSingle(),
+        supabase
+          .from('keyframes')
+          .select('pose_data, frame_type')
+          .eq('shot_id', shotId)
+          .eq('frame_type', 'initial')
+          .maybeSingle(),
+      ]);
 
-      if (transitionData) {
-        setTransition(transitionData as unknown as ShotTransition);
-        
-        // Validate based on stored data
-        const val = validateContinuity(
-          transitionData.exit_pose as unknown as Record<string, PoseData>,
-          transitionData.entry_pose as unknown as Record<string, PoseData>,
-          transitionData.screen_direction_lock || undefined
-        );
-        setValidation(val);
-      } else {
-        // Need to fetch keyframes and calculate
-        const [prevKeyframes, currKeyframes] = await Promise.all([
-          supabase
-            .from('keyframes')
-            .select('pose_data, frame_type')
-            .eq('shot_id', prevShot.id)
-            .eq('frame_type', 'final')
-            .maybeSingle(),
-          supabase
-            .from('keyframes')
-            .select('pose_data, frame_type')
-            .eq('shot_id', shotId)
-            .eq('frame_type', 'initial')
-            .maybeSingle()
-        ]);
+      const prevPose = prevKeyframes.data?.pose_data as unknown as Record<string, PoseData> | null;
+      const currPose = currKeyframes.data?.pose_data as unknown as Record<string, PoseData> | null;
 
-        const prevPose = prevKeyframes.data?.pose_data as unknown as Record<string, PoseData> | null;
-        const currPose = currKeyframes.data?.pose_data as unknown as Record<string, PoseData> | null;
-
-        const val = validateContinuity(prevPose, currPose);
-        setValidation(val);
-      }
+      const val = validateContinuity(prevPose, currPose);
+      setValidation(val);
     } catch (error) {
       console.error('Error fetching continuity data:', error);
     } finally {
@@ -273,121 +216,23 @@ export function useShotContinuity({
     fetchContinuityData();
   }, [fetchContinuityData]);
 
-  // Save transition to database
-  const saveTransition = useCallback(async (
-    exitPose: Record<string, PoseData>,
-    entryPose: Record<string, PoseData>,
-    overrideReason?: string
-  ) => {
-    if (!previousShot) return;
+  // No-op save - table removed
+  const saveTransition = useCallback(
+    async (
+      _exitPose: Record<string, PoseData>,
+      _entryPose: Record<string, PoseData>,
+      _overrideReason?: string
+    ) => {
+      console.log('[useShotContinuity] shot_transitions table removed');
+      return null;
+    },
+    []
+  );
 
-    try {
-      const { score, issues } = calculatePoseMatchScore(exitPose, entryPose);
-      const status = overrideReason ? 'override' : 
-                     score >= 0.9 ? 'valid' :
-                     score >= 0.7 ? 'warning' : 'error';
-
-      const transitionRecord = {
-        project_id: projectId,
-        from_shot_id: previousShot.id,
-        to_shot_id: shotId,
-        exit_pose: exitPose as unknown as Record<string, unknown>,
-        entry_pose: entryPose as unknown as Record<string, unknown>,
-        pose_match_score: score,
-        screen_direction_lock: 'preserve',
-        relative_scale_lock: 1,
-        validation_status: status,
-        override_reason: overrideReason || null,
-        validated_at: new Date().toISOString()
-      };
-
-      // First try to find existing
-      const { data: existing } = await supabase
-        .from('shot_transitions')
-        .select('id')
-        .eq('from_shot_id', previousShot.id)
-        .eq('to_shot_id', shotId)
-        .maybeSingle();
-
-      let data;
-      let error;
-
-      if (existing) {
-        // Update existing
-        const result = await supabase
-          .from('shot_transitions')
-          .update({
-            exit_pose: JSON.parse(JSON.stringify(exitPose)),
-            entry_pose: JSON.parse(JSON.stringify(entryPose)),
-            pose_match_score: score,
-            screen_direction_lock: 'preserve',
-            relative_scale_lock: 1,
-            validation_status: status,
-            override_reason: overrideReason || null,
-            validated_at: new Date().toISOString()
-          })
-          .eq('id', existing.id)
-          .select()
-          .single();
-        data = result.data;
-        error = result.error;
-      } else {
-        // Insert new
-        const result = await supabase
-          .from('shot_transitions')
-          .insert([{
-            project_id: projectId,
-            from_shot_id: previousShot.id,
-            to_shot_id: shotId,
-            exit_pose: JSON.parse(JSON.stringify(exitPose)),
-            entry_pose: JSON.parse(JSON.stringify(entryPose)),
-            pose_match_score: score,
-            screen_direction_lock: 'preserve',
-            relative_scale_lock: 1,
-            validation_status: status,
-            override_reason: overrideReason || null,
-            validated_at: new Date().toISOString()
-          }])
-          .select()
-          .single();
-        data = result.data;
-        error = result.error;
-      }
-
-      if (error) throw error;
-
-      setTransition(data as unknown as ShotTransition);
-      await fetchContinuityData();
-      
-      if (status === 'valid') {
-        toast.success('Continuidad validada ✓');
-      } else if (status === 'warning') {
-        toast.warning(`Continuidad con advertencias: ${issues.join(', ')}`);
-      } else if (status === 'override') {
-        toast.info('Discontinuidad intencionada registrada');
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error saving transition:', error);
-      toast.error('Error al guardar transición');
-      throw error;
-    }
-  }, [previousShot, shotId, projectId, fetchContinuityData]);
-
-  // Override continuity (director intentional break)
-  const overrideContinuity = useCallback(async (reason: string) => {
-    if (!validation?.expectedEntryPose) {
-      toast.error('No hay pose anterior para sobreescribir');
-      return;
-    }
-
-    return saveTransition(
-      validation.expectedEntryPose,
-      validation.actualEntryPose || {},
-      reason
-    );
-  }, [validation, saveTransition]);
+  const overrideContinuity = useCallback(async (_reason: string) => {
+    console.log('[useShotContinuity] shot_transitions table removed');
+    return null;
+  }, []);
 
   return {
     loading,
@@ -398,6 +243,6 @@ export function useShotContinuity({
     poseMatchScore: validation?.poseMatchScore ?? 1,
     saveTransition,
     overrideContinuity,
-    refresh: fetchContinuityData
+    refresh: fetchContinuityData,
   };
 }

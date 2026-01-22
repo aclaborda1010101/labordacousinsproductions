@@ -246,9 +246,8 @@ export async function logAutopilotEvent(
   chosenEngine?: string,
   chosenPreset?: string
 ): Promise<void> {
-  try {
-    await supabase.from('editorial_events').insert([{
-      project_id: projectId,
+  // editorial_events table removed - log to console only
+  console.log('[Autopilot] Event:', eventType, { projectId, assetType, decision: decision.reason });
       asset_type: assetType,
       event_type: eventType,
       payload: {
