@@ -3837,13 +3837,48 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 const errorMsg = error?.message || '';
                 const errorCode = errorObj?.code || '';
                 
-                // V3.0: Enhanced density gate detection (includes DENSITY_INSUFFICIENT)
-                const isDensityError = 
-                  errorObj?.status === 422 || 
-                  errorMsg.includes('GATE_FAILED') || 
+                // Gate detection
+                // IMPORTANT: not every 422 is a density gate (e.g. BATCH_DISCONTINUITY, BIBLE_EMPTY, FORMAT_GATE_FAILED)
+                const isDensityError =
+                  errorMsg.includes('GATE_FAILED') ||
                   errorMsg.includes('DENSITY_INSUFFICIENT') ||
                   errorCode === 'DENSITY_INSUFFICIENT' ||
                   errorCode === 'DENSITY_GATE_FAILED';
+
+                const isBatchDiscontinuity =
+                  errorCode === 'BATCH_DISCONTINUITY' ||
+                  errorObj?.error === 'BATCH_DISCONTINUITY' ||
+                  errorMsg.includes('BATCH_DISCONTINUITY');
+
+                if (isBatchDiscontinuity) {
+                  // Hard stop: continuing to later batches only spams errors and guarantees 0 scenes.
+                  setPipelineRunning(false);
+                  setGeneratingOutline(false);
+                  clearPipelineState();
+
+                  if (taskId) {
+                    failTask(taskId, 'Generación desincronizada (BATCH_DISCONTINUITY)');
+                    setScriptTaskId(null);
+                  }
+
+                  toast.error('Generación desincronizada', {
+                    description: 'Faltan escenas de batches anteriores. Reinicia la generación desde el inicio.',
+                    action: {
+                      label: 'Reiniciar',
+                      onClick: () => {
+                        try {
+                          clearPipelineState();
+                        } finally {
+                          window.location.reload();
+                        }
+                      },
+                    },
+                    duration: 20000,
+                  });
+
+                  // Throw to exit all loops
+                  throw new Error(`BATCH_DISCONTINUITY: ${errorMsg}`);
+                }
                 
                 if (isDensityError) {
                   // V15: Extract script_id from error response for recovery
