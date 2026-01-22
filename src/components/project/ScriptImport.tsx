@@ -2757,6 +2757,26 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         }
         
         if (!data?.success) {
+          // V71: Handle IN_PROGRESS as a status, not an error
+          if (data?.error_code === 'IN_PROGRESS') {
+            console.log('[ScriptImport] Upgrade in progress, waiting...', {
+              retry_after_ms: data?.retry_after_ms,
+              heartbeat_age_ms: data?.heartbeat_age_ms
+            });
+            
+            // Show informative toast (not error)
+            toast.info('Mejora en progreso', {
+              description: 'Tu outline se está mejorando. Continúa automáticamente.',
+              duration: 5000,
+            });
+            
+            // Refresh to show current status
+            await outlinePersistence.refreshOutline();
+            
+            // Exit the loop gracefully - don't retry, let existing process complete
+            return; // Clean exit - process is running elsewhere
+          }
+          
           lastError = data?.error || 'Error desconocido';
           break;
         }
@@ -2795,8 +2815,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           duration: 8000,
         });
       } else if (lastError) {
-        // Handle specific error types
-        if (lastError.includes('RATE_LIMIT') || lastError.includes('429')) {
+        // V71: IN_PROGRESS is not an error - already handled above
+        if (lastError.includes('IN_PROGRESS') || lastError.includes('already in progress')) {
+          console.log('[ScriptImport] IN_PROGRESS handled gracefully');
+        } else if (lastError.includes('RATE_LIMIT') || lastError.includes('429')) {
           toast.error('Límite de solicitudes alcanzado', {
             description: 'Espera unos segundos e inténtalo de nuevo.',
           });
