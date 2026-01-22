@@ -30,8 +30,7 @@ import {
   X,
   Settings,
   Loader2,
-  RefreshCw,
-  Zap
+  RefreshCw
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -110,16 +109,18 @@ export function AppLayout({ children }: AppLayoutProps) {
         "h-16 flex items-center border-b border-sidebar-border",
         collapsed && !isMobile ? "px-3 justify-center" : "px-4 lg:px-5"
       )}>
-        <Link to="/dashboard" className="flex items-center gap-3 group flex-1" onClick={() => isMobile && setMobileOpen(false)}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow flex-shrink-0">
-            <Zap className="w-5 h-5 text-primary-foreground" />
+        <Link to="/dashboard" className="flex items-center gap-2 group flex-1" onClick={() => isMobile && setMobileOpen(false)}>
+          {/* Text-based logo matching MANIAS-5.png branding */}
+          <div className="flex items-baseline">
+            <span className="font-black text-foreground text-lg tracking-tight">Man</span>
+            <span className="font-black text-primary text-lg tracking-tight">IAS</span>
+            {(!collapsed || isMobile) && (
+              <>
+                <span className="font-black text-foreground text-lg tracking-tight ml-1">Lab</span>
+                <span className="text-primary text-lg">.</span>
+              </>
+            )}
           </div>
-          {(!collapsed || isMobile) && (
-            <div className="flex flex-col">
-              <span className="font-bold text-foreground tracking-tight text-base leading-none">ManIAS</span>
-              <span className="text-[10px] text-primary font-medium tracking-widest">LAB.</span>
-            </div>
-          )}
         </Link>
         
         {/* Mobile close button */}
@@ -391,12 +392,12 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Mobile Header - z-60 to stay above overlays */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-sidebar/95 backdrop-blur-lg border-b border-sidebar-border z-[60] flex items-center px-4 gap-3">
         <Link to="/dashboard" className="flex items-center gap-2 flex-1">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[hsl(80,100%,40%)] flex items-center justify-center shadow-glow">
-            <Zap className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-foreground text-sm leading-none">ManIAS</span>
-            <span className="text-[8px] text-primary font-medium tracking-widest">LAB.</span>
+          {/* Text-based logo matching MANIAS-5.png branding */}
+          <div className="flex items-baseline">
+            <span className="font-black text-foreground text-sm tracking-tight">Man</span>
+            <span className="font-black text-primary text-sm tracking-tight">IAS</span>
+            <span className="font-black text-foreground text-sm tracking-tight ml-1">Lab</span>
+            <span className="text-primary text-sm">.</span>
           </div>
         </Link>
         <TaskNotificationCenter />
