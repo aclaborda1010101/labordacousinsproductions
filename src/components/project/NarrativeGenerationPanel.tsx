@@ -59,6 +59,7 @@ export function NarrativeGenerationPanel({
     progressPercentage,
     isGenerating,
     startGeneration,
+    continueGeneration,
     cancelGeneration,
     resetNarrativeState,
   } = useNarrativeGeneration({
@@ -247,10 +248,18 @@ export function NarrativeGenerationPanel({
 
         {/* Actions */}
         <div className="flex gap-2">
-          {!isGenerating && progress.phase !== 'completed' && (
+          {!isGenerating && progress.phase === 'idle' && (
             <Button onClick={handleStart} className="flex-1">
               <Sparkles className="h-4 w-4 mr-2" />
               Iniciar Generación
+            </Button>
+          )}
+
+          {/* Continue button for pending scenes */}
+          {!isGenerating && progress.phase !== 'idle' && progress.phase !== 'completed' && (
+            <Button onClick={continueGeneration} className="flex-1">
+              <Play className="h-4 w-4 mr-2" />
+              Continuar ({progress.totalScenes - progress.completedScenes} pendientes)
             </Button>
           )}
 

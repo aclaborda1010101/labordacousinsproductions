@@ -415,7 +415,7 @@ export function useNarrativeGeneration({
         
         const { data: pendingIntents } = await supabase
           .from('scene_intent')
-          .select('id, scene_number')
+          .select('id, scene_number, episode_number')
           .eq('project_id', projectId)
           .eq('status', 'pending')
           .order('scene_number', { ascending: true });
@@ -429,19 +429,64 @@ export function useNarrativeGeneration({
               break;
             }
 
+            // Update current scene in progress
+            setProgress(prev => ({
+              ...prev,
+              currentScene: intent.scene_number,
+              currentEpisode: intent.episode_number,
+            }));
+
             try {
+              console.log(`[NarrativeGen] Processing scene ${intent.scene_number}...`);
+              
               const { error: workerError } = await invokeAuthedFunction('scene-worker', {
                 sceneIntentId: intent.id,
                 projectId,
+                sceneNumber: intent.scene_number,
+                episodeNumber: intent.episode_number,
               });
 
               if (workerError) {
                 console.error('[NarrativeGen] scene-worker fallback error:', workerError);
+                // Continue to next scene even if one fails
               }
+              
+              // Wait for the scene to be written (poll for status change)
+              let attempts = 0;
+              const maxAttempts = 60; // 60 seconds max per scene
+              while (attempts < maxAttempts) {
+                const { data: updatedIntent } = await supabase
+                  .from('scene_intent')
+                  .select('status')
+                  .eq('id', intent.id)
+                  .single();
+                
+                if (updatedIntent && ['written', 'validated', 'failed'].includes(updatedIntent.status)) {
+                  console.log(`[NarrativeGen] Scene ${intent.scene_number} completed with status: ${updatedIntent.status}`);
+                  
+                  // Update completed count
+                  if (updatedIntent.status === 'written' || updatedIntent.status === 'validated') {
+                    setProgress(prev => ({
+                      ...prev,
+                      completedScenes: prev.completedScenes + 1,
+                    }));
+                  }
+                  break;
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                attempts++;
+              }
+              
+              if (attempts >= maxAttempts) {
+                console.warn(`[NarrativeGen] Scene ${intent.scene_number} timed out`);
+              }
+              
             } catch (err) {
               console.error('[NarrativeGen] Failed to invoke scene-worker (fallback):', err);
             }
             
+            // Small delay before next scene
             await new Promise(resolve => setTimeout(resolve, 500));
           }
         }
@@ -490,6 +535,127 @@ export function useNarrativeGeneration({
     setProgress(prev => ({ ...prev, phase: 'idle' }));
     toast.info('Generación cancelada');
   }, []);
+
+  // ============================================================================
+  // Continue Generation (Resume pending scenes)
+  // ============================================================================
+  
+  const continueGeneration = useCallback(async () => {
+    if (isGeneratingRef.current) {
+      toast.warning('Ya hay una generación en progreso');
+      return;
+    }
+
+    // Find pending scene_intents
+    const { data: pendingIntents } = await supabase
+      .from('scene_intent')
+      .select('id, scene_number, episode_number, status')
+      .eq('project_id', projectId)
+      .in('status', ['pending', 'planning', 'planned'])
+      .order('scene_number', { ascending: true });
+    
+    if (!pendingIntents || pendingIntents.length === 0) {
+      toast.info('No hay escenas pendientes');
+      return;
+    }
+
+    isGeneratingRef.current = true;
+    setIsGenerating(true);
+    setProgress(prev => ({ ...prev, phase: 'generating', error: null }));
+    abortControllerRef.current = new AbortController();
+
+    toast.info(`Continuando generación: ${pendingIntents.length} escenas pendientes...`);
+
+    try {
+      for (const intent of pendingIntents) {
+        if (abortControllerRef.current?.signal.aborted) {
+          console.log('[NarrativeGen] Aborted by user');
+          break;
+        }
+
+        setProgress(prev => ({
+          ...prev,
+          currentScene: intent.scene_number,
+          currentEpisode: intent.episode_number,
+        }));
+
+        try {
+          console.log(`[NarrativeGen] Continuing scene ${intent.scene_number}...`);
+          
+          const { error: workerError } = await invokeAuthedFunction('scene-worker', {
+            sceneIntentId: intent.id,
+            projectId,
+            sceneNumber: intent.scene_number,
+            episodeNumber: intent.episode_number,
+          });
+
+          if (workerError) {
+            console.error('[NarrativeGen] scene-worker error:', workerError);
+          }
+          
+          // Wait for completion
+          let attempts = 0;
+          const maxAttempts = 60;
+          while (attempts < maxAttempts) {
+            const { data: updatedIntent } = await supabase
+              .from('scene_intent')
+              .select('status')
+              .eq('id', intent.id)
+              .single();
+            
+            if (updatedIntent && ['written', 'validated', 'failed'].includes(updatedIntent.status)) {
+              console.log(`[NarrativeGen] Scene ${intent.scene_number} completed: ${updatedIntent.status}`);
+              
+              if (updatedIntent.status === 'written' || updatedIntent.status === 'validated') {
+                setProgress(prev => ({
+                  ...prev,
+                  completedScenes: prev.completedScenes + 1,
+                }));
+              }
+              break;
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            attempts++;
+          }
+          
+        } catch (err) {
+          console.error('[NarrativeGen] Failed to process scene:', err);
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      // Check final state
+      await loadInitialState();
+      
+      const { data: finalIntents } = await supabase
+        .from('scene_intent')
+        .select('status')
+        .eq('project_id', projectId);
+      
+      const allCompleted = finalIntents?.every(
+        i => i.status === 'written' || i.status === 'validated'
+      );
+
+      if (allCompleted) {
+        setProgress(prev => ({ ...prev, phase: 'completed' }));
+        toast.success('¡Generación completada!');
+        onComplete?.();
+      }
+
+    } catch (err: any) {
+      console.error('[NarrativeGen] Continue generation error:', err);
+      const errorMsg = err.message || 'Error desconocido';
+      setProgress(prev => ({ ...prev, phase: 'failed', error: errorMsg }));
+      toast.error('Error al continuar generación', { description: errorMsg });
+      onError?.(errorMsg);
+    } finally {
+      isGeneratingRef.current = false;
+      setIsGenerating(false);
+    }
+  }, [projectId, loadInitialState, onComplete, onError]);
+
 
   // ============================================================================
   // Reset State
@@ -569,6 +735,7 @@ export function useNarrativeGeneration({
     
     // Actions
     startGeneration,
+    continueGeneration,
     cancelGeneration,
     resetNarrativeState,
     refreshState: loadInitialState,
