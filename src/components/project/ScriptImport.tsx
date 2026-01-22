@@ -4687,22 +4687,24 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
   // Delete current script
   const deleteCurrentScript = async () => {
-    if (!currentScriptId) {
-      toast.error('No hay guion para eliminar');
-      return;
-    }
-
     const confirm = window.confirm(
-      '¿Estás seguro de que deseas eliminar este guion? Esta acción no se puede deshacer.'
+      '¿Estás seguro de que deseas eliminar TODOS los guiones de este proyecto? Esta acción no se puede deshacer.'
     );
     if (!confirm) return;
 
     setDeletingScript(true);
     try {
-      const { error } = await supabase
+      // First delete all scenes associated with the project
+      await supabase
+        .from('scenes')
+        .delete()
+        .eq('project_id', projectId);
+
+      // Then delete ALL scripts for this project (including zombies)
+      const { error, count } = await supabase
         .from('scripts')
         .delete()
-        .eq('id', currentScriptId);
+        .eq('project_id', projectId);
 
       if (error) throw error;
 
@@ -4715,10 +4717,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
       setOutlineApproved(false);
       setActiveTab('generate');
       
-      // Reload history
+      // Reload history (will be empty now)
       await loadScriptHistory();
       
-      toast.success('Guion eliminado correctamente');
+      toast.success(`Todos los guiones eliminados correctamente`);
     } catch (err: any) {
       console.error('Error deleting script:', err);
       toast.error('Error al eliminar guion');
