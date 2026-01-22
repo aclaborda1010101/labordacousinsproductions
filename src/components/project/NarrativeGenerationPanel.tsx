@@ -73,16 +73,34 @@ export function NarrativeGenerationPanel({
   });
 
   const handleStart = async () => {
-    // Start generation
-    await startGeneration({
-      outline,
-      episodeNumber,
-      language,
-      qualityTier,
-      format,
-    });
-    // Notify parent immediately for navigation
-    onGenerationStarted?.();
+    try {
+      // Start generation
+      await startGeneration({
+        outline,
+        episodeNumber,
+        language,
+        qualityTier,
+        format,
+      });
+      // Notify parent immediately for navigation
+      onGenerationStarted?.();
+    } catch (error: any) {
+      // V70: Handle 409 PROJECT_BUSY gracefully - redirect to progress instead of showing error
+      const is409 = error?.code === 'PROJECT_BUSY' || 
+                    error?.status === 409 || 
+                    error?.message?.includes('PROJECT_BUSY') ||
+                    error?.message?.includes('409');
+      
+      if (is409) {
+        console.log('[NarrativePanel] 409 PROJECT_BUSY detected - redirecting to progress');
+        // Still navigate - user can see the existing generation progress
+        onGenerationStarted?.();
+        return;
+      }
+      
+      // Re-throw other errors for the hook to handle
+      throw error;
+    }
   };
 
   const getStatusIcon = (status: SceneIntent['status']) => {
