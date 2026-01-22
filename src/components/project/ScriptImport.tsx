@@ -5924,23 +5924,19 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           <TabsList className="inline-flex w-max min-w-full sm:grid sm:grid-cols-4 sm:w-full h-auto sm:h-11 gap-1 sm:gap-0 bg-muted/50 p-1">
             <TabsTrigger value="generate" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Idea</span>
-              <span className="xs:hidden">💡</span>
+              <span>Idea</span>
             </TabsTrigger>
             <TabsTrigger value="outline" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Outline</span>
-              <span className="xs:hidden">📋</span>
+              <span>Outline</span>
             </TabsTrigger>
             <TabsTrigger value="summary" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Guion</span>
-              <span className="xs:hidden">📖</span>
+              <span>Guion</span>
             </TabsTrigger>
             <TabsTrigger value="production" className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Producción</span>
-              <span className="xs:hidden">🎬</span>
+              <span>Producción</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -6085,7 +6081,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   />
                   
                   <Button 
-                    variant="gold" 
+                    variant="lime" 
                     className="w-full"
                     onClick={useDirectGeneration ? generateOutlineDirect : generateLightOutline} 
                     disabled={generatingOutline || !ideaText.trim()}
@@ -7227,7 +7223,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 {/* CTA Buttons */}
                 <div className="flex gap-3 flex-wrap pt-4 border-t">
                   <Button 
-                    variant="gold" 
+                    variant="lime" 
                     size="lg"
                     className="flex-1 min-w-[200px]"
                     onClick={approveAndGenerateEpisodes}
@@ -8059,6 +8055,122 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             </Card>
           ) : (
             <>
+              {/* ═══════════════════════════════════════════════════════════════ */}
+              {/* OUTLINE RICH CONTENT - Show synopsis, characters, locations */}
+              {/* ═══════════════════════════════════════════════════════════════ */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <GitBranch className="w-5 h-5 text-primary" />
+                    {outlineForUI?.title || 'Outline'}
+                  </CardTitle>
+                  {outlineForUI?.logline && (
+                    <CardDescription className="italic">{outlineForUI.logline}</CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Genre & Tone badges */}
+                  <div className="flex gap-2 flex-wrap">
+                    {outlineForUI?.genre && <Badge variant="secondary">{outlineForUI.genre}</Badge>}
+                    {outlineForUI?.tone && <Badge variant="outline">{outlineForUI.tone}</Badge>}
+                  </div>
+
+                  {/* Synopsis */}
+                  {outlineForUI?.synopsis && (
+                    <div>
+                      <Label className="text-xs uppercase text-muted-foreground">Sinopsis</Label>
+                      <p className="text-sm mt-1">{outlineForUI.synopsis}</p>
+                    </div>
+                  )}
+
+                  {/* Characters */}
+                  {outlineForUI?.main_characters?.length > 0 && (
+                    <div>
+                      <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                        Personajes ({outlineForUI.main_characters.length})
+                      </Label>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        {outlineForUI.main_characters.map((char: any, i: number) => {
+                          const role = char.role || '';
+                          const variant = role === 'protagonist' ? 'default' : role === 'antagonist' ? 'destructive' : 'secondary';
+                          const description = char.description || char.bio || char.want;
+                          return (
+                            <div key={i} className="p-3 bg-muted/30 rounded border space-y-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant={variant}>{char.name}</Badge>
+                                {role && <span className="text-xs text-muted-foreground">{role}</span>}
+                              </div>
+                              {description && <p className="text-xs text-muted-foreground">{description}</p>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Locations */}
+                  {outlineForUI?.main_locations?.length > 0 && (
+                    <div>
+                      <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                        Localizaciones ({outlineForUI.main_locations.length})
+                      </Label>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        {outlineForUI.main_locations.map((loc: any, i: number) => {
+                          const description = loc.description || loc.visual_identity || loc.function;
+                          return (
+                            <div key={i} className="p-2 bg-muted/30 rounded border space-y-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant="outline">{loc.name}</Badge>
+                                {loc.type && <span className="text-xs text-muted-foreground">{loc.type}</span>}
+                              </div>
+                              {description && <p className="text-xs text-muted-foreground">{description}</p>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Episode beats (for series) or Acts (for film) */}
+                  {format === 'film' && outlineForUI?.acts_summary ? (
+                    <div>
+                      <Label className="text-xs uppercase text-muted-foreground mb-2 block flex items-center gap-2">
+                        <Film className="w-3 h-3" />
+                        Estructura de 3 Actos
+                      </Label>
+                      <div className="grid gap-2 md:grid-cols-3">
+                        <div className="p-2 bg-green-500/10 rounded border border-green-500/30">
+                          <span className="text-xs font-medium text-green-600 dark:text-green-400 block">Acto I</span>
+                          <p className="text-xs text-muted-foreground">{outlineForUI.acts_summary?.act_i_goal || 'Setup'}</p>
+                        </div>
+                        <div className="p-2 bg-amber-500/10 rounded border border-amber-500/30">
+                          <span className="text-xs font-medium text-amber-600 dark:text-amber-400 block">Acto II</span>
+                          <p className="text-xs text-muted-foreground">{outlineForUI.acts_summary?.act_ii_goal || 'Confrontación'}</p>
+                        </div>
+                        <div className="p-2 bg-red-500/10 rounded border border-red-500/30">
+                          <span className="text-xs font-medium text-red-600 dark:text-red-400 block">Acto III</span>
+                          <p className="text-xs text-muted-foreground">{outlineForUI.acts_summary?.act_iii_goal || 'Resolución'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : outlineForUI?.episode_beats?.length > 0 && (
+                    <div>
+                      <Label className="text-xs uppercase text-muted-foreground mb-2 block">
+                        Episodios ({outlineForUI.episode_beats.length})
+                      </Label>
+                      <div className="space-y-2">
+                        {outlineForUI.episode_beats.map((ep: any, idx: number) => (
+                          <div key={ep.episode || idx} className="p-2 bg-muted/30 rounded border">
+                            <span className="font-medium text-sm">Ep {ep.episode}: {ep.title}</span>
+                            {ep.summary && <p className="text-xs text-muted-foreground mt-1">{ep.summary}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* Outline Wizard */}
               <OutlineWizardV11
                 outline={lightOutline}

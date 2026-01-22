@@ -9,8 +9,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
 
-export const LanguageSelector = forwardRef<HTMLDivElement, object>(
-  function LanguageSelector(_props, ref) {
+interface LanguageSelectorProps {
+  compact?: boolean;
+}
+
+export const LanguageSelector = forwardRef<HTMLDivElement, LanguageSelectorProps>(
+  function LanguageSelector({ compact = false }, ref) {
     const { language, setLanguage, t } = useLanguage();
 
     return (
@@ -26,13 +30,13 @@ export const LanguageSelector = forwardRef<HTMLDivElement, object>(
               onClick={() => setLanguage('es')}
               className={language === 'es' ? 'bg-accent' : ''}
             >
-              🇪🇸 {t.language.es}
+              🇪🇸 {!compact && t.language.es}
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => setLanguage('en')}
               className={language === 'en' ? 'bg-accent' : ''}
             >
-              🇬🇧 {t.language.en}
+              🇬🇧 {!compact && t.language.en}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
