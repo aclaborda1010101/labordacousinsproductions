@@ -373,9 +373,8 @@ serve(async (req) => {
       await auth.supabase
         .from('jobs')
         .update({ 
-          status: 'done', 
-          completed_at: new Date().toISOString(),
-          result: { scene_id: insertedScene.id }
+          status: 'succeeded', 
+          updated_at: new Date().toISOString()
         })
         .eq('id', jobId);
     }
