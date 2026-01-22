@@ -247,25 +247,11 @@ export async function logAutopilotEvent(
   chosenPreset?: string
 ): Promise<void> {
   // editorial_events table removed - log to console only
-  console.log('[Autopilot] Event:', eventType, { projectId, assetType, decision: decision.reason });
-      asset_type: assetType,
-      event_type: eventType,
-      payload: {
-        recommendedEngine: decision.recommendation?.recommendedEngine ?? null,
-        recommendedPreset: decision.recommendation?.recommendedPreset ?? null,
-        confidence: decision.confidence,
-        shouldAutopilot: decision.shouldAutopilot,
-        reason: decision.reason,
-        chosenEngine: chosenEngine ?? null,
-        chosenPreset: chosenPreset ?? null,
-        templateStepKey: decision.templateStepKey ?? null, // v2
-        autopilotImageEnabled: decision.settings.autopilotImageEnabled,
-        autopilotConfidenceThreshold: decision.settings.autopilotConfidenceThreshold,
-        autopilotMinRuns: decision.settings.autopilotMinRuns,
-        autopilotMaxRegens: decision.settings.autopilotMaxRegens
-      }
-    }]);
-  } catch (err) {
-    console.error('[Autopilot] Error logging event:', err);
-  }
+  console.log('[Autopilot] Event:', eventType, {
+    projectId,
+    assetType,
+    decision: decision.reason,
+    chosenEngine,
+    chosenPreset
+  });
 }
