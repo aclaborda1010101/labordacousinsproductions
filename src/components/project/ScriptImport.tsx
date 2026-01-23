@@ -7743,10 +7743,15 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                     <Button 
                       variant="gold" 
                       className="flex-1"
-                      onClick={() => {
-                        setOutlineApproved(true);
-                        setActiveTab('summary');
-                        toast.success('Outline aprobado. Ahora puedes generar el guion completo.');
+                      onClick={async () => {
+                        const success = await outlinePersistence.approveOutline();
+                        if (success) {
+                          setOutlineApproved(true);
+                          setActiveTab('summary');
+                          toast.success('Outline aprobado. Ahora puedes generar el guion completo.');
+                        } else {
+                          toast.error('Error al aprobar el outline');
+                        }
                       }}
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
