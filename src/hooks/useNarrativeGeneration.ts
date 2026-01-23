@@ -663,13 +663,27 @@ export function useNarrativeGeneration({
   
   const resetNarrativeState = useCallback(async () => {
     try {
-      // Delete scene_intents
+      // 1. Delete orphaned jobs first (prevent future issues)
+      await supabase
+        .from('jobs')
+        .delete()
+        .eq('project_id', projectId)
+        .eq('type', 'scene_generation')
+        .in('status', ['queued', 'running', 'blocked']);
+
+      // 2. Delete scene_repairs
+      await supabase
+        .from('scene_repairs')
+        .delete()
+        .eq('project_id', projectId);
+
+      // 3. Delete scene_intents
       await supabase
         .from('scene_intent')
         .delete()
         .eq('project_id', projectId);
 
-      // Delete narrative_state
+      // 4. Delete narrative_state
       await supabase
         .from('narrative_state')
         .delete()
