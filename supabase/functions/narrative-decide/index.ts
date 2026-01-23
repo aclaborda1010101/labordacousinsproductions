@@ -118,6 +118,36 @@ serve(async (req) => {
     const existingSceneNumbers = new Set(existingIntents?.map(s => s.scene_number) || []);
     const completedScenes = existingIntents?.filter(s => s.status === 'written').length || 0;
 
+    // 3b. Check for existing queued jobs that need processing (retry scenario)
+    const { data: existingQueuedJobs } = await auth.supabase
+      .from('jobs')
+      .select('id, payload')
+      .eq('project_id', projectId)
+      .eq('type', 'scene_generation')
+      .eq('status', 'queued');
+
+    // If there are existing queued jobs, return them instead of creating new ones
+    if (existingQueuedJobs && existingQueuedJobs.length > 0) {
+      const existingJobIds = existingQueuedJobs.map(j => j.id);
+      
+      console.log('[narrative-decide] Found existing queued jobs to resume:', existingJobIds.length);
+      
+      const durationMs = Date.now() - startTime;
+      return new Response(JSON.stringify({
+        ok: true,
+        data: {
+          scenes_planned: existingJobIds.length,
+          jobs_created: existingJobIds,
+          reusing_existing_jobs: true,
+          narrative_state_id: narrativeState.id,
+          duration_ms: durationMs
+        }
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // 4. Get existing scenes to continue from
     const { data: existingScenes } = await auth.supabase
       .from('scenes')

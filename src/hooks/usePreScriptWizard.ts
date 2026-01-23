@@ -684,27 +684,62 @@ export function usePreScriptWizard({
     try {
       const currentOutline = state.enrichedOutline || outline;
       
-      // Step 5a: Call narrative-decide to plan scenes
-      console.log('[PreScriptWizard] Step 5: Planning scenes...');
-      toast.info('Planificando escenas...');
+      // Step 5a: Check for existing queued jobs first (resume scenario)
+      console.log('[PreScriptWizard] Checking for existing queued jobs...');
       
-      const { data, error } = await invokeAuthedFunction('narrative-decide', {
-        projectId,
-        outline: currentOutline,
-        episodeNumber: 1,
-        language,
-        qualityTier,
-        format,
-      });
+      const { data: existingJobs } = await supabase
+        .from('jobs')
+        .select('id')
+        .eq('project_id', projectId)
+        .eq('type', 'scene_generation')
+        .eq('status', 'queued');
 
-      if (error) {
-        throw new Error(error.message || 'Error en narrative-decide');
+      let jobsCreated: string[] = [];
+      let scenesPlanned = 0;
+
+      if (existingJobs && existingJobs.length > 0) {
+        // Resume from existing queued jobs
+        jobsCreated = existingJobs.map(j => j.id);
+        scenesPlanned = jobsCreated.length;
+        toast.info(`Reanudando ${scenesPlanned} escenas pendientes...`);
+        console.log('[PreScriptWizard] Found existing jobs to resume:', jobsCreated);
+      } else {
+        // No existing jobs - call narrative-decide for fresh planning
+        console.log('[PreScriptWizard] Step 5: Planning scenes...');
+        toast.info('Planificando escenas...');
+        
+        const { data, error } = await invokeAuthedFunction('narrative-decide', {
+          projectId,
+          outline: currentOutline,
+          episodeNumber: 1,
+          language,
+          qualityTier,
+          format,
+        });
+
+        if (error) {
+          throw new Error(error.message || 'Error en narrative-decide');
+        }
+
+        console.log('[PreScriptWizard] narrative-decide result:', data);
+        jobsCreated = Array.isArray(data.jobs_created) ? data.jobs_created : [];
+        scenesPlanned = data.scenes_planned || jobsCreated.length || 0;
       }
 
-      console.log('[PreScriptWizard] narrative-decide result:', data);
-
-      const jobsCreated: string[] = Array.isArray(data.jobs_created) ? data.jobs_created : [];
-      const scenesPlanned = data.scenes_planned || jobsCreated.length || 0;
+      // Fallback: check for pending intents without jobs
+      if (scenesPlanned === 0) {
+        const { data: pendingIntentsCheck } = await supabase
+          .from('scene_intent')
+          .select('id, scene_number, episode_number')
+          .eq('project_id', projectId)
+          .eq('status', 'pending')
+          .order('scene_number', { ascending: true });
+        
+        if (pendingIntentsCheck && pendingIntentsCheck.length > 0) {
+          scenesPlanned = pendingIntentsCheck.length;
+          console.log('[PreScriptWizard] Found pending intents without jobs:', scenesPlanned);
+        }
+      }
       
       toast.success(`${scenesPlanned} escenas planificadas`);
 
