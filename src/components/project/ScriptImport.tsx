@@ -353,6 +353,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   // V67: Ref to prevent tab auto-switch during outline operations
   const isOutlineOperationInProgress = useRef(false);
   
+  // V72: Ref to track intentional user navigation (prevents useEffect override)
+  const userNavigatedRef = useRef(false);
+  
   // Background task tracking for global progress visibility
   const { addTask, updateTask, completeTask, failTask, tasks: activeTasks } = useBackgroundTasks();
   const [scriptTaskId, setScriptTaskId] = useState<string | null>(null);
@@ -1519,7 +1522,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               setGeneratedTeasers(parsed.teasers);
             }
             // V67: Only auto-switch tab on initial load, not during operations
-            if (!isOutlineOperationInProgress.current && activeTab === 'generate') {
+            // V72: Respect intentional user navigation
+            if (!isOutlineOperationInProgress.current && 
+                !userNavigatedRef.current && 
+                activeTab === 'generate') {
               setActiveTab('summary');
             }
           }
@@ -8035,12 +8041,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       {!outlineApproved && ' Apruébalo para poder generar el guion completo.'}
                     </p>
                     {outlineApproved ? (
-                      <Button variant="default" onClick={() => setActiveTab('generate')}>
+                      <Button variant="default" onClick={() => {
+                        userNavigatedRef.current = true;
+                        setActiveTab('outline');
+                        // Reset after navigation is processed
+                        setTimeout(() => { userNavigatedRef.current = false; }, 500);
+                      }}>
                         <Sparkles className="w-4 h-4 mr-2" />
                         Generar Guion Completo
                       </Button>
                     ) : (
-                      <Button variant="outline" onClick={() => setActiveTab('generate')}>
+                      <Button variant="outline" onClick={() => {
+                        userNavigatedRef.current = true;
+                        setActiveTab('outline');
+                        setTimeout(() => { userNavigatedRef.current = false; }, 500);
+                      }}>
                         <FileText className="w-4 h-4 mr-2" />
                         Ir a Aprobar Outline
                       </Button>

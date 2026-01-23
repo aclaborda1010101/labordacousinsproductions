@@ -663,6 +663,11 @@ export function useNarrativeGeneration({
   // ============================================================================
   
   const continueGeneration = useCallback(async () => {
+    console.log('[NarrativeGen] continueGeneration called', { 
+      isGenerating: isGeneratingRef.current,
+      projectId 
+    });
+    
     if (isGeneratingRef.current) {
       toast.warning('Ya hay una generación en progreso');
       return;
