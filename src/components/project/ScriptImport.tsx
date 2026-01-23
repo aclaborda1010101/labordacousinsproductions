@@ -3628,19 +3628,41 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         
         setOutlineApproved(true);
         updatePipelineStep('approval', 'success');
-        console.log('[v71] Outline approved, triggering auto-start');
+        console.log('[v72] Outline approved, triggering auto-start');
       }
       
-      // 2. Signal auto-start for NarrativeGenerationPanel
+      // 2. Check existing intents to show contextual toast (V72)
+      const { data: existingIntents } = await supabase
+        .from('scene_intent')
+        .select('id, status')
+        .eq('project_id', projectId)
+        .limit(10);
+      
+      const hasCompleted = existingIntents?.every(i => 
+        ['written', 'validated'].includes(i.status)
+      ) && (existingIntents?.length ?? 0) > 0;
+      
+      const hasPending = existingIntents?.some(i => 
+        ['pending', 'planning', 'writing', 'repairing'].includes(i.status)
+      );
+      
+      // 3. Signal auto-start for NarrativeGenerationPanel
       setShouldAutoStartGeneration(true);
       
-      // 3. Scroll to the narrative panel
+      // 4. Scroll to the narrative panel
       const narrativePanel = document.querySelector('[data-narrative-panel]');
       if (narrativePanel) {
         narrativePanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
       
-      toast.success('Outline aprobado. Iniciando generación automática...', { duration: 3000 });
+      // 5. Contextual toast based on existing state (V72)
+      if (hasCompleted) {
+        toast.success('Outline aprobado. Ya tienes un guion generado.', { duration: 4000 });
+      } else if (hasPending) {
+        toast.success('Outline aprobado. Retomando generación...', { duration: 3000 });
+      } else {
+        toast.success('Outline aprobado. Iniciando generación...', { duration: 3000 });
+      }
     } catch (error: any) {
       console.error('[ScriptImport] Error in approveAndGenerateEpisodes:', error);
       toast.error('Error al aprobar el outline');
