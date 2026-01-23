@@ -5,7 +5,7 @@
  * Integrates with useNarrativeGeneration hook.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -40,6 +40,10 @@ interface NarrativeGenerationPanelProps {
   onComplete?: () => void;
   /** Called immediately when generation starts - use for navigation */
   onGenerationStarted?: () => void;
+  /** V71: Auto-start generation when set to true */
+  autoStart?: boolean;
+  /** V71: Called after auto-start is processed */
+  onAutoStartComplete?: () => void;
 }
 
 export function NarrativeGenerationPanel({
@@ -51,8 +55,11 @@ export function NarrativeGenerationPanel({
   format = 'series',
   onComplete,
   onGenerationStarted,
+  autoStart = false,
+  onAutoStartComplete,
 }: NarrativeGenerationPanelProps) {
   const [showIntents, setShowIntents] = useState(false);
+  const autoStartProcessedRef = useRef(false);
 
   // Stable callbacks to prevent realtime subscription churn
   const handleSceneGenerated = useCallback((scene: any) => {
@@ -80,6 +87,22 @@ export function NarrativeGenerationPanel({
     onSceneGenerated: handleSceneGenerated,
     onError: handleError,
   });
+
+  // V71: Auto-start effect - triggers generation when autoStart prop is true
+  useEffect(() => {
+    // Only process once per mount to prevent double-triggering
+    if (autoStart && !autoStartProcessedRef.current && !isGenerating && sceneIntents.length === 0) {
+      autoStartProcessedRef.current = true;
+      console.log('[NarrativePanel] Auto-start triggered');
+      handleStart().finally(() => {
+        onAutoStartComplete?.();
+      });
+    }
+    // Reset the ref when autoStart becomes false
+    if (!autoStart) {
+      autoStartProcessedRef.current = false;
+    }
+  }, [autoStart, isGenerating, sceneIntents.length]);
 
   const handleCleanupComplete = () => {
     // Refresh state after cleanup from diagnostics panel

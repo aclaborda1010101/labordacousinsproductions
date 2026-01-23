@@ -366,6 +366,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [outlineApproved, setOutlineApproved] = useState(false);
   const [generatingOutline, setGeneratingOutline] = useState(false);
   
+  // V71: Auto-start narrative generation when approving outline
+  const [shouldAutoStartGeneration, setShouldAutoStartGeneration] = useState(false);
+  
   // V24: Stable outline ref to prevent flicker during operations
   const lastStableOutlineRef = useRef<any>(null);
   
@@ -3595,13 +3598,41 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, [projectId, lightOutline, bibleCharacters.length, bibleLocations.length, bibleLoading, outlinePersistence.savedOutline, outlinePersistence.isLoading]);
 
   // PIPELINE V2: Step 3 - Approve Outline & Generate Episodes (with batches)
-  // V70: THIS FUNCTION IS DEPRECATED - Use NarrativeGenerationPanel instead
-  // Keeping the function for compatibility but it will block execution
+  // V71: This function now approves the outline and triggers auto-start of Narrative System
   const approveAndGenerateEpisodes = async () => {
-    // V70: Redirect to the new narrative system - no more legacy execution
-    console.log('[v70] Redirecting to narrative system via /script');
-    navigate(`/projects/${projectId}/script`);
-    toast.info('Ve a la pestaña "Producción" y usa el panel de Sistema Narrativo v70 para generar.');
+    try {
+      // 1. Approve the outline in the database
+      if (outlinePersistence.savedOutline?.id) {
+        const { error } = await supabase
+          .from('project_outlines')
+          .update({ status: 'approved' })
+          .eq('id', outlinePersistence.savedOutline.id);
+        
+        if (error) {
+          console.error('[ScriptImport] Error approving outline:', error);
+          toast.error('Error al aprobar el outline');
+          return;
+        }
+        
+        setOutlineApproved(true);
+        updatePipelineStep('approval', 'success');
+        console.log('[v71] Outline approved, triggering auto-start');
+      }
+      
+      // 2. Signal auto-start for NarrativeGenerationPanel
+      setShouldAutoStartGeneration(true);
+      
+      // 3. Scroll to the narrative panel
+      const narrativePanel = document.querySelector('[data-narrative-panel]');
+      if (narrativePanel) {
+        narrativePanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      
+      toast.success('Outline aprobado. Iniciando generación automática...', { duration: 3000 });
+    } catch (error: any) {
+      console.error('[ScriptImport] Error in approveAndGenerateEpisodes:', error);
+      toast.error('Error al aprobar el outline');
+    }
     return;
 
     // Legacy code below is unreachable but kept for reference
@@ -7750,25 +7781,29 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </Badge>
               </div>
 
-              {/* V70: Narrative Generation Panel - Always available when outline exists */}
+              {/* V71: Narrative Generation Panel - Always available when outline exists */}
               {lightOutline && (
-                <NarrativeGenerationPanel
-                  projectId={projectId}
-                  outline={lightOutline}
-                  episodeNumber={1}
-                  language={language}
-                  qualityTier={qualityTier}
-                  format={format}
-                  onComplete={() => {
-                    toast.success('¡Generación completada con Sistema Narrativo!');
-                    onScenesCreated?.();
-                  }}
-                  onGenerationStarted={() => {
-                    // Navigate immediately to script workspace
-                    navigate(`/projects/${projectId}/script`);
-                    toast.info('Generando guion... Puedes ver el progreso en tiempo real.');
-                  }}
-                />
+                <div data-narrative-panel>
+                  <NarrativeGenerationPanel
+                    projectId={projectId}
+                    outline={lightOutline}
+                    episodeNumber={1}
+                    language={language}
+                    qualityTier={qualityTier}
+                    format={format}
+                    autoStart={shouldAutoStartGeneration}
+                    onAutoStartComplete={() => setShouldAutoStartGeneration(false)}
+                    onComplete={() => {
+                      toast.success('¡Generación completada con Sistema Narrativo!');
+                      onScenesCreated?.();
+                    }}
+                    onGenerationStarted={() => {
+                      // Navigate immediately to script workspace
+                      navigate(`/projects/${projectId}/script`);
+                      toast.info('Generando guion... Puedes ver el progreso en tiempo real.');
+                    }}
+                  />
+                </div>
               )}
 
               {/* Legacy path completely removed - v70 is the only motor */}
