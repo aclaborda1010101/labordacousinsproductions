@@ -1,106 +1,179 @@
 
-Contexto (qué está pasando ahora)
-- El botón “Iniciar Generación” sí ejecuta código, pero el hook `useNarrativeGeneration.startGeneration()` tiene una protección: si ya existen escenas con estado “pendiente / planificando / escribiendo / reparando” en la base de datos, no inicia una nueva corrida y hace `return`.
-- En tu proyecto ya existe al menos 1 `scene_intent` en estado `writing` con `job_id = null` y `scene_id = null`. Eso deja la corrida en un estado “a medio camino”: el sistema cree que hay algo en progreso, pero no hay un trabajo activo que la empuje.
-- Además, en consola aparece repetido: `[NarrativeGen] Realtime subscription status: CLOSED`. Eso sugiere que la suscripción de “tiempo real” se está cerrando/recreando constantemente (por callbacks inline), lo cual empeora la sensación de que “no pasa nada”.
+# Plan: Conectar el botón "Aprobar y Generar Guion" al Sistema Narrativo v70
 
-Objetivo
-1) Que el panel no se “quede callado”: si ya hay generación a medias, debe mostrar claramente “Continuar / Reanudar” (y permitirlo).
-2) Que el sistema pueda “rescatar” escenas en `writing` sin job (re-lanzando `scene-worker` de forma idempotente).
-3) Estabilizar la suscripción realtime para que el panel refleje progreso sin estar cerrándose en bucle.
+## Diagnóstico del Problema
 
-Cambios propuestos (frontend + hook)
+El botón **"✅ Aprobar y Generar Guión"** en el componente `OutlineWizardV11` no hace nada visible porque:
 
-A) Arreglar el estado de UI para que “Continuar” aparezca cuando corresponde
-Archivo: `src/hooks/useNarrativeGeneration.ts`
-- En `loadInitialState()`:
-  - Después de cargar `scene_intent`, calcular un `phase` derivado del estado real (en DB), por ejemplo:
-    - Si existe cualquier intent en `writing` → `phase = 'generating'`
-    - Si existe cualquier intent en `pending/planning/planned` → `phase = 'planning'` o `generating` (según criterio)
-    - Si existe `needs_repair/repairing` → `phase = 'repairing'`
-    - Si todos están `written/validated` → `phase = 'completed'`
-    - Si no hay intents → `phase = 'idle'`
-  - Esto evita el caso actual: `phase` se queda en `idle` aunque existan intents, por lo cual la UI muestra “Iniciar Generación”, pero luego `startGeneration` bloquea y parece que “no hizo nada”.
+1. **Función deprecada**: La función `approveAndGenerateEpisodes()` en `ScriptImport.tsx:3600-3605` está diseñada para **bloquear** la ejecución del motor legacy y solo hacer:
+   ```typescript
+   navigate(`/projects/${projectId}/script`);
+   toast.info('Ve a la pestaña "Producción" y usa el panel de Sistema Narrativo v70 para generar.');
+   ```
 
-B) Cambiar “Iniciar Generación” para que sea accionable cuando hay generación previa
-Archivos:
-- `src/hooks/useNarrativeGeneration.ts`
-- `src/components/project/NarrativeGenerationPanel.tsx`
+2. **Doble punto de entrada confuso**: 
+   - **Arriba**: Botón grande verde "Aprobar y Generar Guión" que **no genera nada**
+   - **Abajo**: Panel de "Sistema Narrativo v70" con botón "Iniciar Generación" que **SÍ genera**
 
-En `startGeneration()` cuando detecta intents existentes:
-- Mantener la protección (no crear nuevos intents), pero:
-  - Mostrar un toast más claro con acciones:
-    - Acción 1: “Continuar” → llama a `continueGeneration()` (o a una nueva función `resumeGeneration()`; ver punto C)
-    - Acción 2: “Reiniciar” → llama a `resetNarrativeState()` (con confirmación)
-  - Asegurar que `loadInitialState()` deje el `phase` correcto (punto A) para que el botón “Continuar” quede visible siempre.
+3. **UX rota**: El usuario ve el botón prominente, lo clickea, y parece que "no hace nada" porque:
+   - Ya está en `/projects/:id/script` (no hay redirección visible)
+   - El toast dice que vaya a un panel que está más abajo en la misma página
 
-C) Hacer que “Continuar” realmente rescate estados atascados
-Archivo: `src/hooks/useNarrativeGeneration.ts`
-- En `continueGeneration()`:
-  - Ampliar el filtro de estados para incluir también:
-    - `writing` (clave para tu caso)
-    - `needs_repair`, `repairing` (si aplica)
-  - Ordenar por `episode_number`, `scene_number` (no solo `scene_number`) para evitar rarezas en series.
-  - Para cada intent:
-    - Si está `writing` y NO tiene `scene_id`:
-      - Re-invocar `scene-worker` con `sceneIntentId` (modo directo), porque el `job_id` es null.
-      - Luego hacer polling del intent hasta que pase a `written/validated/failed` (ya existe polling; se reutiliza).
-    - Si está `pending/planning/planned`:
-      - Invocar `scene-worker` (directo por intent id).
-    - Si está `repairing/needs_repair`:
-      - (Opcional) invocar el worker de reparación correspondiente si existe; si no, al menos mostrar en UI que está en reparación y ofrecer “Reiniciar”.
-- También ajustar el “fallback” dentro de `startGeneration()` (cuando `jobs_created` viene vacío):
-  - En vez de traer solo `status = 'pending'`, traer “todas las no-finalizadas” (incluyendo `writing`), para que el fallback no ignore escenas en `writing`.
+## Solución Propuesta
 
-D) Estabilizar Realtime (evitar el bucle CLOSED)
-Archivos:
-- `src/hooks/useNarrativeGeneration.ts`
-- `src/components/project/NarrativeGenerationPanel.tsx`
+**Conectar el botón "Aprobar y Generar" directamente al Sistema Narrativo v70**, eliminando la confusión de tener dos puntos de entrada.
 
-Problema actual:
-- `useNarrativeGeneration` recrea `setupRealtimeSubscription` cuando cambia `onSceneGenerated`.
-- En `NarrativeGenerationPanel` se pasa `onSceneGenerated: (scene) => {...}` inline, lo que cambia en cada render → se desmonta/monta el canal → spam de `CLOSED`.
+### Opción A: Invocar el Sistema Narrativo desde el botón (RECOMENDADA)
 
-Solución (una de estas dos):
-1) En `NarrativeGenerationPanel.tsx`: envolver `onSceneGenerated` y `onError` con `useCallback` para que sean estables.
-2) En `useNarrativeGeneration.ts`: guardar callbacks en `useRef` (pattern “callback ref”), y sacar `onSceneGenerated` de las dependencias del `useCallback`, así `setupRealtimeSubscription` solo depende de `projectId`.
+Modificar `approveAndGenerateEpisodes` para que:
+1. Marque el outline como "approved" en la base de datos
+2. Invoque `startGeneration()` del hook de useNarrativeGeneration 
+3. Navegue a la vista de progreso
 
-Adicional (opcional pero recomendado):
-- Si el estado del canal llega como `CLOSED`, programar un reintento (retry con backoff) en vez de depender de renders.
+### Opción B: Eliminar el botón y destacar el panel v70
 
-E) Mensaje claro en UI cuando hay intents “en curso”
-Archivo: `src/components/project/NarrativeGenerationPanel.tsx`
-- Si `sceneIntents.length > 0` y `progress.phase === 'idle'`, mostrar un bloque “Hay una generación anterior en curso” con botones:
-  - “Continuar”
-  - “Reiniciar”
-Esto elimina por completo la experiencia de “no hace nada”.
+Ocultar o cambiar el botón a "Ver Panel de Generación" que haga scroll al `NarrativeGenerationPanel`.
 
-Validación / pruebas (lo que voy a testear al implementar)
-1) Con un proyecto que tenga intents en `writing` y `job_id null`:
-   - Entrar a `/projects/:id/script`
-   - Ver que el panel muestre “Continuar” (no solo “Iniciar”)
-   - Click “Continuar” → debe invocar `scene-worker` por `sceneIntentId` y avanzar estados.
-2) Realtime:
-   - Confirmar que en consola ya no aparece “CLOSED” en bucle.
-   - Confirmar que updates de `scene_intent` refrescan la lista/estado sin recargar.
-3) Reinicio:
-   - Click “Reiniciar” debe limpiar todo y dejar `phase = idle`, sin intents visibles.
+---
 
-Mitigación inmediata para ti (sin esperar cambios)
-- En el panel de “Diagnósticos” usa “Limpiar Todos los Datos de Generación” y luego vuelve a “Iniciar Generación”.
-  - Esto funciona, pero es un “reset total”. El plan de arriba busca que NO sea necesario para rescatar corridas a medias.
+## Implementación (Opción A)
 
-Archivos a tocar
-- `src/hooks/useNarrativeGeneration.ts` (principal: phase derivado + continue/resume + fallback)
-- `src/components/project/NarrativeGenerationPanel.tsx` (callbacks estables + UI/acciones claras)
+### Cambios en `ScriptImport.tsx`
 
-Riesgos y cómo los evitamos
-- Riesgo: re-ejecutar `scene-worker` sobre una escena ya escrita.
-  - Mitigación: `scene-worker` ya está usando `upsert` por `(project_id, episode_no, scene_no)`, así que reintentos no deberían romper por duplicados.
-- Riesgo: contador de progreso se desincroniza.
-  - Mitigación: preferir progreso derivado desde `sceneIntents` en `loadInitialState` y, si es necesario, ajustar el incremento en realtime para no duplicar conteos.
+**1. Importar y usar el hook de generación narrativa:**
+```typescript
+// Nueva referencia para controlar el panel de generación
+const narrativeGenerationRef = useRef<{ startGeneration: () => Promise<void> } | null>(null);
+```
 
-Resultado esperado
-- Cuando le des “Iniciar Generación”, si hay una corrida previa, te ofrecerá “Continuar” de forma explícita.
-- “Continuar” sí moverá escenas en `writing` sin job (rescate automático).
-- El panel reflejará cambios en vivo (sin spam de “CLOSED”).
+**2. Modificar `approveAndGenerateEpisodes()` para aprobar el outline e iniciar generación:**
+
+```typescript
+const approveAndGenerateEpisodes = async () => {
+  try {
+    // 1. Aprobar el outline en la base de datos
+    if (outlinePersistence.savedOutline?.id) {
+      await supabase
+        .from('project_outlines')
+        .update({ status: 'approved' })
+        .eq('id', outlinePersistence.savedOutline.id);
+      
+      setOutlineApproved(true);
+      updatePipelineStep('approval', 'success');
+    }
+    
+    // 2. Hacer scroll al panel de Sistema Narrativo y mostrar toast
+    const narrativePanel = document.querySelector('[data-narrative-panel]');
+    narrativePanel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    toast.success(
+      'Outline aprobado. Haz clic en "Iniciar Generación" en el panel de Sistema Narrativo.',
+      { duration: 5000 }
+    );
+  } catch (error: any) {
+    console.error('[ScriptImport] Error approving outline:', error);
+    toast.error('Error al aprobar el outline');
+  }
+};
+```
+
+**3. Añadir `data-narrative-panel` al `NarrativeGenerationPanel`:**
+
+```tsx
+{lightOutline && (
+  <div data-narrative-panel>
+    <NarrativeGenerationPanel
+      projectId={projectId}
+      outline={lightOutline}
+      // ... resto de props
+    />
+  </div>
+)}
+```
+
+### Alternativa más directa: Auto-iniciar generación
+
+Si quieres que el botón "Aprobar y Generar" inicie automáticamente la generación:
+
+**1. Crear un estado de "auto-start" en ScriptImport:**
+```typescript
+const [shouldAutoStartGeneration, setShouldAutoStartGeneration] = useState(false);
+```
+
+**2. Modificar `approveAndGenerateEpisodes`:**
+```typescript
+const approveAndGenerateEpisodes = async () => {
+  // Aprobar outline
+  if (outlinePersistence.savedOutline?.id) {
+    await supabase
+      .from('project_outlines')
+      .update({ status: 'approved' })
+      .eq('id', outlinePersistence.savedOutline.id);
+    
+    setOutlineApproved(true);
+    updatePipelineStep('approval', 'success');
+  }
+  
+  // Señalar que debe auto-iniciar
+  setShouldAutoStartGeneration(true);
+  
+  // Scroll al panel
+  const narrativePanel = document.querySelector('[data-narrative-panel]');
+  narrativePanel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+```
+
+**3. Pasar prop `autoStart` al `NarrativeGenerationPanel`:**
+```tsx
+<NarrativeGenerationPanel
+  projectId={projectId}
+  outline={lightOutline}
+  autoStart={shouldAutoStartGeneration}
+  onAutoStartComplete={() => setShouldAutoStartGeneration(false)}
+  // ...
+/>
+```
+
+**4. En `NarrativeGenerationPanel`, añadir lógica de auto-start:**
+```typescript
+useEffect(() => {
+  if (autoStart && !isGenerating && sceneIntents.length === 0) {
+    handleStart().then(() => onAutoStartComplete?.());
+  }
+}, [autoStart]);
+```
+
+---
+
+## Archivos a Modificar
+
+1. **`src/components/project/ScriptImport.tsx`**
+   - Líneas 3598-3605: Reescribir `approveAndGenerateEpisodes()` para aprobar + señalar auto-start
+   - Líneas 7753-7771: Añadir wrapper con `data-narrative-panel` y props `autoStart`
+
+2. **`src/components/project/NarrativeGenerationPanel.tsx`**
+   - Añadir props `autoStart` y `onAutoStartComplete`
+   - Implementar `useEffect` que detecte `autoStart` y llame a `handleStart()`
+
+---
+
+## Resultado Esperado
+
+Después de implementar estos cambios:
+
+1. Usuario ve el botón "✅ Aprobar y Generar Guión"
+2. Al hacer clic:
+   - El outline se marca como `approved` en la base de datos
+   - El panel de Sistema Narrativo v70 inicia automáticamente la generación
+   - El usuario ve el progreso en tiempo real
+3. No hay más confusión entre dos puntos de entrada
+
+---
+
+## Riesgos y Mitigaciones
+
+| Riesgo | Mitigación |
+|--------|------------|
+| `startGeneration` falla silenciosamente | Ya implementado en cambios anteriores: muestra toast con acciones "Continuar"/"Reiniciar" |
+| El outline no está listo para aprobar | El botón ya está deshabilitado si `!qcStatus.canGenerateEpisodes` |
+| Generación ya en curso | `startGeneration` detecta intents existentes y ofrece "Continuar" |
