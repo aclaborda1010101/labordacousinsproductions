@@ -3021,11 +3021,14 @@ export type Database = {
       }
       scene_intent: {
         Row: {
+          allowed_camera_language: Json | null
           characters_involved: Json | null
           constraints: Json | null
+          continuity_constraints: Json | null
           created_at: string | null
           emotional_turn: string | null
           episode_number: number | null
+          forbidden_repetitions: Json | null
           id: string
           information_hidden: Json | null
           information_revealed: Json | null
@@ -3035,16 +3038,23 @@ export type Database = {
           project_id: string
           scene_id: string | null
           scene_number: number
+          showrunner_decision_id: string | null
+          showrunner_notes: string | null
+          showrunner_validated: boolean | null
           status: string | null
           thread_to_advance: string | null
           updated_at: string | null
+          visual_energy: string | null
         }
         Insert: {
+          allowed_camera_language?: Json | null
           characters_involved?: Json | null
           constraints?: Json | null
+          continuity_constraints?: Json | null
           created_at?: string | null
           emotional_turn?: string | null
           episode_number?: number | null
+          forbidden_repetitions?: Json | null
           id?: string
           information_hidden?: Json | null
           information_revealed?: Json | null
@@ -3054,16 +3064,23 @@ export type Database = {
           project_id: string
           scene_id?: string | null
           scene_number: number
+          showrunner_decision_id?: string | null
+          showrunner_notes?: string | null
+          showrunner_validated?: boolean | null
           status?: string | null
           thread_to_advance?: string | null
           updated_at?: string | null
+          visual_energy?: string | null
         }
         Update: {
+          allowed_camera_language?: Json | null
           characters_involved?: Json | null
           constraints?: Json | null
+          continuity_constraints?: Json | null
           created_at?: string | null
           emotional_turn?: string | null
           episode_number?: number | null
+          forbidden_repetitions?: Json | null
           id?: string
           information_hidden?: Json | null
           information_revealed?: Json | null
@@ -3073,9 +3090,13 @@ export type Database = {
           project_id?: string
           scene_id?: string | null
           scene_number?: number
+          showrunner_decision_id?: string | null
+          showrunner_notes?: string | null
+          showrunner_validated?: boolean | null
           status?: string | null
           thread_to_advance?: string | null
           updated_at?: string | null
+          visual_energy?: string | null
         }
         Relationships: [
           {
@@ -3097,6 +3118,13 @@ export type Database = {
             columns: ["scene_id"]
             isOneToOne: false
             referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_intent_showrunner_decision_id_fkey"
+            columns: ["showrunner_decision_id"]
+            isOneToOne: false
+            referencedRelation: "showrunner_decisions"
             referencedColumns: ["id"]
           },
         ]
@@ -3742,6 +3770,103 @@ export type Database = {
           },
         ]
       }
+      showrunner_decisions: {
+        Row: {
+          camera_language_allowed: Json | null
+          confidence_score: number | null
+          created_at: string | null
+          id: string
+          lens_range_allowed: string[] | null
+          mode: string | null
+          model_used: string | null
+          movement_allowed: string[] | null
+          pacing_guidance: string | null
+          project_id: string
+          reasoning: string | null
+          scene_id: string
+          shot_types_allowed: string[] | null
+          updated_at: string | null
+          validated: boolean | null
+          validated_at: string | null
+          validated_by: string | null
+          visual_energy: string | null
+          visual_strategy: string | null
+          what_cannot_repeat: string | null
+          what_must_change: string | null
+          where_we_came_from: string | null
+        }
+        Insert: {
+          camera_language_allowed?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          lens_range_allowed?: string[] | null
+          mode?: string | null
+          model_used?: string | null
+          movement_allowed?: string[] | null
+          pacing_guidance?: string | null
+          project_id: string
+          reasoning?: string | null
+          scene_id: string
+          shot_types_allowed?: string[] | null
+          updated_at?: string | null
+          validated?: boolean | null
+          validated_at?: string | null
+          validated_by?: string | null
+          visual_energy?: string | null
+          visual_strategy?: string | null
+          what_cannot_repeat?: string | null
+          what_must_change?: string | null
+          where_we_came_from?: string | null
+        }
+        Update: {
+          camera_language_allowed?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          lens_range_allowed?: string[] | null
+          mode?: string | null
+          model_used?: string | null
+          movement_allowed?: string[] | null
+          pacing_guidance?: string | null
+          project_id?: string
+          reasoning?: string | null
+          scene_id?: string
+          shot_types_allowed?: string[] | null
+          updated_at?: string | null
+          validated?: boolean | null
+          validated_at?: string | null
+          validated_by?: string | null
+          visual_energy?: string | null
+          visual_strategy?: string | null
+          what_cannot_repeat?: string | null
+          what_must_change?: string | null
+          where_we_came_from?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "showrunner_decisions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "showrunner_decisions_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: true
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "showrunner_decisions_validated_by_fkey"
+            columns: ["validated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       sound_music: {
         Row: {
           bpm: number | null
@@ -4319,6 +4444,96 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      visual_context_memory: {
+        Row: {
+          average_shot_duration_sec: number | null
+          camera_height_tendency: string | null
+          computed_at: string | null
+          coverage_style: string | null
+          created_at: string | null
+          dominant_lenses: Json | null
+          dominant_movements: Json | null
+          dominant_shot_types: Json | null
+          emotional_delta: string | null
+          emotional_end: string | null
+          emotional_start: string | null
+          episode_number: number
+          forbidden_next: Json | null
+          id: string
+          pacing_level: string | null
+          project_id: string
+          recommended_next: Json | null
+          scene_id: string
+          scene_number: number
+          shot_count: number | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          average_shot_duration_sec?: number | null
+          camera_height_tendency?: string | null
+          computed_at?: string | null
+          coverage_style?: string | null
+          created_at?: string | null
+          dominant_lenses?: Json | null
+          dominant_movements?: Json | null
+          dominant_shot_types?: Json | null
+          emotional_delta?: string | null
+          emotional_end?: string | null
+          emotional_start?: string | null
+          episode_number?: number
+          forbidden_next?: Json | null
+          id?: string
+          pacing_level?: string | null
+          project_id: string
+          recommended_next?: Json | null
+          scene_id: string
+          scene_number: number
+          shot_count?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          average_shot_duration_sec?: number | null
+          camera_height_tendency?: string | null
+          computed_at?: string | null
+          coverage_style?: string | null
+          created_at?: string | null
+          dominant_lenses?: Json | null
+          dominant_movements?: Json | null
+          dominant_shot_types?: Json | null
+          emotional_delta?: string | null
+          emotional_end?: string | null
+          emotional_start?: string | null
+          episode_number?: number
+          forbidden_next?: Json | null
+          id?: string
+          pacing_level?: string | null
+          project_id?: string
+          recommended_next?: Json | null
+          scene_id?: string
+          scene_number?: number
+          shot_count?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visual_context_memory_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visual_context_memory_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: true
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wardrobe: {
         Row: {
