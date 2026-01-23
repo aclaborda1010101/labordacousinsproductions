@@ -183,18 +183,18 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
     try {
       // Extract threads from enriched outline or generate them
       const enrichedOutline = state.enrichedOutline || outline;
+      console.log('[PreScriptWizard] Step 2 - Extracting threads from outline:', enrichedOutline);
       
       // Threads might already exist in the outline
       let threads = enrichedOutline?.threads || 
                     enrichedOutline?.narrative_threads || 
                     enrichedOutline?.active_threads || [];
 
-      // If no threads, extract from episode beats
+      const extractedThreads: any[] = [];
+
+      // Extract from episode beats (series format)
       if (threads.length === 0 && enrichedOutline?.episode_beats) {
         const episodeBeats = enrichedOutline.episode_beats;
-        
-        // Create threads from turning points and character arcs
-        const extractedThreads: any[] = [];
         
         episodeBeats.forEach((ep: any, idx: number) => {
           if (ep.turning_point) {
@@ -216,8 +216,87 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
             });
           }
         });
+      }
 
+      // Extract from ACT structure (film format)
+      const acts = ['ACT_I', 'ACT_II', 'ACT_III'];
+      acts.forEach((actKey, actIdx) => {
+        const act = enrichedOutline?.[actKey];
+        if (act) {
+          // Extract from scenes within acts
+          const scenes = act.scenes || act.beats || [];
+          scenes.forEach((scene: any, sceneIdx: number) => {
+            if (scene.conflict || scene.dramatic_question) {
+              extractedThreads.push({
+                id: `thread-${actKey}-${sceneIdx}`,
+                name: scene.title || `Escena ${actIdx + 1}.${sceneIdx + 1}`,
+                type: 'plot',
+                description: scene.conflict || scene.dramatic_question || scene.summary,
+                act: actIdx + 1,
+              });
+            }
+          });
+          
+          // Extract act-level turning points
+          if (act.turning_point || act.climax) {
+            extractedThreads.push({
+              id: `thread-act${actIdx + 1}-climax`,
+              name: `Clímax Acto ${actIdx + 1}`,
+              type: 'structural',
+              description: act.turning_point || act.climax,
+              act: actIdx + 1,
+            });
+          }
+        }
+      });
+
+      // Extract from character arcs
+      const characterArcs = enrichedOutline?.character_arcs || enrichedOutline?.arcos_personajes || [];
+      characterArcs.forEach((arc: any, idx: number) => {
+        extractedThreads.push({
+          id: `thread-arc-char-${idx}`,
+          name: arc.character || arc.nombre || `Arco Personaje ${idx + 1}`,
+          type: 'character',
+          description: arc.arc || arc.transformation || arc.descripcion || '',
+        });
+      });
+
+      // Extract from themes/thematic_threads
+      const themes = enrichedOutline?.themes || enrichedOutline?.thematic_threads || [];
+      themes.forEach((theme: any, idx: number) => {
+        const themeName = typeof theme === 'string' ? theme : (theme.name || theme.tema);
+        const themeDesc = typeof theme === 'string' ? theme : (theme.description || theme.descripcion || '');
+        extractedThreads.push({
+          id: `thread-theme-${idx}`,
+          name: themeName,
+          type: 'thematic',
+          description: themeDesc,
+        });
+      });
+
+      // Extract main conflict as primary thread
+      if (enrichedOutline?.central_conflict || enrichedOutline?.conflicto_central) {
+        extractedThreads.unshift({
+          id: 'thread-main-conflict',
+          name: 'Conflicto Central',
+          type: 'main',
+          description: enrichedOutline.central_conflict || enrichedOutline.conflicto_central,
+        });
+      }
+
+      // Use extracted if we found any
+      if (extractedThreads.length > 0) {
         threads = extractedThreads;
+      }
+
+      // Fallback: create basic threads from synopsis/logline
+      if (threads.length === 0) {
+        threads = [{
+          id: 'thread-main',
+          name: 'Trama Principal',
+          type: 'main',
+          description: enrichedOutline?.logline || enrichedOutline?.synopsis || 'Hilo narrativo principal',
+        }];
       }
 
       // Also check narrative_state for existing threads
