@@ -21,6 +21,7 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   CheckCircle,
   Circle,
@@ -87,6 +88,7 @@ export function PreScriptWizard({
   const {
     state,
     isProcessing,
+    isLoading, // V76: Loading state for wizard initialization
     currentStep,
     currentStepState,
     canGoNext,
@@ -108,13 +110,17 @@ export function PreScriptWizard({
     },
   });
 
-  // Reset wizard when dialog opens
+  // V76: Don't reset wizard when loading - state is being restored from DB
   useEffect(() => {
-    if (open) {
-      reset();
-      setConfirmChecked(false);
+    if (open && !isLoading) {
+      // Only reset if we're not in the middle of loading persisted state
+      // AND no steps have been started yet
+      const hasProgress = Object.values(state.steps).some(s => s.status !== 'pending');
+      if (!hasProgress) {
+        setConfirmChecked(false);
+      }
     }
-  }, [open, reset]);
+  }, [open, isLoading, state.steps]);
 
   const currentStepIndex = STEP_ORDER.indexOf(currentStep);
   const progressPercent = ((currentStepIndex + (currentStepState.status === 'done' ? 1 : 0)) / STEP_ORDER.length) * 100;
@@ -137,6 +143,23 @@ export function PreScriptWizard({
     }
     return <Circle className="h-5 w-5 text-muted-foreground" />;
   };
+
+  // V76: Show loading state while wizard is initializing from DB
+  if (isLoading) {
+    if (inline) {
+      return (
+        <Card>
+          <CardContent className="py-8">
+            <div className="flex items-center justify-center">
+              <Loader2 className="h-6 w-6 animate-spin mr-2 text-primary" />
+              <span className="text-muted-foreground">Cargando estado del wizard...</span>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+    return null; // Don't render modal while loading
+  }
 
   const renderStepContent = () => {
     switch (currentStep) {
