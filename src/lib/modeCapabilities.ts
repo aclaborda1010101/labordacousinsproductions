@@ -17,9 +17,15 @@ export interface ModeCapabilities {
     showTargetsNumeric: boolean;
     showOverrides: boolean;
     showPerSceneOverrideMode: boolean;
-    showPackSlots: boolean; // New: Show full character pack grid
-    showIdentityPack: boolean; // New: Show identity pack management
-    showVisualDNAEditor: boolean; // New: Show visual DNA editor
+    showPackSlots: boolean;
+    showIdentityPack: boolean;
+    showVisualDNAEditor: boolean;
+    // Showrunner IA System
+    showShowrunnerLayer: boolean;
+    showSequenceIntent: boolean;
+    showVisualMemoryTimeline: boolean;
+    showSceneComparison: boolean;
+    showContinuityAlerts: boolean;
   };
   // Edit permissions
   edit: {
@@ -44,8 +50,13 @@ export interface ModeCapabilities {
     canEditCostModel: boolean;
     canAcceptWithWarnings: boolean;
     canOverrideQCBlocks: boolean;
-    canManagePackSlots: boolean; // New: Can manually fill pack slots
-    canTrainLoRA: boolean; // New: Can trigger LoRA training
+    canManagePackSlots: boolean;
+    canTrainLoRA: boolean;
+    // Showrunner IA System
+    canEditShowrunnerDecisions: boolean;
+    canEditSequenceIntent: boolean;
+    canOverrideShowrunnerBlocks: boolean;
+    canValidateShowrunnerDecisions: boolean;
   };
   // AI and QC behavior
   behavior: {
@@ -54,7 +65,12 @@ export interface ModeCapabilities {
     qcBlocksOnHardViolation: boolean;
     qcBlocksOnMediumViolation: boolean;
     qcWarningsOnly: boolean;
-    autoGeneratePackSlots: boolean; // New: Auto-generate extra slots after hero accept
+    autoGeneratePackSlots: boolean;
+    // Showrunner IA System
+    showrunnerAutoDecides: boolean;
+    showrunnerBlocksOnViolation: boolean;
+    showrunnerWarningsOnly: boolean;
+    autoUpdateVisualMemory: boolean;
   };
 }
 
@@ -71,9 +87,15 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       showTargetsNumeric: false,
       showOverrides: false,
       showPerSceneOverrideMode: false,
-      showPackSlots: false, // Hide pack grid in ASSISTED
-      showIdentityPack: false, // Hide identity pack in ASSISTED
-      showVisualDNAEditor: false, // Hide Visual DNA editor in ASSISTED
+      showPackSlots: false,
+      showIdentityPack: false,
+      showVisualDNAEditor: false,
+      // Showrunner: invisible in ASSISTED (works in background)
+      showShowrunnerLayer: false,
+      showSequenceIntent: false,
+      showVisualMemoryTimeline: false,
+      showSceneComparison: false,
+      showContinuityAlerts: true, // Show warnings, but subtle
     },
     edit: {
       canEditAuthorDNA: false,
@@ -97,8 +119,13 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       canEditCostModel: false,
       canAcceptWithWarnings: false,
       canOverrideQCBlocks: false,
-      canManagePackSlots: false, // Cannot manually manage slots
-      canTrainLoRA: false, // Cannot train LoRA
+      canManagePackSlots: false,
+      canTrainLoRA: false,
+      // Showrunner: no manual control in ASSISTED
+      canEditShowrunnerDecisions: false,
+      canEditSequenceIntent: false,
+      canOverrideShowrunnerBlocks: false,
+      canValidateShowrunnerDecisions: false,
     },
     behavior: {
       aiAutoDecidesTechnical: true,
@@ -106,7 +133,12 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       qcBlocksOnHardViolation: true,
       qcBlocksOnMediumViolation: true,
       qcWarningsOnly: false,
-      autoGeneratePackSlots: true, // Auto-generate profile + back after hero accept
+      autoGeneratePackSlots: true,
+      // Showrunner: fully automatic in ASSISTED
+      showrunnerAutoDecides: true,
+      showrunnerBlocksOnViolation: true,
+      showrunnerWarningsOnly: false,
+      autoUpdateVisualMemory: true,
     },
   },
 
@@ -122,9 +154,15 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       showTargetsNumeric: true,
       showOverrides: true,
       showPerSceneOverrideMode: true,
-      showPackSlots: true, // Show full pack grid
-      showIdentityPack: true, // Show identity pack management
-      showVisualDNAEditor: true, // Show Visual DNA editor
+      showPackSlots: true,
+      showIdentityPack: true,
+      showVisualDNAEditor: true,
+      // Showrunner: fully visible in PRO
+      showShowrunnerLayer: true,
+      showSequenceIntent: true,
+      showVisualMemoryTimeline: true,
+      showSceneComparison: true,
+      showContinuityAlerts: true,
     },
     edit: {
       canEditAuthorDNA: true,
@@ -148,8 +186,13 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       canEditCostModel: true,
       canAcceptWithWarnings: true,
       canOverrideQCBlocks: true,
-      canManagePackSlots: true, // Full pack control
-      canTrainLoRA: true, // Can trigger LoRA training
+      canManagePackSlots: true,
+      canTrainLoRA: true,
+      // Showrunner: full control in PRO
+      canEditShowrunnerDecisions: true,
+      canEditSequenceIntent: true,
+      canOverrideShowrunnerBlocks: true,
+      canValidateShowrunnerDecisions: true,
     },
     behavior: {
       aiAutoDecidesTechnical: false,
@@ -157,7 +200,12 @@ export const modeCapabilities: Record<CreativeMode, ModeCapabilities> = {
       qcBlocksOnHardViolation: false,
       qcBlocksOnMediumViolation: false,
       qcWarningsOnly: true,
-      autoGeneratePackSlots: false, // No auto-generation, manual control
+      autoGeneratePackSlots: false,
+      // Showrunner: advisory only in PRO (user has final say)
+      showrunnerAutoDecides: false,
+      showrunnerBlocksOnViolation: false,
+      showrunnerWarningsOnly: true,
+      autoUpdateVisualMemory: true,
     },
   },
 } as const;
