@@ -220,24 +220,32 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
 
       // Extract from ACT structure (film format)
       const acts = ['ACT_I', 'ACT_II', 'ACT_III'];
+      const uniqueAgents = new Set<string>();
+      
       acts.forEach((actKey, actIdx) => {
         const act = enrichedOutline?.[actKey];
         if (act) {
-          // Extract from scenes within acts
+          // Extract from scenes/beats within acts
           const scenes = act.scenes || act.beats || [];
           scenes.forEach((scene: any, sceneIdx: number) => {
-            if (scene.conflict || scene.dramatic_question) {
+            // Extract beat events as plot threads
+            if (scene.event || scene.conflict || scene.dramatic_question) {
               extractedThreads.push({
-                id: `thread-${actKey}-${sceneIdx}`,
-                name: scene.title || `Escena ${actIdx + 1}.${sceneIdx + 1}`,
+                id: `thread-${actKey}-beat-${sceneIdx}`,
+                name: scene.agent || scene.title || `Beat ${actIdx + 1}.${scene.beat_number || sceneIdx + 1}`,
                 type: 'plot',
-                description: scene.conflict || scene.dramatic_question || scene.summary,
+                description: scene.event || scene.conflict || scene.dramatic_question || scene.consequence || '',
                 act: actIdx + 1,
               });
             }
+            
+            // Collect unique agents/characters for character threads
+            if (scene.agent && typeof scene.agent === 'string') {
+              scene.agent.split(',').forEach((a: string) => uniqueAgents.add(a.trim()));
+            }
           });
           
-          // Extract act-level turning points
+          // Extract act-level turning points/climax
           if (act.turning_point || act.climax) {
             extractedThreads.push({
               id: `thread-act${actIdx + 1}-climax`,
@@ -247,7 +255,28 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
               act: actIdx + 1,
             });
           }
+          
+          // Extract act resolution
+          if (act.resolution) {
+            extractedThreads.push({
+              id: `thread-act${actIdx + 1}-resolution`,
+              name: `Resolución Acto ${actIdx + 1}`,
+              type: 'structural',
+              description: act.resolution,
+              act: actIdx + 1,
+            });
+          }
         }
+      });
+      
+      // Create character threads from collected agents
+      Array.from(uniqueAgents).forEach((agent, idx) => {
+        extractedThreads.push({
+          id: `thread-agent-${idx}`,
+          name: agent,
+          type: 'character',
+          description: `Hilo de personaje: ${agent}`,
+        });
       });
 
       // Extract from character arcs
