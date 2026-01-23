@@ -45,6 +45,7 @@ import ThreadsDisplay from './ThreadsDisplay';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { DensityProfileSelector } from './DensityProfileSelector';
 import NarrativeGenerationPanel from './NarrativeGenerationPanel';
+import PreScriptWizard from './PreScriptWizard';
 import { 
   FileText, 
   Wand2, 
@@ -371,6 +372,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   // V71: Auto-start narrative generation when approving outline
   const [shouldAutoStartGeneration, setShouldAutoStartGeneration] = useState(false);
+  
+  // V73: Pre-Script Wizard for 4-step preparation before generation
+  const [showPreScriptWizard, setShowPreScriptWizard] = useState(false);
   
   // V24: Stable outline ref to prevent flicker during operations
   const lastStableOutlineRef = useRef<any>(null);
@@ -8041,12 +8045,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                       {!outlineApproved && ' Apruébalo para poder generar el guion completo.'}
                     </p>
                     {outlineApproved ? (
-                      <Button variant="default" onClick={() => {
-                        userNavigatedRef.current = true;
-                        setActiveTab('outline');
-                        // Reset after navigation is processed
-                        setTimeout(() => { userNavigatedRef.current = false; }, 500);
-                      }}>
+                      <Button variant="default" onClick={() => setShowPreScriptWizard(true)}>
                         <Sparkles className="w-4 h-4 mr-2" />
                         Generar Guion Completo
                       </Button>
@@ -10213,6 +10212,21 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      {/* V73: Pre-Script Wizard for 4-step preparation */}
+      <PreScriptWizard
+        projectId={projectId}
+        outline={outlineForUI}
+        open={showPreScriptWizard}
+        onOpenChange={setShowPreScriptWizard}
+        onComplete={() => {
+          setShowPreScriptWizard(false);
+          setShouldAutoStartGeneration(true);
+          userNavigatedRef.current = true;
+          setActiveTab('outline');
+          setTimeout(() => { userNavigatedRef.current = false; }, 500);
+        }}
+      />
     </div>
     </>
   );
