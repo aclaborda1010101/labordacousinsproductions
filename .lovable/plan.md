@@ -1,179 +1,92 @@
 
-# Plan: Conectar el botón "Aprobar y Generar Guion" al Sistema Narrativo v70
-
-## Diagnóstico del Problema
-
-El botón **"✅ Aprobar y Generar Guión"** en el componente `OutlineWizardV11` no hace nada visible porque:
-
-1. **Función deprecada**: La función `approveAndGenerateEpisodes()` en `ScriptImport.tsx:3600-3605` está diseñada para **bloquear** la ejecución del motor legacy y solo hacer:
-   ```typescript
-   navigate(`/projects/${projectId}/script`);
-   toast.info('Ve a la pestaña "Producción" y usa el panel de Sistema Narrativo v70 para generar.');
-   ```
-
-2. **Doble punto de entrada confuso**: 
-   - **Arriba**: Botón grande verde "Aprobar y Generar Guión" que **no genera nada**
-   - **Abajo**: Panel de "Sistema Narrativo v70" con botón "Iniciar Generación" que **SÍ genera**
-
-3. **UX rota**: El usuario ve el botón prominente, lo clickea, y parece que "no hace nada" porque:
-   - Ya está en `/projects/:id/script` (no hay redirección visible)
-   - El toast dice que vaya a un panel que está más abajo en la misma página
-
-## Solución Propuesta
-
-**Conectar el botón "Aprobar y Generar" directamente al Sistema Narrativo v70**, eliminando la confusión de tener dos puntos de entrada.
-
-### Opción A: Invocar el Sistema Narrativo desde el botón (RECOMENDADA)
-
-Modificar `approveAndGenerateEpisodes` para que:
-1. Marque el outline como "approved" en la base de datos
-2. Invoque `startGeneration()` del hook de useNarrativeGeneration 
-3. Navegue a la vista de progreso
-
-### Opción B: Eliminar el botón y destacar el panel v70
-
-Ocultar o cambiar el botón a "Ver Panel de Generación" que haga scroll al `NarrativeGenerationPanel`.
+## Objetivo
+Que al salir del Outline y volver, se sigan viendo **Threads/Tramas** y **Carne Operativa (reglas/facciones/setpieces/turning points)** exactamente como quedaron guardadas, sin “desaparecer” hasta que vuelves a “generar”.
 
 ---
 
-## Implementación (Opción A)
+## Diagnóstico (por qué pasa lo raro)
+Por lo que se ve en el código actual, hay dos causas probables y compatibles con tu síntoma (“no se ve guardado”, pero al generar lo hace al momento):
 
-### Cambios en `ScriptImport.tsx`
+1) **Sí está guardado en el backend, pero la UI se rehidrata con una versión “reconstruida” que pisa campos enriquecidos**  
+En `useOutlinePersistence.loadOutline()` hay una lógica que, cuando detecta que el `outline_json` está “vacío” o “necesita enriquecimiento”, **reconstruye** `outlineJson` a partir de `outline_parts.film_scaffold` y acts, pero lo hace con una asignación del estilo:
+- `outlineJson = { ...(scaffold), main_characters, main_locations, beats, ... }`
+Esto **no mezcla** de forma segura con el `outline_json` original, y puede **perder campos** como:
+- `threads`, `episode_beats`
+- `entity_rules` (reglas operativas / carne operativa)
+- `factions`, `turning_points`, `setpieces`, etc.
 
-**1. Importar y usar el hook de generación narrativa:**
-```typescript
-// Nueva referencia para controlar el panel de generación
-const narrativeGenerationRef = useRef<{ startGeneration: () => Promise<void> } | null>(null);
-```
+Resultado: al volver a entrar, la UI te muestra un `outline_json` “limpio” (sin carne/threads), aunque el backend todavía tenga esos datos (y por eso “generar” va instantáneo).
 
-**2. Modificar `approveAndGenerateEpisodes()` para aprobar el outline e iniciar generación:**
-
-```typescript
-const approveAndGenerateEpisodes = async () => {
-  try {
-    // 1. Aprobar el outline en la base de datos
-    if (outlinePersistence.savedOutline?.id) {
-      await supabase
-        .from('project_outlines')
-        .update({ status: 'approved' })
-        .eq('id', outlinePersistence.savedOutline.id);
-      
-      setOutlineApproved(true);
-      updatePipelineStep('approval', 'success');
-    }
-    
-    // 2. Hacer scroll al panel de Sistema Narrativo y mostrar toast
-    const narrativePanel = document.querySelector('[data-narrative-panel]');
-    narrativePanel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    toast.success(
-      'Outline aprobado. Haz clic en "Iniciar Generación" en el panel de Sistema Narrativo.',
-      { duration: 5000 }
-    );
-  } catch (error: any) {
-    console.error('[ScriptImport] Error approving outline:', error);
-    toast.error('Error al aprobar el outline');
-  }
-};
-```
-
-**3. Añadir `data-narrative-panel` al `NarrativeGenerationPanel`:**
-
-```tsx
-{lightOutline && (
-  <div data-narrative-panel>
-    <NarrativeGenerationPanel
-      projectId={projectId}
-      outline={lightOutline}
-      // ... resto de props
-    />
-  </div>
-)}
-```
-
-### Alternativa más directa: Auto-iniciar generación
-
-Si quieres que el botón "Aprobar y Generar" inicie automáticamente la generación:
-
-**1. Crear un estado de "auto-start" en ScriptImport:**
-```typescript
-const [shouldAutoStartGeneration, setShouldAutoStartGeneration] = useState(false);
-```
-
-**2. Modificar `approveAndGenerateEpisodes`:**
-```typescript
-const approveAndGenerateEpisodes = async () => {
-  // Aprobar outline
-  if (outlinePersistence.savedOutline?.id) {
-    await supabase
-      .from('project_outlines')
-      .update({ status: 'approved' })
-      .eq('id', outlinePersistence.savedOutline.id);
-    
-    setOutlineApproved(true);
-    updatePipelineStep('approval', 'success');
-  }
-  
-  // Señalar que debe auto-iniciar
-  setShouldAutoStartGeneration(true);
-  
-  // Scroll al panel
-  const narrativePanel = document.querySelector('[data-narrative-panel]');
-  narrativePanel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-};
-```
-
-**3. Pasar prop `autoStart` al `NarrativeGenerationPanel`:**
-```tsx
-<NarrativeGenerationPanel
-  projectId={projectId}
-  outline={lightOutline}
-  autoStart={shouldAutoStartGeneration}
-  onAutoStartComplete={() => setShouldAutoStartGeneration(false)}
-  // ...
-/>
-```
-
-**4. En `NarrativeGenerationPanel`, añadir lógica de auto-start:**
-```typescript
-useEffect(() => {
-  if (autoStart && !isGenerating && sceneIntents.length === 0) {
-    handleStart().then(() => onAutoStartComplete?.());
-  }
-}, [autoStart]);
-```
+2) **`ScriptImport.tsx` solo sincroniza `lightOutline` una vez**  
+En `ScriptImport.tsx` hay un `useEffect` que solo hace `setLightOutline(...)` si `!lightOutline`. Si por timing/estado la UI ya tiene algo (aunque sea viejo), puede quedar “pegada” a ese snapshot y no reflejar el outline más reciente.
 
 ---
 
-## Archivos a Modificar
+## Qué vamos a cambiar (solución)
+### A) Arreglar la reconstrucción para que NO borre “Carne Operativa” ni “Threads”
+En `src/hooks/useOutlinePersistence.ts`, en el bloque “Reconstructing outline_json from outline_parts”, vamos a:
+- **Conservar el `outline_json` original** y solo “rellenar huecos” con scaffold/acts.
+- Hacer un merge seguro tipo:
+  - Mantener primero lo enriquecido (threads, entity_rules, etc.)
+  - Completar `main_characters`, `main_locations`, `beats`, `acts_summary` desde scaffold si faltan
+- En vez de reemplazar todo el objeto, construiremos algo como:
+  - `outlineJson = { ...outlineJson, ...(scaffold ?? {}), main_characters: ..., main_locations: ..., beats: ..., acts_summary: ... }`
+  - Ajustando el orden para que **no pise** arrays/objetos enriquecidos si ya existen.
 
-1. **`src/components/project/ScriptImport.tsx`**
-   - Líneas 3598-3605: Reescribir `approveAndGenerateEpisodes()` para aprobar + señalar auto-start
-   - Líneas 7753-7771: Añadir wrapper con `data-narrative-panel` y props `autoStart`
+Criterios concretos:
+- Si `outlineJson.threads` ya existe, no tocarlo.
+- Si `outlineJson.entity_rules` ya existe, no tocarlo.
+- Si `outlineJson.factions` ya existe, no tocarlo.
+- Solo “reparar” lo mínimo necesario para que el UI tenga personajes/locaciones/acts coherentes.
 
-2. **`src/components/project/NarrativeGenerationPanel.tsx`**
-   - Añadir props `autoStart` y `onAutoStartComplete`
-   - Implementar `useEffect` que detecte `autoStart` y llame a `handleStart()`
+### B) Re-sincronizar el Outline UI cuando cambia el Outline guardado
+En `src/components/project/ScriptImport.tsx`, vamos a:
+- Añadir una sincronización que observe `outlinePersistence.savedOutline?.updated_at` (o `id`) y cuando cambie:
+  - actualice `lightOutline` si el outline del backend es más nuevo que el que se está mostrando.
+- Mantener el “anti-flicker” (lastStableOutlineRef) pero evitando que se quede mostrando una versión vieja.
+
+Esto hace que:
+- Al volver a entrar al Outline, se pinte lo guardado real.
+- Tras “Carne Op.” o “Threads”, aunque haya latencia, el refresco termine reflejándose.
 
 ---
 
-## Resultado Esperado
-
-Después de implementar estos cambios:
-
-1. Usuario ve el botón "✅ Aprobar y Generar Guión"
-2. Al hacer clic:
-   - El outline se marca como `approved` en la base de datos
-   - El panel de Sistema Narrativo v70 inicia automáticamente la generación
-   - El usuario ve el progreso en tiempo real
-3. No hay más confusión entre dos puntos de entrada
+## Cómo lo probaremos (pasos de verificación)
+1) En un proyecto con Outline ya enriquecido:
+   - Verificar que aparecen `Threads/Tramas` y `Reglas Operativas/Facciones`.
+2) Cambiar de pestaña/ruta (salir del Outline) y volver:
+   - Confirmar que **siguen visibles** sin tocar “Generar”.
+3) Ejecutar “Carne Op.” y “Threads”:
+   - Confirmar que tras terminar, si navegas fuera y vuelves, se mantiene.
+4) Caso borde: outline_parts existe y main_characters está vacío:
+   - Confirmar que aún reconstruye personajes/locaciones, pero **no borra** threads/reglas.
 
 ---
 
-## Riesgos y Mitigaciones
+## Impacto esperado
+- Se elimina el efecto “parece que no guardó”.
+- El botón de generar seguirá funcionando igual, pero ya no será el “trigger” que te hace reaparecer datos.
+- Menos confusión y menos riesgo de regenerar innecesariamente.
 
-| Riesgo | Mitigación |
-|--------|------------|
-| `startGeneration` falla silenciosamente | Ya implementado en cambios anteriores: muestra toast con acciones "Continuar"/"Reiniciar" |
-| El outline no está listo para aprobar | El botón ya está deshabilitado si `!qcStatus.canGenerateEpisodes` |
-| Generación ya en curso | `startGeneration` detecta intents existentes y ofrece "Continuar" |
+---
+
+## Archivos a tocar
+- `src/hooks/useOutlinePersistence.ts` (merge seguro al reconstruir)
+- `src/components/project/ScriptImport.tsx` (sincronización por `updated_at` / outline change)
+
+---
+
+## Riesgos y mitigación
+- Riesgo: merge “malo” podría mezclar estructuras antiguas.
+  - Mitigación: merge selectivo (solo completar campos faltantes; no sobreescribir enriquecidos).
+- Riesgo: re-render extra por re-sincronización.
+  - Mitigación: comparar `updated_at` y solo actualizar si es más nuevo.
+
+---
+
+## Sugerencias de siguientes mejoras (opcionales)
+1) Añadir un indicador “Guardado en backend: hh:mm:ss” en el panel del Outline para que siempre sepas si estás viendo lo último.
+2) Botón “Refrescar Outline” visible (sin generar) para forzar reload.
+3) Historial/Versionado del Outline (ver cambios de carne/threads).
+4) Aviso si estás viendo un “snapshot reconstruido” (modo recovery) vs outline completo.
+5) Tests Playwright: “enrich -> navegar -> volver -> datos siguen”.
