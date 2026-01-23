@@ -29,6 +29,7 @@ import {
 import { useNarrativeGeneration, SceneIntent } from '@/hooks/useNarrativeGeneration';
 import { NarrativeDiagnosticsPanel } from './NarrativeDiagnosticsPanel';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface NarrativeGenerationPanelProps {
   projectId: string;
@@ -76,6 +77,7 @@ export function NarrativeGenerationPanel({
     progress,
     progressPercentage,
     isGenerating,
+    isLoaded, // V72: Wait for initial load before auto-start
     startGeneration,
     continueGeneration,
     cancelGeneration,
@@ -88,21 +90,59 @@ export function NarrativeGenerationPanel({
     onError: handleError,
   });
 
-  // V71: Auto-start effect - triggers generation when autoStart prop is true
+  // V72: Improved auto-start effect - waits for isLoaded and handles all cases
   useEffect(() => {
-    // Only process once per mount to prevent double-triggering
-    if (autoStart && !autoStartProcessedRef.current && !isGenerating && sceneIntents.length === 0) {
-      autoStartProcessedRef.current = true;
-      console.log('[NarrativePanel] Auto-start triggered');
-      handleStart().finally(() => {
-        onAutoStartComplete?.();
-      });
+    // Don't process until initial state is loaded (fixes race condition)
+    if (!autoStart || autoStartProcessedRef.current || !isLoaded) return;
+    
+    autoStartProcessedRef.current = true;
+    
+    // Case 1: No intents → start new generation
+    if (sceneIntents.length === 0) {
+      console.log('[NarrativePanel] Auto-start: nueva generación');
+      handleStart().finally(() => onAutoStartComplete?.());
+      return;
     }
-    // Reset the ref when autoStart becomes false
+    
+    // Case 2: Generation already completed → show feedback
+    if (progress.phase === 'completed') {
+      console.log('[NarrativePanel] Auto-start: generación ya completada');
+      toast.info('Ya existe un guion generado. Puedes verlo en la pestaña Escenas.', {
+        duration: 5000,
+        action: {
+          label: 'Regenerar',
+          onClick: () => {
+            resetNarrativeState().then(() => {
+              autoStartProcessedRef.current = false;
+            });
+          },
+        },
+      });
+      onAutoStartComplete?.();
+      return;
+    }
+    
+    // Case 3: Pending/writing intents → continue generation
+    const hasPending = sceneIntents.some(i => 
+      ['pending', 'planning', 'writing', 'repairing', 'needs_repair'].includes(i.status)
+    );
+    if (hasPending) {
+      console.log('[NarrativePanel] Auto-start: continuando generación pendiente');
+      continueGeneration().finally(() => onAutoStartComplete?.());
+      return;
+    }
+    
+    // Case 4: All other cases (e.g., all failed) → just complete
+    console.log('[NarrativePanel] Auto-start: estado no manejado, completando');
+    onAutoStartComplete?.();
+  }, [autoStart, isLoaded, sceneIntents.length, progress.phase]);
+
+  // Reset the ref when autoStart becomes false
+  useEffect(() => {
     if (!autoStart) {
       autoStartProcessedRef.current = false;
     }
-  }, [autoStart, isGenerating, sceneIntents.length]);
+  }, [autoStart]);
 
   const handleCleanupComplete = () => {
     // Refresh state after cleanup from diagnostics panel

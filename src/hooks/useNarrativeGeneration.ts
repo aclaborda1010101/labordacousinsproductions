@@ -146,6 +146,8 @@ export function useNarrativeGeneration({
     error: null,
   });
   const [isGenerating, setIsGenerating] = useState(false);
+  // V72: Track when initial state has been loaded (fixes race condition with auto-start)
+  const [isLoaded, setIsLoaded] = useState(false);
   
   // Refs
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -414,6 +416,9 @@ export function useNarrativeGeneration({
       }
     } catch (err) {
       console.error('[NarrativeGen] Error loading initial state:', err);
+    } finally {
+      // V72: Always mark as loaded (even on error) to unblock auto-start logic
+      setIsLoaded(true);
     }
   }, [projectId, validateAndCleanupIntegrity]);
 
@@ -794,6 +799,8 @@ export function useNarrativeGeneration({
   // ============================================================================
   
   const resetNarrativeState = useCallback(async () => {
+    // V72: Reset isLoaded so auto-start can re-trigger after reset
+    setIsLoaded(false);
     try {
       // 1. Delete orphaned jobs first (prevent future issues)
       await supabase
@@ -878,6 +885,7 @@ export function useNarrativeGeneration({
     progress,
     progressPercentage,
     isGenerating,
+    isLoaded, // V72: Exposed for auto-start race condition fix
     
     // Actions
     startGeneration,
