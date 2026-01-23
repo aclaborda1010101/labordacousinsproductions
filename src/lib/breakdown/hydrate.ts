@@ -290,7 +290,13 @@ export const buildRobustCounts = (
           ? payload.dialogues.total_lines
           : typeof payload?.dialogue_count === "number"
             ? payload.dialogue_count
-            : scenes.reduce((sum: number, sc: any) => sum + (sc?.dialogue_lines || sc?.dialogue_blocks?.length || 0), 0),
+            : scenes.reduce((sum: number, sc: any) => {
+                return sum + 
+                  (sc?.dialogue_lines || 0) + 
+                  (sc?.dialogue_blocks?.length || 0) +
+                  (Array.isArray(sc?.dialogues) ? sc.dialogues.length : 0) +
+                  (Array.isArray(sc?.dialogue) ? sc.dialogue.length : 0);
+              }, 0),
   };
 };
 

@@ -101,9 +101,18 @@ export async function compileScriptFromScenes(
     const rawText = renderScreenplayFromScenes(screenplayData);
 
     // 6. Build parsed_json for structured access
+    // Calculate total dialogues from scenes
+    const totalDialogues = scenes.reduce((sum: number, sc: any) => 
+      sum + (sc.parsed_json?.dialogues?.length || 0), 0
+    );
+
     const parsedJson = {
       title: scriptTitle,
       synopsis: scriptSynopsis,
+      counts: {
+        total_scenes: scenes.length,
+        dialogues: totalDialogues,
+      },
       episodes: [{
         episode_number: episodeNumber,
         title: scriptTitle,
@@ -113,6 +122,7 @@ export async function compileScriptFromScenes(
           summary: scene.summary || scene.objective,
           description: scene.parsed_json?.description || '',
           dialogues: scene.parsed_json?.dialogues || [],
+          dialogue: scene.parsed_json?.dialogues || [],  // Alias for compatibility
           characters_present: scene.characters_involved || [],
           duration_estimate_sec: scene.duration_estimate_sec,
         })),

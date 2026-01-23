@@ -5826,7 +5826,10 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     const hasScript = generatedScript?.episodes?.length > 0;
     const isOutlineComplete = outlineApproved;
     const isScriptComplete = hasScript && generatedScript?.episodes?.every((ep: any) =>
-      ep.scenes?.every((s: any) => s.dialogue && s.dialogue.length > 0)
+      ep.scenes?.every((s: any) => 
+        (s.dialogue && s.dialogue.length > 0) || 
+        (s.dialogues && s.dialogues.length > 0)
+      )
     );
     
     switch (stepId) {
@@ -5874,12 +5877,18 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
   // Check if script is complete (has dialogues)
   const isScriptComplete = generatedScript?.episodes?.every((ep: any) =>
-    ep.scenes?.every((s: any) => s.dialogue && s.dialogue.length > 0)
+    ep.scenes?.every((s: any) => 
+      (s.dialogue && s.dialogue.length > 0) || 
+      (s.dialogues && s.dialogues.length > 0)
+    )
   ) ?? false;
 
   // Count episodes needing dialogues
   const episodesNeedingDialogue = generatedScript?.episodes?.filter((ep: any) =>
-    ep.scenes?.some((s: any) => !s.dialogue || s.dialogue.length === 0)
+    ep.scenes?.some((s: any) => 
+      (!s.dialogue || s.dialogue.length === 0) && 
+      (!s.dialogues || s.dialogues.length === 0)
+    )
   ) || [];
 
   return (
