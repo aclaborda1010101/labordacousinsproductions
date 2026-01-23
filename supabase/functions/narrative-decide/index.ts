@@ -11,10 +11,17 @@
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { requireAuth, requireProjectAccess, authErrorResponse } from "../_shared/auth.ts";
 import { aiFetch } from "../_shared/ai-fetch.ts";
 import { MODEL_CONFIG } from "../_shared/model-config.ts";
+
+// Service role client for system operations (bypasses RLS)
+function getServiceClient(): SupabaseClient {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  return createClient(supabaseUrl, serviceKey);
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -193,8 +200,11 @@ serve(async (req) => {
         status: 'pending'
       }));
 
+    // Use service role client for system operations to bypass RLS
+    const serviceClient = getServiceClient();
+    
     if (intentsToInsert.length > 0) {
-      const { error: insertError } = await auth.supabase
+      const { error: insertError } = await serviceClient
         .from('scene_intent')
         .insert(intentsToInsert);
 
@@ -209,7 +219,7 @@ serve(async (req) => {
     const newActiveThreads = decision.active_threads || threads.slice(0, 3).map(t => t.id || t.name);
     const newForbiddenActions = decision.forbidden_actions || [];
 
-    await auth.supabase
+    await serviceClient
       .from('narrative_state')
       .update({
         narrative_goal: nextGoal,
@@ -224,7 +234,7 @@ serve(async (req) => {
 
     // 10. Create jobs for scene-worker - now with proper IDs returned
     // First, get the inserted intent IDs
-    const { data: insertedIntents } = await auth.supabase
+    const { data: insertedIntents } = await serviceClient
       .from('scene_intent')
       .select('id, scene_number')
       .eq('project_id', projectId)
@@ -261,7 +271,7 @@ serve(async (req) => {
         samplePayload: jobsToInsert[0]?.payload
       });
       
-      const { error: jobsError } = await auth.supabase
+      const { error: jobsError } = await serviceClient
         .from('jobs')
         .insert(jobsToInsert);
 

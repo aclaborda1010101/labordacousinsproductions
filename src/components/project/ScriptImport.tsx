@@ -2440,6 +2440,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     updatePipelineStep('outline', 'success');
     updatePipelineStep('approval', 'running', 'Esperando aprobación...');
     
+    // V72: Auto-navigate to Outline tab after generation completes
+    setActiveTab('outline');
+    
     const successMessage = outlineQuality === 'DEGRADED' 
       ? 'Outline generado (con avisos). Revísalo antes de aprobar.'
       : 'Outline generado. Revísalo y apruébalo para continuar.';
