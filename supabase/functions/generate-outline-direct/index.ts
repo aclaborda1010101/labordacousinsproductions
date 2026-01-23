@@ -1,5 +1,5 @@
 /**
- * GENERATE-OUTLINE-DIRECT V1.0
+ * GENERATE-OUTLINE-DIRECT V1.1
  * 
  * Simplified single-call outline generation.
  * No chunking, no micro-stages - just one powerful prompt to the LLM.
@@ -8,10 +8,13 @@
  * - 1 call = 1 complete outline
  * - Warnings instead of blockers
  * - Always save result, let user decide
+ * 
+ * V1.1: Added robust JSON parsing to handle malformed AI responses
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { parseJsonRobust } from "../_shared/parse-json-robust.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -342,13 +345,20 @@ async function callAIWithModel(
       content = JSON.stringify(data);
     }
 
-    // Parse JSON
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('No valid JSON found in AI response');
+    // Parse JSON with robust parser
+    const parseResult = parseJsonRobust(content, 'generate-outline-direct');
+    
+    if (!parseResult.ok || !parseResult.json) {
+      console.error(`[generate-outline-direct] JSON parse failed: strategy=${parseResult.strategy}, error=${parseResult.error}`);
+      throw new Error(`JSON_PARSE_FAILED: ${parseResult.error || 'Unknown parse error'}`);
     }
-
-    return { outline: JSON.parse(jsonMatch[0]), model };
+    
+    if (parseResult.warnings.length > 0) {
+      console.warn(`[generate-outline-direct] Parse warnings: ${parseResult.warnings.join(', ')}`);
+    }
+    
+    console.log(`[generate-outline-direct] JSON parsed successfully with strategy: ${parseResult.strategy}`);
+    return { outline: parseResult.json, model };
   } catch (error: any) {
     clearTimeout(timeoutId);
     if (error.name === 'AbortError') {
