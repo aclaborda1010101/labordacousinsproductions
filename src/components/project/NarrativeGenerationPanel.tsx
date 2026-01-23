@@ -97,6 +97,12 @@ export function NarrativeGenerationPanel({
     
     autoStartProcessedRef.current = true;
     
+    console.log('[NarrativePanel] Auto-start evaluating:', {
+      intentsCount: sceneIntents.length,
+      phase: progress.phase,
+      statuses: sceneIntents.map(i => i.status),
+    });
+    
     // Case 1: No intents → start new generation
     if (sceneIntents.length === 0) {
       console.log('[NarrativePanel] Auto-start: nueva generación');
@@ -122,12 +128,17 @@ export function NarrativeGenerationPanel({
       return;
     }
     
-    // Case 3: Pending/writing intents → continue generation
-    const hasPending = sceneIntents.some(i => 
-      ['pending', 'planning', 'writing', 'repairing', 'needs_repair'].includes(i.status)
-    );
+    // Case 3: ANY intents in workable states → ALWAYS continue
+    // (covers planning, pending, planned, writing, repairing, needs_repair)
+    const workableStatuses = ['pending', 'planning', 'planned', 'writing', 'repairing', 'needs_repair'];
+    const hasPending = sceneIntents.some(i => workableStatuses.includes(i.status));
+    
     if (hasPending) {
-      console.log('[NarrativePanel] Auto-start: continuando generación pendiente');
+      const pendingCount = sceneIntents.filter(i => workableStatuses.includes(i.status)).length;
+      console.log('[NarrativePanel] Auto-start: continuando generación pendiente', {
+        total: sceneIntents.length,
+        pending: pendingCount,
+      });
       continueGeneration().finally(() => onAutoStartComplete?.());
       return;
     }
@@ -135,7 +146,7 @@ export function NarrativeGenerationPanel({
     // Case 4: All other cases (e.g., all failed) → just complete
     console.log('[NarrativePanel] Auto-start: estado no manejado, completando');
     onAutoStartComplete?.();
-  }, [autoStart, isLoaded, sceneIntents.length, progress.phase]);
+  }, [autoStart, isLoaded, sceneIntents, progress.phase]);
 
   // Reset the ref when autoStart becomes false
   useEffect(() => {
