@@ -34,13 +34,12 @@ export async function compileScriptFromScenes(
 
   try {
     // 1. Fetch all scenes for this project/episode
-    // @ts-expect-error - Supabase TS2589 workaround for deeply chained queries
     const { data: scenesData, error: scenesError } = await supabase
       .from('scenes')
       .select('*')
       .eq('project_id', projectId)
-      .eq('episode_number', episodeNumber)
-      .order('scene_number', { ascending: true });
+      .eq('episode_no', episodeNumber)
+      .order('scene_no', { ascending: true });
 
     if (scenesError) {
       console.error('[CompileScript] Error fetching scenes:', scenesError);
@@ -74,7 +73,7 @@ export async function compileScriptFromScenes(
       const dialogues = parsedJson.dialogues || [];
       
       return {
-        scene_number: scene.scene_number,
+        scene_number: scene.scene_no,
         slugline: scene.slugline || parsedJson.slugline || '',
         action_summary: parsedJson.description || parsedJson.action || scene.objective || '',
         dialogue: dialogues.map((d: any) => ({
@@ -109,7 +108,7 @@ export async function compileScriptFromScenes(
         episode_number: episodeNumber,
         title: scriptTitle,
         scenes: scenes.map((scene: any) => ({
-          scene_number: scene.scene_number,
+          scene_number: scene.scene_no,
           slugline: scene.slugline,
           summary: scene.summary || scene.objective,
           description: scene.parsed_json?.description || '',
