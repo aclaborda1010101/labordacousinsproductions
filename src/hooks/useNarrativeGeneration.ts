@@ -261,11 +261,89 @@ export function useNarrativeGeneration({
   }, [projectId, onSceneGenerated]);
 
   // ============================================================================
+  // Integrity Validation - Auto-cleanup orphaned data
+  // ============================================================================
+  
+  const validateAndCleanupIntegrity = useCallback(async (): Promise<{
+    hadOrphans: boolean;
+    cleanedJobs: number;
+  }> => {
+    try {
+      // 1. Load scene_intents to get valid IDs
+      const { data: intents } = await supabase
+        .from('scene_intent')
+        .select('id')
+        .eq('project_id', projectId);
+      
+      const validIntentIds = new Set((intents || []).map(i => i.id));
+
+      // 2. Load jobs and check for orphans
+      const { data: jobs } = await supabase
+        .from('jobs')
+        .select('id, payload, status')
+        .eq('project_id', projectId)
+        .eq('type', 'scene_generation')
+        .in('status', ['queued', 'running', 'blocked'] as const);
+
+      if (!jobs || jobs.length === 0) {
+        return { hadOrphans: false, cleanedJobs: 0 };
+      }
+
+      // Find orphaned jobs (those pointing to non-existent intents)
+      const orphanedJobIds: string[] = [];
+      for (const job of jobs) {
+        const payload = job.payload as { scene_intent_id?: string } | null;
+        const intentId = payload?.scene_intent_id;
+        
+        // Job is orphan if:
+        // - It has no intent ID but there are no intents at all
+        // - It references an intent that doesn't exist
+        const isOrphan = !intentId || 
+                         (validIntentIds.size === 0) || 
+                         (intentId && !validIntentIds.has(intentId));
+        
+        if (isOrphan) {
+          orphanedJobIds.push(job.id);
+        }
+      }
+
+      if (orphanedJobIds.length > 0) {
+        console.log(`[NarrativeGen] Found ${orphanedJobIds.length} orphaned jobs, cleaning up...`);
+        
+        // Delete orphaned jobs
+        const { error } = await supabase
+          .from('jobs')
+          .delete()
+          .in('id', orphanedJobIds);
+
+        if (error) {
+          console.error('[NarrativeGen] Error cleaning orphaned jobs:', error);
+        } else {
+          console.log(`[NarrativeGen] Cleaned ${orphanedJobIds.length} orphaned jobs`);
+        }
+
+        return { hadOrphans: true, cleanedJobs: orphanedJobIds.length };
+      }
+
+      return { hadOrphans: false, cleanedJobs: 0 };
+    } catch (err) {
+      console.error('[NarrativeGen] Integrity validation error:', err);
+      return { hadOrphans: false, cleanedJobs: 0 };
+    }
+  }, [projectId]);
+
+  // ============================================================================
   // Load Initial State
   // ============================================================================
   
   const loadInitialState = useCallback(async () => {
     try {
+      // Step 0: Run integrity check and cleanup orphans FIRST
+      const { hadOrphans, cleanedJobs } = await validateAndCleanupIntegrity();
+      if (hadOrphans) {
+        console.log(`[NarrativeGen] Auto-cleaned ${cleanedJobs} orphaned jobs on load`);
+      }
+
       // Load narrative_state
       const { data: nsData } = await supabase
         .from('narrative_state')
@@ -304,7 +382,7 @@ export function useNarrativeGeneration({
     } catch (err) {
       console.error('[NarrativeGen] Error loading initial state:', err);
     }
-  }, [projectId]);
+  }, [projectId, validateAndCleanupIntegrity]);
 
   // ============================================================================
   // Start Generation

@@ -12,6 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 import { 
   Sparkles, 
   Loader2, 
@@ -26,6 +27,7 @@ import {
   Brain
 } from 'lucide-react';
 import { useNarrativeGeneration, SceneIntent } from '@/hooks/useNarrativeGeneration';
+import { NarrativeDiagnosticsPanel } from './NarrativeDiagnosticsPanel';
 import { cn } from '@/lib/utils';
 
 interface NarrativeGenerationPanelProps {
@@ -62,6 +64,7 @@ export function NarrativeGenerationPanel({
     continueGeneration,
     cancelGeneration,
     resetNarrativeState,
+    refreshState,
   } = useNarrativeGeneration({
     projectId,
     onComplete,
@@ -72,6 +75,11 @@ export function NarrativeGenerationPanel({
       console.error('[NarrativePanel] Error:', error);
     },
   });
+
+  const handleCleanupComplete = () => {
+    // Refresh state after cleanup from diagnostics panel
+    refreshState();
+  };
 
   const handleStart = async () => {
     try {
@@ -283,6 +291,13 @@ export function NarrativeGenerationPanel({
             </Button>
           )}
         </div>
+
+        {/* Diagnostics Panel */}
+        <Separator className="my-2" />
+        <NarrativeDiagnosticsPanel 
+          projectId={projectId} 
+          onCleanupComplete={handleCleanupComplete}
+        />
       </CardContent>
     </Card>
   );
