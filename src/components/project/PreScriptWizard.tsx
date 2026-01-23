@@ -1,11 +1,12 @@
 /**
- * PreScriptWizard - 4-step wizard for preparing script generation
+ * PreScriptWizard - 5-step wizard for preparing and generating script (V77)
  * 
  * Steps:
  * 1. Carne Operativa (Enrich + Materialize)
  * 2. Threads Narrativos (Automatic)
  * 3. Showrunner (Editorial + Visual Context)
- * 4. Aprobar y Generar
+ * 4. Aprobar (Confirm readiness)
+ * 5. Generar Guion (Integrated narrative generation)
  */
 
 import { useEffect } from 'react';
@@ -35,6 +36,9 @@ import {
   ArrowRight,
   ArrowLeft,
   AlertCircle,
+  Square,
+  Play,
+  Clapperboard,
 } from 'lucide-react';
 import { usePreScriptWizard, WizardStep } from '@/hooks/usePreScriptWizard';
 import { cn } from '@/lib/utils';
@@ -48,8 +52,15 @@ interface PreScriptWizardProps {
   onComplete: () => void;
   /** When true, renders inline (no modal dialog) */
   inline?: boolean;
+  /** V77: Callback when script is compiled */
+  onScriptCompiled?: (scriptData: any) => void;
+  /** V77: Generation params */
+  language?: string;
+  qualityTier?: string;
+  format?: 'film' | 'series' | 'ad';
 }
 
+// V77: 5-step config
 const STEP_CONFIG: Record<WizardStep, { title: string; description: string; icon: any }> = {
   enrich: {
     title: 'Carne Operativa',
@@ -67,13 +78,18 @@ const STEP_CONFIG: Record<WizardStep, { title: string; description: string; icon
     icon: Film,
   },
   approve: {
-    title: 'Aprobar y Generar',
-    description: 'Confirma y lanza la generación del guion completo',
+    title: 'Confirmar',
+    description: 'Revisa y confirma para iniciar la generación',
     icon: Sparkles,
+  },
+  generate: {
+    title: 'Generando Guion',
+    description: 'Escribiendo escenas con diálogos y acotaciones',
+    icon: Clapperboard,
   },
 };
 
-const STEP_ORDER: WizardStep[] = ['enrich', 'threads', 'showrunner', 'approve'];
+const STEP_ORDER: WizardStep[] = ['enrich', 'threads', 'showrunner', 'approve', 'generate'];
 
 export function PreScriptWizard({
   projectId,
@@ -82,13 +98,17 @@ export function PreScriptWizard({
   onOpenChange,
   onComplete,
   inline = false,
+  onScriptCompiled,
+  language = 'es-ES',
+  qualityTier = 'profesional',
+  format = 'series',
 }: PreScriptWizardProps) {
   const [confirmChecked, setConfirmChecked] = useState(false);
 
   const {
     state,
     isProcessing,
-    isLoading, // V76: Loading state for wizard initialization
+    isLoading,
     currentStep,
     currentStepState,
     canGoNext,
@@ -97,10 +117,13 @@ export function PreScriptWizard({
     goPrev,
     executeCurrentStep,
     reset,
+    cancelGeneration,
     characters,
     locations,
     threads,
     showrunnerDecisions,
+    generationProgress,
+    sceneIntents,
   } = usePreScriptWizard({
     projectId,
     outline,
@@ -108,13 +131,15 @@ export function PreScriptWizard({
       onComplete();
       onOpenChange(false);
     },
+    onScriptCompiled,
+    language,
+    qualityTier,
+    format,
   });
 
-  // V76: Don't reset wizard when loading - state is being restored from DB
+  // Don't reset wizard when loading - state is being restored from DB
   useEffect(() => {
     if (open && !isLoading) {
-      // Only reset if we're not in the middle of loading persisted state
-      // AND no steps have been started yet
       const hasProgress = Object.values(state.steps).some(s => s.status !== 'pending');
       if (!hasProgress) {
         setConfirmChecked(false);
@@ -144,7 +169,7 @@ export function PreScriptWizard({
     return <Circle className="h-5 w-5 text-muted-foreground" />;
   };
 
-  // V76: Show loading state while wizard is initializing from DB
+  // Show loading state while wizard is initializing from DB
   if (isLoading) {
     if (inline) {
       return (
@@ -158,8 +183,13 @@ export function PreScriptWizard({
         </Card>
       );
     }
-    return null; // Don't render modal while loading
+    return null;
   }
+
+  // V77: Generation progress percentage
+  const generationPercent = generationProgress.totalScenes > 0
+    ? Math.round((generationProgress.completedScenes / generationProgress.totalScenes) * 100)
+    : 0;
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -441,22 +471,126 @@ export function PreScriptWizard({
             </div>
 
             <Button 
-              onClick={executeCurrentStep} 
+              onClick={async () => {
+                await executeCurrentStep();
+                goNext(); // Auto-advance to generate step
+              }} 
               disabled={!confirmChecked || isProcessing}
               className="w-full"
             >
               {isProcessing ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Iniciando...
+                  Preparando...
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Generar Guion Completo
+                  <Play className="h-4 w-4 mr-2" />
+                  Iniciar Generación
                 </>
               )}
             </Button>
+          </div>
+        );
+
+      // V77: New step 5 - Generate
+      case 'generate':
+        return (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              El sistema narrativo está generando las escenas con diálogos completos.
+            </p>
+
+            {/* Generation Progress */}
+            {(currentStepState.status === 'running' || generationProgress.phase === 'generating' || generationProgress.phase === 'planning') && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>
+                      {generationProgress.phase === 'planning' ? 'Planificando escenas...' : 
+                       `Escena ${generationProgress.currentScene || 1} de ${generationProgress.totalScenes || '?'}`}
+                    </span>
+                    <span>{generationPercent}%</span>
+                  </div>
+                  <Progress value={generationPercent} className="h-3" />
+                </div>
+
+                {sceneIntents.length > 0 && (
+                  <ScrollArea className="h-40 border rounded-lg p-2">
+                    <div className="space-y-2">
+                      {sceneIntents.map((intent) => (
+                        <div key={intent.id} className="flex items-center gap-2 p-2 bg-muted/30 rounded">
+                          {intent.status === 'written' || intent.status === 'validated' ? (
+                            <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                          ) : intent.status === 'writing' ? (
+                            <Loader2 className="h-4 w-4 text-primary animate-spin flex-shrink-0" />
+                          ) : intent.status === 'failed' ? (
+                            <XCircle className="h-4 w-4 text-destructive flex-shrink-0" />
+                          ) : (
+                            <Circle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <span className="text-sm font-medium">Escena {intent.scene_number}</span>
+                            {intent.intent_summary && (
+                              <p className="text-xs text-muted-foreground truncate">
+                                {intent.intent_summary}
+                              </p>
+                            )}
+                          </div>
+                          <Badge variant="outline" className="text-xs flex-shrink-0">
+                            {intent.status}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                )}
+
+                <Button onClick={cancelGeneration} variant="destructive" className="w-full">
+                  <Square className="h-4 w-4 mr-2" />
+                  Cancelar Generación
+                </Button>
+              </div>
+            )}
+
+            {/* Pending state - auto-start */}
+            {currentStepState.status === 'pending' && generationProgress.phase === 'idle' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-center py-8">
+                  <div className="text-center">
+                    <Clapperboard className="h-12 w-12 mx-auto mb-4 text-primary/50" />
+                    <p className="text-muted-foreground mb-4">Todo listo para generar el guion</p>
+                    <Button onClick={executeCurrentStep} className="w-full">
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Generar Guion Completo
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Completed */}
+            {currentStepState.status === 'done' && (
+              <div className="space-y-4">
+                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-center">
+                  <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500" />
+                  <h4 className="font-medium text-lg mb-2">¡Guion Generado!</h4>
+                  <p className="text-muted-foreground text-sm">
+                    {currentStepState.result?.scenesCompleted || generationProgress.completedScenes} escenas generadas exitosamente.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Error */}
+            {currentStepState.status === 'error' && (
+              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <p className="text-destructive text-sm">{currentStepState.error}</p>
+                <Button onClick={executeCurrentStep} variant="outline" className="mt-2">
+                  Reintentar
+                </Button>
+              </div>
+            )}
           </div>
         );
     }
@@ -493,8 +627,11 @@ export function PreScriptWizard({
                   )}
                 >
                   {getStepIcon(step)}
-                  <span className="text-xs font-medium text-center">
+                  <span className="text-xs font-medium text-center hidden sm:block">
                     {config.title}
+                  </span>
+                  <span className="text-xs font-medium text-center sm:hidden">
+                    {idx + 1}
                   </span>
                 </div>
               );
@@ -520,7 +657,7 @@ export function PreScriptWizard({
         </div>
 
         {/* Navigation */}
-        {currentStepIndex > 0 && currentStepState.status === 'done' && (
+        {currentStepIndex > 0 && currentStepState.status === 'done' && currentStep !== 'generate' && (
           <div className="flex justify-start">
             <Button variant="ghost" size="sm" onClick={goPrev}>
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -593,7 +730,7 @@ export function PreScriptWizard({
         </div>
 
         {/* Navigation (only show back button if not on first step and current step is done) */}
-        {currentStepIndex > 0 && currentStepState.status === 'done' && (
+        {currentStepIndex > 0 && currentStepState.status === 'done' && currentStep !== 'generate' && (
           <div className="flex justify-start">
             <Button variant="ghost" size="sm" onClick={goPrev}>
               <ArrowLeft className="h-4 w-4 mr-2" />

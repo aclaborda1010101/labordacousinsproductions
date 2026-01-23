@@ -1,17 +1,19 @@
 /**
- * usePreScriptWizard - Hook for managing the 4-step pre-script wizard
+ * usePreScriptWizard - Hook for managing the 5-step pre-script wizard (V77)
  * 
  * Steps:
  * 1. Enrich Outline + Materialize Entities ("Carne Operativa")
  * 2. Generate Threads (automatic)
  * 3. Showrunner Decisions (editorial + visual context)
- * 4. Approve and Generate Script
+ * 4. Approve and Confirm
+ * 5. Generate Script (integrated narrative system)
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { toast } from 'sonner';
+import { compileScriptFromScenes } from '@/lib/compileScriptFromScenes';
 
 // Helper functions for deriving editorial context from outline
 function deriveVisualStyle(genre: string, tone: string): string {
@@ -43,12 +45,30 @@ function derivePacing(outline: any): string {
   }
   return 'Ritmo moderado con builds graduales';
 }
-export type WizardStep = 'enrich' | 'threads' | 'showrunner' | 'approve';
+
+// V77: 5-step wizard (added 'generate')
+export type WizardStep = 'enrich' | 'threads' | 'showrunner' | 'approve' | 'generate';
 
 export interface StepState {
   status: 'pending' | 'running' | 'done' | 'error';
   result?: any;
   error?: string;
+}
+
+// V77: Generation progress for step 5
+export interface GenerationProgress {
+  totalScenes: number;
+  completedScenes: number;
+  currentScene: number | null;
+  phase: 'idle' | 'planning' | 'generating' | 'completed' | 'failed';
+}
+
+export interface SceneIntent {
+  id: string;
+  scene_number: number;
+  episode_number: number;
+  intent_summary: string;
+  status: string;
 }
 
 export interface WizardState {
@@ -59,6 +79,9 @@ export interface WizardState {
   locations: any[];
   threads: any[];
   showrunnerDecisions: any | null;
+  // V77: Generation state
+  generationProgress: GenerationProgress;
+  sceneIntents: SceneIntent[];
 }
 
 const initialStepState: StepState = { status: 'pending' };
@@ -70,24 +93,51 @@ const initialState: WizardState = {
     threads: { ...initialStepState },
     showrunner: { ...initialStepState },
     approve: { ...initialStepState },
+    generate: { ...initialStepState }, // V77: New step
   },
   enrichedOutline: null,
   characters: [],
   locations: [],
   threads: [],
   showrunnerDecisions: null,
+  // V77: Initial generation state
+  generationProgress: {
+    totalScenes: 0,
+    completedScenes: 0,
+    currentScene: null,
+    phase: 'idle',
+  },
+  sceneIntents: [],
 };
 
 export interface UsePreScriptWizardOptions {
   projectId: string;
   outline: any;
   onComplete: () => void;
+  // V77: New callback for script compilation
+  onScriptCompiled?: (scriptData: any) => void;
+  // V77: Generation params
+  language?: string;
+  qualityTier?: string;
+  format?: 'film' | 'series' | 'ad';
 }
 
-export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScriptWizardOptions) {
+export function usePreScriptWizard({ 
+  projectId, 
+  outline, 
+  onComplete,
+  onScriptCompiled,
+  language = 'es-ES',
+  qualityTier = 'profesional',
+  format = 'series',
+}: UsePreScriptWizardOptions) {
   const [state, setState] = useState<WizardState>(initialState);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // V77: Refs for generation control
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isGeneratingRef = useRef(false);
   
   // V76: Load wizard state from project_outlines on mount
   useEffect(() => {
@@ -98,41 +148,110 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
       }
       
       try {
-        // Check if wizard was already completed (characters/locations materialized + narrative_state exists)
-        const [{ data: chars }, { data: locs }, { data: narrativeState }] = await Promise.all([
+        // Check if wizard was already completed or in progress
+        const [{ data: chars }, { data: locs }, { data: narrativeState }, { data: sceneIntents }] = await Promise.all([
           supabase.from('characters').select('id, name, role, bio').eq('project_id', projectId).limit(20),
           supabase.from('locations').select('id, name, description').eq('project_id', projectId).limit(20),
           supabase.from('narrative_state').select('id, current_phase, active_threads').eq('project_id', projectId).maybeSingle(),
+          supabase.from('scene_intent').select('id, scene_number, episode_number, intent_summary, status').eq('project_id', projectId).order('scene_number'),
         ]);
         
         const hasCharacters = (chars?.length || 0) > 0;
         const hasLocations = (locs?.length || 0) > 0;
         const hasNarrativeState = !!narrativeState;
         const isReadyToGenerate = narrativeState?.current_phase === 'ready_to_generate';
+        const hasSceneIntents = (sceneIntents?.length || 0) > 0;
         
-        console.log('[PreScriptWizard] V76: Loading state', {
-          hasCharacters, hasLocations, hasNarrativeState, isReadyToGenerate
+        // V77: Check if generation is in progress or completed
+        const completedIntents = sceneIntents?.filter(i => i.status === 'written' || i.status === 'validated') || [];
+        const pendingIntents = sceneIntents?.filter(i => ['pending', 'planning', 'writing'].includes(i.status)) || [];
+        const isGenerationInProgress = pendingIntents.length > 0;
+        const isGenerationCompleted = hasSceneIntents && pendingIntents.length === 0 && completedIntents.length > 0;
+        
+        console.log('[PreScriptWizard] V77: Loading state', {
+          hasCharacters, hasLocations, hasNarrativeState, isReadyToGenerate,
+          hasSceneIntents, isGenerationInProgress, isGenerationCompleted
         });
         
-        // Determine which step we're at based on database state
-        if (isReadyToGenerate) {
-          // Wizard was fully completed
+        // V77: Determine which step we're at based on database state
+        if (isGenerationCompleted) {
+          // All scenes done - mark wizard as complete
           setState(prev => ({
             ...prev,
-            currentStep: 'approve',
+            currentStep: 'generate',
             steps: {
-              enrich: { status: 'done', result: { characters: chars?.length, locations: locs?.length } },
-              threads: { status: 'done', result: { threadsCount: (narrativeState?.active_threads as any[])?.length || 0 } },
+              enrich: { status: 'done' },
+              threads: { status: 'done' },
               showrunner: { status: 'done' },
               approve: { status: 'done' },
+              generate: { status: 'done', result: { scenesCompleted: completedIntents.length } },
+            },
+            characters: chars || [],
+            locations: locs || [],
+            threads: (narrativeState?.active_threads as any[]) || [],
+            enrichedOutline: outline,
+            sceneIntents: sceneIntents || [],
+            generationProgress: {
+              totalScenes: sceneIntents?.length || 0,
+              completedScenes: completedIntents.length,
+              currentScene: null,
+              phase: 'completed',
+            },
+          }));
+          // Auto-trigger compilation and complete
+          setTimeout(async () => {
+            try {
+              const result = await compileScriptFromScenes({ projectId });
+              if (result.success) {
+                onScriptCompiled?.({ scriptId: result.scriptId, scenesCompiled: result.scenesCompiled });
+              }
+              onComplete();
+            } catch (e) {
+              console.error('[PreScriptWizard] Auto-compile error:', e);
+              onComplete();
+            }
+          }, 100);
+        } else if (isGenerationInProgress) {
+          // Generation started but not finished - resume at step 5
+          setState(prev => ({
+            ...prev,
+            currentStep: 'generate',
+            steps: {
+              enrich: { status: 'done' },
+              threads: { status: 'done' },
+              showrunner: { status: 'done' },
+              approve: { status: 'done' },
+              generate: { status: 'running' },
+            },
+            characters: chars || [],
+            locations: locs || [],
+            threads: (narrativeState?.active_threads as any[]) || [],
+            enrichedOutline: outline,
+            sceneIntents: sceneIntents || [],
+            generationProgress: {
+              totalScenes: sceneIntents?.length || 0,
+              completedScenes: completedIntents.length,
+              currentScene: pendingIntents[0]?.scene_number || null,
+              phase: 'generating',
+            },
+          }));
+        } else if (isReadyToGenerate) {
+          // Wizard steps 1-4 done, ready for step 5
+          setState(prev => ({
+            ...prev,
+            currentStep: 'generate',
+            steps: {
+              enrich: { status: 'done' },
+              threads: { status: 'done' },
+              showrunner: { status: 'done' },
+              approve: { status: 'done' },
+              generate: { status: 'pending' },
             },
             characters: chars || [],
             locations: locs || [],
             threads: (narrativeState?.active_threads as any[]) || [],
             enrichedOutline: outline,
           }));
-          // Auto-trigger completion since wizard was already done
-          setTimeout(() => onComplete(), 100);
         } else if (hasCharacters && hasLocations) {
           // Step 1 was completed - resume from step 2
           setState(prev => ({
@@ -150,7 +269,7 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
         // Otherwise start from beginning
         
       } catch (err) {
-        console.error('[PreScriptWizard] V76: Error loading state:', err);
+        console.error('[PreScriptWizard] V77: Error loading state:', err);
       } finally {
         setIsLoading(false);
       }
@@ -495,7 +614,7 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
   }, [projectId, outline, state.enrichedOutline, state.characters, state.locations, state.threads, updateStep]);
 
   // ============================================================================
-  // Step 4: Approve and Trigger Generation
+  // Step 4: Approve and Mark Ready for Generation
   // ============================================================================
   const executeStep4 = useCallback(async () => {
     setIsProcessing(true);
@@ -529,10 +648,7 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
       // If no narrative_state exists, it will be created during generation
 
       updateStep('approve', { status: 'done' });
-      toast.success('¡Preparación completada! Iniciando generación de guion...');
-      
-      // Trigger the actual script generation
-      onComplete();
+      toast.success('¡Preparación completada! Listo para generar.');
 
     } catch (err: any) {
       console.error('[PreScriptWizard] Step 4 error:', err);
@@ -541,12 +657,308 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
     } finally {
       setIsProcessing(false);
     }
-  }, [projectId, state.threads, state.showrunnerDecisions, updateStep, onComplete]);
+  }, [projectId, state.threads, state.showrunnerDecisions, updateStep]);
+
+  // ============================================================================
+  // Step 5: Generate Script (V77 - Integrated Narrative System)
+  // ============================================================================
+  const executeStep5 = useCallback(async () => {
+    if (isGeneratingRef.current) {
+      toast.warning('Ya hay una generación en progreso');
+      return;
+    }
+    
+    setIsProcessing(true);
+    isGeneratingRef.current = true;
+    updateStep('generate', { status: 'running' });
+    abortControllerRef.current = new AbortController();
+
+    setState(prev => ({
+      ...prev,
+      generationProgress: {
+        ...prev.generationProgress,
+        phase: 'planning',
+      },
+    }));
+
+    try {
+      const currentOutline = state.enrichedOutline || outline;
+      
+      // Step 5a: Call narrative-decide to plan scenes
+      console.log('[PreScriptWizard] Step 5: Planning scenes...');
+      toast.info('Planificando escenas...');
+      
+      const { data, error } = await invokeAuthedFunction('narrative-decide', {
+        projectId,
+        outline: currentOutline,
+        episodeNumber: 1,
+        language,
+        qualityTier,
+        format,
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Error en narrative-decide');
+      }
+
+      console.log('[PreScriptWizard] narrative-decide result:', data);
+
+      const jobsCreated: string[] = Array.isArray(data.jobs_created) ? data.jobs_created : [];
+      const scenesPlanned = data.scenes_planned || jobsCreated.length || 0;
+      
+      toast.success(`${scenesPlanned} escenas planificadas`);
+
+      setState(prev => ({
+        ...prev,
+        generationProgress: {
+          totalScenes: scenesPlanned,
+          completedScenes: 0,
+          currentScene: 1,
+          phase: 'generating',
+        },
+      }));
+
+      // Step 5b: Process jobs or intents
+      if (jobsCreated.length > 0) {
+        toast.info(`Generando ${jobsCreated.length} escenas...`);
+        
+        for (let i = 0; i < jobsCreated.length; i++) {
+          const jobIdToProcess = jobsCreated[i];
+          
+          if (abortControllerRef.current?.signal.aborted) {
+            console.log('[PreScriptWizard] Aborted by user');
+            break;
+          }
+
+          setState(prev => ({
+            ...prev,
+            generationProgress: {
+              ...prev.generationProgress,
+              currentScene: i + 1,
+            },
+          }));
+
+          try {
+            const { error: workerError } = await invokeAuthedFunction('scene-worker', {
+              job_id: jobIdToProcess,
+            });
+
+            if (workerError) {
+              console.error('[PreScriptWizard] scene-worker error:', workerError);
+            }
+          } catch (err) {
+            console.error('[PreScriptWizard] Failed to invoke scene-worker:', err);
+          }
+
+          // Wait for scene completion
+          await waitForSceneCompletion(i);
+          
+          setState(prev => ({
+            ...prev,
+            generationProgress: {
+              ...prev.generationProgress,
+              completedScenes: i + 1,
+            },
+          }));
+
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      } else if (scenesPlanned > 0) {
+        // Fallback: process intents directly
+        const { data: pendingIntents } = await supabase
+          .from('scene_intent')
+          .select('id, scene_number, episode_number, intent_summary, status')
+          .eq('project_id', projectId)
+          .eq('status', 'pending')
+          .order('scene_number', { ascending: true });
+        
+        if (pendingIntents && pendingIntents.length > 0) {
+          setState(prev => ({ ...prev, sceneIntents: pendingIntents }));
+          
+          for (let i = 0; i < pendingIntents.length; i++) {
+            const intent = pendingIntents[i];
+            
+            if (abortControllerRef.current?.signal.aborted) break;
+
+            setState(prev => ({
+              ...prev,
+              generationProgress: {
+                ...prev.generationProgress,
+                currentScene: intent.scene_number,
+              },
+            }));
+
+            try {
+              const { error: workerError } = await invokeAuthedFunction('scene-worker', {
+                sceneIntentId: intent.id,
+                projectId,
+                sceneNumber: intent.scene_number,
+                episodeNumber: intent.episode_number,
+              });
+
+              if (workerError) {
+                console.error('[PreScriptWizard] scene-worker fallback error:', workerError);
+              }
+              
+              // Wait for completion
+              await waitForIntentCompletion(intent.id);
+              
+              setState(prev => ({
+                ...prev,
+                generationProgress: {
+                  ...prev.generationProgress,
+                  completedScenes: i + 1,
+                },
+              }));
+              
+            } catch (err) {
+              console.error('[PreScriptWizard] Failed to process scene:', err);
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
+      }
+
+      // Step 5c: Check completion and compile
+      const { data: finalIntents } = await supabase
+        .from('scene_intent')
+        .select('status')
+        .eq('project_id', projectId);
+      
+      const allCompleted = finalIntents?.every(
+        i => i.status === 'written' || i.status === 'validated'
+      );
+
+      if (allCompleted) {
+        setState(prev => ({
+          ...prev,
+          generationProgress: {
+            ...prev.generationProgress,
+            phase: 'completed',
+          },
+        }));
+        
+        toast.success('¡Generación completada!');
+        
+        // Compile script from scenes
+        console.log('[PreScriptWizard] Compiling full script...');
+        const compileResult = await compileScriptFromScenes({ projectId });
+        
+        if (compileResult.success) {
+          toast.success(`Guion compilado: ${compileResult.scenesCompiled} escenas`, {
+            description: 'Puedes exportar el guion en formato PDF',
+          });
+          
+          updateStep('generate', { 
+            status: 'done', 
+            result: { 
+              scenesCompleted: compileResult.scenesCompiled,
+              scriptId: compileResult.scriptId,
+            } 
+          });
+          
+          // Load compiled script data for callback
+          const { data: scriptData } = await supabase
+            .from('scripts')
+            .select('id, raw_text, parsed_json, status')
+            .eq('id', compileResult.scriptId)
+            .single();
+          
+          onScriptCompiled?.(scriptData);
+          onComplete();
+        } else {
+          throw new Error(compileResult.error || 'Error al compilar guion');
+        }
+      } else {
+        throw new Error('No todas las escenas se completaron correctamente');
+      }
+
+    } catch (err: any) {
+      console.error('[PreScriptWizard] Step 5 error:', err);
+      updateStep('generate', { status: 'error', error: err.message });
+      setState(prev => ({
+        ...prev,
+        generationProgress: {
+          ...prev.generationProgress,
+          phase: 'failed',
+        },
+      }));
+      toast.error('Error en generación', { description: err.message });
+    } finally {
+      setIsProcessing(false);
+      isGeneratingRef.current = false;
+    }
+  }, [projectId, outline, state.enrichedOutline, language, qualityTier, format, updateStep, onComplete, onScriptCompiled]);
+
+  // Helper: Wait for scene completion by polling
+  const waitForSceneCompletion = async (sceneIndex: number) => {
+    let attempts = 0;
+    const maxAttempts = 60;
+    
+    while (attempts < maxAttempts) {
+      const { data: intents } = await supabase
+        .from('scene_intent')
+        .select('status')
+        .eq('project_id', projectId)
+        .order('scene_number', { ascending: true });
+      
+      if (intents && intents[sceneIndex]) {
+        const status = intents[sceneIndex].status;
+        if (['written', 'validated', 'failed'].includes(status)) {
+          return;
+        }
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      attempts++;
+    }
+  };
+
+  // Helper: Wait for intent completion
+  const waitForIntentCompletion = async (intentId: string) => {
+    let attempts = 0;
+    const maxAttempts = 60;
+    
+    while (attempts < maxAttempts) {
+      const { data: updatedIntent } = await supabase
+        .from('scene_intent')
+        .select('status')
+        .eq('id', intentId)
+        .single();
+      
+      if (updatedIntent && ['written', 'validated', 'failed'].includes(updatedIntent.status)) {
+        return;
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      attempts++;
+    }
+  };
+
+  // V77: Cancel generation
+  const cancelGeneration = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    isGeneratingRef.current = false;
+    setIsProcessing(false);
+    updateStep('generate', { status: 'pending' });
+    setState(prev => ({
+      ...prev,
+      generationProgress: {
+        ...prev.generationProgress,
+        phase: 'idle',
+      },
+    }));
+    toast.info('Generación cancelada');
+  }, [updateStep]);
 
   // ============================================================================
   // Navigation
   // ============================================================================
-  const stepOrder: WizardStep[] = ['enrich', 'threads', 'showrunner', 'approve'];
+  const stepOrder: WizardStep[] = ['enrich', 'threads', 'showrunner', 'approve', 'generate'];
 
   const canGoNext = useCallback(() => {
     const currentIdx = stepOrder.indexOf(state.currentStep);
@@ -586,8 +998,11 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
       case 'approve':
         await executeStep4();
         break;
+      case 'generate':
+        await executeStep5();
+        break;
     }
-  }, [state.currentStep, executeStep1, executeStep2, executeStep3, executeStep4]);
+  }, [state.currentStep, executeStep1, executeStep2, executeStep3, executeStep4, executeStep5]);
 
   const reset = useCallback(() => {
     setState(initialState);
@@ -596,7 +1011,7 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
   return {
     state,
     isProcessing,
-    isLoading, // V76: Expose loading state for wizard initialization
+    isLoading,
     currentStep: state.currentStep,
     currentStepState: state.steps[state.currentStep],
     canGoNext,
@@ -606,10 +1021,15 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
     goToStep,
     executeCurrentStep,
     reset,
+    // V77: Cancel generation
+    cancelGeneration,
     // Exposed data for UI
     characters: state.characters,
     locations: state.locations,
     threads: state.threads,
     showrunnerDecisions: state.showrunnerDecisions,
+    // V77: Generation data
+    generationProgress: state.generationProgress,
+    sceneIntents: state.sceneIntents,
   };
 }
