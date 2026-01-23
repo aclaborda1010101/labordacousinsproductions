@@ -45,6 +45,8 @@ interface PreScriptWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onComplete: () => void;
+  /** When true, renders inline (no modal dialog) */
+  inline?: boolean;
 }
 
 const STEP_CONFIG: Record<WizardStep, { title: string; description: string; icon: any }> = {
@@ -78,6 +80,7 @@ export function PreScriptWizard({
   open,
   onOpenChange,
   onComplete,
+  inline = false,
 }: PreScriptWizardProps) {
   const [confirmChecked, setConfirmChecked] = useState(false);
 
@@ -436,6 +439,77 @@ export function PreScriptWizard({
     }
   };
 
+  // Inline rendering (no modal)
+  if (inline) {
+    if (!open) return null;
+    
+    return (
+      <div className="space-y-4 p-4 border rounded-lg bg-card">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold text-lg">Preparación del Guion</h3>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="space-y-3">
+          <Progress value={progressPercent} className="h-2" />
+          
+          <div className="flex justify-between">
+            {STEP_ORDER.map((step, idx) => {
+              const config = STEP_CONFIG[step];
+              const isActive = step === currentStep;
+              const isDone = state.steps[step].status === 'done';
+
+              return (
+                <div
+                  key={step}
+                  className={cn(
+                    'flex flex-col items-center gap-1 flex-1',
+                    isActive && 'text-primary',
+                    !isActive && !isDone && 'text-muted-foreground'
+                  )}
+                >
+                  {getStepIcon(step)}
+                  <span className="text-xs font-medium text-center">
+                    {config.title}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Step Title */}
+        <div>
+          <h4 className="font-semibold">
+            Paso {currentStepIndex + 1}: {STEP_CONFIG[currentStep].title}
+          </h4>
+          <p className="text-sm text-muted-foreground">
+            {STEP_CONFIG[currentStep].description}
+          </p>
+        </div>
+
+        {/* Step Content */}
+        <div className="min-h-[150px]">
+          {renderStepContent()}
+        </div>
+
+        {/* Navigation */}
+        {currentStepIndex > 0 && currentStepState.status === 'done' && (
+          <div className="flex justify-start">
+            <Button variant="ghost" size="sm" onClick={goPrev}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Modal rendering
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
