@@ -13,6 +13,36 @@ import { supabase } from '@/integrations/supabase/client';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { toast } from 'sonner';
 
+// Helper functions for deriving editorial context from outline
+function deriveVisualStyle(genre: string, tone: string): string {
+  const genreLower = genre?.toLowerCase() || '';
+  if (genreLower.includes('comedy') || genreLower.includes('comedia')) {
+    return 'Cinematográfico dinámico con encuadres expresivos';
+  }
+  if (genreLower.includes('drama')) {
+    return 'Cinematográfico íntimo con iluminación naturalista';
+  }
+  if (genreLower.includes('thriller') || genreLower.includes('suspense')) {
+    return 'Cinematográfico tenso con claroscuros marcados';
+  }
+  if (genreLower.includes('horror') || genreLower.includes('terror')) {
+    return 'Cinematográfico atmosférico con sombras pronunciadas';
+  }
+  return `Cinematográfico ${tone || 'estándar'}`;
+}
+
+function derivePacing(outline: any): string {
+  const beatCount = outline?.ACT_I?.beats?.length || 0;
+  const actCount = outline?.acts?.length || 3;
+  
+  if (beatCount > 10) {
+    return 'Ritmo ágil con escenas cortas';
+  }
+  if (beatCount < 5) {
+    return 'Ritmo pausado con escenas contemplativas';
+  }
+  return 'Ritmo moderado con builds graduales';
+}
 export type WizardStep = 'enrich' | 'threads' | 'showrunner' | 'approve';
 
 export interface StepState {
@@ -232,27 +262,28 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
     updateStep('showrunner', { status: 'running' });
 
     try {
-      console.log('[PreScriptWizard] Generating showrunner decisions...');
+      console.log('[PreScriptWizard] Extracting editorial context from outline...');
       
-      const { data: showrunnerData, error: showrunnerError } = await invokeAuthedFunction('showrunner-decide', {
-        projectId,
-        outline: state.enrichedOutline || outline,
-        characters: state.characters,
-        locations: state.locations,
-        threads: state.threads,
-        mode: 'pre_script', // Indicates this is the initial setup
-      });
-
-      if (showrunnerError) {
-        throw new Error(`Error en showrunner: ${showrunnerError.message || showrunnerError}`);
-      }
-
-      const decisions = showrunnerData?.decisions || showrunnerData || {
-        visual_style: 'Cinematográfico realista',
-        tone: 'Drama íntimo con momentos de tensión',
-        pacing: 'Moderado con builds graduales',
+      // Extract editorial decisions from outline instead of calling per-scene showrunner
+      const currentOutline = state.enrichedOutline || outline;
+      
+      // Derive visual style from genre/tone
+      const genre = currentOutline?.genre || 'drama';
+      const tone = currentOutline?.tone || 'Cinematográfico';
+      
+      // Build editorial context from outline structure
+      const decisions = {
+        visual_style: deriveVisualStyle(genre, tone),
+        tone: tone,
+        pacing: derivePacing(currentOutline),
+        genre: genre,
+        act_structure: currentOutline?.acts || [],
+        character_count: state.characters?.length || 0,
+        location_count: state.locations?.length || 0,
+        thread_count: state.threads?.length || 0,
         restrictions: [],
         approved: true,
+        source: 'outline_derived',
       };
 
       setState(prev => ({ ...prev, showrunnerDecisions: decisions }));
@@ -262,7 +293,7 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
         result: decisions 
       });
 
-      toast.success('Paso 3 completado: Decisiones del Showrunner establecidas');
+      toast.success('Paso 3 completado: Contexto editorial establecido');
 
     } catch (err: any) {
       console.error('[PreScriptWizard] Step 3 error:', err);
