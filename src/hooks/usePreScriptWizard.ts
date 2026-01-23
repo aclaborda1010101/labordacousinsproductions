@@ -8,7 +8,7 @@
  * 4. Approve and Generate Script
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { toast } from 'sonner';
@@ -87,6 +87,77 @@ export interface UsePreScriptWizardOptions {
 export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScriptWizardOptions) {
   const [state, setState] = useState<WizardState>(initialState);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // V76: Load wizard state from project_outlines on mount
+  useEffect(() => {
+    const loadWizardState = async () => {
+      if (!projectId) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        // Check if wizard was already completed (characters/locations materialized + narrative_state exists)
+        const [{ data: chars }, { data: locs }, { data: narrativeState }] = await Promise.all([
+          supabase.from('characters').select('id, name, role, bio').eq('project_id', projectId).limit(20),
+          supabase.from('locations').select('id, name, description').eq('project_id', projectId).limit(20),
+          supabase.from('narrative_state').select('id, current_phase, active_threads').eq('project_id', projectId).maybeSingle(),
+        ]);
+        
+        const hasCharacters = (chars?.length || 0) > 0;
+        const hasLocations = (locs?.length || 0) > 0;
+        const hasNarrativeState = !!narrativeState;
+        const isReadyToGenerate = narrativeState?.current_phase === 'ready_to_generate';
+        
+        console.log('[PreScriptWizard] V76: Loading state', {
+          hasCharacters, hasLocations, hasNarrativeState, isReadyToGenerate
+        });
+        
+        // Determine which step we're at based on database state
+        if (isReadyToGenerate) {
+          // Wizard was fully completed
+          setState(prev => ({
+            ...prev,
+            currentStep: 'approve',
+            steps: {
+              enrich: { status: 'done', result: { characters: chars?.length, locations: locs?.length } },
+              threads: { status: 'done', result: { threadsCount: (narrativeState?.active_threads as any[])?.length || 0 } },
+              showrunner: { status: 'done' },
+              approve: { status: 'done' },
+            },
+            characters: chars || [],
+            locations: locs || [],
+            threads: (narrativeState?.active_threads as any[]) || [],
+            enrichedOutline: outline,
+          }));
+          // Auto-trigger completion since wizard was already done
+          setTimeout(() => onComplete(), 100);
+        } else if (hasCharacters && hasLocations) {
+          // Step 1 was completed - resume from step 2
+          setState(prev => ({
+            ...prev,
+            currentStep: 'threads',
+            steps: {
+              ...prev.steps,
+              enrich: { status: 'done', result: { characters: chars?.length, locations: locs?.length } },
+            },
+            characters: chars || [],
+            locations: locs || [],
+            enrichedOutline: outline,
+          }));
+        }
+        // Otherwise start from beginning
+        
+      } catch (err) {
+        console.error('[PreScriptWizard] V76: Error loading state:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadWizardState();
+  }, [projectId]);
 
   const updateStep = useCallback((step: WizardStep, update: Partial<StepState>) => {
     setState(prev => ({
@@ -525,6 +596,7 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
   return {
     state,
     isProcessing,
+    isLoading, // V76: Expose loading state for wizard initialization
     currentStep: state.currentStep,
     currentStepState: state.steps[state.currentStep],
     canGoNext,

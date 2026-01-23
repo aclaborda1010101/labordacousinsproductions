@@ -1462,11 +1462,16 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   }, [backgroundGeneration, projectId, episodesCount]);
 
   // Load existing script
+  // V76: Track if narrative system generation is already complete (scenes exist)
+  const [narrativeGenerationComplete, setNarrativeGenerationComplete] = useState(false);
+  
   useEffect(() => {
     const fetchData = async () => {
-      const [projectRes, scriptsRes] = await Promise.all([
+      const [projectRes, scriptsRes, scenesCountRes] = await Promise.all([
         supabase.from('projects').select('episodes_count, format, target_duration_min').eq('id', projectId).single(),
-        supabase.from('scripts').select('id, status, raw_text, parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1)
+        supabase.from('scripts').select('id, status, raw_text, parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1),
+        // V76: Check if scenes exist (indicates narrative generation completed)
+        supabase.from('scenes').select('id', { count: 'exact', head: true }).eq('project_id', projectId)
       ]);
       
       if (projectRes.data) {
@@ -1478,6 +1483,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           setEpisodeDurationMin(projectDuration);
           setFilmDurationMin(projectDuration);
         }
+      }
+      
+      // V76: Detect if narrative generation already completed
+      const existingScenesCount = scenesCountRes.count || 0;
+      if (existingScenesCount > 0) {
+        console.log('[ScriptImport] V76: Detected', existingScenesCount, 'existing scenes - narrative generation complete');
+        setNarrativeGenerationComplete(true);
       }
       
       if (scriptsRes.data && scriptsRes.data.length > 0) {
@@ -1533,6 +1545,50 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               setActiveTab('summary');
             }
           }
+        }
+      } else if (existingScenesCount > 0) {
+        // V76: Scenes exist but no compiled script - auto-compile
+        console.log('[ScriptImport] V76: Scenes exist but no script - auto-compiling...');
+        try {
+          const { compileScriptFromScenes } = await import('@/lib/compileScriptFromScenes');
+          const result = await compileScriptFromScenes({ projectId, episodeNumber: 1 });
+          if (result.success && result.scriptId) {
+            console.log('[ScriptImport] V76: Auto-compiled script:', result.scriptId);
+            // Reload script data
+            const { data: newScript } = await supabase
+              .from('scripts')
+              .select('id, status, raw_text, parsed_json')
+              .eq('id', result.scriptId)
+              .single();
+            
+            if (newScript?.parsed_json) {
+              const parsed = newScript.parsed_json as Record<string, unknown>;
+              const payload = getBreakdownPayload(parsed) ?? parsed;
+              const chars = hydrateCharacters(payload);
+              const locs = hydrateLocations(payload);
+              const propsArr = hydrateProps(payload);
+              const scenes = hydrateScenes(payload);
+              const episodesArr = Array.isArray(payload?.episodes) ? payload.episodes : [];
+              const counts = buildRobustCounts(payload, chars, locs, scenes, propsArr, episodesArr);
+              
+              setGeneratedScript({
+                ...parsed,
+                breakdown: payload,
+                title: extractTitle(payload),
+                writers: extractWriters(payload),
+                main_characters: chars,
+                characters: chars,
+                locations: locs,
+                scenes: scenes,
+                props: propsArr,
+                counts,
+              });
+              setCurrentScriptId(newScript.id);
+              toast.success('Guion compilado desde escenas existentes');
+            }
+          }
+        } catch (compileErr) {
+          console.warn('[ScriptImport] V76: Auto-compile failed:', compileErr);
         }
       }
     };
@@ -7986,8 +8042,26 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
             />
           ) : !generatedScript ? (
             <>
-              {/* V74: Script tab shows wizard when no script exists */}
-              {lightOutline && outlineApproved ? (
+              {/* V76: If narrative generation already completed, show loading/redirect */}
+              {narrativeGenerationComplete ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Loader2 className="w-12 h-12 mx-auto mb-4 text-primary animate-spin" />
+                    <h3 className="font-medium text-lg mb-2">Compilando guion...</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Detectamos escenas generadas. Compilando el guion para su visualización.
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => navigate(`/projects/${projectId}/script`)}
+                      className="mt-2"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Ver en Script Workspace
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : lightOutline && outlineApproved ? (
                 <>
                   {/* V74: Inline PreScript Wizard - 4 steps before generation */}
                   <PreScriptWizard
