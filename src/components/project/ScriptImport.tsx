@@ -44,7 +44,7 @@ import OutlineWizardV11 from './OutlineWizardV11';
 import ThreadsDisplay from './ThreadsDisplay';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { DensityProfileSelector } from './DensityProfileSelector';
-import NarrativeGenerationPanel from './NarrativeGenerationPanel';
+// V77: NarrativeGenerationPanel removed - integrated into PreScriptWizard
 import PreScriptWizard from './PreScriptWizard';
 import { 
   FileText, 
@@ -370,8 +370,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [outlineApproved, setOutlineApproved] = useState(false);
   const [generatingOutline, setGeneratingOutline] = useState(false);
   
-  // V71: Auto-start narrative generation when approving outline
-  const [shouldAutoStartGeneration, setShouldAutoStartGeneration] = useState(false);
+  // V77: shouldAutoStartGeneration removed - generation integrated into wizard
   
   // V73: Pre-Script Wizard for 4-step preparation before generation
   const [showPreScriptWizard, setShowPreScriptWizard] = useState(false);
@@ -3712,13 +3711,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         ['pending', 'planning', 'writing', 'repairing'].includes(i.status)
       );
       
-      // 3. Signal auto-start for NarrativeGenerationPanel
-      setShouldAutoStartGeneration(true);
-      
-      // 4. Scroll to the narrative panel
-      const narrativePanel = document.querySelector('[data-narrative-panel]');
-      if (narrativePanel) {
-        narrativePanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // V77: Auto-start removed - generation is now part of wizard step 5
+      // Just scroll to the wizard which handles everything
+      const wizardPanel = document.querySelector('[data-narrative-panel]') || document.querySelector('.space-y-4.p-4.border.rounded-lg.bg-card');
+      if (wizardPanel) {
+        wizardPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
       
       // 5. Contextual toast based on existing state (V72)
@@ -8062,43 +8059,44 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </CardContent>
                 </Card>
               ) : lightOutline && outlineApproved ? (
-                <>
-                  {/* V74: Inline PreScript Wizard - 4 steps before generation */}
-                  <PreScriptWizard
-                    projectId={projectId}
-                    outline={outlineForUI}
-                    open={true}
-                    onOpenChange={() => {}} // Always open when in this state
-                    onComplete={() => {
-                      setShouldAutoStartGeneration(true);
-                      // Trigger narrative generation via the panel
-                    }}
-                    inline={true} // New prop for inline rendering
-                  />
-                  
-                  {/* V74: Narrative Generation Panel - Active after wizard completes */}
-                  <div data-narrative-panel className="mt-4">
-                    <NarrativeGenerationPanel
-                      projectId={projectId}
-                      outline={lightOutline}
-                      episodeNumber={1}
-                      language={language}
-                      qualityTier={qualityTier}
-                      format={format}
-                      autoStart={shouldAutoStartGeneration}
-                      onAutoStartComplete={() => setShouldAutoStartGeneration(false)}
-                      onComplete={() => {
-                        toast.success('¡Generación completada con Sistema Narrativo!');
-                        onScenesCreated?.();
-                      }}
-                      onGenerationStarted={() => {
-                        // Navigate immediately to script workspace
-                        navigate(`/projects/${projectId}/script`);
-                        toast.info('Generando guion... Puedes ver el progreso en tiempo real.');
-                      }}
-                    />
-                  </div>
-                </>
+                /* V77: Unified 5-step PreScript Wizard - includes generation */
+                <PreScriptWizard
+                  projectId={projectId}
+                  outline={outlineForUI}
+                  open={true}
+                  onOpenChange={() => {}}
+                  onComplete={() => {
+                    toast.success('¡Guion generado exitosamente!');
+                    onScenesCreated?.();
+                  }}
+                  onScriptCompiled={async (scriptData) => {
+                    if (scriptData?.parsed_json) {
+                      const hydrated = {
+                        ...scriptData.parsed_json,
+                        id: scriptData.id,
+                      };
+                      setGeneratedScript(hydrated);
+                      setNarrativeGenerationComplete(false);
+                    } else if (scriptData?.id) {
+                      const { data } = await supabase
+                        .from('scripts')
+                        .select('id, raw_text, parsed_json')
+                        .eq('id', scriptData.id)
+                        .single();
+                      if (data?.parsed_json) {
+                        setGeneratedScript({
+                          ...data.parsed_json as any,
+                          id: data.id,
+                        });
+                      }
+                    }
+                    setNarrativeGenerationComplete(false);
+                  }}
+                  inline={true}
+                  language={language}
+                  qualityTier={qualityTier}
+                  format={format}
+                />
               ) : lightOutline ? (
                 <Card>
                   <CardContent className="py-12 text-center">
@@ -10280,7 +10278,7 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         onOpenChange={setShowPreScriptWizard}
         onComplete={() => {
           setShowPreScriptWizard(false);
-          setShouldAutoStartGeneration(true);
+          // V77: No longer need shouldAutoStartGeneration - wizard handles it
           userNavigatedRef.current = true;
           setActiveTab('outline');
           setTimeout(() => { userNavigatedRef.current = false; }, 500);
