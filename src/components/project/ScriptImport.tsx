@@ -7726,131 +7726,78 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                 </CardContent>
               </Card>
 
-              {/* Outline Wizard */}
-              <OutlineWizardV11
-                outline={lightOutline}
-                qcStatus={qcStatus}
-                isEnriching={enrichingOutline}
-                isUpgrading={upgradingOutline}
-                isPipelineRunning={pipelineRunning}
-                format={format}
-                onEnrich={async () => {
-                  if (!outlinePersistence.savedOutline?.id) return;
-                  setEnrichingOutline(true);
-                  try {
-                    const { data, error } = await invokeAuthedFunction('outline-enrich', {
-                      outline_id: outlinePersistence.savedOutline.id
-                    });
-                    if (error) throw error;
-                    await outlinePersistence.refreshOutline();
-                    const refreshedOutline = outlinePersistence.savedOutline?.outline_json;
-                    if (refreshedOutline && typeof refreshedOutline === 'object' && Object.keys(refreshedOutline).length > 0) {
-                      setLightOutline(refreshedOutline as any);
-                    } else if (data?.outline) {
-                      setLightOutline(data.outline);
-                    }
-                    toast.success('Outline enriquecido con facciones, reglas y setpieces');
-                  } catch (err) {
-                    toast.error('Error al enriquecer: ' + (err as Error).message);
-                  } finally {
-                    setEnrichingOutline(false);
-                  }
-                }}
-                onThreads={async () => {
-                  if (!outlinePersistence.savedOutline?.id) return;
-                  setEnrichingOutline(true);
-                  try {
-                    const { data, error } = await invokeAuthedFunction('outline-enrich', {
-                      outline_id: outlinePersistence.savedOutline.id,
-                      enrich_mode: 'threads'
-                    });
-                    if (error) throw error;
-                    await outlinePersistence.refreshOutline();
-                    const refreshedOutline = outlinePersistence.savedOutline?.outline_json;
-                    if (refreshedOutline && typeof refreshedOutline === 'object' && Object.keys(refreshedOutline).length > 0) {
-                      setLightOutline(refreshedOutline as any);
-                    } else if (data?.outline) {
-                      setLightOutline(data.outline);
-                    }
-                    toast.success(`Generados ${data?.enriched?.threads || 0} threads con cruces por episodio`);
-                  } catch (err) {
-                    toast.error('Error al generar threads: ' + (err as Error).message);
-                  } finally {
-                    setEnrichingOutline(false);
-                  }
-                }}
-                onShowrunner={handleUpgradeToShowrunner}
-                onGenerateEpisodes={approveAndGenerateEpisodes}
-                isStaleGenerating={outlinePersistence.isStaleGenerating}
-                canResume={outlinePersistence.canResume}
-                onResume={async () => {
-                  const result = await outlinePersistence.resumeGeneration();
-                  if (result.success) {
-                    toast.info('Reanudando generación desde el último paso...');
-                  } else if (result.errorCode === 'MAX_ATTEMPTS_EXCEEDED') {
-                    toast.error('Máximo de intentos alcanzado. Regenera el outline.');
-                  } else {
-                    toast.error('Error al reanudar la generación');
-                  }
-                }}
-                outlineParts={(outlinePersistence.savedOutline as any)?.outline_parts}
-                savedOutline={outlinePersistence.savedOutline}
-                isProjectLocked={isProjectLocked}
-                lockCountdown={lockRemainingSeconds > 0 ? formatLockCountdown(lockRemainingSeconds) : undefined}
-                onUnlock={async () => {
-                  try {
-                    await invokeAuthedFunction('force-unlock-project', { project_id: projectId });
-                    toast.success('Proyecto desbloqueado');
-                  } catch (err) {
-                    toast.error('Error al desbloquear');
-                  }
-                }}
-                onExportPDF={handleExportOutlinePDF}
-                isExportingPDF={isExportingPdf}
-              />
-
-              {/* Threads Display */}
-              {lightOutline?.threads && (
-                <ThreadsDisplay 
-                  threads={lightOutline.threads} 
-                  episodeBeats={lightOutline.episode_beats || []}
-                />
+              {/* V74: Outline tab is now CLEAN - only shows outline info */}
+              {/* Approve and navigate to Script tab for full generation wizard */}
+              {!outlineApproved ? (
+                <Card className="border-primary/50 bg-gradient-to-r from-primary/5 to-transparent">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5 text-primary" />
+                      Aprobar Outline
+                    </CardTitle>
+                    <CardDescription>
+                      Revisa la estructura de tu historia. Cuando estés listo, aprueba el outline para generar el guion completo.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      variant="gold" 
+                      className="flex-1"
+                      onClick={() => {
+                        setOutlineApproved(true);
+                        setActiveTab('summary');
+                        toast.success('Outline aprobado. Ahora puedes generar el guion completo.');
+                      }}
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Aprobar y Generar Guion
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={handleExportOutlinePDF}
+                      disabled={isExportingPdf}
+                    >
+                      {isExportingPdf ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <FileDown className="w-4 h-4 mr-2" />
+                      )}
+                      Exportar PDF
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card className="border-green-500/50 bg-green-500/5">
+                  <CardContent className="py-4">
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
+                        <div>
+                          <p className="font-medium text-green-700 dark:text-green-400">Outline Aprobado</p>
+                          <p className="text-sm text-muted-foreground">Listo para generar el guion completo</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="default" 
+                          onClick={() => setActiveTab('summary')}
+                        >
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Ir a Generar Guion
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={handleExportOutlinePDF}
+                          disabled={isExportingPdf}
+                        >
+                          <FileDown className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
-
-              {/* V70: Narrative System - Always Active (no toggle) */}
-              <div className="flex items-center justify-center gap-4 pt-4 pb-2">
-                <Badge variant="outline" className="text-xs">
-                  <Zap className="h-3 w-3 mr-1" />
-                  Sistema Narrativo v70 Activo
-                </Badge>
-              </div>
-
-              {/* V71: Narrative Generation Panel - Always available when outline exists */}
-              {lightOutline && (
-                <div data-narrative-panel>
-                  <NarrativeGenerationPanel
-                    projectId={projectId}
-                    outline={lightOutline}
-                    episodeNumber={1}
-                    language={language}
-                    qualityTier={qualityTier}
-                    format={format}
-                    autoStart={shouldAutoStartGeneration}
-                    onAutoStartComplete={() => setShouldAutoStartGeneration(false)}
-                    onComplete={() => {
-                      toast.success('¡Generación completada con Sistema Narrativo!');
-                      onScenesCreated?.();
-                    }}
-                    onGenerationStarted={() => {
-                      // Navigate immediately to script workspace
-                      navigate(`/projects/${projectId}/script`);
-                      toast.info('Generando guion... Puedes ver el progreso en tiempo real.');
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* Legacy path completely removed - v70 is the only motor */}
             </>
           )}
         </TabsContent>
@@ -8033,58 +7980,91 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
               partialScenesCount={partialScriptData?.scenesCount}
             />
           ) : !generatedScript ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                {lightOutline ? (
-                  <>
-                    {/* Has outline but no full script */}
-                    <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500/50" />
-                    <h3 className="font-medium text-lg mb-2">Outline Disponible</h3>
+            <>
+              {/* V74: Script tab shows wizard when no script exists */}
+              {lightOutline && outlineApproved ? (
+                <>
+                  {/* V74: Inline PreScript Wizard - 4 steps before generation */}
+                  <PreScriptWizard
+                    projectId={projectId}
+                    outline={outlineForUI}
+                    open={true}
+                    onOpenChange={() => {}} // Always open when in this state
+                    onComplete={() => {
+                      setShouldAutoStartGeneration(true);
+                      // Trigger narrative generation via the panel
+                    }}
+                    inline={true} // New prop for inline rendering
+                  />
+                  
+                  {/* V74: Narrative Generation Panel - Active after wizard completes */}
+                  <div data-narrative-panel className="mt-4">
+                    <NarrativeGenerationPanel
+                      projectId={projectId}
+                      outline={lightOutline}
+                      episodeNumber={1}
+                      language={language}
+                      qualityTier={qualityTier}
+                      format={format}
+                      autoStart={shouldAutoStartGeneration}
+                      onAutoStartComplete={() => setShouldAutoStartGeneration(false)}
+                      onComplete={() => {
+                        toast.success('¡Generación completada con Sistema Narrativo!');
+                        onScenesCreated?.();
+                      }}
+                      onGenerationStarted={() => {
+                        // Navigate immediately to script workspace
+                        navigate(`/projects/${projectId}/script`);
+                        toast.info('Generando guion... Puedes ver el progreso en tiempo real.');
+                      }}
+                    />
+                  </div>
+                </>
+              ) : lightOutline ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <GitBranch className="w-12 h-12 mx-auto mb-4 text-primary/50" />
+                    <h3 className="font-medium text-lg mb-2">Outline Pendiente de Aprobación</h3>
                     <p className="text-muted-foreground mb-4">
                       Tienes un outline generado con {lightOutline.episode_beats?.length || 0} episodios.
-                      {!outlineApproved && ' Apruébalo para poder generar el guion completo.'}
+                      Apruébalo primero para poder generar el guion completo.
                     </p>
-                    {outlineApproved ? (
-                      <Button variant="default" onClick={() => setShowPreScriptWizard(true)}>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Generar Guion Completo
-                      </Button>
-                    ) : (
-                      <Button variant="outline" onClick={() => {
-                        userNavigatedRef.current = true;
-                        setActiveTab('outline');
-                        setTimeout(() => { userNavigatedRef.current = false; }, 500);
-                      }}>
-                        <FileText className="w-4 h-4 mr-2" />
-                        Ir a Aprobar Outline
-                      </Button>
-                    )}
-                  </>
-                ) : outlinePersistence.isLoading ? (
-                  <>
-                    {/* Loading state */}
+                    <Button variant="outline" onClick={() => {
+                      userNavigatedRef.current = true;
+                      setActiveTab('outline');
+                      setTimeout(() => { userNavigatedRef.current = false; }, 500);
+                    }}>
+                      <GitBranch className="w-4 h-4 mr-2" />
+                      Ir a Aprobar Outline
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : outlinePersistence.isLoading ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
                     <Loader2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground animate-spin" />
                     <h3 className="font-medium text-lg mb-2">Cargando proyecto...</h3>
                     <p className="text-muted-foreground mb-4">
                       Verificando datos del proyecto
                     </p>
-                  </>
-                ) : (
-                  <>
-                    {/* No outline, no script */}
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="py-12 text-center">
                     <BookOpen className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
                     <h3 className="font-medium text-lg mb-2">No hay contenido todavía</h3>
                     <p className="text-muted-foreground mb-4">
-                      Empieza escribiendo tu idea y generando un outline desde la pestaña "Guion"
+                      Empieza escribiendo tu idea y generando un outline desde la pestaña "Idea"
                     </p>
                     <Button variant="default" onClick={() => setActiveTab('generate')}>
                       <Sparkles className="w-4 h-4 mr-2" />
                       Ir a Generar Outline
                     </Button>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           ) : (
             <>
               {/* Header with export */}
