@@ -22,11 +22,10 @@ export default function ScriptWorkspaceView({ projectId }: ScriptWorkspaceViewPr
   const creativeModeContext = useCreativeModeOptional();
   const effectiveMode = creativeModeContext?.effectiveMode ?? 'ASSISTED';
   
-  // Check if there's an active generation to show timeline
-  const activeGeneration = useActiveGeneration(projectId);
-  const showTimeline = activeGeneration && 
-    activeGeneration.phase !== 'completed' && 
-    activeGeneration.phase !== 'idle';
+  // V78: Disable external ScriptProgressTimeline - the PreScriptWizard 
+  // now handles its own progress UI for step 5 (narrative generation).
+  // Showing both causes confusion with mismatched progress indicators.
+  const showTimeline = false;
 
   // Developer Mode or PRO: Show full ScriptImport with pipeline
   if (isDeveloperMode || effectiveMode === 'PRO') {
