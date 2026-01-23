@@ -86,8 +86,8 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
       if (!isEnriched) {
         console.log('[PreScriptWizard] Enriching outline...');
         const { data: enrichData, error: enrichError } = await invokeAuthedFunction('outline-enrich', {
-          projectId,
-          outlineId: outline?.id,
+          project_id: projectId,
+          outline_id: outline?.id,
         });
 
         if (enrichError) {
@@ -102,7 +102,8 @@ export function usePreScriptWizard({ projectId, outline, onComplete }: UsePreScr
       // Step 1b: Materialize entities
       console.log('[PreScriptWizard] Materializing entities...');
       const { data: materializeData, error: materializeError } = await invokeAuthedFunction('materialize-entities', {
-        projectId,
+        projectId: projectId,
+        source: 'outline',
       });
 
       if (materializeError) {
