@@ -5,6 +5,7 @@
  * - Backend-driven scene generation via narrative-decide + scene-worker
  * - Realtime subscriptions for progress updates
  * - Persistent state in narrative_state + scene_intent tables
+ * - Auto-compilation of scenes into a full script when completed
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -12,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { toast } from 'sonner';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { compileScriptFromScenes } from '@/lib/compileScriptFromScenes';
 
 // Helper to derive phase from intent statuses
 function derivePhaseFromIntents(intents: { status: string }[]): 'idle' | 'planning' | 'generating' | 'validating' | 'repairing' | 'completed' | 'failed' {
@@ -115,8 +117,10 @@ export interface GenerationProgress {
 
 export interface UseNarrativeGenerationOptions {
   projectId: string;
+  episodeNumber?: number;
   onSceneGenerated?: (scene: any) => void;
   onComplete?: () => void;
+  onScriptCompiled?: (scriptId: string) => void;
   onError?: (error: string) => void;
 }
 
@@ -126,8 +130,10 @@ export interface UseNarrativeGenerationOptions {
 
 export function useNarrativeGeneration({
   projectId,
+  episodeNumber = 1,
   onSceneGenerated,
   onComplete,
+  onScriptCompiled,
   onError,
 }: UseNarrativeGenerationOptions) {
   // State
@@ -155,15 +161,44 @@ export function useNarrativeGeneration({
   // Callback refs to stabilize realtime subscription (prevent CLOSED spam)
   const onSceneGeneratedRef = useRef(onSceneGenerated);
   const onCompleteRef = useRef(onComplete);
+  const onScriptCompiledRef = useRef(onScriptCompiled);
   const onErrorRef = useRef(onError);
   
   // Keep refs updated
   useEffect(() => {
     onSceneGeneratedRef.current = onSceneGenerated;
     onCompleteRef.current = onComplete;
+    onScriptCompiledRef.current = onScriptCompiled;
     onErrorRef.current = onError;
-  }, [onSceneGenerated, onComplete, onError]);
+  }, [onSceneGenerated, onComplete, onScriptCompiled, onError]);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // ============================================================================
+  // Auto-compile Script when generation completes
+  // ============================================================================
+  
+  const compileFullScript = useCallback(async () => {
+    console.log('[NarrativeGen] Compiling full script from scenes...');
+    
+    try {
+      const result = await compileScriptFromScenes({
+        projectId,
+        episodeNumber,
+      });
+      
+      if (result.success && result.scriptId) {
+        console.log('[NarrativeGen] Script compiled:', result);
+        toast.success(`Guion compilado: ${result.scenesCompiled} escenas`, {
+          description: 'Puedes exportar el guion en formato PDF',
+        });
+        onScriptCompiledRef.current?.(result.scriptId);
+      } else {
+        console.warn('[NarrativeGen] Script compilation failed:', result.error);
+      }
+    } catch (err) {
+      console.error('[NarrativeGen] Script compilation error:', err);
+    }
+  }, [projectId, episodeNumber]);
 
   // ============================================================================
   // Realtime Subscriptions
@@ -629,6 +664,10 @@ export function useNarrativeGeneration({
       if (allCompleted) {
         setProgress(prev => ({ ...prev, phase: 'completed' }));
         toast.success('¡Generación completada!');
+        
+        // V73: Auto-compile script from scenes
+        await compileFullScript();
+        
         onComplete?.();
       }
 
@@ -642,7 +681,7 @@ export function useNarrativeGeneration({
       isGeneratingRef.current = false;
       setIsGenerating(false);
     }
-  }, [projectId, loadInitialState, onComplete, onError]);
+  }, [projectId, loadInitialState, compileFullScript, onComplete, onError]);
 
   // ============================================================================
   // Cancel Generation
@@ -783,6 +822,10 @@ export function useNarrativeGeneration({
       if (allCompleted) {
         setProgress(prev => ({ ...prev, phase: 'completed' }));
         toast.success('¡Generación completada!');
+        
+        // V73: Auto-compile script from scenes
+        await compileFullScript();
+        
         onComplete?.();
       }
 
@@ -796,7 +839,7 @@ export function useNarrativeGeneration({
       isGeneratingRef.current = false;
       setIsGenerating(false);
     }
-  }, [projectId, loadInitialState, onComplete, onError]);
+  }, [projectId, loadInitialState, compileFullScript, onComplete, onError]);
 
 
   // ============================================================================
@@ -898,5 +941,6 @@ export function useNarrativeGeneration({
     cancelGeneration,
     resetNarrativeState,
     refreshState: loadInitialState,
+    compileFullScript, // V73: Manual compilation trigger
   };
 }
