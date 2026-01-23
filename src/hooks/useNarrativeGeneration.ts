@@ -13,6 +13,27 @@ import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { toast } from 'sonner';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
+// Helper to derive phase from intent statuses
+function derivePhaseFromIntents(intents: { status: string }[]): 'idle' | 'planning' | 'generating' | 'validating' | 'repairing' | 'completed' | 'failed' {
+  if (!intents || intents.length === 0) return 'idle';
+  
+  const statuses = intents.map(i => i.status);
+  
+  // Any failed → failed
+  if (statuses.some(s => s === 'failed')) return 'failed';
+  
+  // Any writing/needs_repair → generating (active work)
+  if (statuses.some(s => s === 'writing' || s === 'needs_repair' || s === 'repairing')) return 'generating';
+  
+  // Any pending/planning/planned → planning (queue has work)
+  if (statuses.some(s => s === 'pending' || s === 'planning' || s === 'planned')) return 'planning';
+  
+  // All written or validated → completed
+  if (statuses.every(s => s === 'written' || s === 'validated')) return 'completed';
+  
+  return 'idle';
+}
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -129,6 +150,17 @@ export function useNarrativeGeneration({
   // Refs
   const channelRef = useRef<RealtimeChannel | null>(null);
   const isGeneratingRef = useRef(false); // Ref to prevent race conditions
+  // Callback refs to stabilize realtime subscription (prevent CLOSED spam)
+  const onSceneGeneratedRef = useRef(onSceneGenerated);
+  const onCompleteRef = useRef(onComplete);
+  const onErrorRef = useRef(onError);
+  
+  // Keep refs updated
+  useEffect(() => {
+    onSceneGeneratedRef.current = onSceneGenerated;
+    onCompleteRef.current = onComplete;
+    onErrorRef.current = onError;
+  }, [onSceneGenerated, onComplete, onError]);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // ============================================================================
@@ -191,7 +223,7 @@ export function useNarrativeGeneration({
         },
         (payload) => {
           console.log('[NarrativeGen] New scene:', payload.new);
-          onSceneGenerated?.(payload.new);
+          onSceneGeneratedRef.current?.(payload.new);
         }
       )
       // Listen to narrative_state updates
@@ -258,7 +290,7 @@ export function useNarrativeGeneration({
       });
 
     channelRef.current = channel;
-  }, [projectId, onSceneGenerated]);
+  }, [projectId]); // Removed onSceneGenerated - using ref instead
 
   // ============================================================================
   // Integrity Validation - Auto-cleanup orphaned data
@@ -370,13 +402,14 @@ export function useNarrativeGeneration({
           i => i.status === 'written' || i.status === 'validated'
         ).length;
         
+        // Derive phase from actual intent statuses (key fix for stuck UI)
+        const derivedPhase = derivePhaseFromIntents(intentsData);
+        
         setProgress(prev => ({
           ...prev,
           totalScenes: intentsData.length,
           completedScenes: completed,
-          phase: completed === intentsData.length && intentsData.length > 0 
-            ? 'completed' 
-            : prev.phase,
+          phase: derivedPhase,
         }));
       }
     } catch (err) {
@@ -412,8 +445,14 @@ export function useNarrativeGeneration({
       .limit(1);
     
     if (existingIntents && existingIntents.length > 0) {
-      toast.warning('Hay escenas pendientes de la última generación. Usa "Reiniciar" para empezar de nuevo.');
-      // Load existing state instead
+      toast.info('Hay una generación anterior. Puedes continuar o reiniciar.', {
+        duration: 6000,
+        action: {
+          label: 'Continuar',
+          onClick: () => continueGeneration(),
+        },
+      });
+      // Load existing state - will derive the correct phase for UI
       await loadInitialState();
       return;
     }
@@ -624,16 +663,19 @@ export function useNarrativeGeneration({
       return;
     }
 
-    // Find pending scene_intents
+    // Find ALL non-finalized scene_intents (including 'writing' without scene_id)
     const { data: pendingIntents } = await supabase
       .from('scene_intent')
-      .select('id, scene_number, episode_number, status')
+      .select('id, scene_number, episode_number, status, scene_id')
       .eq('project_id', projectId)
-      .in('status', ['pending', 'planning', 'planned'])
+      .in('status', ['pending', 'planning', 'planned', 'writing', 'needs_repair', 'repairing'])
+      .order('episode_number', { ascending: true })
       .order('scene_number', { ascending: true });
     
     if (!pendingIntents || pendingIntents.length === 0) {
       toast.info('No hay escenas pendientes');
+      // Double-check and mark as completed if everything is done
+      await loadInitialState();
       return;
     }
 
@@ -658,7 +700,19 @@ export function useNarrativeGeneration({
         }));
 
         try {
-          console.log(`[NarrativeGen] Continuing scene ${intent.scene_number}...`);
+          // Skip 'writing' intents that already have a scene_id (likely already processed)
+          if (intent.status === 'writing' && (intent as any).scene_id) {
+            console.log(`[NarrativeGen] Scene ${intent.scene_number} already has scene_id, marking as written...`);
+            // Attempt to mark as written directly (scene-worker already wrote it)
+            await supabase
+              .from('scene_intent')
+              .update({ status: 'written' })
+              .eq('id', intent.id);
+            setProgress(prev => ({ ...prev, completedScenes: prev.completedScenes + 1 }));
+            continue;
+          }
+          
+          console.log(`[NarrativeGen] Continuing scene ${intent.scene_number} (status: ${intent.status})...`);
           
           const { error: workerError } = await invokeAuthedFunction('scene-worker', {
             sceneIntentId: intent.id,

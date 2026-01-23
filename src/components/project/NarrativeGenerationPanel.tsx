@@ -5,7 +5,7 @@
  * Integrates with useNarrativeGeneration hook.
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -54,6 +54,15 @@ export function NarrativeGenerationPanel({
 }: NarrativeGenerationPanelProps) {
   const [showIntents, setShowIntents] = useState(false);
 
+  // Stable callbacks to prevent realtime subscription churn
+  const handleSceneGenerated = useCallback((scene: any) => {
+    console.log('[NarrativePanel] Scene generated:', scene.scene_number);
+  }, []);
+  
+  const handleError = useCallback((error: string) => {
+    console.error('[NarrativePanel] Error:', error);
+  }, []);
+
   const {
     narrativeState,
     sceneIntents,
@@ -68,12 +77,8 @@ export function NarrativeGenerationPanel({
   } = useNarrativeGeneration({
     projectId,
     onComplete,
-    onSceneGenerated: (scene) => {
-      console.log('[NarrativePanel] Scene generated:', scene.scene_number);
-    },
-    onError: (error) => {
-      console.error('[NarrativePanel] Error:', error);
-    },
+    onSceneGenerated: handleSceneGenerated,
+    onError: handleError,
   });
 
   const handleCleanupComplete = () => {
@@ -256,15 +261,34 @@ export function NarrativeGenerationPanel({
 
         {/* Actions */}
         <div className="flex gap-2">
-          {!isGenerating && progress.phase === 'idle' && (
+          {/* Detect stuck state: intents exist but phase shows idle */}
+          {!isGenerating && sceneIntents.length > 0 && progress.phase === 'idle' && (
+            <div className="flex flex-col gap-2 w-full">
+              <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-sm text-amber-700 dark:text-amber-400">
+                Hay una generación anterior que puede continuar.
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={continueGeneration} className="flex-1">
+                  <Play className="h-4 w-4 mr-2" />
+                  Continuar ({sceneIntents.filter(i => !['written', 'validated', 'failed'].includes(i.status)).length} pendientes)
+                </Button>
+                <Button onClick={resetNarrativeState} variant="ghost">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Reiniciar
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          {!isGenerating && progress.phase === 'idle' && sceneIntents.length === 0 && (
             <Button onClick={handleStart} className="flex-1">
               <Sparkles className="h-4 w-4 mr-2" />
               Iniciar Generación
             </Button>
           )}
 
-          {/* Continue button for pending scenes */}
-          {!isGenerating && progress.phase !== 'idle' && progress.phase !== 'completed' && (
+          {/* Continue button for pending scenes (phase already computed correctly) */}
+          {!isGenerating && ['planning', 'generating'].includes(progress.phase) && (
             <Button onClick={continueGeneration} className="flex-1">
               <Play className="h-4 w-4 mr-2" />
               Continuar ({progress.totalScenes - progress.completedScenes} pendientes)
@@ -285,7 +309,7 @@ export function NarrativeGenerationPanel({
             </Button>
           )}
 
-          {(progress.phase === 'failed' || sceneIntents.length > 0) && (
+          {(progress.phase === 'failed' || (sceneIntents.length > 0 && progress.phase !== 'idle')) && (
             <Button onClick={resetNarrativeState} variant="ghost" size="icon">
               <RefreshCw className="h-4 w-4" />
             </Button>
