@@ -1069,6 +1069,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
   // V6: Robust sync of outline_json to lightOutline for ANY status with valid content
   // This ensures outline visibility even in inconsistent states (e.g., approved but incomplete)
+  // V72: Track the last synced updated_at to detect when backend has newer data
+  const lastSyncedUpdatedAtRef = useRef<string | null>(null);
+  
   useEffect(() => {
     const saved = outlinePersistence.savedOutline;
     if (!saved || outlinePersistence.isLoading) return;
@@ -1076,11 +1079,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     const status = saved.status;
     const hasValidContent = saved.outline_json && Object.keys(saved.outline_json).length > 0 && (saved.outline_json as any).title;
     
-    // If we have valid content but lightOutline is empty, sync it regardless of status
-    // This catches: stalled, timeout, approved (with error), failed with partial data, etc.
-    if (hasValidContent && !lightOutline) {
-      console.log('[ScriptImport] V6: Syncing outline from persistence, status:', status);
+    // V72: Check if backend has newer data than what we last synced
+    const backendUpdatedAt = saved.updated_at;
+    const isNewerThanLocal = !lastSyncedUpdatedAtRef.current || 
+      (backendUpdatedAt && new Date(backendUpdatedAt) > new Date(lastSyncedUpdatedAtRef.current));
+    
+    // V72: Sync if: (1) lightOutline is empty, OR (2) backend has newer data
+    // This fixes the "navigate away and back" bug where enriched fields appeared lost
+    if (hasValidContent && (!lightOutline || isNewerThanLocal)) {
+      console.log('[ScriptImport] V72: Syncing outline from persistence, status:', status, 
+        'reason:', !lightOutline ? 'empty' : 'backend newer', 
+        'updated_at:', backendUpdatedAt);
       setLightOutline(saved.outline_json);
+      lastSyncedUpdatedAtRef.current = backendUpdatedAt;
+      
       if (saved.idea) setIdeaText(saved.idea);
       if (saved.genre) setGenre(saved.genre);
       if (saved.tone) setTone(saved.tone);

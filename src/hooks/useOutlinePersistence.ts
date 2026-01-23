@@ -209,17 +209,42 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
               beatsCount: allBeats.length
             });
             
+            // V72: SAFE MERGE - Preserve enriched fields from original outline_json
+            // These fields are added by enrich operations and MUST NOT be overwritten
+            const enrichedFields = {
+              threads: (data.outline_json as any)?.threads,
+              entity_rules: (data.outline_json as any)?.entity_rules,
+              factions: (data.outline_json as any)?.factions,
+              turning_points: (data.outline_json as any)?.turning_points,
+              setpieces: (data.outline_json as any)?.setpieces,
+              episode_beats: (data.outline_json as any)?.episode_beats,
+              serialization_points: (data.outline_json as any)?.serialization_points,
+              cliffhangers: (data.outline_json as any)?.cliffhangers,
+            };
+            
             // V6: Use scaffold data even without expanded acts
             // V10: Also preserve _film_structure and acts_summary for FILM projects
+            // V72: Start with original outline_json, then fill gaps from scaffold
             outlineJson = { 
+              // Base: keep ALL original outline_json fields (especially enriched ones)
+              ...(outlineJson || {}),
+              // Layer scaffold data underneath (only fills missing fields)
               ...(scaffold || {}),
-              // Ensure main_characters is populated from scaffold.cast
-              main_characters: scaffold?.cast || scaffold?.main_characters || [],
-              main_locations: scaffold?.locations || scaffold?.main_locations || [],
-              acts_summary: scaffold?.acts_summary,
-              beats: allBeats.length > 0 ? allBeats : scaffold?.beats || [],
+              // V72: Re-apply enriched fields on top to ensure they're never lost
+              ...(Object.fromEntries(
+                Object.entries(enrichedFields).filter(([_, v]) => v !== undefined && v !== null)
+              )),
+              // Ensure main_characters is populated from scaffold.cast if missing
+              main_characters: (Array.isArray((outlineJson as any)?.main_characters) && (outlineJson as any).main_characters.length > 0)
+                ? (outlineJson as any).main_characters
+                : (scaffold?.cast || scaffold?.main_characters || []),
+              main_locations: (Array.isArray((outlineJson as any)?.main_locations) && (outlineJson as any).main_locations.length > 0)
+                ? (outlineJson as any).main_locations
+                : (scaffold?.locations || scaffold?.main_locations || []),
+              acts_summary: (outlineJson as any)?.acts_summary || scaffold?.acts_summary,
+              beats: allBeats.length > 0 ? allBeats : ((outlineJson as any)?.beats || scaffold?.beats || []),
               // Preserve format
-              format: scaffold?.format || 'FILM',
+              format: (outlineJson as any)?.format || scaffold?.format || 'FILM',
               // V10: Preserve _film_structure from outline_json if exists (FILM projects)
               _film_structure: (data.outline_json as any)?._film_structure || null,
               // V11: Preserve ACT_I/II/III from outline_json for FILM projects (prevents enrich revert bug)
@@ -227,6 +252,14 @@ export function useOutlinePersistence({ projectId }: UseOutlinePersistenceOption
               ACT_II: (data.outline_json as any)?.ACT_II || scaffold?.ACT_II,
               ACT_III: (data.outline_json as any)?.ACT_III || scaffold?.ACT_III,
             };
+            
+            console.log('[useOutlinePersistence] V72: Safe merge preserved enriched fields:', {
+              hasThreads: !!outlineJson.threads,
+              hasEntityRules: !!outlineJson.entity_rules,
+              hasFactions: !!outlineJson.factions,
+              hasTurningPoints: !!outlineJson.turning_points,
+              hasSetpieces: !!outlineJson.setpieces,
+            });
           }
         }
         
