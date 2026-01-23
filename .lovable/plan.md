@@ -1,522 +1,367 @@
-# Plan: Calidad Cinematografica Profesional + Upload Manual de Keyframes
 
-## Vision General
+# Plan: Sistema Showrunner IA + Coherencia Cinematográfica
 
-Implementar mejoras para que las producciones generadas sean indistinguibles de una pelicula o serie profesional, ya sea live-action o animacion. El objetivo es eliminar los "tells" tipicos de contenido generado por IA.
+## Resumen Ejecutivo
 
----
-
-## FASE 1: Upload Manual de Keyframes
-
-### Problema
-El usuario no puede subir keyframes generados externamente (Midjourney, Stable Diffusion local, etc.) o fotogramas de referencia.
-
-### Solucion
-
-**Archivo:** `src/components/project/KeyframeManager.tsx`
-
-Agregar boton de upload junto al boton de generar:
-
-```typescript
-// Nuevo estado para upload
-const [isUploading, setIsUploading] = useState(false);
-const fileInputRef = useRef<HTMLInputElement>(null);
-
-// Funcion de upload
-async function handleManualUpload(file: File, frameType: 'initial' | 'intermediate' | 'final', timestampSec: number) {
-  // 1. Subir a Supabase Storage
-  const path = `keyframes/${shotId}/manual_${frameType}_${timestampSec}s_${Date.now()}.jpg`;
-  const { data, error } = await supabase.storage
-    .from('renders')
-    .upload(path, file);
-  
-  // 2. Crear registro en tabla keyframes
-  await supabase.from('keyframes').insert({
-    shot_id: shotId,
-    frame_type: frameType,
-    timestamp_sec: timestampSec,
-    image_url: publicUrl,
-    source: 'manual_upload', // Nuevo campo para distinguir origen
-    approved: false // Usuario debe aprobar despues
-  });
-}
-```
-
-**UI:**
-- Boton "Subir Keyframe" junto a "Generar"
-- Drag & drop zone para arrastrar imagenes
-- Preview antes de confirmar
-- Opcion de reemplazar keyframe existente
+Integrar una capa de **Showrunner IA** que actúe como árbitro editorial entre el guion y la producción visual, garantizando coherencia narrativa, visual y técnica entre escenas. El sistema implementará "Sequence Intent" y "Visual Context Memory" para que cada decisión de plano viva en cadena, no como elemento aislado.
 
 ---
 
-## FASE 2: Eliminacion de "AI Tells" - Prompt Engineering Avanzado
+## 1. Análisis del Estado Actual
 
-### Problema
-Las imagenes generadas tienen "tells" tipicos de IA:
-- Piel demasiado suave/plastica
-- Ojos muy brillantes/perfectos
-- Iluminacion irreal
-- Texturas repetitivas
-- Simetria excesiva
+### Lo que YA existe (bases sólidas):
 
-### Solucion: Nuevos Modificadores Anti-AI
+| Componente | Estado | Ubicación |
+|------------|--------|-----------|
+| **Creative Mode (ASSISTED/PRO)** | Funcionando | `src/lib/modeCapabilities.ts`, `CreativeModeContext.tsx` |
+| **scene_intent** | Tabla existe | BD: `scene_intent` con `emotional_turn`, `intent_summary`, `characters_involved` |
+| **narrative_state** | Tabla existe | BD: `narrative_state` con `locked_facts`, `forbidden_actions`, `active_threads` |
+| **ContinuityManager** | Código base | `src/lib/continuityManager.ts` |
+| **canon_packs** | Tabla existe | BD: `canon_packs` con `voice_tone_rules`, `continuity_locks` |
+| **Showrunner prompts** | Fragmentos | `outline-patch/index.ts`, `episode-generate-batch/index.ts` |
 
-**Archivo:** `supabase/functions/generate-keyframe/index.ts`
+### Lo que FALTA (gaps críticos):
 
-Agregar bloque `ANTI_AI_TELLS` al prompt:
+1. **Visual Context Memory** - No existe memoria visual entre escenas
+2. **Sequence Intent UI** - `scene_intent` solo se usa en backend, no hay UI
+3. **Showrunner Layer visible** - Las decisiones editoriales son invisibles
+4. **Comparación N-1/N/N+1** - No hay vista de concatenación
+5. **Reglas de prohibición visual** - No se trackean recursos visuales usados
 
-```typescript
-const ANTI_AI_TELLS = `
-=== REALISMO FOTOGRAFICO OBLIGATORIO ===
-PIEL: 
-- Textura de poros visible a distancia apropiada
-- Imperfecciones naturales (marcas, pecas, pequeñas irregularidades)
-- NO suavizado artificial, NO aspecto "porcelana"
-- Variaciones de tono natural (rojeces, venas sutiles)
+---
 
-OJOS:
-- Reflexiones realistas de luz ambiental (no highlights perfectos)
-- Venas sutiles en esclerótica
-- Asimetría natural entre ambos ojos
-- Iris con variaciones de color y textura
+## 2. Arquitectura Propuesta
 
-CABELLO:
-- Mechones sueltos naturales, "flyaways"
-- Variaciones de grosor y direccion
-- Reflejos coherentes con fuente de luz
-- NO demasiado perfecto o simétrico
+### 2.1 Nueva Tabla: `visual_context_memory`
 
-ILUMINACION:
-- Coherencia con fuente de luz establecida
-- Sombras con bordes variables (no uniformes)
-- Spill de color ambiental
-- Falloff natural de la luz
-
-TEXTURAS:
-- Ropa con arrugas, pliegues, y desgaste apropiado
-- Superficies con polvo, huellas, o uso visible
-- NO texturas "nuevas" o perfectamente limpias
-- Variación en materiales (brillo, mate, textil)
-
-COMPOSICION:
-- Asimetría compositiva natural
-- Espacio negativo intencional
-- NO centrado perfecto a menos que sea narrativo
-=== FIN ANTI-AI ===
-`;
+```sql
+CREATE TABLE visual_context_memory (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+  scene_id UUID REFERENCES scenes(id) ON DELETE CASCADE,
+  episode_number INTEGER NOT NULL,
+  scene_number INTEGER NOT NULL,
+  
+  -- Estado emocional
+  emotional_start TEXT,
+  emotional_end TEXT,
+  emotional_delta TEXT,
+  
+  -- Lenguaje visual usado
+  dominant_lenses JSONB DEFAULT '[]',
+  dominant_movements JSONB DEFAULT '[]', 
+  dominant_shot_types JSONB DEFAULT '[]',
+  camera_height_tendency TEXT,
+  coverage_style TEXT,
+  
+  -- Ritmo
+  average_shot_duration_sec NUMERIC,
+  shot_count INTEGER,
+  pacing_level TEXT,
+  
+  -- Restricciones para siguiente escena
+  forbidden_next JSONB DEFAULT '{}',
+  recommended_next JSONB DEFAULT '{}',
+  
+  -- Metadata
+  status TEXT DEFAULT 'pending',
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  
+  UNIQUE(scene_id)
+);
 ```
 
-**Negative Prompts Mejorados:**
+### 2.2 Ampliar Tabla: `scene_intent` (campos nuevos)
 
-```typescript
-const ENHANCED_NEGATIVE = [
-  // Anti-AI específicos
-  'smooth plastic skin',
-  'poreless skin',
-  'airbrushed face',
-  'perfect symmetrical face',
-  'overly bright eyes',
-  'uniform lighting without falloff',
-  'perfectly clean textures',
-  'stock photo look',
-  'CGI render appearance',
-  'wax figure look',
-  'mannequin appearance',
+```sql
+ALTER TABLE scene_intent ADD COLUMN IF NOT EXISTS
+  visual_energy TEXT,
+  continuity_constraints JSONB DEFAULT '{}',
+  allowed_camera_language JSONB DEFAULT '{}',
+  forbidden_repetitions JSONB DEFAULT '[]',
+  showrunner_validated BOOLEAN DEFAULT false,
+  showrunner_notes TEXT;
+```
+
+### 2.3 Nueva Tabla: `showrunner_decisions`
+
+```sql
+CREATE TABLE showrunner_decisions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+  scene_id UUID REFERENCES scenes(id) ON DELETE CASCADE,
   
-  // Calidad técnica
-  'jpeg artifacts',
-  'noise grain pattern',
-  'watermark',
-  'text overlay',
-  'border frame',
-  'vignette filter',
+  -- Preguntas editoriales respondidas
+  where_we_came_from TEXT,
+  what_must_change TEXT,
+  what_cannot_repeat TEXT,
   
-  // Composición
-  'centered composition',
-  'amateur framing',
-  'snapshot aesthetic',
-];
+  -- Decisiones resultantes
+  visual_strategy TEXT,
+  camera_language_allowed JSONB,
+  lens_range_allowed TEXT[],
+  movement_allowed TEXT[],
+  
+  -- Validación
+  validated BOOLEAN DEFAULT false,
+  validated_at TIMESTAMPTZ,
+  validated_by UUID,
+  
+  -- Modo
+  mode TEXT DEFAULT 'auto',
+  
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  
+  UNIQUE(scene_id)
+);
 ```
 
 ---
 
-## FASE 3: Sistema de Coherencia Temporal (Keyframe Chaining Mejorado)
+## 3. Componentes UI Nuevos
 
-### Problema
-Los keyframes consecutivos pueden tener inconsistencias sutiles que rompen la ilusion.
+### 3.1 `ShowrunnerLayer.tsx`
 
-### Solucion: Análisis de Coherencia Pre-Generacion
+Panel que muestra las decisiones editoriales de la escena actual.
 
-**Nuevo Edge Function:** `supabase/functions/analyze-keyframe-coherence/index.ts`
+**Comportamiento por modo:**
+- **ASSISTED**: Invisible pero activo (guardrail automático)
+- **PRO**: Visible y editable
 
-Antes de generar un nuevo keyframe, analizar el anterior para extraer:
+**Contenido:**
+- Card "De dónde venimos" (resumen escena anterior)
+- Card "Qué debe cambiar" (delta emocional)
+- Card "Qué NO repetir" (recursos prohibidos)
+- Badge de estado: `DRAFT | REVIEW | VALIDATED`
 
-```typescript
-interface CoherenceAnalysis {
-  // Iluminacion
-  lighting: {
-    direction: 'left' | 'right' | 'front' | 'back' | 'top' | 'mixed';
-    temperature: 'warm' | 'neutral' | 'cool';
-    intensity: 'low' | 'medium' | 'high';
-    keyToFillRatio: string; // e.g., "3:1"
-  };
-  
-  // Color
-  color: {
-    dominantPalette: string[]; // hex colors
-    saturationLevel: 'muted' | 'natural' | 'vibrant';
-    contrastLevel: 'low' | 'medium' | 'high';
-  };
-  
-  // Personajes
-  characters: Array<{
-    id: string;
-    position: { x: number; y: number }; // porcentaje del frame
-    facing: 'camera' | 'left' | 'right' | 'away';
-    expression: string;
-    wardrobeDescription: string;
-  }>;
-  
-  // Set/Fondo
-  background: {
-    description: string;
-    keyElements: string[];
-    depth: 'shallow' | 'medium' | 'deep';
-  };
-}
-```
+### 3.2 `SequenceIntentPanel.tsx`
 
-**Flujo:**
-1. Usuario genera Keyframe N
-2. Sistema analiza Keyframe N con Vision AI
-3. Análisis se inyecta como CONTEXTO OBLIGATORIO en Keyframe N+1
-4. Prompt incluye: "MANTENER EXACTAMENTE: [análisis del anterior]"
+Vista de intención de secuencia antes del storyboard.
 
----
+**Campos:**
+- `emotional_start` / `emotional_end`
+- `visual_energy` (baja/media/alta)
+- `allowed_camera_language`
+- `forbidden_repetitions`
 
-## FASE 4: Presets Cinematograficos por Genero
+**Comportamiento:**
+- En ASSISTED: Auto-derivado del mood, no editable
+- En PRO: Editable con validación
 
-### Solucion: Ampliar Visual Presets
+### 3.3 `VisualMemoryTimeline.tsx`
 
-**Archivo:** `src/lib/visualPresets.ts`
+Timeline horizontal que muestra concatenación N-1 / N / N+1.
 
-Agregar presets especializados con configuraciones anti-AI integradas:
+**Visualización por escena:**
+- Lentes dominantes (iconos)
+- Movimientos usados
+- Nivel de ritmo (chips de color)
+- Alertas de repetición
 
-```typescript
-// Nuevo preset ejemplo: Drama Televisivo Premium
-drama_premium: {
-  id: 'drama_premium',
-  name: 'Drama Premium TV',
-  description: 'Estilo series HBO/Netflix - Breaking Bad, The Crown',
-  category: 'live-action',
-  examples: ['Breaking Bad', 'The Crown', 'Succession', 'Better Call Saul'],
-  
-  camera: {
-    body: 'ARRI Alexa LF',
-    lens: 'Cooke S7/i Full Frame',
-    focalLength: '50mm',
-    aperture: 'f/2.8',
-  },
-  
-  style: {
-    lighting: 'motivated naturalistic, practical sources, subtle fill',
-    colorPalette: ['#1a1a1a', '#2d3436', '#636e72', '#dfe6e9', '#ffeaa7'],
-    mood: 'contemplative, layered, psychological depth',
-    contrast: 'medium',
-    saturation: 'natural',
-    grain: 'subtle',
-  },
-  
-  // NUEVO: Configuración anti-AI específica del preset
-  antiAIConfig: {
-    skinTexture: 'visible pores, natural imperfections, age-appropriate',
-    eyeDetail: 'realistic reflections of practicals, not ring lights',
-    hairStyle: 'natural flyaways, movement-appropriate',
-    clothingWear: 'lived-in, character-appropriate wear patterns',
-  },
-  
-  promptModifiers: [
-    'premium television production value',
-    'motivated lighting from practical sources',
-    'shallow depth of field isolating subjects',
-    'atmospheric haze in backgrounds',
-    'color graded for drama',
-    'ARRI Alexa color science',
-    'anamorphic lens characteristics',
-    'cinematic aspect ratio framing',
-  ],
-  
-  negativePromptModifiers: [
-    'flat lighting',
-    'amateur photography',
-    'stock photo look',
-    'oversaturated colors',
-    'digital noise',
-    'plastic skin texture',
-    'perfect symmetry',
-  ],
-}
-```
+### 3.4 `SceneComparisonView.tsx`
+
+Vista lado a lado de 3 escenas para verificar coherencia.
+
+**Columnas:**
+- Escena anterior
+- Escena actual  
+- Escena siguiente
+
+**Métricas comparadas:**
+- Lentes usadas
+- Movimientos dominantes
+- Ritmo de corte
+- Estado emocional
 
 ---
 
-## FASE 5: Sistema de QC Visual Pre-Aprobacion
+## 4. Lógica de Backend
 
-### Problema
-El usuario debe detectar manualmente problemas de calidad.
-
-### Solucion: QC Automatico con Puntuacion
-
-**Nuevo componente:** `src/components/project/KeyframeQCPanel.tsx`
-
-Cuando se genera un keyframe, ejecutar QC automatico:
+### 4.1 Edge Function: `showrunner-decide`
 
 ```typescript
-interface KeyframeQC {
-  // Puntuaciones por categoria (0-100)
-  scores: {
-    technicalQuality: number;     // Nitidez, ruido, artefactos
-    cinematicComposition: number; // Encuadre, regla de tercios
-    lightingCoherence: number;    // Consistencia con preset
-    characterIdentity: number;    // Parecido con referencia
-    styleAdherence: number;       // Fidelidad al preset visual
-    antiAIScore: number;          // Ausencia de "tells" de IA
-  };
-  
-  // Score global ponderado
-  overallScore: number;
-  
-  // Issues detectados
-  issues: Array<{
-    category: string;
-    severity: 'minor' | 'major' | 'critical';
-    description: string;
-    suggestion: string;
-  }>;
-  
-  // Veredicto
-  verdict: 'approve' | 'review' | 'regenerate';
-}
-```
-
-**UI en KeyframeManager:**
-- Badge de color segun score (verde >85, amarillo 70-85, rojo <70)
-- Panel expandible con detalles de QC
-- Sugerencias de mejora especificas
-- Boton "Regenerar con Correcciones" que inyecta los issues al prompt
-
----
-
-## FASE 6: Temporal Consistency Engine
-
-### Problema
-Los videos generados de micro-shots pueden tener "jumps" visuales.
-
-### Solucion: Bloqueo de Parametros entre Keyframes
-
-**Modificar:** `supabase/functions/generate-microshot-video/index.ts`
-
-```typescript
-// Antes de generar video, verificar coherencia de keyframes
-async function validateKeyframeChain(microShotId: string): Promise<{
-  valid: boolean;
-  issues: string[];
-}> {
-  const microShot = await getMicroShotWithKeyframes(microShotId);
-  
-  const issues: string[] = [];
-  
-  // Verificar que ambos keyframes existen y estan aprobados
-  if (!microShot.keyframe_initial?.approved) {
-    issues.push('Keyframe inicial no aprobado');
-  }
-  if (!microShot.keyframe_final?.approved) {
-    issues.push('Keyframe final no aprobado');
-  }
-  
-  // Verificar coherencia visual (usando Vision AI)
-  const coherenceCheck = await analyzeKeyframePairCoherence(
-    microShot.keyframe_initial.image_url,
-    microShot.keyframe_final.image_url
-  );
-  
-  if (coherenceCheck.lightingMismatch) {
-    issues.push(`Iluminacion inconsistente: ${coherenceCheck.lightingDetails}`);
-  }
-  if (coherenceCheck.wardrobeMismatch) {
-    issues.push(`Vestuario inconsistente: ${coherenceCheck.wardrobeDetails}`);
-  }
-  if (coherenceCheck.positionJump) {
-    issues.push(`Salto de posicion demasiado grande para ${microShot.duration_sec}s`);
-  }
-  
-  return {
-    valid: issues.length === 0,
-    issues
-  };
-}
-```
-
----
-
-## FASE 7: Motion Prompting para Videos
-
-### Problema
-Los prompts de video no especifican el movimiento con suficiente detalle.
-
-### Solucion: Template de Movimiento Cinematografico
-
-**Nuevo archivo:** `src/lib/motionTemplates.ts`
-
-```typescript
-export const MOTION_TEMPLATES = {
-  dialogue_subtle: {
-    name: 'Dialogo Sutil',
-    description: 'Movimiento minimo para escenas de conversacion',
-    cameraMotion: 'locked off, imperceptible drift',
-    subjectMotion: 'subtle breathing, micro-expressions, occasional blinks',
-    environmentMotion: 'ambient particles, distant background movement',
-    promptBlock: `
-MOVIMIENTO CINEMATICO:
-- Camara: fija con drift imperceptible (maximo 0.5% del frame)
-- Personajes: respiracion sutil, micro-expresiones, parpadeo natural
-- Ambiente: particulas en el aire, movimiento lejano de fondo
-- EVITAR: movimiento robotico, estatismo total, cambios bruscos
-    `
-  },
-  
-  action_dynamic: {
-    name: 'Accion Dinamica',
-    description: 'Movimiento energetico para secuencias de accion',
-    cameraMotion: 'handheld shake, motivated pans, impact response',
-    subjectMotion: 'full body motion, physics-accurate movement',
-    environmentMotion: 'reactive environment, debris, dust',
-    promptBlock: `
-MOVIMIENTO CINEMATICO:
-- Camara: shake de handheld, respuesta a impactos
-- Personajes: movimiento de cuerpo completo, fisica realista
-- Ambiente: polvo, particulas reactivas, elementos que responden
-- EVITAR: movimiento flotante, falta de peso, transiciones irreales
-    `
-  },
-  
-  emotional_breathing: {
-    name: 'Emocional Respirando',
-    description: 'Movimiento para momentos emotivos',
-    cameraMotion: 'imperceptible dolly in, breathing with character',
-    subjectMotion: 'emotional micro-movements, breathing changes',
-    environmentMotion: 'still except for natural elements',
-    promptBlock: `
-MOVIMIENTO CINEMATICO:
-- Camara: dolly in imperceptible (1% por segundo maximo)
-- Personajes: respiracion visible, temblor emocional sutil
-- Ambiente: casi estatico, solo elementos naturales (viento, luz)
-- EVITAR: movimiento que distraiga de la emocion
-    `
-  }
-};
-```
-
----
-
-## FASE 8: Color Grading Lock
-
-### Problema
-Los colores pueden variar entre keyframes/shots.
-
-### Solucion: Extraccion y Bloqueo de Paleta
-
-**Nuevo modulo:** `src/lib/colorGradingLock.ts`
-
-```typescript
-// Extraer paleta de colores de una imagen usando Vision AI
-async function extractColorPalette(imageUrl: string): Promise<{
-  dominant: string[];      // Top 5 colores dominantes (hex)
-  shadows: string;         // Color de sombras
-  midtones: string;        // Color de medios tonos
-  highlights: string;      // Color de altas luces
-  temperature: number;     // Kelvin estimado
-  tint: number;           // Desviacion verde/magenta
-}> {
-  // Llamar a Gemini Vision para analisis
-}
-
-// Bloquear paleta para toda una escena
-interface ColorGradingLock {
+// Antes de generar storyboard, el Showrunner evalúa:
+interface ShowrunnerDecideRequest {
+  project_id: string;
   scene_id: string;
-  palette: ColorPalette;
-  lut_description: string;  // Descripcion del look para prompts
-  locked_at: Date;
-  locked_by: string;
+  scene_number: number;
+  episode_number: number;
+}
+
+// Respuesta:
+interface ShowrunnerDecision {
+  where_we_came_from: string;
+  what_must_change: string;
+  what_cannot_repeat: string[];
+  visual_strategy: string;
+  camera_language_allowed: {
+    shot_types: string[];
+    movements: string[];
+    lens_range: { min: number; max: number };
+  };
+  confidence: number;
 }
 ```
 
-**Inyeccion en prompts:**
-```typescript
-const colorBlock = `
-COLOR GRADING BLOQUEADO (NO DESVIARSE):
-- Paleta dominante: ${palette.dominant.join(', ')}
-- Sombras: ${palette.shadows} (NO usar negro puro)
-- Altas luces: ${palette.highlights} (NO usar blanco puro)
-- Temperatura: ${palette.temperature}K
-- Look: ${palette.lut_description}
-- PROHIBIDO: colores fuera de paleta, saturacion inconsistente
-`;
+### 4.2 Edge Function: `update-visual-memory`
+
+Se ejecuta al aprobar storyboard/shots de una escena:
+- Analiza planos aprobados
+- Extrae lentes/movimientos dominantes
+- Calcula ritmo medio
+- Actualiza `visual_context_memory`
+- Genera `forbidden_next` para escena siguiente
+
+### 4.3 Modificar: `generate-storyboard`
+
+Antes de generar, consultar `showrunner_decisions`:
+- Si no existe: llamar a `showrunner-decide` primero
+- Inyectar restricciones en el prompt
+- Validar output contra reglas
+
+---
+
+## 5. Flujo de Pipeline Modificado
+
+```text
+GUIÓN
+  ↓
+SHOWRUNNER-DECIDE (nuevo)
+  ↓
+SEQUENCE INTENT (visible en PRO)
+  ↓
+STORYBOARD (condicionado por restricciones)
+  ↓
+CAMERA PLAN
+  ↓
+SHOTS
+  ↓
+MICROSHOTS
+  ↓
+UPDATE-VISUAL-MEMORY (nuevo)
+  ↓
+DOCUMENTO TÉCNICO
 ```
 
 ---
 
-## Archivos a Crear/Modificar
+## 6. Cambios en modeCapabilities.ts
 
-| Archivo | Accion | Descripcion |
-|---------|--------|-------------|
-| `src/components/project/KeyframeManager.tsx` | Modificar | Agregar upload manual |
-| `supabase/functions/generate-keyframe/index.ts` | Modificar | Agregar ANTI_AI_TELLS y negative prompts mejorados |
-| `supabase/functions/analyze-keyframe-coherence/index.ts` | Crear | Analisis de coherencia pre-generacion |
-| `src/lib/visualPresets.ts` | Modificar | Agregar presets con antiAIConfig |
-| `src/components/project/KeyframeQCPanel.tsx` | Crear | Panel de QC automatico |
-| `supabase/functions/generate-microshot-video/index.ts` | Modificar | Validacion de coherencia de cadena |
-| `src/lib/motionTemplates.ts` | Crear | Templates de movimiento cinematico |
-| `src/lib/colorGradingLock.ts` | Crear | Sistema de bloqueo de color |
-| `migrations/xxx_add_keyframe_source.sql` | Crear | Agregar campo source a keyframes |
+```typescript
+// Nuevas capabilities
+ui: {
+  // ... existentes ...
+  showShowrunnerLayer: boolean,
+  showSequenceIntent: boolean,
+  showVisualMemoryTimeline: boolean,
+  showSceneComparison: boolean,
+},
 
----
+edit: {
+  // ... existentes ...
+  canEditShowrunnerDecisions: boolean,
+  canEditSequenceIntent: boolean,
+  canOverrideShowrunnerBlocks: boolean,
+},
 
-## Resultado Esperado
+behavior: {
+  // ... existentes ...
+  showrunnerAutoDecides: boolean,
+  showrunnerBlocksOnViolation: boolean,
+}
+```
 
-### Calidad Visual:
-- Keyframes con textura de piel realista (poros, imperfecciones)
-- Iluminacion coherente con fuentes motivadas
-- Colores consistentes bloqueados por escena
-- Composicion cinematografica profesional
+**Configuración por modo:**
 
-### Coherencia Temporal:
-- Keyframes encadenados visualmente coherentes
-- Videos sin "jumps" de iluminacion o color
-- Movimiento cinematografico apropiado al genero
-
-### Flujo de Trabajo:
-- Upload manual para keyframes externos
-- QC automatico con puntuacion
-- Sugerencias de mejora especificas
-- Regeneracion inteligente con correcciones
-
-### Anti-AI:
-- Eliminacion de "tells" tipicos de IA
-- Texturas realistas en piel, ojos, cabello
-- Asimetria y imperfecciones naturales
-- Iluminacion con falloff y spill reales
+| Capability | ASSISTED | PRO |
+|------------|----------|-----|
+| `showShowrunnerLayer` | `false` | `true` |
+| `showSequenceIntent` | `false` | `true` |
+| `showVisualMemoryTimeline` | `false` | `true` |
+| `canEditShowrunnerDecisions` | `false` | `true` |
+| `showrunnerAutoDecides` | `true` | `false` |
+| `showrunnerBlocksOnViolation` | `true` | `false` |
 
 ---
 
-## Orden de Implementacion
+## 7. Onboarding Inteligente
 
-1. **Fase 1**: Upload manual de keyframes (permite testing inmediato)
-2. **Fase 2**: Anti-AI tells en prompts (mejora calidad base)
-3. **Fase 3**: Analisis de coherencia (garantiza continuidad)
-4. **Fase 4**: Presets cinematograficos (configuracion facil)
-5. **Fase 5**: QC automatico (feedback al usuario)
-6. **Fase 6**: Validacion de cadena temporal
-7. **Fase 7**: Motion templates (calidad de video)
-8. **Fase 8**: Color grading lock (consistencia total)
+### Fricción Progresiva (sin tutoriales)
+
+1. **Usuario nuevo → ASSISTED por defecto**
+   - Storyboard visible desde inicio
+   - Showrunner trabaja invisible
+
+2. **Detección de patrones problemáticos:**
+   - Repetición de recursos 3+ veces
+   - Escenas similares consecutivas
+   - → Aparece banner sutil: "Hay decisiones que podrías afinar"
+
+3. **Revelación del Showrunner:**
+   - Al cambiar a PRO por primera vez
+   - Animación: "Esto es lo que estaba pasando"
+   - Se muestran reglas activas, intención implícita
+
+---
+
+## 8. Copy UX (Voz de Director Senior)
+
+| Ubicación | Copy |
+|-----------|------|
+| Showrunner Header | "Antes de pensar en planos, piensa en decisiones." |
+| Card "De dónde venimos" | "¿Cómo terminó emocionalmente la escena anterior?" |
+| Card "Qué debe cambiar" | "Si esta escena no cambia nada, sobra." |
+| Card "Qué NO repetir" | "Repetir recursos debilita el relato." |
+| Sequence Intent Header | "El plano correcto no es el más bonito. Es el siguiente necesario." |
+| Storyboard Tooltip | "Este plano existe para cumplir una función, no para lucirse." |
+| Continuity Alert | "Este movimiento ya domina escenas anteriores." |
+
+---
+
+## 9. Fases de Implementación
+
+### Fase 1: Foundation (1-2 semanas)
+- [ ] Crear migración DB: `visual_context_memory`, `showrunner_decisions`
+- [ ] Ampliar `scene_intent` con campos nuevos
+- [ ] Crear edge function `showrunner-decide`
+- [ ] Crear edge function `update-visual-memory`
+
+### Fase 2: Backend Integration (1 semana)
+- [ ] Modificar `generate-storyboard` para consultar Showrunner
+- [ ] Modificar `generate-camera-plan` para respetar restricciones
+- [ ] Añadir validación post-storyboard
+
+### Fase 3: UI Components (2 semanas)
+- [ ] `ShowrunnerLayer.tsx`
+- [ ] `SequenceIntentPanel.tsx`
+- [ ] `VisualMemoryTimeline.tsx`
+- [ ] `SceneComparisonView.tsx`
+- [ ] Integrar en `Scenes.tsx`
+
+### Fase 4: Mode Integration (1 semana)
+- [ ] Actualizar `modeCapabilities.ts`
+- [ ] Condicionar componentes por modo
+- [ ] Implementar onboarding progresivo
+
+### Fase 5: Polish (1 semana)
+- [ ] Copy UX final
+- [ ] Estados visuales (badges, colores)
+- [ ] Animaciones de revelación
+- [ ] Testing de flujos
+
+---
+
+## 10. Ventaja Competitiva Resultante
+
+| Higgsfield | Tu Sistema |
+|------------|------------|
+| Genera planos bonitos | Genera planos coherentes |
+| Piensa en escena | Piensa en secuencia |
+| Inspira creatividad | Estructura criterio cinematográfico |
+| UI como herramienta | UI como mentor invisible |
+
+**Frase núcleo:**
+> "El plano no se elige porque es bueno. Se elige porque es el siguiente correcto."
+
