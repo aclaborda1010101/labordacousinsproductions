@@ -1,165 +1,183 @@
 
 
-# Plan: Arreglar el flujo "Aprobar y Generar Guion"
+# Plan: Arreglar el flujo "Generar Guion Completo" y "Aprobar y Generar"
 
-## Problema Detectado
+## Diagnóstico
 
-Cuando el usuario pulsa **"Aprobar y Generar Guion"**:
-1. El outline se aprueba correctamente en la BD (status → `approved`)
-2. Se muestra toast "Outline aprobado. Iniciando generación automática..."
-3. Se dispara el auto-start **antes** de que el hook haya cargado los intents existentes
-4. `startGeneration()` detecta que ya hay 5 escenas con status `written` y solo carga el estado existente
-5. **No genera nada nuevo** porque la generación ya está completada
-6. El usuario ve "nada pasa" aunque técnicamente todo funcionó correctamente
+Tras revisar el código, la base de datos y los logs, he identificado **3 causas raíz**:
 
-## Causa Raíz
+### 1. Botón "Generar Guion Completo" lleva al tab INCORRECTO
+- **Ubicación**: `ScriptImport.tsx:8038`
+- **Problema**: El botón ejecuta `setActiveTab('generate')` (tab "Idea"), pero el `NarrativeGenerationPanel` está renderizado en el tab `'outline'`.
+- **Efecto**: El usuario ve la pantalla de "Idea" en lugar del panel de generación.
 
-**Race condition + Lógica incompleta:**
-- El auto-start evalúa `sceneIntents.length === 0` antes de que `loadInitialState()` termine
-- No hay feedback claro cuando la generación ya está completada
-- No hay opción visible para "empezar de nuevo" si el usuario quiere regenerar
+### 2. useEffect fuerza el tab a 'summary' si existe un script
+- **Ubicación**: `ScriptImport.tsx:1521-1524`
+- **Problema**: Si hay un `generatedScript`, el efecto hace `setActiveTab('summary')` automáticamente, pisando cualquier navegación intencional del usuario.
+- **Efecto**: El click del usuario es ignorado porque el efecto restaura el tab inmediatamente.
 
-## Solución Propuesta
+### 3. La lógica de auto-start detecta intents pero el useEffect tiene dependencias incompletas
+- **Ubicación**: `NarrativeGenerationPanel.tsx:94-138`
+- **Problema**: El `useEffect` tiene dependencias `[autoStart, isLoaded, sceneIntents.length, progress.phase]` pero no responde correctamente cuando:
+  - `sceneIntents.length > 0` (hay 5 intents)
+  - `progress.phase === 'planning'` (derivado de intents 'pending')
+  - La rama `hasPending` debería dispararse pero no está continuando la generación
 
-### Parte A: Esperar a que el estado inicial esté cargado antes del auto-start
+El estado actual de tu proyecto:
+- 5 `scene_intent` con status `'pending'`
+- 0 `jobs` en cola
+- `narrative_state.current_phase = 'setup'`
 
-En `NarrativeGenerationPanel.tsx`, modificar la lógica de auto-start para:
+Esto indica que `narrative-decide` creó los intents pero no procesó los jobs. El frontend debería llamar a `continueGeneration()` pero algo bloquea.
 
-1. Añadir un estado `initialLoadComplete` que indica cuando `loadInitialState()` terminó
-2. Exponer `refreshState` como promesa que resuelve cuando la carga termina
-3. El auto-start espera a que el estado inicial esté cargado antes de decidir qué hacer
+---
 
-```typescript
-// En useNarrativeGeneration.ts - Exponer isLoaded
-const [isLoaded, setIsLoaded] = useState(false);
+## Solución
 
-// En loadInitialState, al final:
-setIsLoaded(true);
+### Cambio 1: Corregir el tab destino del botón "Generar Guion Completo"
 
-// En el return del hook:
-return { ..., isLoaded };
+**Archivo**: `src/components/project/ScriptImport.tsx`
+**Línea**: 8038
+
+```diff
+- <Button variant="default" onClick={() => setActiveTab('generate')}>
++ <Button variant="default" onClick={() => setActiveTab('outline')}>
 ```
 
+Esto llevará al usuario al tab donde está el `NarrativeGenerationPanel`.
+
+### Cambio 2: Evitar que el useEffect pise la navegación intencional
+
+**Archivo**: `src/components/project/ScriptImport.tsx`
+**Líneas**: 1521-1524
+
+Añadir un flag que indique "el usuario navegó intencionalmente" y respetarlo.
+
 ```typescript
-// En NarrativeGenerationPanel.tsx - useEffect de auto-start
+// Nueva ref para trackear navegación intencional
+const userNavigatedRef = useRef(false);
+
+// En setActiveTab wrapper:
+const handleTabChange = (newTab: string) => {
+  userNavigatedRef.current = true;
+  setActiveTab(newTab);
+  // Reset after a delay
+  setTimeout(() => { userNavigatedRef.current = false; }, 500);
+};
+
+// En el useEffect:
+if (!isOutlineOperationInProgress.current && 
+    !userNavigatedRef.current && 
+    activeTab === 'generate') {
+  setActiveTab('summary');
+}
+```
+
+### Cambio 3: Mejorar lógica de auto-start para manejar el caso "intents pending sin generación activa"
+
+**Archivo**: `src/components/project/NarrativeGenerationPanel.tsx`
+**Líneas**: 94-138
+
+```typescript
 useEffect(() => {
   if (!autoStart || autoStartProcessedRef.current || !isLoaded) return;
   
   autoStartProcessedRef.current = true;
   
-  // Caso 1: No hay intents → iniciar generación nueva
+  // Case 1: No intents → start new generation
   if (sceneIntents.length === 0) {
     console.log('[NarrativePanel] Auto-start: nueva generación');
     handleStart().finally(() => onAutoStartComplete?.());
     return;
   }
   
-  // Caso 2: Hay intents completados → mostrar feedback y opción de regenerar
+  // Case 2: Generation completed → show feedback
   if (progress.phase === 'completed') {
-    toast.info('Ya existe un guion generado. Puedes verlo o regenerar.', {
-      action: { label: 'Regenerar', onClick: () => resetNarrativeState() },
+    console.log('[NarrativePanel] Auto-start: generación ya completada');
+    toast.info('Ya existe un guion generado. Puedes verlo en la pestaña Escenas.', {
+      duration: 5000,
+      action: {
+        label: 'Regenerar',
+        onClick: () => resetNarrativeState(),
+      },
     });
     onAutoStartComplete?.();
     return;
   }
   
-  // Caso 3: Hay intents pendientes → continuar
-  if (sceneIntents.some(i => ['pending', 'writing', 'repairing'].includes(i.status))) {
-    console.log('[NarrativePanel] Auto-start: continuando generación');
+  // Case 3: ANY intents in workable states → ALWAYS continue (covers planning, pending, writing, etc.)
+  const workableStatuses = ['pending', 'planning', 'planned', 'writing', 'repairing', 'needs_repair'];
+  const hasPending = sceneIntents.some(i => workableStatuses.includes(i.status));
+  
+  if (hasPending) {
+    console.log('[NarrativePanel] Auto-start: continuando generación pendiente', {
+      total: sceneIntents.length,
+      pending: sceneIntents.filter(i => workableStatuses.includes(i.status)).length,
+    });
     continueGeneration().finally(() => onAutoStartComplete?.());
     return;
   }
   
+  // Case 4: All failed or unknown → just complete
+  console.log('[NarrativePanel] Auto-start: estado no manejado, completando');
   onAutoStartComplete?.();
-}, [autoStart, isLoaded, sceneIntents.length, progress.phase]);
+}, [autoStart, isLoaded, sceneIntents, progress.phase]);
 ```
 
-### Parte B: Mejorar el feedback visual cuando la generación ya está completa
+**Nota clave**: Cambiar `sceneIntents.length` a `sceneIntents` en las dependencias para que el efecto se re-evalúe cuando cambian los datos internos (statuses).
 
-En `NarrativeGenerationPanel.tsx`, mejorar la UI para cuando `phase === 'completed'`:
+### Cambio 4: Asegurar que continueGeneration() maneje correctamente el estado actual
 
-1. Mostrar mensaje claro de que ya existe un guion
-2. Botones: "Ver Guion" | "Regenerar Todo"
-3. Badge verde de éxito visible
+**Archivo**: `src/hooks/useNarrativeGeneration.ts`
 
-### Parte C: Arreglar el toast del aprobador
+Añadir un log más explícito al inicio de `continueGeneration` para debugging:
 
-En `ScriptImport.tsx`, cambiar el toast para reflejar lo que realmente pasará:
-- Si no hay intents → "Iniciando generación..."
-- Si hay intents completados → "Outline aprobado. Ya tienes un guion generado."
-- Si hay intents pendientes → "Outline aprobado. Retomando generación..."
-
----
-
-## Cambios por Archivo
-
-### 1. `src/hooks/useNarrativeGeneration.ts`
-
-| Línea | Cambio |
-|-------|--------|
-| ~135 | Añadir `const [isLoaded, setIsLoaded] = useState(false);` |
-| ~417 | En `loadInitialState()`, añadir `setIsLoaded(true);` al final |
-| ~795 | En `resetNarrativeState()`, añadir `setIsLoaded(false);` al inicio |
-| ~874 | Añadir `isLoaded` al return del hook |
-
-### 2. `src/components/project/NarrativeGenerationPanel.tsx`
-
-| Línea | Cambio |
-|-------|--------|
-| 73-89 | Extraer `isLoaded` del hook |
-| 92-105 | Reescribir `useEffect` de auto-start para manejar los 3 casos |
-| 328-333 | Mejorar UI de "Generar Más" con más opciones |
-
-### 3. `src/components/project/ScriptImport.tsx`
-
-| Línea | Cambio |
-|-------|--------|
-| 3614-3648 | Modificar `approveAndGenerateEpisodes()` para mostrar toast contextual |
+```typescript
+const continueGeneration = useCallback(async () => {
+  console.log('[NarrativeGen] continueGeneration called', { 
+    isGenerating: isGeneratingRef.current,
+    projectId 
+  });
+  // ... resto del código
+});
+```
 
 ---
 
-## Flujo Esperado Después del Fix
+## Resumen de archivos a modificar
 
-### Caso A: Primera vez (sin intents previos)
-1. Usuario pulsa "Aprobar y Generar"
-2. Outline se aprueba → toast "Iniciando generación..."
-3. Hook espera a `isLoaded=true` (muy rápido, ~200ms)
-4. Auto-start detecta `sceneIntents.length === 0`
-5. Llama a `startGeneration()` → genera las 5 escenas
-6. Usuario ve progreso en tiempo real
-
-### Caso B: Ya hay guion completado
-1. Usuario pulsa "Aprobar y Generar"  
-2. Outline se aprueba → toast "Ya tienes un guion generado"
-3. Hook carga los 5 intents `written`
-4. Auto-start detecta `phase === 'completed'`
-5. Muestra toast con opción "Regenerar"
-6. Si usuario elige regenerar → llama a `resetNarrativeState()` y luego `startGeneration()`
-
-### Caso C: Generación interrumpida (intents pendientes)
-1. Usuario pulsa "Aprobar y Generar"
-2. Outline se aprueba → toast "Retomando generación..."
-3. Hook carga intents mixtos
-4. Auto-start detecta intents `pending`/`writing`
-5. Llama a `continueGeneration()` automáticamente
-6. Usuario ve progreso continuar
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/project/ScriptImport.tsx` | (1) Cambiar `setActiveTab('generate')` → `setActiveTab('outline')` en línea 8038 |
+| `src/components/project/ScriptImport.tsx` | (2) Añadir `userNavigatedRef` y condición para evitar override del tab |
+| `src/components/project/NarrativeGenerationPanel.tsx` | (3) Mejorar lógica de auto-start y dependencias del useEffect |
+| `src/hooks/useNarrativeGeneration.ts` | (4) Añadir logs de debugging en `continueGeneration` |
 
 ---
 
-## Impacto
+## Flujo esperado después del fix
 
-- ✅ El botón "Aprobar y Generar" siempre tiene feedback visible
-- ✅ No más "no hace nada" silencioso
-- ✅ El usuario entiende el estado actual de su proyecto
-- ✅ Opción clara para regenerar si quiere empezar de nuevo
+### Botón "Generar Guion Completo" (tab Guion)
+1. Usuario pulsa → `setActiveTab('outline')` 
+2. Vista cambia al tab Outline
+3. El `NarrativeGenerationPanel` es visible
+4. Si `shouldAutoStartGeneration` está true, el panel auto-inicia
+
+### Botón "Aprobar y Generar" (en OutlineWizard)
+1. Usuario pulsa → outline se aprueba en BD
+2. `setShouldAutoStartGeneration(true)` se activa
+3. Scroll al panel de generación
+4. `NarrativeGenerationPanel` recibe `autoStart=true`
+5. `useEffect` espera `isLoaded=true` (carga intents existentes)
+6. Detecta 5 intents `pending` → llama `continueGeneration()`
+7. Generación comienza y el usuario ve progreso
 
 ---
 
-## Riesgos y Mitigaciones
+## Verificación post-fix
 
-| Riesgo | Mitigación |
-|--------|------------|
-| `isLoaded` nunca se pone true si falla loadInitialState | Añadir try/finally para garantizar `setIsLoaded(true)` |
-| Doble regeneración accidental | `autoStartProcessedRef` ya previene esto |
-| Toast spam | Solo 1 toast por flujo, con acciones claras |
+1. Pulsar "Generar Guion Completo" → debe ir al tab Outline y mostrar el panel
+2. Pulsar "Aprobar y Generar" → debe aprobar, hacer scroll, y auto-iniciar
+3. Si ya existen intents pending → debe continuar automáticamente
+4. Si ya está completado → debe mostrar toast con opción "Regenerar"
 
