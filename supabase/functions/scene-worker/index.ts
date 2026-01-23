@@ -293,14 +293,18 @@ serve(async (req) => {
       }
     };
 
+    // Use upsert to handle re-runs (duplicate key on project_id, episode_no, scene_no)
     const { data: insertedScene, error: insertError } = await auth.supabase
       .from('scenes')
-      .insert(sceneData)
+      .upsert(sceneData, { 
+        onConflict: 'project_id,episode_no,scene_no',
+        ignoreDuplicates: false 
+      })
       .select()
       .single();
 
     if (insertError) {
-      throw new Error(`Failed to insert scene: ${insertError.message}`);
+      throw new Error(`Failed to upsert scene: ${insertError.message}`);
     }
 
     // 9. Update scene_intent to 'written'
