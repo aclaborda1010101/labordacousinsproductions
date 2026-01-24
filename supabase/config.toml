@@ -349,3 +349,17 @@ verify_jwt = false
 # Updates visual context memory after scene approval
 # Tracks visual patterns and generates constraints for continuity
 verify_jwt = false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SHOWRUNNER SURGERY (V2 - Async with Persistence)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[functions.showrunner-surgery]
+# Analyzes and rewrites script applying 5 dramaturgical rules
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
+
+[functions.apply-showrunner-surgery]
+# Applies or rejects approved surgery changes to script
+# Gateway JWT disabled; function enforces auth internally
+verify_jwt = false
