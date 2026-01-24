@@ -1,130 +1,137 @@
 
-# Plan: Mejora de Timeout y Persistencia para Cirugía de Showrunner
+# Plan: Mejorar UI de Progreso en Cirugía de Showrunner
 
 ## Problema Identificado
 
-La ejecución anterior de `showrunner-surgery` completó exitosamente (147 segundos, status 200), pero el resultado no se guardó porque:
-1. El frontend tiene un timeout más corto que la operación
-2. El workflow actual requiere que el usuario apruebe manualmente en el dialog
-3. Si el dialog pierde la conexión, los cambios se pierden
+El reloj de la cirugía no avanza porque:
+1. El timer solo se inicia después de recibir la respuesta HTTP inicial (cuando empieza el polling)
+2. Durante la llamada inicial al edge function (10-30 segundos), el reloj queda en `0:00`
+3. La UI actual solo muestra un contador numérico, que no transmite bien el progreso en operaciones largas
 
 ## Solución Propuesta
 
-### 1. Persistencia Automática del Resultado
+### 1. Iniciar Timer Inmediatamente
 
-Modificar `showrunner-surgery` para guardar automáticamente el resultado en la base de datos antes de devolver la respuesta:
+Mover el inicio del timer al momento en que el usuario hace clic en "Analizar", no cuando empieza el polling.
 
-| Tabla | Campo | Contenido |
-|-------|-------|-----------|
-| `generation_blocks` | `block_type` | `'showrunner_surgery'` |
-| `generation_blocks` | `output_data` | JSON completo con scene_changes, checklist |
-| `generation_blocks` | `status` | `'pending_approval'` |
+| Momento | Antes | Después |
+|---------|-------|---------|
+| Click "Analizar" | Timer parado | Timer arranca |
+| Respuesta HTTP | Timer arranca (polling) | Timer sigue corriendo |
+| Resultado listo | Timer para | Timer para |
 
-### 2. Polling en el Frontend
+### 2. Agregar Barra de Progreso Visual
 
-Cambiar `ShowrunnerSurgeryDialog.tsx` para usar polling en lugar de esperar la respuesta directa:
+Añadir un componente `Progress` que muestre el avance estimado basándose en el tiempo transcurrido vs tiempo máximo (5 minutos).
 
-```text
-1. Usuario hace clic en "Analizar"
-2. Edge function inicia, devuelve inmediatamente un `job_id`
-3. Frontend hace polling cada 5s a generation_blocks
-4. Cuando status = 'pending_approval', muestra preview
-5. Usuario aprueba -> status = 'applied'
+- **0-60s**: Progreso 0-33% - "Analizando estructura..."
+- **60-120s**: Progreso 33-66% - "Aplicando reglas dramatúrgicas..."
+- **120-180s**: Progreso 66-90% - "Refinando cambios..."
+- **180s+**: Progreso 90-99% - "Finalizando análisis..."
+
+### 3. Mensajes de Estado Dinámicos
+
+Mostrar mensajes que cambian según el tiempo transcurrido para dar feedback visual de que algo está pasando.
+
+## Cambios Técnicos
+
+### Archivo: `src/components/project/ShowrunnerSurgeryDialog.tsx`
+
+**Importar componente Progress:**
+```tsx
+import { Progress } from '@/components/ui/progress';
 ```
 
-### 3. Nuevo Endpoint: Aplicar Cirugía
+**Modificar `handleAnalyze`:**
+```tsx
+const handleAnalyze = async () => {
+  setStep('analyzing');
+  setElapsedSeconds(0);
+  
+  // NUEVO: Iniciar timer inmediatamente
+  pollStartTimeRef.current = Date.now();
+  timerIntervalRef.current = window.setInterval(() => {
+    setElapsedSeconds(Math.floor((Date.now() - pollStartTimeRef.current) / 1000));
+  }, 1000);
+  
+  try {
+    const response = await invokeAuthedFunction(...);
+    // resto del código...
+  }
+};
+```
 
-Crear función separada para aplicar los cambios aprobados al script:
+**Nueva función para calcular progreso estimado:**
+```tsx
+const getProgressInfo = (seconds: number) => {
+  const maxSeconds = MAX_POLL_DURATION_MS / 1000; // 300s
+  const progress = Math.min((seconds / maxSeconds) * 100, 99);
+  
+  let message = "Analizando estructura del guion...";
+  if (seconds > 60) message = "Aplicando reglas dramatúrgicas...";
+  if (seconds > 120) message = "Refinando cambios propuestos...";
+  if (seconds > 180) message = "Finalizando análisis...";
+  
+  return { progress, message };
+};
+```
 
-- `apply-showrunner-surgery`: Toma el `block_id` y actualiza `scripts.parsed_json`
+**UI mejorada para paso `analyzing`:**
+```tsx
+{step === 'analyzing' && (
+  <div className="flex flex-col items-center justify-center py-12">
+    <Loader2 className="h-12 w-12 animate-spin text-amber-500 mb-4" />
+    <p className="text-lg font-medium">Analizando guion...</p>
+    <p className="text-sm text-muted-foreground mb-4">
+      {getProgressInfo(elapsedSeconds).message}
+    </p>
+    
+    {/* Barra de progreso */}
+    <div className="w-full max-w-xs mb-4">
+      <Progress 
+        value={getProgressInfo(elapsedSeconds).progress} 
+        className="h-2"
+      />
+    </div>
+    
+    {/* Timer */}
+    <div className="flex items-center gap-2 text-muted-foreground">
+      <Clock className="h-4 w-4" />
+      <span className="text-sm font-mono">{formatTime(elapsedSeconds)}</span>
+      <span className="text-xs">/ 5:00 máx</span>
+    </div>
+    
+    <p className="text-xs text-muted-foreground mt-4 text-center max-w-sm">
+      El resultado se guarda automáticamente. Puedes cerrar este diálogo y volver más tarde.
+    </p>
+  </div>
+)}
+```
+
+## Resultado Visual Esperado
+
+```
+        [Spinner girando]
+      
+      Analizando guion...
+  Aplicando reglas dramatúrgicas...
+      
+  [████████████░░░░░░░░░] 58%
+      
+        🕐 1:45 / 5:00 máx
+      
+  El resultado se guarda automáticamente...
+```
 
 ## Archivos a Modificar
 
-| Archivo | Cambio |
-|---------|--------|
-| `supabase/functions/showrunner-surgery/index.ts` | Guardar resultado en DB antes de responder |
-| `src/components/project/ShowrunnerSurgeryDialog.tsx` | Implementar polling + recuperar resultados previos |
-| (nuevo) `supabase/functions/apply-showrunner-surgery/index.ts` | Aplicar cambios aprobados al script |
-
-## Flujo Mejorado
-
-```text
-+------------------+     +----------------------+     +--------------------+
-|  Click Analizar  | --> | showrunner-surgery   | --> | generation_blocks  |
-|                  |     | (guarda en DB)       |     | status: pending    |
-+------------------+     +----------------------+     +--------------------+
-                                                              |
-        +-----------------------------------------------------+
-        |
-        v
-+------------------+     +--------------------+     +------------------+
-|  Polling cada 5s | --> | Lee generation_    | --> | Muestra Preview  |
-|  (hasta 5 min)   |     | blocks             |     | en Dialog        |
-+------------------+     +--------------------+     +------------------+
-                                                              |
-        +-----------------------------------------------------+
-        |
-        v
-+------------------+     +----------------------+     +------------------+
-|  Click Aplicar   | --> | apply-showrunner-    | --> | scripts.parsed   |
-|                  |     | surgery              |     | actualizado      |
-+------------------+     +----------------------+     +------------------+
-```
+| Archivo | Cambios |
+|---------|---------|
+| `src/components/project/ShowrunnerSurgeryDialog.tsx` | Timer inmediato + Progress bar + Mensajes dinámicos |
 
 ## Beneficios
 
-1. **Sin pérdida de trabajo**: Resultado guardado aunque el browser se cierre
-2. **Recuperación**: Usuario puede volver y ver resultados pendientes
-3. **UX mejorada**: Progreso visible con mensaje claro de espera
-4. **Robusto**: Timeout de 5 minutos con feedback al usuario
-
-## Seccion Tecnica
-
-### Timeout Configuration
-
-```typescript
-// ShowrunnerSurgeryDialog.tsx
-const POLL_INTERVAL_MS = 5000;  // 5 segundos
-const MAX_POLL_DURATION_MS = 5 * 60 * 1000;  // 5 minutos max
-```
-
-### Nuevo Schema para generation_blocks
-
-```typescript
-interface SurgeryBlock {
-  block_type: 'showrunner_surgery';
-  status: 'processing' | 'pending_approval' | 'applied' | 'rejected';
-  input_context: {
-    script_id: string;
-    surgery_level: 'light' | 'standard' | 'aggressive';
-  };
-  output_data: {
-    scene_changes: SceneChange[];
-    rewritten_script: any;
-    dramaturgy_checklist: DramaturgChecklist;
-    stats: SurgeryStats;
-  };
-}
-```
-
-### Endpoint apply-showrunner-surgery
-
-```typescript
-// Request
-{ blockId: string; action: 'apply' | 'reject' }
-
-// Response
-{ 
-  ok: boolean; 
-  scriptUpdated: boolean;
-  previousVersionId?: string;  // Para historial
-}
-```
-
-## Resultado Esperado
-
-1. Usuario puede ejecutar la cirugía sin preocuparse por timeouts
-2. Si cierra el browser, puede volver y ver resultados pendientes
-3. Aplicar o rechazar cambios con confianza de que no se perderan
-4. Historial del script preserva version anterior
-
+1. **Feedback inmediato**: El reloj arranca desde el primer click
+2. **Progreso visual**: Barra que avanza da confianza de que algo pasa
+3. **Mensajes dinámicos**: Texto que cambia indica etapas del proceso
+4. **Tiempo límite visible**: Usuario sabe cuánto falta para timeout
