@@ -1,137 +1,146 @@
 
-# Plan: Mejorar UI de Progreso en Cirugía de Showrunner
+# Plan: Auto-aplicación Opcional en Cirugía de Showrunner
 
 ## Problema Identificado
 
-El reloj de la cirugía no avanza porque:
-1. El timer solo se inicia después de recibir la respuesta HTTP inicial (cuando empieza el polling)
-2. Durante la llamada inicial al edge function (10-30 segundos), el reloj queda en `0:00`
-3. La UI actual solo muestra un contador numérico, que no transmite bien el progreso en operaciones largas
+El usuario ejecutó la cirugía exitosamente (hay 3 bloques `pending_approval` en la base de datos), pero nunca vio la pantalla de "Aplicar cambios" porque:
 
-## Solución Propuesta
+1. El diálogo se cerró durante el análisis
+2. Al reabrir, la recuperación de resultados pendientes no funcionó correctamente
+3. El flujo actual requiere siempre revisión manual
 
-### 1. Iniciar Timer Inmediatamente
+## Solución
 
-Mover el inicio del timer al momento en que el usuario hace clic en "Analizar", no cuando empieza el polling.
-
-| Momento | Antes | Después |
-|---------|-------|---------|
-| Click "Analizar" | Timer parado | Timer arranca |
-| Respuesta HTTP | Timer arranca (polling) | Timer sigue corriendo |
-| Resultado listo | Timer para | Timer para |
-
-### 2. Agregar Barra de Progreso Visual
-
-Añadir un componente `Progress` que muestre el avance estimado basándose en el tiempo transcurrido vs tiempo máximo (5 minutos).
-
-- **0-60s**: Progreso 0-33% - "Analizando estructura..."
-- **60-120s**: Progreso 33-66% - "Aplicando reglas dramatúrgicas..."
-- **120-180s**: Progreso 66-90% - "Refinando cambios..."
-- **180s+**: Progreso 90-99% - "Finalizando análisis..."
-
-### 3. Mensajes de Estado Dinámicos
-
-Mostrar mensajes que cambian según el tiempo transcurrido para dar feedback visual de que algo está pasando.
+Agregar un **checkbox de auto-aplicación** en la pantalla de configuración que:
+- Permite al usuario elegir aplicar automáticamente cuando termine el análisis
+- Evita pérdida de resultados por cerrar el diálogo
+- Mantiene la opción de revisión manual para usuarios que lo prefieran
 
 ## Cambios Técnicos
 
 ### Archivo: `src/components/project/ShowrunnerSurgeryDialog.tsx`
 
-**Importar componente Progress:**
-```tsx
-import { Progress } from '@/components/ui/progress';
+#### 1. Nuevo estado para auto-aplicación
+
+```typescript
+const [autoApply, setAutoApply] = useState(false);
 ```
 
-**Modificar `handleAnalyze`:**
+#### 2. Modificar la UI de configuración
+
+Agregar checkbox debajo de los niveles de cirugía:
+
 ```tsx
-const handleAnalyze = async () => {
-  setStep('analyzing');
-  setElapsedSeconds(0);
+<div className="flex items-center space-x-2 mt-4">
+  <Checkbox 
+    id="autoApply" 
+    checked={autoApply} 
+    onCheckedChange={(checked) => setAutoApply(checked === true)} 
+  />
+  <Label htmlFor="autoApply" className="text-sm cursor-pointer">
+    Aplicar cambios automáticamente al finalizar
+    <p className="text-xs text-muted-foreground">
+      Los cambios se aplicarán sin revisión previa
+    </p>
+  </Label>
+</div>
+```
+
+#### 3. Lógica de auto-aplicación
+
+Cuando el polling detecta `pending_approval` y `autoApply` está activo:
+
+```typescript
+// En el polling callback, cuando status === 'pending_approval':
+if (autoApply) {
+  // Auto-aplicar sin mostrar preview
+  setStep('applying');
+  const applyResponse = await invokeAuthedFunction('apply-showrunner-surgery', {
+    blockId: block.id,
+    action: 'apply'
+  });
   
-  // NUEVO: Iniciar timer inmediatamente
-  pollStartTimeRef.current = Date.now();
-  timerIntervalRef.current = window.setInterval(() => {
-    setElapsedSeconds(Math.floor((Date.now() - pollStartTimeRef.current) / 1000));
-  }, 1000);
-  
-  try {
-    const response = await invokeAuthedFunction(...);
-    // resto del código...
+  if (applyResponse.ok) {
+    toast.success(`Cirugía aplicada automáticamente (v${applyResponse.newVersion})`);
+    onSurgeryComplete?.(result);
+    onOpenChange(false);
+    resetDialog();
+  } else {
+    // Fallback a preview si falla
+    setStep('preview');
+    toast.error('Error auto-aplicando, revisa los cambios manualmente');
   }
-};
+} else {
+  // Flujo normal: mostrar preview
+  setStep('preview');
+}
 ```
 
-**Nueva función para calcular progreso estimado:**
-```tsx
-const getProgressInfo = (seconds: number) => {
-  const maxSeconds = MAX_POLL_DURATION_MS / 1000; // 300s
-  const progress = Math.min((seconds / maxSeconds) * 100, 99);
-  
-  let message = "Analizando estructura del guion...";
-  if (seconds > 60) message = "Aplicando reglas dramatúrgicas...";
-  if (seconds > 120) message = "Refinando cambios propuestos...";
-  if (seconds > 180) message = "Finalizando análisis...";
-  
-  return { progress, message };
-};
+#### 4. También aplicar auto-apply a resultados pendientes recuperados
+
+Cuando `checkForPendingSurgery` encuentra un resultado `pending_approval` y `autoApply` está activo:
+
+```typescript
+if (response.status === 'pending_approval' && response.sceneChanges) {
+  // Si hay auto-apply configurado previamente, aplicar directamente
+  // Por ahora, mostrar preview para que usuario decida
+  setResult({...});
+  setStep('preview');
+  toast.info('Hay una cirugía pendiente de aprobar');
+}
 ```
 
-**UI mejorada para paso `analyzing`:**
-```tsx
-{step === 'analyzing' && (
-  <div className="flex flex-col items-center justify-center py-12">
-    <Loader2 className="h-12 w-12 animate-spin text-amber-500 mb-4" />
-    <p className="text-lg font-medium">Analizando guion...</p>
-    <p className="text-sm text-muted-foreground mb-4">
-      {getProgressInfo(elapsedSeconds).message}
-    </p>
-    
-    {/* Barra de progreso */}
-    <div className="w-full max-w-xs mb-4">
-      <Progress 
-        value={getProgressInfo(elapsedSeconds).progress} 
-        className="h-2"
-      />
-    </div>
-    
-    {/* Timer */}
-    <div className="flex items-center gap-2 text-muted-foreground">
-      <Clock className="h-4 w-4" />
-      <span className="text-sm font-mono">{formatTime(elapsedSeconds)}</span>
-      <span className="text-xs">/ 5:00 máx</span>
-    </div>
-    
-    <p className="text-xs text-muted-foreground mt-4 text-center max-w-sm">
-      El resultado se guarda automáticamente. Puedes cerrar este diálogo y volver más tarde.
-    </p>
-  </div>
-)}
-```
+## Flujo Visual
 
-## Resultado Visual Esperado
-
-```
-        [Spinner girando]
-      
-      Analizando guion...
-  Aplicando reglas dramatúrgicas...
-      
-  [████████████░░░░░░░░░] 58%
-      
-        🕐 1:45 / 5:00 máx
-      
-  El resultado se guarda automáticamente...
+```text
+                          ┌─────────────────────┐
+                          │   Configuración     │
+                          │                     │
+                          │ [x] Auto-aplicar    │
+                          │                     │
+                          │   [Analizar]        │
+                          └─────────┬───────────┘
+                                    │
+                          ┌─────────▼───────────┐
+                          │   Analizando...     │
+                          │   [Barra progreso]  │
+                          └─────────┬───────────┘
+                                    │
+               ┌────────────────────┴────────────────────┐
+               │                                         │
+      Auto-apply ON                            Auto-apply OFF
+               │                                         │
+    ┌──────────▼──────────┐               ┌──────────────▼──────────────┐
+    │   Aplicando...      │               │   Preview                   │
+    │   (automático)      │               │   [Rechazar] [Aplicar]      │
+    └──────────┬──────────┘               └─────────────────────────────┘
+               │
+    ┌──────────▼──────────┐
+    │   Hecho!            │
+    │   (cierra diálogo)  │
+    └─────────────────────┘
 ```
 
 ## Archivos a Modificar
 
-| Archivo | Cambios |
-|---------|---------|
-| `src/components/project/ShowrunnerSurgeryDialog.tsx` | Timer inmediato + Progress bar + Mensajes dinámicos |
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/project/ShowrunnerSurgeryDialog.tsx` | Estado `autoApply`, checkbox UI, lógica de auto-aplicación |
+
+## Importación Adicional
+
+```typescript
+import { Checkbox } from '@/components/ui/checkbox';
+```
 
 ## Beneficios
 
-1. **Feedback inmediato**: El reloj arranca desde el primer click
-2. **Progreso visual**: Barra que avanza da confianza de que algo pasa
-3. **Mensajes dinámicos**: Texto que cambia indica etapas del proceso
-4. **Tiempo límite visible**: Usuario sabe cuánto falta para timeout
+1. **Menos fricción**: Usuario que confía en el sistema puede dejar que aplique solo
+2. **Resiliencia**: Si cierra el diálogo, al terminar igual se aplica
+3. **Flexibilidad**: Mantiene opción de revisión para usuarios precavidos
+4. **Recuperación**: Resultados pendientes se muestran para aplicación manual
+
+## Consideración de UX
+
+- El checkbox está **desactivado por defecto** para mantener el flujo de revisión como comportamiento predeterminado
+- Se muestra una advertencia clara de que los cambios se aplicarán sin revisión
