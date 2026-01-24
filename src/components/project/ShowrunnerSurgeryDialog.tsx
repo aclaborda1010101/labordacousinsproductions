@@ -20,7 +20,8 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
-import { Scissors, AlertTriangle, CheckCircle2, Loader2, ChevronDown, ChevronUp, Clock, RefreshCw } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Scissors, AlertTriangle, CheckCircle2, Loader2, ChevronDown, ChevronUp, Clock, RefreshCw, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -106,10 +107,17 @@ export function ShowrunnerSurgeryDialog({
   const [expandedChanges, setExpandedChanges] = useState<Set<number>>(new Set());
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [currentBlockId, setCurrentBlockId] = useState<string | null>(null);
+  const [autoApply, setAutoApply] = useState(false);
   
   const pollIntervalRef = useRef<number | null>(null);
   const timerIntervalRef = useRef<number | null>(null);
   const pollStartTimeRef = useRef<number>(0);
+  const autoApplyRef = useRef(false);
+  
+  // Keep ref in sync with state for use in async callbacks
+  useEffect(() => {
+    autoApplyRef.current = autoApply;
+  }, [autoApply]);
 
   // Check for pending surgery on dialog open
   useEffect(() => {
@@ -190,15 +198,46 @@ export function ShowrunnerSurgeryDialog({
         if (block.status === 'pending_approval' && block.output_data) {
           stopPolling();
           const outputData = block.output_data as any;
-          setResult({
+          const surgeryResult: SurgeryResult = {
             sceneChanges: outputData.scene_changes || [],
             rewrittenScript: outputData.rewritten_script || {},
             dramaturgChecklist: outputData.dramaturgy_checklist || {},
             stats: outputData.stats || { scenesModified: 0, dialoguesAdjusted: 0, consequencesAdded: 0, durationMs: 0 },
             blockId: block.id
-          });
-          setStep('preview');
-          toast.success('Análisis completado');
+          };
+          
+          // Auto-apply if enabled
+          if (autoApplyRef.current) {
+            setStep('applying');
+            try {
+              const applyResponse = await invokeAuthedFunction('apply-showrunner-surgery', {
+                blockId: block.id,
+                action: 'apply'
+              }) as any;
+              
+              if (applyResponse.ok) {
+                toast.success(`Cirugía aplicada automáticamente (v${applyResponse.newVersion})`);
+                if (onSurgeryComplete) onSurgeryComplete(surgeryResult);
+                onOpenChange(false);
+                resetDialog();
+                return;
+              } else {
+                // Fallback to preview if auto-apply fails
+                setResult(surgeryResult);
+                setStep('preview');
+                toast.error('Error auto-aplicando, revisa los cambios manualmente');
+              }
+            } catch (applyErr) {
+              console.error('Auto-apply error:', applyErr);
+              setResult(surgeryResult);
+              setStep('preview');
+              toast.error('Error auto-aplicando, revisa los cambios manualmente');
+            }
+          } else {
+            setResult(surgeryResult);
+            setStep('preview');
+            toast.success('Análisis completado');
+          }
         } else if (block.status === 'failed') {
           stopPolling();
           toast.error(block.error_message || 'Error en la cirugía');
@@ -208,7 +247,7 @@ export function ShowrunnerSurgeryDialog({
         console.error('Poll request failed:', err);
       }
     }, POLL_INTERVAL_MS);
-  }, []);
+  }, [onOpenChange, onSurgeryComplete]);
 
   const stopPolling = useCallback(() => {
     if (pollIntervalRef.current) {
@@ -287,15 +326,45 @@ export function ShowrunnerSurgeryDialog({
           if (block.status === 'pending_approval' && block.output_data) {
             stopPolling();
             const outputData = block.output_data as any;
-            setResult({
+            const surgeryResult: SurgeryResult = {
               sceneChanges: outputData.scene_changes || [],
               rewrittenScript: outputData.rewritten_script || {},
               dramaturgChecklist: outputData.dramaturgy_checklist || {},
               stats: outputData.stats || { scenesModified: 0, dialoguesAdjusted: 0, consequencesAdded: 0, durationMs: 0 },
               blockId: block.id
-            });
-            setStep('preview');
-            toast.success('Análisis completado');
+            };
+            
+            // Auto-apply if enabled
+            if (autoApplyRef.current) {
+              setStep('applying');
+              try {
+                const applyResponse = await invokeAuthedFunction('apply-showrunner-surgery', {
+                  blockId: block.id,
+                  action: 'apply'
+                }) as any;
+                
+                if (applyResponse.ok) {
+                  toast.success(`Cirugía aplicada automáticamente (v${applyResponse.newVersion})`);
+                  if (onSurgeryComplete) onSurgeryComplete(surgeryResult);
+                  onOpenChange(false);
+                  resetDialog();
+                  return;
+                } else {
+                  setResult(surgeryResult);
+                  setStep('preview');
+                  toast.error('Error auto-aplicando, revisa los cambios manualmente');
+                }
+              } catch (applyErr) {
+                console.error('Auto-apply error:', applyErr);
+                setResult(surgeryResult);
+                setStep('preview');
+                toast.error('Error auto-aplicando, revisa los cambios manualmente');
+              }
+            } else {
+              setResult(surgeryResult);
+              setStep('preview');
+              toast.success('Análisis completado');
+            }
           } else if (block.status === 'failed') {
             stopPolling();
             toast.error(block.error_message || 'Error en la cirugía');
@@ -375,6 +444,7 @@ export function ShowrunnerSurgeryDialog({
     setExpandedChanges(new Set());
     setElapsedSeconds(0);
     setCurrentBlockId(null);
+    setAutoApply(false);
   };
 
   const toggleChange = (sceneNumber: number) => {
@@ -459,7 +529,28 @@ export function ShowrunnerSurgeryDialog({
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+              </RadioGroup>
+              </div>
+
+              <Separator />
+
+              {/* Auto-apply option */}
+              <div className="flex items-start space-x-3">
+                <Checkbox 
+                  id="autoApply" 
+                  checked={autoApply} 
+                  onCheckedChange={(checked) => setAutoApply(checked === true)} 
+                  className="mt-0.5"
+                />
+                <Label htmlFor="autoApply" className="cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-amber-500" />
+                    <span className="font-medium">Aplicar cambios automáticamente al finalizar</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Los cambios se aplicarán sin revisión previa. Útil si confías en el sistema.
+                  </p>
+                </Label>
               </div>
 
               <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-800">
