@@ -9,16 +9,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BookOpen, Plus, X, Save } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BookOpen, Plus, X, Save, Library } from 'lucide-react';
 import type { ProjectBible } from '@/lib/editorialMVPTypes';
 import { PRESET_TONES, PRESET_PERIODS, PRESET_RATINGS } from '@/lib/editorialMVPTypes';
+import { SeriesBiblePanel } from '@/components/project/SeriesBiblePanel';
 
 interface BibleEditorProps {
   bible: ProjectBible | null;
+  projectId: string;
   onUpdate: (updates: Partial<Pick<ProjectBible, 'tone' | 'period' | 'rating' | 'facts'>>) => Promise<void>;
 }
 
-export function BibleEditor({ bible, onUpdate }: BibleEditorProps) {
+export function BibleEditor({ bible, projectId, onUpdate }: BibleEditorProps) {
   const [tone, setTone] = useState(bible?.tone || '');
   const [period, setPeriod] = useState(bible?.period || '');
   const [rating, setRating] = useState(bible?.rating || '');
@@ -58,24 +61,37 @@ export function BibleEditor({ bible, onUpdate }: BibleEditorProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <Tabs defaultValue="project" className="w-full space-y-6">
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
             <BookOpen className="h-6 w-6" />
-            Biblia del Proyecto
+            Biblia
           </h2>
           <p className="text-muted-foreground">
             Define el tono, época y reglas canónicas que guiarán todas las generaciones.
           </p>
         </div>
-        <Button onClick={handleSave} disabled={!hasChanges || saving}>
-          <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Guardando...' : 'Guardar cambios'}
-        </Button>
+        <div className="flex items-center gap-4">
+          <TabsList>
+            <TabsTrigger value="project" className="gap-2">
+              <BookOpen className="h-4 w-4" />
+              Proyecto
+            </TabsTrigger>
+            <TabsTrigger value="series" className="gap-2">
+              <Library className="h-4 w-4" />
+              Serie
+            </TabsTrigger>
+          </TabsList>
+          <Button onClick={handleSave} disabled={!hasChanges || saving}>
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? 'Guardando...' : 'Guardar cambios'}
+          </Button>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <TabsContent value="project" className="space-y-6 mt-0">
+        <div className="grid md:grid-cols-3 gap-4">
         {/* Tono */}
         <Card>
           <CardHeader className="pb-3">
@@ -203,6 +219,11 @@ export function BibleEditor({ bible, onUpdate }: BibleEditorProps) {
           </p>
         </CardContent>
       </Card>
-    </div>
+      </TabsContent>
+
+      <TabsContent value="series" className="mt-0">
+        <SeriesBiblePanel projectId={projectId} />
+      </TabsContent>
+    </Tabs>
   );
 }

@@ -3549,6 +3549,81 @@ export type Database = {
           },
         ]
       }
+      series_bibles: {
+        Row: {
+          antagonism: Json | null
+          artifact_rules: Json | null
+          character_arcs: Json | null
+          created_at: string | null
+          created_by: string | null
+          episode_template: Json | null
+          generation_model: string | null
+          id: string
+          logline: string | null
+          premise: string | null
+          project_id: string
+          season_structure: Json | null
+          source_script_id: string | null
+          status: string | null
+          tone_guidelines: Json | null
+          updated_at: string | null
+          version: number | null
+        }
+        Insert: {
+          antagonism?: Json | null
+          artifact_rules?: Json | null
+          character_arcs?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          episode_template?: Json | null
+          generation_model?: string | null
+          id?: string
+          logline?: string | null
+          premise?: string | null
+          project_id: string
+          season_structure?: Json | null
+          source_script_id?: string | null
+          status?: string | null
+          tone_guidelines?: Json | null
+          updated_at?: string | null
+          version?: number | null
+        }
+        Update: {
+          antagonism?: Json | null
+          artifact_rules?: Json | null
+          character_arcs?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          episode_template?: Json | null
+          generation_model?: string | null
+          id?: string
+          logline?: string | null
+          premise?: string | null
+          project_id?: string
+          season_structure?: Json | null
+          source_script_id?: string | null
+          status?: string | null
+          tone_guidelines?: Json | null
+          updated_at?: string | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_bibles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "series_bibles_source_script_id_fkey"
+            columns: ["source_script_id"]
+            isOneToOne: false
+            referencedRelation: "scripts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       short_templates: {
         Row: {
           created_at: string | null
