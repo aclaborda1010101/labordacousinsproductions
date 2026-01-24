@@ -164,6 +164,7 @@ import OutlineStatusPanel from './OutlineStatusPanel';
 import { ScriptGenerationOverlay } from './ScriptGenerationOverlay';
 import { ScriptGenerationInProgress } from './ScriptGenerationInProgress';
 import ProjectDataStatus from './ProjectDataStatus';
+import { ShowrunnerSurgeryDialog } from './ShowrunnerSurgeryDialog';
 import {
   hydrateCharacters,
   hydrateLocations,
@@ -205,6 +206,9 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [scriptHistory, setScriptHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [deletingScript, setDeletingScript] = useState(false);
+  
+  // Showrunner Surgery dialog state
+  const [showSurgeryDialog, setShowSurgeryDialog] = useState(false);
   
   // Delete all project data state
   const [deletingAllData, setDeletingAllData] = useState(false);
@@ -8278,6 +8282,17 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
                   </p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
+                  {/* Showrunner Surgery Button */}
+                  <Button
+                    onClick={() => setShowSurgeryDialog(true)}
+                    variant="outline"
+                    className="border-amber-500 text-amber-600 hover:bg-amber-50"
+                    disabled={!currentScriptId}
+                  >
+                    <Scissors className="w-4 h-4 mr-2" />
+                    Cirugía de Showrunner
+                  </Button>
+                  
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button 
@@ -10408,6 +10423,23 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           setTimeout(() => { userNavigatedRef.current = false; }, 500);
         }}
       />
+      
+      {/* Showrunner Surgery Dialog */}
+      {currentScriptId && (
+        <ShowrunnerSurgeryDialog
+          open={showSurgeryDialog}
+          onOpenChange={setShowSurgeryDialog}
+          projectId={projectId}
+          scriptId={currentScriptId}
+          onSurgeryComplete={(result) => {
+            // Update the local script state with the rewritten version
+            if (result.rewrittenScript) {
+              setGeneratedScript(result.rewrittenScript);
+              toast.success(`Cirugía aplicada: ${result.stats.scenesModified} escenas modificadas`);
+            }
+          }}
+        />
+      )}
     </div>
     </>
   );
