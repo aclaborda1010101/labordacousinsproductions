@@ -312,8 +312,51 @@ export function ScriptSummaryPanel({ projectId, onScenesGenerated }: ScriptSumma
     );
   }
 
+  // V78: Never return null - show actionable empty state instead
   if (!scriptData || !scriptData.episodes?.length) {
-    return null;
+    return (
+      <Card className="border-amber-500/30 bg-amber-500/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-amber-600">
+            <Film className="h-5 w-5" />
+            Guion sin estructura de episodios
+          </CardTitle>
+          <CardDescription>
+            {scriptData 
+              ? 'El guion guardado no contiene episodios estructurados.'
+              : 'No se encontró ningún guion para este proyecto.'
+            }
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.location.reload()}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Recargar página
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate(`/projects/${projectId}/script`)}
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              Ir a Guion
+            </Button>
+            <Button 
+              size="sm"
+              onClick={() => navigate(`/projects/${projectId}/scenes`)}
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Ver Escenas
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   const totalScenes = scriptData.counts?.total_scenes || 
