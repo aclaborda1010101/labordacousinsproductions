@@ -427,6 +427,20 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   const [generatedScript, setGeneratedScript] = useState<any>(null);
   const [generatedTeasers, setGeneratedTeasers] = useState<any>(null);
   const [expandedEpisodes, setExpandedEpisodes] = useState<Record<number, boolean>>({});
+  
+  // V78: Script existence state - decoupled from hydration success
+  // This ensures "Script: sí" badge shows even if hydration fails
+  const [latestScriptRow, setLatestScriptRow] = useState<{
+    id: string;
+    status: string;
+    hasContent: boolean;
+    updatedAt: string;
+  } | null>(null);
+  const [isLoadingScriptRow, setIsLoadingScriptRow] = useState(true);
+  
+  // V78: Derived state for reliable script existence check
+  const scriptExistsInDb = !!latestScriptRow?.id;
+  const scriptHasContent = latestScriptRow?.hasContent ?? false;
 
   // Script Doctor state
   const [analyzing, setAnalyzing] = useState(false);
@@ -1466,9 +1480,11 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoadingScriptRow(true);
+      
       const [projectRes, scriptsRes, scenesCountRes] = await Promise.all([
         supabase.from('projects').select('episodes_count, format, target_duration_min').eq('id', projectId).single(),
-        supabase.from('scripts').select('id, status, raw_text, parsed_json').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1),
+        supabase.from('scripts').select('id, status, raw_text, parsed_json, updated_at').eq('project_id', projectId).order('created_at', { ascending: false }).limit(1),
         // V76: Check if scenes exist (indicates narrative generation completed)
         supabase.from('scenes').select('id', { count: 'exact', head: true }).eq('project_id', projectId)
       ]);
@@ -1491,58 +1507,81 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
         setNarrativeGenerationComplete(true);
       }
       
+      // V78: Always set latestScriptRow for reliable script existence detection
       if (scriptsRes.data && scriptsRes.data.length > 0) {
         const script = scriptsRes.data[0];
+        const parsed = script.parsed_json as Record<string, unknown> | null;
+        const hasContent = !!(
+          script.raw_text?.length > 0 ||
+          (parsed && (parsed.episodes || parsed.title || parsed.characters))
+        );
+        
+        setLatestScriptRow({
+          id: script.id,
+          status: script.status || 'unknown',
+          hasContent,
+          updatedAt: script.updated_at || new Date().toISOString(),
+        });
+        
         setCurrentScriptId(script.id);
         setScriptLocked(script.status === 'locked');
         if (script.raw_text) setScriptText(script.raw_text);
+        
+        // V78: Wrap hydration in try/catch - don't let failures break script existence
         if (script.parsed_json && typeof script.parsed_json === 'object') {
-          const parsed = script.parsed_json as Record<string, unknown>;
-          if (parsed.episodes || parsed.screenplay || parsed.title || parsed.characters) {
-            // Use shared hydration helpers for v10+ nested structure support
-            const payload = getBreakdownPayload(parsed) ?? parsed;
-            const chars = hydrateCharacters(payload);
-            const locs = hydrateLocations(payload);
-            const propsArr = hydrateProps(payload);
-            const scenes = hydrateScenes(payload);
-            const episodesArr = Array.isArray(payload?.episodes) ? payload.episodes : [];
-            
-            // Use shared robust counts builder
-            const counts = buildRobustCounts(payload, chars, locs, scenes, propsArr, episodesArr);
+          try {
+            const parsedJson = script.parsed_json as Record<string, unknown>;
+            if (parsedJson.episodes || parsedJson.screenplay || parsedJson.title || parsedJson.characters) {
+              // Use shared hydration helpers for v10+ nested structure support
+              const payload = getBreakdownPayload(parsedJson) ?? parsedJson;
+              const chars = hydrateCharacters(payload);
+              const locs = hydrateLocations(payload);
+              const propsArr = hydrateProps(payload);
+              const scenes = hydrateScenes(payload);
+              const episodesArr = Array.isArray(payload?.episodes) ? payload.episodes : [];
+              
+              // Use shared robust counts builder
+              const counts = buildRobustCounts(payload, chars, locs, scenes, propsArr, episodesArr);
 
-            const hydratedScriptData = {
-              ...parsed,
-              // Keep original payload for downstream consumers (e.g., Casting Report enrichment)
-              breakdown: payload,
-              title: extractTitle(payload),
-              writers: extractWriters(payload),
-              main_characters: chars,
-              characters: chars,
-              locations: locs,
-              scenes: scenes,
-              props: propsArr,
-              counts,
-            };
+              const hydratedScriptData = {
+                ...parsedJson,
+                // Keep original payload for downstream consumers (e.g., Casting Report enrichment)
+                breakdown: payload,
+                title: extractTitle(payload),
+                writers: extractWriters(payload),
+                main_characters: chars,
+                characters: chars,
+                locations: locs,
+                scenes: scenes,
+                props: propsArr,
+                counts,
+              };
 
-            setGeneratedScript(hydratedScriptData);
+              setGeneratedScript(hydratedScriptData);
 
-            // Rehydrate Pro breakdown (if it exists in DB)
-            const storedBreakdownPro = (parsed as any).breakdown_pro;
-            if (storedBreakdownPro && typeof storedBreakdownPro === 'object') {
-              setBreakdownPro(storedBreakdownPro);
+              // Rehydrate Pro breakdown (if it exists in DB)
+              const storedBreakdownPro = (parsedJson as any).breakdown_pro;
+              if (storedBreakdownPro && typeof storedBreakdownPro === 'object') {
+                setBreakdownPro(storedBreakdownPro);
+              }
+
+              // Load teasers from parsed_json if they exist
+              if (parsedJson.teasers) {
+                setGeneratedTeasers(parsedJson.teasers);
+              }
+              // V67: Only auto-switch tab on initial load, not during operations
+              // V72: Respect intentional user navigation
+              if (!isOutlineOperationInProgress.current && 
+                  !userNavigatedRef.current && 
+                  activeTab === 'generate') {
+                setActiveTab('summary');
+              }
             }
-
-            // Load teasers from parsed_json if they exist
-            if (parsed.teasers) {
-              setGeneratedTeasers(parsed.teasers);
-            }
-            // V67: Only auto-switch tab on initial load, not during operations
-            // V72: Respect intentional user navigation
-            if (!isOutlineOperationInProgress.current && 
-                !userNavigatedRef.current && 
-                activeTab === 'generate') {
-              setActiveTab('summary');
-            }
+          } catch (hydrationErr) {
+            console.warn('[ScriptImport] V78: Hydration failed, but script exists:', hydrationErr);
+            // Still show script exists even if hydration fails
+            // Set minimal generatedScript from raw parsed_json
+            setGeneratedScript(script.parsed_json);
           }
         }
       } else if (existingScenesCount > 0) {
@@ -1590,8 +1629,81 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           console.warn('[ScriptImport] V76: Auto-compile failed:', compileErr);
         }
       }
+      
+      // V78: Mark loading complete
+      setIsLoadingScriptRow(false);
     };
     fetchData();
+  }, [projectId]);
+
+  // V78: Realtime subscription for scripts table - auto-refresh when backend updates
+  useEffect(() => {
+    const channel = supabase
+      .channel(`scripts-${projectId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'scripts',
+          filter: `project_id=eq.${projectId}`,
+        },
+        async (payload) => {
+          console.log('[ScriptImport] V78: Realtime script update detected:', payload.eventType);
+          
+          const newRecord = payload.new as any;
+          if (newRecord?.id) {
+            const parsed = newRecord.parsed_json as Record<string, unknown> | null;
+            const hasContent = !!(
+              newRecord.raw_text?.length > 0 ||
+              (parsed && (parsed.episodes || parsed.title || parsed.characters))
+            );
+            
+            setLatestScriptRow({
+              id: newRecord.id,
+              status: newRecord.status || 'unknown',
+              hasContent,
+              updatedAt: newRecord.updated_at || new Date().toISOString(),
+            });
+            
+            // Re-hydrate if we have valid content
+            if (parsed && hasContent) {
+              try {
+                const payload2 = getBreakdownPayload(parsed) ?? parsed;
+                const chars = hydrateCharacters(payload2);
+                const locs = hydrateLocations(payload2);
+                const propsArr = hydrateProps(payload2);
+                const scenes = hydrateScenes(payload2);
+                const episodesArr = Array.isArray(payload2?.episodes) ? payload2.episodes : [];
+                const counts = buildRobustCounts(payload2, chars, locs, scenes, propsArr, episodesArr);
+
+                setGeneratedScript({
+                  ...parsed,
+                  breakdown: payload2,
+                  title: extractTitle(payload2),
+                  writers: extractWriters(payload2),
+                  main_characters: chars,
+                  characters: chars,
+                  locations: locs,
+                  scenes: scenes,
+                  props: propsArr,
+                  counts,
+                });
+                
+                console.log('[ScriptImport] V78: Script auto-refreshed via realtime');
+              } catch (err) {
+                console.warn('[ScriptImport] V78: Realtime hydration failed:', err);
+                setGeneratedScript(parsed);
+              }
+            }
+          }
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [projectId]);
 
   // Calculate targets when inputs change
@@ -5821,9 +5933,12 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
   ];
   
   // Get status for each step: 'completed' | 'running' | 'active' | 'pending'
+  // V78: Use scriptExistsInDb for reliable script detection (decoupled from hydration)
   const getStepStatus = (stepId: string): 'completed' | 'running' | 'active' | 'pending' => {
     const hasOutline = !!lightOutline;
-    const hasScript = generatedScript?.episodes?.length > 0;
+    // V78: Script exists if DB row exists OR if hydration succeeded
+    const hasScript = scriptExistsInDb || (generatedScript?.episodes?.length > 0);
+    const hasScriptWithEpisodes = generatedScript?.episodes?.length > 0;
     const isOutlineComplete = outlineApproved;
     const isScriptComplete = hasScript && generatedScript?.episodes?.every((ep: any) =>
       ep.scenes?.every((s: any) => 
