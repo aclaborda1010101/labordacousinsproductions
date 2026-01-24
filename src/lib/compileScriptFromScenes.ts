@@ -67,6 +67,38 @@ export async function compileScriptFromScenes(
       scriptTitle = project?.title || 'Untitled Script';
     }
 
+    // 2b. Fetch project entities (so Script Summary/Import-to-Bible can show real data)
+    // NOTE: We intentionally keep this lightweight + tolerant; the UI can still work without these.
+    const [charactersRes, locationsRes] = await Promise.all([
+      supabase
+        .from('characters')
+        .select('name, role, bio, character_role')
+        .eq('project_id', projectId),
+      supabase
+        .from('locations')
+        .select('name, description, narrative_role')
+        .eq('project_id', projectId),
+    ]);
+
+    const characters = (charactersRes.data as any[] | null) ?? [];
+    const locations = (locationsRes.data as any[] | null) ?? [];
+
+    const normalizedCharacters = characters
+      .filter((c) => !!c?.name)
+      .map((c) => ({
+        name: c.name,
+        role: c.character_role ?? c.role ?? undefined,
+        description: c.bio ?? undefined,
+      }));
+
+    const normalizedLocations = locations
+      .filter((l) => !!l?.name)
+      .map((l) => ({
+        name: l.name,
+        type: l.narrative_role ?? undefined,
+        description: l.description ?? undefined,
+      }));
+
     // 3. Convert scenes to ScreenplayScene format
     const screenplayScenes: ScreenplayScene[] = scenes.map((scene: any) => {
       const parsedJson = scene.parsed_json || {};
@@ -112,6 +144,8 @@ export async function compileScriptFromScenes(
       counts: {
         total_scenes: scenes.length,
         dialogues: totalDialogues,
+        characters_total: normalizedCharacters.length,
+        locations: normalizedLocations.length,
       },
       episodes: [{
         episode_number: episodeNumber,
@@ -123,12 +157,11 @@ export async function compileScriptFromScenes(
           description: scene.parsed_json?.description || '',
           dialogues: scene.parsed_json?.dialogues || [],
           dialogue: scene.parsed_json?.dialogues || [],  // Alias for compatibility
-          characters_present: scene.characters_involved || [],
-          duration_estimate_sec: scene.duration_estimate_sec,
+          characters_present: scene.characters_present || scene.parsed_json?.characters_present || [],
         })),
       }],
-      characters: [],
-      locations: [],
+      characters: normalizedCharacters,
+      locations: normalizedLocations,
       compiled_at: new Date().toISOString(),
       scenes_count: scenes.length,
     };
