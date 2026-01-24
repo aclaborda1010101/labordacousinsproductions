@@ -17,7 +17,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const AI_GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 const SHOWRUNNER_SURGERY_SYSTEM = `Actúa como showrunner y guionista senior de series.
 Tu misión NO es reescribir desde cero ni cambiar el estilo, sino FORTALECER LA DRAMATURGIA.
@@ -183,10 +183,11 @@ ${scriptContent}
 
 Analiza el guion y aplica las 5 reglas no negociables. Devuelve el JSON con los cambios por escena y el guion reescrito completo.`;
 
-    const OPENROUTER_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    if (!OPENROUTER_KEY) {
+    // Use Lovable AI Gateway
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
       return new Response(
-        JSON.stringify({ ok: false, error: "OPENROUTER_API_KEY not configured" }),
+        JSON.stringify({ ok: false, error: "LOVABLE_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -194,8 +195,8 @@ Analiza el guion y aplica las 5 reglas no negociables. Devuelve el JSON con los 
     // Call AI
     const startTime = Date.now();
     const aiResponse = await aiFetch({
-      url: OPENROUTER_URL,
-      apiKey: OPENROUTER_KEY,
+      url: AI_GATEWAY_URL,
+      apiKey: LOVABLE_API_KEY,
       payload: {
         model: "openai/gpt-5.2",
         messages: [
