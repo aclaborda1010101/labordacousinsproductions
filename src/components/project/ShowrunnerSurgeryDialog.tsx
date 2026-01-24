@@ -1,11 +1,16 @@
 /**
- * Showrunner Surgery Dialog
+ * Showrunner Surgery Dialog (V2 - Async with Polling)
  * 
  * Modal for applying dramatic improvements to Episode 1
  * Applies 5 non-negotiable rules to strengthen dramaturgy
+ * 
+ * V2 Changes:
+ * - Polls generation_blocks for result instead of waiting on HTTP response
+ * - Recovers pending results on dialog open
+ * - Calls apply-showrunner-surgery to commit changes
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,10 +19,15 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Scissors, AlertTriangle, CheckCircle2, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Scissors, AlertTriangle, CheckCircle2, Loader2, ChevronDown, ChevronUp, Clock, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { supabase } from '@/integrations/supabase/client';
+
+// Polling configuration
+const POLL_INTERVAL_MS = 5000;  // 5 seconds
+const MAX_POLL_DURATION_MS = 5 * 60 * 1000;  // 5 minutes max
 
 interface ShowrunnerSurgeryDialogProps {
   open: boolean;
@@ -54,9 +64,11 @@ interface SurgeryResult {
     consequencesAdded: number;
     durationMs: number;
   };
+  blockId?: string;
 }
 
 type SurgeryLevel = 'light' | 'standard' | 'aggressive';
+type DialogStep = 'config' | 'analyzing' | 'preview' | 'applying';
 
 const RULES = [
   { id: 1, title: 'Preservar tono y voz', description: 'Mantener estilo de diálogos, subtexto y atmósfera sin simplificar.' },
@@ -87,13 +99,131 @@ export function ShowrunnerSurgeryDialog({
   scriptId,
   onSurgeryComplete
 }: ShowrunnerSurgeryDialogProps) {
-  const [step, setStep] = useState<'config' | 'analyzing' | 'preview' | 'applying'>('config');
+  const [step, setStep] = useState<DialogStep>('config');
   const [surgeryLevel, setSurgeryLevel] = useState<SurgeryLevel>('standard');
   const [result, setResult] = useState<SurgeryResult | null>(null);
   const [expandedChanges, setExpandedChanges] = useState<Set<number>>(new Set());
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [currentBlockId, setCurrentBlockId] = useState<string | null>(null);
+  
+  const pollIntervalRef = useRef<number | null>(null);
+  const timerIntervalRef = useRef<number | null>(null);
+  const pollStartTimeRef = useRef<number>(0);
+
+  // Check for pending surgery on dialog open
+  useEffect(() => {
+    if (open && projectId && scriptId) {
+      checkForPendingSurgery();
+    }
+    return () => {
+      stopPolling();
+    };
+  }, [open, projectId, scriptId]);
+
+  const checkForPendingSurgery = async () => {
+    try {
+      const response = await invokeAuthedFunction('showrunner-surgery', {
+        projectId,
+        scriptId,
+        checkPending: true
+      }) as any;
+
+      if (response.ok && response.blockId) {
+        setCurrentBlockId(response.blockId);
+        
+        if (response.status === 'processing') {
+          // Resume polling for in-progress surgery
+          setStep('analyzing');
+          startPolling(response.blockId);
+        } else if (response.status === 'pending_approval' && response.sceneChanges) {
+          // Show existing pending result
+          setResult({
+            sceneChanges: response.sceneChanges || [],
+            rewrittenScript: response.rewrittenScript || {},
+            dramaturgChecklist: response.dramaturgChecklist || {},
+            stats: response.stats || { scenesModified: 0, dialoguesAdjusted: 0, consequencesAdded: 0, durationMs: 0 },
+            blockId: response.blockId
+          });
+          setStep('preview');
+          toast.info('Resultado de cirugía pendiente recuperado');
+        }
+      }
+    } catch (error) {
+      console.error('Error checking pending surgery:', error);
+    }
+  };
+
+  const startPolling = useCallback((blockId: string) => {
+    stopPolling();
+    pollStartTimeRef.current = Date.now();
+    setElapsedSeconds(0);
+
+    // Timer for elapsed time display
+    timerIntervalRef.current = window.setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - pollStartTimeRef.current) / 1000));
+    }, 1000);
+
+    // Polling for result
+    pollIntervalRef.current = window.setInterval(async () => {
+      const elapsed = Date.now() - pollStartTimeRef.current;
+      
+      if (elapsed > MAX_POLL_DURATION_MS) {
+        stopPolling();
+        toast.error('Tiempo máximo de espera excedido');
+        setStep('config');
+        return;
+      }
+
+      try {
+        const { data: block, error } = await supabase
+          .from('generation_blocks')
+          .select('id, status, output_data, error_message')
+          .eq('id', blockId)
+          .single();
+
+        if (error) {
+          console.error('Polling error:', error);
+          return;
+        }
+
+        if (block.status === 'pending_approval' && block.output_data) {
+          stopPolling();
+          const outputData = block.output_data as any;
+          setResult({
+            sceneChanges: outputData.scene_changes || [],
+            rewrittenScript: outputData.rewritten_script || {},
+            dramaturgChecklist: outputData.dramaturgy_checklist || {},
+            stats: outputData.stats || { scenesModified: 0, dialoguesAdjusted: 0, consequencesAdded: 0, durationMs: 0 },
+            blockId: block.id
+          });
+          setStep('preview');
+          toast.success('Análisis completado');
+        } else if (block.status === 'failed') {
+          stopPolling();
+          toast.error(block.error_message || 'Error en la cirugía');
+          setStep('config');
+        }
+      } catch (err) {
+        console.error('Poll request failed:', err);
+      }
+    }, POLL_INTERVAL_MS);
+  }, []);
+
+  const stopPolling = useCallback(() => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+      pollIntervalRef.current = null;
+    }
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+  }, []);
 
   const handleAnalyze = async () => {
     setStep('analyzing');
+    setElapsedSeconds(0);
+    
     try {
       const response = await invokeAuthedFunction('showrunner-surgery', {
         projectId,
@@ -101,39 +231,99 @@ export function ShowrunnerSurgeryDialog({
         episodeNumber: 1,
         surgeryLevel,
         preserveDialogueStyle: true
-      }) as { ok?: boolean; error?: string; sceneChanges?: SceneChange[]; rewrittenScript?: any; dramaturgChecklist?: DramaturgChecklist; stats?: SurgeryResult['stats'] };
+      }) as any;
 
       if (!response.ok) {
-        throw new Error(response.error || 'Error en la cirugía');
+        throw new Error(response.error || 'Error iniciando la cirugía');
       }
 
-      setResult({
-        sceneChanges: response.sceneChanges || [],
-        rewrittenScript: response.rewrittenScript || {},
-        dramaturgChecklist: response.dramaturgChecklist || { early_consequence_present: false, dirty_decision_present: false, action_over_reflection: false, pilot_ending_promise: '' },
-        stats: response.stats || { scenesModified: 0, dialoguesAdjusted: 0, consequencesAdded: 0, durationMs: 0 }
-      });
-      setStep('preview');
+      const blockId = response.blockId;
+      setCurrentBlockId(blockId);
+
+      // If result came back immediately (fast response), show it
+      if (response.status === 'pending_approval' && response.sceneChanges) {
+        setResult({
+          sceneChanges: response.sceneChanges || [],
+          rewrittenScript: response.rewrittenScript || {},
+          dramaturgChecklist: response.dramaturgChecklist || {},
+          stats: response.stats || { scenesModified: 0, dialoguesAdjusted: 0, consequencesAdded: 0, durationMs: 0 },
+          blockId
+        });
+        setStep('preview');
+        return;
+      }
+
+      // Otherwise, start polling
+      startPolling(blockId);
+
     } catch (error) {
       console.error('Surgery error:', error);
-      toast.error('Error al analizar el guion');
+      toast.error('Error al iniciar el análisis del guion');
       setStep('config');
     }
   };
 
-  const handleApply = () => {
-    if (result && onSurgeryComplete) {
-      onSurgeryComplete(result);
+  const handleApply = async () => {
+    if (!result?.blockId) {
+      toast.error('No hay resultado para aplicar');
+      return;
     }
-    toast.success('Cirugía aplicada correctamente');
+
+    setStep('applying');
+    
+    try {
+      const response = await invokeAuthedFunction('apply-showrunner-surgery', {
+        blockId: result.blockId,
+        action: 'apply'
+      }) as any;
+
+      if (!response.ok) {
+        throw new Error(response.error || 'Error aplicando la cirugía');
+      }
+
+      if (onSurgeryComplete) {
+        onSurgeryComplete(result);
+      }
+      
+      toast.success(`Cirugía aplicada (v${response.newVersion})`);
+      onOpenChange(false);
+      resetDialog();
+      
+    } catch (error) {
+      console.error('Apply error:', error);
+      toast.error('Error al aplicar la cirugía');
+      setStep('preview');
+    }
+  };
+
+  const handleReject = async () => {
+    if (!result?.blockId) {
+      onOpenChange(false);
+      resetDialog();
+      return;
+    }
+
+    try {
+      await invokeAuthedFunction('apply-showrunner-surgery', {
+        blockId: result.blockId,
+        action: 'reject'
+      });
+      toast.info('Cirugía rechazada');
+    } catch (error) {
+      console.error('Reject error:', error);
+    }
+
     onOpenChange(false);
     resetDialog();
   };
 
   const resetDialog = () => {
+    stopPolling();
     setStep('config');
     setResult(null);
     setExpandedChanges(new Set());
+    setElapsedSeconds(0);
+    setCurrentBlockId(null);
   };
 
   const toggleChange = (sceneNumber: number) => {
@@ -144,6 +334,12 @@ export function ShowrunnerSurgeryDialog({
       newExpanded.add(sceneNumber);
     }
     setExpandedChanges(newExpanded);
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -203,12 +399,12 @@ export function ShowrunnerSurgeryDialog({
                 </RadioGroup>
               </div>
 
-              <Card className="border-amber-200 bg-amber-50/50">
+              <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-800">
                 <CardContent className="pt-4">
                   <div className="flex gap-2">
-                    <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
-                    <p className="text-sm text-amber-800">
-                      Esta operación analizará y reescribirá el guion. El original se conservará en el historial.
+                    <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                      Esta operación puede tardar hasta 3 minutos. El resultado se guardará automáticamente.
                     </p>
                   </div>
                 </CardContent>
@@ -220,7 +416,24 @@ export function ShowrunnerSurgeryDialog({
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="h-12 w-12 animate-spin text-amber-500 mb-4" />
               <p className="text-lg font-medium">Analizando guion...</p>
-              <p className="text-sm text-muted-foreground">Aplicando las 5 reglas dramatúrgicas</p>
+              <p className="text-sm text-muted-foreground mb-4">Aplicando las 5 reglas dramatúrgicas</p>
+              
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span className="text-sm font-mono">{formatTime(elapsedSeconds)}</span>
+              </div>
+              
+              <p className="text-xs text-muted-foreground mt-4 text-center max-w-sm">
+                El resultado se guarda automáticamente. Puedes cerrar este diálogo y volver más tarde.
+              </p>
+            </div>
+          )}
+
+          {step === 'applying' && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <RefreshCw className="h-12 w-12 animate-spin text-green-500 mb-4" />
+              <p className="text-lg font-medium">Aplicando cambios...</p>
+              <p className="text-sm text-muted-foreground">Actualizando el guion</p>
             </div>
           )}
 
@@ -327,7 +540,7 @@ export function ShowrunnerSurgeryDialog({
                             {change.original_excerpt && (
                               <div>
                                 <p className="text-xs font-medium text-muted-foreground mb-1">Original:</p>
-                                <p className="text-sm bg-red-50 p-2 rounded border-l-2 border-red-300">
+                                <p className="text-sm bg-red-50 dark:bg-red-950/30 p-2 rounded border-l-2 border-red-300 dark:border-red-700">
                                   {change.original_excerpt}
                                 </p>
                               </div>
@@ -335,7 +548,7 @@ export function ShowrunnerSurgeryDialog({
                             {change.revised_excerpt && (
                               <div>
                                 <p className="text-xs font-medium text-muted-foreground mb-1">Revisado:</p>
-                                <p className="text-sm bg-green-50 p-2 rounded border-l-2 border-green-300">
+                                <p className="text-sm bg-green-50 dark:bg-green-950/30 p-2 rounded border-l-2 border-green-300 dark:border-green-700">
                                   {change.revised_excerpt}
                                 </p>
                               </div>
@@ -363,10 +576,15 @@ export function ShowrunnerSurgeryDialog({
               </Button>
             </>
           )}
+          {step === 'analyzing' && (
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cerrar (el análisis continúa)
+            </Button>
+          )}
           {step === 'preview' && (
             <>
-              <Button variant="outline" onClick={() => setStep('config')}>
-                Volver a configurar
+              <Button variant="outline" onClick={handleReject}>
+                Rechazar cambios
               </Button>
               <Button onClick={handleApply} className="bg-green-600 hover:bg-green-700">
                 <CheckCircle2 className="h-4 w-4 mr-2" />
