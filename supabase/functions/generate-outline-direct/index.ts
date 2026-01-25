@@ -204,6 +204,8 @@ Genera un JSON con la siguiente estructura:
     {
       "name": "Nombre del setpiece",
       "act": "I | II | III",
+      "protagonist_focus": "Nombre del protagonista que LIDERA este momento (OBLIGATORIO para películas coral)",
+      "featured_characters": ["Lista de personajes presentes en la escena"],
       "description": "Descripción visual de la escena espectacular (50-100 palabras)",
       "stakes": "Qué está en juego en este momento"
     }
@@ -258,9 +260,24 @@ Genera un JSON con la siguiente estructura:
 - OBLIGATORIO: Mínimo ${profile.min_setpieces} setpieces
 - Cada setpiece es un momento ESPECTACULAR que define la película visualmente
 - Distribuir equitativamente entre los 3 actos (Acto II debe tener más)
-- Cada uno DEBE incluir: name, act, description (50+ palabras), stakes
+- Cada uno DEBE incluir: name, act, protagonist_focus, featured_characters, description (50+ palabras), stakes
 - Ejemplos: persecuciones, confrontaciones, revelaciones dramáticas, momentos mágicos
 - NO pueden ser escenas genéricas - deben ser los PICOS visuales y emocionales
+
+### DISTRIBUCIÓN DE SETPIECES PARA PELÍCULAS CORAL/ENSEMBLE (CRÍTICO)
+IMPORTANTE para películas con múltiples protagonistas (role="protagonist"):
+1. CONTAR cuántos personajes tienen role="protagonist"
+2. DISTRIBUIR los setpieces EQUITATIVAMENTE entre todos ellos
+3. Cada protagonista DEBE liderar (protagonist_focus) al menos ⌊setpieces_totales / num_protagonistas⌋ setpieces
+4. El campo "protagonist_focus" indica QUIÉN PROTAGONIZA ese momento específico
+5. El campo "featured_characters" lista TODOS los personajes presentes en la escena
+
+Ejemplo para 3 protagonistas (Baltasar, Gaspar, Melchor) con 12 setpieces:
+- Baltasar lidera: 4 setpieces (setpieces 1, 4, 7, 10)
+- Gaspar lidera: 4 setpieces (setpieces 2, 5, 8, 11)  
+- Melchor lidera: 4 setpieces (setpieces 3, 6, 9, 12)
+
+Esto asegura que CADA protagonista tenga su momento cinematográfico destacado.
 
 ### SEQUENCES (Agrupaciones Dramáticas)
 - OBLIGATORIO: Mínimo ${profile.min_sequences} secuencias
@@ -367,6 +384,39 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       required: profile.min_setpieces,
     });
     score -= 15;
+  }
+
+  // Check setpiece distribution for ensemble films (multiple protagonists)
+  const protagonists = chars.filter((c: any) => 
+    (c.role || '').toLowerCase() === 'protagonist'
+  );
+
+  if (protagonists.length > 1 && setpieces.length > 0) {
+    const minPerProtagonist = Math.floor(setpieces.length / protagonists.length);
+    
+    // Count setpieces per protagonist
+    const setpiecesByProtag: Record<string, number> = {};
+    protagonists.forEach((p: any) => { setpiecesByProtag[p.name] = 0; });
+    
+    setpieces.forEach((sp: any) => {
+      const focus = sp.protagonist_focus;
+      if (focus && setpiecesByProtag.hasOwnProperty(focus)) {
+        setpiecesByProtag[focus]++;
+      }
+    });
+    
+    // Warn if any protagonist has fewer than minimum
+    for (const [name, count] of Object.entries(setpiecesByProtag)) {
+      if (count < minPerProtagonist) {
+        warnings.push({
+          type: 'structure',
+          message: `${name} solo tiene ${count} setpieces, debería tener mínimo ${minPerProtagonist} (distribución equitativa en película coral)`,
+          current: count as number,
+          required: minPerProtagonist,
+        });
+        score -= 5;
+      }
+    }
   }
 
   // Check sequences count
