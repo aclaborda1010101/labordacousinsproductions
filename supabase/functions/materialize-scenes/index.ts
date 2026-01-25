@@ -233,19 +233,49 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    // Fetch outline
-    const query = adminClient
-      .from('project_outlines')
-      .select('id, outline_json, quality, status')
-      .eq('project_id', projectId);
+    // Fetch outline - prioritize ones with expanded scenes
+    let outlineData: any = null;
+    let outlineError: any = null;
     
     if (outlineId) {
-      query.eq('id', outlineId);
+      const result = await adminClient
+        .from('project_outlines')
+        .select('id, outline_json, quality, status')
+        .eq('project_id', projectId)
+        .eq('id', outlineId)
+        .maybeSingle();
+      outlineData = result.data;
+      outlineError = result.error;
     } else {
-      query.in('status', ['approved', 'completed', 'generating']).order('created_at', { ascending: false }).limit(1);
+      // First try to find outline with expanded scenes (status = completed from expand-beats-to-scenes)
+      const completedResult = await adminClient
+        .from('project_outlines')
+        .select('id, outline_json, quality, status')
+        .eq('project_id', projectId)
+        .eq('status', 'completed')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (completedResult.data?.outline_json?.episode_beats?.[0]?.scenes?.length > 0) {
+        outlineData = completedResult.data;
+        outlineError = completedResult.error;
+        console.log('[materialize-scenes] Found completed outline with scenes:', outlineData?.id);
+      } else {
+        // Fallback to approved outline
+        const approvedResult = await adminClient
+          .from('project_outlines')
+          .select('id, outline_json, quality, status')
+          .eq('project_id', projectId)
+          .in('status', ['approved', 'generating'])
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        outlineData = approvedResult.data;
+        outlineError = approvedResult.error;
+        console.log('[materialize-scenes] Fallback to approved outline:', outlineData?.id);
+      }
     }
-    
-    const { data: outlineData, error: outlineError } = await query.maybeSingle();
     
     if (outlineError) {
       console.error('[materialize-scenes] Outline fetch error:', outlineError);
@@ -403,7 +433,8 @@ serve(async (req) => {
           character_ids: characterIds,
           location_id: locationId,
           beats: scene.beats,
-          status: 'draft'
+          characters_present: scene.character_names, // Store names for reference
+          approved: false
         });
 
       if (!insertError) {
