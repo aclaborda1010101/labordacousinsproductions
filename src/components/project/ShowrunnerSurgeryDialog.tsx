@@ -131,6 +131,51 @@ export function ShowrunnerSurgeryDialog({
 
   const checkForPendingSurgery = async () => {
     try {
+      // First check directly in DB for pending_approval blocks (faster & more reliable)
+      const { data: pendingBlocks, error: dbError } = await supabase
+        .from('generation_blocks')
+        .select('id, status, output_data, created_at')
+        .eq('project_id', projectId)
+        .eq('script_id', scriptId)
+        .eq('block_type', 'showrunner_surgery')
+        .in('status', ['processing', 'pending_approval'])
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (dbError) {
+        console.error('Error checking pending blocks:', dbError);
+        return;
+      }
+
+      if (pendingBlocks && pendingBlocks.length > 0) {
+        const block = pendingBlocks[0];
+        setCurrentBlockId(block.id);
+
+        if (block.status === 'processing') {
+          // Resume polling for in-progress surgery
+          setStep('analyzing');
+          startPolling(block.id);
+          toast.info('Reanudando análisis en progreso...');
+        } else if (block.status === 'pending_approval' && block.output_data) {
+          // Show existing pending result directly
+          const outputData = block.output_data as any;
+          setResult({
+            sceneChanges: outputData.scene_changes || [],
+            rewrittenScript: outputData.rewritten_script || {},
+            dramaturgChecklist: outputData.dramaturgy_checklist || {},
+            stats: outputData.stats || { scenesModified: 0, dialoguesAdjusted: 0, consequencesAdded: 0, durationMs: 0 },
+            blockId: block.id
+          });
+          setStep('preview');
+          toast.success('Hay cambios de cirugía pendientes de aprobación', {
+            description: 'Revisa los cambios propuestos y aprueba o rechaza.',
+            duration: 5000
+          });
+        }
+        return;
+      }
+
+      // Fallback to edge function check (for processing status with heartbeat)
       const response = await invokeAuthedFunction('showrunner-surgery', {
         projectId,
         scriptId,
@@ -141,11 +186,9 @@ export function ShowrunnerSurgeryDialog({
         setCurrentBlockId(response.blockId);
         
         if (response.status === 'processing') {
-          // Resume polling for in-progress surgery
           setStep('analyzing');
           startPolling(response.blockId);
         } else if (response.status === 'pending_approval' && response.sceneChanges) {
-          // Show existing pending result
           setResult({
             sceneChanges: response.sceneChanges || [],
             rewrittenScript: response.rewrittenScript || {},
@@ -154,7 +197,7 @@ export function ShowrunnerSurgeryDialog({
             blockId: response.blockId
           });
           setStep('preview');
-          toast.info('Resultado de cirugía pendiente recuperado');
+          toast.success('Hay cambios de cirugía pendientes de aprobación');
         }
       }
     } catch (error) {
