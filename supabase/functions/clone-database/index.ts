@@ -15,6 +15,8 @@ const activeJobs = new Map<string, {
   currentItem: string;
   error?: string;
   cancelled: boolean;
+  verification?: { table: string; sourceCount: number; targetCount: number; match: boolean }[];
+  verificationPassed?: boolean;
 }>();
 
 // Tables to clone in order (respecting foreign key dependencies)
@@ -502,6 +504,47 @@ async function cloneDatabase(jobId: string, targetUrl: string, options: { includ
       }
       job.current++;
     }
+
+    // Phase: Verification
+    if (job.cancelled) return cleanup();
+    
+    job.phase = 'verification';
+    job.currentItem = 'Verificando integridad de datos...';
+    job.current = 0;
+    job.total = TABLES_ORDER.length;
+    
+    const verificationResults: { table: string; sourceCount: number; targetCount: number; match: boolean }[] = [];
+    
+    for (const tableName of TABLES_ORDER) {
+      if (job.cancelled) return cleanup();
+      
+      try {
+        // Count in source
+        const sourceResult = await sourceDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
+        const sourceCount = parseInt(sourceResult[0]?.count || '0');
+        
+        // Count in target
+        const targetResult = await targetDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
+        const targetCount = parseInt(targetResult[0]?.count || '0');
+        
+        verificationResults.push({
+          table: tableName,
+          sourceCount,
+          targetCount,
+          match: sourceCount === targetCount
+        });
+        
+        job.currentItem = `Verificando: ${tableName} (${sourceCount} → ${targetCount})`;
+        job.current++;
+      } catch {
+        // Table might not exist in one of the databases
+        job.current++;
+      }
+    }
+    
+    // Store verification results
+    job.verification = verificationResults;
+    job.verificationPassed = verificationResults.every(v => v.match);
 
     // Done!
     job.phase = 'done';
