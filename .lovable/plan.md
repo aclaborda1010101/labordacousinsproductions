@@ -1,116 +1,112 @@
 
-# Plan: Aumentar Set Pieces y Sequences en el Outline
+# Plan: Regenerar Outline con Densidad Hollywood
 
-## Problema Detectado
+## Estado Actual del Proyecto
 
-El outline actual muestra solo 5 set pieces porque:
+| Campo | Valor Actual |
+|-------|--------------|
+| **Proyecto** | Reyes Magos V3 (`9cbb775e-...`) |
+| **Formato** | Film (90 min) |
+| **Género** | Comedy |
+| **Tono** | Ligero y entretenido |
 
-| Campo | Estado Actual | Requerido |
-|-------|---------------|-----------|
-| `setpieces` | 0 (no existe) | 8-12 mínimo |
-| `sequences` | 0 (no existe) | 6-8 mínimo |
-| DensityProfile | Sin min_setpieces | Añadir campo |
-| Prompt | "memorables" (vago) | Cantidad explícita |
-| Validación | No verifica setpieces | Añadir check |
+### Outline Actual (`8601c962-...`)
+| Métrica | Actual | Objetivo Hollywood |
+|---------|--------|-------------------|
+| Personajes | 15 | 15 ✓ |
+| Setpieces | 5 | **12** ✗ |
+| Sequences | 6 | **8** ✗ |
+| Locations | 0 | **15** ✗ |
 
-El outline fue generado el 23-enero, antes de los cambios de hoy.
+## Parámetros de Regeneración
 
-## Cambios Técnicos
+Para aplicar el perfil **Hollywood** completo:
 
-### 1. Actualizar DensityProfile
-
-```typescript
-interface DensityProfile {
-  id: string;
-  label: string;
-  min_characters: number;
-  min_locations: number;
-  min_beats: number;
-  min_scenes: number;
-  min_setpieces: number;    // NUEVO
-  min_sequences: number;    // NUEVO
-}
-
-const DENSITY_PROFILES = {
-  indie: {
-    // ... existing
-    min_setpieces: 5,
-    min_sequences: 4,
-  },
-  standard: {
-    // ... existing
-    min_setpieces: 8,
-    min_sequences: 6,
-  },
-  hollywood: {
-    // ... existing
-    min_setpieces: 12,
-    min_sequences: 8,
-  },
-};
-```
-
-### 2. Mejorar el Prompt
-
-Añadir instrucción explícita:
-
-```text
-## REQUISITOS DE SETPIECES Y SEQUENCES
-
-SETPIECES (Momentos Visuales de Alto Impacto):
-- Mínimo: ${profile.min_setpieces} setpieces
-- Cada setpiece debe ser un momento ESPECTACULAR que defina la película
-- Distribuir entre los 3 actos
-- Cada uno con: name, act, description, stakes
-
-SEQUENCES (Agrupaciones Dramáticas):
-- Mínimo: ${profile.min_sequences} secuencias
-- Cada secuencia agrupa 2-5 escenas bajo un objetivo común
-- Ejemplos: "La Transformación", "La Noche de Milagros", "El Regreso"
-```
-
-### 3. Añadir Validación de Setpieces
-
-```typescript
-// En softValidate()
-const setpieces = outline.setpieces || [];
-if (setpieces.length < profile.min_setpieces) {
-  warnings.push({
-    type: 'structure',
-    message: `Tienes ${setpieces.length} setpieces, se requieren mínimo ${profile.min_setpieces}`,
-    current: setpieces.length,
-    required: profile.min_setpieces,
-  });
-  score -= 15;
+```json
+{
+  "projectId": "9cbb775e-3f28-4232-8fe2-aaa590dd3081",
+  "densityProfile": "hollywood",
+  "format": "film",
+  "duration": 90,
+  "genre": "comedy",
+  "tone": "Ligero y entretenido",
+  "idea": "[synopsis actual del outline]"
 }
 ```
 
-### 4. Regenerar el Outline Actual
+### Objetivos de Densidad Hollywood
 
-Para que el proyecto `d2a6e5b8-...` tenga los nuevos campos:
-- Usar "Regenerar Outline" en el UI
-- O ejecutar `generate-outline-direct` con los nuevos parámetros
+| Elemento | Mínimo Requerido |
+|----------|------------------|
+| Personajes | 15 (incluir 1 antagonista) |
+| Localizaciones | 15 |
+| Beats narrativos | 30 |
+| Escenas | 45 |
+| **Setpieces** | **12** |
+| **Sequences** | **8** |
 
-## Cálculo de Setpieces por Duración
+## Implementación
 
-Para una película de 85 minutos con perfil "standard":
+### Paso 1: Llamar a la Edge Function
 
-```text
-Target scenes: 85 min / 2.5 min avg = 34 scenes
-Target setpieces: ~25% de scenes = 8-10 setpieces
-Target sequences: scenes / 5 = 6-7 secuencias
+```typescript
+const response = await supabase.functions.invoke('generate-outline-direct', {
+  body: {
+    projectId: '9cbb775e-3f28-4232-8fe2-aaa590dd3081',
+    idea: `TÍTULO: La Noche que Fuimos Reyes
+    
+    SINOPSIS: En un mundo que los ignora o los juzga, Baltasar, un hombre negro 
+    cansado del racismo; Gaspar, un pelirrojo marcado por el bullying; y Melchor, 
+    un hombre gay atrapado en una vida doble, viven existencias grises y llenas 
+    de injusticia. En la noche de Reyes se transforman en los auténticos Reyes 
+    Magos y usan su poder para impartir justicia poética irónica y social.`,
+    format: 'film',
+    densityProfile: 'hollywood',
+    genre: 'comedy',
+    tone: 'Ligero y entretenido',
+    duration: 90
+  }
+});
 ```
 
-## Archivos a Modificar
+### Paso 2: El sistema aplicará automáticamente
 
-| Archivo | Cambio |
-|---------|--------|
-| `supabase/functions/generate-outline-direct/index.ts` | Añadir min_setpieces/sequences a profile, mejorar prompt, añadir validación |
+1. **Prompt mejorado** con requisitos explícitos:
+   - "Genera exactamente 12 SETPIECES espectaculares"
+   - "Genera exactamente 8 SEQUENCES con dramatic_goal"
+   - "Incluye 1 personaje con role='antagonist'"
+   - "Define 15 LOCATIONS con INT/EXT"
+
+2. **Validación post-generación** (`softValidate`):
+   - Verificar setpieces >= 12
+   - Verificar sequences >= 8
+   - Verificar antagonist presente
+   - Penalizar score si faltan elementos
+
+### Paso 3: Marcar outline anterior como obsoleto
+
+El nuevo outline reemplazará al actual, marcando `8601c962-...` como `status: 'obsolete'`.
 
 ## Resultado Esperado
 
-Después de regenerar el outline:
-- 8-12 setpieces con stakes claros
-- 6-8 sequences con dramatic_goal
-- Personaje con role="antagonist"
-- UI mostrando todos los nuevos elementos
+El nuevo outline contendrá:
+
+```text
+✓ 15 personajes (incluyendo 1 antagonista: "Inspector Fernández")
+✓ 15 localizaciones únicas con INT/EXT
+✓ 12 setpieces distribuidos en 3 actos
+✓ 8 sequences con dramatic_goal y tone_shift
+✓ 30 beats narrativos detallados
+```
+
+## Acción Requerida
+
+Para ejecutar la regeneración, cambia a **modo normal** (aprueba este plan) y te ayudaré a:
+
+1. Invocar `generate-outline-direct` con los parámetros correctos
+2. Monitorear el progreso en tiempo real
+3. Validar que el nuevo outline cumpla todos los requisitos
+
+---
+
+**Nota técnica**: La Edge Function `generate-outline-direct` ya fue actualizada con los perfiles de densidad mejorados. Solo necesita ser invocada con `densityProfile: 'hollywood'`.
