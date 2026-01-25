@@ -24,6 +24,8 @@ export interface DensityProfile {
   minLocations: number;
   minBeats: number;
   minScenes: number;
+  minSetpieces: number;
+  minSequences: number;
   badge?: string;
 }
 
@@ -37,6 +39,8 @@ export const DENSITY_PROFILES: Record<DensityProfileId, DensityProfile> = {
     minLocations: 6,
     minBeats: 18,
     minScenes: 25,
+    minSetpieces: 5,
+    minSequences: 4,
   },
   standard: {
     id: 'standard',
@@ -47,6 +51,8 @@ export const DENSITY_PROFILES: Record<DensityProfileId, DensityProfile> = {
     minLocations: 10,
     minBeats: 24,
     minScenes: 35,
+    minSetpieces: 8,
+    minSequences: 6,
     badge: 'Recomendado',
   },
   hollywood: {
@@ -58,6 +64,8 @@ export const DENSITY_PROFILES: Record<DensityProfileId, DensityProfile> = {
     minLocations: 15,
     minBeats: 30,
     minScenes: 45,
+    minSetpieces: 12,
+    minSequences: 8,
   },
 };
 
