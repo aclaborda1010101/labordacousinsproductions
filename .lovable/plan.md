@@ -1,60 +1,113 @@
 
-# Plan: Regenerar Script con Expansión de Escenas
+# Plan: Mejorar Outline con Antagonista y Secuencias Claras
 
-## Estado Actual del Proyecto
+## Diagnóstico del Outline Actual
 
-| Aspecto | Valor Actual | Objetivo |
-|---------|-------------|----------|
-| Beats narrativos | 34 (8+15+11 por acto) | - |
-| Escenas en BD | 5-6 | 25-35 |
-| Duración objetivo | 85 min | 85 min |
-| Set pieces | 5 definidos | 5 |
+| Aspecto | Estado Actual | Requerido |
+|---------|--------------|-----------|
+| Personajes totales | 15 | ✓ Cumple |
+| Antagonistas explícitos | 0 | 1 mínimo |
+| Set pieces | 5 | ✓ Cumple |
+| Secuencias | No existe campo | Añadir soporte |
+| Threads/Tramas | No definidos | 2 mínimo |
 
-## Flujo de Regeneración
+### Personajes Actuales (sin antagonista formal)
+- 3 Protagonistas: Baltasar, Gaspar, Melchor
+- 12 Supporting: Incluyen "El Bully Adulto", "La Mujer Intolerante", "El Agente de Policía Prejuicioso" - que funcionan como antagonistas pero no están marcados como tales
 
-El sistema ya tiene todo implementado. El proceso será:
+## Cambios Propuestos
+
+### 1. Mejorar el Prompt de Generación de Outline
+
+**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
+
+Añadir instrucciones explícitas para:
+- Requerir al menos 1 personaje con `role: "antagonist"`
+- Definir "secuencias" como agrupaciones de escenas con un objetivo dramático común
+- Añadir validación post-generación para antagonistas
 
 ```text
-[Wizard Paso 4: Confirmar]
-        ↓
-   Validación de densidad detecta 5 escenas < 25 mínimo
-        ↓
-   Botón "Expandir a 25-35 Escenas" visible
-        ↓
-   Invocar expand-beats-to-scenes (34 beats → 28-35 escenas)
-        ↓
-   outline_json.episode_beats actualizado
-        ↓
-[Wizard Paso 5: GENERAR]
-        ↓
-   narrative-decide planifica 28-35 jobs
-        ↓
-   scene-worker escribe cada escena
-        ↓
-   compileScriptFromScenes genera script final
+## REQUISITOS OBLIGATORIOS DE PERSONAJES
+
+CRÍTICO: El reparto DEBE incluir al menos:
+- 1 personaje con role: "protagonist" 
+- 1 personaje con role: "antagonist" (fuerza opositora principal)
+- 2+ personajes con role: "supporting"
+
+El ANTAGONISTA puede ser:
+- Una persona individual (villano clásico)
+- Una institución/sistema (sociedad, burocracia, prejuicio)
+- Una fuerza interna (adicción, miedo, pasado)
+
+Pero DEBE estar representado por al menos UN personaje concreto.
 ```
 
-## Acción Requerida
+### 2. Añadir Campo "sequences" al Schema
 
-Navega al **Pre-Script Wizard** desde la vista de Script:
+**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
 
-1. **Abre el Wizard** (botón "Preparar Guion" o similar)
-2. **Avanza hasta el paso "Confirmar"** (paso 4)
-3. **Verás el warning de densidad insuficiente** con el botón amarillo
-4. **Haz clic en "Expandir a 25-35 Escenas"**
-5. **Una vez expandido**, el botón "Iniciar Generación" se habilitará
-6. **Ejecuta la generación** para escribir las 28-35 escenas
+Añadir estructura de secuencias al JSON solicitado:
 
-## Resultado Esperado
+```json
+"sequences": [
+  {
+    "name": "Nombre de la secuencia",
+    "act": "I | II | III",
+    "scenes_range": "1-4",
+    "dramatic_goal": "Objetivo emocional de la secuencia",
+    "tone_shift": "Cómo cambia el tono al final"
+  }
+]
+```
 
-- **34 beats** se transformarán en **~30 escenas** con sluglines únicos
-- El script final tendrá **60-80KB** en lugar de 20KB
-- Duración promedio por escena: **2.5-3 minutos** (realista para cine)
-- Los 5 set pieces se distribuirán correctamente en las escenas expandidas
+Las secuencias agrupan 2-5 escenas bajo un mismo objetivo dramático, por ejemplo:
+- "El Despertar de los Reyes" (secuencia de transformación)
+- "La Noche de los Milagros" (secuencia de acción mágica)
+- "El Regreso a la Normalidad" (secuencia de resolución)
+
+### 3. Mejorar la Validación (`softValidate`)
+
+**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
+
+Añadir verificación de antagonista:
+
+```typescript
+// Check antagonist presence
+const chars = outline.main_characters || outline.cast || [];
+const hasAntagonist = chars.some(c => 
+  c.role?.toLowerCase().includes('antag') ||
+  c.role?.toLowerCase().includes('villain')
+);
+
+if (!hasAntagonist) {
+  warnings.push({
+    type: 'characters',
+    message: 'Falta un antagonista explícito - el conflicto puede ser débil',
+    current: 0,
+    required: 1,
+  });
+  score -= 15;
+}
+```
+
+### 4. Actualizar el Outline Existente (Acción Inmediata)
+
+Para el proyecto actual, se puede actualizar el outline sin regenerarlo:
+
+1. Cambiar el `role` de "El Bully Adulto" o "La Mujer Intolerante" a `"antagonist"`
+2. Añadir un array `sequences` basado en los set pieces existentes
+
+Esto se hace con una actualización directa al `outline_json` en la base de datos.
+
+## Resumen de Archivos a Modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `supabase/functions/generate-outline-direct/index.ts` | Mejorar prompt + validación |
+| `supabase/functions/_shared/outline-schemas-film.ts` | Añadir schema para sequences |
 
 ## Notas Técnicas
 
-- La función `expand-beats-to-scenes` ya está deployeada
-- El hook `useSceneDensityValidation` maneja la lógica de UI
-- La validación ocurre automáticamente en el paso "Showrunner" → "Confirmar"
-- Si el proyecto ya tiene escenas en la tabla `scenes`, se reemplazarán con las nuevas
+- El validador de densidad (`density-validator.ts`) ya tiene lógica para detectar antagonistas por keywords en descripciones
+- Los set pieces actuales pueden mapearse a sequences con lógica de agrupación
+- La validación de antagonista debe ser un warning, no un blocker, para no romper flujos existentes
