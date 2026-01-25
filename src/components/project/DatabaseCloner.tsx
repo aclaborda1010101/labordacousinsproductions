@@ -18,7 +18,8 @@ import {
   EyeOff,
   RefreshCw,
   Trash2,
-  PlayCircle
+  PlayCircle,
+  Activity
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -40,6 +41,8 @@ type CloneCheckpoint = {
   currentTable: string | null;
   currentTableOffset: number;
   dataRowsCopied: number;
+  tableCounts?: Record<string, number>;
+  totalRows?: number;
 };
 
 type VerificationResult = { 
@@ -71,6 +74,9 @@ type PreviousJobInfo = {
 
 // Stale threshold: 60 seconds without update
 const STALE_THRESHOLD_MS = 60_000;
+
+// Delay between steps (ms)
+const STEP_DELAY_MS = 500;
 
 const PHASE_LABELS: Record<ClonePhase, string> = {
   idle: 'Esperando...',
@@ -128,7 +134,12 @@ export function DatabaseCloner() {
   const [cleaning, setCleaning] = useState(false);
   const [resuming, setResuming] = useState(false);
   const [verificationResults, setVerificationResults] = useState<VerificationResult[]>([]);
+  const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
+  const [isStepRunning, setIsStepRunning] = useState(false);
+  
   const hasCheckedActiveJob = useRef(false);
+  const isSteppingRef = useRef(false);
+  const abortRef = useRef(false);
 
   // Validate PostgreSQL URL format
   const isValidUrl = useCallback((url: string): boolean => {
@@ -158,6 +169,96 @@ export function DatabaseCloner() {
       }
     }
     return false;
+  }, []);
+
+  // Format time since last update
+  const formatTimeSince = useCallback((timestamp: number): string => {
+    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    if (seconds < 5) return 'ahora mismo';
+    if (seconds < 60) return `hace ${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    return `hace ${minutes}m ${seconds % 60}s`;
+  }, []);
+
+  // The step-based runner - calls step repeatedly until done
+  const runStepLoop = useCallback(async (currentJobId: string) => {
+    if (isSteppingRef.current) {
+      console.log('Step loop already running');
+      return;
+    }
+
+    isSteppingRef.current = true;
+    abortRef.current = false;
+    setIsStepRunning(true);
+
+    try {
+      while (!abortRef.current) {
+        const stepStart = Date.now();
+        
+        const { data, error } = await supabase.functions.invoke('clone-database', {
+          body: { action: 'step', jobId: currentJobId }
+        });
+
+        if (error) {
+          console.error('Step error:', error);
+          // Wait and retry
+          await new Promise(r => setTimeout(r, 2000));
+          continue;
+        }
+
+        setLastUpdateTime(Date.now());
+
+        if (data?.progress) {
+          setProgress(data.progress);
+
+          if (data.progress.verification) {
+            setVerificationResults(data.progress.verification);
+          }
+
+          // Check if done or error
+          if (data.progress.phase === 'done') {
+            setCloning(false);
+            setJobId(null);
+            setPreviousJob(null);
+            const passed = data.progress.verificationPassed;
+            if (passed) {
+              toast.success('¡Base de datos clonada y verificada exitosamente!');
+            } else {
+              toast.warning('Clonación completada con discrepancias. Revisa la verificación.');
+            }
+            break;
+          }
+
+          if (data.progress.phase === 'error') {
+            setCloning(false);
+            setJobId(null);
+            toast.error(data.progress.error || 'Error durante la clonación');
+            break;
+          }
+        }
+
+        // If needsMore is false but not done/error, something is off
+        if (!data?.needsMore && data?.progress?.phase !== 'done' && data?.progress?.phase !== 'error') {
+          console.warn('Step returned needsMore=false but phase is not terminal:', data?.progress?.phase);
+          break;
+        }
+
+        // If still needs more, wait a bit before next step
+        if (data?.needsMore) {
+          const elapsed = Date.now() - stepStart;
+          const waitTime = Math.max(STEP_DELAY_MS - elapsed, 100);
+          await new Promise(r => setTimeout(r, waitTime));
+        } else {
+          break;
+        }
+      }
+    } catch (err) {
+      console.error('Step loop exception:', err);
+      toast.error('Error en el proceso de clonación');
+    } finally {
+      isSteppingRef.current = false;
+      setIsStepRunning(false);
+    }
   }, []);
 
   // Check for active or stale clone jobs on mount
@@ -195,11 +296,14 @@ export function DatabaseCloner() {
                            Date.now() - lastUpdate > STALE_THRESHOLD_MS;
 
             if (recentTask.status === 'running' && !isStale) {
-              // Active job - reconnect
+              // Active job - reconnect and resume stepping
               setJobId(recentTask.id);
               setCloning(true);
               setProgress(cloneProgress);
-              toast.info('Reconectado a clonación en progreso...');
+              setLastUpdateTime(lastUpdate);
+              toast.info('Reconectando a clonación en progreso...');
+              // Start step loop
+              runStepLoop(recentTask.id);
             } else {
               // Stale or failed job - show recovery options
               setPreviousJob({
@@ -219,68 +323,26 @@ export function DatabaseCloner() {
     };
 
     checkActiveCloneJob();
-  }, []);
+  }, [runStepLoop]);
 
-  // Poll for progress
+  // Update the "time since last update" display
   useEffect(() => {
-    if (!cloning || !jobId) return;
+    if (!cloning) return;
+    
+    const interval = setInterval(() => {
+      // Force re-render to update the "hace Xs" display
+      setLastUpdateTime(prev => prev);
+    }, 1000);
 
-    const pollInterval = setInterval(async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('clone-database', {
-          body: { action: 'status', jobId }
-        });
+    return () => clearInterval(interval);
+  }, [cloning]);
 
-        if (error) {
-          console.error('Poll error:', error);
-          return;
-        }
-
-        if (data?.progress) {
-          setProgress(data.progress);
-
-          if (data.progress.verification) {
-            setVerificationResults(data.progress.verification);
-          }
-
-          // Check if job became stale
-          if (data.isStale) {
-            setCloning(false);
-            setPreviousJob({
-              id: jobId,
-              status: 'running',
-              progress: data.progress,
-              checkpoint: data.checkpoint,
-              updated_at: new Date().toISOString(),
-              isStale: true,
-            });
-            toast.warning('La clonación se interrumpió. Puedes reanudarla.');
-            return;
-          }
-
-          if (data.progress.phase === 'done') {
-            setCloning(false);
-            setJobId(null);
-            setPreviousJob(null);
-            const passed = data.progress.verificationPassed;
-            if (passed) {
-              toast.success('¡Base de datos clonada y verificada exitosamente!');
-            } else {
-              toast.warning('Clonación completada con discrepancias. Revisa la verificación.');
-            }
-          } else if (data.progress.phase === 'error') {
-            setCloning(false);
-            setJobId(null);
-            toast.error(data.progress.error || 'Error durante la clonación');
-          }
-        }
-      } catch (err) {
-        console.error('Poll exception:', err);
-      }
-    }, 2000);
-
-    return () => clearInterval(pollInterval);
-  }, [cloning, jobId]);
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      abortRef.current = true;
+    };
+  }, []);
 
   const handleStartClone = async () => {
     if (!isValidUrl(targetUrl)) {
@@ -293,9 +355,10 @@ export function DatabaseCloner() {
       phase: 'connecting',
       current: 0,
       total: 0,
-      currentItem: 'Iniciando conexión...'
+      currentItem: 'Creando job de clonación...'
     });
     setPreviousJob(null);
+    setLastUpdateTime(Date.now());
 
     try {
       const { data, error } = await supabase.functions.invoke('clone-database', {
@@ -310,7 +373,9 @@ export function DatabaseCloner() {
 
       if (data?.jobId) {
         setJobId(data.jobId);
-        toast.info('Clonación iniciada. Esto puede tomar varios minutos...');
+        toast.info('Clonación iniciada. Monitorizando en tiempo real...');
+        // Start the step loop
+        runStepLoop(data.jobId);
       } else if (data?.error) {
         throw new Error(data.error);
       }
@@ -343,7 +408,10 @@ export function DatabaseCloner() {
         setJobId(previousJob.id);
         setCloning(true);
         setPreviousJob(null);
+        setLastUpdateTime(Date.now());
         toast.info(`Reanudando desde ${data.fromTable || data.fromPhase}...`);
+        // Start the step loop
+        runStepLoop(previousJob.id);
       } else if (data?.error) {
         throw new Error(data.error);
       }
@@ -392,7 +460,13 @@ export function DatabaseCloner() {
   };
 
   const handleCancel = async () => {
-    if (!jobId) return;
+    // Stop the step loop
+    abortRef.current = true;
+
+    if (!jobId) {
+      setCloning(false);
+      return;
+    }
 
     try {
       await supabase.functions.invoke('clone-database', {
@@ -595,6 +669,16 @@ export function DatabaseCloner() {
                 {progress.currentItem}
                 {progress.total > 0 && ` (${progress.current.toLocaleString()}/${progress.total.toLocaleString()})`}
               </p>
+            )}
+            {/* Real-time monitoring indicators */}
+            {cloning && (
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Activity className={`w-3 h-3 ${isStepRunning ? 'text-green-500 animate-pulse' : 'text-muted-foreground'}`} />
+                  {isStepRunning ? 'Ejecutando paso...' : 'Esperando...'}
+                </span>
+                <span>Última actualización: {formatTimeSince(lastUpdateTime)}</span>
+              </div>
             )}
           </div>
         )}
