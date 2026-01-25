@@ -1,112 +1,177 @@
 
-# Plan: Regenerar Outline con Densidad Hollywood
+# Plan: Distribución de Setpieces por Protagonista para Películas Ensemble
 
-## Estado Actual del Proyecto
+## Concepto a Implementar
 
-| Campo | Valor Actual |
-|-------|--------------|
-| **Proyecto** | Reyes Magos V3 (`9cbb775e-...`) |
-| **Formato** | Film (90 min) |
-| **Género** | Comedy |
-| **Tono** | Ligero y entretenido |
+En películas corales (ensemble) con múltiples protagonistas (como "Reyes Magos" con Baltasar, Gaspar y Melchor), los setpieces deben distribuirse equitativamente para que **cada protagonista tenga su momento cinematográfico destacado**.
 
-### Outline Actual (`8601c962-...`)
-| Métrica | Actual | Objetivo Hollywood |
-|---------|--------|-------------------|
-| Personajes | 15 | 15 ✓ |
-| Setpieces | 5 | **12** ✗ |
-| Sequences | 6 | **8** ✗ |
-| Locations | 0 | **15** ✗ |
-
-## Parámetros de Regeneración
-
-Para aplicar el perfil **Hollywood** completo:
-
-```json
-{
-  "projectId": "9cbb775e-3f28-4232-8fe2-aaa590dd3081",
-  "densityProfile": "hollywood",
-  "format": "film",
-  "duration": 90,
-  "genre": "comedy",
-  "tone": "Ligero y entretenido",
-  "idea": "[synopsis actual del outline]"
-}
-```
-
-### Objetivos de Densidad Hollywood
-
-| Elemento | Mínimo Requerido |
-|----------|------------------|
-| Personajes | 15 (incluir 1 antagonista) |
-| Localizaciones | 15 |
-| Beats narrativos | 30 |
-| Escenas | 45 |
-| **Setpieces** | **12** |
-| **Sequences** | **8** |
-
-## Implementación
-
-### Paso 1: Llamar a la Edge Function
-
-```typescript
-const response = await supabase.functions.invoke('generate-outline-direct', {
-  body: {
-    projectId: '9cbb775e-3f28-4232-8fe2-aaa590dd3081',
-    idea: `TÍTULO: La Noche que Fuimos Reyes
-    
-    SINOPSIS: En un mundo que los ignora o los juzga, Baltasar, un hombre negro 
-    cansado del racismo; Gaspar, un pelirrojo marcado por el bullying; y Melchor, 
-    un hombre gay atrapado en una vida doble, viven existencias grises y llenas 
-    de injusticia. En la noche de Reyes se transforman en los auténticos Reyes 
-    Magos y usan su poder para impartir justicia poética irónica y social.`,
-    format: 'film',
-    densityProfile: 'hollywood',
-    genre: 'comedy',
-    tone: 'Ligero y entretenido',
-    duration: 90
-  }
-});
-```
-
-### Paso 2: El sistema aplicará automáticamente
-
-1. **Prompt mejorado** con requisitos explícitos:
-   - "Genera exactamente 12 SETPIECES espectaculares"
-   - "Genera exactamente 8 SEQUENCES con dramatic_goal"
-   - "Incluye 1 personaje con role='antagonist'"
-   - "Define 15 LOCATIONS con INT/EXT"
-
-2. **Validación post-generación** (`softValidate`):
-   - Verificar setpieces >= 12
-   - Verificar sequences >= 8
-   - Verificar antagonist presente
-   - Penalizar score si faltan elementos
-
-### Paso 3: Marcar outline anterior como obsoleto
-
-El nuevo outline reemplazará al actual, marcando `8601c962-...` como `status: 'obsolete'`.
-
-## Resultado Esperado
-
-El nuevo outline contendrá:
-
+### Regla de Oro
 ```text
-✓ 15 personajes (incluyendo 1 antagonista: "Inspector Fernández")
-✓ 15 localizaciones únicas con INT/EXT
-✓ 12 setpieces distribuidos en 3 actos
-✓ 8 sequences con dramatic_goal y tone_shift
-✓ 30 beats narrativos detallados
+Si hay N protagonistas y M setpieces:
+→ Cada protagonista debe liderar al menos ⌊M/N⌋ setpieces
+→ Setpieces compartidos cuentan para ambos
+
+Ejemplo: 3 protagonistas + 12 setpieces = 4 setpieces/protagonista mínimo
 ```
-
-## Acción Requerida
-
-Para ejecutar la regeneración, cambia a **modo normal** (aprueba este plan) y te ayudaré a:
-
-1. Invocar `generate-outline-direct` con los parámetros correctos
-2. Monitorear el progreso en tiempo real
-3. Validar que el nuevo outline cumpla todos los requisitos
 
 ---
 
-**Nota técnica**: La Edge Function `generate-outline-direct` ya fue actualizada con los perfiles de densidad mejorados. Solo necesita ser invocada con `densityProfile: 'hollywood'`.
+## Cambios Técnicos
+
+### 1. Actualizar Schema del Setpiece
+
+**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
+
+Modificar la estructura JSON del setpiece para incluir el protagonista que lo lidera:
+
+```json
+"setpieces": [
+  {
+    "name": "Nombre del setpiece",
+    "act": "I | II | III",
+    "protagonist_focus": "Nombre del protagonista que lidera este momento",
+    "featured_characters": ["Nombre1", "Nombre2"],
+    "description": "Descripción visual (50-100 palabras)",
+    "stakes": "Qué está en juego"
+  }
+]
+```
+
+### 2. Añadir Instrucciones Específicas para Ensemble
+
+En la sección del prompt (después de línea ~263), añadir reglas explícitas:
+
+```text
+### DISTRIBUCIÓN DE SETPIECES PARA PELÍCULAS CORAL/ENSEMBLE
+
+CRÍTICO para películas con múltiples protagonistas:
+- Contar cuántos personajes tienen role="protagonist"
+- Distribuir los setpieces EQUITATIVAMENTE entre ellos
+- Cada protagonista DEBE liderar al menos ${Math.ceil(minSetpieces / protagonistCount)} setpieces
+- El campo "protagonist_focus" indica quién PROTAGONIZA ese momento
+- "featured_characters" lista todos los personajes presentes
+
+Ejemplo para 3 protagonistas (Baltasar, Gaspar, Melchor) con 12 setpieces:
+- Baltasar lidera: 4 setpieces (setpieces 1, 4, 7, 10)
+- Gaspar lidera: 4 setpieces (setpieces 2, 5, 8, 11)
+- Melchor lidera: 4 setpieces (setpieces 3, 6, 9, 12)
+```
+
+### 3. Añadir Validación de Distribución
+
+En la función `softValidate()`, añadir una verificación:
+
+```typescript
+// Check setpiece distribution for ensemble films
+const protagonists = chars.filter((c: any) => 
+  (c.role || '').toLowerCase() === 'protagonist'
+);
+
+if (protagonists.length > 1 && setpieces.length > 0) {
+  const minPerProtagonist = Math.floor(setpieces.length / protagonists.length);
+  
+  // Count setpieces per protagonist
+  const setpiecesByProtag: Record<string, number> = {};
+  protagonists.forEach((p: any) => setpiecesByProtag[p.name] = 0);
+  
+  setpieces.forEach((sp: any) => {
+    const focus = sp.protagonist_focus;
+    if (focus && setpiecesByProtag.hasOwnProperty(focus)) {
+      setpiecesByProtag[focus]++;
+    }
+  });
+  
+  // Warn if any protagonist has fewer than minimum
+  for (const [name, count] of Object.entries(setpiecesByProtag)) {
+    if (count < minPerProtagonist) {
+      warnings.push({
+        type: 'structure',
+        message: `${name} solo tiene ${count} setpieces, debería tener mínimo ${minPerProtagonist}`,
+        current: count,
+        required: minPerProtagonist,
+      });
+      score -= 5;
+    }
+  }
+}
+```
+
+### 4. Actualizar Frontend (DensityProfileSelector)
+
+Añadir indicación visual de la distribución en películas ensemble:
+
+```typescript
+// En el tooltip o descripción del perfil Hollywood:
+"12 setpieces (4 por protagonista en películas coral)"
+```
+
+---
+
+## Flujo de Generación Actualizado
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  1. Usuario selecciona perfil "Hollywood"                   │
+│     → 12 setpieces, 15 locations, 8 sequences               │
+├─────────────────────────────────────────────────────────────┤
+│  2. Sistema detecta múltiples protagonistas (3)             │
+│     → Calcula: 12/3 = 4 setpieces por protagonista          │
+├─────────────────────────────────────────────────────────────┤
+│  3. Prompt incluye instrucciones de distribución            │
+│     "Baltasar debe liderar 4 setpieces..."                  │
+│     "Gaspar debe liderar 4 setpieces..."                    │
+│     "Melchor debe liderar 4 setpieces..."                   │
+├─────────────────────────────────────────────────────────────┤
+│  4. Validación post-generación                              │
+│     ✓ Total setpieces >= 12                                 │
+│     ✓ Cada protagonista tiene >= 4                          │
+│     ⚠ Warning si distribución desbalanceada                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Archivos a Modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `supabase/functions/generate-outline-direct/index.ts` | Schema, prompt, validación |
+| `src/components/project/DensityProfileSelector.tsx` | Descripción visual opcional |
+
+## Resultado Esperado
+
+El próximo outline generado incluirá:
+
+```json
+{
+  "setpieces": [
+    {
+      "name": "La Transformación de Baltasar",
+      "act": "I",
+      "protagonist_focus": "Baltasar",
+      "featured_characters": ["Baltasar", "Amara"],
+      "description": "En el almacén vacío, Baltasar siente por primera vez el poder...",
+      "stakes": "Su identidad como Rey Mago despierta"
+    },
+    {
+      "name": "El Desafío del Pelirrojo",
+      "act": "I", 
+      "protagonist_focus": "Gaspar",
+      "featured_characters": ["Gaspar", "Miguel"],
+      "description": "En el bar, Gaspar enfrenta a los matones que lo humillaron...",
+      "stakes": "Recuperar su dignidad después de años de bullying"
+    }
+    // ... 10 setpieces más distribuidos
+  ]
+}
+```
+
+---
+
+## Beneficios
+
+1. **Arcos Balanceados**: Cada protagonista tiene su momento de gloria
+2. **Producción Clara**: El equipo sabe qué personaje lidera cada escena grande
+3. **Validación Automática**: El sistema advierte si la distribución está desbalanceada
+4. **Escalable**: Funciona para 2, 3, 4 o más protagonistas
+
