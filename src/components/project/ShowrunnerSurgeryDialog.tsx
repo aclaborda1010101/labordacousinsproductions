@@ -534,7 +534,7 @@ export function ShowrunnerSurgeryDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 min-h-0 pr-4">
+        <ScrollArea className="flex-1 min-h-0 max-h-[calc(90vh-200px)] pr-4">
           {step === 'config' && (
             <div className="space-y-6">
               {/* Rules */}
