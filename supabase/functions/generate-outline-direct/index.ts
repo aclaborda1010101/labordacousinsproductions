@@ -32,6 +32,8 @@ interface DensityProfile {
   min_locations: number;
   min_beats: number;
   min_scenes: number;
+  min_setpieces: number;
+  min_sequences: number;
 }
 
 const DENSITY_PROFILES: Record<string, DensityProfile> = {
@@ -42,6 +44,8 @@ const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_locations: 6,
     min_beats: 18,
     min_scenes: 25,
+    min_setpieces: 5,
+    min_sequences: 4,
   },
   standard: {
     id: 'standard',
@@ -50,6 +54,8 @@ const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_locations: 10,
     min_beats: 24,
     min_scenes: 35,
+    min_setpieces: 8,
+    min_sequences: 6,
   },
   hollywood: {
     id: 'hollywood',
@@ -58,6 +64,8 @@ const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_locations: 15,
     min_beats: 30,
     min_scenes: 45,
+    min_setpieces: 12,
+    min_sequences: 8,
   },
 };
 
@@ -125,6 +133,8 @@ ${sceneInstruction}
 - Localizaciones: ${profile.min_locations} mínimo
 - Beats narrativos: ${profile.min_beats} mínimo (CON situation_detail.physical_context)
 - Escenas estimadas: ${sceneTarget ? `${sceneTarget.min}-${sceneTarget.max}` : profile.min_scenes} escenas
+- SET PIECES: ${profile.min_setpieces} mínimo (momentos visuales espectaculares)
+- SEQUENCES: ${profile.min_sequences} mínimo (agrupaciones dramáticas de escenas)
 
 ## REQUISITOS OBLIGATORIOS DE PERSONAJES
 
@@ -236,10 +246,27 @@ Genera un JSON con la siguiente estructura:
     {
       "name": "Nombre del setpiece",
       "act": "I | II | III",
-      "description": "Descripción visual de la escena espectacular"
+      "description": "Descripción visual de la escena espectacular (50-100 palabras)",
+      "stakes": "Qué está en juego en este momento"
     }
   ]
 }
+
+## REQUISITOS DE SETPIECES Y SEQUENCES (CRÍTICO)
+
+### SETPIECES (Momentos Visuales de Alto Impacto)
+- OBLIGATORIO: Mínimo ${profile.min_setpieces} setpieces
+- Cada setpiece es un momento ESPECTACULAR que define la película visualmente
+- Distribuir equitativamente entre los 3 actos (Acto II debe tener más)
+- Cada uno DEBE incluir: name, act, description (50+ palabras), stakes
+- Ejemplos: persecuciones, confrontaciones, revelaciones dramáticas, momentos mágicos
+- NO pueden ser escenas genéricas - deben ser los PICOS visuales y emocionales
+
+### SEQUENCES (Agrupaciones Dramáticas)
+- OBLIGATORIO: Mínimo ${profile.min_sequences} secuencias
+- Cada secuencia agrupa 2-5 escenas bajo UN objetivo dramático común
+- Ejemplos: "La Transformación", "La Noche de Milagros", "El Enfrentamiento Final"
+- Cada secuencia tiene un tono_shift que indica cómo cambia el estado emocional
 
 ## INSTRUCCIONES CRÍTICAS
 
@@ -249,8 +276,8 @@ Genera un JSON con la siguiente estructura:
 4. Las localizaciones deben ser variadas y visuales
 5. El midpoint_reversal debe ser un giro real que cambie la dirección
 6. El all_is_lost_moment debe ser el punto más bajo del protagonista
-7. Los setpieces deben ser momentos visuales memorables
-8. Incluye al menos 4-6 sequences que agrupen los beats en unidades dramáticas
+7. CRÍTICO: Los setpieces (${profile.min_setpieces} mínimo) deben ser momentos CINEMATOGRÁFICOS únicos
+8. CRÍTICO: Las sequences (${profile.min_sequences} mínimo) deben agrupar los beats en unidades dramáticas claras
 
 RESPONDE ÚNICAMENTE CON EL JSON. Sin markdown, sin explicaciones.
 `.trim();
@@ -330,14 +357,26 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
     score -= 20;
   }
 
-  // Check sequences (new field)
-  const sequences = outline.sequences || [];
-  if (sequences.length < 4) {
+  // Check setpieces count
+  const setpieces = outline.setpieces || [];
+  if (setpieces.length < profile.min_setpieces) {
     warnings.push({
       type: 'structure',
-      message: `Tienes ${sequences.length} secuencias, se recomiendan mínimo 4 para agrupar los beats`,
+      message: `Tienes ${setpieces.length} setpieces, el perfil ${profile.label} requiere mínimo ${profile.min_setpieces}`,
+      current: setpieces.length,
+      required: profile.min_setpieces,
+    });
+    score -= 15;
+  }
+
+  // Check sequences count
+  const sequences = outline.sequences || [];
+  if (sequences.length < profile.min_sequences) {
+    warnings.push({
+      type: 'structure',
+      message: `Tienes ${sequences.length} secuencias, el perfil ${profile.label} requiere mínimo ${profile.min_sequences}`,
       current: sequences.length,
-      required: 4,
+      required: profile.min_sequences,
     });
     score -= 10;
   }
