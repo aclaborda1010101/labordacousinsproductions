@@ -112,6 +112,14 @@ function extractScenesFromIdea(idea: string, episodeNo: number): ExtractedScene[
   return scenes;
 }
 
+// Extract location name from slugline like "INT. CASA DE BALTASAR (SALÓN) - DÍA"
+function extractLocationFromSlugline(slugline: string): string {
+  if (!slugline) return '';
+  // Remove INT./EXT. prefix and time suffix
+  const match = slugline.match(/(?:INT\.|EXT\.|INT\/EXT\.)\s*(.+?)\s*(?:-\s*(?:DÍA|NOCHE|DAWN|DUSK|DAY|NIGHT))?$/i);
+  return match ? match[1].trim() : slugline;
+}
+
 // Extract scenes from outline's episode_beats
 function extractScenesFromEpisodeBeats(episodeBeats: any[]): ExtractedScene[] {
   const scenes: ExtractedScene[] = [];
@@ -120,25 +128,35 @@ function extractScenesFromEpisodeBeats(episodeBeats: any[]): ExtractedScene[] {
   for (const ep of episodeBeats) {
     const episodeNo = ep.episode || 1;
     
-    // If episode has scenes array
+    // If episode has scenes array (from expand-beats-to-scenes)
     if (Array.isArray(ep.scenes)) {
+      console.log(`[materialize-scenes] Found ${ep.scenes.length} scenes in episode ${episodeNo}`);
+      
       for (let i = 0; i < ep.scenes.length; i++) {
         const sc = ep.scenes[i];
+        
+        // Support both old and new formats
+        const slugline = sc.slugline || `ESCENA ${i + 1}`;
+        const timeOfDay = sc.time_of_day || parseTimeOfDay(slugline);
+        
         scenes.push({
-          scene_no: globalSceneNo++,
+          scene_no: sc.scene_number || globalSceneNo++,
           episode_no: episodeNo,
-          slugline: sc.slugline || `ESCENA ${i + 1}`,
+          slugline,
           summary: sc.summary || sc.description || '',
-          time_of_day: sc.time_of_day || 'DAY',
+          time_of_day: timeOfDay,
           mood: sc.mood || 'neutral',
-          character_names: sc.character_names || sc.characters || [],
-          location_name: sc.location_name || sc.location || '',
+          // Support characters_present (new) and character_names/characters (old)
+          character_names: sc.characters_present || sc.character_names || sc.characters || [],
+          location_name: sc.location_name || sc.location || extractLocationFromSlugline(slugline),
           beats: sc.beats || []
         });
       }
     }
     // If episode has key_beats as scenes
     else if (Array.isArray(ep.key_beats)) {
+      console.log(`[materialize-scenes] Converting ${ep.key_beats.length} key_beats to scenes`);
+      
       for (let i = 0; i < ep.key_beats.length; i++) {
         const beat = ep.key_beats[i];
         // Convert beat to scene
@@ -157,7 +175,9 @@ function extractScenesFromEpisodeBeats(episodeBeats: any[]): ExtractedScene[] {
     }
     // If episode has turning_points, create scenes from them
     else if (Array.isArray(ep.turning_points) && ep.turning_points.length >= 3) {
-      // Create 3 scenes from turning points for this episode
+      console.log(`[materialize-scenes] Converting ${ep.turning_points.length} turning_points to scenes`);
+      
+      // Create scenes from turning points for this episode
       for (let i = 0; i < Math.min(ep.turning_points.length, 4); i++) {
         const tp = ep.turning_points[i];
         scenes.push({
@@ -175,6 +195,7 @@ function extractScenesFromEpisodeBeats(episodeBeats: any[]): ExtractedScene[] {
     }
   }
   
+  console.log(`[materialize-scenes] Total extracted: ${scenes.length} scenes`);
   return scenes;
 }
 
