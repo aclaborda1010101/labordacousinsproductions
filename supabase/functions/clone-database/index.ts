@@ -103,8 +103,18 @@ serve(async (req) => {
     if (action === "status") {
       const job = activeJobs.get(jobId);
       if (!job) {
+        // Cold start occurred - inform user to retry
         return new Response(
-          JSON.stringify({ error: "Job not found", progress: { phase: 'error', error: 'Job not found' } }),
+          JSON.stringify({ 
+            error: "Job not found - la función se reinició", 
+            progress: { 
+              phase: 'error', 
+              current: 0,
+              total: 0,
+              currentItem: '',
+              error: 'Sesión expirada (cold start). Por favor intenta de nuevo.' 
+            } 
+          }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -201,6 +211,21 @@ async function cloneDatabase(jobId: string, targetUrl: string, options: { includ
       throw new Error("SUPABASE_DB_URL not configured");
     }
 
+    // Sanitize target URL - properly encode password with special characters
+    let cleanTargetUrl = targetUrl;
+    try {
+      const url = new URL(targetUrl);
+      if (url.password) {
+        // Decode first (in case partially encoded), then re-encode properly
+        const decodedPassword = decodeURIComponent(url.password);
+        url.password = encodeURIComponent(decodedPassword);
+        cleanTargetUrl = url.toString();
+      }
+    } catch (urlParseErr) {
+      console.warn("URL sanitization warning:", urlParseErr);
+      // Continue with original URL if parsing fails
+    }
+
     // Phase: Connecting
     job.phase = 'connecting';
     job.currentItem = 'Conectando a base de datos origen...';
@@ -209,7 +234,7 @@ async function cloneDatabase(jobId: string, targetUrl: string, options: { includ
     await sourceDb`SELECT 1`; // Test connection
     
     job.currentItem = 'Conectando a base de datos destino...';
-    targetDb = postgres(targetUrl, { max: 1 });
+    targetDb = postgres(cleanTargetUrl, { max: 1 });
     await targetDb`SELECT 1`; // Test connection
 
     if (job.cancelled) return cleanup();
@@ -563,7 +588,22 @@ async function cloneDatabase(jobId: string, targetUrl: string, options: { includ
     console.error("Clone error:", err);
     if (job) {
       job.phase = 'error';
-      job.error = err.message || 'Error durante la clonación';
+      
+      // Provide clearer error messages for common issues
+      let errorMessage = err.message || 'Error durante la clonación';
+      
+      if (err.code === '28P01') {
+        errorMessage = "Error de autenticación: verifica que la contraseña sea correcta. " +
+          "Si contiene caracteres especiales (!, @, #, etc.), intenta cambiarla por una más simple.";
+      } else if (err.code === '28000') {
+        errorMessage = "Conexión rechazada: verifica que la URL sea correcta y el servidor acepte conexiones.";
+      } else if (err.code === 'ENOTFOUND' || err.message?.includes('getaddrinfo')) {
+        errorMessage = "No se pudo resolver el host. Verifica que la URL del servidor sea correcta.";
+      } else if (err.code === 'ECONNREFUSED') {
+        errorMessage = "Conexión rechazada. Verifica que el servidor esté activo y acepte conexiones externas.";
+      }
+      
+      job.error = errorMessage;
       job.currentItem = '';
     }
   } finally {
