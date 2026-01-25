@@ -1,235 +1,141 @@
 
-# Plan: Sistema de Reanudación Automática para Clonación
+## Qué está pasando (diagnóstico real del “atasco”)
 
-## Diagnóstico del Problema
+Lo que ves como “atascado en `Copiando: storyboard_panels (48/48) (707/2431)`” en realidad no significa que `storyboard_panels` falle:
 
-El job de clonación está en estado "zombie":
-- **Job ID:** `9fbd7ae5...`
-- **Estado actual:** `running` pero sin actualizaciones en 3+ minutos
-- **Fase:** `data` - 29% completado (707/2430 registros)
-- **Última tabla:** `storyboard_panels`
+- En tu base actual, `storyboard_panels` tiene **48 filas** (y el clonador llega a **48/48**, o sea, termina esa tabla).
+- El `707/2431` es el **progreso total (todas las tablas sumadas)**, no solo storyboard.
+- El job queda con `status=running`, pero **deja de actualizarse** (stale). Eso indica que el proceso backend **se corta por límite de ejecución** antes de seguir con las siguientes tablas (las que vienen después: `generation_runs`, `generation_blocks`, `generation_logs`, etc.).
 
-La Edge Function tiene un límite de ejecución (~30-60s) que causa que el proceso termine antes de completar todas las tablas. Aunque el estado se persiste en `background_tasks`, la ejecución no se resume automáticamente.
+Causa raíz técnica:
+- Ahora mismo la clonación se dispara en modo “fire-and-forget” (no bloqueante): `cloneDatabase(...).catch(...)` y la función responde al navegador.
+- En este tipo de runtime, cuando la request termina, **no es confiable que el trabajo siga corriendo**; suele apagarse cerca del límite (30–60s). Por eso “siempre muere” alrededor del mismo punto.
 
-## Solución: Sistema de Resume con Checkpoint
+## Objetivo
 
-### Cambio 1: Agregar campos de checkpoint al estado del job
+Que podamos “hacerlo otra vez y monitorizar en tiempo real”, pero de forma robusta:
+- La clonación avanzará en **pasos cortos** (step-based).
+- Cada paso dura poco y **siempre termina dentro del tiempo permitido**.
+- La UI dispara el siguiente paso automáticamente mientras estés en la pantalla (monitor en vivo).
+- Si se interrumpe, al volver puedes reanudar sin perder progreso.
 
-Guardar exactamente dónde quedó la clonación para poder reanudar:
+---
 
-```typescript
-// Nuevo tipo de checkpoint
-type CloneCheckpoint = {
-  lastCompletedTable: string | null;  // Última tabla completamente copiada
-  currentTable: string | null;        // Tabla en proceso
-  currentTableOffset: number;         // Offset dentro de la tabla actual
-  completedTables: string[];          // Lista de tablas ya terminadas
-};
+## Solución propuesta (cambio de arquitectura): clonación por “steps” con runner en el frontend
 
-// El metadata ahora incluye checkpoint
-metadata: {
-  clone: {
-    progress: JobState,
-    checkpoint: CloneCheckpoint,
-    options: { includeData, includeStorage },
-    targetUrl: string  // Necesario para resume
-  }
-}
-```
+### 1) Backend: convertir `clone-database` en un motor “step-based”
+**Archivo:** `supabase/functions/clone-database/index.ts`
 
-### Cambio 2: Nueva acción `resume` en la Edge Function
+#### 1.1. Nuevo action: `step`
+- `step` hace “un tramo” de clonación (por ejemplo, 10–20 segundos de trabajo máximo), persiste checkpoint y devuelve respuesta.
+- La UI lo llamará repetidamente hasta terminar.
 
-```typescript
-// Handler para action === 'resume'
-if (action === "resume") {
-  const task = await readCloneTask(jobId);
-  
-  // Verificar que el job esté estancado (sin actualización en 60s)
-  const lastUpdate = new Date(task.updated_at).getTime();
-  const isStale = Date.now() - lastUpdate > 60_000;
-  
-  if (!isStale && task.status === 'running') {
-    return { error: "Job still active, wait a moment" };
-  }
-  
-  // Extraer checkpoint y targetUrl del metadata
-  const checkpoint = task.metadata?.clone?.checkpoint;
-  const savedTargetUrl = task.metadata?.clone?.targetUrl;
-  
-  // Reiniciar la clonación desde el checkpoint
-  cloneDatabase(jobId, userId, savedTargetUrl, options, checkpoint);
-  
-  return { resumed: true, fromTable: checkpoint?.currentTable };
-}
-```
+**Idea clave:** dentro de todos los bucles (fases, tablas, chunks, filas) añadiremos un control de tiempo:
+- `deadline = Date.now() + TIME_BUDGET_MS`
+- Si `Date.now() > deadline`: persistir estado y **salir limpiamente** devolviendo `{ ok:true, progress, checkpoint, needsMore:true }`.
 
-### Cambio 3: Modificar `cloneDatabase` para aceptar checkpoint
+#### 1.2. `start` y `resume` dejan de lanzar clonación en “background”
+- `start` solo crea el job (y guarda targetUrl/options/checkpoint como hoy).
+- `resume` solo valida, marca `status=running` si hace falta, y devuelve OK.
+- El avance real lo hace `step`.
 
-La función ahora puede empezar desde un punto intermedio:
+Esto elimina el comportamiento actual que depende de que el runtime “deje vivir” tareas después de responder.
 
-```typescript
-async function cloneDatabase(
-  jobId: string,
-  userId: string,
-  targetUrl: string,
-  options: { includeData?: boolean },
-  checkpoint?: CloneCheckpoint  // NUEVO
-) {
-  // Si hay checkpoint, saltar las fases/tablas ya completadas
-  if (checkpoint) {
-    // Saltarse enums si ya se completaron
-    if (checkpoint.completedPhases?.includes('enums')) {
-      job.phase = 'schema';
-    }
-    // Durante la fase de datos, empezar desde lastCompletedTable
-  }
-  
-  // En el loop de datos:
-  for (const tableName of TABLES_ORDER) {
-    // Saltar tablas ya completadas
-    if (checkpoint?.completedTables?.includes(tableName)) {
-      continue;
-    }
-    
-    // Si es la tabla actual, empezar desde offset guardado
-    let startOffset = 0;
-    if (checkpoint?.currentTable === tableName) {
-      startOffset = checkpoint.currentTableOffset;
-    }
-    
-    // ... copiar datos desde startOffset
-  }
-}
-```
+#### 1.3. Optimización importante: no recalcular conteos cada vez
+Hoy, cada arranque entra a “Data” y hace `COUNT(*)` de muchas tablas. Eso consume segundos valiosos.
+- En el primer `step` que entra a fase `data`, calculamos y guardamos `tableCounts` (y `totalRows`) en metadata.
+- En steps siguientes reutilizamos esos conteos.
 
-### Cambio 4: Guardar targetUrl encriptada en metadata
+(Esto mejora mucho la consistencia y hace que los steps rindan).
 
-Para poder reanudar, necesitamos acceso a la URL destino:
+#### 1.4. Ajuste de UI/estado para evitar “parece que se quedó ahí”
+Actualmente al terminar una tabla haces `persist(true)` pero no cambias `job.currentItem`, entonces queda “pegado” al último texto aunque ya pasó.
+- Al completar una tabla, actualizar `job.currentItem = 'Tabla completada: X, continuando...'` antes de persistir.
+- Al iniciar la siguiente tabla, actualizar a `Copiando: next_table (0/N)`.
 
-```typescript
-// Al iniciar el job
-const { error: insertError } = await supabaseAdmin.from("background_tasks").insert({
-  id: newJobId,
-  metadata: { 
-    clone: { 
-      progress: initialJob, 
-      options,
-      // Guardar URL (ya sanitizada) para resume
-      targetUrl: cleanTargetUrl,
-      checkpoint: { completedTables: [], currentTable: null, currentTableOffset: 0 }
-    } 
-  },
-});
-```
+#### 1.5. Seguridad: NO clonar `background_tasks` (y sanitizar targetUrl al final)
+Ahora mismo `TABLES_ORDER` incluye `background_tasks`. Eso es peligroso porque:
+- `background_tasks.metadata.clone.targetUrl` contiene una connection string con contraseña.
+- Si clonas `background_tasks`, estarías copiando esa URL sensible al proyecto destino.
 
-### Cambio 5: Actualizar `DatabaseCloner.tsx` para detectar y resumir
+Acciones:
+- Excluir `background_tasks` del copiado de datos y de verificación (y opcionalmente también de RLS enable).
+- Al finalizar el job (`done`), borrar o nullear `metadata.clone.targetUrl` del job para no dejar la URL guardada más tiempo del necesario.
 
-```typescript
-// Nuevo: detectar jobs estancados
-const isJobStale = (updatedAt: string) => {
-  return Date.now() - new Date(updatedAt).getTime() > 60_000; // 60s sin update
-};
+---
 
-// En el useEffect de reconexión
-if (recentTask.status === 'running') {
-  const isStale = isJobStale(recentTask.updated_at);
-  
-  if (isStale) {
-    // Job zombie detectado - ofrecer resume
-    setPreviousJob({
-      ...recentTask,
-      isStale: true,  // NUEVO flag
-    });
-    toast.warning('Clonación interrumpida detectada');
-  } else {
-    // Job activo - reconectar normalmente
-    setJobId(recentTask.id);
-    setCloning(true);
-  }
-}
+### 2) Frontend: “Monitor en tiempo real” llamando `step` en bucle controlado
+**Archivo:** `src/components/project/DatabaseCloner.tsx`
 
-// Nuevo botón "Reanudar"
-const handleResume = async () => {
-  setCloning(true);
-  const { data } = await supabase.functions.invoke('clone-database', {
-    body: { action: 'resume', jobId: previousJob.id }
-  });
-  
-  if (data?.resumed) {
-    setJobId(previousJob.id);
-    toast.info(`Reanudando desde ${data.fromTable}...`);
-  }
-};
-```
+#### 2.1. Reemplazar el polling pasivo por un “runner” activo
+Ahora:
+- La UI hace `status` cada 2s y espera que el backend avance solo.
 
-### Cambio 6: UI para job estancado
+Nuevo:
+- La UI ejecuta un bucle secuencial:
+  1) llama `step`
+  2) actualiza `progress`
+  3) si `needsMore`, espera un pequeño delay (p.ej. 300–800ms) y repite
+  4) si `done/error/cancelled`, termina
 
-Agregar estado visual diferente para jobs zombies:
+Importante: que sea **secuencial**, no setInterval, para no solapar requests.
+- Usar `useRef` tipo `isSteppingRef` para evitar doble ejecución.
+- Parar el runner al desmontar el componente o al “Cancelar”.
 
-```tsx
-{previousJob?.isStale && (
-  <Alert className="border-orange-500 bg-orange-50">
-    <AlertTriangle className="h-4 w-4 text-orange-600" />
-    <AlertDescription>
-      <p><strong>Clonación interrumpida:</strong> El proceso se detuvo en la fase {previousJob.progress.phase}</p>
-      <p className="text-xs">Progreso: {previousJob.progress.current}/{previousJob.progress.total} - {previousJob.progress.currentItem}</p>
-      <div className="flex gap-2 mt-2">
-        <Button size="sm" onClick={handleResume}>
-          <RotateCcw className="w-3 h-3 mr-1" />
-          Reanudar desde aquí
-        </Button>
-        <Button size="sm" variant="destructive" onClick={handleCleanAndRetry}>
-          <Trash2 className="w-3 h-3 mr-1" />
-          Empezar de cero
-        </Button>
-      </div>
-    </AlertDescription>
-  </Alert>
-)}
-```
+#### 2.2. Botón “Reanudar” = arrancar runner con el job existente
+- Para el job que hoy queda “stale”, “Reanudar” simplemente vuelve a empezar el runner (`step` loop) con ese `jobId`.
 
-## Archivos a Modificar
+#### 2.3. Señales claras de vida
+Añadir al panel de progreso:
+- “Última actualización: hace X segundos”
+- “Paso actual: ejecutando…” mientras `step` está in-flight
+- Si no hay updates pero runner está activo, mostrar “reintentando” y continuar.
 
-| Archivo | Cambios |
-|---------|---------|
-| `supabase/functions/clone-database/index.ts` | Nueva acción `resume`, checkpoint en metadata, lógica de skip para tablas completadas |
-| `src/components/project/DatabaseCloner.tsx` | Detección de jobs estancados, botón "Reanudar", UI para estado zombie |
+Esto es lo que permite “monitorizar en tiempo real” como pides.
 
-## Flujo Completo de Resume
+---
 
-```text
-1. Usuario inicia clonación
-         ↓
-2. Edge Function empieza, guarda checkpoint cada 300ms
-         ↓
-3. Cold start/timeout interrumpe el proceso
-         ↓
-4. Usuario vuelve a la pantalla de clonación
-         ↓
-5. useEffect detecta job "running" sin update en 60s
-         ↓
-6. UI muestra: "Clonación interrumpida en tabla X"
-         ↓
-7. Usuario hace clic en "Reanudar"
-         ↓
-8. Edge Function lee checkpoint, salta tablas completadas
-         ↓
-9. Continúa desde donde quedó
-         ↓
-10. Si hay otro timeout, repetir desde paso 4
-```
+## Validación (cómo comprobaremos que ya no se atasca en storyboard_panels)
 
-## Manejo del Job Zombie Actual
+1) Con el job actual que quedó en storyboard_panels:
+- Abrir Project Settings → Backup/Migración → Clonador.
+- Dar “Reanudar desde aquí”.
+- Verás que pasa a `generation_runs`, `generation_blocks`, `generation_logs` y sigue sumando el total.
 
-Para el job actual (`9fbd7ae5...`), después de implementar esto:
+2) Con una clonación nueva:
+- “Limpiar y empezar de cero”
+- “Iniciar clonación”
+- Confirmar que llega a `done` y muestra verificación.
 
-1. El sistema detectará que está estancado
-2. Mostrará opción de "Reanudar" o "Limpiar y empezar de cero"
-3. Si el usuario elige "Reanudar", continuará desde `storyboard_panels`
-4. Si elige "Limpiar", borrará el destino y empezará fresh
+---
 
-## Consideraciones de Seguridad
+## Archivos a modificar
 
-- La `targetUrl` se guarda en `metadata` que solo el usuario propietario puede leer (RLS)
-- La URL ya está sanitizada antes de guardarse
-- El `resume` verifica que el `user_id` del job coincida con el usuario autenticado
+1) `supabase/functions/clone-database/index.ts`
+- Agregar `action: 'step'`
+- Quitar ejecución no-bloqueante en `start`/`resume` (no depender de background)
+- Añadir time budget + cortes limpios en loops
+- Persistir `tableCounts/totalRows` una vez
+- Mejorar `currentItem` al finalizar tablas
+- Excluir `background_tasks` y limpiar `targetUrl` al finalizar
+
+2) `src/components/project/DatabaseCloner.tsx`
+- Implementar runner secuencial basado en `step`
+- Ajustar “Reanudar” para usar runner
+- Mejorar señales de estado (última actualización / ejecutando paso)
+
+---
+
+## Riesgos y mitigaciones
+
+- Si cierras la pestaña, el runner se detiene: al volver, “Reanudar” continúa desde checkpoint.
+- Si el destino tiene latencia alta, el step puede copiar menos por ciclo: igual avanza (solo tarda más).
+- Si algún insert falla por dato raro, hoy ya se “loggea y sigue”. Mantendremos ese comportamiento, pero mejoraremos el reporte final en verificación.
+
+---
+
+## Resultado esperado
+
+- Ya no se quedará “para siempre” en storyboard_panels: avanzará tabla por tabla hasta completar.
+- Tendrás un modo real de “monitorización en tiempo real” porque el frontend empuja cada paso y recibe respuesta.
+- La reanudación será confiable y sin depender de ejecuciones largas en el backend.
