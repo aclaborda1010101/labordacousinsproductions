@@ -1,27 +1,46 @@
-# Plan de Implementación - COMPLETADO ✅
 
-## Cambios Aplicados
+# Plan: Corregir Scroll en Ventana de Cirugia
 
-### 1. ✅ Corregido DialogFooter y DialogHeader (Warning forwardRef)
-**Archivo**: `src/components/ui/dialog.tsx`
-- Actualizado `DialogHeader` y `DialogFooter` para usar `React.forwardRef`
+## Problema Identificado
 
-### 2. ✅ Corregido RLS en generation_run_logs (Error INSERT)
-**Migración aplicada**:
-```sql
-CREATE POLICY "Users can insert their own run logs"
-ON public.generation_run_logs
-FOR INSERT
-TO authenticated
-WITH CHECK (auth.uid() = user_id);
+El componente `ScrollArea` en `ShowrunnerSurgeryDialog.tsx` no permite hacer scroll porque:
+
+1. El `DialogContent` tiene `overflow-hidden` que corta el contenido
+2. El `ScrollArea` usa `flex-1` pero le falta `min-h-0` para permitir que se encoja por debajo del tamano de su contenido (requerido en flexbox)
+3. El viewport interno del ScrollArea necesita una altura definida para calcular el scroll
+
+## Solucion
+
+### Archivo: `src/components/project/ShowrunnerSurgeryDialog.tsx`
+
+**Cambio en linea 526** - Agregar `min-h-0` al DialogContent para permitir que los hijos flex se encojan:
+
+```tsx
+// Antes:
+<DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+
+// Despues:
+<DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col min-h-0">
 ```
 
-### 3. ✅ Mejorada detección de bloques pendientes
-**Archivos modificados**:
-- `src/components/project/ShowrunnerSurgeryDialog.tsx`: Ahora consulta directamente la BD al abrir el diálogo
-- `src/hooks/useHasPendingSurgery.ts`: Nuevo hook para detectar cirugías pendientes
+**Cambio en linea 537** - Agregar `min-h-0` y altura maxima al ScrollArea:
 
-**Mejoras**:
-- Consulta directa a `generation_blocks` más rápida y confiable
-- Muestra toast prominente cuando hay cambios pendientes
-- Navega automáticamente al paso `preview` con los resultados
+```tsx
+// Antes:
+<ScrollArea className="flex-1 pr-4">
+
+// Despues:
+<ScrollArea className="flex-1 min-h-0 pr-4">
+```
+
+## Explicacion Tecnica
+
+En CSS Flexbox, los elementos hijos tienen `min-height: auto` por defecto, lo que significa que no pueden encogerse por debajo del tamano de su contenido. Agregar `min-h-0` (`min-height: 0`) permite que el ScrollArea se encoja al tamano disponible del contenedor y active su scroll interno.
+
+El `overflow-hidden` en DialogContent esta bien porque evita scroll doble, pero necesitamos que el ScrollArea hijo tenga `min-h-0` para que respete la altura maxima del padre.
+
+## Resultado Esperado
+
+- El dialogo de Cirugia de Showrunner mostrara una barra de scroll vertical
+- El usuario podra hacer scroll para ver todos los cambios propuestos (5 escenas)
+- Los botones "Rechazar cambios" y "Aplicar cirugia" permaneceran fijos en la parte inferior
