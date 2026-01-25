@@ -1,177 +1,146 @@
 
-# Plan: Distribución de Setpieces por Protagonista para Películas Ensemble
+# Plan: Conectar Expansión de Beats con Materialización de Escenas
 
-## Concepto a Implementar
+## Diagnóstico
 
-En películas corales (ensemble) con múltiples protagonistas (como "Reyes Magos" con Baltasar, Gaspar y Melchor), los setpieces deben distribuirse equitativamente para que **cada protagonista tenga su momento cinematográfico destacado**.
+El flujo actual tiene una desconexión:
 
-### Regla de Oro
 ```text
-Si hay N protagonistas y M setpieces:
-→ Cada protagonista debe liderar al menos ⌊M/N⌋ setpieces
-→ Setpieces compartidos cuentan para ambos
-
-Ejemplo: 3 protagonistas + 12 setpieces = 4 setpieces/protagonista mínimo
+┌─────────────────────────────────────────────────────────────────────┐
+│  FLUJO ACTUAL (ROTO)                                                │
+├─────────────────────────────────────────────────────────────────────┤
+│  1. expand-beats-to-scenes                                          │
+│     → Genera 36 escenas en outline_json.episode_beats               │
+│     ✓ FUNCIONA                                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│  2. validateDensity()                                               │
+│     → Re-valida el outline actualizado                              │
+│     ✗ PERO: Busca en tabla `scenes` que tiene 0 registros           │
+├─────────────────────────────────────────────────────────────────────┤
+│  3. materialize-scenes                                              │
+│     → NUNCA SE LLAMA                                                │
+│     ✗ La tabla `scenes` permanece vacía                             │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
----
+## Solución
+
+Modificar el hook `useSceneDensityValidation.ts` para que después de expandir los beats, llame automáticamente a `materialize-scenes`:
+
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│  FLUJO CORREGIDO                                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│  1. expand-beats-to-scenes                                          │
+│     → Genera 36 escenas en outline_json.episode_beats               │
+├─────────────────────────────────────────────────────────────────────┤
+│  2. materialize-scenes (NUEVO)                                      │
+│     → Lee episode_beats[0].scenes                                   │
+│     → Inserta 36 registros en tabla `scenes`                        │
+├─────────────────────────────────────────────────────────────────────┤
+│  3. validateDensity()                                               │
+│     → Ahora encuentra 36 escenas en la tabla                        │
+│     ✓ Validación pasa                                               │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 ## Cambios Técnicos
 
-### 1. Actualizar Schema del Setpiece
+### 1. Actualizar useSceneDensityValidation.ts
 
-**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
-
-Modificar la estructura JSON del setpiece para incluir el protagonista que lo lidera:
-
-```json
-"setpieces": [
-  {
-    "name": "Nombre del setpiece",
-    "act": "I | II | III",
-    "protagonist_focus": "Nombre del protagonista que lidera este momento",
-    "featured_characters": ["Nombre1", "Nombre2"],
-    "description": "Descripción visual (50-100 palabras)",
-    "stakes": "Qué está en juego"
-  }
-]
-```
-
-### 2. Añadir Instrucciones Específicas para Ensemble
-
-En la sección del prompt (después de línea ~263), añadir reglas explícitas:
-
-```text
-### DISTRIBUCIÓN DE SETPIECES PARA PELÍCULAS CORAL/ENSEMBLE
-
-CRÍTICO para películas con múltiples protagonistas:
-- Contar cuántos personajes tienen role="protagonist"
-- Distribuir los setpieces EQUITATIVAMENTE entre ellos
-- Cada protagonista DEBE liderar al menos ${Math.ceil(minSetpieces / protagonistCount)} setpieces
-- El campo "protagonist_focus" indica quién PROTAGONIZA ese momento
-- "featured_characters" lista todos los personajes presentes
-
-Ejemplo para 3 protagonistas (Baltasar, Gaspar, Melchor) con 12 setpieces:
-- Baltasar lidera: 4 setpieces (setpieces 1, 4, 7, 10)
-- Gaspar lidera: 4 setpieces (setpieces 2, 5, 8, 11)
-- Melchor lidera: 4 setpieces (setpieces 3, 6, 9, 12)
-```
-
-### 3. Añadir Validación de Distribución
-
-En la función `softValidate()`, añadir una verificación:
+Modificar la función `expandBeatsToScenes` para encadenar la llamada a `materialize-scenes`:
 
 ```typescript
-// Check setpiece distribution for ensemble films
-const protagonists = chars.filter((c: any) => 
-  (c.role || '').toLowerCase() === 'protagonist'
-);
+const expandBeatsToScenes = useCallback(async (
+  projectId: string,
+  durationMin: number,
+  densityProfile: string = 'standard'
+): Promise<{ success: boolean; scenesCount: number; error?: string }> => {
+  setIsExpanding(true);
+  
+  try {
+    toast.info('Expandiendo beats en escenas...', { duration: 10000 });
+    
+    // Paso 1: Expandir beats a escenas en el outline
+    const { data, error } = await invokeAuthedFunction('expand-beats-to-scenes', {
+      projectId,
+      durationMin,
+      densityProfile,
+    });
 
-if (protagonists.length > 1 && setpieces.length > 0) {
-  const minPerProtagonist = Math.floor(setpieces.length / protagonists.length);
-  
-  // Count setpieces per protagonist
-  const setpiecesByProtag: Record<string, number> = {};
-  protagonists.forEach((p: any) => setpiecesByProtag[p.name] = 0);
-  
-  setpieces.forEach((sp: any) => {
-    const focus = sp.protagonist_focus;
-    if (focus && setpiecesByProtag.hasOwnProperty(focus)) {
-      setpiecesByProtag[focus]++;
+    if (error || !data?.success) {
+      throw new Error(data?.message || error?.message || 'Error expandiendo escenas');
     }
-  });
-  
-  // Warn if any protagonist has fewer than minimum
-  for (const [name, count] of Object.entries(setpiecesByProtag)) {
-    if (count < minPerProtagonist) {
-      warnings.push({
-        type: 'structure',
-        message: `${name} solo tiene ${count} setpieces, debería tener mínimo ${minPerProtagonist}`,
-        current: count,
-        required: minPerProtagonist,
-      });
-      score -= 5;
+
+    // Paso 2: NUEVO - Materializar escenas en la tabla scenes
+    toast.info('Materializando escenas en base de datos...', { duration: 5000 });
+    
+    const { data: materializeData, error: materializeError } = await invokeAuthedFunction(
+      'materialize-scenes',
+      {
+        projectId,
+        deleteExisting: true, // Borrar escenas previas
+      }
+    );
+
+    if (materializeError || !materializeData?.success) {
+      console.warn('[useSceneDensityValidation] Materialize warning:', materializeError);
+      // No fallar si materialize falla, solo advertir
+    } else {
+      console.log('[useSceneDensityValidation] Materialized:', materializeData.scenes?.created);
     }
+
+    toast.success(`Expansión completada: ${data.scenesCount} escenas generadas`);
+    
+    return {
+      success: true,
+      scenesCount: data.scenesCount,
+    };
+  } catch (err: any) {
+    // ... error handling
+  } finally {
+    setIsExpanding(false);
+  }
+}, []);
+```
+
+### 2. Verificar materialize-scenes
+
+La función `materialize-scenes` ya tiene lógica para leer de `episode_beats[0].scenes`, pero necesita mejorarse para manejar el nuevo formato de `expand-beats-to-scenes`. 
+
+Añadir soporte para el formato con campos `slugline`, `summary`, `characters_present`:
+
+```typescript
+// En extractScenesFromEpisodeBeats()
+if (Array.isArray(ep.scenes)) {
+  for (let i = 0; i < ep.scenes.length; i++) {
+    const sc = ep.scenes[i];
+    scenes.push({
+      scene_no: sc.scene_number || globalSceneNo++,
+      episode_no: episodeNo,
+      slugline: sc.slugline || `ESCENA ${i + 1}`,
+      summary: sc.summary || sc.description || '',
+      time_of_day: parseTimeOfDay(sc.slugline || ''),
+      mood: 'neutral',
+      character_names: sc.characters_present || sc.character_names || [],
+      location_name: extractLocationFromSlugline(sc.slugline),
+      beats: sc.beats || []
+    });
   }
 }
 ```
-
-### 4. Actualizar Frontend (DensityProfileSelector)
-
-Añadir indicación visual de la distribución en películas ensemble:
-
-```typescript
-// En el tooltip o descripción del perfil Hollywood:
-"12 setpieces (4 por protagonista en películas coral)"
-```
-
----
-
-## Flujo de Generación Actualizado
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│  1. Usuario selecciona perfil "Hollywood"                   │
-│     → 12 setpieces, 15 locations, 8 sequences               │
-├─────────────────────────────────────────────────────────────┤
-│  2. Sistema detecta múltiples protagonistas (3)             │
-│     → Calcula: 12/3 = 4 setpieces por protagonista          │
-├─────────────────────────────────────────────────────────────┤
-│  3. Prompt incluye instrucciones de distribución            │
-│     "Baltasar debe liderar 4 setpieces..."                  │
-│     "Gaspar debe liderar 4 setpieces..."                    │
-│     "Melchor debe liderar 4 setpieces..."                   │
-├─────────────────────────────────────────────────────────────┤
-│  4. Validación post-generación                              │
-│     ✓ Total setpieces >= 12                                 │
-│     ✓ Cada protagonista tiene >= 4                          │
-│     ⚠ Warning si distribución desbalanceada                 │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
 
 ## Archivos a Modificar
 
 | Archivo | Cambio |
 |---------|--------|
-| `supabase/functions/generate-outline-direct/index.ts` | Schema, prompt, validación |
-| `src/components/project/DensityProfileSelector.tsx` | Descripción visual opcional |
+| `src/hooks/useSceneDensityValidation.ts` | Añadir llamada a materialize-scenes después de expand |
+| `supabase/functions/materialize-scenes/index.ts` | Mejorar extracción del nuevo formato de escenas |
 
 ## Resultado Esperado
 
-El próximo outline generado incluirá:
-
-```json
-{
-  "setpieces": [
-    {
-      "name": "La Transformación de Baltasar",
-      "act": "I",
-      "protagonist_focus": "Baltasar",
-      "featured_characters": ["Baltasar", "Amara"],
-      "description": "En el almacén vacío, Baltasar siente por primera vez el poder...",
-      "stakes": "Su identidad como Rey Mago despierta"
-    },
-    {
-      "name": "El Desafío del Pelirrojo",
-      "act": "I", 
-      "protagonist_focus": "Gaspar",
-      "featured_characters": ["Gaspar", "Miguel"],
-      "description": "En el bar, Gaspar enfrenta a los matones que lo humillaron...",
-      "stakes": "Recuperar su dignidad después de años de bullying"
-    }
-    // ... 10 setpieces más distribuidos
-  ]
-}
-```
-
----
-
-## Beneficios
-
-1. **Arcos Balanceados**: Cada protagonista tiene su momento de gloria
-2. **Producción Clara**: El equipo sabe qué personaje lidera cada escena grande
-3. **Validación Automática**: El sistema advierte si la distribución está desbalanceada
-4. **Escalable**: Funciona para 2, 3, 4 o más protagonistas
-
+1. Usuario hace clic en "Expandir a 26-45 Escenas"
+2. Sistema genera 36 escenas en el outline JSON
+3. Sistema automáticamente materializa esas 36 escenas en la tabla `scenes`
+4. Validación encuentra 36 escenas y marca como válido
+5. Usuario puede continuar al paso de generación de guión
