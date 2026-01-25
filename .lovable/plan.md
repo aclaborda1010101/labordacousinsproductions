@@ -1,144 +1,110 @@
 
-# Plan: Refrescar Outline Después de Expansión y Materialización
+# Plan: Pasar Conteo Real de Escenas a narrative-decide
 
-## Problema Identificado
+## Problema Raíz
 
-Después de expandir beats a escenas:
-1. El outline JSON se actualiza en la base de datos (status = 'completed')
-2. Las escenas se materializan en la tabla `scenes`
-3. **PERO** la validación usa el `outline` viejo en memoria del componente
+El Edge Function `narrative-decide` planifica solo **5 escenas** porque:
+
+1. El parámetro `scenesToPlan` tiene un valor por defecto de `5`
+2. El frontend (`usePreScriptWizard.ts`) **no pasa** el número real de escenas al llamar a `narrative-decide`
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│  FLUJO ACTUAL (ROTO)                                            │
-├─────────────────────────────────────────────────────────────────┤
-│  1. expand-beats-to-scenes → DB: outline actualizado            │
-│  2. materialize-scenes → DB: 34 escenas insertadas              │
-│  3. validateDensity(oldOutline) → Usa memoria vieja             │
-│     ✗ oldOutline no tiene episode_beats[0].scenes               │
-│     ✗ Sigue mostrando "necesita expansión"                      │
-└─────────────────────────────────────────────────────────────────┘
++-------------------------------------------------------+
+|  FLUJO ACTUAL (5 escenas solamente)                   |
++-------------------------------------------------------+
+|  expand-beats-to-scenes                               |
+|    → outline_json.episode_beats[0].scenes = 34        |
++-------------------------------------------------------+
+|  narrative-decide                                     |
+|    → scenesToPlan = 5 (default!)                      |
+|    → Crea solo 5 scene_intents                        |
++-------------------------------------------------------+
+|  scene-worker                                         |
+|    → Solo genera 5 escenas                            |
++-------------------------------------------------------+
 ```
 
 ## Solución
 
-Modificar `PreScriptWizard.tsx` para refrescar el outline desde la base de datos después de una expansión exitosa:
+Calcular el número de escenas desde el outline y pasarlo a `narrative-decide`:
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│  FLUJO CORREGIDO                                                │
-├─────────────────────────────────────────────────────────────────┤
-│  1. expand-beats-to-scenes → DB actualizado                     │
-│  2. materialize-scenes → 34 escenas insertadas                  │
-│  3. NUEVO: Refetch outline from DB                              │
-│  4. validateDensity(newOutline) → Encuentra 34 escenas          │
-│     ✓ Validación pasa                                           │
-└─────────────────────────────────────────────────────────────────┘
++-------------------------------------------------------+
+|  FLUJO CORREGIDO (todas las escenas)                  |
++-------------------------------------------------------+
+|  expand-beats-to-scenes                               |
+|    → outline_json.episode_beats[0].scenes = 34        |
++-------------------------------------------------------+
+|  usePreScriptWizard.executeStep5                      |
+|    → Extraer: scenesToPlan = 34 desde episode_beats   |
++-------------------------------------------------------+
+|  narrative-decide                                     |
+|    → scenesToPlan = 34                                |
+|    → Crea 34 scene_intents                            |
++-------------------------------------------------------+
+|  scene-worker                                         |
+|    → Genera las 34 escenas                            |
++-------------------------------------------------------+
 ```
 
 ## Cambios Técnicos
 
-### 1. Añadir callback para refrescar outline
+### 1. Modificar usePreScriptWizard.ts
 
-En `PreScriptWizard.tsx`, añadir prop `onOutlineRefresh`:
+En la función `executeStep5`, antes de llamar a `narrative-decide`, calcular el número de escenas:
 
 ```typescript
-interface PreScriptWizardProps {
-  projectId: string;
-  outline: any;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onComplete: () => void;
-  inline?: boolean;
-  onScriptCompiled?: (scriptData: any) => void;
-  language?: string;
-  onOutlineRefresh?: () => Promise<void>; // NUEVO
-}
+// Calcular el número de escenas desde episode_beats
+const episodeBeats = currentOutline?.episode_beats || [];
+const scenesToPlan = episodeBeats[0]?.scenes?.length || 
+                     episodeBeats.reduce((acc: number, ep: any) => 
+                       acc + (ep.scenes?.length || 0), 0) ||
+                     5; // Fallback a 5 si no hay datos
+
+console.log('[PreScriptWizard] Scenes to plan from outline:', scenesToPlan);
+
+const { data, error } = await invokeAuthedFunction('narrative-decide', {
+  projectId,
+  outline: currentOutline,
+  episodeNumber: 1,
+  language,
+  qualityTier,
+  format,
+  scenesToPlan, // NUEVO: Pasar el número real de escenas
+});
 ```
 
-### 2. Modificar el handler del botón "Expandir"
+### 2. Verificar que narrative-decide use el valor
+
+El Edge Function ya soporta este parámetro (línea 66), solo no se estaba pasando:
 
 ```typescript
-<Button 
-  onClick={async () => {
-    const profile = outline?.density_profile || 'standard';
-    const result = await expandBeatsToScenes(projectId, durationMin, profile);
-    if (result.success) {
-      // NUEVO: Refrescar outline desde la base de datos
-      if (onOutlineRefresh) {
-        await onOutlineRefresh();
-      }
-      
-      // Ahora la validación usará el outline actualizado
-      // (que llegará como nuevo prop en el siguiente render)
-      setDensityValidated(false);
-      setTimeout(() => setDensityValidated(true), 100);
-    }
-  }}
-  disabled={isExpanding}
->
-```
-
-### 3. Alternativa: Validar directamente desde la DB
-
-Si no hay callback disponible, modificar `expandBeatsToScenes` para devolver el outline actualizado:
-
-```typescript
-// En useSceneDensityValidation.ts
-const expandBeatsToScenes = useCallback(async (
-  projectId: string,
-  durationMin: number,
-  densityProfile: string = 'standard'
-): Promise<{ 
-  success: boolean; 
-  scenesCount: number; 
-  error?: string;
-  updatedOutline?: any; // NUEVO: Devolver outline actualizado
-}> => {
-  // ... después de materializar...
-  
-  // Fetch el outline actualizado desde la DB
-  const { data: refreshedOutline } = await supabase
-    .from('project_outlines')
-    .select('outline_json')
-    .eq('project_id', projectId)
-    .eq('status', 'completed')
-    .order('updated_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  return {
-    success: true,
-    scenesCount: finalCount,
-    updatedOutline: refreshedOutline?.outline_json,
-  };
-}, []);
-```
-
-### 4. Usar el outline actualizado para re-validar
-
-```typescript
-// En PreScriptWizard.tsx
-const result = await expandBeatsToScenes(projectId, durationMin, profile);
-if (result.success && result.updatedOutline) {
-  // Re-validar con el outline actualizado
-  const newResult = validateDensity(result.updatedOutline, format, durationMin, profile);
-  // Esto ahora encontrará las escenas expandidas
-}
+const { 
+  projectId, 
+  episodeNumber = 1, 
+  outline,
+  scenesToPlan = 5, // Este valor se usará si viene del frontend
+  format = 'film'
+} = request;
 ```
 
 ## Archivos a Modificar
 
 | Archivo | Cambio |
 |---------|--------|
-| `src/hooks/useSceneDensityValidation.ts` | Devolver outline actualizado en `expandBeatsToScenes` |
-| `src/components/project/PreScriptWizard.tsx` | Usar outline actualizado para re-validar |
+| `src/hooks/usePreScriptWizard.ts` | Calcular y pasar `scenesToPlan` desde `episode_beats[0].scenes.length` |
+
+## Consideraciones
+
+1. **Límite de escenas**: Para películas largas (40+ escenas), considerar procesar en lotes para evitar timeouts
+2. **Validación**: Asegurar que `scenesToPlan` sea al menos 1 y no más de 50 (límite razonable)
+3. **Fallback**: Si el outline no tiene `episode_beats`, usar el método legacy de contar desde ACT_I/II/III
 
 ## Resultado Esperado
 
-1. Usuario hace clic en "Expandir a 26-45 Escenas"
-2. Sistema genera 34 escenas y las materializa
-3. Sistema obtiene el outline actualizado de la DB
-4. Validación encuentra 34 escenas en `episode_beats[0].scenes`
-5. UI muestra "Densidad correcta: 34 escenas" (checkbox verde)
-6. Usuario puede continuar al siguiente paso
+1. Usuario completa los pasos previos del wizard
+2. Sistema calcula: 34 escenas en `episode_beats[0].scenes`
+3. `narrative-decide` recibe `scenesToPlan: 34`
+4. Se crean 34 `scene_intent` records
+5. `scene-worker` genera las 34 escenas
+6. UI muestra "Escena X de 34" correctamente
