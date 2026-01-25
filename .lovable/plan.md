@@ -1,233 +1,135 @@
 
-# Plan: Mejoras en Ventana de Configuración y Verificación de Clonación
+# Plan: Corregir Clonación de Base de Datos
 
-## Resumen de Cambios Solicitados
+## Problemas Identificados
 
-El usuario ha identificado dos mejoras necesarias:
+### Problema 1: Caracteres especiales en contraseña
+Tu contraseña contiene `!!!!!!` que necesitan ser URL-encoded como `%21%21%21%21%21%21`. La librería `postgres.js` no está manejando correctamente estos caracteres especiales.
 
-1. **Ventana de ajustes más pequeña con scroll** - La ventana de configuración actual es muy alta y no cabe completamente en pantalla
-2. **Verificación post-clonación** - Después de clonar, verificar que los datos se copiaron correctamente comparando conteos de tablas entre origen y destino
+### Problema 2: "Job not found" por cold starts
+La Edge Function almacena los jobs en memoria (`Map`). Cuando la función se reinicia (cold start), se pierde el estado y el frontend recibe "Job not found".
 
-## Cambios Propuestos
+## Solución Propuesta
 
-### 1. Modificar `src/components/project/ProjectSettings.tsx`
+### Cambio 1: Codificar automáticamente la contraseña en la URL
 
-**Problema actual:** El `DialogContent` tiene `max-w-md` pero no tiene altura máxima ni scroll, lo que hace que el contenido se desborde en pantallas pequeñas.
+Modificar el Edge Function para parsear la URL, extraer la contraseña, codificarla correctamente, y reconstruir la URL:
 
-**Solución:**
-- Agregar altura máxima al diálogo: `max-h-[85vh]`
-- Envolver el contenido interno en un `ScrollArea` para habilitar scroll vertical
-- Mantener el header y footer fijos, solo el contenido hace scroll
-
-```tsx
-// Antes
-<DialogContent className="max-w-md">
-
-// Después
-<DialogContent className="max-w-md max-h-[85vh] flex flex-col">
-  <DialogHeader>...</DialogHeader>
-  <ScrollArea className="flex-1 pr-4">
-    <div className="space-y-4 py-4">
-      {/* contenido existente */}
-    </div>
-  </ScrollArea>
-  <DialogFooter>...</DialogFooter>
-</DialogContent>
-```
-
-### 2. Modificar `src/components/project/DatabaseCloner.tsx`
-
-**Mejoras:**
-- Agregar una nueva fase `verification` después de `policies`
-- Mostrar resultados de verificación al completar
-- Indicar si hay discrepancias en los conteos
-
-**Nuevo tipo de fase:**
 ```typescript
-export type ClonePhase = 
-  | 'idle' 
-  | 'connecting' 
-  | 'enums' 
-  | 'schema' 
-  | 'data' 
-  | 'functions' 
-  | 'policies' 
-  | 'verification'  // <-- NUEVO
-  | 'done' 
-  | 'error';
-```
+// En clone-database/index.ts, después de validar la URL
+const url = new URL(targetUrl);
 
-**Nuevo estado para resultados de verificación:**
-```typescript
-interface VerificationResult {
-  table: string;
-  sourceCount: number;
-  targetCount: number;
-  match: boolean;
+// Extraer y re-codificar la contraseña (puede tener caracteres especiales)
+if (url.password) {
+  // Decodificar primero (por si ya viene parcialmente codificada)
+  const decodedPassword = decodeURIComponent(url.password);
+  // Re-codificar correctamente
+  url.password = encodeURIComponent(decodedPassword);
 }
 
-const [verificationResults, setVerificationResults] = useState<VerificationResult[]>([]);
+// Usar la URL limpia
+const cleanTargetUrl = url.toString();
 ```
 
-**Mostrar resultados de verificación:**
-```tsx
-{progress.phase === 'done' && verificationResults.length > 0 && (
-  <div className="space-y-2">
-    <h5 className="text-sm font-medium">Verificación de datos:</h5>
-    <div className="max-h-32 overflow-auto text-xs space-y-1">
-      {verificationResults.map(v => (
-        <div key={v.table} className="flex justify-between">
-          <span>{v.table}</span>
-          <span className={v.match ? 'text-green-500' : 'text-red-500'}>
-            {v.sourceCount} → {v.targetCount} {v.match ? '✓' : '✗'}
-          </span>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-```
+### Cambio 2: Manejo de errores mejorado para cold starts
 
-### 3. Modificar `supabase/functions/clone-database/index.ts`
-
-**Agregar fase de verificación después de policies:**
+Cuando el job no se encuentra, en lugar de solo retornar error, agregar información útil:
 
 ```typescript
-// Después de Phase: Policies...
-
-// Phase: Verification
-job.phase = 'verification';
-job.currentItem = 'Verificando integridad de datos...';
-
-const verificationResults: { table: string; sourceCount: number; targetCount: number; match: boolean }[] = [];
-
-for (const tableName of TABLES_ORDER) {
-  if (job.cancelled) return cleanup();
-  
-  try {
-    // Contar en origen
-    const sourceResult = await sourceDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
-    const sourceCount = parseInt(sourceResult[0]?.count || '0');
-    
-    // Contar en destino
-    const targetResult = await targetDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
-    const targetCount = parseInt(targetResult[0]?.count || '0');
-    
-    verificationResults.push({
-      table: tableName,
-      sourceCount,
-      targetCount,
-      match: sourceCount === targetCount
-    });
-    
-    job.currentItem = `Verificando: ${tableName} (${sourceCount} → ${targetCount})`;
-  } catch {
-    // Tabla puede no existir en uno de los lados
+if (action === "status") {
+  const job = activeJobs.get(jobId);
+  if (!job) {
+    return new Response(
+      JSON.stringify({ 
+        error: "Job not found - la función pudo haberse reiniciado", 
+        progress: { 
+          phase: 'error', 
+          current: 0,
+          total: 0,
+          currentItem: '',
+          error: 'Sesión expirada. Por favor intenta de nuevo.' 
+        } 
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
+  // ...
 }
-
-// Almacenar resultados en job para el status
-job.verification = verificationResults;
-job.verificationPassed = verificationResults.every(v => v.match);
 ```
 
-**Actualizar estructura del job:**
+### Cambio 3: Mejorar el mensaje de error de autenticación
+
+Detectar específicamente el error `28P01` (authentication failed) y mostrar un mensaje más claro:
+
 ```typescript
-const activeJobs = new Map<string, {
-  phase: string;
-  current: number;
-  total: number;
-  currentItem: string;
-  error?: string;
-  cancelled: boolean;
-  verification?: { table: string; sourceCount: number; targetCount: number; match: boolean }[];
-  verificationPassed?: boolean;
-}>();
+} catch (err: any) {
+  console.error("Clone error:", err);
+  
+  let errorMessage = err.message || "Error desconocido";
+  
+  // Detectar errores comunes
+  if (err.code === '28P01') {
+    errorMessage = "Error de autenticación: verifica que la contraseña sea correcta. " +
+      "Si contiene caracteres especiales (!, @, #, etc.), intenta cambiarla por una más simple.";
+  }
+  
+  job.phase = 'error';
+  job.error = errorMessage;
+}
+```
+
+## Cambios en Frontend
+
+### Cambio 4: Validación y ayuda en DatabaseCloner.tsx
+
+Agregar advertencia cuando la URL contiene caracteres especiales no codificados:
+
+```typescript
+// Detectar caracteres problemáticos en la contraseña
+const hasSpecialChars = (url: string): boolean => {
+  const match = url.match(/:([^@]+)@/);
+  if (match) {
+    const password = match[1];
+    return /[!@#$%^&*()+=\[\]{}|;':",.<>?/\\]/.test(password);
+  }
+  return false;
+};
+
+// En el UI, mostrar advertencia
+{targetUrl && hasSpecialChars(targetUrl) && (
+  <p className="text-xs text-yellow-600">
+    ⚠️ La contraseña contiene caracteres especiales. Si hay errores de conexión, 
+    considera cambiar la contraseña en Supabase a una sin caracteres especiales.
+  </p>
+)}
 ```
 
 ## Archivos a Modificar
 
 | Archivo | Cambios |
 |---------|---------|
-| `src/components/project/ProjectSettings.tsx` | Agregar `max-h-[85vh]`, usar `ScrollArea` para contenido scrolleable |
-| `src/components/project/DatabaseCloner.tsx` | Agregar fase `verification`, mostrar resultados de verificación, actualizar PHASE_LABELS |
-| `supabase/functions/clone-database/index.ts` | Agregar lógica de verificación post-clonación, actualizar estructura del job |
+| `supabase/functions/clone-database/index.ts` | Codificar contraseña, mejorar mensajes de error |
+| `src/components/project/DatabaseCloner.tsx` | Agregar advertencia para caracteres especiales |
 
-## Flujo de Usuario Actualizado
+## Solución Alternativa Inmediata
+
+Mientras implementamos los cambios, puedes:
+
+1. Ir al dashboard de Supabase del proyecto destino
+2. Settings → Database → Reset database password
+3. Usar una contraseña simple sin caracteres especiales (ej: `Bosco2305AbcXyz`)
+4. Actualizar la URL con la nueva contraseña
+
+## Flujo de Error Mejorado
 
 ```text
-┌───────────────────────────────────┐
-│  Configuración del Proyecto       │  <- max-h-[85vh]
-├───────────────────────────────────┤
-│  ┌─────────────────────────────┐  │
-│  │  Contenido scrolleable      │  │  <- ScrollArea
-│  │  - Título                   │  │
-│  │  - Formato                  │  │
-│  │  - Episodios/Duración       │  │
-│  │  - EKB Config               │  │
-│  │  - Developer Mode           │  │
-│  │  - Backup/Migración         │  │
-│  │    ┌─────────────────────┐  │  │
-│  │    │ DatabaseCloner      │  │  │
-│  │    │ [URL destino]       │  │  │
-│  │    │ [Iniciar Clonación] │  │  │
-│  │    │                     │  │  │
-│  │    │ Progreso: 95%       │  │  │
-│  │    │ Fase: verification  │  │  │
-│  │    │                     │  │  │
-│  │    │ Verificación:       │  │  │
-│  │    │ characters: 12→12 ✓ │  │  │
-│  │    │ scenes: 45→45 ✓     │  │  │
-│  │    │ shots: 120→120 ✓    │  │  │
-│  │    └─────────────────────┘  │  │
-│  │  - Zona de Peligro          │  │
-│  └─────────────────────────────┘  │
-├───────────────────────────────────┤
-│  [Cancelar]    [Guardar Cambios]  │  <- Footer fijo
-└───────────────────────────────────┘
+Usuario ingresa URL con contraseña "Bosco2305!!!!!!"
+                    ↓
+Edge Function detecta caracteres especiales
+                    ↓
+Codifica automáticamente: "Bosco2305%21%21%21%21%21%21"
+                    ↓
+Intenta conexión con URL limpia
+                    ↓
+Si falla → Mensaje claro: "Error de autenticación..."
 ```
-
-## Detalles Técnicos
-
-### Cálculo de Progreso Actualizado
-
-Agregar peso para la nueva fase de verificación:
-
-```typescript
-const phaseWeights: Record<ClonePhase, number> = {
-  idle: 0,
-  connecting: 5,
-  enums: 10,
-  schema: 25,
-  data: 75,
-  functions: 85,
-  policies: 92,
-  verification: 98,  // NUEVO
-  done: 100,
-  error: 0
-};
-```
-
-### Etiquetas de Fase Actualizadas
-
-```typescript
-const PHASE_LABELS: Record<ClonePhase, string> = {
-  idle: 'Esperando...',
-  connecting: 'Conectando a bases de datos...',
-  enums: 'Creando tipos ENUM...',
-  schema: 'Creando tablas...',
-  data: 'Copiando datos...',
-  functions: 'Creando funciones...',
-  policies: 'Aplicando políticas RLS...',
-  verification: 'Verificando integridad...', // NUEVO
-  done: '¡Clonación completada!',
-  error: 'Error en la clonación'
-};
-```
-
-## Beneficios
-
-1. **Mejor UX en pantallas pequeñas** - La ventana ahora es scrolleable y se adapta a cualquier tamaño de pantalla
-2. **Confianza en la migración** - El usuario puede ver exactamente cuántos registros se copiaron vs esperados
-3. **Diagnóstico de problemas** - Si hay discrepancias, el usuario sabe exactamente qué tablas revisar
-4. **Feedback visual claro** - Iconos ✓/✗ y colores verde/rojo para indicar estado de cada tabla
