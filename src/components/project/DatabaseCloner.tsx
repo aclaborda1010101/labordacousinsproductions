@@ -1,14 +1,13 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import { 
   Database, 
   Loader2, 
@@ -19,10 +18,11 @@ import {
   EyeOff,
   RefreshCw,
   Trash2,
-  RotateCcw
+  PlayCircle
 } from 'lucide-react';
+import { toast } from 'sonner';
 
-export type ClonePhase = 
+type ClonePhase = 
   | 'idle' 
   | 'connecting' 
   | 'enums' 
@@ -34,23 +34,43 @@ export type ClonePhase =
   | 'done' 
   | 'error';
 
-interface VerificationResult {
-  table: string;
-  sourceCount: number;
-  targetCount: number;
-  match: boolean;
-}
+type CloneCheckpoint = {
+  completedPhases: ClonePhase[];
+  completedTables: string[];
+  currentTable: string | null;
+  currentTableOffset: number;
+  dataRowsCopied: number;
+};
 
-interface CloneProgress {
+type VerificationResult = { 
+  table: string; 
+  sourceCount: number; 
+  targetCount: number; 
+  match: boolean;
+};
+
+type CloneProgress = {
   phase: ClonePhase;
   current: number;
   total: number;
   currentItem: string;
   error?: string;
-  details?: string;
+  cancelled?: boolean;
   verification?: VerificationResult[];
   verificationPassed?: boolean;
-}
+};
+
+type PreviousJobInfo = {
+  id: string;
+  status: string;
+  progress: CloneProgress;
+  checkpoint?: CloneCheckpoint;
+  updated_at: string;
+  isStale: boolean;
+};
+
+// Stale threshold: 60 seconds without update
+const STALE_THRESHOLD_MS = 60_000;
 
 const PHASE_LABELS: Record<ClonePhase, string> = {
   idle: 'Esperando...',
@@ -78,26 +98,35 @@ const PHASE_ICONS: Record<ClonePhase, React.ReactNode> = {
   error: <XCircle className="w-4 h-4 text-red-500" />
 };
 
+const phaseProgress: Record<ClonePhase, number> = {
+  idle: 0,
+  connecting: 5,
+  enums: 10,
+  schema: 25,
+  data: 75,
+  functions: 85,
+  policies: 92,
+  verification: 98,
+  done: 100,
+  error: 0,
+};
+
 export function DatabaseCloner() {
   const [targetUrl, setTargetUrl] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [includeData, setIncludeData] = useState(true);
   const [includeStorage, setIncludeStorage] = useState(false);
   const [cloning, setCloning] = useState(false);
-  const [cleaning, setCleaning] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
-  const [previousJob, setPreviousJob] = useState<{
-    id: string;
-    status: string;
-    progress: CloneProgress;
-    updatedAt: string;
-  } | null>(null);
   const [progress, setProgress] = useState<CloneProgress>({
     phase: 'idle',
     current: 0,
     total: 0,
     currentItem: ''
   });
+  const [previousJob, setPreviousJob] = useState<PreviousJobInfo | null>(null);
+  const [cleaning, setCleaning] = useState(false);
+  const [resuming, setResuming] = useState(false);
   const [verificationResults, setVerificationResults] = useState<VerificationResult[]>([]);
   const hasCheckedActiveJob = useRef(false);
 
@@ -120,11 +149,9 @@ export function DatabaseCloner() {
     try {
       const parsed = new URL(url);
       if (parsed.password) {
-        // Check for characters that commonly cause URL encoding issues
         return /[!@#$%^&*()+=\[\]{}|;':",.<>?/\\]/.test(decodeURIComponent(parsed.password));
       }
     } catch {
-      // Fallback: check raw URL for special chars between : and @
       const match = url.match(/:([^@]+)@/);
       if (match) {
         return /[!@#$%^&*()+=\[\]{}|;':",.<>?/\\]/.test(match[1]);
@@ -133,55 +160,70 @@ export function DatabaseCloner() {
     return false;
   }, []);
 
-  // Check for active or recent clone jobs on mount
+  // Check for active or stale clone jobs on mount
   useEffect(() => {
     if (hasCheckedActiveJob.current) return;
     hasCheckedActiveJob.current = true;
 
     const checkActiveCloneJob = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-      // Look for active or recent clone jobs (last 2 hours)
-      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
-      const { data: recentTask } = await supabase
-        .from('background_tasks')
-        .select('id, status, metadata, progress, updated_at')
-        .eq('user_id', user.id)
-        .eq('type', 'clone_database')
-        .gte('updated_at', twoHoursAgo)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (recentTask) {
-        const taskProgress = (recentTask.metadata as any)?.clone?.progress;
+        // Look for recent clone jobs (last 2 hours)
+        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
         
-        if (recentTask.status === 'running' && taskProgress) {
-          // Reconnect to active job
-          setJobId(recentTask.id);
-          setCloning(true);
-          setProgress(taskProgress);
-          toast.info('Reconectado a clonación en progreso...');
-        } else if (recentTask.status === 'failed' || 
-                   (recentTask.status === 'running' && taskProgress?.phase === 'error')) {
-          // Show previous failed job info
-          setPreviousJob({
-            id: recentTask.id,
-            status: recentTask.status,
-            progress: taskProgress || { phase: 'error', current: 0, total: 0, currentItem: '' },
-            updatedAt: recentTask.updated_at
-          });
+        const { data: recentTask } = await supabase
+          .from('background_tasks')
+          .select('id, status, metadata, progress, updated_at')
+          .eq('user_id', user.id)
+          .eq('type', 'clone_database')
+          .in('status', ['running', 'failed'])
+          .gte('updated_at', twoHoursAgo)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (recentTask) {
+          const meta = recentTask.metadata as any;
+          const cloneProgress = meta?.clone?.progress as CloneProgress | undefined;
+          const checkpoint = meta?.clone?.checkpoint as CloneCheckpoint | undefined;
+          
+          if (cloneProgress) {
+            const lastUpdate = new Date(recentTask.updated_at).getTime();
+            const isStale = recentTask.status === 'running' && 
+                           Date.now() - lastUpdate > STALE_THRESHOLD_MS;
+
+            if (recentTask.status === 'running' && !isStale) {
+              // Active job - reconnect
+              setJobId(recentTask.id);
+              setCloning(true);
+              setProgress(cloneProgress);
+              toast.info('Reconectado a clonación en progreso...');
+            } else {
+              // Stale or failed job - show recovery options
+              setPreviousJob({
+                id: recentTask.id,
+                status: recentTask.status,
+                progress: cloneProgress,
+                checkpoint,
+                updated_at: recentTask.updated_at,
+                isStale,
+              });
+            }
+          }
         }
+      } catch (err) {
+        console.error('Error checking for active clone job:', err);
       }
     };
 
     checkActiveCloneJob();
   }, []);
 
-  // Poll for status updates
+  // Poll for progress
   useEffect(() => {
-    if (!jobId || !cloning) return;
+    if (!cloning || !jobId) return;
 
     const pollInterval = setInterval(async () => {
       try {
@@ -190,7 +232,7 @@ export function DatabaseCloner() {
         });
 
         if (error) {
-          console.error('Status poll error:', error);
+          console.error('Poll error:', error);
           return;
         }
 
@@ -199,6 +241,21 @@ export function DatabaseCloner() {
 
           if (data.progress.verification) {
             setVerificationResults(data.progress.verification);
+          }
+
+          // Check if job became stale
+          if (data.isStale) {
+            setCloning(false);
+            setPreviousJob({
+              id: jobId,
+              status: 'running',
+              progress: data.progress,
+              checkpoint: data.checkpoint,
+              updated_at: new Date().toISOString(),
+              isStale: true,
+            });
+            toast.warning('La clonación se interrumpió. Puedes reanudarla.');
+            return;
           }
 
           if (data.progress.phase === 'done') {
@@ -218,12 +275,12 @@ export function DatabaseCloner() {
           }
         }
       } catch (err) {
-        console.error('Polling error:', err);
+        console.error('Poll exception:', err);
       }
     }, 2000);
 
     return () => clearInterval(pollInterval);
-  }, [jobId, cloning]);
+  }, [cloning, jobId]);
 
   const handleStartClone = async () => {
     if (!isValidUrl(targetUrl)) {
@@ -238,22 +295,18 @@ export function DatabaseCloner() {
       total: 0,
       currentItem: 'Iniciando conexión...'
     });
+    setPreviousJob(null);
 
     try {
       const { data, error } = await supabase.functions.invoke('clone-database', {
         body: {
           action: 'start',
-          targetUrl,
-          options: {
-            includeData,
-            includeStorage
-          }
+          targetUrl: targetUrl.trim(),
+          options: { includeData, includeStorage }
         }
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (data?.jobId) {
         setJobId(data.jobId);
@@ -275,6 +328,69 @@ export function DatabaseCloner() {
     }
   };
 
+  const handleResume = async () => {
+    if (!previousJob) return;
+
+    setResuming(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('clone-database', {
+        body: { action: 'resume', jobId: previousJob.id }
+      });
+
+      if (error) throw error;
+
+      if (data?.resumed) {
+        setJobId(previousJob.id);
+        setCloning(true);
+        setPreviousJob(null);
+        toast.info(`Reanudando desde ${data.fromTable || data.fromPhase}...`);
+      } else if (data?.error) {
+        throw new Error(data.error);
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Error al reanudar');
+    } finally {
+      setResuming(false);
+    }
+  };
+
+  const handleCleanAndRetry = async () => {
+    if (!isValidUrl(targetUrl)) {
+      toast.error('Primero ingresa una URL válida del proyecto destino');
+      return;
+    }
+
+    setCleaning(true);
+    try {
+      // First clean the target
+      const { data: cleanData, error: cleanError } = await supabase.functions.invoke('clone-database', {
+        body: { action: 'clean', targetUrl: targetUrl.trim() }
+      });
+
+      if (cleanError) throw cleanError;
+      if (cleanData?.error) throw new Error(cleanData.error);
+
+      toast.success('Base de datos destino limpiada');
+      
+      // Mark previous job as cancelled
+      if (previousJob) {
+        await supabase.functions.invoke('clone-database', {
+          body: { action: 'cancel', jobId: previousJob.id }
+        });
+      }
+
+      setPreviousJob(null);
+      setCleaning(false);
+      
+      // Start fresh clone
+      await handleStartClone();
+    } catch (err: any) {
+      console.error('Clean and retry error:', err);
+      setCleaning(false);
+      toast.error(err.message || 'Error al limpiar el destino');
+    }
+  };
+
   const handleCancel = async () => {
     if (!jobId) return;
 
@@ -291,61 +407,32 @@ export function DatabaseCloner() {
     }
   };
 
-  const handleCleanAndRetry = async () => {
-    if (!isValidUrl(targetUrl)) {
-      toast.error('Primero ingresa una URL válida del proyecto destino');
-      return;
-    }
-
-    setCleaning(true);
-    try {
-      // First, clean the target database
-      const { data: cleanData, error: cleanError } = await supabase.functions.invoke('clone-database', {
-        body: { action: 'clean', targetUrl }
-      });
-
-      if (cleanError) throw cleanError;
-      if (cleanData?.error) throw new Error(cleanData.error);
-
-      toast.success('Destino limpiado. Iniciando clonación...');
-      setPreviousJob(null);
-      
-      // Now start fresh clone
-      setCleaning(false);
-      await handleStartClone();
-    } catch (err: any) {
-      console.error('Clean and retry error:', err);
-      setCleaning(false);
-      toast.error(err.message || 'Error al limpiar el destino');
-    }
-  };
-
   const handleDismissPreviousJob = () => {
     setPreviousJob(null);
   };
 
-  const calculateProgressPercent = (): number => {
-    const phaseWeights: Record<ClonePhase, number> = {
-      idle: 0,
-      connecting: 5,
-      enums: 10,
-      schema: 25,
-      data: 75,
-      functions: 85,
-      policies: 92,
-      verification: 98,
-      done: 100,
-      error: 0
-    };
-
-    const basePercent = phaseWeights[progress.phase] || 0;
+  const calculateProgressPercent = useCallback((): number => {
+    const basePercent = phaseProgress[progress.phase] || 0;
     
     if (progress.phase === 'data' && progress.total > 0) {
-      const dataProgress = (progress.current / progress.total) * 50; // 50% of total for data phase
+      const dataProgress = (progress.current / progress.total) * 50;
       return Math.min(25 + dataProgress, 75);
     }
-
+    
     return basePercent;
+  }, [progress]);
+
+  const formatCheckpointInfo = (checkpoint?: CloneCheckpoint) => {
+    if (!checkpoint) return null;
+    
+    const completedTables = checkpoint.completedTables.length;
+    const currentTable = checkpoint.currentTable;
+    const offset = checkpoint.currentTableOffset;
+    
+    if (currentTable) {
+      return `${completedTables} tablas completas, en progreso: ${currentTable} (registro ${offset})`;
+    }
+    return `${completedTables} tablas completas`;
   };
 
   const isActive = cloning || cleaning || progress.phase === 'done';
@@ -362,6 +449,66 @@ export function DatabaseCloner() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Previous/Stale Job Alert */}
+        {previousJob && (
+          <Alert className={previousJob.isStale ? "border-orange-500 bg-orange-50 dark:bg-orange-950/20" : "border-red-500 bg-red-50 dark:bg-red-950/20"}>
+            <AlertTriangle className={`h-4 w-4 ${previousJob.isStale ? 'text-orange-600' : 'text-red-600'}`} />
+            <AlertDescription className="space-y-2">
+              <p className="font-medium">
+                {previousJob.isStale 
+                  ? 'Clonación interrumpida detectada' 
+                  : 'Clonación anterior fallida'}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Fase: {PHASE_LABELS[previousJob.progress.phase]} - {previousJob.progress.currentItem}
+              </p>
+              {previousJob.checkpoint && (
+                <p className="text-xs text-muted-foreground">
+                  Checkpoint: {formatCheckpointInfo(previousJob.checkpoint)}
+                </p>
+              )}
+              {previousJob.progress.error && (
+                <p className="text-sm text-red-600">{previousJob.progress.error}</p>
+              )}
+              <div className="flex flex-wrap gap-2 mt-3">
+                <Button 
+                  size="sm" 
+                  onClick={handleResume}
+                  disabled={resuming || cleaning}
+                >
+                  {resuming ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  ) : (
+                    <PlayCircle className="w-3 h-3 mr-1" />
+                  )}
+                  Reanudar desde aquí
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="destructive" 
+                  onClick={handleCleanAndRetry}
+                  disabled={resuming || cleaning || !isValidUrl(targetUrl)}
+                >
+                  {cleaning ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3 h-3 mr-1" />
+                  )}
+                  Limpiar y empezar de cero
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  onClick={handleDismissPreviousJob}
+                  disabled={resuming || cleaning}
+                >
+                  Descartar
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Target URL Input */}
         <div className="space-y-2">
           <Label htmlFor="target-url" className="text-sm">
@@ -397,7 +544,7 @@ export function DatabaseCloner() {
           {targetUrl && isValidUrl(targetUrl) && hasSpecialCharsInPassword(targetUrl) && (
             <p className="text-xs text-yellow-600 dark:text-yellow-400">
               ⚠️ La contraseña contiene caracteres especiales. Si hay errores de conexión, 
-              considera cambiar la contraseña en el proyecto destino por una sin caracteres especiales.
+              considera cambiar la contraseña en el proyecto destino.
             </p>
           )}
         </div>
@@ -446,14 +593,14 @@ export function DatabaseCloner() {
             {progress.currentItem && (
               <p className="text-xs text-muted-foreground truncate">
                 {progress.currentItem}
-                {progress.total > 0 && ` (${progress.current}/${progress.total})`}
+                {progress.total > 0 && ` (${progress.current.toLocaleString()}/${progress.total.toLocaleString()})`}
               </p>
             )}
           </div>
         )}
 
         {/* Error Display */}
-        {progress.phase === 'error' && progress.error && (
+        {progress.phase === 'error' && progress.error && !previousJob && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="text-sm">
@@ -497,81 +644,20 @@ export function DatabaseCloner() {
           </div>
         )}
 
-        {/* Previous Job Warning */}
-        {previousJob && !cloning && !cleaning && progress.phase !== 'done' && (
-          <Alert className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
-            <AlertTriangle className="h-4 w-4 text-yellow-600" />
-            <AlertDescription className="text-sm text-yellow-700 dark:text-yellow-300">
-              <div className="flex flex-col gap-2">
-                <p>
-                  <strong>Clonación anterior incompleta:</strong> {previousJob.progress.error || 'El proceso se interrumpió antes de completarse.'}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  El destino puede tener datos parciales. Se recomienda limpiar antes de reintentar.
-                </p>
-                <div className="flex gap-2 mt-1">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={handleDismissPreviousJob}
-                    disabled={cleaning}
-                  >
-                    <XCircle className="w-3 h-3 mr-1" />
-                    Ignorar
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    onClick={handleCleanAndRetry}
-                    disabled={cleaning || !isValidUrl(targetUrl)}
-                  >
-                    {cleaning ? (
-                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-3 h-3 mr-1" />
-                    )}
-                    Limpiar Destino y Reintentar
-                  </Button>
-                </div>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Cleaning indicator */}
-        {cleaning && (
-          <Alert className="border-blue-500 bg-blue-50 dark:bg-blue-950">
-            <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
-            <AlertDescription className="text-sm text-blue-700 dark:text-blue-300">
-              Limpiando base de datos destino... Esto eliminará todas las tablas existentes.
-            </AlertDescription>
-          </Alert>
-        )}
-
         {/* Action Buttons */}
         <div className="flex gap-2 pt-2">
-          {!cloning && !cleaning && progress.phase !== 'done' && !previousJob && (
-            <Button
-              onClick={handleStartClone}
-              disabled={!isValidUrl(targetUrl)}
+          {!cloning ? (
+            <Button 
+              onClick={handleStartClone} 
+              disabled={!isValidUrl(targetUrl) || cleaning || resuming}
               className="flex-1"
             >
               <Database className="w-4 h-4 mr-2" />
               Iniciar Clonación
             </Button>
-          )}
-          {!cloning && !cleaning && progress.phase !== 'done' && previousJob && (
-            <Button
-              onClick={handleCleanAndRetry}
-              disabled={!isValidUrl(targetUrl) || cleaning}
-              className="flex-1"
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Limpiar y Reintentar
-            </Button>
-          )}
-          {cloning && (
-            <Button
-              variant="destructive"
+          ) : (
+            <Button 
+              variant="destructive" 
               onClick={handleCancel}
               className="flex-1"
             >
@@ -579,32 +665,21 @@ export function DatabaseCloner() {
               Cancelar
             </Button>
           )}
-          {progress.phase === 'done' && (
-            <Button
-              variant="outline"
-              onClick={() => {
-                setProgress({ phase: 'idle', current: 0, total: 0, currentItem: '' });
-                setPreviousJob(null);
-              }}
-              className="flex-1"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Nueva Clonación
-            </Button>
-          )}
         </div>
 
         {/* Instructions */}
-        <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t">
-          <p className="font-medium">Instrucciones:</p>
-          <ol className="list-decimal list-inside space-y-1">
-            <li>Crea un proyecto vacío en supabase.com</li>
-            <li>Ve a Settings → Database → Connection string → URI</li>
-            <li>Copia la URL y pégala arriba</li>
-            <li>Después de clonar, configura los secretos manualmente</li>
+        <div className="text-xs text-muted-foreground space-y-1 pt-4 border-t">
+          <p className="font-medium">Pasos previos en el proyecto destino:</p>
+          <ol className="list-decimal list-inside space-y-1 ml-2">
+            <li>Crear un nuevo proyecto en Supabase</li>
+            <li>Copiar la Connection String (URI) desde Settings → Database</li>
+            <li>Ejecutar las mismas migraciones (o descargar Bundle y aplicar)</li>
+            <li>Configurar los mismos secrets en las Edge Functions</li>
           </ol>
         </div>
       </CardContent>
     </Card>
   );
 }
+
+export default DatabaseCloner;
