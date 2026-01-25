@@ -8,6 +8,7 @@
 
 import { useState, useCallback } from 'react';
 import { invokeAuthedFunction } from '@/lib/invokeAuthedFunction';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export interface DensityValidationResult {
@@ -132,7 +133,7 @@ export function useSceneDensityValidation() {
     projectId: string,
     durationMin: number,
     densityProfile: string = 'standard'
-  ): Promise<{ success: boolean; scenesCount: number; error?: string }> => {
+  ): Promise<{ success: boolean; scenesCount: number; error?: string; updatedOutline?: any }> => {
     setIsExpanding(true);
     
     try {
@@ -173,9 +174,23 @@ export function useSceneDensityValidation() {
       const finalCount = materializeData?.scenes?.created || data.scenesCount;
       toast.success(`Expansión completada: ${finalCount} escenas guardadas`);
       
+      // Paso 3: Obtener el outline actualizado de la DB para re-validación
+      const { data: refreshedOutline } = await supabase
+        .from('project_outlines')
+        .select('outline_json')
+        .eq('project_id', projectId)
+        .eq('status', 'completed')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      console.log('[useSceneDensityValidation] Fetched refreshed outline:', 
+        (refreshedOutline?.outline_json as any)?.episode_beats?.[0]?.scenes?.length, 'scenes');
+      
       return {
         success: true,
         scenesCount: finalCount,
+        updatedOutline: refreshedOutline?.outline_json,
       };
     } catch (err: any) {
       console.error('[useSceneDensityValidation] Expansion error:', err);
