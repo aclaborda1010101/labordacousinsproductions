@@ -29,8 +29,16 @@ export type ClonePhase =
   | 'data' 
   | 'functions' 
   | 'policies' 
+  | 'verification'
   | 'done' 
   | 'error';
+
+interface VerificationResult {
+  table: string;
+  sourceCount: number;
+  targetCount: number;
+  match: boolean;
+}
 
 interface CloneProgress {
   phase: ClonePhase;
@@ -39,6 +47,8 @@ interface CloneProgress {
   currentItem: string;
   error?: string;
   details?: string;
+  verification?: VerificationResult[];
+  verificationPassed?: boolean;
 }
 
 const PHASE_LABELS: Record<ClonePhase, string> = {
@@ -49,6 +59,7 @@ const PHASE_LABELS: Record<ClonePhase, string> = {
   data: 'Copiando datos...',
   functions: 'Creando funciones...',
   policies: 'Aplicando políticas RLS...',
+  verification: 'Verificando integridad...',
   done: '¡Clonación completada!',
   error: 'Error en la clonación'
 };
@@ -61,6 +72,7 @@ const PHASE_ICONS: Record<ClonePhase, React.ReactNode> = {
   data: <Loader2 className="w-4 h-4 animate-spin" />,
   functions: <Loader2 className="w-4 h-4 animate-spin" />,
   policies: <Loader2 className="w-4 h-4 animate-spin" />,
+  verification: <Loader2 className="w-4 h-4 animate-spin" />,
   done: <CheckCircle2 className="w-4 h-4 text-green-500" />,
   error: <XCircle className="w-4 h-4 text-red-500" />
 };
@@ -78,6 +90,7 @@ export function DatabaseCloner() {
     total: 0,
     currentItem: ''
   });
+  const [verificationResults, setVerificationResults] = useState<VerificationResult[]>([]);
 
   // Validate PostgreSQL URL format
   const isValidUrl = useCallback((url: string): boolean => {
@@ -104,10 +117,19 @@ export function DatabaseCloner() {
         if (data?.progress) {
           setProgress(data.progress);
 
+          if (data.progress.verification) {
+            setVerificationResults(data.progress.verification);
+          }
+
           if (data.progress.phase === 'done') {
             setCloning(false);
             setJobId(null);
-            toast.success('¡Base de datos clonada exitosamente!');
+            const passed = data.progress.verificationPassed;
+            if (passed) {
+              toast.success('¡Base de datos clonada y verificada exitosamente!');
+            } else {
+              toast.warning('Clonación completada con discrepancias. Revisa la verificación.');
+            }
           } else if (data.progress.phase === 'error') {
             setCloning(false);
             setJobId(null);
@@ -194,9 +216,10 @@ export function DatabaseCloner() {
       connecting: 5,
       enums: 10,
       schema: 25,
-      data: 80,
-      functions: 90,
-      policies: 95,
+      data: 75,
+      functions: 85,
+      policies: 92,
+      verification: 98,
       done: 100,
       error: 0
     };
@@ -204,8 +227,8 @@ export function DatabaseCloner() {
     const basePercent = phaseWeights[progress.phase] || 0;
     
     if (progress.phase === 'data' && progress.total > 0) {
-      const dataProgress = (progress.current / progress.total) * 55; // 55% of total for data phase
-      return Math.min(25 + dataProgress, 80);
+      const dataProgress = (progress.current / progress.total) * 50; // 50% of total for data phase
+      return Math.min(25 + dataProgress, 75);
     }
 
     return basePercent;
@@ -328,6 +351,30 @@ export function DatabaseCloner() {
               y desplegar las Edge Functions en el nuevo proyecto.
             </AlertDescription>
           </Alert>
+        )}
+
+        {/* Verification Results */}
+        {progress.phase === 'done' && verificationResults.length > 0 && (
+          <div className="space-y-2 border rounded-lg p-3">
+            <h5 className="text-sm font-medium flex items-center gap-2">
+              Verificación de datos:
+              {verificationResults.every(v => v.match) ? (
+                <Badge variant="default" className="text-xs">✓ Todo correcto</Badge>
+              ) : (
+                <Badge variant="destructive" className="text-xs">Discrepancias</Badge>
+              )}
+            </h5>
+            <div className="max-h-32 overflow-auto text-xs space-y-1">
+              {verificationResults.map(v => (
+                <div key={v.table} className="flex justify-between items-center py-0.5">
+                  <span className="text-muted-foreground">{v.table}</span>
+                  <span className={v.match ? 'text-green-600' : 'text-red-600'}>
+                    {v.sourceCount} → {v.targetCount} {v.match ? '✓' : '✗'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Action Buttons */}

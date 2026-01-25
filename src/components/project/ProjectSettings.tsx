@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, Settings, Trash2, Palette, Wrench, Lock, Unlock, Database } from 'lucide-react';
@@ -112,8 +113,8 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent className="max-w-md max-h-[85vh] flex flex-col overflow-hidden">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />
             Configuración del Proyecto
@@ -122,7 +123,8 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
             Edita los detalles de tu proyecto o elimínalo
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+        <ScrollArea className="flex-1 pr-4">
+          <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label>Título *</Label>
             <Input
@@ -327,7 +329,8 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
             </AlertDialog>
           </div>
         </div>
-        <DialogFooter>
+        </ScrollArea>
+        <DialogFooter className="flex-shrink-0 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
