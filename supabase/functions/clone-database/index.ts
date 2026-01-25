@@ -7,8 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// NOTE: This function used to keep jobs in-memory (Map), which breaks under cold starts / multi-instance.
-// We persist job state in `background_tasks.metadata.clone.progress` so status polling works reliably.
+// NOTE: This function keeps job state in `background_tasks.metadata.clone` for status polling
+// and resume across cold starts.
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
@@ -41,10 +41,21 @@ type JobState = {
   verificationPassed?: boolean;
 };
 
+// Checkpoint for resume support
+type CloneCheckpoint = {
+  completedPhases: ClonePhase[];      // Phases fully completed
+  completedTables: string[];          // Tables fully copied (data phase)
+  currentTable: string | null;        // Table in progress
+  currentTableOffset: number;         // Offset within current table
+  dataRowsCopied: number;             // Total rows copied so far
+};
+
 type CloneTaskMetadata = {
   clone?: {
     progress: JobState;
+    checkpoint?: CloneCheckpoint;
     options?: { includeData?: boolean; includeStorage?: boolean };
+    targetUrl?: string;  // Stored for resume (RLS protected)
   };
 };
 
@@ -64,7 +75,6 @@ function calculateProgressPercent(p: JobState): number {
 
   const basePercent = phaseWeights[p.phase] ?? 0;
 
-  // Keep the same rough semantics as the frontend.
   if (p.phase === "data" && p.total > 0) {
     const dataProgress = (p.current / p.total) * 50;
     return Math.min(25 + dataProgress, 75);
@@ -76,7 +86,7 @@ function calculateProgressPercent(p: JobState): number {
 async function readCloneTask(jobId: string) {
   const { data, error } = await supabaseAdmin
     .from("background_tasks")
-    .select("id,user_id,status,metadata,error")
+    .select("id,user_id,status,metadata,error,updated_at")
     .eq("id", jobId)
     .maybeSingle();
   if (error) throw error;
@@ -84,13 +94,29 @@ async function readCloneTask(jobId: string) {
     id: string;
     user_id: string;
     status: string;
-    metadata: any;
+    metadata: CloneTaskMetadata;
     error: string | null;
+    updated_at: string;
   };
 }
 
-async function writeCloneTask(jobId: string, userId: string, job: JobState, taskStatus: string) {
-  const metadata: CloneTaskMetadata = { clone: { progress: job } };
+async function writeCloneTask(
+  jobId: string,
+  userId: string,
+  job: JobState,
+  taskStatus: string,
+  checkpoint?: CloneCheckpoint,
+  options?: { includeData?: boolean },
+  targetUrl?: string
+) {
+  const metadata: CloneTaskMetadata = {
+    clone: {
+      progress: job,
+      checkpoint,
+      options,
+      targetUrl,
+    },
+  };
   const overall = Math.round(calculateProgressPercent(job));
 
   const { error } = await supabaseAdmin
@@ -100,6 +126,7 @@ async function writeCloneTask(jobId: string, userId: string, job: JobState, task
       progress: overall,
       metadata,
       error: job.error ?? null,
+      updated_at: new Date().toISOString(),
     })
     .eq("id", jobId)
     .eq("user_id", userId);
@@ -154,6 +181,9 @@ const TABLES_ORDER = [
 
 // Large tables that need smaller chunks
 const LARGE_TABLES = ['scripts', 'generation_blocks', 'generation_logs', 'storyboard_panels'];
+
+// Stale threshold: job not updated in 60 seconds
+const STALE_THRESHOLD_MS = 60_000;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -218,7 +248,7 @@ serve(async (req) => {
         );
       }
 
-      const progress = (task.metadata as CloneTaskMetadata)?.clone?.progress;
+      const progress = task.metadata?.clone?.progress;
       if (!progress) {
         return new Response(
           JSON.stringify({
@@ -235,8 +265,16 @@ serve(async (req) => {
         );
       }
 
+      // Check if job is stale (running but no update in 60s)
+      const lastUpdate = new Date(task.updated_at).getTime();
+      const isStale = task.status === "running" && Date.now() - lastUpdate > STALE_THRESHOLD_MS;
+
       return new Response(
-        JSON.stringify({ progress }),
+        JSON.stringify({ 
+          progress,
+          isStale,
+          checkpoint: task.metadata?.clone?.checkpoint,
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -252,7 +290,7 @@ serve(async (req) => {
 
       const task = await readCloneTask(jobId);
       if (task && task.user_id === user.id) {
-        const existing = (task.metadata as CloneTaskMetadata)?.clone?.progress;
+        const existing = task.metadata?.clone?.progress;
         const cancelledJob: JobState = {
           ...(existing ?? { phase: "error", current: 0, total: 0, currentItem: "", cancelled: true }),
           cancelled: true,
@@ -330,6 +368,78 @@ serve(async (req) => {
       }
     }
 
+    // Handle resume - continue from checkpoint
+    if (action === "resume") {
+      if (!jobId) {
+        return new Response(
+          JSON.stringify({ error: "jobId is required" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const task = await readCloneTask(jobId);
+      if (!task) {
+        return new Response(
+          JSON.stringify({ error: "Job not found" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (task.user_id !== user.id) {
+        return new Response(
+          JSON.stringify({ error: "Forbidden" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Check if job is stale enough to resume
+      const lastUpdate = new Date(task.updated_at).getTime();
+      const isStale = Date.now() - lastUpdate > STALE_THRESHOLD_MS;
+
+      if (!isStale && task.status === "running") {
+        return new Response(
+          JSON.stringify({ error: "Job is still active. Wait a moment before resuming." }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Get checkpoint and target URL from metadata
+      const checkpoint = task.metadata?.clone?.checkpoint;
+      const savedTargetUrl = task.metadata?.clone?.targetUrl;
+      const savedOptions = task.metadata?.clone?.options || {};
+
+      if (!savedTargetUrl) {
+        return new Response(
+          JSON.stringify({ error: "Cannot resume: target URL not saved. Please start a new clone." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Update status to running again
+      await supabaseAdmin
+        .from("background_tasks")
+        .update({
+          status: "running",
+          error: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", jobId);
+
+      // Start cloning from checkpoint (non-blocking)
+      cloneDatabase(jobId, user.id, savedTargetUrl, savedOptions, checkpoint).catch(console.error);
+
+      return new Response(
+        JSON.stringify({
+          resumed: true,
+          jobId,
+          fromPhase: checkpoint?.completedPhases?.slice(-1)[0] || "connecting",
+          fromTable: checkpoint?.currentTable,
+          completedTables: checkpoint?.completedTables?.length || 0,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Handle start
     if (action === "start") {
       if (!targetUrl) {
@@ -339,8 +449,8 @@ serve(async (req) => {
         );
       }
 
-      // Validate URL format - more permissive to allow special chars in password
-      // Format: postgresql://user:password@host:port/database
+      // Validate URL format
+      let cleanTargetUrl = targetUrl;
       try {
         const url = new URL(targetUrl);
         if (!url.protocol.startsWith('postgres')) {
@@ -348,6 +458,12 @@ serve(async (req) => {
         }
         if (!url.hostname || !url.port || !url.pathname.slice(1)) {
           throw new Error('Missing host, port, or database');
+        }
+        // Sanitize password
+        if (url.password) {
+          const decodedPassword = decodeURIComponent(url.password);
+          url.password = encodeURIComponent(decodedPassword);
+          cleanTargetUrl = url.toString();
         }
       } catch (urlErr: any) {
         return new Response(
@@ -367,7 +483,15 @@ serve(async (req) => {
         cancelled: false,
       };
 
-      // Persist job state (so status works across instances)
+      const initialCheckpoint: CloneCheckpoint = {
+        completedPhases: [],
+        completedTables: [],
+        currentTable: null,
+        currentTableOffset: 0,
+        dataRowsCopied: 0,
+      };
+
+      // Persist job state with target URL for resume capability
       const { error: insertError } = await supabaseAdmin.from("background_tasks").insert({
         id: newJobId,
         user_id: user.id,
@@ -375,13 +499,20 @@ serve(async (req) => {
         title: "Clonación de base de datos",
         type: "clone_database",
         progress: 0,
-        metadata: { clone: { progress: initialJob, options: options || {} } },
+        metadata: {
+          clone: {
+            progress: initialJob,
+            checkpoint: initialCheckpoint,
+            options: options || {},
+            targetUrl: cleanTargetUrl, // Store for resume
+          },
+        },
       });
 
       if (insertError) throw insertError;
 
       // Start cloning in background (non-blocking)
-      cloneDatabase(newJobId, user.id, targetUrl, options || {}).catch(console.error);
+      cloneDatabase(newJobId, user.id, cleanTargetUrl, options || {}).catch(console.error);
 
       return new Response(
         JSON.stringify({ jobId: newJobId, message: "Cloning started" }),
@@ -407,16 +538,28 @@ async function cloneDatabase(
   jobId: string,
   userId: string,
   targetUrl: string,
-  options: { includeData?: boolean; includeStorage?: boolean }
+  options: { includeData?: boolean; includeStorage?: boolean },
+  resumeCheckpoint?: CloneCheckpoint
 ) {
-  // Load persisted job (supports multi-instance status polling)
+  // Load persisted job
   const task = await readCloneTask(jobId);
-  const job: JobState = (task?.metadata as CloneTaskMetadata)?.clone?.progress ?? {
+  const savedMeta = task?.metadata?.clone;
+  
+  const job: JobState = savedMeta?.progress ?? {
     phase: "connecting",
     current: 0,
     total: 0,
     currentItem: "Iniciando conexiones...",
     cancelled: false,
+  };
+
+  // Initialize or restore checkpoint
+  const checkpoint: CloneCheckpoint = resumeCheckpoint ?? savedMeta?.checkpoint ?? {
+    completedPhases: [],
+    completedTables: [],
+    currentTable: null,
+    currentTableOffset: 0,
+    dataRowsCopied: 0,
   };
 
   let taskStatus: "running" | "completed" | "failed" | "cancelled" = "running";
@@ -426,7 +569,7 @@ async function cloneDatabase(
     const now = Date.now();
     if (!force && now - lastPersistAt < 300) return;
     lastPersistAt = now;
-    await writeCloneTask(jobId, userId, job, taskStatus);
+    await writeCloneTask(jobId, userId, job, taskStatus, checkpoint, options, targetUrl);
   };
 
   const refreshCancelledFlag = async () => {
@@ -444,89 +587,39 @@ async function cloneDatabase(
       throw new Error("SUPABASE_DB_URL not configured");
     }
 
-    // Sanitize target URL - properly encode password with special characters
+    // Sanitize target URL
     let cleanTargetUrl = targetUrl;
     try {
       const url = new URL(targetUrl);
       if (url.password) {
-        // Decode first (in case partially encoded), then re-encode properly
         const decodedPassword = decodeURIComponent(url.password);
         url.password = encodeURIComponent(decodedPassword);
         cleanTargetUrl = url.toString();
       }
     } catch (urlParseErr) {
       console.warn("URL sanitization warning:", urlParseErr);
-      // Continue with original URL if parsing fails
     }
 
-    // Phase: Connecting
-    job.phase = 'connecting';
-    job.currentItem = 'Conectando a base de datos origen...';
-    await persist(true);
-    
-    sourceDb = postgres(sourceUrl, { max: 1 });
-    await sourceDb`SELECT 1`; // Test connection
-    
-    job.currentItem = 'Conectando a base de datos destino...';
-    await persist(true);
-    targetDb = postgres(cleanTargetUrl, { max: 1 });
-    await targetDb`SELECT 1`; // Test connection
-
-    await refreshCancelledFlag();
-    if (job.cancelled) {
-      taskStatus = "cancelled";
-      job.phase = "error";
-      job.error = "Clonación cancelada";
+    // Phase: Connecting (skip if already done)
+    if (!checkpoint.completedPhases.includes("connecting")) {
+      job.phase = 'connecting';
+      job.currentItem = 'Conectando a base de datos origen...';
       await persist(true);
-      return await cleanup();
-    }
-
-    // Phase: Enums
-    job.phase = 'enums';
-    job.currentItem = 'Obteniendo tipos ENUM...';
-    await persist(true);
-    
-    const enums = await sourceDb`
-      SELECT t.typname, e.enumlabel
-      FROM pg_type t 
-      JOIN pg_enum e ON t.oid = e.enumtypid  
-      WHERE t.typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
-      ORDER BY t.typname, e.enumsortorder
-    `;
-
-    // Group enums by type name
-    const enumsByType = new Map<string, string[]>();
-    for (const row of enums) {
-      if (!enumsByType.has(row.typname)) {
-        enumsByType.set(row.typname, []);
-      }
-      enumsByType.get(row.typname)!.push(row.enumlabel);
-    }
-
-    job.total = enumsByType.size;
-    job.current = 0;
-    
-    for (const [typeName, values] of enumsByType) {
-      await refreshCancelledFlag();
-      if (job.cancelled) {
-        taskStatus = "cancelled";
-        job.phase = "error";
-        job.error = "Clonación cancelada";
-        await persist(true);
-        return await cleanup();
-      }
-      job.currentItem = `Creando ENUM: ${typeName}`;
       
-      try {
-        // Drop if exists and recreate
-        await targetDb.unsafe(`DROP TYPE IF EXISTS public.${typeName} CASCADE`);
-        const valuesStr = values.map(v => `'${v}'`).join(', ');
-        await targetDb.unsafe(`CREATE TYPE public.${typeName} AS ENUM (${valuesStr})`);
-      } catch (enumErr: any) {
-        console.warn(`Enum ${typeName} warning:`, enumErr.message);
-      }
-      job.current++;
-      await persist();
+      sourceDb = postgres(sourceUrl, { max: 1 });
+      await sourceDb`SELECT 1`;
+      
+      job.currentItem = 'Conectando a base de datos destino...';
+      await persist(true);
+      targetDb = postgres(cleanTargetUrl, { max: 1 });
+      await targetDb`SELECT 1`;
+
+      checkpoint.completedPhases.push("connecting");
+      await persist(true);
+    } else {
+      // Reconnect for resume
+      sourceDb = postgres(sourceUrl, { max: 1 });
+      targetDb = postgres(cleanTargetUrl, { max: 1 });
     }
 
     await refreshCancelledFlag();
@@ -538,91 +631,151 @@ async function cloneDatabase(
       return await cleanup();
     }
 
-    // Phase: Schema (tables)
-    job.phase = 'schema';
-    job.currentItem = 'Obteniendo estructura de tablas...';
-    await persist(true);
-    
-    // Get table definitions
-    const tables = await sourceDb`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-        AND table_type = 'BASE TABLE'
-        AND table_name NOT LIKE 'pg_%'
-      ORDER BY table_name
-    `;
-
-    job.total = tables.length;
-    job.current = 0;
-
-    for (const table of tables) {
-      await refreshCancelledFlag();
-      if (job.cancelled) {
-        taskStatus = "cancelled";
-        job.phase = "error";
-        job.error = "Clonación cancelada";
-        await persist(true);
-        return await cleanup();
-      }
-      const tableName = table.table_name;
-      job.currentItem = `Creando tabla: ${tableName}`;
-      await persist();
+    // Phase: Enums (skip if already done)
+    if (!checkpoint.completedPhases.includes("enums")) {
+      job.phase = 'enums';
+      job.currentItem = 'Obteniendo tipos ENUM...';
+      await persist(true);
       
-      try {
-        // Get column definitions
-        const columns = await sourceDb`
-          SELECT 
-            column_name,
-            data_type,
-            udt_name,
-            is_nullable,
-            column_default,
-            character_maximum_length
-          FROM information_schema.columns
-          WHERE table_schema = 'public' AND table_name = ${tableName}
-          ORDER BY ordinal_position
-        `;
+      const enums = await sourceDb`
+        SELECT t.typname, e.enumlabel
+        FROM pg_type t 
+        JOIN pg_enum e ON t.oid = e.enumtypid  
+        WHERE t.typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+        ORDER BY t.typname, e.enumsortorder
+      `;
 
-        // Build CREATE TABLE statement
-        const colDefs = columns.map(col => {
-          let typeDef = col.data_type === 'USER-DEFINED' ? col.udt_name : col.data_type;
-          if (col.data_type === 'ARRAY') {
-            typeDef = `${col.udt_name.replace(/^_/, '')}[]`;
-          }
-          if (col.character_maximum_length) {
-            typeDef = `${col.data_type}(${col.character_maximum_length})`;
-          }
-          
-          let def = `"${col.column_name}" ${typeDef}`;
-          if (col.is_nullable === 'NO') def += ' NOT NULL';
-          if (col.column_default) def += ` DEFAULT ${col.column_default}`;
-          return def;
-        }).join(',\n  ');
-
-        // Get primary key
-        const pkResult = await sourceDb`
-          SELECT a.attname
-          FROM pg_index i
-          JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
-          WHERE i.indrelid = ${`public.${tableName}`}::regclass AND i.indisprimary
-        `;
-        
-        let pkClause = '';
-        if (pkResult.length > 0) {
-          const pkCols = pkResult.map(r => `"${r.attname}"`).join(', ');
-          pkClause = `,\n  PRIMARY KEY (${pkCols})`;
+      const enumsByType = new Map<string, string[]>();
+      for (const row of enums) {
+        if (!enumsByType.has(row.typname)) {
+          enumsByType.set(row.typname, []);
         }
-
-        // Create table (drop first if exists)
-        await targetDb.unsafe(`DROP TABLE IF EXISTS public."${tableName}" CASCADE`);
-        await targetDb.unsafe(`CREATE TABLE public."${tableName}" (\n  ${colDefs}${pkClause}\n)`);
-        
-      } catch (tableErr: any) {
-        console.warn(`Table ${tableName} error:`, tableErr.message);
+        enumsByType.get(row.typname)!.push(row.enumlabel);
       }
-      job.current++;
-      await persist();
+
+      job.total = enumsByType.size;
+      job.current = 0;
+      
+      for (const [typeName, values] of enumsByType) {
+        await refreshCancelledFlag();
+        if (job.cancelled) {
+          taskStatus = "cancelled";
+          job.phase = "error";
+          job.error = "Clonación cancelada";
+          await persist(true);
+          return await cleanup();
+        }
+        job.currentItem = `Creando ENUM: ${typeName}`;
+        
+        try {
+          await targetDb.unsafe(`DROP TYPE IF EXISTS public.${typeName} CASCADE`);
+          const valuesStr = values.map(v => `'${v}'`).join(', ');
+          await targetDb.unsafe(`CREATE TYPE public.${typeName} AS ENUM (${valuesStr})`);
+        } catch (enumErr: any) {
+          console.warn(`Enum ${typeName} warning:`, enumErr.message);
+        }
+        job.current++;
+        await persist();
+      }
+
+      checkpoint.completedPhases.push("enums");
+      await persist(true);
+    }
+
+    await refreshCancelledFlag();
+    if (job.cancelled) {
+      taskStatus = "cancelled";
+      job.phase = "error";
+      job.error = "Clonación cancelada";
+      await persist(true);
+      return await cleanup();
+    }
+
+    // Phase: Schema (skip if already done)
+    if (!checkpoint.completedPhases.includes("schema")) {
+      job.phase = 'schema';
+      job.currentItem = 'Obteniendo estructura de tablas...';
+      await persist(true);
+      
+      const tables = await sourceDb`
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+          AND table_type = 'BASE TABLE'
+          AND table_name NOT LIKE 'pg_%'
+        ORDER BY table_name
+      `;
+
+      job.total = tables.length;
+      job.current = 0;
+
+      for (const table of tables) {
+        await refreshCancelledFlag();
+        if (job.cancelled) {
+          taskStatus = "cancelled";
+          job.phase = "error";
+          job.error = "Clonación cancelada";
+          await persist(true);
+          return await cleanup();
+        }
+        const tableName = table.table_name;
+        job.currentItem = `Creando tabla: ${tableName}`;
+        await persist();
+        
+        try {
+          const columns = await sourceDb`
+            SELECT 
+              column_name,
+              data_type,
+              udt_name,
+              is_nullable,
+              column_default,
+              character_maximum_length
+            FROM information_schema.columns
+            WHERE table_schema = 'public' AND table_name = ${tableName}
+            ORDER BY ordinal_position
+          `;
+
+          const colDefs = columns.map(col => {
+            let typeDef = col.data_type === 'USER-DEFINED' ? col.udt_name : col.data_type;
+            if (col.data_type === 'ARRAY') {
+              typeDef = `${col.udt_name.replace(/^_/, '')}[]`;
+            }
+            if (col.character_maximum_length) {
+              typeDef = `${col.data_type}(${col.character_maximum_length})`;
+            }
+            
+            let def = `"${col.column_name}" ${typeDef}`;
+            if (col.is_nullable === 'NO') def += ' NOT NULL';
+            if (col.column_default) def += ` DEFAULT ${col.column_default}`;
+            return def;
+          }).join(',\n  ');
+
+          const pkResult = await sourceDb`
+            SELECT a.attname
+            FROM pg_index i
+            JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
+            WHERE i.indrelid = ${`public.${tableName}`}::regclass AND i.indisprimary
+          `;
+          
+          let pkClause = '';
+          if (pkResult.length > 0) {
+            const pkCols = pkResult.map(r => `"${r.attname}"`).join(', ');
+            pkClause = `,\n  PRIMARY KEY (${pkCols})`;
+          }
+
+          await targetDb.unsafe(`DROP TABLE IF EXISTS public."${tableName}" CASCADE`);
+          await targetDb.unsafe(`CREATE TABLE public."${tableName}" (\n  ${colDefs}${pkClause}\n)`);
+          
+        } catch (tableErr: any) {
+          console.warn(`Table ${tableName} error:`, tableErr.message);
+        }
+        job.current++;
+        await persist();
+      }
+
+      checkpoint.completedPhases.push("schema");
+      await persist(true);
     }
 
     await refreshCancelledFlag();
@@ -635,7 +788,7 @@ async function cloneDatabase(
     }
 
     // Phase: Data
-    if (options.includeData !== false) {
+    if (options.includeData !== false && !checkpoint.completedPhases.includes("data")) {
       job.phase = 'data';
       await persist(true);
       
@@ -663,7 +816,7 @@ async function cloneDatabase(
       }
 
       job.total = totalRows;
-      job.current = 0;
+      job.current = checkpoint.dataRowsCopied;
 
       // Disable triggers on target
       try {
@@ -671,6 +824,11 @@ async function cloneDatabase(
       } catch {}
 
       for (const tableName of TABLES_ORDER) {
+        // Skip completed tables
+        if (checkpoint.completedTables.includes(tableName)) {
+          continue;
+        }
+
         await refreshCancelledFlag();
         if (job.cancelled) {
           taskStatus = "cancelled";
@@ -681,14 +839,21 @@ async function cloneDatabase(
         }
         
         const tableCount = tableCounts.get(tableName) || 0;
-        if (tableCount === 0) continue;
-        
+        if (tableCount === 0) {
+          checkpoint.completedTables.push(tableName);
+          await persist();
+          continue;
+        }
+
+        checkpoint.currentTable = tableName;
         job.currentItem = `Copiando: ${tableName} (0/${tableCount})`;
         
         try {
           const chunkSize = LARGE_TABLES.includes(tableName) ? 10 : 100;
-          let offset = 0;
-          let copied = 0;
+          
+          // Start from saved offset if resuming current table
+          let offset = checkpoint.currentTable === tableName ? checkpoint.currentTableOffset : 0;
+          let copied = offset;
 
           while (copied < tableCount) {
             await refreshCancelledFlag();
@@ -706,7 +871,6 @@ async function cloneDatabase(
 
             if (rows.length === 0) break;
 
-            // Insert rows
             for (const row of rows) {
               const columns = Object.keys(row);
               const values = columns.map(c => row[c]);
@@ -719,23 +883,31 @@ async function cloneDatabase(
                   values
                 );
               } catch (insertErr: any) {
-                // Log but continue
                 console.warn(`Insert error in ${tableName}:`, insertErr.message);
               }
 
               copied++;
               job.current++;
+              checkpoint.dataRowsCopied++;
+              checkpoint.currentTableOffset = copied;
               job.currentItem = `Copiando: ${tableName} (${copied}/${tableCount})`;
             }
 
             offset += chunkSize;
             await persist();
             
-            // Small delay to avoid overloading
             await new Promise(r => setTimeout(r, 50));
           }
+
+          // Table completed
+          checkpoint.completedTables.push(tableName);
+          checkpoint.currentTable = null;
+          checkpoint.currentTableOffset = 0;
+          await persist(true);
+
         } catch (dataErr: any) {
           console.warn(`Data copy error for ${tableName}:`, dataErr.message);
+          checkpoint.completedTables.push(tableName); // Skip and continue
         }
       }
 
@@ -743,6 +915,9 @@ async function cloneDatabase(
       try {
         await targetDb.unsafe(`SET session_replication_role = 'origin'`);
       } catch {}
+
+      checkpoint.completedPhases.push("data");
+      await persist(true);
     }
 
     await refreshCancelledFlag();
@@ -754,45 +929,49 @@ async function cloneDatabase(
       return await cleanup();
     }
 
-    // Phase: Functions
-    job.phase = 'functions';
-    job.currentItem = 'Copiando funciones...';
-    await persist(true);
-    
-    const functions = await sourceDb`
-      SELECT 
-        p.proname as name,
-        pg_get_functiondef(p.oid) as definition
-      FROM pg_proc p
-      JOIN pg_namespace n ON p.pronamespace = n.oid
-      WHERE n.nspname = 'public'
-        AND p.prokind = 'f'
-    `;
-
-    job.total = functions.length;
-    job.current = 0;
-
-    for (const func of functions) {
-      await refreshCancelledFlag();
-      if (job.cancelled) {
-        taskStatus = "cancelled";
-        job.phase = "error";
-        job.error = "Clonación cancelada";
-        await persist(true);
-        return await cleanup();
-      }
-      job.currentItem = `Creando función: ${func.name}`;
-      await persist();
+    // Phase: Functions (skip if already done)
+    if (!checkpoint.completedPhases.includes("functions")) {
+      job.phase = 'functions';
+      job.currentItem = 'Copiando funciones...';
+      await persist(true);
       
-      try {
-        // Drop existing and recreate
-        await targetDb.unsafe(`DROP FUNCTION IF EXISTS public.${func.name} CASCADE`);
-        await targetDb.unsafe(func.definition);
-      } catch (funcErr: any) {
-        console.warn(`Function ${func.name} warning:`, funcErr.message);
+      const functions = await sourceDb`
+        SELECT 
+          p.proname as name,
+          pg_get_functiondef(p.oid) as definition
+        FROM pg_proc p
+        JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname = 'public'
+          AND p.prokind = 'f'
+      `;
+
+      job.total = functions.length;
+      job.current = 0;
+
+      for (const func of functions) {
+        await refreshCancelledFlag();
+        if (job.cancelled) {
+          taskStatus = "cancelled";
+          job.phase = "error";
+          job.error = "Clonación cancelada";
+          await persist(true);
+          return await cleanup();
+        }
+        job.currentItem = `Creando función: ${func.name}`;
+        await persist();
+        
+        try {
+          await targetDb.unsafe(`DROP FUNCTION IF EXISTS public.${func.name} CASCADE`);
+          await targetDb.unsafe(func.definition);
+        } catch (funcErr: any) {
+          console.warn(`Function ${func.name} warning:`, funcErr.message);
+        }
+        job.current++;
+        await persist();
       }
-      job.current++;
-      await persist();
+
+      checkpoint.completedPhases.push("functions");
+      await persist(true);
     }
 
     await refreshCancelledFlag();
@@ -804,78 +983,81 @@ async function cloneDatabase(
       return await cleanup();
     }
 
-    // Phase: Policies
-    job.phase = 'policies';
-    job.currentItem = 'Aplicando políticas RLS...';
-    await persist(true);
-    
-    // Enable RLS on tables
-    for (const tableName of TABLES_ORDER) {
-      await refreshCancelledFlag();
-      if (job.cancelled) {
-        taskStatus = "cancelled";
-        job.phase = "error";
-        job.error = "Clonación cancelada";
-        await persist(true);
-        return await cleanup();
-      }
+    // Phase: Policies (skip if already done)
+    if (!checkpoint.completedPhases.includes("policies")) {
+      job.phase = 'policies';
+      job.currentItem = 'Aplicando políticas RLS...';
+      await persist(true);
       
-      try {
-        await targetDb.unsafe(`ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY`);
-      } catch {}
-    }
-
-    // Get and apply policies
-    const policies = await sourceDb`
-      SELECT 
-        schemaname,
-        tablename,
-        policyname,
-        permissive,
-        roles,
-        cmd,
-        qual,
-        with_check
-      FROM pg_policies
-      WHERE schemaname = 'public'
-    `;
-
-    job.total = policies.length;
-    job.current = 0;
-
-    for (const policy of policies) {
-      await refreshCancelledFlag();
-      if (job.cancelled) {
-        taskStatus = "cancelled";
-        job.phase = "error";
-        job.error = "Clonación cancelada";
-        await persist(true);
-        return await cleanup();
+      for (const tableName of TABLES_ORDER) {
+        await refreshCancelledFlag();
+        if (job.cancelled) {
+          taskStatus = "cancelled";
+          job.phase = "error";
+          job.error = "Clonación cancelada";
+          await persist(true);
+          return await cleanup();
+        }
+        
+        try {
+          await targetDb.unsafe(`ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY`);
+        } catch {}
       }
-      job.currentItem = `Política: ${policy.policyname}`;
-      await persist();
-      
-      try {
-        const permissive = policy.permissive === 'PERMISSIVE' ? 'PERMISSIVE' : 'RESTRICTIVE';
-        const roles = policy.roles.join(', ');
-        const using = policy.qual ? `USING (${policy.qual})` : '';
-        const withCheck = policy.with_check ? `WITH CHECK (${policy.with_check})` : '';
 
-        await targetDb.unsafe(`DROP POLICY IF EXISTS "${policy.policyname}" ON public."${policy.tablename}"`);
-        await targetDb.unsafe(`
-          CREATE POLICY "${policy.policyname}" 
-          ON public."${policy.tablename}"
-          AS ${permissive}
-          FOR ${policy.cmd}
-          TO ${roles}
-          ${using}
-          ${withCheck}
-        `);
-      } catch (polErr: any) {
-        console.warn(`Policy ${policy.policyname} warning:`, polErr.message);
+      const policies = await sourceDb`
+        SELECT 
+          schemaname,
+          tablename,
+          policyname,
+          permissive,
+          roles,
+          cmd,
+          qual,
+          with_check
+        FROM pg_policies
+        WHERE schemaname = 'public'
+      `;
+
+      job.total = policies.length;
+      job.current = 0;
+
+      for (const policy of policies) {
+        await refreshCancelledFlag();
+        if (job.cancelled) {
+          taskStatus = "cancelled";
+          job.phase = "error";
+          job.error = "Clonación cancelada";
+          await persist(true);
+          return await cleanup();
+        }
+        job.currentItem = `Política: ${policy.policyname}`;
+        await persist();
+        
+        try {
+          const permissive = policy.permissive === 'PERMISSIVE' ? 'PERMISSIVE' : 'RESTRICTIVE';
+          const roles = policy.roles.join(', ');
+          const using = policy.qual ? `USING (${policy.qual})` : '';
+          const withCheck = policy.with_check ? `WITH CHECK (${policy.with_check})` : '';
+
+          await targetDb.unsafe(`DROP POLICY IF EXISTS "${policy.policyname}" ON public."${policy.tablename}"`);
+          await targetDb.unsafe(`
+            CREATE POLICY "${policy.policyname}" 
+            ON public."${policy.tablename}"
+            AS ${permissive}
+            FOR ${policy.cmd}
+            TO ${roles}
+            ${using}
+            ${withCheck}
+          `);
+        } catch (polErr: any) {
+          console.warn(`Policy ${policy.policyname} warning:`, polErr.message);
+        }
+        job.current++;
+        await persist();
       }
-      job.current++;
-      await persist();
+
+      checkpoint.completedPhases.push("policies");
+      await persist(true);
     }
 
     // Phase: Verification
@@ -894,7 +1076,7 @@ async function cloneDatabase(
     job.total = TABLES_ORDER.length;
     await persist(true);
     
-    const verificationResults: { table: string; sourceCount: number; targetCount: number; match: boolean }[] = [];
+    const verificationResults: VerificationResult[] = [];
     
     for (const tableName of TABLES_ORDER) {
       await refreshCancelledFlag();
@@ -907,11 +1089,9 @@ async function cloneDatabase(
       }
       
       try {
-        // Count in source
         const sourceResult = await sourceDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
         const sourceCount = parseInt(sourceResult[0]?.count || '0');
         
-        // Count in target
         const targetResult = await targetDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
         const targetCount = parseInt(targetResult[0]?.count || '0');
         
@@ -926,13 +1106,11 @@ async function cloneDatabase(
         job.current++;
         await persist();
       } catch {
-        // Table might not exist in one of the databases
         job.current++;
         await persist();
       }
     }
     
-    // Store verification results
     job.verification = verificationResults;
     job.verificationPassed = verificationResults.every(v => v.match);
 
@@ -947,18 +1125,16 @@ async function cloneDatabase(
     console.error("Clone error:", err);
     job.phase = 'error';
 
-    // Provide clearer error messages for common issues
     let errorMessage = err.message || 'Error durante la clonación';
     
     if (err.code === '28P01') {
-      errorMessage = "Error de autenticación: verifica que la contraseña sea correcta. " +
-        "Si contiene caracteres especiales (!, @, #, etc.), intenta cambiarla por una más simple.";
+      errorMessage = "Error de autenticación: verifica que la contraseña sea correcta.";
     } else if (err.code === '28000') {
-      errorMessage = "Conexión rechazada: verifica que la URL sea correcta y el servidor acepte conexiones.";
+      errorMessage = "Conexión rechazada: verifica que la URL sea correcta.";
     } else if (err.code === 'ENOTFOUND' || err.message?.includes('getaddrinfo')) {
-      errorMessage = "No se pudo resolver el host. Verifica que la URL del servidor sea correcta.";
+      errorMessage = "No se pudo resolver el host.";
     } else if (err.code === 'ECONNREFUSED') {
-      errorMessage = "Conexión rechazada. Verifica que el servidor esté activo y acepte conexiones externas.";
+      errorMessage = "Conexión rechazada.";
     }
     
     job.error = errorMessage;
