@@ -1,152 +1,235 @@
 
-# Plan: Persistencia del Estado de Clonación
+# Plan: Sistema de Reanudación Automática para Clonación
 
-## Problema Actual
+## Diagnóstico del Problema
 
-El componente `DatabaseCloner.tsx` pierde el estado cuando:
-1. Cambias de pestaña del navegador
-2. Navegas a otra sección de la app
-3. El componente se desmonta/remonta
+El job de clonación está en estado "zombie":
+- **Job ID:** `9fbd7ae5...`
+- **Estado actual:** `running` pero sin actualizaciones en 3+ minutos
+- **Fase:** `data` - 29% completado (707/2430 registros)
+- **Última tabla:** `storyboard_panels`
 
-Aunque el job está guardado en `background_tasks`, el frontend no sabe qué `jobId` debe consultar al volver.
+La Edge Function tiene un límite de ejecución (~30-60s) que causa que el proceso termine antes de completar todas las tablas. Aunque el estado se persiste en `background_tasks`, la ejecución no se resume automáticamente.
 
-## Solución: Reconexión Automática a Jobs Activos
+## Solución: Sistema de Resume con Checkpoint
 
-### Cambio 1: Detectar jobs activos al montar el componente
+### Cambio 1: Agregar campos de checkpoint al estado del job
 
-Al cargar el componente, consultar `background_tasks` por cualquier job de clonación `running` del usuario actual:
+Guardar exactamente dónde quedó la clonación para poder reanudar:
 
 ```typescript
-// En DatabaseCloner.tsx - nuevo useEffect al inicio
-useEffect(() => {
-  const checkActiveCloneJob = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    
-    // Buscar job de clonación activo
-    const { data: activeTask } = await supabase
-      .from('background_tasks')
-      .select('id, status, metadata, progress')
-      .eq('user_id', user.id)
-      .eq('type', 'clone_database')
-      .eq('status', 'running')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    
-    if (activeTask) {
-      // Reconectar al job activo
-      setJobId(activeTask.id);
-      setCloning(true);
-      
-      const progress = activeTask.metadata?.clone?.progress;
-      if (progress) {
-        setProgress(progress);
-      }
-      
-      toast.info('Reconectado a clonación en progreso...');
-    }
-  };
+// Nuevo tipo de checkpoint
+type CloneCheckpoint = {
+  lastCompletedTable: string | null;  // Última tabla completamente copiada
+  currentTable: string | null;        // Tabla en proceso
+  currentTableOffset: number;         // Offset dentro de la tabla actual
+  completedTables: string[];          // Lista de tablas ya terminadas
+};
+
+// El metadata ahora incluye checkpoint
+metadata: {
+  clone: {
+    progress: JobState,
+    checkpoint: CloneCheckpoint,
+    options: { includeData, includeStorage },
+    targetUrl: string  // Necesario para resume
+  }
+}
+```
+
+### Cambio 2: Nueva acción `resume` en la Edge Function
+
+```typescript
+// Handler para action === 'resume'
+if (action === "resume") {
+  const task = await readCloneTask(jobId);
   
-  checkActiveCloneJob();
-}, []);
+  // Verificar que el job esté estancado (sin actualización en 60s)
+  const lastUpdate = new Date(task.updated_at).getTime();
+  const isStale = Date.now() - lastUpdate > 60_000;
+  
+  if (!isStale && task.status === 'running') {
+    return { error: "Job still active, wait a moment" };
+  }
+  
+  // Extraer checkpoint y targetUrl del metadata
+  const checkpoint = task.metadata?.clone?.checkpoint;
+  const savedTargetUrl = task.metadata?.clone?.targetUrl;
+  
+  // Reiniciar la clonación desde el checkpoint
+  cloneDatabase(jobId, userId, savedTargetUrl, options, checkpoint);
+  
+  return { resumed: true, fromTable: checkpoint?.currentTable };
+}
 ```
 
-### Cambio 2: Mostrar estado del job anterior (incluso si falló)
+### Cambio 3: Modificar `cloneDatabase` para aceptar checkpoint
 
-Permitir ver el último estado del job aunque haya fallado o esté estancado:
+La función ahora puede empezar desde un punto intermedio:
 
 ```typescript
-// También verificar jobs recientes (últimas 2 horas) que no estén completados
-const { data: recentTask } = await supabase
-  .from('background_tasks')
-  .select('id, status, metadata, progress, updated_at')
-  .eq('user_id', user.id)
-  .eq('type', 'clone_database')
-  .in('status', ['running', 'failed'])
-  .gte('updated_at', new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
-  .order('created_at', { ascending: false })
-  .limit(1)
-  .maybeSingle();
+async function cloneDatabase(
+  jobId: string,
+  userId: string,
+  targetUrl: string,
+  options: { includeData?: boolean },
+  checkpoint?: CloneCheckpoint  // NUEVO
+) {
+  // Si hay checkpoint, saltar las fases/tablas ya completadas
+  if (checkpoint) {
+    // Saltarse enums si ya se completaron
+    if (checkpoint.completedPhases?.includes('enums')) {
+      job.phase = 'schema';
+    }
+    // Durante la fase de datos, empezar desde lastCompletedTable
+  }
+  
+  // En el loop de datos:
+  for (const tableName of TABLES_ORDER) {
+    // Saltar tablas ya completadas
+    if (checkpoint?.completedTables?.includes(tableName)) {
+      continue;
+    }
+    
+    // Si es la tabla actual, empezar desde offset guardado
+    let startOffset = 0;
+    if (checkpoint?.currentTable === tableName) {
+      startOffset = checkpoint.currentTableOffset;
+    }
+    
+    // ... copiar datos desde startOffset
+  }
+}
 ```
 
-### Cambio 3: Agregar botón "Reintentar/Limpiar y Clonar"
+### Cambio 4: Guardar targetUrl encriptada en metadata
 
-Cuando hay un job anterior incompleto, mostrar opciones:
+Para poder reanudar, necesitamos acceso a la URL destino:
 
-| Estado del Job | Acción Disponible |
-|----------------|-------------------|
-| `running` (pero estancado) | "Reconectar" o "Cancelar y Reiniciar" |
-| `failed` | "Limpiar destino y Reintentar" |
-| `completed` | "Nueva Clonación" |
-
-### Cambio 4: Edge Function - Limpiar esquema antes de clonar
-
-Agregar opción `cleanTarget: true` que ejecute:
-
-```sql
--- Eliminar todas las tablas del schema public antes de clonar
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO public;
+```typescript
+// Al iniciar el job
+const { error: insertError } = await supabaseAdmin.from("background_tasks").insert({
+  id: newJobId,
+  metadata: { 
+    clone: { 
+      progress: initialJob, 
+      options,
+      // Guardar URL (ya sanitizada) para resume
+      targetUrl: cleanTargetUrl,
+      checkpoint: { completedTables: [], currentTable: null, currentTableOffset: 0 }
+    } 
+  },
+});
 ```
 
-Esto garantiza que no haya datos duplicados ni conflictos.
+### Cambio 5: Actualizar `DatabaseCloner.tsx` para detectar y resumir
 
-## Cambios en Archivos
+```typescript
+// Nuevo: detectar jobs estancados
+const isJobStale = (updatedAt: string) => {
+  return Date.now() - new Date(updatedAt).getTime() > 60_000; // 60s sin update
+};
 
-| Archivo | Descripción |
-|---------|-------------|
-| `src/components/project/DatabaseCloner.tsx` | Agregar reconexión automática, mostrar estado previo, botón de limpieza |
-| `supabase/functions/clone-database/index.ts` | Agregar acción `clean` para limpiar destino antes de clonar |
+// En el useEffect de reconexión
+if (recentTask.status === 'running') {
+  const isStale = isJobStale(recentTask.updated_at);
+  
+  if (isStale) {
+    // Job zombie detectado - ofrecer resume
+    setPreviousJob({
+      ...recentTask,
+      isStale: true,  // NUEVO flag
+    });
+    toast.warning('Clonación interrumpida detectada');
+  } else {
+    // Job activo - reconectar normalmente
+    setJobId(recentTask.id);
+    setCloning(true);
+  }
+}
 
-## Flujo de Usuario Mejorado
+// Nuevo botón "Reanudar"
+const handleResume = async () => {
+  setCloning(true);
+  const { data } = await supabase.functions.invoke('clone-database', {
+    body: { action: 'resume', jobId: previousJob.id }
+  });
+  
+  if (data?.resumed) {
+    setJobId(previousJob.id);
+    toast.info(`Reanudando desde ${data.fromTable}...`);
+  }
+};
+```
+
+### Cambio 6: UI para job estancado
+
+Agregar estado visual diferente para jobs zombies:
+
+```tsx
+{previousJob?.isStale && (
+  <Alert className="border-orange-500 bg-orange-50">
+    <AlertTriangle className="h-4 w-4 text-orange-600" />
+    <AlertDescription>
+      <p><strong>Clonación interrumpida:</strong> El proceso se detuvo en la fase {previousJob.progress.phase}</p>
+      <p className="text-xs">Progreso: {previousJob.progress.current}/{previousJob.progress.total} - {previousJob.progress.currentItem}</p>
+      <div className="flex gap-2 mt-2">
+        <Button size="sm" onClick={handleResume}>
+          <RotateCcw className="w-3 h-3 mr-1" />
+          Reanudar desde aquí
+        </Button>
+        <Button size="sm" variant="destructive" onClick={handleCleanAndRetry}>
+          <Trash2 className="w-3 h-3 mr-1" />
+          Empezar de cero
+        </Button>
+      </div>
+    </AlertDescription>
+  </Alert>
+)}
+```
+
+## Archivos a Modificar
+
+| Archivo | Cambios |
+|---------|---------|
+| `supabase/functions/clone-database/index.ts` | Nueva acción `resume`, checkpoint en metadata, lógica de skip para tablas completadas |
+| `src/components/project/DatabaseCloner.tsx` | Detección de jobs estancados, botón "Reanudar", UI para estado zombie |
+
+## Flujo Completo de Resume
 
 ```text
-Usuario abre DatabaseCloner
+1. Usuario inicia clonación
          ↓
-useEffect busca jobs activos/recientes
+2. Edge Function empieza, guarda checkpoint cada 300ms
          ↓
-┌─────────────────────────────────────────┐
-│ Job encontrado?                          │
-├────────────┬────────────────────────────┤
-│ running    │ Reconectar automáticamente │
-│            │ Mostrar progreso actual    │
-├────────────┼────────────────────────────┤
-│ failed     │ Mostrar error + botón      │
-│            │ "Limpiar y Reintentar"     │
-├────────────┼────────────────────────────┤
-│ Ninguno    │ Mostrar UI normal          │
-└────────────┴────────────────────────────┘
+3. Cold start/timeout interrumpe el proceso
+         ↓
+4. Usuario vuelve a la pantalla de clonación
+         ↓
+5. useEffect detecta job "running" sin update en 60s
+         ↓
+6. UI muestra: "Clonación interrumpida en tabla X"
+         ↓
+7. Usuario hace clic en "Reanudar"
+         ↓
+8. Edge Function lee checkpoint, salta tablas completadas
+         ↓
+9. Continúa desde donde quedó
+         ↓
+10. Si hay otro timeout, repetir desde paso 4
 ```
 
-## Respuesta a tu Pregunta Inmediata
+## Manejo del Job Zombie Actual
 
-**¿Qué hacer ahora?**
+Para el job actual (`9fbd7ae5...`), después de implementar esto:
 
-1. **No inicies otra clonación todavía** - la base destino tiene datos parciales
-2. Voy a implementar la función de "Limpiar destino" que:
-   - Borra todas las tablas del proyecto destino
-   - Inicia la clonación desde cero
-3. También agregaré la reconexión automática para que no pierdas el progreso al cambiar de pestaña
+1. El sistema detectará que está estancado
+2. Mostrará opción de "Reanudar" o "Limpiar y empezar de cero"
+3. Si el usuario elige "Reanudar", continuará desde `storyboard_panels`
+4. Si elige "Limpiar", borrará el destino y empezará fresh
 
-## Detalles Técnicos
+## Consideraciones de Seguridad
 
-### Reconexión al Job Activo
-
-El componente verificará `background_tasks` al montarse y se reconectará automáticamente si encuentra un job `running`.
-
-### Limpieza del Destino
-
-La Edge Function tendrá una nueva acción `clean` que ejecuta `DROP SCHEMA public CASCADE` en el destino antes de empezar a copiar, eliminando cualquier dato parcial anterior.
-
-### Manejo de Cold Starts
-
-El job ya está persistido en la base de datos. El problema es que la **ejecución** se interrumpe cuando la Edge Function tiene cold start. Esto es una limitación de las Edge Functions para procesos largos. La solución completa requeriría:
-
-1. Dividir el trabajo en chunks más pequeños
-2. Implementar un sistema de "resume" desde el último punto guardado
-3. O usar un enfoque diferente (pg_dump/pg_restore manual)
-
-Por ahora, la limpieza + reintento es la solución más práctica.
+- La `targetUrl` se guarda en `metadata` que solo el usuario propietario puede leer (RLS)
+- La URL ya está sanitizada antes de guardarse
+- El `resume` verifica que el `user_id` del job coincida con el usuario autenticado
