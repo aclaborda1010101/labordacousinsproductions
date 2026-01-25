@@ -1,46 +1,97 @@
 
-# Plan: Corregir Scroll en Ventana de Cirugia
+# Plan: Corregir Error al Aplicar Cirugía
 
 ## Problema Identificado
 
-El componente `ScrollArea` en `ShowrunnerSurgeryDialog.tsx` no permite hacer scroll porque:
+El error "Error aplicando la cirugía" aparece aunque el backend funciona correctamente. La respuesta del servidor es exitosa:
+```json
+{"ok":true,"scriptUpdated":true,"action":"applied","newVersion":2}
+```
 
-1. El `DialogContent` tiene `overflow-hidden` que corta el contenido
-2. El `ScrollArea` usa `flex-1` pero le falta `min-h-0` para permitir que se encoja por debajo del tamano de su contenido (requerido en flexbox)
-3. El viewport interno del ScrollArea necesita una altura definida para calcular el scroll
+**Causa Raíz**: La función `invokeAuthedFunction` devuelve la estructura estándar de Supabase:
+```typescript
+{ data: { ok: true, ... }, error: null }
+```
 
-## Solucion
+Pero el código en `handleApply` accede incorrectamente a la respuesta:
+```typescript
+// INCORRECTO (actual)
+if (!response.ok) { ... }  // response.ok es undefined
+
+// CORRECTO
+if (response.error || !response.data?.ok) { ... }
+```
+
+---
+
+## Cambios Propuestos
 
 ### Archivo: `src/components/project/ShowrunnerSurgeryDialog.tsx`
 
-**Cambio en linea 526** - Agregar `min-h-0` al DialogContent para permitir que los hijos flex se encojan:
+**Líneas 437-459** - Corregir `handleApply`:
 
-```tsx
-// Antes:
-<DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+```typescript
+const handleApply = async () => {
+  if (!result?.blockId) {
+    toast.error('No hay resultado para aplicar');
+    return;
+  }
 
-// Despues:
-<DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col min-h-0">
+  setStep('applying');
+  
+  try {
+    const { data, error } = await invokeAuthedFunction('apply-showrunner-surgery', {
+      blockId: result.blockId,
+      action: 'apply'
+    });
+
+    if (error || !data?.ok) {
+      throw new Error(data?.error || error?.message || 'Error aplicando la cirugía');
+    }
+
+    if (onSurgeryComplete) {
+      onSurgeryComplete(result);
+    }
+    
+    toast.success(`Cirugía aplicada (v${data.newVersion})`);
+    onOpenChange(false);
+    resetDialog();
+    
+  } catch (error) {
+    console.error('Apply error:', error);
+    toast.error('Error al aplicar la cirugía');
+    setStep('preview');
+  }
+};
 ```
 
-**Cambio en linea 537** - Agregar `min-h-0` y altura maxima al ScrollArea:
+**Líneas 469-473** - También corregir `handleReject` para mejor manejo de errores:
 
-```tsx
-// Antes:
-<ScrollArea className="flex-1 pr-4">
-
-// Despues:
-<ScrollArea className="flex-1 min-h-0 pr-4">
+```typescript
+const { error } = await invokeAuthedFunction('apply-showrunner-surgery', {
+  blockId: result.blockId,
+  action: 'reject'
+});
+if (error) {
+  console.error('Reject error:', error);
+}
+toast.info('Cirugía rechazada');
 ```
 
-## Explicacion Tecnica
+---
 
-En CSS Flexbox, los elementos hijos tienen `min-height: auto` por defecto, lo que significa que no pueden encogerse por debajo del tamano de su contenido. Agregar `min-h-0` (`min-height: 0`) permite que el ScrollArea se encoja al tamano disponible del contenedor y active su scroll interno.
+## Resumen de Cambios
 
-El `overflow-hidden` en DialogContent esta bien porque evita scroll doble, pero necesitamos que el ScrollArea hijo tenga `min-h-0` para que respete la altura maxima del padre.
+| Función | Problema | Solución |
+|---------|----------|----------|
+| `handleApply` | Accede a `response.ok` en vez de `response.data.ok` | Desestructurar `{ data, error }` y usar `data.ok` |
+| `handleReject` | No verifica errores de la respuesta | Desestructurar y verificar `error` |
+
+---
 
 ## Resultado Esperado
 
-- El dialogo de Cirugia de Showrunner mostrara una barra de scroll vertical
-- El usuario podra hacer scroll para ver todos los cambios propuestos (5 escenas)
-- Los botones "Rechazar cambios" y "Aplicar cirugia" permaneceran fijos en la parte inferior
+- Al hacer clic en "Aplicar cirugía", se aplicará correctamente y mostrará el toast de éxito
+- El diálogo se cerrará automáticamente
+- La versión del script se actualizará (v2, v3, etc.)
+- El callback `onSurgeryComplete` se ejecutará para refrescar el script en la UI
