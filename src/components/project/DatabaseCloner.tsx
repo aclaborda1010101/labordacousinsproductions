@@ -95,8 +95,33 @@ export function DatabaseCloner() {
   // Validate PostgreSQL URL format
   const isValidUrl = useCallback((url: string): boolean => {
     if (!url) return false;
-    const pattern = /^postgres(ql)?:\/\/[^:]+:[^@]+@[^:]+:\d+\/\w+$/;
-    return pattern.test(url);
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol.startsWith('postgres') && 
+             !!parsed.hostname && 
+             !!parsed.port && 
+             !!parsed.pathname.slice(1);
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Detect special characters in password that might cause issues
+  const hasSpecialCharsInPassword = useCallback((url: string): boolean => {
+    try {
+      const parsed = new URL(url);
+      if (parsed.password) {
+        // Check for characters that commonly cause URL encoding issues
+        return /[!@#$%^&*()+=\[\]{}|;':",.<>?/\\]/.test(decodeURIComponent(parsed.password));
+      }
+    } catch {
+      // Fallback: check raw URL for special chars between : and @
+      const match = url.match(/:([^@]+)@/);
+      if (match) {
+        return /[!@#$%^&*()+=\[\]{}|;':",.<>?/\\]/.test(match[1]);
+      }
+    }
+    return false;
   }, []);
 
   // Poll for status updates
@@ -278,6 +303,12 @@ export function DatabaseCloner() {
           {targetUrl && !isValidUrl(targetUrl) && (
             <p className="text-xs text-destructive">
               Formato inválido. Usa: postgres://user:pass@host:port/database
+            </p>
+          )}
+          {targetUrl && isValidUrl(targetUrl) && hasSpecialCharsInPassword(targetUrl) && (
+            <p className="text-xs text-yellow-600 dark:text-yellow-400">
+              ⚠️ La contraseña contiene caracteres especiales. Si hay errores de conexión, 
+              considera cambiar la contraseña en el proyecto destino por una sin caracteres especiales.
             </p>
           )}
         </div>
