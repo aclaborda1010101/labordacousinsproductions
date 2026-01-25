@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, Settings, Trash2, Palette, Wrench, Lock, Unlock, Database } from 'lucide-react';
@@ -123,7 +122,7 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
             Edita los detalles de tu proyecto o elimínalo
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="flex-1 pr-4">
+        <div className="flex-1 overflow-y-auto pr-2">
           <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label>Título *</Label>
@@ -329,7 +328,7 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
             </AlertDialog>
           </div>
         </div>
-        </ScrollArea>
+        </div>
         <DialogFooter className="flex-shrink-0 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
