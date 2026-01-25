@@ -1,218 +1,233 @@
 
-# Plan: Clonación Directa de Base de Datos
+# Plan: Mejoras en Ventana de Configuración y Verificación de Clonación
 
-## Objetivo
-Crear una herramienta de clonación simplificada que permita duplicar toda la base de datos actual a una nueva instancia de Supabase que el usuario proporcione, sin necesidad de comandos de terminal ni pasos manuales complejos.
+## Resumen de Cambios Solicitados
 
-## Problema Actual
-El sistema de migración existente:
-1. Genera un ZIP con archivos SQL que el usuario debe aplicar manualmente
-2. Requiere conocimientos de `pg_dump`, `psql` y línea de comandos
-3. Ha fallado previamente por límites de memoria (WORKER_LIMIT)
+El usuario ha identificado dos mejoras necesarias:
 
-## Solución Propuesta
-Un nuevo componente `DatabaseCloner` que:
-1. Solicita la **URL de conexión de la nueva base de datos** (proporcionada por el usuario desde su dashboard de Supabase)
-2. Ejecuta la clonación directamente desde una Edge Function usando conexión directa PostgreSQL
-3. Muestra progreso en tiempo real
+1. **Ventana de ajustes más pequeña con scroll** - La ventana de configuración actual es muy alta y no cabe completamente en pantalla
+2. **Verificación post-clonación** - Después de clonar, verificar que los datos se copiaron correctamente comparando conteos de tablas entre origen y destino
 
-## Flujo de Usuario
+## Cambios Propuestos
 
-```text
-┌─────────────────────────────────────┐
-│   Configuración del Proyecto        │
-│                                     │
-│   [Backup/Migración]                │
-│   ┌───────────────────────────────┐ │
-│   │ 📦 Exportar ZIP (actual)      │ │
-│   └───────────────────────────────┘ │
-│                                     │
-│   ┌───────────────────────────────┐ │
-│   │ 🔄 Clonar a Nueva DB          │ │  <-- NUEVO
-│   │                               │ │
-│   │ URL de destino:               │ │
-│   │ [postgres://user:pass@...]    │ │
-│   │                               │ │
-│   │ [x] Incluir datos             │ │
-│   │ [x] Incluir storage (URLs)    │ │
-│   │                               │ │
-│   │ [🚀 Iniciar Clonación]        │ │
-│   │                               │ │
-│   │ Progreso:                     │ │
-│   │ ████████████░░░░ 75%          │ │
-│   │ Copiando: characters (45/120) │ │
-│   └───────────────────────────────┘ │
-└─────────────────────────────────────┘
+### 1. Modificar `src/components/project/ProjectSettings.tsx`
+
+**Problema actual:** El `DialogContent` tiene `max-w-md` pero no tiene altura máxima ni scroll, lo que hace que el contenido se desborde en pantallas pequeñas.
+
+**Solución:**
+- Agregar altura máxima al diálogo: `max-h-[85vh]`
+- Envolver el contenido interno en un `ScrollArea` para habilitar scroll vertical
+- Mantener el header y footer fijos, solo el contenido hace scroll
+
+```tsx
+// Antes
+<DialogContent className="max-w-md">
+
+// Después
+<DialogContent className="max-w-md max-h-[85vh] flex flex-col">
+  <DialogHeader>...</DialogHeader>
+  <ScrollArea className="flex-1 pr-4">
+    <div className="space-y-4 py-4">
+      {/* contenido existente */}
+    </div>
+  </ScrollArea>
+  <DialogFooter>...</DialogFooter>
+</DialogContent>
 ```
 
-## Arquitectura Técnica
+### 2. Modificar `src/components/project/DatabaseCloner.tsx`
 
-### 1. Nuevo Componente: `src/components/project/DatabaseCloner.tsx`
+**Mejoras:**
+- Agregar una nueva fase `verification` después de `policies`
+- Mostrar resultados de verificación al completar
+- Indicar si hay discrepancias en los conteos
 
-Responsabilidades:
-- Formulario para capturar URL de destino
-- Validación de formato de URL PostgreSQL
-- Opciones de clonación (datos, storage)
-- Barra de progreso con polling al Edge Function
-- Manejo de errores y reintentos
-
-### 2. Nueva Edge Function: `supabase/functions/clone-database/index.ts`
-
-Responsabilidades:
-- Recibir URL de destino (encriptada en memoria, nunca persistida)
-- Conectar a la BD origen usando `SUPABASE_DB_URL` 
-- Conectar a la BD destino usando URL proporcionada
-- Ejecutar clonación en fases:
-  1. **Crear enums** - Tipos personalizados
-  2. **Crear tablas** - Schema completo
-  3. **Copiar datos** - INSERT por chunks
-  4. **Crear funciones** - Funciones SQL
-  5. **Crear policies** - RLS
-
-Dependencias:
+**Nuevo tipo de fase:**
 ```typescript
-import postgres from "https://deno.land/x/postgresjs@v3.4.3/mod.js";
+export type ClonePhase = 
+  | 'idle' 
+  | 'connecting' 
+  | 'enums' 
+  | 'schema' 
+  | 'data' 
+  | 'functions' 
+  | 'policies' 
+  | 'verification'  // <-- NUEVO
+  | 'done' 
+  | 'error';
 ```
 
-### 3. Modificar: `src/components/project/ProjectSettings.tsx`
+**Nuevo estado para resultados de verificación:**
+```typescript
+interface VerificationResult {
+  table: string;
+  sourceCount: number;
+  targetCount: number;
+  match: boolean;
+}
 
-Agregar el nuevo componente `DatabaseCloner` en la sección "Backup / Migración" junto al `MigrationExport` existente.
+const [verificationResults, setVerificationResults] = useState<VerificationResult[]>([]);
+```
 
-## Estructura de la Edge Function
+**Mostrar resultados de verificación:**
+```tsx
+{progress.phase === 'done' && verificationResults.length > 0 && (
+  <div className="space-y-2">
+    <h5 className="text-sm font-medium">Verificación de datos:</h5>
+    <div className="max-h-32 overflow-auto text-xs space-y-1">
+      {verificationResults.map(v => (
+        <div key={v.table} className="flex justify-between">
+          <span>{v.table}</span>
+          <span className={v.match ? 'text-green-500' : 'text-red-500'}>
+            {v.sourceCount} → {v.targetCount} {v.match ? '✓' : '✗'}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+```
+
+### 3. Modificar `supabase/functions/clone-database/index.ts`
+
+**Agregar fase de verificación después de policies:**
 
 ```typescript
-// supabase/functions/clone-database/index.ts
+// Después de Phase: Policies...
 
-// Fases de clonación
-const PHASES = [
-  { id: 'connect', label: 'Conectando...' },
-  { id: 'schema', label: 'Creando schema...' },
-  { id: 'data', label: 'Copiando datos...' },
-  { id: 'functions', label: 'Creando funciones...' },
-  { id: 'policies', label: 'Aplicando RLS...' },
-  { id: 'done', label: 'Completado' }
-];
+// Phase: Verification
+job.phase = 'verification';
+job.currentItem = 'Verificando integridad de datos...';
 
-// Acciones disponibles
-// action: 'start' -> Inicia clonación, devuelve jobId
-// action: 'status' -> Consulta progreso por jobId
-// action: 'cancel' -> Cancela clonación en progreso
+const verificationResults: { table: string; sourceCount: number; targetCount: number; match: boolean }[] = [];
+
+for (const tableName of TABLES_ORDER) {
+  if (job.cancelled) return cleanup();
+  
+  try {
+    // Contar en origen
+    const sourceResult = await sourceDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
+    const sourceCount = parseInt(sourceResult[0]?.count || '0');
+    
+    // Contar en destino
+    const targetResult = await targetDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
+    const targetCount = parseInt(targetResult[0]?.count || '0');
+    
+    verificationResults.push({
+      table: tableName,
+      sourceCount,
+      targetCount,
+      match: sourceCount === targetCount
+    });
+    
+    job.currentItem = `Verificando: ${tableName} (${sourceCount} → ${targetCount})`;
+  } catch {
+    // Tabla puede no existir en uno de los lados
+  }
+}
+
+// Almacenar resultados en job para el status
+job.verification = verificationResults;
+job.verificationPassed = verificationResults.every(v => v.match);
 ```
 
-## Seguridad
-
-1. **URL de destino nunca se guarda** - Solo en memoria durante la ejecución
-2. **Validación de propiedad** - Usuario debe estar autenticado
-3. **Rate limiting** - Máximo 1 clonación activa por usuario
-4. **Timeout** - 10 minutos máximo de ejecución
-5. **Logs mínimos** - No se loguean credenciales
-
-## Manejo de Tablas Grandes
-
-Para evitar WORKER_LIMIT:
-- Chunking de 100 registros por INSERT
-- Delay de 100ms entre chunks
-- Tablas grandes (scripts, generation_blocks) usan chunks de 1 registro
-- Timeout por tabla de 60 segundos
-
-## Archivos a Crear
-
-| Archivo | Descripción |
-|---------|-------------|
-| `src/components/project/DatabaseCloner.tsx` | Componente UI para clonación |
-| `supabase/functions/clone-database/index.ts` | Edge Function que ejecuta la clonación |
+**Actualizar estructura del job:**
+```typescript
+const activeJobs = new Map<string, {
+  phase: string;
+  current: number;
+  total: number;
+  currentItem: string;
+  error?: string;
+  cancelled: boolean;
+  verification?: { table: string; sourceCount: number; targetCount: number; match: boolean }[];
+  verificationPassed?: boolean;
+}>();
+```
 
 ## Archivos a Modificar
 
-| Archivo | Cambio |
-|---------|--------|
-| `src/components/project/ProjectSettings.tsx` | Agregar DatabaseCloner debajo de MigrationExport |
+| Archivo | Cambios |
+|---------|---------|
+| `src/components/project/ProjectSettings.tsx` | Agregar `max-h-[85vh]`, usar `ScrollArea` para contenido scrolleable |
+| `src/components/project/DatabaseCloner.tsx` | Agregar fase `verification`, mostrar resultados de verificación, actualizar PHASE_LABELS |
+| `supabase/functions/clone-database/index.ts` | Agregar lógica de verificación post-clonación, actualizar estructura del job |
 
-## Componente DatabaseCloner - Estructura UI
-
-```tsx
-<Card>
-  <CardHeader>
-    <CardTitle>🔄 Clonar a Nueva Base de Datos</CardTitle>
-    <CardDescription>
-      Duplica toda la base de datos a otro proyecto Supabase
-    </CardDescription>
-  </CardHeader>
-  <CardContent>
-    {/* Input para URL de destino */}
-    <Input 
-      type="password" 
-      placeholder="postgres://postgres:PASSWORD@db.XXX.supabase.co:5432/postgres"
-    />
-    
-    {/* Opciones */}
-    <Checkbox> Incluir todos los datos</Checkbox>
-    <Checkbox> Actualizar URLs de storage</Checkbox>
-    
-    {/* Progreso */}
-    <Progress value={progress} />
-    <p>{currentTable} ({currentRow}/{totalRows})</p>
-    
-    {/* Acción */}
-    <Button>🚀 Iniciar Clonación</Button>
-  </CardContent>
-</Card>
-```
-
-## Edge Function - Flujo de Clonación
+## Flujo de Usuario Actualizado
 
 ```text
-1. Validar autenticación
-2. Validar formato URL destino
-3. Conectar a origen (SUPABASE_DB_URL)
-4. Conectar a destino (URL proporcionada)
-5. Crear job_id para tracking
-
-6. FASE 1: Schema
-   - Ejecutar cada archivo de migrations/*.sql en orden
-   - O usar queries de información_schema para extraer y recrear
-
-7. FASE 2: Datos
-   Para cada tabla en ALL_TABLES:
-     - SELECT * FROM tabla (chunks de 100)
-     - INSERT INTO destino.tabla VALUES (...)
-     - Reportar progreso
-
-8. FASE 3: Funciones
-   - Extraer definiciones de pg_proc
-   - Crear en destino
-
-9. FASE 4: Policies (opcional - pueden fallar si ya existen)
-   - Extraer de pg_policies
-   - Crear en destino
-
-10. Cerrar conexiones
-11. Marcar job como completado
+┌───────────────────────────────────┐
+│  Configuración del Proyecto       │  <- max-h-[85vh]
+├───────────────────────────────────┤
+│  ┌─────────────────────────────┐  │
+│  │  Contenido scrolleable      │  │  <- ScrollArea
+│  │  - Título                   │  │
+│  │  - Formato                  │  │
+│  │  - Episodios/Duración       │  │
+│  │  - EKB Config               │  │
+│  │  - Developer Mode           │  │
+│  │  - Backup/Migración         │  │
+│  │    ┌─────────────────────┐  │  │
+│  │    │ DatabaseCloner      │  │  │
+│  │    │ [URL destino]       │  │  │
+│  │    │ [Iniciar Clonación] │  │  │
+│  │    │                     │  │  │
+│  │    │ Progreso: 95%       │  │  │
+│  │    │ Fase: verification  │  │  │
+│  │    │                     │  │  │
+│  │    │ Verificación:       │  │  │
+│  │    │ characters: 12→12 ✓ │  │  │
+│  │    │ scenes: 45→45 ✓     │  │  │
+│  │    │ shots: 120→120 ✓    │  │  │
+│  │    └─────────────────────┘  │  │
+│  │  - Zona de Peligro          │  │
+│  └─────────────────────────────┘  │
+├───────────────────────────────────┤
+│  [Cancelar]    [Guardar Cambios]  │  <- Footer fijo
+└───────────────────────────────────┘
 ```
 
-## Instrucciones para el Usuario
+## Detalles Técnicos
 
-Al usar la herramienta, el usuario debe:
+### Cálculo de Progreso Actualizado
 
-1. **Crear un proyecto vacío en Supabase** (supabase.com)
-2. **Obtener la URL de conexión**:
-   - Dashboard → Settings → Database → Connection string → URI
-   - Ejemplo: `postgres://postgres:[PASSWORD]@db.[PROJECT-ID].supabase.co:5432/postgres`
-3. **Pegar la URL** en el campo de la herramienta
-4. **Esperar** a que la clonación termine (5-15 minutos según tamaño)
-5. **Configurar secretos** manualmente en el nuevo proyecto
-6. **Desplegar Edge Functions** con Supabase CLI
+Agregar peso para la nueva fase de verificación:
 
-## Limitaciones Conocidas
+```typescript
+const phaseWeights: Record<ClonePhase, number> = {
+  idle: 0,
+  connecting: 5,
+  enums: 10,
+  schema: 25,
+  data: 75,
+  functions: 85,
+  policies: 92,
+  verification: 98,  // NUEVO
+  done: 100,
+  error: 0
+};
+```
 
-1. **Edge Functions no se clonan** - Deben desplegarse por separado
-2. **Secretos no se clonan** - Deben configurarse manualmente
-3. **Storage files** - Solo se actualiza la URL base, los archivos deben descargarse por separado
-4. **RLS policies** - Pueden requerir ajustes si hay referencias a auth.uid()
+### Etiquetas de Fase Actualizadas
+
+```typescript
+const PHASE_LABELS: Record<ClonePhase, string> = {
+  idle: 'Esperando...',
+  connecting: 'Conectando a bases de datos...',
+  enums: 'Creando tipos ENUM...',
+  schema: 'Creando tablas...',
+  data: 'Copiando datos...',
+  functions: 'Creando funciones...',
+  policies: 'Aplicando políticas RLS...',
+  verification: 'Verificando integridad...', // NUEVO
+  done: '¡Clonación completada!',
+  error: 'Error en la clonación'
+};
+```
 
 ## Beneficios
 
-- **Sin comandos de terminal** - Todo desde la UI
-- **Progreso visible** - Saber exactamente qué se está copiando
-- **Resistente a errores** - Reintenta automáticamente
-- **Seguro** - Credenciales nunca se guardan
+1. **Mejor UX en pantallas pequeñas** - La ventana ahora es scrolleable y se adapta a cualquier tamaño de pantalla
+2. **Confianza en la migración** - El usuario puede ver exactamente cuántos registros se copiaron vs esperados
+3. **Diagnóstico de problemas** - Si hay discrepancias, el usuario sabe exactamente qué tablas revisar
+4. **Feedback visual claro** - Iconos ✓/✗ y colores verde/rojo para indicar estado de cada tabla
