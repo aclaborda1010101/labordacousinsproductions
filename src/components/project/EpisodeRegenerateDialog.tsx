@@ -78,6 +78,25 @@ export default function EpisodeRegenerateDialog({
     try {
       // If delete existing, remove old scenes first
       if (deleteExisting && existingSceneCount > 0) {
+        // V81: Delete scene_intent first (FK constraint)
+        // Get scene IDs for this episode first
+        const { data: scenesToDelete } = await supabase
+          .from('scenes')
+          .select('id')
+          .eq('project_id', projectId)
+          .eq('episode_no', episodeNo);
+
+        if (scenesToDelete && scenesToDelete.length > 0) {
+          const sceneIds = scenesToDelete.map(s => s.id);
+          
+          // Delete scene_intents referencing these scenes
+          await supabase
+            .from('scene_intent')
+            .delete()
+            .in('scene_id', sceneIds);
+        }
+
+        // Now delete the scenes
         const { error: deleteError } = await supabase
           .from('scenes')
           .delete()

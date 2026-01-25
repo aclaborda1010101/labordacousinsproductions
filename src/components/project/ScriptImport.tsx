@@ -5175,7 +5175,25 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
 
     setDeletingScript(true);
     try {
-      // First delete all scenes associated with the project
+      // V81: Delete scene_intent first (FK constraint)
+      await supabase
+        .from('scene_intent')
+        .delete()
+        .eq('project_id', projectId);
+
+      // Delete scene_repairs
+      await supabase
+        .from('scene_repairs')
+        .delete()
+        .eq('project_id', projectId);
+
+      // Delete narrative_state
+      await supabase
+        .from('narrative_state')
+        .delete()
+        .eq('project_id', projectId);
+
+      // Now delete all scenes associated with the project
       await supabase
         .from('scenes')
         .delete()
