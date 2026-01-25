@@ -473,9 +473,10 @@ export function PreScriptWizard({
                   onClick={async () => {
                     const profile = outline?.density_profile || 'standard';
                     const result = await expandBeatsToScenes(projectId, durationMin, profile);
-                    if (result.success) {
-                      // Re-validate after expansion
-                      const newResult = validateDensity(outline, format, durationMin, profile);
+                    if (result.success && result.updatedOutline) {
+                      // Re-validate with the UPDATED outline from DB
+                      const newResult = validateDensity(result.updatedOutline, format, durationMin, profile);
+                      console.log('[PreScriptWizard] Re-validation with updated outline:', newResult);
                       // Force re-render by updating state
                       setDensityValidated(false);
                       setTimeout(() => setDensityValidated(true), 100);
