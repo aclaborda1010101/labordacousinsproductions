@@ -200,6 +200,15 @@ Genera un JSON con la siguiente estructura:
     }
   ],
   
+  "setpieces": [
+    {
+      "name": "Nombre del setpiece",
+      "act": "I | II | III",
+      "description": "Descripción visual de la escena espectacular (50-100 palabras)",
+      "stakes": "Qué está en juego en este momento"
+    }
+  ],
+  
   "ACT_I": {
     "title": "Acto I - Planteamiento",
     "summary": "Resumen del acto (50-100 palabras)",
@@ -240,16 +249,7 @@ Genera un JSON con la siguiente estructura:
     "climax": "Descripción del clímax",
     "resolution": "Cómo termina la historia",
     "beats": [...]
-  },
-  
-  "setpieces": [
-    {
-      "name": "Nombre del setpiece",
-      "act": "I | II | III",
-      "description": "Descripción visual de la escena espectacular (50-100 palabras)",
-      "stakes": "Qué está en juego en este momento"
-    }
-  ]
+  }
 }
 
 ## REQUISITOS DE SETPIECES Y SEQUENCES (CRÍTICO)
@@ -580,7 +580,7 @@ serve(async (req) => {
 
     // Create outline record
     const outlineId = crypto.randomUUID();
-    await supabase
+    const { error: insertError } = await supabase
       .from('project_outlines')
       .insert({
         id: outlineId,
@@ -591,7 +591,20 @@ serve(async (req) => {
         progress: 10,
         quality: 'direct',
         heartbeat_at: new Date().toISOString(),
+        outline_json: {}, // Required NOT NULL field - will be populated after AI generation
       });
+
+    if (insertError) {
+      console.error('[generate-outline-direct] Failed to create outline record:', insertError);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'INSERT_FAILED', 
+          message: insertError.message 
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Update progress: Building prompt
     await supabase
