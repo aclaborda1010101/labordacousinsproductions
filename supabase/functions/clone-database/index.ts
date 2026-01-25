@@ -7,14 +7,17 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// NOTE: This function keeps job state in `background_tasks.metadata.clone` for status polling
-// and resume across cold starts.
+// NOTE: This function uses step-based cloning for reliable progress.
+// The frontend calls 'step' repeatedly until done.
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+// Time budget per step (15 seconds to stay safe under Edge limits)
+const STEP_TIME_BUDGET_MS = 15_000;
 
 type ClonePhase =
   | "idle"
@@ -48,6 +51,8 @@ type CloneCheckpoint = {
   currentTable: string | null;        // Table in progress
   currentTableOffset: number;         // Offset within current table
   dataRowsCopied: number;             // Total rows copied so far
+  tableCounts?: Record<string, number>; // Cached table counts
+  totalRows?: number;                 // Cached total rows
 };
 
 type CloneTaskMetadata = {
@@ -107,14 +112,14 @@ async function writeCloneTask(
   taskStatus: string,
   checkpoint?: CloneCheckpoint,
   options?: { includeData?: boolean },
-  targetUrl?: string
+  targetUrl?: string | null
 ) {
   const metadata: CloneTaskMetadata = {
     clone: {
       progress: job,
       checkpoint,
       options,
-      targetUrl,
+      targetUrl: targetUrl ?? undefined,
     },
   };
   const overall = Math.round(calculateProgressPercent(job));
@@ -135,6 +140,7 @@ async function writeCloneTask(
 }
 
 // Tables to clone in order (respecting foreign key dependencies)
+// IMPORTANT: background_tasks is EXCLUDED to avoid copying sensitive targetUrl
 const TABLES_ORDER = [
   'profiles',
   'projects',
@@ -176,11 +182,11 @@ const TABLES_ORDER = [
   'ekb_format_profiles',
   'ekb_industry_rules',
   'episode_qc',
-  'background_tasks'
+  // 'background_tasks' - EXCLUDED for security
 ];
 
-// Large tables that need smaller chunks
-const LARGE_TABLES = ['scripts', 'generation_blocks', 'generation_logs', 'storyboard_panels'];
+// Tables that need smaller chunks (JSON-heavy or many columns)
+const LARGE_TABLES = ['scripts', 'generation_blocks', 'generation_logs', 'storyboard_panels', 'generation_runs'];
 
 // Stale threshold: job not updated in 60 seconds
 const STALE_THRESHOLD_MS = 60_000;
@@ -299,11 +305,12 @@ serve(async (req) => {
           error: "Clonación cancelada",
         };
 
+        // Clear targetUrl on cancel for security
         const { error } = await supabaseAdmin
           .from("background_tasks")
           .update({
             status: "cancelled",
-            metadata: { clone: { progress: cancelledJob } },
+            metadata: { clone: { progress: cancelledJob, targetUrl: null } },
             error: "Clonación cancelada",
           })
           .eq("id", jobId)
@@ -368,7 +375,7 @@ serve(async (req) => {
       }
     }
 
-    // Handle resume - continue from checkpoint
+    // Handle resume - just validates and marks running, step does the work
     if (action === "resume") {
       if (!jobId) {
         return new Response(
@@ -392,21 +399,8 @@ serve(async (req) => {
         );
       }
 
-      // Check if job is stale enough to resume
-      const lastUpdate = new Date(task.updated_at).getTime();
-      const isStale = Date.now() - lastUpdate > STALE_THRESHOLD_MS;
-
-      if (!isStale && task.status === "running") {
-        return new Response(
-          JSON.stringify({ error: "Job is still active. Wait a moment before resuming." }),
-          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      // Get checkpoint and target URL from metadata
-      const checkpoint = task.metadata?.clone?.checkpoint;
       const savedTargetUrl = task.metadata?.clone?.targetUrl;
-      const savedOptions = task.metadata?.clone?.options || {};
+      const checkpoint = task.metadata?.clone?.checkpoint;
 
       if (!savedTargetUrl) {
         return new Response(
@@ -415,7 +409,7 @@ serve(async (req) => {
         );
       }
 
-      // Update status to running again
+      // Mark as running again
       await supabaseAdmin
         .from("background_tasks")
         .update({
@@ -424,9 +418,6 @@ serve(async (req) => {
           updated_at: new Date().toISOString(),
         })
         .eq("id", jobId);
-
-      // Start cloning from checkpoint (non-blocking)
-      cloneDatabase(jobId, user.id, savedTargetUrl, savedOptions, checkpoint).catch(console.error);
 
       return new Response(
         JSON.stringify({
@@ -440,7 +431,7 @@ serve(async (req) => {
       );
     }
 
-    // Handle start
+    // Handle start - only creates the job, step does the work
     if (action === "start") {
       if (!targetUrl) {
         return new Response(
@@ -479,7 +470,7 @@ serve(async (req) => {
         phase: "connecting",
         current: 0,
         total: 0,
-        currentItem: "Iniciando conexiones...",
+        currentItem: "Esperando primer paso...",
         cancelled: false,
       };
 
@@ -511,11 +502,25 @@ serve(async (req) => {
 
       if (insertError) throw insertError;
 
-      // Start cloning in background (non-blocking)
-      cloneDatabase(newJobId, user.id, cleanTargetUrl, options || {}).catch(console.error);
-
+      // NO BACKGROUND CLONING - step action will do the work
       return new Response(
-        JSON.stringify({ jobId: newJobId, message: "Cloning started" }),
+        JSON.stringify({ jobId: newJobId, message: "Job created. Call step to begin cloning." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Handle step - the main workhorse that advances cloning incrementally
+    if (action === "step") {
+      if (!jobId) {
+        return new Response(
+          JSON.stringify({ error: "jobId is required" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await executeCloneStep(jobId, user.id);
+      return new Response(
+        JSON.stringify(result),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -534,27 +539,57 @@ serve(async (req) => {
   }
 });
 
-async function cloneDatabase(
-  jobId: string,
-  userId: string,
-  targetUrl: string,
-  options: { includeData?: boolean; includeStorage?: boolean },
-  resumeCheckpoint?: CloneCheckpoint
-) {
-  // Load persisted job
-  const task = await readCloneTask(jobId);
-  const savedMeta = task?.metadata?.clone;
+// Execute one step of cloning with time budget
+async function executeCloneStep(jobId: string, userId: string): Promise<{
+  ok: boolean;
+  needsMore: boolean;
+  progress: JobState;
+  checkpoint?: CloneCheckpoint;
+  error?: string;
+}> {
+  const deadline = Date.now() + STEP_TIME_BUDGET_MS;
   
+  const task = await readCloneTask(jobId);
+  if (!task) {
+    return {
+      ok: false,
+      needsMore: false,
+      progress: { phase: "error", current: 0, total: 0, currentItem: "", error: "Job not found", cancelled: false },
+      error: "Job not found"
+    };
+  }
+
+  if (task.user_id !== userId) {
+    return {
+      ok: false,
+      needsMore: false,
+      progress: { phase: "error", current: 0, total: 0, currentItem: "", error: "Forbidden", cancelled: false },
+      error: "Forbidden"
+    };
+  }
+
+  const savedMeta = task.metadata?.clone;
+  const savedTargetUrl = savedMeta?.targetUrl;
+  const savedOptions = savedMeta?.options || {};
+
+  if (!savedTargetUrl) {
+    return {
+      ok: false,
+      needsMore: false,
+      progress: { phase: "error", current: 0, total: 0, currentItem: "", error: "No target URL", cancelled: false },
+      error: "No target URL saved"
+    };
+  }
+
   const job: JobState = savedMeta?.progress ?? {
     phase: "connecting",
     current: 0,
     total: 0,
-    currentItem: "Iniciando conexiones...",
+    currentItem: "Iniciando...",
     cancelled: false,
   };
 
-  // Initialize or restore checkpoint
-  const checkpoint: CloneCheckpoint = resumeCheckpoint ?? savedMeta?.checkpoint ?? {
+  const checkpoint: CloneCheckpoint = savedMeta?.checkpoint ?? {
     completedPhases: [],
     completedTables: [],
     currentTable: null,
@@ -562,21 +597,19 @@ async function cloneDatabase(
     dataRowsCopied: 0,
   };
 
-  let taskStatus: "running" | "completed" | "failed" | "cancelled" = "running";
+  // Check if already done or error
+  if (job.phase === "done" || job.phase === "error") {
+    return { ok: true, needsMore: false, progress: job, checkpoint };
+  }
 
-  let lastPersistAt = 0;
-  const persist = async (force = false) => {
-    const now = Date.now();
-    if (!force && now - lastPersistAt < 300) return;
-    lastPersistAt = now;
-    await writeCloneTask(jobId, userId, job, taskStatus, checkpoint, options, targetUrl);
-  };
-
-  const refreshCancelledFlag = async () => {
-    const latest = await readCloneTask(jobId);
-    if (!latest) return;
-    if (latest.status === "cancelled") job.cancelled = true;
-  };
+  // Check cancelled
+  if (task.status === "cancelled" || job.cancelled) {
+    job.cancelled = true;
+    job.phase = "error";
+    job.error = "Clonación cancelada";
+    await writeCloneTask(jobId, userId, job, "cancelled", checkpoint, savedOptions, null);
+    return { ok: true, needsMore: false, progress: job, checkpoint };
+  }
 
   let sourceDb: ReturnType<typeof postgres> | null = null;
   let targetDb: ReturnType<typeof postgres> | null = null;
@@ -587,56 +620,36 @@ async function cloneDatabase(
       throw new Error("SUPABASE_DB_URL not configured");
     }
 
-    // Sanitize target URL
-    let cleanTargetUrl = targetUrl;
-    try {
-      const url = new URL(targetUrl);
-      if (url.password) {
-        const decodedPassword = decodeURIComponent(url.password);
-        url.password = encodeURIComponent(decodedPassword);
-        cleanTargetUrl = url.toString();
-      }
-    } catch (urlParseErr) {
-      console.warn("URL sanitization warning:", urlParseErr);
-    }
+    // Connect to databases
+    sourceDb = postgres(sourceUrl, { max: 1 });
+    targetDb = postgres(savedTargetUrl, { max: 1 });
 
-    // Phase: Connecting (skip if already done)
+    // Test connections if first step
     if (!checkpoint.completedPhases.includes("connecting")) {
-      job.phase = 'connecting';
-      job.currentItem = 'Conectando a base de datos origen...';
-      await persist(true);
-      
-      sourceDb = postgres(sourceUrl, { max: 1 });
+      job.phase = "connecting";
+      job.currentItem = "Conectando a bases de datos...";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
       await sourceDb`SELECT 1`;
-      
-      job.currentItem = 'Conectando a base de datos destino...';
-      await persist(true);
-      targetDb = postgres(cleanTargetUrl, { max: 1 });
       await targetDb`SELECT 1`;
 
       checkpoint.completedPhases.push("connecting");
-      await persist(true);
-    } else {
-      // Reconnect for resume
-      sourceDb = postgres(sourceUrl, { max: 1 });
-      targetDb = postgres(cleanTargetUrl, { max: 1 });
+      job.currentItem = "Conexiones establecidas";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
+      // Check time budget
+      if (Date.now() > deadline) {
+        await cleanup();
+        return { ok: true, needsMore: true, progress: job, checkpoint };
+      }
     }
 
-    await refreshCancelledFlag();
-    if (job.cancelled) {
-      taskStatus = "cancelled";
-      job.phase = "error";
-      job.error = "Clonación cancelada";
-      await persist(true);
-      return await cleanup();
-    }
-
-    // Phase: Enums (skip if already done)
+    // Phase: Enums
     if (!checkpoint.completedPhases.includes("enums")) {
-      job.phase = 'enums';
-      job.currentItem = 'Obteniendo tipos ENUM...';
-      await persist(true);
-      
+      job.phase = "enums";
+      job.currentItem = "Obteniendo tipos ENUM...";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
       const enums = await sourceDb`
         SELECT t.typname, e.enumlabel
         FROM pg_type t 
@@ -655,16 +668,13 @@ async function cloneDatabase(
 
       job.total = enumsByType.size;
       job.current = 0;
-      
+
       for (const [typeName, values] of enumsByType) {
-        await refreshCancelledFlag();
-        if (job.cancelled) {
-          taskStatus = "cancelled";
-          job.phase = "error";
-          job.error = "Clonación cancelada";
-          await persist(true);
-          return await cleanup();
+        if (Date.now() > deadline) {
+          await cleanup();
+          return { ok: true, needsMore: true, progress: job, checkpoint };
         }
+
         job.currentItem = `Creando ENUM: ${typeName}`;
         
         try {
@@ -675,28 +685,26 @@ async function cloneDatabase(
           console.warn(`Enum ${typeName} warning:`, enumErr.message);
         }
         job.current++;
-        await persist();
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
       }
 
       checkpoint.completedPhases.push("enums");
-      await persist(true);
+      job.currentItem = "ENUMs completados";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
     }
 
-    await refreshCancelledFlag();
-    if (job.cancelled) {
-      taskStatus = "cancelled";
-      job.phase = "error";
-      job.error = "Clonación cancelada";
-      await persist(true);
-      return await cleanup();
+    // Check time budget
+    if (Date.now() > deadline) {
+      await cleanup();
+      return { ok: true, needsMore: true, progress: job, checkpoint };
     }
 
-    // Phase: Schema (skip if already done)
+    // Phase: Schema
     if (!checkpoint.completedPhases.includes("schema")) {
-      job.phase = 'schema';
-      job.currentItem = 'Obteniendo estructura de tablas...';
-      await persist(true);
-      
+      job.phase = "schema";
+      job.currentItem = "Obteniendo estructura de tablas...";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
       const tables = await sourceDb`
         SELECT table_name 
         FROM information_schema.tables 
@@ -710,18 +718,15 @@ async function cloneDatabase(
       job.current = 0;
 
       for (const table of tables) {
-        await refreshCancelledFlag();
-        if (job.cancelled) {
-          taskStatus = "cancelled";
-          job.phase = "error";
-          job.error = "Clonación cancelada";
-          await persist(true);
-          return await cleanup();
+        if (Date.now() > deadline) {
+          await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+          await cleanup();
+          return { ok: true, needsMore: true, progress: job, checkpoint };
         }
+
         const tableName = table.table_name;
         job.currentItem = `Creando tabla: ${tableName}`;
-        await persist();
-        
+
         try {
           const columns = await sourceDb`
             SELECT 
@@ -771,144 +776,128 @@ async function cloneDatabase(
           console.warn(`Table ${tableName} error:`, tableErr.message);
         }
         job.current++;
-        await persist();
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
       }
 
       checkpoint.completedPhases.push("schema");
-      await persist(true);
+      job.currentItem = "Schema completado";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
     }
 
-    await refreshCancelledFlag();
-    if (job.cancelled) {
-      taskStatus = "cancelled";
-      job.phase = "error";
-      job.error = "Clonación cancelada";
-      await persist(true);
-      return await cleanup();
+    // Check time budget
+    if (Date.now() > deadline) {
+      await cleanup();
+      return { ok: true, needsMore: true, progress: job, checkpoint };
     }
 
     // Phase: Data
-    if (options.includeData !== false && !checkpoint.completedPhases.includes("data")) {
-      job.phase = 'data';
-      await persist(true);
-      
-      // Count total rows
-      let totalRows = 0;
-      const tableCounts = new Map<string, number>();
-      
-      for (const tableName of TABLES_ORDER) {
-        await refreshCancelledFlag();
-        if (job.cancelled) {
-          taskStatus = "cancelled";
-          job.phase = "error";
-          job.error = "Clonación cancelada";
-          await persist(true);
-          return await cleanup();
+    if (savedOptions.includeData !== false && !checkpoint.completedPhases.includes("data")) {
+      job.phase = "data";
+
+      // Calculate table counts once and cache them
+      if (!checkpoint.tableCounts || !checkpoint.totalRows) {
+        job.currentItem = "Contando registros...";
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
+        let totalRows = 0;
+        const tableCounts: Record<string, number> = {};
+
+        for (const tableName of TABLES_ORDER) {
+          try {
+            const countResult = await sourceDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
+            const count = parseInt(countResult[0]?.count || '0');
+            tableCounts[tableName] = count;
+            totalRows += count;
+          } catch {
+            tableCounts[tableName] = 0;
+          }
         }
-        try {
-          const countResult = await sourceDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
-          const count = parseInt(countResult[0]?.count || '0');
-          tableCounts.set(tableName, count);
-          totalRows += count;
-        } catch {
-          tableCounts.set(tableName, 0);
-        }
+
+        checkpoint.tableCounts = tableCounts;
+        checkpoint.totalRows = totalRows;
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
       }
 
-      job.total = totalRows;
+      job.total = checkpoint.totalRows || 0;
       job.current = checkpoint.dataRowsCopied;
 
-      // Disable triggers on target
+      // Disable triggers on target (once per step is fine)
       try {
         await targetDb.unsafe(`SET session_replication_role = 'replica'`);
       } catch {}
 
+      // Process tables
       for (const tableName of TABLES_ORDER) {
-        // Skip completed tables
         if (checkpoint.completedTables.includes(tableName)) {
           continue;
         }
 
-        await refreshCancelledFlag();
-        if (job.cancelled) {
-          taskStatus = "cancelled";
-          job.phase = "error";
-          job.error = "Clonación cancelada";
-          await persist(true);
-          return await cleanup();
+        if (Date.now() > deadline) {
+          await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+          await cleanup();
+          return { ok: true, needsMore: true, progress: job, checkpoint };
         }
-        
-        const tableCount = tableCounts.get(tableName) || 0;
+
+        const tableCount = checkpoint.tableCounts?.[tableName] || 0;
         if (tableCount === 0) {
           checkpoint.completedTables.push(tableName);
-          await persist();
           continue;
         }
 
         checkpoint.currentTable = tableName;
-        job.currentItem = `Copiando: ${tableName} (0/${tableCount})`;
+        const chunkSize = LARGE_TABLES.includes(tableName) ? 10 : 100;
         
-        try {
-          const chunkSize = LARGE_TABLES.includes(tableName) ? 10 : 100;
-          
-          // Start from saved offset if resuming current table
-          let offset = checkpoint.currentTable === tableName ? checkpoint.currentTableOffset : 0;
-          let copied = offset;
+        // Start from saved offset
+        let offset = checkpoint.currentTableOffset;
+        let copied = offset;
 
-          while (copied < tableCount) {
-            await refreshCancelledFlag();
-            if (job.cancelled) {
-              taskStatus = "cancelled";
-              job.phase = "error";
-              job.error = "Clonación cancelada";
-              await persist(true);
-              return await cleanup();
-            }
-
-            const rows = await sourceDb.unsafe(
-              `SELECT * FROM public."${tableName}" LIMIT ${chunkSize} OFFSET ${offset}`
-            );
-
-            if (rows.length === 0) break;
-
-            for (const row of rows) {
-              const columns = Object.keys(row);
-              const values = columns.map(c => row[c]);
-              const placeholders = columns.map((_, i) => `$${i + 1}`).join(', ');
-              const colNames = columns.map(c => `"${c}"`).join(', ');
-
-              try {
-                await targetDb.unsafe(
-                  `INSERT INTO public."${tableName}" (${colNames}) VALUES (${placeholders}) ON CONFLICT DO NOTHING`,
-                  values
-                );
-              } catch (insertErr: any) {
-                console.warn(`Insert error in ${tableName}:`, insertErr.message);
-              }
-
-              copied++;
-              job.current++;
-              checkpoint.dataRowsCopied++;
-              checkpoint.currentTableOffset = copied;
-              job.currentItem = `Copiando: ${tableName} (${copied}/${tableCount})`;
-            }
-
-            offset += chunkSize;
-            await persist();
-            
-            await new Promise(r => setTimeout(r, 50));
+        while (copied < tableCount) {
+          if (Date.now() > deadline) {
+            job.currentItem = `Copiando: ${tableName} (${copied}/${tableCount})`;
+            checkpoint.currentTableOffset = copied;
+            await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+            await cleanup();
+            return { ok: true, needsMore: true, progress: job, checkpoint };
           }
 
-          // Table completed
-          checkpoint.completedTables.push(tableName);
-          checkpoint.currentTable = null;
-          checkpoint.currentTableOffset = 0;
-          await persist(true);
+          const rows = await sourceDb.unsafe(
+            `SELECT * FROM public."${tableName}" LIMIT ${chunkSize} OFFSET ${offset}`
+          );
 
-        } catch (dataErr: any) {
-          console.warn(`Data copy error for ${tableName}:`, dataErr.message);
-          checkpoint.completedTables.push(tableName); // Skip and continue
+          if (rows.length === 0) break;
+
+          for (const row of rows) {
+            const columns = Object.keys(row);
+            const values = columns.map(c => row[c]);
+            const placeholders = columns.map((_, i) => `$${i + 1}`).join(', ');
+            const colNames = columns.map(c => `"${c}"`).join(', ');
+
+            try {
+              await targetDb.unsafe(
+                `INSERT INTO public."${tableName}" (${colNames}) VALUES (${placeholders}) ON CONFLICT DO NOTHING`,
+                values
+              );
+            } catch (insertErr: any) {
+              console.warn(`Insert error in ${tableName}:`, insertErr.message);
+            }
+
+            copied++;
+            job.current++;
+            checkpoint.dataRowsCopied++;
+          }
+
+          offset += chunkSize;
+          checkpoint.currentTableOffset = copied;
+          job.currentItem = `Copiando: ${tableName} (${copied}/${tableCount})`;
+          await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
         }
+
+        // Table completed
+        checkpoint.completedTables.push(tableName);
+        checkpoint.currentTable = null;
+        checkpoint.currentTableOffset = 0;
+        job.currentItem = `Tabla completada: ${tableName}`;
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
       }
 
       // Re-enable triggers
@@ -917,24 +906,22 @@ async function cloneDatabase(
       } catch {}
 
       checkpoint.completedPhases.push("data");
-      await persist(true);
+      job.currentItem = "Datos copiados";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
     }
 
-    await refreshCancelledFlag();
-    if (job.cancelled) {
-      taskStatus = "cancelled";
-      job.phase = "error";
-      job.error = "Clonación cancelada";
-      await persist(true);
-      return await cleanup();
+    // Check time budget
+    if (Date.now() > deadline) {
+      await cleanup();
+      return { ok: true, needsMore: true, progress: job, checkpoint };
     }
 
-    // Phase: Functions (skip if already done)
+    // Phase: Functions
     if (!checkpoint.completedPhases.includes("functions")) {
-      job.phase = 'functions';
-      job.currentItem = 'Copiando funciones...';
-      await persist(true);
-      
+      job.phase = "functions";
+      job.currentItem = "Copiando funciones...";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
       const functions = await sourceDb`
         SELECT 
           p.proname as name,
@@ -949,17 +936,14 @@ async function cloneDatabase(
       job.current = 0;
 
       for (const func of functions) {
-        await refreshCancelledFlag();
-        if (job.cancelled) {
-          taskStatus = "cancelled";
-          job.phase = "error";
-          job.error = "Clonación cancelada";
-          await persist(true);
-          return await cleanup();
+        if (Date.now() > deadline) {
+          await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+          await cleanup();
+          return { ok: true, needsMore: true, progress: job, checkpoint };
         }
+
         job.currentItem = `Creando función: ${func.name}`;
-        await persist();
-        
+
         try {
           await targetDb.unsafe(`DROP FUNCTION IF EXISTS public.${func.name} CASCADE`);
           await targetDb.unsafe(func.definition);
@@ -967,38 +951,28 @@ async function cloneDatabase(
           console.warn(`Function ${func.name} warning:`, funcErr.message);
         }
         job.current++;
-        await persist();
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
       }
 
       checkpoint.completedPhases.push("functions");
-      await persist(true);
+      job.currentItem = "Funciones completadas";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
     }
 
-    await refreshCancelledFlag();
-    if (job.cancelled) {
-      taskStatus = "cancelled";
-      job.phase = "error";
-      job.error = "Clonación cancelada";
-      await persist(true);
-      return await cleanup();
+    // Check time budget
+    if (Date.now() > deadline) {
+      await cleanup();
+      return { ok: true, needsMore: true, progress: job, checkpoint };
     }
 
-    // Phase: Policies (skip if already done)
+    // Phase: Policies
     if (!checkpoint.completedPhases.includes("policies")) {
-      job.phase = 'policies';
-      job.currentItem = 'Aplicando políticas RLS...';
-      await persist(true);
-      
+      job.phase = "policies";
+      job.currentItem = "Aplicando políticas RLS...";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
+      // Enable RLS on all tables (except background_tasks which isn't cloned)
       for (const tableName of TABLES_ORDER) {
-        await refreshCancelledFlag();
-        if (job.cancelled) {
-          taskStatus = "cancelled";
-          job.phase = "error";
-          job.error = "Clonación cancelada";
-          await persist(true);
-          return await cleanup();
-        }
-        
         try {
           await targetDb.unsafe(`ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY`);
         } catch {}
@@ -1022,17 +996,14 @@ async function cloneDatabase(
       job.current = 0;
 
       for (const policy of policies) {
-        await refreshCancelledFlag();
-        if (job.cancelled) {
-          taskStatus = "cancelled";
-          job.phase = "error";
-          job.error = "Clonación cancelada";
-          await persist(true);
-          return await cleanup();
+        if (Date.now() > deadline) {
+          await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+          await cleanup();
+          return { ok: true, needsMore: true, progress: job, checkpoint };
         }
+
         job.currentItem = `Política: ${policy.policyname}`;
-        await persist();
-        
+
         try {
           const permissive = policy.permissive === 'PERMISSIVE' ? 'PERMISSIVE' : 'RESTRICTIVE';
           const roles = policy.roles.join(', ');
@@ -1053,77 +1024,76 @@ async function cloneDatabase(
           console.warn(`Policy ${policy.policyname} warning:`, polErr.message);
         }
         job.current++;
-        await persist();
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
       }
 
       checkpoint.completedPhases.push("policies");
-      await persist(true);
+      job.currentItem = "Políticas completadas";
+      await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+    }
+
+    // Check time budget
+    if (Date.now() > deadline) {
+      await cleanup();
+      return { ok: true, needsMore: true, progress: job, checkpoint };
     }
 
     // Phase: Verification
-    await refreshCancelledFlag();
-    if (job.cancelled) {
-      taskStatus = "cancelled";
-      job.phase = "error";
-      job.error = "Clonación cancelada";
-      await persist(true);
-      return await cleanup();
-    }
-    
-    job.phase = 'verification';
-    job.currentItem = 'Verificando integridad de datos...';
+    job.phase = "verification";
+    job.currentItem = "Verificando integridad de datos...";
     job.current = 0;
     job.total = TABLES_ORDER.length;
-    await persist(true);
-    
+    await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+
     const verificationResults: VerificationResult[] = [];
-    
+
     for (const tableName of TABLES_ORDER) {
-      await refreshCancelledFlag();
-      if (job.cancelled) {
-        taskStatus = "cancelled";
-        job.phase = "error";
-        job.error = "Clonación cancelada";
-        await persist(true);
-        return await cleanup();
+      if (Date.now() > deadline) {
+        // Save partial verification and continue later
+        job.verification = verificationResults;
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+        await cleanup();
+        return { ok: true, needsMore: true, progress: job, checkpoint };
       }
-      
+
       try {
         const sourceResult = await sourceDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
         const sourceCount = parseInt(sourceResult[0]?.count || '0');
-        
+
         const targetResult = await targetDb.unsafe(`SELECT COUNT(*) as count FROM public."${tableName}"`);
         const targetCount = parseInt(targetResult[0]?.count || '0');
-        
+
         verificationResults.push({
           table: tableName,
           sourceCount,
           targetCount,
           match: sourceCount === targetCount
         });
-        
+
         job.currentItem = `Verificando: ${tableName} (${sourceCount} → ${targetCount})`;
         job.current++;
-        await persist();
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
       } catch {
         job.current++;
-        await persist();
       }
     }
-    
+
     job.verification = verificationResults;
     job.verificationPassed = verificationResults.every(v => v.match);
 
-    // Done!
-    job.phase = 'done';
-    job.currentItem = '¡Clonación completada!';
+    // Done! Clear targetUrl for security
+    job.phase = "done";
+    job.currentItem = "¡Clonación completada!";
     job.current = job.total;
-    taskStatus = "completed";
-    await persist(true);
+    
+    await writeCloneTask(jobId, userId, job, "completed", checkpoint, savedOptions, null);
+    await cleanup();
+
+    return { ok: true, needsMore: false, progress: job, checkpoint };
 
   } catch (err: any) {
-    console.error("Clone error:", err);
-    job.phase = 'error';
+    console.error("Step error:", err);
+    job.phase = "error";
 
     let errorMessage = err.message || 'Error durante la clonación';
     
@@ -1139,20 +1109,17 @@ async function cloneDatabase(
     
     job.error = errorMessage;
     job.currentItem = '';
-    taskStatus = "failed";
+    
     try {
-      await persist(true);
+      await writeCloneTask(jobId, userId, job, "failed", checkpoint, savedOptions, savedTargetUrl);
     } catch {}
-  } finally {
+
     await cleanup();
+    return { ok: false, needsMore: false, progress: job, checkpoint, error: errorMessage };
   }
 
   async function cleanup() {
-    try {
-      if (sourceDb) await sourceDb.end();
-    } catch {}
-    try {
-      if (targetDb) await targetDb.end();
-    } catch {}
+    try { if (sourceDb) await sourceDb.end(); } catch {}
+    try { if (targetDb) await targetDb.end(); } catch {}
   }
 }
