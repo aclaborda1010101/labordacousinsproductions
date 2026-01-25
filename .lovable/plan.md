@@ -1,132 +1,129 @@
 
-# Plan: Conectar Expansión de Beats con Materialización de Escenas
+# Plan: Refrescar Outline Después de Expansión y Materialización
 
-## Diagnóstico
+## Problema Identificado
 
-El flujo actual tiene una desconexión:
+Después de expandir beats a escenas:
+1. El outline JSON se actualiza en la base de datos (status = 'completed')
+2. Las escenas se materializan en la tabla `scenes`
+3. **PERO** la validación usa el `outline` viejo en memoria del componente
 
 ```text
-┌─────────────────────────────────────────────────────────────────────┐
-│  FLUJO ACTUAL (ROTO)                                                │
-├─────────────────────────────────────────────────────────────────────┤
-│  1. expand-beats-to-scenes                                          │
-│     → Genera 36 escenas en outline_json.episode_beats               │
-│     ✓ FUNCIONA                                                      │
-├─────────────────────────────────────────────────────────────────────┤
-│  2. validateDensity()                                               │
-│     → Re-valida el outline actualizado                              │
-│     ✗ PERO: Busca en tabla `scenes` que tiene 0 registros           │
-├─────────────────────────────────────────────────────────────────────┤
-│  3. materialize-scenes                                              │
-│     → NUNCA SE LLAMA                                                │
-│     ✗ La tabla `scenes` permanece vacía                             │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  FLUJO ACTUAL (ROTO)                                            │
+├─────────────────────────────────────────────────────────────────┤
+│  1. expand-beats-to-scenes → DB: outline actualizado            │
+│  2. materialize-scenes → DB: 34 escenas insertadas              │
+│  3. validateDensity(oldOutline) → Usa memoria vieja             │
+│     ✗ oldOutline no tiene episode_beats[0].scenes               │
+│     ✗ Sigue mostrando "necesita expansión"                      │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ## Solución
 
-Modificar el hook `useSceneDensityValidation.ts` para que después de expandir los beats, llame automáticamente a `materialize-scenes`:
+Modificar `PreScriptWizard.tsx` para refrescar el outline desde la base de datos después de una expansión exitosa:
 
 ```text
-┌─────────────────────────────────────────────────────────────────────┐
-│  FLUJO CORREGIDO                                                    │
-├─────────────────────────────────────────────────────────────────────┤
-│  1. expand-beats-to-scenes                                          │
-│     → Genera 36 escenas en outline_json.episode_beats               │
-├─────────────────────────────────────────────────────────────────────┤
-│  2. materialize-scenes (NUEVO)                                      │
-│     → Lee episode_beats[0].scenes                                   │
-│     → Inserta 36 registros en tabla `scenes`                        │
-├─────────────────────────────────────────────────────────────────────┤
-│  3. validateDensity()                                               │
-│     → Ahora encuentra 36 escenas en la tabla                        │
-│     ✓ Validación pasa                                               │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  FLUJO CORREGIDO                                                │
+├─────────────────────────────────────────────────────────────────┤
+│  1. expand-beats-to-scenes → DB actualizado                     │
+│  2. materialize-scenes → 34 escenas insertadas                  │
+│  3. NUEVO: Refetch outline from DB                              │
+│  4. validateDensity(newOutline) → Encuentra 34 escenas          │
+│     ✓ Validación pasa                                           │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ## Cambios Técnicos
 
-### 1. Actualizar useSceneDensityValidation.ts
+### 1. Añadir callback para refrescar outline
 
-Modificar la función `expandBeatsToScenes` para encadenar la llamada a `materialize-scenes`:
+En `PreScriptWizard.tsx`, añadir prop `onOutlineRefresh`:
 
 ```typescript
+interface PreScriptWizardProps {
+  projectId: string;
+  outline: any;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onComplete: () => void;
+  inline?: boolean;
+  onScriptCompiled?: (scriptData: any) => void;
+  language?: string;
+  onOutlineRefresh?: () => Promise<void>; // NUEVO
+}
+```
+
+### 2. Modificar el handler del botón "Expandir"
+
+```typescript
+<Button 
+  onClick={async () => {
+    const profile = outline?.density_profile || 'standard';
+    const result = await expandBeatsToScenes(projectId, durationMin, profile);
+    if (result.success) {
+      // NUEVO: Refrescar outline desde la base de datos
+      if (onOutlineRefresh) {
+        await onOutlineRefresh();
+      }
+      
+      // Ahora la validación usará el outline actualizado
+      // (que llegará como nuevo prop en el siguiente render)
+      setDensityValidated(false);
+      setTimeout(() => setDensityValidated(true), 100);
+    }
+  }}
+  disabled={isExpanding}
+>
+```
+
+### 3. Alternativa: Validar directamente desde la DB
+
+Si no hay callback disponible, modificar `expandBeatsToScenes` para devolver el outline actualizado:
+
+```typescript
+// En useSceneDensityValidation.ts
 const expandBeatsToScenes = useCallback(async (
   projectId: string,
   durationMin: number,
   densityProfile: string = 'standard'
-): Promise<{ success: boolean; scenesCount: number; error?: string }> => {
-  setIsExpanding(true);
+): Promise<{ 
+  success: boolean; 
+  scenesCount: number; 
+  error?: string;
+  updatedOutline?: any; // NUEVO: Devolver outline actualizado
+}> => {
+  // ... después de materializar...
   
-  try {
-    toast.info('Expandiendo beats en escenas...', { duration: 10000 });
-    
-    // Paso 1: Expandir beats a escenas en el outline
-    const { data, error } = await invokeAuthedFunction('expand-beats-to-scenes', {
-      projectId,
-      durationMin,
-      densityProfile,
-    });
+  // Fetch el outline actualizado desde la DB
+  const { data: refreshedOutline } = await supabase
+    .from('project_outlines')
+    .select('outline_json')
+    .eq('project_id', projectId)
+    .eq('status', 'completed')
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-    if (error || !data?.success) {
-      throw new Error(data?.message || error?.message || 'Error expandiendo escenas');
-    }
-
-    // Paso 2: NUEVO - Materializar escenas en la tabla scenes
-    toast.info('Materializando escenas en base de datos...', { duration: 5000 });
-    
-    const { data: materializeData, error: materializeError } = await invokeAuthedFunction(
-      'materialize-scenes',
-      {
-        projectId,
-        deleteExisting: true, // Borrar escenas previas
-      }
-    );
-
-    if (materializeError || !materializeData?.success) {
-      console.warn('[useSceneDensityValidation] Materialize warning:', materializeError);
-      // No fallar si materialize falla, solo advertir
-    } else {
-      console.log('[useSceneDensityValidation] Materialized:', materializeData.scenes?.created);
-    }
-
-    toast.success(`Expansión completada: ${data.scenesCount} escenas generadas`);
-    
-    return {
-      success: true,
-      scenesCount: data.scenesCount,
-    };
-  } catch (err: any) {
-    // ... error handling
-  } finally {
-    setIsExpanding(false);
-  }
+  return {
+    success: true,
+    scenesCount: finalCount,
+    updatedOutline: refreshedOutline?.outline_json,
+  };
 }, []);
 ```
 
-### 2. Verificar materialize-scenes
-
-La función `materialize-scenes` ya tiene lógica para leer de `episode_beats[0].scenes`, pero necesita mejorarse para manejar el nuevo formato de `expand-beats-to-scenes`. 
-
-Añadir soporte para el formato con campos `slugline`, `summary`, `characters_present`:
+### 4. Usar el outline actualizado para re-validar
 
 ```typescript
-// En extractScenesFromEpisodeBeats()
-if (Array.isArray(ep.scenes)) {
-  for (let i = 0; i < ep.scenes.length; i++) {
-    const sc = ep.scenes[i];
-    scenes.push({
-      scene_no: sc.scene_number || globalSceneNo++,
-      episode_no: episodeNo,
-      slugline: sc.slugline || `ESCENA ${i + 1}`,
-      summary: sc.summary || sc.description || '',
-      time_of_day: parseTimeOfDay(sc.slugline || ''),
-      mood: 'neutral',
-      character_names: sc.characters_present || sc.character_names || [],
-      location_name: extractLocationFromSlugline(sc.slugline),
-      beats: sc.beats || []
-    });
-  }
+// En PreScriptWizard.tsx
+const result = await expandBeatsToScenes(projectId, durationMin, profile);
+if (result.success && result.updatedOutline) {
+  // Re-validar con el outline actualizado
+  const newResult = validateDensity(result.updatedOutline, format, durationMin, profile);
+  // Esto ahora encontrará las escenas expandidas
 }
 ```
 
@@ -134,13 +131,14 @@ if (Array.isArray(ep.scenes)) {
 
 | Archivo | Cambio |
 |---------|--------|
-| `src/hooks/useSceneDensityValidation.ts` | Añadir llamada a materialize-scenes después de expand |
-| `supabase/functions/materialize-scenes/index.ts` | Mejorar extracción del nuevo formato de escenas |
+| `src/hooks/useSceneDensityValidation.ts` | Devolver outline actualizado en `expandBeatsToScenes` |
+| `src/components/project/PreScriptWizard.tsx` | Usar outline actualizado para re-validar |
 
 ## Resultado Esperado
 
 1. Usuario hace clic en "Expandir a 26-45 Escenas"
-2. Sistema genera 36 escenas en el outline JSON
-3. Sistema automáticamente materializa esas 36 escenas en la tabla `scenes`
-4. Validación encuentra 36 escenas y marca como válido
-5. Usuario puede continuar al paso de generación de guión
+2. Sistema genera 34 escenas y las materializa
+3. Sistema obtiene el outline actualizado de la DB
+4. Validación encuentra 34 escenas en `episode_beats[0].scenes`
+5. UI muestra "Densidad correcta: 34 escenas" (checkbox verde)
+6. Usuario puede continuar al siguiente paso
