@@ -435,20 +435,20 @@ export function ShowrunnerSurgeryDialog({
     setStep('applying');
     
     try {
-      const response = await invokeAuthedFunction('apply-showrunner-surgery', {
+      const { data, error } = await invokeAuthedFunction('apply-showrunner-surgery', {
         blockId: result.blockId,
         action: 'apply'
-      }) as any;
+      });
 
-      if (!response.ok) {
-        throw new Error(response.error || 'Error aplicando la cirugía');
+      if (error || !data?.ok) {
+        throw new Error(data?.error || error?.message || 'Error aplicando la cirugía');
       }
 
       if (onSurgeryComplete) {
         onSurgeryComplete(result);
       }
       
-      toast.success(`Cirugía aplicada (v${response.newVersion})`);
+      toast.success(`Cirugía aplicada (v${data.newVersion})`);
       onOpenChange(false);
       resetDialog();
       
@@ -467,10 +467,13 @@ export function ShowrunnerSurgeryDialog({
     }
 
     try {
-      await invokeAuthedFunction('apply-showrunner-surgery', {
+      const { error } = await invokeAuthedFunction('apply-showrunner-surgery', {
         blockId: result.blockId,
         action: 'reject'
       });
+      if (error) {
+        console.error('Reject error:', error);
+      }
       toast.info('Cirugía rechazada');
     } catch (error) {
       console.error('Reject error:', error);
