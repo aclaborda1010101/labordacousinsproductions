@@ -126,6 +126,20 @@ ${sceneInstruction}
 - Beats narrativos: ${profile.min_beats} mínimo (CON situation_detail.physical_context)
 - Escenas estimadas: ${sceneTarget ? `${sceneTarget.min}-${sceneTarget.max}` : profile.min_scenes} escenas
 
+## REQUISITOS OBLIGATORIOS DE PERSONAJES
+
+CRÍTICO: El reparto DEBE incluir al menos:
+- 1 personaje con role: "protagonist" 
+- 1 personaje con role: "antagonist" (fuerza opositora principal)
+- 2+ personajes con role: "supporting"
+
+El ANTAGONISTA puede ser:
+- Una persona individual (villano clásico)
+- Una institución/sistema representada por un personaje (el jefe corrupto, el oficial injusto)
+- Una fuerza abstracta encarnada en un personaje (el vecino que representa el prejuicio social)
+
+Pero DEBE estar representado por al menos UN personaje concreto con role="antagonist".
+
 ## ESTRUCTURA REQUERIDA
 
 Genera un JSON con la siguiente estructura:
@@ -163,6 +177,16 @@ Genera un JSON con la siguiente estructura:
       "name": "Nombre de la trama",
       "type": "primary | secondary",
       "description": "De qué trata esta línea narrativa"
+    }
+  ],
+  
+  "sequences": [
+    {
+      "name": "Nombre de la secuencia",
+      "act": "I | II | III",
+      "scenes_range": "1-4",
+      "dramatic_goal": "Objetivo emocional de la secuencia",
+      "tone_shift": "Cómo cambia el tono al final de la secuencia"
     }
   ],
   
@@ -221,10 +245,12 @@ Genera un JSON con la siguiente estructura:
 
 1. Cada beat debe tener TODOS los campos de situation_detail
 2. Cada personaje debe tener want, need, flaw y arc
-3. Las localizaciones deben ser variadas y visuales
-4. El midpoint_reversal debe ser un giro real que cambie la dirección
-5. El all_is_lost_moment debe ser el punto más bajo del protagonista
-6. Los setpieces deben ser momentos visuales memorables
+3. OBLIGATORIO: Al menos 1 personaje con role="antagonist" - sin antagonista el conflicto no funciona
+4. Las localizaciones deben ser variadas y visuales
+5. El midpoint_reversal debe ser un giro real que cambie la dirección
+6. El all_is_lost_moment debe ser el punto más bajo del protagonista
+7. Los setpieces deben ser momentos visuales memorables
+8. Incluye al menos 4-6 sequences que agrupen los beats en unidades dramáticas
 
 RESPONDE ÚNICAMENTE CON EL JSON. Sin markdown, sin explicaciones.
 `.trim();
@@ -245,14 +271,33 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
   const warnings: ValidationWarning[] = [];
   let score = 100;
 
-  // Count characters
-  const chars = (outline.main_characters || outline.cast || []).length;
-  if (chars < profile.min_characters) {
+  // Get character array
+  const chars = outline.main_characters || outline.cast || [];
+  const charCount = chars.length;
+  
+  // Check character count
+  if (charCount < profile.min_characters) {
     warnings.push({
       type: 'characters',
-      message: `Tienes ${chars} personajes, el perfil ${profile.label} sugiere mínimo ${profile.min_characters}`,
-      current: chars,
+      message: `Tienes ${charCount} personajes, el perfil ${profile.label} sugiere mínimo ${profile.min_characters}`,
+      current: charCount,
       required: profile.min_characters,
+    });
+    score -= 15;
+  }
+
+  // Check for antagonist presence
+  const hasAntagonist = chars.some((c: any) => {
+    const role = (c.role || '').toLowerCase();
+    return role.includes('antag') || role.includes('villain') || role === 'antagonist';
+  });
+  
+  if (!hasAntagonist) {
+    warnings.push({
+      type: 'characters',
+      message: 'Falta un antagonista explícito (role="antagonist") - el conflicto puede ser débil',
+      current: 0,
+      required: 1,
     });
     score -= 15;
   }
@@ -283,6 +328,18 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       required: profile.min_beats,
     });
     score -= 20;
+  }
+
+  // Check sequences (new field)
+  const sequences = outline.sequences || [];
+  if (sequences.length < 4) {
+    warnings.push({
+      type: 'structure',
+      message: `Tienes ${sequences.length} secuencias, se recomiendan mínimo 4 para agrupar los beats`,
+      current: sequences.length,
+      required: 4,
+    });
+    score -= 10;
   }
 
   // Check structure

@@ -61,6 +61,37 @@ serve(async (req) => {
       });
     }
 
+    // Check antagonist presence
+    const chars = outline.main_characters || outline.cast || [];
+    const antagonistCount = chars.filter((c: any) => {
+      const role = (c.role || '').toLowerCase();
+      return role.includes('antag') || role.includes('villain') || role === 'antagonist';
+    }).length;
+    
+    if (antagonistCount < 1) {
+      issues.push({
+        code: 'ANTAGONIST_MISSING',
+        severity: 'critical',
+        message: `Falta antagonista explícito: ${antagonistCount}/1`,
+        current: antagonistCount,
+        required: 1,
+        fix: 'Añadir al menos 1 personaje con role="antagonist" para establecer el conflicto central'
+      });
+    }
+
+    // Check sequences presence
+    const sequences = outline.sequences || [];
+    if (sequences.length < 4) {
+      issues.push({
+        code: 'SEQUENCES_MISSING',
+        severity: 'warning',
+        message: `Faltan secuencias dramáticas: ${sequences.length}/4`,
+        current: sequences.length,
+        required: 4,
+        fix: `Añadir ${4 - sequences.length} secuencia(s) para agrupar beats en unidades dramáticas`
+      });
+    }
+
     // Check supporting
     if ((counts.supporting || 0) < targets.supporting_min) {
       issues.push({

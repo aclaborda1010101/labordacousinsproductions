@@ -92,6 +92,21 @@ export const FILM_SCAFFOLD_SCHEMA = {
         },
         description: "Momentos visuales memorables (mínimo 3)"
       },
+      sequences: {
+        type: "array" as const,
+        items: {
+          type: "object" as const,
+          properties: {
+            name: { type: "string" as const, description: "Nombre de la secuencia" },
+            act: { type: "string" as const, enum: ["I", "II", "III"], description: "Acto al que pertenece" },
+            scenes_range: { type: "string" as const, description: "Rango de escenas (ej: 1-4)" },
+            dramatic_goal: { type: "string" as const, description: "Objetivo emocional de la secuencia" },
+            tone_shift: { type: "string" as const, description: "Cómo cambia el tono al final" }
+          },
+          required: ["name", "act", "dramatic_goal"]
+        },
+        description: "Secuencias dramáticas que agrupan 2-5 escenas bajo un objetivo común (mínimo 4)"
+      },
       world_rules: {
         type: "array" as const,
         items: {
@@ -119,7 +134,7 @@ export const FILM_SCAFFOLD_SCHEMA = {
         required: ["act_i_goal", "inciting_incident_summary", "act_ii_goal", "midpoint_summary", "act_iii_goal", "climax_summary"]
       }
     },
-    required: ["title", "logline", "thematic_premise", "cast", "locations", "acts_summary"]
+    required: ["title", "logline", "thematic_premise", "cast", "locations", "sequences", "acts_summary"]
   }
 };
 
