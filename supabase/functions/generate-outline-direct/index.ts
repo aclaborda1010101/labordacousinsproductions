@@ -61,6 +61,24 @@ const DENSITY_PROFILES: Record<string, DensityProfile> = {
   },
 };
 
+// Film duration-based scene targets
+function getFilmSceneTarget(durationMin: number, profile: DensityProfile): { min: number; max: number } {
+  // Average scene duration by profile
+  const avgSceneDuration: Record<string, number> = {
+    indie: 3.5,    // 3.5 min/scene average
+    standard: 2.5, // 2.5 min/scene average
+    hollywood: 2.0 // 2 min/scene average
+  };
+  
+  const avgDuration = avgSceneDuration[profile.id] || 2.5;
+  const targetScenes = Math.ceil(durationMin / avgDuration);
+  
+  return {
+    min: Math.max(profile.min_scenes, Math.floor(targetScenes * 0.8)),
+    max: Math.ceil(targetScenes * 1.2),
+  };
+}
+
 // ============================================================================
 // OUTLINE GENERATION PROMPT
 // ============================================================================
@@ -74,7 +92,19 @@ function buildOutlinePrompt(
   duration?: number
 ): string {
   const formatLabel = format === 'film' ? 'PELÍCULA' : 'SERIE';
+  const durationMin = duration || (format === 'film' ? 90 : 45);
   const durationStr = duration ? `${duration} minutos` : format === 'film' ? '90-120 minutos' : '6-10 episodios de 45 min';
+  
+  // Calculate scene targets for films
+  const sceneTarget = format === 'film' ? getFilmSceneTarget(durationMin, profile) : null;
+  const sceneInstruction = sceneTarget 
+    ? `\n\n## CRÍTICO: DENSIDAD DE ESCENAS PARA ${durationMin} MINUTOS
+Esta película de ${durationMin} minutos requiere entre ${sceneTarget.min} y ${sceneTarget.max} escenas.
+- Promedio por escena: ~${Math.round(durationMin / ((sceneTarget.min + sceneTarget.max) / 2) * 10) / 10} minutos
+- Cada beat del outline DEBE poder expandirse en 1-3 escenas concretas
+- Los beats deben ser suficientemente detallados para generar escenas con sluglines únicos
+- NO generes solo 5-8 beats generales; necesitas ${profile.min_beats}+ beats con location hints`
+    : '';
   
   return `
 # TAREA: Generar un outline cinematográfico profesional
@@ -88,12 +118,13 @@ ${idea}
 - Género: ${genre || 'Drama'}
 - Tono: ${tone || 'Cinematográfico realista'}
 - Perfil de complejidad: ${profile.label}
+${sceneInstruction}
 
 ## REQUISITOS MÍNIMOS (${profile.label})
 - Personajes: ${profile.min_characters} mínimo
 - Localizaciones: ${profile.min_locations} mínimo
-- Beats narrativos: ${profile.min_beats} mínimo
-- Escenas estimadas: ${profile.min_scenes} mínimo
+- Beats narrativos: ${profile.min_beats} mínimo (CON situation_detail.physical_context)
+- Escenas estimadas: ${sceneTarget ? `${sceneTarget.min}-${sceneTarget.max}` : profile.min_scenes} escenas
 
 ## ESTRUCTURA REQUERIDA
 

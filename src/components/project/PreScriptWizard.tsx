@@ -9,7 +9,7 @@
  * 5. Generar Guion (Integrated narrative generation)
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -39,10 +39,12 @@ import {
   Square,
   Play,
   Clapperboard,
+  AlertTriangle,
+  Expand,
 } from 'lucide-react';
 import { usePreScriptWizard, WizardStep } from '@/hooks/usePreScriptWizard';
+import { useSceneDensityValidation } from '@/hooks/useSceneDensityValidation';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
 
 interface PreScriptWizardProps {
   projectId: string;
@@ -104,6 +106,7 @@ export function PreScriptWizard({
   format = 'series',
 }: PreScriptWizardProps) {
   const [confirmChecked, setConfirmChecked] = useState(false);
+  const [densityValidated, setDensityValidated] = useState(false);
 
   const {
     state,
@@ -137,12 +140,32 @@ export function PreScriptWizard({
     format,
   });
 
+  // Scene density validation for films
+  const {
+    isExpanding,
+    validationResult,
+    validateDensity,
+    expandBeatsToScenes,
+  } = useSceneDensityValidation();
+
+  // Validate density when reaching showrunner step for films
+  useEffect(() => {
+    if (currentStep === 'showrunner' && format === 'film' && !densityValidated) {
+      const durationMin = outline?.target_duration_min || 90;
+      const profile = outline?.density_profile || 'standard';
+      const result = validateDensity(outline, format, durationMin, profile);
+      setDensityValidated(true);
+      console.log('[PreScriptWizard] Density validation:', result);
+    }
+  }, [currentStep, format, outline, densityValidated, validateDensity]);
+
   // Don't reset wizard when loading - state is being restored from DB
   useEffect(() => {
     if (open && !isLoading) {
       const hasProgress = Object.values(state.steps).some(s => s.status !== 'pending');
       if (!hasProgress) {
         setConfirmChecked(false);
+        setDensityValidated(false);
       }
     }
   }, [open, isLoading, state.steps]);
@@ -423,11 +446,69 @@ export function PreScriptWizard({
         );
 
       case 'approve':
+        // Check if we need scene expansion for films
+        const needsExpansion = format === 'film' && validationResult?.needsExpansion;
+        const durationMin = outline?.target_duration_min || 90;
+        
         return (
           <div className="space-y-4">
             <p className="text-muted-foreground">
               Revisa el resumen y confirma para iniciar la generación del guion completo.
             </p>
+
+            {/* Density Warning for Films */}
+            {needsExpansion && (
+              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg space-y-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium text-amber-600">Densidad de Escenas Insuficiente</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {validationResult?.message}
+                    </p>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={async () => {
+                    const profile = outline?.density_profile || 'standard';
+                    const result = await expandBeatsToScenes(projectId, durationMin, profile);
+                    if (result.success) {
+                      // Re-validate after expansion
+                      const newResult = validateDensity(outline, format, durationMin, profile);
+                      // Force re-render by updating state
+                      setDensityValidated(false);
+                      setTimeout(() => setDensityValidated(true), 100);
+                    }
+                  }}
+                  disabled={isExpanding}
+                  variant="outline"
+                  className="w-full border-amber-500/50 text-amber-600 hover:bg-amber-500/10"
+                >
+                  {isExpanding ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Expandiendo beats en escenas...
+                    </>
+                  ) : (
+                    <>
+                      <Expand className="h-4 w-4 mr-2" />
+                      Expandir a {validationResult?.requiredMinScenes}-{validationResult?.requiredMaxScenes} Escenas
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {/* Density OK indicator */}
+            {format === 'film' && validationResult && !validationResult.needsExpansion && (
+              <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span className="text-sm text-green-600">{validationResult.message}</span>
+                </div>
+              </div>
+            )}
 
             <div className="p-4 bg-muted/50 rounded-lg space-y-3">
               <h4 className="font-medium">Resumen de Preparación</h4>
@@ -446,8 +527,13 @@ export function PreScriptWizard({
                   <span className="ml-2 font-medium">{threads.length}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Episodios:</span>
-                  <span className="ml-2 font-medium">{outline?.episode_beats?.length || 1}</span>
+                  <span className="text-muted-foreground">{format === 'film' ? 'Escenas:' : 'Episodios:'}</span>
+                  <span className="ml-2 font-medium">
+                    {format === 'film' 
+                      ? (validationResult?.currentScenes || outline?.episode_beats?.[0]?.scenes?.length || '—')
+                      : (outline?.episode_beats?.length || 1)
+                    }
+                  </span>
                 </div>
               </div>
 
@@ -464,9 +550,16 @@ export function PreScriptWizard({
                 id="confirm"
                 checked={confirmChecked}
                 onCheckedChange={(c) => setConfirmChecked(!!c)}
+                disabled={needsExpansion}
               />
-              <label htmlFor="confirm" className="text-sm cursor-pointer">
-                Confirmo que el outline está listo y quiero generar el guion completo con diálogos y acotaciones.
+              <label htmlFor="confirm" className={cn(
+                "text-sm cursor-pointer",
+                needsExpansion && "text-muted-foreground"
+              )}>
+                {needsExpansion 
+                  ? 'Primero expande los beats en escenas para continuar.'
+                  : 'Confirmo que el outline está listo y quiero generar el guion completo con diálogos y acotaciones.'
+                }
               </label>
             </div>
 
@@ -475,7 +568,7 @@ export function PreScriptWizard({
                 await executeCurrentStep();
                 goNext(); // Auto-advance to generate step
               }} 
-              disabled={!confirmChecked || isProcessing}
+              disabled={!confirmChecked || isProcessing || needsExpansion}
               className="w-full"
             >
               {isProcessing ? (
