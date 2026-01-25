@@ -1,113 +1,116 @@
 
-# Plan: Mejorar Outline con Antagonista y Secuencias Claras
+# Plan: Aumentar Set Pieces y Sequences en el Outline
 
-## Diagnóstico del Outline Actual
+## Problema Detectado
 
-| Aspecto | Estado Actual | Requerido |
-|---------|--------------|-----------|
-| Personajes totales | 15 | ✓ Cumple |
-| Antagonistas explícitos | 0 | 1 mínimo |
-| Set pieces | 5 | ✓ Cumple |
-| Secuencias | No existe campo | Añadir soporte |
-| Threads/Tramas | No definidos | 2 mínimo |
+El outline actual muestra solo 5 set pieces porque:
 
-### Personajes Actuales (sin antagonista formal)
-- 3 Protagonistas: Baltasar, Gaspar, Melchor
-- 12 Supporting: Incluyen "El Bully Adulto", "La Mujer Intolerante", "El Agente de Policía Prejuicioso" - que funcionan como antagonistas pero no están marcados como tales
+| Campo | Estado Actual | Requerido |
+|-------|---------------|-----------|
+| `setpieces` | 0 (no existe) | 8-12 mínimo |
+| `sequences` | 0 (no existe) | 6-8 mínimo |
+| DensityProfile | Sin min_setpieces | Añadir campo |
+| Prompt | "memorables" (vago) | Cantidad explícita |
+| Validación | No verifica setpieces | Añadir check |
 
-## Cambios Propuestos
+El outline fue generado el 23-enero, antes de los cambios de hoy.
 
-### 1. Mejorar el Prompt de Generación de Outline
+## Cambios Técnicos
 
-**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
-
-Añadir instrucciones explícitas para:
-- Requerir al menos 1 personaje con `role: "antagonist"`
-- Definir "secuencias" como agrupaciones de escenas con un objetivo dramático común
-- Añadir validación post-generación para antagonistas
-
-```text
-## REQUISITOS OBLIGATORIOS DE PERSONAJES
-
-CRÍTICO: El reparto DEBE incluir al menos:
-- 1 personaje con role: "protagonist" 
-- 1 personaje con role: "antagonist" (fuerza opositora principal)
-- 2+ personajes con role: "supporting"
-
-El ANTAGONISTA puede ser:
-- Una persona individual (villano clásico)
-- Una institución/sistema (sociedad, burocracia, prejuicio)
-- Una fuerza interna (adicción, miedo, pasado)
-
-Pero DEBE estar representado por al menos UN personaje concreto.
-```
-
-### 2. Añadir Campo "sequences" al Schema
-
-**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
-
-Añadir estructura de secuencias al JSON solicitado:
-
-```json
-"sequences": [
-  {
-    "name": "Nombre de la secuencia",
-    "act": "I | II | III",
-    "scenes_range": "1-4",
-    "dramatic_goal": "Objetivo emocional de la secuencia",
-    "tone_shift": "Cómo cambia el tono al final"
-  }
-]
-```
-
-Las secuencias agrupan 2-5 escenas bajo un mismo objetivo dramático, por ejemplo:
-- "El Despertar de los Reyes" (secuencia de transformación)
-- "La Noche de los Milagros" (secuencia de acción mágica)
-- "El Regreso a la Normalidad" (secuencia de resolución)
-
-### 3. Mejorar la Validación (`softValidate`)
-
-**Archivo**: `supabase/functions/generate-outline-direct/index.ts`
-
-Añadir verificación de antagonista:
+### 1. Actualizar DensityProfile
 
 ```typescript
-// Check antagonist presence
-const chars = outline.main_characters || outline.cast || [];
-const hasAntagonist = chars.some(c => 
-  c.role?.toLowerCase().includes('antag') ||
-  c.role?.toLowerCase().includes('villain')
-);
+interface DensityProfile {
+  id: string;
+  label: string;
+  min_characters: number;
+  min_locations: number;
+  min_beats: number;
+  min_scenes: number;
+  min_setpieces: number;    // NUEVO
+  min_sequences: number;    // NUEVO
+}
 
-if (!hasAntagonist) {
+const DENSITY_PROFILES = {
+  indie: {
+    // ... existing
+    min_setpieces: 5,
+    min_sequences: 4,
+  },
+  standard: {
+    // ... existing
+    min_setpieces: 8,
+    min_sequences: 6,
+  },
+  hollywood: {
+    // ... existing
+    min_setpieces: 12,
+    min_sequences: 8,
+  },
+};
+```
+
+### 2. Mejorar el Prompt
+
+Añadir instrucción explícita:
+
+```text
+## REQUISITOS DE SETPIECES Y SEQUENCES
+
+SETPIECES (Momentos Visuales de Alto Impacto):
+- Mínimo: ${profile.min_setpieces} setpieces
+- Cada setpiece debe ser un momento ESPECTACULAR que defina la película
+- Distribuir entre los 3 actos
+- Cada uno con: name, act, description, stakes
+
+SEQUENCES (Agrupaciones Dramáticas):
+- Mínimo: ${profile.min_sequences} secuencias
+- Cada secuencia agrupa 2-5 escenas bajo un objetivo común
+- Ejemplos: "La Transformación", "La Noche de Milagros", "El Regreso"
+```
+
+### 3. Añadir Validación de Setpieces
+
+```typescript
+// En softValidate()
+const setpieces = outline.setpieces || [];
+if (setpieces.length < profile.min_setpieces) {
   warnings.push({
-    type: 'characters',
-    message: 'Falta un antagonista explícito - el conflicto puede ser débil',
-    current: 0,
-    required: 1,
+    type: 'structure',
+    message: `Tienes ${setpieces.length} setpieces, se requieren mínimo ${profile.min_setpieces}`,
+    current: setpieces.length,
+    required: profile.min_setpieces,
   });
   score -= 15;
 }
 ```
 
-### 4. Actualizar el Outline Existente (Acción Inmediata)
+### 4. Regenerar el Outline Actual
 
-Para el proyecto actual, se puede actualizar el outline sin regenerarlo:
+Para que el proyecto `d2a6e5b8-...` tenga los nuevos campos:
+- Usar "Regenerar Outline" en el UI
+- O ejecutar `generate-outline-direct` con los nuevos parámetros
 
-1. Cambiar el `role` de "El Bully Adulto" o "La Mujer Intolerante" a `"antagonist"`
-2. Añadir un array `sequences` basado en los set pieces existentes
+## Cálculo de Setpieces por Duración
 
-Esto se hace con una actualización directa al `outline_json` en la base de datos.
+Para una película de 85 minutos con perfil "standard":
 
-## Resumen de Archivos a Modificar
+```text
+Target scenes: 85 min / 2.5 min avg = 34 scenes
+Target setpieces: ~25% de scenes = 8-10 setpieces
+Target sequences: scenes / 5 = 6-7 secuencias
+```
+
+## Archivos a Modificar
 
 | Archivo | Cambio |
 |---------|--------|
-| `supabase/functions/generate-outline-direct/index.ts` | Mejorar prompt + validación |
-| `supabase/functions/_shared/outline-schemas-film.ts` | Añadir schema para sequences |
+| `supabase/functions/generate-outline-direct/index.ts` | Añadir min_setpieces/sequences a profile, mejorar prompt, añadir validación |
 
-## Notas Técnicas
+## Resultado Esperado
 
-- El validador de densidad (`density-validator.ts`) ya tiene lógica para detectar antagonistas por keywords en descripciones
-- Los set pieces actuales pueden mapearse a sequences con lógica de agrupación
-- La validación de antagonista debe ser un warning, no un blocker, para no romper flujos existentes
+Después de regenerar el outline:
+- 8-12 setpieces con stakes claros
+- 6-8 sequences con dramatic_goal
+- Personaje con role="antagonist"
+- UI mostrando todos los nuevos elementos
