@@ -136,11 +136,19 @@ serve(async (req) => {
         );
       }
 
-      // Validate URL format
-      const urlPattern = /^postgres(ql)?:\/\/[^:]+:[^@]+@[^:]+:\d+\/\w+$/;
-      if (!urlPattern.test(targetUrl)) {
+      // Validate URL format - more permissive to allow special chars in password
+      // Format: postgresql://user:password@host:port/database
+      try {
+        const url = new URL(targetUrl);
+        if (!url.protocol.startsWith('postgres')) {
+          throw new Error('Protocol must be postgres or postgresql');
+        }
+        if (!url.hostname || !url.port || !url.pathname.slice(1)) {
+          throw new Error('Missing host, port, or database');
+        }
+      } catch (urlErr: any) {
         return new Response(
-          JSON.stringify({ error: "Invalid PostgreSQL URL format" }),
+          JSON.stringify({ error: `Invalid PostgreSQL URL: ${urlErr.message}` }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
