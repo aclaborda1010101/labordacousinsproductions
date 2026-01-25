@@ -1,5 +1,8 @@
 project_id = "dzrfbulwiqhzxxbcnzhn"
 
+[functions.clone-database]
+verify_jwt = false
+
 # =============================================================================
 # V3.0 ENTERPRISE SECURITY CONFIGURATION
 # verify_jwt = true for ALL functions that consume AI or CPU resources

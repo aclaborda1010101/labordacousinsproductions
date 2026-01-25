@@ -15,6 +15,7 @@ import { useEditorialKnowledgeBase } from '@/hooks/useEditorialKnowledgeBase';
 import { useDeveloperMode } from '@/contexts/DeveloperModeContext';
 import { DeveloperModeModal } from '@/components/developer/DeveloperModeModal';
 import { MigrationExport } from './MigrationExport';
+import { DatabaseCloner } from './DatabaseCloner';
 import {
   FormatProfile,
   AnimationType,
@@ -294,6 +295,7 @@ export function ProjectSettings({ project, open, onOpenChange, onUpdate }: Proje
               Backup / Migración
             </h4>
             <MigrationExport projectTitle={project.title.replace(/\s+/g, '-').toLowerCase()} />
+            <DatabaseCloner />
           </div>
           
           {/* Danger Zone */}
