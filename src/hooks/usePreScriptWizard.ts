@@ -708,6 +708,29 @@ export function usePreScriptWizard({
         console.log('[PreScriptWizard] Step 5: Planning scenes...');
         toast.info('Planificando escenas...');
         
+        // Calculate scenesToPlan from episode_beats or ACT structure
+        const episodeBeats = currentOutline?.episode_beats || [];
+        let scenesToPlan = 
+          episodeBeats[0]?.scenes?.length || 
+          episodeBeats.reduce((acc: number, ep: any) => acc + (ep.scenes?.length || 0), 0) ||
+          0;
+        
+        // Fallback: count from ACT structure if episode_beats is empty
+        if (scenesToPlan === 0) {
+          const acts = ['ACT_I', 'ACT_II', 'ACT_III'];
+          acts.forEach(actKey => {
+            const act = currentOutline?.[actKey];
+            if (act) {
+              scenesToPlan += (act.scenes?.length || act.beats?.length || 0);
+            }
+          });
+        }
+        
+        // Clamp between 5 and 50 for safety
+        scenesToPlan = Math.max(5, Math.min(50, scenesToPlan || 5));
+        
+        console.log('[PreScriptWizard] Scenes to plan from outline:', scenesToPlan);
+        
         const { data, error } = await invokeAuthedFunction('narrative-decide', {
           projectId,
           outline: currentOutline,
@@ -715,6 +738,7 @@ export function usePreScriptWizard({
           language,
           qualityTier,
           format,
+          scenesToPlan, // Pass the calculated scene count
         });
 
         if (error) {
