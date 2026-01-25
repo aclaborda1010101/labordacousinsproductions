@@ -136,8 +136,9 @@ export function useSceneDensityValidation() {
     setIsExpanding(true);
     
     try {
-      toast.info('Expandiendo beats en escenas...', { duration: 10000 });
+      toast.info('Expandiendo beats en escenas...', { duration: 15000 });
       
+      // Paso 1: Expandir beats a escenas en el outline JSON
       const { data, error } = await invokeAuthedFunction('expand-beats-to-scenes', {
         projectId,
         durationMin,
@@ -148,11 +149,33 @@ export function useSceneDensityValidation() {
         throw new Error(data?.message || error?.message || 'Error expandiendo escenas');
       }
 
-      toast.success(`Expansión completada: ${data.scenesCount} escenas generadas`);
+      console.log('[useSceneDensityValidation] Expansion complete:', data.scenesCount, 'scenes');
+
+      // Paso 2: Materializar escenas en la tabla scenes
+      toast.info('Materializando escenas en base de datos...', { duration: 5000 });
+      
+      const { data: materializeData, error: materializeError } = await invokeAuthedFunction(
+        'materialize-scenes',
+        {
+          projectId,
+          deleteExisting: true, // Borrar escenas previas
+        }
+      );
+
+      if (materializeError || !materializeData?.success) {
+        console.warn('[useSceneDensityValidation] Materialize warning:', materializeError || materializeData?.error);
+        // No fallar si materialize tiene problemas menores, solo advertir
+        toast.warning('Escenas expandidas pero hubo un problema al guardarlas');
+      } else {
+        console.log('[useSceneDensityValidation] Materialized:', materializeData.scenes?.created, 'scenes');
+      }
+
+      const finalCount = materializeData?.scenes?.created || data.scenesCount;
+      toast.success(`Expansión completada: ${finalCount} escenas guardadas`);
       
       return {
         success: true,
-        scenesCount: data.scenesCount,
+        scenesCount: finalCount,
       };
     } catch (err: any) {
       console.error('[useSceneDensityValidation] Expansion error:', err);
