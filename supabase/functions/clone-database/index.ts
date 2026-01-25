@@ -16,8 +16,11 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-// Time budget per step (15 seconds to stay safe under Edge limits)
-const STEP_TIME_BUDGET_MS = 15_000;
+// Time budget per step (5 seconds to avoid CPU limit - Edge Functions have strict CPU caps)
+const STEP_TIME_BUDGET_MS = 5_000;
+
+// Delay between database operations to reduce CPU pressure (ms)
+const OPERATION_DELAY_MS = 50;
 
 type ClonePhase =
   | "idle"
@@ -187,6 +190,9 @@ const TABLES_ORDER = [
 
 // Tables that need smaller chunks (JSON-heavy or many columns)
 const LARGE_TABLES = ['scripts', 'generation_blocks', 'generation_logs', 'storyboard_panels', 'generation_runs'];
+
+// Helper to add small delay between operations
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Stale threshold: job not updated in 60 seconds
 const STALE_THRESHOLD_MS = 60_000;
@@ -845,20 +851,27 @@ async function executeCloneStep(jobId: string, userId: string): Promise<{
         }
 
         checkpoint.currentTable = tableName;
-        const chunkSize = LARGE_TABLES.includes(tableName) ? 10 : 100;
+        // Much smaller chunks to avoid CPU limit
+        const chunkSize = LARGE_TABLES.includes(tableName) ? 5 : 25;
         
         // Start from saved offset
         let offset = checkpoint.currentTableOffset;
         let copied = offset;
+        let rowsThisStep = 0;
+        const maxRowsPerStep = 50; // Hard limit per step to avoid CPU exhaustion
 
         while (copied < tableCount) {
-          if (Date.now() > deadline) {
+          // Aggressive time check + row limit check
+          if (Date.now() > deadline || rowsThisStep >= maxRowsPerStep) {
             job.currentItem = `Copiando: ${tableName} (${copied}/${tableCount})`;
             checkpoint.currentTableOffset = copied;
             await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
             await cleanup();
             return { ok: true, needsMore: true, progress: job, checkpoint };
           }
+
+          // Small delay to reduce CPU pressure
+          await delay(OPERATION_DELAY_MS);
 
           const rows = await sourceDb.unsafe(
             `SELECT * FROM public."${tableName}" LIMIT ${chunkSize} OFFSET ${offset}`
@@ -867,6 +880,15 @@ async function executeCloneStep(jobId: string, userId: string): Promise<{
           if (rows.length === 0) break;
 
           for (const row of rows) {
+            // Check within inner loop too for very CPU-intensive operations
+            if (Date.now() > deadline || rowsThisStep >= maxRowsPerStep) {
+              job.currentItem = `Copiando: ${tableName} (${copied}/${tableCount})`;
+              checkpoint.currentTableOffset = copied;
+              await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+              await cleanup();
+              return { ok: true, needsMore: true, progress: job, checkpoint };
+            }
+
             const columns = Object.keys(row);
             const values = columns.map(c => row[c]);
             const placeholders = columns.map((_, i) => `$${i + 1}`).join(', ');
@@ -882,6 +904,7 @@ async function executeCloneStep(jobId: string, userId: string): Promise<{
             }
 
             copied++;
+            rowsThisStep++;
             job.current++;
             checkpoint.dataRowsCopied++;
           }
@@ -889,8 +912,11 @@ async function executeCloneStep(jobId: string, userId: string): Promise<{
           offset += chunkSize;
           checkpoint.currentTableOffset = copied;
           job.currentItem = `Copiando: ${tableName} (${copied}/${tableCount})`;
-          await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
+          // Only persist every chunk, not every row
         }
+        
+        // Persist after completing table
+        await writeCloneTask(jobId, userId, job, "running", checkpoint, savedOptions, savedTargetUrl);
 
         // Table completed
         checkpoint.completedTables.push(tableName);
