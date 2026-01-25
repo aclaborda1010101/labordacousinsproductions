@@ -303,6 +303,29 @@ serve(async (req) => {
 
     // Delete existing scenes if requested
     if (deleteExisting) {
+      // V81: Delete scene_intent first (FK constraint)
+      const { error: intentError } = await adminClient
+        .from('scene_intent')
+        .delete()
+        .eq('project_id', projectId);
+      
+      if (intentError) {
+        console.error('[materialize-scenes] scene_intent delete error:', intentError);
+      }
+
+      // Delete scene_repairs
+      await adminClient
+        .from('scene_repairs')
+        .delete()
+        .eq('project_id', projectId);
+
+      // Delete narrative_state
+      await adminClient
+        .from('narrative_state')
+        .delete()
+        .eq('project_id', projectId);
+
+      // Now delete scenes
       const { error: deleteError } = await adminClient
         .from('scenes')
         .delete()
@@ -311,7 +334,7 @@ serve(async (req) => {
       if (deleteError) {
         console.error('[materialize-scenes] Delete error:', deleteError);
       } else {
-        console.log('[materialize-scenes] Deleted existing scenes');
+        console.log('[materialize-scenes] Deleted existing scenes and related data');
       }
     }
 
