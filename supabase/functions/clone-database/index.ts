@@ -279,6 +279,57 @@ serve(async (req) => {
       );
     }
 
+    // Handle clean - drop all tables in target before cloning
+    if (action === "clean") {
+      if (!targetUrl) {
+        return new Response(
+          JSON.stringify({ error: "Target URL is required" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      try {
+        // Sanitize target URL
+        let cleanTargetUrl = targetUrl;
+        try {
+          const url = new URL(targetUrl);
+          if (url.password) {
+            const decodedPassword = decodeURIComponent(url.password);
+            url.password = encodeURIComponent(decodedPassword);
+            cleanTargetUrl = url.toString();
+          }
+        } catch {
+          // Continue with original URL
+        }
+
+        const targetDb = postgres(cleanTargetUrl, { max: 1 });
+        
+        // Drop and recreate public schema
+        await targetDb.unsafe(`
+          DROP SCHEMA public CASCADE;
+          CREATE SCHEMA public;
+          GRANT ALL ON SCHEMA public TO postgres;
+          GRANT ALL ON SCHEMA public TO public;
+          GRANT ALL ON SCHEMA public TO anon;
+          GRANT ALL ON SCHEMA public TO authenticated;
+          GRANT ALL ON SCHEMA public TO service_role;
+        `);
+
+        await targetDb.end();
+
+        return new Response(
+          JSON.stringify({ ok: true, message: "Target database cleaned successfully" }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (cleanErr: any) {
+        console.error("Clean target error:", cleanErr);
+        return new Response(
+          JSON.stringify({ error: `Failed to clean target: ${cleanErr.message}` }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     // Handle start
     if (action === "start") {
       if (!targetUrl) {
