@@ -309,13 +309,22 @@ serve(async (req) => {
 
     // Action: Export single table data (chunked to avoid WORKER_LIMIT / memory issues)
     if (action === 'export_table' && table) {
+      // Tables with large JSONB payloads or many rows - use tiny chunks
       const LARGE_PAYLOAD_TABLES = new Set([
         'scripts',
         'project_bibles',
         'project_outlines',
         'generation_blocks',
         'generation_history',
+        'generation_runs',
+        'generation_logs',
+        'storyboard_panels',
         'editorial_source_central',
+        'canon_packs',
+        'characters',
+        'scenes',
+        'shots',
+        'micro_shots',
       ]);
 
       const safeOffset = typeof offset === 'number' && Number.isFinite(offset) && offset >= 0 ? Math.floor(offset) : 0;
