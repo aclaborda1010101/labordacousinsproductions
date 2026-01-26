@@ -3305,6 +3305,7 @@ export type Database = {
           quality_mode: Database["public"]["Enums"]["quality_mode"]
           retry_override: number | null
           scene_no: number
+          scene_number: number | null
           script_id: string | null
           slugline: string
           standardized_location: string | null
@@ -3352,6 +3353,7 @@ export type Database = {
           quality_mode?: Database["public"]["Enums"]["quality_mode"]
           retry_override?: number | null
           scene_no: number
+          scene_number?: number | null
           script_id?: string | null
           slugline: string
           standardized_location?: string | null
@@ -3399,6 +3401,7 @@ export type Database = {
           quality_mode?: Database["public"]["Enums"]["quality_mode"]
           retry_override?: number | null
           scene_no?: number
+          scene_number?: number | null
           script_id?: string | null
           slugline?: string
           standardized_location?: string | null

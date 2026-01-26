@@ -2,12 +2,12 @@
  * NARRATIVE-DECIDE: Decisión Narrativa (FASE 1 del nuevo flujo)
  * 
  * Propósito: Decidir qué escenas generar y crear scene_intents
- * Modelo: Rápido (gpt-5-mini) - max 30s
+ * Modelo: Rápido (gpt-5-mini) para lotes pequeños, gpt-5 para lotes grandes
  * 
  * Input: projectId, episodeNumber, outline
  * Output: scene_intents creados, narrative_state actualizado
  * 
- * V70: Parte del nuevo sistema narrativo desacoplado
+ * V71: Procesamiento por lotes para evitar timeouts de tokens
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -15,6 +15,8 @@ import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-
 import { requireAuth, requireProjectAccess, authErrorResponse } from "../_shared/auth.ts";
 import { aiFetch } from "../_shared/ai-fetch.ts";
 import { MODEL_CONFIG } from "../_shared/model-config.ts";
+
+const BATCH_SIZE = 8; // Process scenes in batches of 8
 
 // Service role client for system operations (bypasses RLS)
 function getServiceClient(): SupabaseClient {
@@ -46,6 +48,23 @@ interface SceneIntent {
   characters_involved: string[];
   thread_to_advance: string;
   constraints: Record<string, unknown>;
+}
+
+interface BatchPlanParams {
+  narrativeState: any;
+  outline: Record<string, unknown>;
+  threads: Array<{ id: string; name: string; question?: string }>;
+  characters: string[];
+  episodes: any;
+  lastSceneSummary: string;
+  startScene: number;
+  endScene: number;
+  scenesInBatch: number;
+  format: string;
+  previousBatchSummary?: string;
+  supabase: any;
+  projectId: string;
+  userId: string;
 }
 
 serve(async (req) => {
@@ -83,7 +102,8 @@ serve(async (req) => {
       episodeNumber,
       scenesToPlan,
       format,
-      hasOutline: !!outline
+      hasOutline: !!outline,
+      batchSize: BATCH_SIZE
     });
 
     // 1. Get or create narrative_state
@@ -165,55 +185,58 @@ serve(async (req) => {
     const characters = extractCharacters(safeOutline);
     const episodes = extractEpisodes(safeOutline, episodeNumber);
 
-    // 6. Call AI to decide next scenes
-    const decisionPrompt = buildDecisionPrompt({
-      narrativeState,
-      outline: safeOutline,
-      threads,
-      characters,
-      episodes,
-      lastSceneSummary,
-      lastSceneNumber,
+    // 6. Process scenes in batches to avoid token limits
+    const allSceneIntents: SceneIntent[] = [];
+    const totalBatches = Math.ceil(scenesToPlan / BATCH_SIZE);
+    let previousBatchSummary = '';
+
+    console.log('[narrative-decide] Processing in batches:', {
       scenesToPlan,
-      format
+      batchSize: BATCH_SIZE,
+      totalBatches
     });
 
-    const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY') || '';
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+      const startScene = lastSceneNumber + 1 + (batchIndex * BATCH_SIZE);
+      const scenesInBatch = Math.min(BATCH_SIZE, scenesToPlan - (batchIndex * BATCH_SIZE));
+      const endScene = startScene + scenesInBatch - 1;
 
-    const aiResponse = await aiFetch({
-      url: AI_GATEWAY_URL,
-      apiKey: LOVABLE_API_KEY,
-      payload: {
-        model: MODEL_CONFIG.SCRIPT.RAPIDO,
-        messages: [
-          {
-            role: 'system',
-            content: SYSTEM_PROMPT
-          },
-          {
-            role: 'user',
-            content: decisionPrompt
-          }
-        ],
-        temperature: 0.3,
-        max_tokens: 4000,
-        response_format: { type: 'json_object' }
-      },
-      label: 'narrative-decide',
-      supabase: auth.supabase,
-      projectId,
-      userId: auth.userId
-    });
+      console.log(`[narrative-decide] Processing batch ${batchIndex + 1}/${totalBatches}:`, {
+        startScene,
+        endScene,
+        scenesInBatch
+      });
 
-    // 7. Parse AI response
-    const content = (aiResponse as any).choices?.[0]?.message?.content || '{}';
-    const decision = JSON.parse(content);
+      const batchIntents = await planScenesBatch({
+        narrativeState,
+        outline: safeOutline,
+        threads,
+        characters,
+        episodes,
+        lastSceneSummary: allSceneIntents.length > 0 
+          ? allSceneIntents[allSceneIntents.length - 1].intent_summary 
+          : lastSceneSummary,
+        startScene,
+        endScene,
+        scenesInBatch,
+        format,
+        previousBatchSummary,
+        supabase: auth.supabase,
+        projectId,
+        userId: auth.userId
+      });
 
-    const sceneIntents: SceneIntent[] = decision.scenes || [];
+      allSceneIntents.push(...batchIntents.scenes);
+      previousBatchSummary = batchIntents.batchSummary || '';
 
-    // 8. Insert scene_intents into DB
-    const intentsToInsert = sceneIntents
+      console.log(`[narrative-decide] Batch ${batchIndex + 1} completed:`, {
+        scenesPlanned: batchIntents.scenes.length,
+        totalSoFar: allSceneIntents.length
+      });
+    }
+
+    // 7. Insert scene_intents into DB
+    const intentsToInsert = allSceneIntents
       .filter(intent => !existingSceneNumbers.has(intent.scene_number))
       .map(intent => ({
         project_id: projectId,
@@ -244,26 +267,22 @@ serve(async (req) => {
       }
     }
 
-    // 9. Update narrative_state with new goals
-    const nextGoal = decision.next_narrative_goal || sceneIntents[0]?.intent_summary || '';
-    const newActiveThreads = decision.active_threads || threads.slice(0, 3).map(t => t.id || t.name);
-    const newForbiddenActions = decision.forbidden_actions || [];
+    // 8. Update narrative_state with new goals
+    const nextGoal = allSceneIntents[0]?.intent_summary || '';
+    const newActiveThreads = threads.slice(0, 3).map(t => t.id || t.name);
 
     await serviceClient
       .from('narrative_state')
       .update({
         narrative_goal: nextGoal,
-        emotional_delta: decision.emotional_arc || '',
         active_threads: newActiveThreads,
-        forbidden_actions: newForbiddenActions,
         last_unit_summary: lastSceneSummary,
         scenes_generated: completedScenes,
         updated_at: new Date().toISOString()
       })
       .eq('id', narrativeState.id);
 
-    // 10. Create jobs for scene-worker - now with proper IDs returned
-    // First, get the inserted intent IDs
+    // 9. Create jobs for scene-worker
     const { data: insertedIntents } = await serviceClient
       .from('scene_intent')
       .select('id, scene_number')
@@ -297,7 +316,7 @@ serve(async (req) => {
     if (jobsToInsert.length > 0) {
       console.log('[narrative-decide] Inserting jobs:', {
         count: jobsToInsert.length,
-        jobIds: jobIds,
+        jobIds: jobIds.slice(0, 3),
         samplePayload: jobsToInsert[0]?.payload
       });
       
@@ -307,7 +326,6 @@ serve(async (req) => {
 
       if (jobsError) {
         console.error('[narrative-decide] Failed to insert jobs:', jobsError);
-        // Jobs failed but scene_intents exist - frontend can use fallback
       } else {
         console.log('[narrative-decide] Jobs inserted successfully:', jobIds.length);
       }
@@ -319,6 +337,7 @@ serve(async (req) => {
       projectId,
       episodeNumber,
       scenesPlanned: intentsToInsert.length,
+      batchesProcessed: totalBatches,
       durationMs
     });
 
@@ -328,8 +347,9 @@ serve(async (req) => {
         scenes_planned: intentsToInsert.length,
         next_narrative_goal: nextGoal,
         active_threads: newActiveThreads,
-        jobs_created: jobIds,  // Now returns array of UUIDs instead of count
+        jobs_created: jobIds,
         narrative_state_id: narrativeState.id,
+        batches_processed: totalBatches,
         duration_ms: durationMs
       }
     }), {
@@ -342,6 +362,109 @@ serve(async (req) => {
     return authErrorResponse(error as Error, corsHeaders);
   }
 });
+
+// ============= BATCH PLANNING FUNCTION =============
+
+async function planScenesBatch(params: BatchPlanParams): Promise<{ scenes: SceneIntent[]; batchSummary: string }> {
+  const {
+    narrativeState,
+    outline,
+    threads,
+    characters,
+    episodes,
+    lastSceneSummary,
+    startScene,
+    endScene,
+    scenesInBatch,
+    format,
+    previousBatchSummary,
+    supabase,
+    projectId,
+    userId
+  } = params;
+
+  // Use more capable model for larger batches
+  const modelToUse = scenesInBatch > 5 ? 'openai/gpt-5' : MODEL_CONFIG.SCRIPT.RAPIDO;
+
+  const decisionPrompt = buildDecisionPrompt({
+    narrativeState,
+    outline,
+    threads,
+    characters,
+    episodes,
+    lastSceneSummary,
+    startScene,
+    endScene,
+    scenesInBatch,
+    format,
+    previousBatchSummary
+  });
+
+  const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY') || '';
+
+  const aiResponse = await aiFetch({
+    url: AI_GATEWAY_URL,
+    apiKey: LOVABLE_API_KEY,
+    payload: {
+      model: modelToUse,
+      messages: [
+        {
+          role: 'system',
+          content: SYSTEM_PROMPT
+        },
+        {
+          role: 'user',
+          content: decisionPrompt
+        }
+      ],
+      temperature: 0.3,
+      max_tokens: 8000, // Increased from 4000
+      response_format: { type: 'json_object' }
+    },
+    label: 'narrative-decide-batch',
+    supabase,
+    projectId,
+    userId
+  });
+
+  // Parse AI response with validation
+  const content = (aiResponse as any).choices?.[0]?.message?.content || '';
+  const finishReason = (aiResponse as any).choices?.[0]?.finish_reason;
+
+  // Validate response is not empty or truncated
+  if (!content || content === '{}' || content.trim() === '') {
+    console.error('[narrative-decide] Empty AI response:', { 
+      finishReason,
+      modelUsed: modelToUse,
+      scenesInBatch
+    });
+    
+    if (finishReason === 'length') {
+      throw new Error(`AI response truncated for batch ${startScene}-${endScene}. Token limit exceeded.`);
+    }
+    throw new Error('AI returned empty response for scene planning');
+  }
+
+  let decision;
+  try {
+    decision = JSON.parse(content);
+  } catch (parseError) {
+    console.error('[narrative-decide] Failed to parse AI response:', content.slice(0, 500));
+    throw new Error('AI returned invalid JSON for scene planning');
+  }
+
+  const sceneIntents: SceneIntent[] = (decision.scenes || []).map((scene: any, idx: number) => ({
+    ...scene,
+    scene_number: scene.scene_number || (startScene + idx),
+    episode_number: params.narrativeState?.unit_ref ? parseInt(params.narrativeState.unit_ref) : 1
+  }));
+
+  return {
+    scenes: sceneIntents,
+    batchSummary: decision.batch_summary || decision.next_narrative_goal || ''
+  };
+}
 
 // ============= HELPER FUNCTIONS =============
 
@@ -396,7 +519,6 @@ async function getOrCreateNarrativeState(
 function extractThreads(outline: Record<string, unknown>): Array<{ id: string; name: string; question?: string }> {
   const threads: Array<{ id: string; name: string; question?: string }> = [];
   
-  // Try various outline structures
   const threadSources = [
     outline?.threads,
     outline?.narrative_threads,
@@ -454,22 +576,32 @@ function buildDecisionPrompt(params: {
   characters: string[];
   episodes: any;
   lastSceneSummary: string;
-  lastSceneNumber: number;
-  scenesToPlan: number;
+  startScene: number;
+  endScene: number;
+  scenesInBatch: number;
   format: string;
+  previousBatchSummary?: string;
 }): string {
-  const { narrativeState, outline, threads, characters, episodes, lastSceneSummary, lastSceneNumber, scenesToPlan, format } = params;
+  const { 
+    narrativeState, outline, threads, characters, episodes, 
+    lastSceneSummary, startScene, endScene, scenesInBatch, format,
+    previousBatchSummary
+  } = params;
+
+  const batchContext = previousBatchSummary 
+    ? `\n## PREVIOUS BATCH SUMMARY\n${previousBatchSummary}\n` 
+    : '';
 
   return `
-# TASK: Plan the next ${scenesToPlan} scenes
+# TASK: Plan scenes ${startScene} to ${endScene} (${scenesInBatch} scenes)
 
 ## CURRENT NARRATIVE STATE
 - Phase: ${narrativeState.current_phase}
 - Scenes generated: ${narrativeState.scenes_generated}
-- Last scene (#${lastSceneNumber}): ${lastSceneSummary || 'None yet'}
+- Last scene summary: ${lastSceneSummary || 'None yet'}
 - Active threads: ${JSON.stringify(narrativeState.active_threads)}
 - Locked facts (DO NOT CONTRADICT): ${JSON.stringify(narrativeState.locked_facts)}
-
+${batchContext}
 ## OUTLINE CONTEXT
 Format: ${format}
 ${episodes?.title ? `Episode: ${episodes.title}` : ''}
@@ -482,28 +614,26 @@ ${threads.map(t => `- [${t.id}] ${t.name}: ${t.question || ''}`).join('\n')}
 ${characters.slice(0, 10).join(', ')}
 
 ## INSTRUCTIONS
-Plan exactly ${scenesToPlan} scenes starting from scene #${lastSceneNumber + 1}.
+Plan exactly ${scenesInBatch} scenes starting from scene #${startScene}.
 
 For each scene, decide:
-1. intent_summary: What MUST happen (not prose, just intention)
-2. emotional_turn: How the audience's emotion should shift
-3. information_revealed: Facts the audience learns
-4. information_hidden: Facts deliberately withheld
-5. characters_involved: Who appears
-6. thread_to_advance: Which thread ID to progress
-7. constraints: Any technical limitations
+1. scene_number: The scene number (${startScene} to ${endScene})
+2. intent_summary: What MUST happen (not prose, just intention)
+3. emotional_turn: How the audience's emotion should shift
+4. information_revealed: Facts the audience learns
+5. information_hidden: Facts deliberately withheld
+6. characters_involved: Who appears
+7. thread_to_advance: Which thread ID to progress
+8. constraints: Any technical limitations
 
 Also provide:
-- next_narrative_goal: The overall direction for this batch
-- active_threads: Which 2-3 threads should be active now
-- forbidden_actions: Things that CANNOT happen yet (arcs not ready to close)
-- emotional_arc: The emotional journey across these scenes
+- batch_summary: A brief summary of what happens in this batch (for continuity)
 
 ## RESPONSE FORMAT (JSON)
 {
   "scenes": [
     {
-      "scene_number": ${lastSceneNumber + 1},
+      "scene_number": ${startScene},
       "intent_summary": "...",
       "emotional_turn": "...",
       "information_revealed": ["..."],
@@ -513,10 +643,7 @@ Also provide:
       "constraints": {}
     }
   ],
-  "next_narrative_goal": "...",
-  "active_threads": ["thread_id_1", "thread_id_2"],
-  "forbidden_actions": ["..."],
-  "emotional_arc": "..."
+  "batch_summary": "Brief summary of this batch for continuity..."
 }
 `;
 }
@@ -530,4 +657,4 @@ KEY PRINCIPLES:
 4. Every scene should shift the audience's emotional state
 5. Characters must act according to their established arcs
 
-You return ONLY valid JSON. No explanations.`;
+You return ONLY valid JSON. No explanations. Be concise in your summaries.`;
