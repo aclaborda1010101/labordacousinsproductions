@@ -1,110 +1,128 @@
 
-# Plan: Pasar Conteo Real de Escenas a narrative-decide
+# Plan: Corregir Generación de Escenas con Timeout de AI
 
-## Problema Raíz
+## Problema Identificado
 
-El Edge Function `narrative-decide` planifica solo **5 escenas** porque:
-
-1. El parámetro `scenesToPlan` tiene un valor por defecto de `5`
-2. El frontend (`usePreScriptWizard.ts`) **no pasa** el número real de escenas al llamar a `narrative-decide`
+El modelo `gpt-5-mini` agotó su límite de tokens al intentar planificar 24 escenas:
 
 ```text
-+-------------------------------------------------------+
-|  FLUJO ACTUAL (5 escenas solamente)                   |
-+-------------------------------------------------------+
-|  expand-beats-to-scenes                               |
-|    → outline_json.episode_beats[0].scenes = 34        |
-+-------------------------------------------------------+
-|  narrative-decide                                     |
-|    → scenesToPlan = 5 (default!)                      |
-|    → Crea solo 5 scene_intents                        |
-+-------------------------------------------------------+
-|  scene-worker                                         |
-|    → Solo genera 5 escenas                            |
-+-------------------------------------------------------+
+┌────────────────────────────────────────────────────────────────┐
+│  RESPUESTA AI (TRUNCADA)                                       │
+├────────────────────────────────────────────────────────────────┤
+│  finish_reason: "length" ← Se quedó sin tokens                 │
+│  content: "" ← Respuesta vacía                                 │
+│  reasoning_tokens: 4000 ← Todo gastado en razonamiento         │
+├────────────────────────────────────────────────────────────────┤
+│  RESULTADO: scenes = [] → 0 escenas planificadas               │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-## Solución
+## Solución: Procesar en Lotes de 8 Escenas
 
-Calcular el número de escenas desde el outline y pasarlo a `narrative-decide`:
+Modificar `narrative-decide` para dividir la planificación en chunks manejables:
 
 ```text
-+-------------------------------------------------------+
-|  FLUJO CORREGIDO (todas las escenas)                  |
-+-------------------------------------------------------+
-|  expand-beats-to-scenes                               |
-|    → outline_json.episode_beats[0].scenes = 34        |
-+-------------------------------------------------------+
-|  usePreScriptWizard.executeStep5                      |
-|    → Extraer: scenesToPlan = 34 desde episode_beats   |
-+-------------------------------------------------------+
-|  narrative-decide                                     |
-|    → scenesToPlan = 34                                |
-|    → Crea 34 scene_intents                            |
-+-------------------------------------------------------+
-|  scene-worker                                         |
-|    → Genera las 34 escenas                            |
-+-------------------------------------------------------+
+┌────────────────────────────────────────────────────────────────┐
+│  FLUJO CORREGIDO (Lotes de 8)                                  │
+├────────────────────────────────────────────────────────────────┤
+│  scenesToPlan = 24                                             │
+│  ↓                                                             │
+│  BATCH 1: Planificar escenas 1-8  → 8 intents                  │
+│  BATCH 2: Planificar escenas 9-16 → 8 intents                  │
+│  BATCH 3: Planificar escenas 17-24 → 8 intents                 │
+│  ↓                                                             │
+│  TOTAL: 24 scene_intents creados                               │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 ## Cambios Técnicos
 
-### 1. Modificar usePreScriptWizard.ts
+### 1. Modificar narrative-decide/index.ts
 
-En la función `executeStep5`, antes de llamar a `narrative-decide`, calcular el número de escenas:
+**a) Aumentar max_tokens y usar modelo más capaz para lotes grandes:**
 
 ```typescript
-// Calcular el número de escenas desde episode_beats
-const episodeBeats = currentOutline?.episode_beats || [];
-const scenesToPlan = episodeBeats[0]?.scenes?.length || 
-                     episodeBeats.reduce((acc: number, ep: any) => 
-                       acc + (ep.scenes?.length || 0), 0) ||
-                     5; // Fallback a 5 si no hay datos
+// Línea ~184-201: Ajustar configuración del modelo
+const modelToUse = scenesToPlan > 10 
+  ? 'openai/gpt-5'  // Modelo más capaz para muchas escenas
+  : MODEL_CONFIG.SCRIPT.RAPIDO;
 
-console.log('[PreScriptWizard] Scenes to plan from outline:', scenesToPlan);
-
-const { data, error } = await invokeAuthedFunction('narrative-decide', {
-  projectId,
-  outline: currentOutline,
-  episodeNumber: 1,
-  language,
-  qualityTier,
-  format,
-  scenesToPlan, // NUEVO: Pasar el número real de escenas
+const aiResponse = await aiFetch({
+  // ...
+  payload: {
+    model: modelToUse,
+    max_tokens: 8000,  // Aumentar de 4000 a 8000
+    // ...
+  }
 });
 ```
 
-### 2. Verificar que narrative-decide use el valor
-
-El Edge Function ya soporta este parámetro (línea 66), solo no se estaba pasando:
+**b) Procesar en lotes si hay más de 10 escenas:**
 
 ```typescript
-const { 
-  projectId, 
-  episodeNumber = 1, 
-  outline,
-  scenesToPlan = 5, // Este valor se usará si viene del frontend
-  format = 'film'
-} = request;
+const BATCH_SIZE = 8;
+const allSceneIntents: SceneIntent[] = [];
+
+if (scenesToPlan <= BATCH_SIZE) {
+  // Proceso normal para pocos escenas
+  const decision = await planScenesBatch(/*...*/);
+  allSceneIntents.push(...decision.scenes);
+} else {
+  // Dividir en lotes
+  for (let batch = 0; batch * BATCH_SIZE < scenesToPlan; batch++) {
+    const startScene = lastSceneNumber + 1 + (batch * BATCH_SIZE);
+    const endScene = Math.min(startScene + BATCH_SIZE - 1, lastSceneNumber + scenesToPlan);
+    
+    const batchDecision = await planScenesBatch({
+      startScene,
+      endScene,
+      previousScenes: allSceneIntents.slice(-3), // Contexto
+      // ...
+    });
+    
+    allSceneIntents.push(...batchDecision.scenes);
+  }
+}
+```
+
+**c) Validar respuesta no vacía:**
+
+```typescript
+// Línea ~210-213: Añadir validación
+const content = (aiResponse as any).choices?.[0]?.message?.content || '{}';
+
+if (!content || content === '{}' || content === '') {
+  const finishReason = (aiResponse as any).choices?.[0]?.finish_reason;
+  console.error('[narrative-decide] Empty AI response:', { finishReason });
+  
+  if (finishReason === 'length') {
+    throw new Error('AI response truncated - too many scenes requested. Reduce batch size.');
+  }
+  throw new Error('AI returned empty response');
+}
+
+const decision = JSON.parse(content);
+```
+
+### 2. Corregir esquema de tabla scenes
+
+Añadir la columna `scene_number` si no existe:
+
+```sql
+ALTER TABLE scenes ADD COLUMN IF NOT EXISTS scene_number INTEGER;
 ```
 
 ## Archivos a Modificar
 
 | Archivo | Cambio |
 |---------|--------|
-| `src/hooks/usePreScriptWizard.ts` | Calcular y pasar `scenesToPlan` desde `episode_beats[0].scenes.length` |
-
-## Consideraciones
-
-1. **Límite de escenas**: Para películas largas (40+ escenas), considerar procesar en lotes para evitar timeouts
-2. **Validación**: Asegurar que `scenesToPlan` sea al menos 1 y no más de 50 (límite razonable)
-3. **Fallback**: Si el outline no tiene `episode_beats`, usar el método legacy de contar desde ACT_I/II/III
+| `supabase/functions/narrative-decide/index.ts` | Añadir procesamiento en lotes, aumentar max_tokens, validar respuesta vacía |
+| Base de datos | Migración para añadir columna `scene_number` a tabla `scenes` |
 
 ## Resultado Esperado
 
-1. Usuario completa los pasos previos del wizard
-2. Sistema calcula: 34 escenas en `episode_beats[0].scenes`
-3. `narrative-decide` recibe `scenesToPlan: 34`
-4. Se crean 34 `scene_intent` records
-5. `scene-worker` genera las 34 escenas
-6. UI muestra "Escena X de 34" correctamente
+1. Usuario inicia generación de guión (24 escenas)
+2. Sistema divide en 3 lotes de 8 escenas cada uno
+3. Cada lote se procesa con suficientes tokens
+4. Se crean 24 `scene_intent` records
+5. `scene-worker` genera las 24 escenas correctamente
