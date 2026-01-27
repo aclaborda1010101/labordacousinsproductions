@@ -24,31 +24,31 @@ interface ModelConfig {
   temperature: number;
 }
 
-// Model tiers: Gemini Flash (rápido), GPT-5 Mini (profesional), GPT-5 (hollywood)
+// V3: Model tiers - Gemini 3 Flash as workhorse to avoid timeouts
 const MODEL_CONFIGS: Record<GenerationModelType, ModelConfig> = {
   rapido: {
-    apiModel: 'google/gemini-2.5-flash', // Fastest for quick outlines
+    apiModel: 'google/gemini-3-flash-preview', // V3: Upgraded to Gemini 3
     provider: 'lovable',
-    maxTokens: 24000, // Generous limit to prevent truncation
+    maxTokens: 24000,
     temperature: 0.8
   },
   profesional: {
-    apiModel: 'openai/gpt-5-mini', // Good balance quality/speed
+    apiModel: 'google/gemini-3-flash-preview', // V3: Gemini 3 for speed + quality
     provider: 'lovable',
-    maxTokens: 28000, // Generous limit to prevent truncation
+    maxTokens: 28000,
     temperature: 0.7
   },
   hollywood: {
-    apiModel: 'openai/gpt-5', // Best quality, stable
+    apiModel: 'google/gemini-3-flash-preview', // V3: Gemini 3 to avoid timeouts
     provider: 'lovable',
-    maxTokens: 32000, // Generous limit to prevent truncation
+    maxTokens: 32000,
     temperature: 0.8
   }
 };
 
 // Fallback model when primary model fails parsing
 const FALLBACK_MODEL_CONFIG: ModelConfig = {
-  apiModel: 'google/gemini-2.5-flash', // Fast fallback - much faster than GPT models
+  apiModel: 'google/gemini-2.5-flash', // Fast fallback
   provider: 'lovable',
   maxTokens: 8000,
   temperature: 0.7
@@ -56,7 +56,7 @@ const FALLBACK_MODEL_CONFIG: ModelConfig = {
 
 // Ultra-fast model for summarization and batch merge
 const FAST_MODEL_CONFIG: ModelConfig = {
-  apiModel: 'google/gemini-2.5-flash', // Fastest multimodal model
+  apiModel: 'google/gemini-3-flash-preview', // V3: Upgraded
   provider: 'lovable',
   maxTokens: 6000,
   temperature: 0.5

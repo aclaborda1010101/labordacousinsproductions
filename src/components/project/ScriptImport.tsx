@@ -2639,15 +2639,13 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
     // V72: Auto-navigate to Outline tab after generation completes
     setActiveTab('outline');
     
+    // V3: Improved feedback - tell user exactly what to do next
     const successMessage = outlineQuality === 'DEGRADED' 
-      ? 'Outline generado (con avisos). Revísalo antes de aprobar.'
-      : 'Outline generado. Revísalo y apruébalo para continuar.';
+      ? '✅ Outline listo. Revísalo abajo y apruébalo para generar el guion.'
+      : '✅ Outline listo. Revísalo abajo → pulsa "Aprobar" → se generará el guion.';
     toast.success(successMessage, {
-      duration: 8000,
-      action: {
-        label: 'Ver Outline',
-        onClick: () => setActiveTab('outline'),
-      },
+      duration: 10000,
+      description: 'Ya estás en la pestaña Outline. Desplázate para ver la estructura.',
     });
   };
 

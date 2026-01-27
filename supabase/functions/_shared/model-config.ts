@@ -11,15 +11,16 @@
  */
 
 export const MODEL_CONFIG = {
-  // === ESCRITURA (máxima calidad narrativa) ===
+  // === ESCRITURA (V3: Gemini 3 Flash como workhorse para evitar timeouts) ===
   SCRIPT: {
-    HOLLYWOOD: 'openai/gpt-5.2',        // Bible, Outline, Guion final
-    PROFESIONAL: 'openai/gpt-5',         // Rewrites, variaciones
-    RAPIDO: 'openai/gpt-5-mini',         // Borradores, beat-sheets
+    HOLLYWOOD: 'google/gemini-3-flash-preview',  // V3: Gemini 3 para evitar timeouts
+    PROFESIONAL: 'google/gemini-3-flash-preview', // V3: Gemini 3 - rápido y buena calidad
+    RAPIDO: 'openai/gpt-5-mini',         // Borradores, beat-sheets (rápido)
     NANO: 'openai/gpt-5-nano',           // Loglines, títulos, sinopsis cortas
     FALLBACK: 'google/gemini-2.5-flash', // Emergencia estable
-    // V2: Gemini 3 Flash Preview como workhorse para contexto grande y evitar timeouts
     WORKHORSE: 'google/gemini-3-flash-preview',
+    // V3: GPT-5.2 reservado solo para polish/rescue donde calidad > velocidad
+    PREMIUM: 'openai/gpt-5.2',
   },
   
   // === CONTEXT THRESHOLDS (for model selection) ===
@@ -88,24 +89,26 @@ export const MODEL_CONFIG = {
     RETRY_CHUNK_REDUCTION: 0.6,         // 60% chunk on retry 1
     RETRY_CHUNK_REDUCTION_2: 0.5,       // 50% chunk on retry 2
     
-    // Per-task timeouts (V12: Hollywood differentiated)
+    // Per-task timeouts (V13: Reduced to avoid Edge Function limits)
+    // Edge Functions have ~120s hard limit - leave 15-20s buffer
     TIMEOUTS: {
-      BIBLE_MS: 90000,                  // V12: 90s for complete Bible
-      OUTLINE_MASTER_MS: 120000,        // V12: 120s for master outline (max Edge)
-      OUTLINE_EPISODE_MS: 60000,        // V12: 60s per episode outline
-      SCENE_CARDS_MS: 50000,            // V12: 50s per block of cards
-      SCRIPT_BLOCK_MS: 70000,           // V12: 70s per script block (2 scenes)
-      POLISH_MS: 80000,                 // V12: 80s for polish pass
-      SUMMARIZE_MS: 70000,              // Summarize can take longer
-      OUTLINE_ARC_MS: 65000,            // PART_A
-      OUTLINE_EPISODES_MS: 75000,       // PART_B/C - more complex
-      MERGE_MS: 45000,                  // Merge is faster
-      QC_MS: 30000,                     // QC is deterministic
+      BIBLE_MS: 80000,                  // V13: 80s (was 90s) - Gemini is faster
+      OUTLINE_MASTER_MS: 95000,         // V13: 95s (was 120s) - safer margin
+      OUTLINE_EPISODE_MS: 55000,        // V13: 55s (was 60s)
+      SCENE_CARDS_MS: 45000,            // V13: 45s (was 50s)
+      SCRIPT_BLOCK_MS: 60000,           // V13: 60s (was 70s)
+      POLISH_MS: 70000,                 // V13: 70s (was 80s)
+      SUMMARIZE_MS: 60000,              // V13: 60s (was 70s)
+      OUTLINE_ARC_MS: 55000,            // V13: 55s (was 65s)
+      OUTLINE_EPISODES_MS: 65000,       // V13: 65s (was 75s)
+      MERGE_MS: 40000,                  // V13: 40s (was 45s)
+      QC_MS: 25000,                     // V13: 25s (was 30s)
     },
     
-    // Model fallback chain (V12: graceful degradation)
+    // Model fallback chain (V13: Gemini 3 as primary workhorse)
     RETRY_MODELS: {
-      'openai/gpt-5.2': 'openai/gpt-5',
+      'google/gemini-3-flash-preview': 'google/gemini-2.5-flash',
+      'openai/gpt-5.2': 'google/gemini-3-flash-preview',
       'openai/gpt-5': 'openai/gpt-5-mini',
       'openai/gpt-5-mini': 'google/gemini-2.5-flash',
       'google/gemini-2.5-flash': 'google/gemini-2.5-flash-lite',

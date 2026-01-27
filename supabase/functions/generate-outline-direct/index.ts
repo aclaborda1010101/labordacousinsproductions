@@ -461,10 +461,10 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
 
 const AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
-// Model fallback chain: fast → faster
+// V3: Model fallback chain - Gemini 3 Flash as primary (faster, better context)
 const MODEL_CHAIN = [
-  { model: 'google/gemini-2.5-flash', timeout: 150000, maxTokens: 16000 },
-  { model: 'google/gemini-2.5-flash-lite', timeout: 120000, maxTokens: 12000 },
+  { model: 'google/gemini-3-flash-preview', timeout: 90000, maxTokens: 16000 },
+  { model: 'google/gemini-2.5-flash', timeout: 70000, maxTokens: 12000 },
 ];
 
 async function callAIWithModel(

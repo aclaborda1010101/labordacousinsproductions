@@ -281,6 +281,9 @@ export function estimateTokensFromStrings(parts: Array<string | undefined | null
 
 /**
  * Get model for specific task types (non-block tasks).
+ * 
+ * V3: Gemini 3 Flash as PRIMARY workhorse for long-running tasks (bible, outline)
+ * to avoid timeouts. GPT-5.2 reserved for polish/rescue where quality > speed.
  */
 export function getModelForTask(
   taskType: "bible" | "outline" | "scene_cards" | "script_block" | "polish" | "rescue" | "drift_check" | "auto_fix",
@@ -291,9 +294,15 @@ export function getModelForTask(
   switch (taskType) {
     case "bible":
     case "outline":
+      // V3: Use Gemini as PRIMARY to avoid timeouts (faster, higher context)
+      // GPT-5.2 caused frequent timeouts on these long-running tasks
+      if (geminiOk) return "google/gemini-3-flash-preview";
+      if (openaiOk) return "openai/gpt-5.2";
+      return "google/gemini-2.5-flash";
+
     case "polish":
     case "rescue":
-      // Premium tasks
+      // Quality-critical tasks: prefer GPT-5.2 for narrative coherence
       if (openaiOk) return "openai/gpt-5.2";
       if (geminiOk) return "google/gemini-3-flash-preview";
       return "google/gemini-2.5-flash";
