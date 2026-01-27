@@ -33,12 +33,12 @@ export interface StoryboardReferenceConfig {
  *   primaryReference: "https://xxxxx.supabase.co/storage/v1/object/public/project-assets/storyboard-refs/leyes-frontera.jpg"
  */
 export const STORYBOARD_REFERENCE_CONFIG: StoryboardReferenceConfig = {
-  // TODO: Replace with your uploaded reference image URL
-  primaryReference: null,
+  // GitHub raw URL for reference storyboard image (AWARENESS #113)
+  primaryReference: "https://raw.githubusercontent.com/aclaborda1010101/labordacousinsproductions/main/assets/storyboard-references/awareness-113-p4.jpg",
   
   styleReferences: {
-    sb_tech_production: null,
-    sb_cinematic_narrative: null,
+    sb_tech_production: "https://raw.githubusercontent.com/aclaborda1010101/labordacousinsproductions/main/assets/storyboard-references/leyes-frontera-sec126.jpg",
+    sb_cinematic_narrative: "https://raw.githubusercontent.com/aclaborda1010101/labordacousinsproductions/main/assets/storyboard-references/awareness-113-p4.jpg",
     sb_art_visual_dev: null,
     sb_previz_animatic: null,
   },
