@@ -67,14 +67,26 @@ export default function ScriptWorkspaceView({ projectId }: ScriptWorkspaceViewPr
     return <div className="p-8 text-center text-muted-foreground">Cargando...</div>;
   }
 
-  // FILM: Use simplified FilmScriptGenerator for all modes
-  if (projectFormat === 'film' || projectFormat === 'short') {
+  // FILM in ASSISTED mode: Use simplified FilmScriptGenerator
+  if ((projectFormat === 'film' || projectFormat === 'short') && effectiveMode === 'ASSISTED') {
     return (
       <div className="p-4">
         <FilmScriptGenerator 
           projectId={projectId} 
           projectName={projectName}
         />
+      </div>
+    );
+  }
+  
+  // FILM in PRO mode: Use ScriptWorkspace (has more options)
+  if ((projectFormat === 'film' || projectFormat === 'short') && (isDeveloperMode || effectiveMode === 'PRO')) {
+    return (
+      <div className="space-y-4">
+        {showTimeline && (
+          <ScriptProgressTimeline projectId={projectId} className="mx-4" />
+        )}
+        <ScriptWorkspace projectId={projectId} />
       </div>
     );
   }
