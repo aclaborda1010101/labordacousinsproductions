@@ -143,20 +143,32 @@ export default function FilmScriptGenerator({
     setProgressMessage('Generando estructura narrativa...');
 
     try {
-      // Usar endpoint específico para películas (más rápido, sin polling)
-      const { data, error: outlineError } = await supabase.functions.invoke('generate-film-outline', {
+      // Usar generate-outline-light con tier rápido para evitar timeouts
+      const { data, error: outlineError } = await supabase.functions.invoke('generate-outline-light', {
         body: {
           projectId,
           idea: idea.trim(),
+          format: 'film',
+          episodesCount: 1,
+          language: 'es-ES',
+          qualityTier: 'rapido', // Tier rápido para evitar timeout
+          disableDensity: true,
           genre,
-          duration,
+          targetDurationMin: duration,
+          // Flags para simplificar
+          skipEnrichment: true,
+          lightMode: true,
         },
       });
 
       if (outlineError) throw outlineError;
 
-      // Respuesta directa, sin polling
-      const outlineData = data;
+      // Handle async polling if needed
+      let outlineData = data;
+      if (data?.polling && data?.outline_id) {
+        setProgressMessage('Procesando outline (puede tardar ~1 min)...');
+        outlineData = await pollForOutline(data.outline_id);
+      }
 
       if (!outlineData?.outline?.title) {
         throw new Error('No se pudo generar el outline');
