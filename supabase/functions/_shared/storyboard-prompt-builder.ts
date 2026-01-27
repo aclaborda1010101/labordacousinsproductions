@@ -118,44 +118,58 @@ export interface BuildStoryboardPromptOptions {
 // STORYBOARD FORMAT CONTRACT (HIGHEST PRIORITY — NEVER VIOLATE)
 // ============================================================================
 
-const STORYBOARD_FORMAT_CONTRACT = `═══════════════════════════════════════════════════════════════════════════════
-STORYBOARD FORMAT CONTRACT (HIGHEST PRIORITY — NEVER VIOLATE)
+const STORYBOARD_FORMAT_CONTRACT = `
+████████████████████████████████████████████████████████████████████████████████
+██                                                                            ██
+██   STORYBOARD FORMAT: ROUGH SKETCH ONLY — NO COMIC ART                     ██
+██                                                                            ██
+████████████████████████████████████████████████████████████████████████████████
+
+WHAT YOU ARE MAKING:
+A rough pencil storyboard for a film production. The kind a director sketches 
+during a meeting. Quick, functional, ugly. NOT art.
+
+LAYOUT:
+- GRID_SHEET_V1 = 6-9 panels in grid layout on one sheet
+- TECH_PAGE_V1 = 4-6 panels with technical notes
+
+═══════════════════════════════════════════════════════════════════════════════
+THE MOST COMMON MISTAKE - DO NOT MAKE THIS MISTAKE:
 ═══════════════════════════════════════════════════════════════════════════════
 
-⚠️ THIS IS A PRODUCTION STORYBOARD — NOT A COMIC BOOK ⚠️
+You will be tempted to make it look GOOD. To add nice shading. To make the 
+characters look cool. To add dramatic lighting. DON'T.
 
-You are creating a WORKING DOCUMENT for a film production crew.
-Think: Spielberg pre-production, Pixar story department, Spanish film industry.
-This is NOT art to be admired — it's a functional tool for filmmakers.
+Every time you think "this would look better if I..." STOP. Make it ROUGHER.
 
-FORMAT (depending on storyboard_style):
-A) GRID_SHEET_V1  = one sheet containing 6–9 panels in a clean grid layout
-B) TECH_PAGE_V1   = one technical sheet containing 4–6 panels with annotations
+CORRECT = Looks like a napkin sketch
+WRONG = Looks like a comic book page
 
-STYLE RULES (CRITICAL):
-- ROUGH PENCIL SKETCH quality — fast, gestural, functional
-- Simple grayscale (3-4 values max) — NOT dramatic shading
-- Quick linework with visible pencil texture — NOT polished illustration
-- Clear silhouettes readable at thumbnail size
-- Panel labels visible: "P1", "P2", etc.
-- Shot type labels when relevant: PG/PM/PMC/OTS/2SHOT/INSERT/PP
+═══════════════════════════════════════════════════════════════════════════════
 
-🚫 ABSOLUTELY FORBIDDEN — INSTANT REJECTION:
-- Comic book style (Marvel, DC, manga, bande dessinée)
-- Anime or cartoon aesthetics
-- Polished illustration or concept art finish
-- Dramatic artistic lighting or atmosphere
-- Decorative linework or stylized proportions
-- Speech bubbles, action lines, comic effects
-- 3D renders or photorealistic style
-- Colored artwork of any kind
+STYLE (MANDATORY):
+✓ Rough pencil lines - wobbly is OK, imperfect is GOOD
+✓ 3 gray values max: white, mid-gray, dark gray
+✓ Simple faces - dots for eyes, line for mouth
+✓ Minimal backgrounds - empty or 2-3 lines suggesting location
+✓ Panel labels: P1, P2, P3 and shot type (PG/PM/PP/OTS)
+✓ Should look like it took 3-5 minutes per panel
 
-✅ CORRECT REFERENCE:
-Look at the attached reference image — that is EXACTLY the style you must match.
-If your output looks more "artistic" or "finished" than the reference, it's WRONG.
+INSTANT FAIL (if any of these appear, the generation is REJECTED):
+✗ Comic book or graphic novel style
+✗ Manga, anime, or cartoon style  
+✗ Dramatic shadows or lighting
+✗ Detailed backgrounds
+✗ Action lines or speed effects
+✗ Speech bubbles
+✗ Polished or "professional illustration" quality
+✗ Stylized proportions (big eyes, exaggerated features)
+✗ Any color (must be grayscale)
 
-FORMAT CONTRACT overrides all other instructions if conflict exists.
-═══════════════════════════════════════════════════════════════════════════════`;
+REFERENCE IMAGE = TRUTH:
+The first attached image shows EXACTLY what this should look like.
+Your output must match that style. If yours looks "better" = YOU FAILED.
+████████████████████████████████████████████████████████████████████████████████`;
 
 // ============================================================================
 // PACK-FIRST CANON (GLOBAL RULE)

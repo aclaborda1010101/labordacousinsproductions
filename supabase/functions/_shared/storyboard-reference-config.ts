@@ -61,33 +61,43 @@ export function getStoryboardReferenceUrl(
 
 /**
  * Reference image instruction block - prepended to prompts when reference is available
+ * v2.0: Much more aggressive anti-comic instructions
  */
 export function buildReferenceInstructionBlock(referenceUrl: string | null): string {
   if (!referenceUrl) return '';
   
   return `
+██████████████████████████████████████████████████████████████████████████████
+██  CRITICAL: COPY THE REFERENCE IMAGE STYLE EXACTLY                        ██
+██████████████████████████████████████████████████████████████████████████████
+
+LOOK AT THE FIRST ATTACHED IMAGE. That is a REAL storyboard from a Spanish film production.
+
+YOUR OUTPUT MUST LOOK LIKE THAT IMAGE. NOT like a comic book. NOT like concept art.
+
+WHAT THE REFERENCE SHOWS:
+• Quick pencil/pen sketches - NOT polished drawings
+• Simple gray shading (3 values max) - NOT dramatic lighting
+• Functional linework - NOT beautiful art
+• Clear but rough - like a sketch done in 5 minutes per frame
+• Panel labels (P1, P2, etc.) and shot notations
+• This is a WORKING DOCUMENT for film crew, not art to display
+
+THE #1 MISTAKE TO AVOID:
+Making it look "better" than the reference. DON'T. It should look ROUGHER, 
+more like a quick sketch, less like finished art. If your output looks more 
+polished than the reference, YOU FAILED.
+
+THINK: "Am I making this too nice?" If yes, make it rougher.
+
 ═══════════════════════════════════════════════════════════════════════════════
-🎬 VISUAL REFERENCE (MATCH THIS EXACTLY)
-═══════════════════════════════════════════════════════════════════════════════
-
-The FIRST attached image is a REFERENCE STORYBOARD from a real film production.
-Your output MUST match this visual style EXACTLY:
-
-COPY FROM REFERENCE:
-✓ The rough, sketchy line quality
-✓ The simple grayscale shading approach  
-✓ The functional, non-artistic feel
-✓ The panel layout and labeling style
-✓ The "working document" aesthetic
-
-DO NOT:
-✗ Make it look more polished than the reference
-✗ Add artistic flourishes not in the reference
-✗ Use comic book or manga styling
-✗ Create finished illustration quality
-
-The reference shows what REAL production storyboards look like.
-Match it. Don't "improve" it with artistic interpretation.
+COMPARISON:
+❌ WRONG: Looks like Marvel/DC comics, manga, graphic novel, concept art
+❌ WRONG: Dramatic shadows, artistic lighting, detailed backgrounds  
+❌ WRONG: Stylized proportions, dynamic poses, action lines
+❌ WRONG: Speech bubbles, sound effects, decorative borders
+✅ RIGHT: Looks like a rough sketch a director drew in a meeting
+✅ RIGHT: Simple, functional, readable at small size, minimal detail
 ═══════════════════════════════════════════════════════════════════════════════
 `;
 }
