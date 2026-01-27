@@ -32,6 +32,10 @@ import {
   getModeBlock,
   type GenerationMode,
 } from "../_shared/storyboard-style-presets.ts";
+import {
+  getStoryboardReferenceUrl,
+  buildReferenceInstructionBlock,
+} from "../_shared/storyboard-reference-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -416,6 +420,15 @@ serve(async (req) => {
           console.log(`[batch] panel_${panelNo} prepended ${mode} mode block`);
         }
 
+        // v5.0: Get storyboard reference image URL and prepend instruction block
+        const stylePresetId = panel.style_preset_id || 'sb_cinematic_narrative';
+        const storyboardRefUrl = getStoryboardReferenceUrl(stylePresetId);
+        if (storyboardRefUrl) {
+          const refInstructionBlock = buildReferenceInstructionBlock(storyboardRefUrl);
+          imagePrompt = refInstructionBlock + '\n\n' + imagePrompt;
+          console.log(`[batch] panel_${panelNo} using storyboard reference image`);
+        }
+
         // ================================================================
         // PACK-FIRST: Get reference images from character_pack_slots
         // ================================================================
@@ -472,8 +485,16 @@ serve(async (req) => {
           referenceImageUrls.push(locationLock.reference_images[0]);
         }
 
-        // Hard cap
-        const finalRefs = referenceImageUrls.slice(0, 6);
+        // v5.0: Prepend storyboard style reference image FIRST (highest priority)
+        // This teaches the model what a real production storyboard looks like
+        const allRefs: string[] = [];
+        if (storyboardRefUrl) {
+          allRefs.push(storyboardRefUrl);
+        }
+        allRefs.push(...referenceImageUrls);
+
+        // Hard cap (6 refs max, but storyboard ref is always first)
+        const finalRefs = allRefs.slice(0, 6);
 
         console.log(`[batch] panel_${panelNo} refs=${finalRefs.length} chars=${presentCharIds.length}`);
 

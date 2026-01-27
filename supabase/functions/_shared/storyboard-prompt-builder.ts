@@ -122,29 +122,39 @@ const STORYBOARD_FORMAT_CONTRACT = `══════════════�
 STORYBOARD FORMAT CONTRACT (HIGHEST PRIORITY — NEVER VIOLATE)
 ═══════════════════════════════════════════════════════════════════════════════
 
-You must output EXACTLY ONE of the following fixed formats, depending on storyboard_style:
+⚠️ THIS IS A PRODUCTION STORYBOARD — NOT A COMIC BOOK ⚠️
+
+You are creating a WORKING DOCUMENT for a film production crew.
+Think: Spielberg pre-production, Pixar story department, Spanish film industry.
+This is NOT art to be admired — it's a functional tool for filmmakers.
+
+FORMAT (depending on storyboard_style):
 A) GRID_SHEET_V1  = one sheet containing 6–9 panels in a clean grid layout
-B) TECH_PAGE_V1   = one technical sheet containing 4–6 panels with stronger technical annotations
+B) TECH_PAGE_V1   = one technical sheet containing 4–6 panels with annotations
 
-ABSOLUTE RULES (MUST):
-- Keep the SAME page layout, panel framing system, line weight, and paper texture across the ENTIRE generation
-- Grayscale pencil storyboard only. Clean linework. Subtle paper grain
-- Each panel must contain:
-  - Panel label "P{n}" clearly visible
-  - Shot type label (e.g., PG/PM/PMC/OTS/2SHOT/INSERT/LOW/TRACK/PP) visible
-  - Simple directional arrows only when needed (movement/camera)
-- Composition must be readable at thumbnail size. Clear silhouettes
-- Consistent margins, consistent panel borders, consistent typography style for labels
+STYLE RULES (CRITICAL):
+- ROUGH PENCIL SKETCH quality — fast, gestural, functional
+- Simple grayscale (3-4 values max) — NOT dramatic shading
+- Quick linework with visible pencil texture — NOT polished illustration
+- Clear silhouettes readable at thumbnail size
+- Panel labels visible: "P1", "P2", etc.
+- Shot type labels when relevant: PG/PM/PMC/OTS/2SHOT/INSERT/PP
 
-ABSOLUTE PROHIBITIONS (NEVER):
-- Do NOT switch to comic/cartoon/anime/3D/colored illustration
-- Do NOT change the sheet format mid-generation
-- Do NOT add new UI frames, decorative backgrounds, or cinematic posters
-- Do NOT invent different label styles. Use the SAME label style in all panels
-- Do NOT output a single-panel "cinematic frame" if storyboard_style requests a sheet
+🚫 ABSOLUTELY FORBIDDEN — INSTANT REJECTION:
+- Comic book style (Marvel, DC, manga, bande dessinée)
+- Anime or cartoon aesthetics
+- Polished illustration or concept art finish
+- Dramatic artistic lighting or atmosphere
+- Decorative linework or stylized proportions
+- Speech bubbles, action lines, comic effects
+- 3D renders or photorealistic style
+- Colored artwork of any kind
 
-IF CONFLICT EXISTS:
-STORYBOARD FORMAT CONTRACT overrides everything else (including panel description)
+✅ CORRECT REFERENCE:
+Look at the attached reference image — that is EXACTLY the style you must match.
+If your output looks more "artistic" or "finished" than the reference, it's WRONG.
+
+FORMAT CONTRACT overrides all other instructions if conflict exists.
 ═══════════════════════════════════════════════════════════════════════════════`;
 
 // ============================================================================
