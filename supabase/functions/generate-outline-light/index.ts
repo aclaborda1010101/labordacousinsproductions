@@ -14,6 +14,11 @@ import {
   V3AuthContext
 } from "../_shared/v3-enterprise.ts";
 
+import { fetchChatCompletion, hasApiAccess, initLovableCompat } from "../_shared/lovable-compat.ts";
+
+// V4.4: Initialize Lovable compatibility layer to route AI calls through Google/OpenAI
+initLovableCompat();
+
 // ⚠️ MODEL CONFIGS - Lovable AI Gateway (GPT-5 family)
 type GenerationModelType = 'rapido' | 'profesional' | 'hollywood';
 
@@ -468,7 +473,7 @@ function normalizeOutline(input: any): any {
       ...extracted,
       characters_from_idea: Array.isArray(extracted.characters_from_idea) ? extracted.characters_from_idea : [],
       locations_from_idea: Array.isArray(extracted.locations_from_idea) ? extracted.locations_from_idea : [],
-      props_from_idea: Array.isArray(extracted.props_from_idea) ? extracted.props_from_idea : [],
+      props_from_idea: Array.isArray(extracted.props_from_idea) ? extracted.props_from_idea : []
     },
 
     // Apply LIGHT mode caps
@@ -477,7 +482,7 @@ function normalizeOutline(input: any): any {
     main_props: (Array.isArray(obj.main_props) ? obj.main_props : []).slice(0, LIGHT_MODE_LIMITS.MAX_PROPS),
     subplots: (Array.isArray(obj.subplots) ? obj.subplots : []).slice(0, LIGHT_MODE_LIMITS.MAX_SUBPLOTS),
     plot_twists: (Array.isArray(obj.plot_twists) ? obj.plot_twists : []).slice(0, LIGHT_MODE_LIMITS.MAX_TWISTS),
-    episode_beats: episodeBeats,
+    episode_beats: episodeBeats
   };
 }
 
@@ -579,8 +584,7 @@ async function summarizeLongText(idea: string): Promise<{ summary: string; wasSu
   
   console.log(`[OUTLINE] Idea too long (${idea.length} chars). Summarizing with fast model...`);
   
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  if (!hasApiAccess()) throw new Error('No API key configured');
   
   const summaryPrompt = `Resume el siguiente texto para generación de outline audiovisual:\n\n${idea}`;
   const systemPrompt = `Eres un asistente que resume guiones y novelas para producción audiovisual.
@@ -604,8 +608,8 @@ INSTRUCCIONES:
       const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
+          // Authorization: handled by fetchChatCompletion,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           model,
@@ -718,14 +722,13 @@ episode_beats debe contener EXACTAMENTE ${batchSize} elementos numerados ${start
     required: ['episode_beats']
   };
 
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  if (!hasApiAccess()) throw new Error('No API key configured');
 
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-      'Content-Type': 'application/json',
+      // Authorization: handled by fetchChatCompletion,
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       model: config.apiModel,
@@ -797,8 +800,7 @@ async function callLovableAI(
   const parseWarnings: string[] = [];
   const callStartTime = Date.now();
   
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  if (!hasApiAccess()) throw new Error('No API key configured');
   
   const effectiveMaxTokens = overrideMaxTokens ?? config.maxTokens;
   
@@ -836,8 +838,8 @@ async function callLovableAI(
   let response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-      'Content-Type': 'application/json',
+      // Authorization: handled by fetchChatCompletion,
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(requestBody)
   });
@@ -866,8 +868,8 @@ async function callLovableAI(
       response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
+          // Authorization: handled by fetchChatCompletion,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
       });
@@ -1095,7 +1097,7 @@ serve(async (req) => {
       userId: auth.userId,
       projectId: projectId || undefined,
       functionName: 'generate-outline-light',
-      provider: generationModel === 'hollywood' ? 'anthropic' : 'openai',
+      provider: generationModel === 'hollywood' ? 'anthropic' : 'openai'
     });
 
     // Validate and get model config - NO truncation, NO auto-downgrade (user preference)
@@ -1108,10 +1110,9 @@ serve(async (req) => {
     const ideaLength = idea.length;
 
     // Lovable AI Gateway - no external API key needed
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY no configurada');
-    }
+    if (!hasApiAccess()) {
+    throw new Error('No API key configured');
+  }
 
     // Episode count: prefer explicit mention in the idea (e.g. "8 capítulos"), otherwise use UI selection
     const defaultEpisodesCount = format === 'series'
@@ -1169,7 +1170,7 @@ serve(async (req) => {
           format: format || null,
           episode_count: cappedEpisodesCount,
           narrative_mode: narrativeMode || 'serie_adictiva',
-          density_targets: disableDensity ? null : (densityTargets || null),
+          density_targets: disableDensity ? null : (densityTargets || null)
         })
         .select('id')
         .single();
@@ -1186,14 +1187,11 @@ serve(async (req) => {
         
         fetch(`${SUPABASE_URL}/functions/v1/outline-worker`, {
           method: 'POST',
-          headers: {
-            'Authorization': authHeader || '',
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             outline_id: outlineRecordId,
             project_id: projectId,
-            idea_text: idea,
+            idea_text: idea
           })
         }).catch(err => console.warn('[OUTLINE V5] Worker fire-and-forget error:', err));
 

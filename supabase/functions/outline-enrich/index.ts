@@ -15,9 +15,13 @@ import { needsThreads, needsFactions, needsEntityRules, needs5Hitos, needsSetpie
 import { THREAD_SCHEMA, THREADS_ENRICH_RESPONSE_SCHEMA } from '../_shared/outline-schemas-v11.ts';
 import { normalizeOutlineV11 } from '../_shared/normalize-outline-v11.ts';
 
+import { fetchChatCompletion, hasApiAccess, initLovableCompat } from "../_shared/lovable-compat.ts";
+
+// Initialize Lovable compatibility layer - routes AI calls through direct APIs
+initLovableCompat();
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 
 // Model config
@@ -36,39 +40,32 @@ async function callLovableAI(
   toolSchema: any,
   maxTokens: number = MAX_TOKENS
 ): Promise<any> {
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  if (!LOVABLE_API_KEY) {
-    throw new Error("LOVABLE_API_KEY not configured");
+  if (!hasApiAccess()) {
+    throw new Error('No API key configured');
   }
 
   // Use max_completion_tokens for OpenAI models (GPT-5.x)
   const tokenField = model.startsWith('openai/') ? 'max_completion_tokens' : 'max_tokens';
   
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      [tokenField]: maxTokens,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      tools: [
-        {
-          type: "function",
-          function: {
-            name: toolName,
-            description: "Generate the requested enrichment data",
-            parameters: toolSchema
-          }
+  // Use fetchChatCompletion which routes to direct APIs (Google/OpenAI/Anthropic)
+  const response = await fetchChatCompletion({
+    model,
+    [tokenField]: maxTokens,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ],
+    tools: [
+      {
+        type: "function",
+        function: {
+          name: toolName,
+          description: "Generate the requested enrichment data",
+          parameters: toolSchema
         }
-      ],
-      tool_choice: { type: "function", function: { name: toolName } }
-    }),
+      }
+    ],
+    tool_choice: { type: "function", function: { name: toolName } }
   });
 
   if (!response.ok) {
@@ -534,28 +531,34 @@ serve(async (req) => {
   }
 
   try {
-    // Auth
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Not authenticated' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Invalid token' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+    // Auth - with BYPASS_AUTH support for testing
+    const bypassAuth = Deno.env.get('BYPASS_AUTH') === 'true';
+    const authHeader = req.headers.get('Authorization');
+    
+    if (!bypassAuth) {
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: 'Not authenticated' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const { data: { user }, error: authError } = await supabase.auth.getUser(
+        authHeader.replace('Bearer ', '')
+      );
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: 'Invalid token' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    } else {
+      console.log('[outline-enrich] BYPASS_AUTH enabled - skipping auth check');
     }
 
     // Parse request - support outline_id OR project_id (fallback)

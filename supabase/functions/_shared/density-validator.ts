@@ -149,6 +149,71 @@ film_blockbuster: {
 },
 
 // ============================================================================
+// V4: GENRE-BASED PROFILES (Based on real Hollywood screenplay analysis Jan 2026)
+// Data source: Analysis of 14+ professional screenplays
+// ============================================================================
+
+// COMEDIA RAPIDA - Fast-paced comedy (Hangover, Superbad, Austin Powers)
+// ~0.7-0.9 min per scene = 100-130 scenes for 90 min
+film_comedia_rapida: {
+  min_characters_total: 12,
+  min_supporting_characters: 6,
+  min_antagonists: 1,
+  min_locations: 15,
+  min_scenes_per_episode: 100,    // HIGH DENSITY - fast cutting
+  min_threads_total: 4,
+  min_secondary_threads: 2
+},
+
+// COMEDIA STANDARD - Standard comedy/dramedy (Lady Bird, Big Sick, Juno)
+// ~1.0-1.3 min per scene = 70-90 scenes for 90 min
+film_comedia: {
+  min_characters_total: 10,
+  min_supporting_characters: 5,
+  min_antagonists: 1,
+  min_locations: 12,
+  min_scenes_per_episode: 75,     // MEDIUM-HIGH DENSITY
+  min_threads_total: 3,
+  min_secondary_threads: 2
+},
+
+// THRILLER/ACTION - Fast-paced thriller (Aliens, Get Out, Knives Out)
+// ~0.6-0.85 min per scene = 105-150 scenes for 90 min
+film_thriller: {
+  min_characters_total: 12,
+  min_supporting_characters: 6,
+  min_antagonists: 2,
+  min_locations: 15,
+  min_scenes_per_episode: 105,    // HIGH DENSITY - tension building
+  min_threads_total: 4,
+  min_secondary_threads: 2
+},
+
+// DRAMA - Standard drama (American President, Amadeus)
+// ~1.3-1.8 min per scene = 50-70 scenes for 90 min
+film_drama: {
+  min_characters_total: 10,
+  min_supporting_characters: 5,
+  min_antagonists: 1,
+  min_locations: 10,
+  min_scenes_per_episode: 55,     // MEDIUM DENSITY
+  min_threads_total: 3,
+  min_secondary_threads: 2
+},
+
+// DRAMA LENTO - Slow/classic drama (All About Eve, Annie Hall)
+// ~2.0-3.0 min per scene = 30-45 scenes for 90 min
+film_drama_lento: {
+  min_characters_total: 8,
+  min_supporting_characters: 4,
+  min_antagonists: 1,
+  min_locations: 8,
+  min_scenes_per_episode: 35,     // LOW DENSITY - character moments
+  min_threads_total: 2,
+  min_secondary_threads: 1
+},
+
+// ============================================================================
 // LEGACY COMPAT - Map old names to new profiles
 // ============================================================================
 

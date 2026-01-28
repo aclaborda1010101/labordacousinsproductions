@@ -20,7 +20,9 @@ export type ModelId =
   | "openai/gpt-5"
   | "openai/gpt-5.2"
   | "google/gemini-3-flash-preview"
-  | "google/gemini-2.5-flash";
+  | "google/gemini-2.5-flash"
+  | "anthropic/claude-opus-4"      // Premium: best narrative quality
+  | "anthropic/claude-sonnet-4";   // High quality, cost-effective
 
 export type ModelReason =
   | "RESCUE_DRIFT"
@@ -37,7 +39,7 @@ export type ModelReason =
   | "TIER_OVERRIDE"
   | "FALLBACK";
 
-export type ModelTier = "hollywood" | "professional" | "fast";
+export type ModelTier = "hollywood" | "professional" | "fast" | "opus_full" | "opus_hybrid";
 export type QualityTier = "rapido" | "profesional" | "hollywood";
 
 export interface SceneCard {
@@ -251,23 +253,51 @@ export function selectModelForBlock(context: ModelSelectionContext): ModelSelect
     return { model: "google/gemini-3-flash-preview", reason: "EPISODE_BOOKEND", tier: "hollywood" };
   }
 
-  // 5. Tier defaults
+  // 5. Tier defaults (V4: Remapped to Opus strategy)
+  
+  // ==========================================================================
+  // HOLLYWOOD = 100% Claude Opus (Máxima calidad narrativa)
+  // ==========================================================================
   if (tier === "hollywood") {
-    if (geminiOk) {
-      return { model: "google/gemini-3-flash-preview", reason: "STANDARD_BLOCK", tier: "hollywood" };
+    return { model: "anthropic/claude-opus-4", reason: "TIER_OVERRIDE", tier: "hollywood" };
+  }
+  
+  // ==========================================================================
+  // PROFESIONAL = Híbrido Opus/Gemini (Balance calidad/coste)
+  // - Opus para escenas críticas (~25%)
+  // - Gemini para volumen (~75%)
+  // ==========================================================================
+  if (tier === "profesional" || tier === "professional") {
+    // Critical beats get Opus
+    if (hasCriticalBeat || hasReveal || hasIntenseDialogue || isBookend) {
+      return { model: "anthropic/claude-opus-4", reason: "CRITICAL_BEAT", tier: "professional" };
     }
-    return { model: "openai/gpt-5.2", reason: "STANDARD_BLOCK", tier: "hollywood" };
+    // Standard blocks get Gemini workhorse
+    return { model: "google/gemini-2.5-flash", reason: "STANDARD_BLOCK", tier: "professional" };
+  }
+  
+  // ==========================================================================
+  // RAPIDO = 100% Gemini (Velocidad y bajo coste)
+  // ==========================================================================
+  if (tier === "rapido" || tier === "fast") {
+    return { model: "google/gemini-2.5-flash", reason: "CHEAP_BLOCK", tier: "fast" };
   }
 
-  if (tier === "profesional") {
-    if (estimatedInputTokens > MEDIUM_CONTEXT_TOKENS && geminiOk) {
-      return { model: "google/gemini-3-flash-preview", reason: "STANDARD_BLOCK", tier: "professional" };
+  // ==========================================================================
+  // LEGACY: opus_full / opus_hybrid (backwards compat)
+  // ==========================================================================
+  if (tier === "opus_full") {
+    return { model: "anthropic/claude-opus-4", reason: "TIER_OVERRIDE", tier: "hollywood" };
+  }
+  if (tier === "opus_hybrid") {
+    if (hasCriticalBeat || hasReveal || hasIntenseDialogue || isBookend) {
+      return { model: "anthropic/claude-opus-4", reason: "CRITICAL_BEAT", tier: "professional" };
     }
-    return { model: "openai/gpt-5-mini", reason: "CHEAP_BLOCK", tier: "fast" };
+    return { model: "google/gemini-2.5-flash", reason: "STANDARD_BLOCK", tier: "professional" };
   }
 
-  // rapido
-  return { model: "openai/gpt-5-mini", reason: "CHEAP_BLOCK", tier: "fast" };
+  // Default fallback
+  return { model: "google/gemini-2.5-flash", reason: "FALLBACK", tier: "fast" };
 }
 
 // =============================================================================
@@ -301,28 +331,79 @@ export function calculateScenesPerBlock(sceneCards: SceneCard[]): number {
 /**
  * Estimate model distribution for cost estimation.
  */
+export interface ModelDistribution {
+  opusBlocks: number;
+  geminiBlocks: number;
+  gpt52Blocks: number; 
+  gemini3Blocks: number;
+  gpt5MiniBlocks: number; 
+  estimatedCost: number;      // in USD
+  estimatedSavings: number;   // % vs opus_full
+  tierDescription: string;
+}
+
 export function estimateModelDistribution(
   totalBlocks: number,
   totalEpisodes: number,
   qualityTier: ModelTier = "professional"
-): { 
-  gpt52Blocks: number; 
-  gemini3Blocks: number;
-  gpt5MiniBlocks: number; 
-  estimatedSavings: number 
-} {
-  if (qualityTier === "hollywood") {
-    // Hollywood uses Gemini 3 as workhorse, GPT-5.2 for critical
-    const criticalBlocks = Math.ceil(totalBlocks * 0.25); // bookends + critical beats
+): ModelDistribution {
+  // Cost per block estimates (USD)
+  const COST_OPUS = 0.15;      // Claude Opus - premium
+  const COST_SONNET = 0.05;    // Claude Sonnet
+  const COST_GPT52 = 0.10;     // GPT-5.2
+  const COST_GEMINI = 0.02;    // Gemini 2.5 Flash - workhorse
+  const COST_MINI = 0.01;      // GPT-5 Mini
+  
+  const allOpusCost = totalBlocks * COST_OPUS;
+
+  // HOLLYWOOD: 100% Claude Opus (Máxima calidad)
+  if (qualityTier === "hollywood" || qualityTier === "opus_full") {
     return {
-      gpt52Blocks: criticalBlocks,
-      gemini3Blocks: totalBlocks - criticalBlocks,
+      opusBlocks: totalBlocks,
+      geminiBlocks: 0,
+      gpt52Blocks: 0,
+      gemini3Blocks: 0,
       gpt5MiniBlocks: 0,
-      estimatedSavings: 40, // vs all GPT-5.2
+      estimatedCost: allOpusCost,
+      estimatedSavings: 0,
+      tierDescription: "🎭 Hollywood - 100% Claude Opus"
     };
   }
 
-  // Professional: mix of all three
+  // PROFESIONAL: Híbrido Opus/Gemini (~25% Opus, ~75% Gemini)
+  if (qualityTier === "professional" || qualityTier === "profesional" || qualityTier === "opus_hybrid") {
+    const criticalBlocks = Math.ceil(totalBlocks * 0.25);
+    const volumeBlocks = totalBlocks - criticalBlocks;
+    const hybridCost = (criticalBlocks * COST_OPUS) + (volumeBlocks * COST_GEMINI);
+    
+    return {
+      opusBlocks: criticalBlocks,
+      geminiBlocks: volumeBlocks,
+      gpt52Blocks: 0,
+      gemini3Blocks: 0,
+      gpt5MiniBlocks: 0,
+      estimatedCost: hybridCost,
+      estimatedSavings: Math.round((1 - hybridCost / allOpusCost) * 100),
+      tierDescription: "⚡ Profesional - Opus crítico + Gemini volumen"
+    };
+  }
+
+  // RAPIDO: 100% Gemini (Velocidad y bajo coste)
+  if (qualityTier === "fast" || qualityTier === "rapido") {
+    const rapidCost = totalBlocks * COST_GEMINI;
+    return {
+      opusBlocks: 0,
+      geminiBlocks: totalBlocks,
+      gpt52Blocks: 0,
+      gemini3Blocks: totalBlocks,
+      gpt5MiniBlocks: 0,
+      estimatedCost: rapidCost,
+      estimatedSavings: Math.round((1 - rapidCost / allOpusCost) * 100),
+      tierDescription: "🚀 Rápido - 100% Gemini"
+    };
+  }
+
+  // PROFESSIONAL: Mixed economy
   const bookendBlocks = totalEpisodes * 2;
   const criticalBlocks = Math.ceil(totalBlocks * 0.15);
   const rescueBlocks = Math.ceil(totalBlocks * 0.10);
@@ -331,11 +412,18 @@ export function estimateModelDistribution(
   const gemini3Blocks = Math.ceil((totalBlocks - gpt52Blocks) * 0.3);
   const gpt5MiniBlocks = Math.max(0, totalBlocks - gpt52Blocks - gemini3Blocks);
 
-  const allGpt52Cost = totalBlocks * 10;
-  const mixedCost = (gpt52Blocks * 10) + (gemini3Blocks * 3) + (gpt5MiniBlocks * 1);
-  const estimatedSavings = Math.round((1 - mixedCost / allGpt52Cost) * 100);
+  const cost = (gpt52Blocks * COST_GPT52) + (gemini3Blocks * COST_GEMINI) + (gpt5MiniBlocks * COST_MINI);
 
-  return { gpt52Blocks, gemini3Blocks, gpt5MiniBlocks, estimatedSavings };
+  return {
+    opusBlocks: 0,
+    geminiBlocks: gemini3Blocks,
+    gpt52Blocks,
+    gemini3Blocks,
+    gpt5MiniBlocks,
+    estimatedCost: cost,
+    estimatedSavings: Math.round((1 - cost / allOpusCost) * 100),
+    tierDescription: "💼 Profesional - Balance calidad/coste"
+  };
 }
 
 /**
@@ -345,20 +433,23 @@ export function getModelForTask(taskType:
   "bible" | "outline" | "scene_cards" | "script_block" | "polish" | "rescue" | "drift_check" | "auto_fix"
 ): ModelId {
   switch (taskType) {
+    // PREMIUM TIER: Use Opus for narrative-critical tasks
     case "bible":
     case "outline":
     case "polish":
+      return "anthropic/claude-opus-4"; // Best narrative quality
+    
     case "rescue":
-      return "openai/gpt-5.2";
+      return "anthropic/claude-sonnet-4"; // High quality recovery
     
     case "scene_cards":
     case "drift_check":
     case "auto_fix":
-      return "openai/gpt-5-mini";
+      return "google/gemini-2.5-flash"; // Fast, cheap for mechanical work
     
     case "script_block":
     default:
-      return "openai/gpt-5-mini"; // Selected dynamically
+      return "google/gemini-2.5-flash"; // Workhorse for volume
   }
 }
 
@@ -372,6 +463,8 @@ export function getModelDisplayName(model: ModelId): string {
     "openai/gpt-5.2": "GPT-5.2 Premium",
     "google/gemini-3-flash-preview": "Gemini 3 Flash",
     "google/gemini-2.5-flash": "Gemini 2.5 Flash",
+    "anthropic/claude-opus-4": "Claude Opus 4 🎭 (Narrativa)",
+    "anthropic/claude-sonnet-4": "Claude Sonnet 4",
   };
   return names[model] || model;
 }

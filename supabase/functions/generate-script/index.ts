@@ -5,6 +5,10 @@ import { parseJsonSafe, parseToolCallArgs, parseAnthropicToolUse, ParseResult } 
 import { extractEpisodeContract, formatContractForPrompt, type EpisodeContract } from "../_shared/episode-contracts.ts";
 import { validateScriptAgainstContract, getQCSummary, validateBatchAgainstPlan, buildRepairPrompt, type ScriptQCResult, type BatchValidationResult } from "../_shared/script-qc.ts";
 import { validateDensity, getDensityProfile } from "../_shared/density-validator.ts";
+import { fetchChatCompletion, hasApiAccess, initLovableCompat } from "../_shared/lovable-compat.ts";
+
+// Initialize Lovable compatibility layer - routes AI calls through direct APIs (Google/OpenAI/Anthropic)
+initLovableCompat();
 // V13: Narrative Profiles - Genre-driven writing method
 import { resolveNarrativeProfile, buildNarrativeProfilePromptBlock, type NarrativeProfile } from "../_shared/narrative-profiles.ts";
 // V13: Intelligent Repair Prompts
@@ -22,10 +26,14 @@ import {
   type BatchPlan, 
   type GenerationState 
 } from "../_shared/batch-planner.ts";
+// V14: Few-shot learning from professional scripts
+import { buildFewShotBlock } from "../_shared/scene-retriever.ts";
+// V15: Industry-standard screenplay density and quality rules
+import { buildDensityPromptBlock, buildQualityRulesBlock, calculateRequiredScenes } from "../_shared/screenplay-standards.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 
 // =============================================================================
@@ -38,6 +46,7 @@ type QualityTier = 'rapido' | 'profesional' | 'hollywood';
 
 interface ModelConfig {
   apiModel: string;
+  auxiliaryModel?: string; // Para tareas auxiliares (validación, QC) en modo híbrido
   provider: 'lovable';
   maxTokens: number;
   temperature: number;
@@ -47,7 +56,7 @@ interface ModelConfig {
 
 const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
   rapido: {
-    apiModel: 'openai/gpt-5-mini',
+    apiModel: 'google/gemini-2.5-flash',
     provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.7,
@@ -55,7 +64,8 @@ const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
     technicalMetadataStatus: 'EMPTY'
   },
   profesional: {
-    apiModel: 'openai/gpt-5',
+    apiModel: 'anthropic/claude-opus',
+    auxiliaryModel: 'google/gemini-2.5-flash', // Para validación, parsing, QC
     provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.72,
@@ -63,7 +73,7 @@ const TIER_CONFIGS: Record<QualityTier, ModelConfig> = {
     technicalMetadataStatus: 'PARTIAL'
   },
   hollywood: {
-    apiModel: 'openai/gpt-5.2',
+    apiModel: 'anthropic/claude-opus',
     provider: 'lovable',
     maxTokens: 16000,
     temperature: 0.75,
@@ -884,8 +894,7 @@ async function callLovableAI(
   episodeNumber?: number,
   scenesPerBatch: number = 5
 ): Promise<{ result: any; parseWarnings: string[] }> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  if (!hasApiAccess()) throw new Error('No API key configured');
 
   // V2: Auto-map token parameter based on model
   const model = config.apiModel;
@@ -906,10 +915,9 @@ async function callLovableAI(
   let response: Response;
   try {
     response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
+      method: 'POST',headers: {
+        // Authorization: handled by fetchChatCompletion,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         model,
@@ -1053,15 +1061,14 @@ async function callMaterializeEntities(projectId: string): Promise<{ success: bo
   }
 
   const res = await fetch(`${supabaseUrl}/functions/v1/materialize-entities`, {
-    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${serviceKey}`,
+      'Authorization': `Bearer ${serviceKey}`
     },
     body: JSON.stringify({
       projectId,
-      source: 'outline',
-    }),
+      source: 'outline'
+    })
   });
 
   const text = await res.text();
@@ -2329,10 +2336,20 @@ IDIOMA: ${language}
     // =========================================================================
     // Call LLM with hardened parsing
     // =========================================================================
+    // V14: Build few-shot examples from professional scripts
+    const fewShotBlock = buildFewShotBlock(resolvedGenre, 2);
+    
+    // V15: Build density and quality blocks based on format/runtime
+    const runtimeMinutes = isFilmFormat ? 90 : 45; // Default runtimes
+    const densityBlock = buildDensityPromptBlock(runtimeMinutes, isFilmFormat ? 'film' : 'series', resolvedGenre);
+    const qualityBlock = buildQualityRulesBlock();
+    
     // V13: Build system prompt with narrative profile for Hollywood tier
+    // V14: Include few-shot examples for better output quality
+    // V15: Include density and quality standards
     const systemPrompt = qualityTier === 'hollywood' 
-      ? `${HOLLYWOOD_FILM_PROMPT}\n\n${narrativeProfileBlock}`
-      : V3_SYMMETRIC_PROMPT;
+      ? `${HOLLYWOOD_FILM_PROMPT}\n\n${densityBlock}\n\n${qualityBlock}\n\n${fewShotBlock}\n\n${narrativeProfileBlock}`
+      : `${V3_SYMMETRIC_PROMPT}\n\n${densityBlock}\n\n${qualityBlock}\n\n${fewShotBlock}`;
     
     // V68: Enhanced logging before AI call
     console.log('[generate-script] Calling Lovable AI Gateway', {
@@ -2515,7 +2532,7 @@ IDIOMA: ${language}
             characters_appeared: v3Result.characters_appeared || (v3Result.scenes || []).flatMap((s: any) => 
               (s.characters_present || []).map((c: any) => c.name || c)
             ),
-            scenes: v3Result.scenes || [],
+            scenes: v3Result.scenes || []
           },
           request.currentBatchPlan || { episode: episodeNumber || 1, batchIndex: batchIndex || 0 } as any
         )

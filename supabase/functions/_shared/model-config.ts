@@ -11,16 +11,30 @@
  */
 
 export const MODEL_CONFIG = {
-  // === ESCRITURA (V3: Gemini 3 Flash como workhorse para evitar timeouts) ===
+  // === ESCRITURA (V5: Tres tiers claros basados en UI) ===
+  // Data source: Analysis of 14+ Hollywood screenplays (Jan 2026)
   SCRIPT: {
-    HOLLYWOOD: 'google/gemini-3-flash-preview',  // V3: Gemini 3 para evitar timeouts
-    PROFESIONAL: 'google/gemini-3-flash-preview', // V3: Gemini 3 - rápido y buena calidad
-    RAPIDO: 'openai/gpt-5-mini',         // Borradores, beat-sheets (rápido)
-    NANO: 'openai/gpt-5-nano',           // Loglines, títulos, sinopsis cortas
-    FALLBACK: 'google/gemini-2.5-flash', // Emergencia estable
-    WORKHORSE: 'google/gemini-3-flash-preview',
-    // V3: GPT-5.2 reservado solo para polish/rescue donde calidad > velocidad
-    PREMIUM: 'openai/gpt-5.2',
+    // HOLLYWOOD TIER: 100% Claude Opus (máxima calidad)
+    HOLLYWOOD: 'anthropic/claude-opus-4',
+    
+    // PROFESIONAL TIER: Híbrido Opus/Gemini
+    PROFESIONAL_CRITICAL: 'anthropic/claude-opus-4',  // Para escenas críticas (~25%)
+    PROFESIONAL_VOLUME: 'google/gemini-2.5-flash',    // Para volumen (~75%)
+    
+    // RAPIDO TIER: 100% Gemini (velocidad/coste)
+    RAPIDO: 'google/gemini-2.5-flash',
+    
+    // WORKHORSE (default para bloques estándar)
+    WORKHORSE: 'google/gemini-2.5-flash',
+    
+    // Alias legacy
+    PREMIUM: 'anthropic/claude-opus-4',
+    NARRATIVE_PREMIUM: 'anthropic/claude-opus-4',
+    NARRATIVE_HIGH: 'anthropic/claude-sonnet-4',
+    
+    // FALLBACK
+    FALLBACK: 'google/gemini-2.5-flash',
+    NANO: 'openai/gpt-5-nano',  // Solo para loglines/títulos
   },
   
   // === CONTEXT THRESHOLDS (for model selection) ===

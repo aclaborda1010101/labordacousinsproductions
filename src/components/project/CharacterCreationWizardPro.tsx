@@ -178,7 +178,7 @@ export function CharacterCreationWizardPro({
           entity_subtype: data.entitySubtype,
           visual_dna: data.physicalDescription ? { physical_description: data.physicalDescription } : null,
           turnaround_urls: referenceUrl ? { front: referenceUrl } : null,
-          source: 'wizard_pro',
+          source: 'USER_PROVIDED',
         })
         .select('id')
         .single();

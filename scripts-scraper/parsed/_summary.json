@@ -1,0 +1,12 @@
+{
+  "total_processed": 0,
+  "total_errors": 1052,
+  "by_genre": {},
+  "by_format": {
+    "film": 0,
+    "series": 0
+  },
+  "total_scenes": 0,
+  "total_characters": 0,
+  "processed_at": "2026-01-28T07:15:50.664Z"
+}

@@ -1,4 +1,4 @@
-project_id = "dzrfbulwiqhzxxbcnzhn"
+project_id = "vzufllbzkavqupwlvjqs"
 
 [functions.clone-database]
 verify_jwt = false
@@ -51,6 +51,14 @@ verify_jwt = false
 
 [functions.outline-upgrade]
 # Showrunner upgrade: transforms outline light to deep dramatic structure using gpt-5.2
+verify_jwt = false
+
+[functions.outline-enrich]
+# Enrich outline with factions, threads, setpieces - validates auth internally with BYPASS_AUTH support
+verify_jwt = false
+
+[functions.expand-beats-to-scenes]
+# Expand outline beats into concrete scenes - validates auth internally with BYPASS_AUTH support
 verify_jwt = false
 
 [functions.script-breakdown]

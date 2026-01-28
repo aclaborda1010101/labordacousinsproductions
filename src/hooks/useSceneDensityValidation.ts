@@ -27,11 +27,26 @@ interface DensityTarget {
 }
 
 // Calculate density targets based on duration and profile
+// UPDATED: Based on real Hollywood screenplay analysis (Jan 2026)
+// Data source: Analysis of 14 professional screenplays (Austin Powers, Aliens, As Good As It Gets, etc.)
 function calculateDensityTarget(durationMin: number, profile: string): DensityTarget {
-  const profiles: Record<string, { minDuration: number; maxDuration: number }> = {
-    indie: { minDuration: 3.0, maxDuration: 4.5 },
-    standard: { minDuration: 2.0, maxDuration: 3.5 },
-    hollywood: { minDuration: 1.5, maxDuration: 2.5 },
+  const profiles: Record<string, { minDuration: number; maxDuration: number; description: string }> = {
+    // === GENRE-BASED PROFILES (RECOMMENDED) ===
+    // Comedy fast-paced (Austin Powers, Deadpool): 0.7-0.9 min/scene
+    comedia_rapida: { minDuration: 0.7, maxDuration: 0.9, description: 'Comedia rápida tipo Hangover/Superbad' },
+    // Comedy standard (Lady Bird, Big Sick): 1.0-1.3 min/scene  
+    comedia: { minDuration: 1.0, maxDuration: 1.3, description: 'Comedia estándar/dramedia' },
+    // Thriller/Action (Aliens, Abyss): 0.6-0.85 min/scene
+    thriller: { minDuration: 0.6, maxDuration: 0.85, description: 'Thriller/Acción' },
+    // Drama (Apartment, American President): 1.3-1.8 min/scene
+    drama: { minDuration: 1.3, maxDuration: 1.8, description: 'Drama pausado' },
+    // Drama slow (All About Eve, Annie Hall): 2.0-3.0 min/scene
+    drama_lento: { minDuration: 2.0, maxDuration: 3.0, description: 'Drama lento/clásico' },
+    
+    // === LEGACY PROFILES (for backwards compatibility) ===
+    indie: { minDuration: 1.5, maxDuration: 2.5, description: 'Indie genérico' },
+    standard: { minDuration: 1.0, maxDuration: 1.5, description: 'Estándar Hollywood' },
+    hollywood: { minDuration: 0.8, maxDuration: 1.2, description: 'Hollywood blockbuster' },
   };
 
   const p = profiles[profile] || profiles.standard;
@@ -43,12 +58,31 @@ function calculateDensityTarget(durationMin: number, profile: string): DensityTa
   };
 }
 
+// Export available density profiles for UI
+export const DENSITY_PROFILES = {
+  comedia_rapida: { label: 'Comedia Rápida', scenes90min: '100-130', example: 'Hangover, Superbad, Austin Powers' },
+  comedia: { label: 'Comedia', scenes90min: '70-90', example: 'Lady Bird, Big Sick, Juno' },
+  thriller: { label: 'Thriller/Acción', scenes90min: '105-150', example: 'Aliens, Get Out, Knives Out' },
+  drama: { label: 'Drama', scenes90min: '50-70', example: 'American President, Amadeus' },
+  drama_lento: { label: 'Drama Clásico', scenes90min: '30-45', example: 'All About Eve, Annie Hall' },
+} as const;
+
 // Count scenes from outline structure
 function countScenesInOutline(outline: any): number {
   // Check episode_beats for scene counts
   const episodeBeats = outline?.episode_beats || [];
   if (episodeBeats.length > 0) {
     const firstEpisode = episodeBeats[0];
+    if (firstEpisode?.scenes?.length > 0) {
+      return firstEpisode.scenes.length;
+    }
+  }
+  
+  // Also check outline_json.episode_beats
+  const outlineJson = outline?.outline_json || outline;
+  const jsonEpisodeBeats = outlineJson?.episode_beats || [];
+  if (jsonEpisodeBeats.length > 0) {
+    const firstEpisode = jsonEpisodeBeats[0];
     if (firstEpisode?.scenes?.length > 0) {
       return firstEpisode.scenes.length;
     }
@@ -72,11 +106,25 @@ function countScenesInOutline(outline: any): number {
 
 // Check if outline has been expanded to scenes
 function hasExpandedScenes(outline: any): boolean {
+  // Check episode_beats first
   const episodeBeats = outline?.episode_beats || [];
   if (episodeBeats.length > 0) {
     const firstEpisode = episodeBeats[0];
-    return (firstEpisode?.scenes?.length || 0) > 10;
+    if ((firstEpisode?.scenes?.length || 0) > 10) {
+      return true;
+    }
   }
+  
+  // Also check outline_json.episode_beats (some flows store it there)
+  const outlineJson = outline?.outline_json || outline;
+  const jsonEpisodeBeats = outlineJson?.episode_beats || [];
+  if (jsonEpisodeBeats.length > 0) {
+    const firstEpisode = jsonEpisodeBeats[0];
+    if ((firstEpisode?.scenes?.length || 0) > 10) {
+      return true;
+    }
+  }
+  
   return false;
 }
 

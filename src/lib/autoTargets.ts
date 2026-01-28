@@ -338,7 +338,7 @@ export const QUALITY_TIERS: Record<QualityTier, QualityTierConfig> = {
   rapido: {
     tier: 'rapido',
     displayName: '⚡ Rápido',
-    description: 'MVPs, borradores funcionales (GPT-5-mini). ~2-5 min/ep',
+    description: 'MVPs, borradores funcionales (Gemini Flash). ~2-5 min/ep',
     estimatedTimePerEpisodeMin: 2,
     delayBetweenBatchesMs: 2000,
     delayBetweenEpisodesMs: 3000
@@ -346,7 +346,7 @@ export const QUALITY_TIERS: Record<QualityTier, QualityTierConfig> = {
   profesional: {
     tier: 'profesional',
     displayName: '🎬 Profesional',
-    description: 'Scripts robustos y detallados (GPT-5). ~5-10 min/ep',
+    description: 'Scripts robustos (Opus + Flash híbrido). ~5-10 min/ep',
     estimatedTimePerEpisodeMin: 7,
     delayBetweenBatchesMs: 10000,
     delayBetweenEpisodesMs: 10000
@@ -354,7 +354,7 @@ export const QUALITY_TIERS: Record<QualityTier, QualityTierConfig> = {
   hollywood: {
     tier: 'hollywood',
     displayName: '🏆 Hollywood',
-    description: 'Guiones complejos, tono refinado (GPT-5.2). ~15-20 min/ep',
+    description: 'Guiones complejos, tono refinado (Claude Opus). ~15-20 min/ep',
     estimatedTimePerEpisodeMin: 15,
     delayBetweenBatchesMs: 30000,
     delayBetweenEpisodesMs: 20000

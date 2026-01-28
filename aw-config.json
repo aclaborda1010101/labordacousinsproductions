@@ -1,0 +1,9 @@
+{
+  "print_profile": "usletter",
+  "embolden_scene_headers": true,
+  "show_page_numbers": true,
+  "split_dialogue": true,
+  "print_title_page": true,
+  "double_space_between_scenes": true,
+  "scenes_numbers": "none"
+}

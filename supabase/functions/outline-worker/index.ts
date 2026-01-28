@@ -25,6 +25,10 @@ import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-
 import { corsHeaders } from "../_shared/v3-enterprise.ts";
 import { parseJsonSafe } from "../_shared/llmJson.ts";
 import { MODEL_CONFIG } from "../_shared/model-config.ts";
+import { fetchChatCompletion, hasApiAccess, initLovableCompat } from "../_shared/lovable-compat.ts";
+
+// V29: Initialize Lovable compatibility layer to route AI calls through Google/OpenAI
+initLovableCompat();
 // V14: Robust JSON parsing with retry logic
 import { 
   parseJsonRobust, 
@@ -66,7 +70,7 @@ const TIMEOUTS = (MODEL_CONFIG.LIMITS as any).TIMEOUTS || {
   OUTLINE_ARC_MS: 65000,
   OUTLINE_EPISODES_MS: 75000,
   MERGE_MS: 45000,
-  QC_MS: 30000,
+  QC_MS: 30000
 };
 const AI_TIMEOUT_MS = MODEL_CONFIG.LIMITS.TIMEOUT_MS;  // Default fallback
 const MAX_ATTEMPTS = MODEL_CONFIG.LIMITS.RETRY_COUNT;
@@ -395,7 +399,7 @@ async function sleepWithHeartbeat(
     if (remaining > 0) {
       await supabase.from('project_outlines').update({
         heartbeat_at: new Date().toISOString(),
-        substage: `${substage}_retry_wait`,
+        substage: `${substage}_retry_wait`
       }).eq('id', outlineId);
     }
   }
@@ -465,8 +469,7 @@ async function callLovableAIWithToolAndHeartbeat(
   substage: string,
   timeoutMs: number = AI_TIMEOUT_MS  // V11.1: Configurable timeout
 ): Promise<{ toolArgs: string | null; content: string; extractionStrategy?: string }> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  if (!hasApiAccess()) throw new Error('No API key configured');
 
   const heartbeatInterval = setInterval(() => {
     heartbeat(supabase, outlineId, substage);
@@ -477,10 +480,9 @@ async function callLovableAIWithToolAndHeartbeat(
 
   try {
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
+      method: 'POST',headers: {
+        // Authorization: handled by fetchChatCompletion,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model,
@@ -552,8 +554,7 @@ async function callLovableAIWithHeartbeat(
   substage: string,
   timeoutMs: number = AI_TIMEOUT_MS  // V11.1: Configurable timeout
 ): Promise<{ content: string }> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+  if (!hasApiAccess()) throw new Error('No API key configured');
 
   const heartbeatInterval = setInterval(() => {
     heartbeat(supabase, outlineId, substage);
@@ -564,10 +565,9 @@ async function callLovableAIWithHeartbeat(
 
   try {
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
+      method: 'POST',headers: {
+        // Authorization: handled by fetchChatCompletion,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model,
@@ -1085,7 +1085,7 @@ const STRICT_JSON_SUFFIX = `
 - NO markdown code blocks (no \`\`\`json or \`\`\`)
 - NO text before or after the JSON object
 - Start your response with { and end with }
-- NO trailing commas (,} or ,] are INVALID JSON)
+- NO trailing commas (} or ,] are INVALID JSON)
 - All string values must use standard double quotes "
 - Escape internal quotes properly: \\"
 ═══════════════════════════════════════════════════════════════════`;
@@ -1560,16 +1560,16 @@ const EXPAND_ACT_CHUNK_SCHEMA = {
               action: { type: "string" as const },
               goal: { type: "string" as const },
               obstacle: { type: "string" as const },
-              state_change: { type: "string" as const },
+              state_change: { type: "string" as const }
             },
-            required: ["physical_context", "action", "goal", "obstacle", "state_change"],
-          },
+            required: ["physical_context", "action", "goal", "obstacle", "state_change"]
+          }
         },
-        required: ["beat_number", "event", "agent", "consequence", "situation_detail"],
-      },
-    },
+        required: ["beat_number", "event", "agent", "consequence", "situation_detail"]
+      }
+    }
   },
-  required: ["beats"],
+  required: ["beats"]
 } as const;
 
 // V22: Build MINIMAL or ULTRA_MINIMAL chunk-specific prompt

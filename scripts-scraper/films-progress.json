@@ -1,0 +1,36 @@
+{
+  "total": 690,
+  "processed": 50,
+  "downloaded": 14,
+  "existed": 31,
+  "failed": 5,
+  "lastSlug": "teenage-mutant-ninja-turtles-mutant-mayhem-2023",
+  "failures": [
+    {
+      "slug": "nosferatu-2024",
+      "status": "http-error",
+      "code": 403
+    },
+    {
+      "slug": "gladiator-ii-2024",
+      "status": "http-error",
+      "code": 403
+    },
+    {
+      "slug": "emilia-pérez-2024",
+      "status": "http-error",
+      "code": 403
+    },
+    {
+      "slug": "sing-sing-2023",
+      "status": "http-error",
+      "code": 403
+    },
+    {
+      "slug": "the-iron-claw-2023",
+      "status": "http-error",
+      "code": 403
+    }
+  ],
+  "timestamp": "2026-01-28T06:57:40.530Z"
+}

@@ -16,9 +16,13 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { parseJsonRobust } from "../_shared/parse-json-robust.ts";
 
+import { fetchChatCompletion, hasApiAccess, initLovableCompat } from "../_shared/lovable-compat.ts";
+
+// Initialize Lovable compatibility layer to route AI calls through Google/OpenAI
+initLovableCompat();
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 
 // ============================================================================
@@ -45,7 +49,7 @@ const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_beats: 18,
     min_scenes: 25,
     min_setpieces: 5,
-    min_sequences: 4,
+    min_sequences: 4
   },
   standard: {
     id: 'standard',
@@ -55,7 +59,7 @@ const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_beats: 24,
     min_scenes: 35,
     min_setpieces: 8,
-    min_sequences: 6,
+    min_sequences: 6
   },
   hollywood: {
     id: 'hollywood',
@@ -65,8 +69,8 @@ const DENSITY_PROFILES: Record<string, DensityProfile> = {
     min_beats: 30,
     min_scenes: 45,
     min_setpieces: 12,
-    min_sequences: 8,
-  },
+    min_sequences: 8
+  }
 };
 
 // Film duration-based scene targets
@@ -83,7 +87,7 @@ function getFilmSceneTarget(durationMin: number, profile: DensityProfile): { min
   
   return {
     min: Math.max(profile.min_scenes, Math.floor(targetScenes * 0.8)),
-    max: Math.ceil(targetScenes * 1.2),
+    max: Math.ceil(targetScenes * 1.2)
   };
 }
 
@@ -325,7 +329,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'characters',
       message: `Tienes ${charCount} personajes, el perfil ${profile.label} sugiere mínimo ${profile.min_characters}`,
       current: charCount,
-      required: profile.min_characters,
+      required: profile.min_characters
     });
     score -= 15;
   }
@@ -341,7 +345,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'characters',
       message: 'Falta un antagonista explícito (role="antagonist") - el conflicto puede ser débil',
       current: 0,
-      required: 1,
+      required: 1
     });
     score -= 15;
   }
@@ -353,7 +357,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'locations',
       message: `Tienes ${locs} localizaciones, el perfil ${profile.label} sugiere mínimo ${profile.min_locations}`,
       current: locs,
-      required: profile.min_locations,
+      required: profile.min_locations
     });
     score -= 15;
   }
@@ -369,7 +373,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'beats',
       message: `Tienes ${totalBeats} beats, el perfil ${profile.label} sugiere mínimo ${profile.min_beats}`,
       current: totalBeats,
-      required: profile.min_beats,
+      required: profile.min_beats
     });
     score -= 20;
   }
@@ -381,7 +385,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'structure',
       message: `Tienes ${setpieces.length} setpieces, el perfil ${profile.label} requiere mínimo ${profile.min_setpieces}`,
       current: setpieces.length,
-      required: profile.min_setpieces,
+      required: profile.min_setpieces
     });
     score -= 15;
   }
@@ -412,7 +416,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
           type: 'structure',
           message: `${name} solo tiene ${count} setpieces, debería tener mínimo ${minPerProtagonist} (distribución equitativa en película coral)`,
           current: count as number,
-          required: minPerProtagonist,
+          required: minPerProtagonist
         });
         score -= 5;
       }
@@ -426,7 +430,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'structure',
       message: `Tienes ${sequences.length} secuencias, el perfil ${profile.label} requiere mínimo ${profile.min_sequences}`,
       current: sequences.length,
-      required: profile.min_sequences,
+      required: profile.min_sequences
     });
     score -= 10;
   }
@@ -437,7 +441,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'structure',
       message: 'Falta el midpoint_reversal en el Acto II',
       current: 0,
-      required: 1,
+      required: 1
     });
     score -= 10;
   }
@@ -447,7 +451,7 @@ function softValidate(outline: any, profile: DensityProfile): { warnings: Valida
       type: 'structure',
       message: 'Falta el all_is_lost_moment en el Acto II',
       current: 0,
-      required: 1,
+      required: 1
     });
     score -= 10;
   }
@@ -473,9 +477,8 @@ async function callAIWithModel(
   timeout: number, 
   maxTokens: number
 ): Promise<{ outline: any; model: string }> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) {
-    throw new Error('LOVABLE_API_KEY not configured');
+  if (!hasApiAccess()) {
+    throw new Error('No API key configured');
   }
 
   const controller = new AbortController();
@@ -488,7 +491,7 @@ async function callAIWithModel(
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        // Authorization: handled by fetchChatCompletion
       },
       body: JSON.stringify({
         model,
@@ -496,9 +499,9 @@ async function callAIWithModel(
           { role: 'user', content: prompt }
         ],
         max_completion_tokens: maxTokens,
-        temperature: 0.7,
+        temperature: 0.7
       }),
-      signal: controller.signal,
+      signal: controller.signal
     });
 
     clearTimeout(timeoutId);
@@ -696,7 +699,7 @@ serve(async (req) => {
           status: 'failed',
           error_message: aiError.message,
           error_code: aiError.message?.includes('TIMEOUT') ? 'AI_TIMEOUT' : 'AI_ERROR',
-          progress: 30,
+          progress: 30
         })
         .eq('id', outlineId);
 
@@ -752,7 +755,7 @@ serve(async (req) => {
             profile: profile.id,
             validation: validation,
             generated_at: new Date().toISOString(),
-            duration_ms: Date.now() - startTime,
+            duration_ms: Date.now() - startTime
           }
         }
       })
@@ -763,7 +766,7 @@ serve(async (req) => {
       .from('projects')
       .update({
         logline: outline.logline || outline.synopsis?.substring(0, 200),
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       })
       .eq('id', projectId);
 
@@ -778,7 +781,7 @@ serve(async (req) => {
         warnings: validation.warnings,
         score: validation.score,
         profile: profile.id,
-        duration_ms: durationMs,
+        duration_ms: durationMs
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
