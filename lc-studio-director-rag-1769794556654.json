@@ -1,0 +1,4483 @@
+{
+  "metadata": {
+    "version": "3.0",
+    "created": "2026-01-30T17:35:56.654Z",
+    "analysisTime": 234,
+    "totalScripts": 5,
+    "realMatches": 5,
+    "confidence": "production-ready"
+  },
+  "database": {
+    "scriptToScreen": [
+      {
+        "id": "correlation_1769794556492_0",
+        "script": {
+          "title": "Ferrari",
+          "slug": "ferrari-2023",
+          "year": 2023,
+          "scenes": 221,
+          "analysis": {
+            "structure": {
+              "scenes": 221,
+              "dialogues": 873,
+              "characters": 67,
+              "actBreakdown": {
+                "act1": {
+                  "scenes": 55,
+                  "percentage": 25
+                },
+                "act2": {
+                  "scenes": 110,
+                  "percentage": 50
+                },
+                "act3": {
+                  "scenes": 56,
+                  "percentage": 25
+                },
+                "structure": "well-structured"
+              }
+            },
+            "cinematic": {
+              "atmosphere": [
+                {
+                  "category": "weather",
+                  "element": "rain",
+                  "frequency": 54
+                },
+                {
+                  "category": "mood",
+                  "element": "dark",
+                  "frequency": 32
+                },
+                {
+                  "category": "emotion",
+                  "element": "love",
+                  "frequency": 16
+                },
+                {
+                  "category": "emotion",
+                  "element": "anger",
+                  "frequency": 15
+                },
+                {
+                  "category": "setting",
+                  "element": "mountain",
+                  "frequency": 12
+                },
+                {
+                  "category": "weather",
+                  "element": "sun",
+                  "frequency": 8
+                },
+                {
+                  "category": "emotion",
+                  "element": "hope",
+                  "frequency": 4
+                },
+                {
+                  "category": "mood",
+                  "element": "happy",
+                  "frequency": 1
+                },
+                {
+                  "category": "setting",
+                  "element": "city",
+                  "frequency": 1
+                },
+                {
+                  "category": "weather",
+                  "element": "storm",
+                  "frequency": 1
+                },
+                {
+                  "category": "emotion",
+                  "element": "fear",
+                  "frequency": 1
+                },
+                {
+                  "category": "emotion",
+                  "element": "joy",
+                  "frequency": 1
+                }
+              ],
+              "lighting": [
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 20
+                }
+              ],
+              "sound": [
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 139
+                }
+              ],
+              "cameraMovement": [
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 39
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 24
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 24
+                }
+              ],
+              "directionNotes": [
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 17
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 17
+                },
+                {
+                  "type": "action",
+                  "content": "(bitterly)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "action",
+                  "content": "(shouts)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(hangs up, to Laura)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "action",
+                  "content": "(singsong)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(confused)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "action",
+                  "content": "(dismissive)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "action",
+                  "content": "(searches for a suitable threat)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "action",
+                  "content": "(pause)",
+                  "frequency": 9
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 130
+                },
+                {
+                  "type": "audio",
+                  "content": "( MM ONLY: perhaps delay Ferrari’s entry till just before Communion begins with the start of the music )",
+                  "frequency": 1
+                }
+              ]
+            },
+            "pacing": {
+              "rhythm": {
+                "type": "consistent",
+                "avgSceneLength": 1,
+                "variation": 0,
+                "pattern": [
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable"
+                ],
+                "consistency": 1
+              },
+              "dialogueIntensity": {
+                "overall": 0,
+                "peaks": [],
+                "valleys": []
+              },
+              "sceneTransitions": {
+                "transitions": 220,
+                "avgComplexity": 0.5,
+                "types": {
+                  "standard": 220
+                }
+              }
+            },
+            "signature": {
+              "visualStyle": {
+                "descriptiveness": "medium",
+                "visualComplexity": "standard"
+              },
+              "narrativeStyle": {
+                "structure": "three-act",
+                "complexity": "medium"
+              },
+              "dialogueStyle": {
+                "density": "medium",
+                "complexity": "standard"
+              },
+              "thematicElements": {
+                "themes": [
+                  "universal"
+                ],
+                "tone": "neutral"
+              }
+            },
+            "complexity": {
+              "score": 2.964151809356357,
+              "factors": {
+                "characterCount": 50,
+                "sceneCount": 221,
+                "dialogueComplexity": 0,
+                "structuralComplexity": 0.8190045248868778
+              },
+              "level": "low"
+            }
+          }
+        },
+        "movie": {
+          "filename": "Ferrari.mkv",
+          "size": 5535572852,
+          "quality": "high",
+          "year": null,
+          "path": "unknown_path_Ferrari.mkv",
+          "analysis": {
+            "technical": {
+              "size": 5535572852,
+              "quality": "high",
+              "estimatedDuration": "5.2h",
+              "format": "MKV"
+            },
+            "inferred": {
+              "genre": "unknown",
+              "productionValue": "medium-budget",
+              "releaseType": "unknown"
+            },
+            "filesystem": {
+              "path": "unknown_path_Ferrari.mkv",
+              "directory": ".",
+              "lastModified": "unknown"
+            }
+          }
+        },
+        "correlation": {
+          "timing": {
+            "scriptScenes": 221,
+            "estimatedMovieDuration": "5.2h",
+            "scenesPerMinute": 0.7083333333333334,
+            "pacingCoherence": 0.8
+          },
+          "translation": {
+            "atmosphereToVisual": [
+              {
+                "scriptElement": "rain",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 54
+              },
+              {
+                "scriptElement": "dark",
+                "category": "mood",
+                "visualSuggestion": "Low-key lighting, shadows",
+                "frequency": 32
+              },
+              {
+                "scriptElement": "love",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 16
+              },
+              {
+                "scriptElement": "anger",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 15
+              },
+              {
+                "scriptElement": "mountain",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 12
+              },
+              {
+                "scriptElement": "sun",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 8
+              },
+              {
+                "scriptElement": "hope",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 4
+              },
+              {
+                "scriptElement": "happy",
+                "category": "mood",
+                "visualSuggestion": "Vibrant colors, open framing",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "city",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "storm",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "fear",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "joy",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              }
+            ],
+            "soundToAudio": [
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 139
+              }
+            ],
+            "directionToExecution": [
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 17
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 17
+              },
+              {
+                "scriptDirection": "(bitterly)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "(shouts)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(hangs up, to Laura)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "(singsong)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(confused)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "(dismissive)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "(searches for a suitable threat)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "(pause)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 9
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 130
+              },
+              {
+                "scriptDirection": "( MM ONLY: perhaps delay Ferrari’s entry till just before Communion begins with the start of the music )",
+                "type": "audio",
+                "filmingAdvice": "Sound design element",
+                "frequency": 1
+              }
+            ],
+            "complexityReduction": {
+              "originalComplexity": "low",
+              "expectedReduction": 0.3,
+              "adaptationStrategy": "Preserve script structure"
+            }
+          },
+          "patterns": {
+            "genreConsistency": {
+              "consistency": 0.5,
+              "scriptGenre": "drama",
+              "movieGenre": "unknown",
+              "recommendation": "Verify genre match"
+            },
+            "structuralFidelity": {
+              "fidelity": 1,
+              "structure": "well-structured",
+              "recommendation": "Maintain script structure"
+            },
+            "rhythmTranslation": {
+              "scriptRhythm": "consistent",
+              "expectedFilmRhythm": "Standard film pacing",
+              "confidence": 0.5
+            }
+          },
+          "lessons": [
+            {
+              "type": "atmosphere_lesson",
+              "lesson": "Scripts with 12 atmospheric elements require careful visual translation",
+              "applicability": "atmosphere_design",
+              "confidence": 0.8
+            },
+            {
+              "type": "complexity_lesson",
+              "lesson": "low complexity scripts work well with high quality production",
+              "applicability": "production_planning",
+              "confidence": 0.7
+            },
+            {
+              "type": "timing_lesson",
+              "lesson": "221 scenes translate to ~0.7 scenes per minute",
+              "applicability": "timing_prediction",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "confidence": 0.75,
+        "timestamp": "2026-01-30T17:35:56.492Z"
+      },
+      {
+        "id": "correlation_1769794556526_1",
+        "script": {
+          "title": "Gladiator Ii",
+          "slug": "gladiator-ii-2024",
+          "year": 2024,
+          "scenes": 146,
+          "analysis": {
+            "structure": {
+              "scenes": 146,
+              "dialogues": 741,
+              "characters": 45,
+              "actBreakdown": {
+                "act1": {
+                  "scenes": 36,
+                  "percentage": 25
+                },
+                "act2": {
+                  "scenes": 73,
+                  "percentage": 50
+                },
+                "act3": {
+                  "scenes": 37,
+                  "percentage": 25
+                },
+                "structure": "well-structured"
+              }
+            },
+            "cinematic": {
+              "atmosphere": [
+                {
+                  "category": "setting",
+                  "element": "city",
+                  "frequency": 484
+                },
+                {
+                  "category": "setting",
+                  "element": "palace",
+                  "frequency": 121
+                },
+                {
+                  "category": "emotion",
+                  "element": "love",
+                  "frequency": 70
+                },
+                {
+                  "category": "setting",
+                  "element": "desert",
+                  "frequency": 49
+                },
+                {
+                  "category": "weather",
+                  "element": "sun",
+                  "frequency": 42
+                },
+                {
+                  "category": "setting",
+                  "element": "beach",
+                  "frequency": 25
+                },
+                {
+                  "category": "mood",
+                  "element": "dark",
+                  "frequency": 24
+                },
+                {
+                  "category": "emotion",
+                  "element": "fear",
+                  "frequency": 20
+                },
+                {
+                  "category": "weather",
+                  "element": "wind",
+                  "frequency": 15
+                },
+                {
+                  "category": "weather",
+                  "element": "sol",
+                  "frequency": 14
+                },
+                {
+                  "category": "emotion",
+                  "element": "anger",
+                  "frequency": 9
+                },
+                {
+                  "category": "weather",
+                  "element": "rain",
+                  "frequency": 3
+                },
+                {
+                  "category": "mood",
+                  "element": "happy",
+                  "frequency": 1
+                },
+                {
+                  "category": "weather",
+                  "element": "storm",
+                  "frequency": 1
+                },
+                {
+                  "category": "emotion",
+                  "element": "hope",
+                  "frequency": 1
+                }
+              ],
+              "lighting": [
+                {
+                  "type": "natural-bright",
+                  "description": "sol",
+                  "frequency": 14
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "dark",
+                  "description": "dark",
+                  "frequency": 8
+                },
+                {
+                  "type": "dark",
+                  "description": "dark",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                }
+              ],
+              "sound": [
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 16
+                }
+              ],
+              "cameraMovement": [
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 15
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 8
+                },
+                {
+                  "type": "movement",
+                  "description": "move",
+                  "frequency": 7
+                }
+              ],
+              "directionNotes": [
+                {
+                  "type": "action",
+                  "content": "(PRESENT DAY LIBYA)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(JUNE 17, 2024)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(to Bostar)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 133
+                },
+                {
+                  "type": "action",
+                  "content": "(to “himself” but others hear)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 133
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 133
+                },
+                {
+                  "type": "action",
+                  "content": "(to himself)",
+                  "frequency": 2
+                },
+                {
+                  "type": "action",
+                  "content": "(smiling,murmurs. A FIST)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(giant bolt-firing crossbows mounted on wheels)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(JUNE 17, 2024)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(shouting, with arm raised)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(repeating in unison)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(shouting)",
+                  "frequency": 4
+                },
+                {
+                  "type": "action",
+                  "content": "(O.S.)",
+                  "frequency": 10
+                },
+                {
+                  "type": "action",
+                  "content": "(JUNE 17, 2024)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(shouting orders)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 133
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 133
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 133
+                }
+              ]
+            },
+            "pacing": {
+              "rhythm": {
+                "type": "consistent",
+                "avgSceneLength": 1,
+                "variation": 0,
+                "pattern": [
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable"
+                ],
+                "consistency": 1
+              },
+              "dialogueIntensity": {
+                "overall": 0,
+                "peaks": [],
+                "valleys": []
+              },
+              "sceneTransitions": {
+                "transitions": 145,
+                "avgComplexity": 0.5,
+                "types": {
+                  "standard": 145
+                }
+              }
+            },
+            "signature": {
+              "visualStyle": {
+                "descriptiveness": "medium",
+                "visualComplexity": "standard"
+              },
+              "narrativeStyle": {
+                "structure": "three-act",
+                "complexity": "medium"
+              },
+              "dialogueStyle": {
+                "density": "medium",
+                "complexity": "standard"
+              },
+              "thematicElements": {
+                "themes": [
+                  "universal"
+                ],
+                "tone": "neutral"
+              }
+            },
+            "complexity": {
+              "score": 2.7594208251173358,
+              "factors": {
+                "characterCount": 45,
+                "sceneCount": 146,
+                "dialogueComplexity": 0,
+                "structuralComplexity": 0.5684931506849316
+              },
+              "level": "low"
+            }
+          }
+        },
+        "movie": {
+          "filename": "Gladiator.mkv",
+          "size": 7324435480,
+          "quality": "high",
+          "year": null,
+          "path": "unknown_path_Gladiator.mkv",
+          "analysis": {
+            "technical": {
+              "size": 7324435480,
+              "quality": "high",
+              "estimatedDuration": "6.8h",
+              "format": "MKV"
+            },
+            "inferred": {
+              "genre": "unknown",
+              "productionValue": "medium-budget",
+              "releaseType": "unknown"
+            },
+            "filesystem": {
+              "path": "unknown_path_Gladiator.mkv",
+              "directory": ".",
+              "lastModified": "unknown"
+            }
+          }
+        },
+        "correlation": {
+          "timing": {
+            "scriptScenes": 146,
+            "estimatedMovieDuration": "6.8h",
+            "scenesPerMinute": 0.35784313725490197,
+            "pacingCoherence": 0.8
+          },
+          "translation": {
+            "atmosphereToVisual": [
+              {
+                "scriptElement": "city",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 484
+              },
+              {
+                "scriptElement": "palace",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 121
+              },
+              {
+                "scriptElement": "love",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 70
+              },
+              {
+                "scriptElement": "desert",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 49
+              },
+              {
+                "scriptElement": "sun",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 42
+              },
+              {
+                "scriptElement": "beach",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 25
+              },
+              {
+                "scriptElement": "dark",
+                "category": "mood",
+                "visualSuggestion": "Low-key lighting, shadows",
+                "frequency": 24
+              },
+              {
+                "scriptElement": "fear",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 20
+              },
+              {
+                "scriptElement": "wind",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 15
+              },
+              {
+                "scriptElement": "sol",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 14
+              },
+              {
+                "scriptElement": "anger",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 9
+              },
+              {
+                "scriptElement": "rain",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 3
+              },
+              {
+                "scriptElement": "happy",
+                "category": "mood",
+                "visualSuggestion": "Vibrant colors, open framing",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "storm",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "hope",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              }
+            ],
+            "soundToAudio": [
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 16
+              }
+            ],
+            "directionToExecution": [
+              {
+                "scriptDirection": "(PRESENT DAY LIBYA)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(JUNE 17, 2024)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(to Bostar)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 133
+              },
+              {
+                "scriptDirection": "(to “himself” but others hear)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 133
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 133
+              },
+              {
+                "scriptDirection": "(to himself)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 2
+              },
+              {
+                "scriptDirection": "(smiling,murmurs. A FIST)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(giant bolt-firing crossbows mounted on wheels)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(JUNE 17, 2024)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(shouting, with arm raised)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(repeating in unison)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(shouting)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 4
+              },
+              {
+                "scriptDirection": "(O.S.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 10
+              },
+              {
+                "scriptDirection": "(JUNE 17, 2024)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(shouting orders)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 133
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 133
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 133
+              }
+            ],
+            "complexityReduction": {
+              "originalComplexity": "low",
+              "expectedReduction": 0.3,
+              "adaptationStrategy": "Preserve script structure"
+            }
+          },
+          "patterns": {
+            "genreConsistency": {
+              "consistency": 0.5,
+              "scriptGenre": "drama",
+              "movieGenre": "unknown",
+              "recommendation": "Verify genre match"
+            },
+            "structuralFidelity": {
+              "fidelity": 1,
+              "structure": "well-structured",
+              "recommendation": "Maintain script structure"
+            },
+            "rhythmTranslation": {
+              "scriptRhythm": "consistent",
+              "expectedFilmRhythm": "Standard film pacing",
+              "confidence": 0.5
+            }
+          },
+          "lessons": [
+            {
+              "type": "atmosphere_lesson",
+              "lesson": "Scripts with 15 atmospheric elements require careful visual translation",
+              "applicability": "atmosphere_design",
+              "confidence": 0.8
+            },
+            {
+              "type": "complexity_lesson",
+              "lesson": "low complexity scripts work well with high quality production",
+              "applicability": "production_planning",
+              "confidence": 0.7
+            },
+            {
+              "type": "timing_lesson",
+              "lesson": "146 scenes translate to ~0.4 scenes per minute",
+              "applicability": "timing_prediction",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "confidence": 0.75,
+        "timestamp": "2026-01-30T17:35:56.526Z"
+      },
+      {
+        "id": "correlation_1769794556573_2",
+        "script": {
+          "title": "Napoleon",
+          "slug": "napoleon-2023",
+          "year": 2023,
+          "scenes": 222,
+          "analysis": {
+            "structure": {
+              "scenes": 222,
+              "dialogues": 748,
+              "characters": 113,
+              "actBreakdown": {
+                "act1": {
+                  "scenes": 55,
+                  "percentage": 25
+                },
+                "act2": {
+                  "scenes": 111,
+                  "percentage": 50
+                },
+                "act3": {
+                  "scenes": 56,
+                  "percentage": 25
+                },
+                "structure": "well-structured"
+              }
+            },
+            "cinematic": {
+              "atmosphere": [
+                {
+                  "category": "emotion",
+                  "element": "love",
+                  "frequency": 322
+                },
+                {
+                  "category": "weather",
+                  "element": "snow",
+                  "frequency": 84
+                },
+                {
+                  "category": "setting",
+                  "element": "palace",
+                  "frequency": 64
+                },
+                {
+                  "category": "emotion",
+                  "element": "joy",
+                  "frequency": 40
+                },
+                {
+                  "category": "mood",
+                  "element": "sad",
+                  "frequency": 34
+                },
+                {
+                  "category": "setting",
+                  "element": "city",
+                  "frequency": 25
+                },
+                {
+                  "category": "emotion",
+                  "element": "fear",
+                  "frequency": 25
+                },
+                {
+                  "category": "emotion",
+                  "element": "hate",
+                  "frequency": 24
+                },
+                {
+                  "category": "setting",
+                  "element": "beach",
+                  "frequency": 16
+                },
+                {
+                  "category": "mood",
+                  "element": "dark",
+                  "frequency": 12
+                },
+                {
+                  "category": "setting",
+                  "element": "desert",
+                  "frequency": 12
+                },
+                {
+                  "category": "weather",
+                  "element": "storm",
+                  "frequency": 12
+                },
+                {
+                  "category": "mood",
+                  "element": "happy",
+                  "frequency": 9
+                },
+                {
+                  "category": "emotion",
+                  "element": "hope",
+                  "frequency": 8
+                },
+                {
+                  "category": "weather",
+                  "element": "wind",
+                  "frequency": 7
+                }
+              ],
+              "lighting": [
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 43
+                }
+              ],
+              "sound": [
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                },
+                {
+                  "category": "ambient",
+                  "description": "door",
+                  "frequency": 15
+                }
+              ],
+              "cameraMovement": [
+                {
+                  "type": "movement",
+                  "description": "move",
+                  "frequency": 14
+                },
+                {
+                  "type": "movement",
+                  "description": "move",
+                  "frequency": 14
+                },
+                {
+                  "type": "movement",
+                  "description": "move",
+                  "frequency": 14
+                },
+                {
+                  "type": "movement",
+                  "description": "move",
+                  "frequency": 14
+                },
+                {
+                  "type": "movement",
+                  "description": "moves",
+                  "frequency": 6
+                },
+                {
+                  "type": "movement",
+                  "description": "moves",
+                  "frequency": 6
+                },
+                {
+                  "type": "movement",
+                  "description": "follow",
+                  "frequency": 6
+                },
+                {
+                  "type": "movement",
+                  "description": "moves",
+                  "frequency": 6
+                },
+                {
+                  "type": "movement",
+                  "description": "moves",
+                  "frequency": 6
+                },
+                {
+                  "type": "movement",
+                  "description": "follow",
+                  "frequency": 6
+                }
+              ],
+              "directionNotes": [
+                {
+                  "type": "action",
+                  "content": "(REBELS, REVOLUTIONARY MOB)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(VO)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(VO)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(VO)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(VO)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(VO)",
+                  "frequency": 28
+                },
+                {
+                  "type": "action",
+                  "content": "(male 30s, effeminate)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(***ALTERNATIVE LINE FORTHCOMING***)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(passes the burnt umber)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(DECEMBER 16, 1793)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(at last I am at war)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(Into Napoleon’s ear)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 24
+                },
+                {
+                  "type": "action",
+                  "content": "(To the Crowd)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(MORE)",
+                  "frequency": 15
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 24
+                },
+                {
+                  "type": "action",
+                  "content": "(OC)",
+                  "frequency": 3
+                },
+                {
+                  "type": "action",
+                  "content": "(10 yrs)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(to Guards)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 24
+                }
+              ]
+            },
+            "pacing": {
+              "rhythm": {
+                "type": "consistent",
+                "avgSceneLength": 1,
+                "variation": 0,
+                "pattern": [
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable"
+                ],
+                "consistency": 1
+              },
+              "dialogueIntensity": {
+                "overall": 0,
+                "peaks": [],
+                "valleys": []
+              },
+              "sceneTransitions": {
+                "transitions": 221,
+                "avgComplexity": 0.5,
+                "types": {
+                  "standard": 221
+                }
+              }
+            },
+            "signature": {
+              "visualStyle": {
+                "descriptiveness": "medium",
+                "visualComplexity": "standard"
+              },
+              "narrativeStyle": {
+                "structure": "three-act",
+                "complexity": "medium"
+              },
+              "dialogueStyle": {
+                "density": "medium",
+                "complexity": "standard"
+              },
+              "thematicElements": {
+                "themes": [
+                  "universal"
+                ],
+                "tone": "neutral"
+              }
+            },
+            "complexity": {
+              "score": 2.89809561765173,
+              "factors": {
+                "characterCount": 50,
+                "sceneCount": 222,
+                "dialogueComplexity": 0,
+                "structuralComplexity": 0.481981981981982
+              },
+              "level": "low"
+            }
+          }
+        },
+        "movie": {
+          "filename": "Napoleon.mkv",
+          "size": 9158982989,
+          "quality": "high",
+          "year": null,
+          "path": "unknown_path_Napoleon.mkv",
+          "analysis": {
+            "technical": {
+              "size": 9158982989,
+              "quality": "high",
+              "estimatedDuration": "8.5h",
+              "format": "MKV"
+            },
+            "inferred": {
+              "genre": "unknown",
+              "productionValue": "medium-budget",
+              "releaseType": "unknown"
+            },
+            "filesystem": {
+              "path": "unknown_path_Napoleon.mkv",
+              "directory": ".",
+              "lastModified": "unknown"
+            }
+          }
+        },
+        "correlation": {
+          "timing": {
+            "scriptScenes": 222,
+            "estimatedMovieDuration": "8.5h",
+            "scenesPerMinute": 0.43529411764705883,
+            "pacingCoherence": 0.8
+          },
+          "translation": {
+            "atmosphereToVisual": [
+              {
+                "scriptElement": "love",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 322
+              },
+              {
+                "scriptElement": "snow",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 84
+              },
+              {
+                "scriptElement": "palace",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 64
+              },
+              {
+                "scriptElement": "joy",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 40
+              },
+              {
+                "scriptElement": "sad",
+                "category": "mood",
+                "visualSuggestion": "Desaturated colors, overcast",
+                "frequency": 34
+              },
+              {
+                "scriptElement": "city",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 25
+              },
+              {
+                "scriptElement": "fear",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 25
+              },
+              {
+                "scriptElement": "hate",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 24
+              },
+              {
+                "scriptElement": "beach",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 16
+              },
+              {
+                "scriptElement": "dark",
+                "category": "mood",
+                "visualSuggestion": "Low-key lighting, shadows",
+                "frequency": 12
+              },
+              {
+                "scriptElement": "desert",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 12
+              },
+              {
+                "scriptElement": "storm",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 12
+              },
+              {
+                "scriptElement": "happy",
+                "category": "mood",
+                "visualSuggestion": "Vibrant colors, open framing",
+                "frequency": 9
+              },
+              {
+                "scriptElement": "hope",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 8
+              },
+              {
+                "scriptElement": "wind",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 7
+              }
+            ],
+            "soundToAudio": [
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              },
+              {
+                "scriptSound": "door",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 15
+              }
+            ],
+            "directionToExecution": [
+              {
+                "scriptDirection": "(REBELS, REVOLUTIONARY MOB)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(VO)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(VO)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(VO)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(VO)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(VO)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 28
+              },
+              {
+                "scriptDirection": "(male 30s, effeminate)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(***ALTERNATIVE LINE FORTHCOMING***)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(passes the burnt umber)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(DECEMBER 16, 1793)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(at last I am at war)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(Into Napoleon’s ear)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 24
+              },
+              {
+                "scriptDirection": "(To the Crowd)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(MORE)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 15
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 24
+              },
+              {
+                "scriptDirection": "(OC)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 3
+              },
+              {
+                "scriptDirection": "(10 yrs)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(to Guards)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 24
+              }
+            ],
+            "complexityReduction": {
+              "originalComplexity": "low",
+              "expectedReduction": 0.3,
+              "adaptationStrategy": "Preserve script structure"
+            }
+          },
+          "patterns": {
+            "genreConsistency": {
+              "consistency": 0.5,
+              "scriptGenre": "drama",
+              "movieGenre": "unknown",
+              "recommendation": "Verify genre match"
+            },
+            "structuralFidelity": {
+              "fidelity": 1,
+              "structure": "well-structured",
+              "recommendation": "Maintain script structure"
+            },
+            "rhythmTranslation": {
+              "scriptRhythm": "consistent",
+              "expectedFilmRhythm": "Standard film pacing",
+              "confidence": 0.5
+            }
+          },
+          "lessons": [
+            {
+              "type": "atmosphere_lesson",
+              "lesson": "Scripts with 15 atmospheric elements require careful visual translation",
+              "applicability": "atmosphere_design",
+              "confidence": 0.8
+            },
+            {
+              "type": "complexity_lesson",
+              "lesson": "low complexity scripts work well with high quality production",
+              "applicability": "production_planning",
+              "confidence": 0.7
+            },
+            {
+              "type": "timing_lesson",
+              "lesson": "222 scenes translate to ~0.4 scenes per minute",
+              "applicability": "timing_prediction",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "confidence": 0.75,
+        "timestamp": "2026-01-30T17:35:56.573Z"
+      },
+      {
+        "id": "correlation_1769794556597_3",
+        "script": {
+          "title": "Ricky Stanicky",
+          "slug": "ricky-stanicky-2024",
+          "year": 2024,
+          "scenes": 97,
+          "analysis": {
+            "structure": {
+              "scenes": 97,
+              "dialogues": 926,
+              "characters": 46,
+              "actBreakdown": {
+                "act1": {
+                  "scenes": 24,
+                  "percentage": 25
+                },
+                "act2": {
+                  "scenes": 48,
+                  "percentage": 50
+                },
+                "act3": {
+                  "scenes": 25,
+                  "percentage": 25
+                },
+                "structure": "well-structured"
+              }
+            },
+            "cinematic": {
+              "atmosphere": [
+                {
+                  "category": "emotion",
+                  "element": "love",
+                  "frequency": 285
+                },
+                {
+                  "category": "emotion",
+                  "element": "hate",
+                  "frequency": 5
+                },
+                {
+                  "category": "mood",
+                  "element": "happy",
+                  "frequency": 4
+                },
+                {
+                  "category": "emotion",
+                  "element": "hope",
+                  "frequency": 4
+                },
+                {
+                  "category": "mood",
+                  "element": "sad",
+                  "frequency": 1
+                },
+                {
+                  "category": "mood",
+                  "element": "romantic",
+                  "frequency": 1
+                },
+                {
+                  "category": "mood",
+                  "element": "dramatic",
+                  "frequency": 1
+                },
+                {
+                  "category": "setting",
+                  "element": "city",
+                  "frequency": 1
+                }
+              ],
+              "lighting": [
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "flame",
+                  "description": "fire",
+                  "frequency": 8
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 7
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 7
+                }
+              ],
+              "sound": [
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 28
+                }
+              ],
+              "cameraMovement": [
+                {
+                  "type": "rotation",
+                  "description": "pan",
+                  "frequency": 10
+                },
+                {
+                  "type": "movement",
+                  "description": "turn",
+                  "frequency": 7
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 5
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 5
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 5
+                },
+                {
+                  "type": "movement",
+                  "description": "turns",
+                  "frequency": 5
+                },
+                {
+                  "type": "movement",
+                  "description": "follow",
+                  "frequency": 4
+                },
+                {
+                  "type": "movement",
+                  "description": "follow",
+                  "frequency": 4
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 3
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 3
+                }
+              ],
+              "directionNotes": [
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(realizing)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(suddenly)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(to Erin)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(then to phone)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(29)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(O.S.)",
+                  "frequency": 7
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT’D)",
+                  "frequency": 80
+                },
+                {
+                  "type": "action",
+                  "content": "(CONT'D)",
+                  "frequency": 8
+                }
+              ]
+            },
+            "pacing": {
+              "rhythm": {
+                "type": "consistent",
+                "avgSceneLength": 1,
+                "variation": 0,
+                "pattern": [
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable"
+                ],
+                "consistency": 1
+              },
+              "dialogueIntensity": {
+                "overall": 0,
+                "peaks": [],
+                "valleys": []
+              },
+              "sceneTransitions": {
+                "transitions": 96,
+                "avgComplexity": 0.5,
+                "types": {
+                  "standard": 96
+                }
+              }
+            },
+            "signature": {
+              "visualStyle": {
+                "descriptiveness": "medium",
+                "visualComplexity": "standard"
+              },
+              "narrativeStyle": {
+                "structure": "three-act",
+                "complexity": "medium"
+              },
+              "dialogueStyle": {
+                "density": "medium",
+                "complexity": "standard"
+              },
+              "thematicElements": {
+                "themes": [
+                  "universal"
+                ],
+                "tone": "neutral"
+              }
+            },
+            "complexity": {
+              "score": 2.645998441639962,
+              "factors": {
+                "characterCount": 46,
+                "sceneCount": 97,
+                "dialogueComplexity": 0,
+                "structuralComplexity": 0.5773195876288659
+              },
+              "level": "low"
+            }
+          }
+        },
+        "movie": {
+          "filename": "Ricky Stanick.mkv",
+          "size": 5444592931,
+          "quality": "high",
+          "year": null,
+          "path": "unknown_path_Ricky Stanick.mkv",
+          "analysis": {
+            "technical": {
+              "size": 5444592931,
+              "quality": "high",
+              "estimatedDuration": "5.1h",
+              "format": "MKV"
+            },
+            "inferred": {
+              "genre": "unknown",
+              "productionValue": "medium-budget",
+              "releaseType": "unknown"
+            },
+            "filesystem": {
+              "path": "unknown_path_Ricky Stanick.mkv",
+              "directory": ".",
+              "lastModified": "unknown"
+            }
+          }
+        },
+        "correlation": {
+          "timing": {
+            "scriptScenes": 97,
+            "estimatedMovieDuration": "5.1h",
+            "scenesPerMinute": 0.31699346405228757,
+            "pacingCoherence": 0.8
+          },
+          "translation": {
+            "atmosphereToVisual": [
+              {
+                "scriptElement": "love",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 285
+              },
+              {
+                "scriptElement": "hate",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 5
+              },
+              {
+                "scriptElement": "happy",
+                "category": "mood",
+                "visualSuggestion": "Vibrant colors, open framing",
+                "frequency": 4
+              },
+              {
+                "scriptElement": "hope",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 4
+              },
+              {
+                "scriptElement": "sad",
+                "category": "mood",
+                "visualSuggestion": "Desaturated colors, overcast",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "romantic",
+                "category": "mood",
+                "visualSuggestion": "Warm lighting, soft focus",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "dramatic",
+                "category": "mood",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              },
+              {
+                "scriptElement": "city",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 1
+              }
+            ],
+            "soundToAudio": [
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 28
+              }
+            ],
+            "directionToExecution": [
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(realizing)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(suddenly)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(to Erin)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(then to phone)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(29)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(O.S.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 7
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT’D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 80
+              },
+              {
+                "scriptDirection": "(CONT'D)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 8
+              }
+            ],
+            "complexityReduction": {
+              "originalComplexity": "low",
+              "expectedReduction": 0.3,
+              "adaptationStrategy": "Preserve script structure"
+            }
+          },
+          "patterns": {
+            "genreConsistency": {
+              "consistency": 0.5,
+              "scriptGenre": "drama",
+              "movieGenre": "unknown",
+              "recommendation": "Verify genre match"
+            },
+            "structuralFidelity": {
+              "fidelity": 0.9,
+              "structure": "well-structured",
+              "recommendation": "Maintain script structure"
+            },
+            "rhythmTranslation": {
+              "scriptRhythm": "consistent",
+              "expectedFilmRhythm": "Standard film pacing",
+              "confidence": 0.5
+            }
+          },
+          "lessons": [
+            {
+              "type": "atmosphere_lesson",
+              "lesson": "Scripts with 8 atmospheric elements require careful visual translation",
+              "applicability": "atmosphere_design",
+              "confidence": 0.8
+            },
+            {
+              "type": "complexity_lesson",
+              "lesson": "low complexity scripts work well with high quality production",
+              "applicability": "production_planning",
+              "confidence": 0.7
+            },
+            {
+              "type": "timing_lesson",
+              "lesson": "97 scenes translate to ~0.3 scenes per minute",
+              "applicability": "timing_prediction",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "confidence": 0.75,
+        "timestamp": "2026-01-30T17:35:56.597Z"
+      },
+      {
+        "id": "correlation_1769794556653_4",
+        "script": {
+          "title": "The Killer",
+          "slug": "the-killer-2023",
+          "year": 2023,
+          "scenes": 303,
+          "analysis": {
+            "structure": {
+              "scenes": 303,
+              "dialogues": 504,
+              "characters": 110,
+              "actBreakdown": {
+                "act1": {
+                  "scenes": 75,
+                  "percentage": 25
+                },
+                "act2": {
+                  "scenes": 152,
+                  "percentage": 50
+                },
+                "act3": {
+                  "scenes": 76,
+                  "percentage": 25
+                },
+                "structure": "well-structured"
+              }
+            },
+            "cinematic": {
+              "atmosphere": [
+                {
+                  "category": "setting",
+                  "element": "city",
+                  "frequency": 3024
+                },
+                {
+                  "category": "mood",
+                  "element": "dark",
+                  "frequency": 644
+                },
+                {
+                  "category": "weather",
+                  "element": "wind",
+                  "frequency": 129
+                },
+                {
+                  "category": "weather",
+                  "element": "sun",
+                  "frequency": 20
+                },
+                {
+                  "category": "emotion",
+                  "element": "love",
+                  "frequency": 18
+                },
+                {
+                  "category": "setting",
+                  "element": "countryside",
+                  "frequency": 16
+                },
+                {
+                  "category": "weather",
+                  "element": "rain",
+                  "frequency": 10
+                },
+                {
+                  "category": "emotion",
+                  "element": "hope",
+                  "frequency": 9
+                },
+                {
+                  "category": "setting",
+                  "element": "beach",
+                  "frequency": 4
+                }
+              ],
+              "lighting": [
+                {
+                  "type": "artificial",
+                  "description": "noon",
+                  "frequency": 61
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                },
+                {
+                  "type": "artificial",
+                  "description": "light",
+                  "frequency": 49
+                }
+              ],
+              "sound": [
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                },
+                {
+                  "category": "ambient",
+                  "description": "car",
+                  "frequency": 133
+                }
+              ],
+              "cameraMovement": [
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                },
+                {
+                  "type": "transition",
+                  "description": "cut to",
+                  "frequency": 40
+                }
+              ],
+              "directionNotes": [
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(He\"},{\"number\":8,\"heading\":\"INT. PARIS OFFICE SPACE, KITCHEN - DAWN\",\"characters\":[\"THE KILLER\"],\"dialogues\":[{\"character\":\"THE KILLER\",\"parenthetical\":\"(V.O.)",
+                  "frequency": 1
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                },
+                {
+                  "type": "action",
+                  "content": "(V.O.)",
+                  "frequency": 162
+                }
+              ]
+            },
+            "pacing": {
+              "rhythm": {
+                "type": "consistent",
+                "avgSceneLength": 1,
+                "variation": 0,
+                "pattern": [
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable",
+                  "stable"
+                ],
+                "consistency": 1
+              },
+              "dialogueIntensity": {
+                "overall": 0,
+                "peaks": [],
+                "valleys": []
+              },
+              "sceneTransitions": {
+                "transitions": 302,
+                "avgComplexity": 0.5,
+                "types": {
+                  "standard": 302
+                }
+              }
+            },
+            "signature": {
+              "visualStyle": {
+                "descriptiveness": "medium",
+                "visualComplexity": "standard"
+              },
+              "narrativeStyle": {
+                "structure": "three-act",
+                "complexity": "medium"
+              },
+              "dialogueStyle": {
+                "density": "medium",
+                "complexity": "standard"
+              },
+              "thematicElements": {
+                "themes": [
+                  "universal"
+                ],
+                "tone": "neutral"
+              }
+            },
+            "complexity": {
+              "score": 2.961322666905831,
+              "factors": {
+                "characterCount": 50,
+                "sceneCount": 303,
+                "dialogueComplexity": 0,
+                "structuralComplexity": 0.3333333333333333
+              },
+              "level": "low"
+            }
+          }
+        },
+        "movie": {
+          "filename": "KILLER JOE.mkv",
+          "size": 2390249443,
+          "quality": "high",
+          "year": null,
+          "path": "unknown_path_KILLER JOE.mkv",
+          "analysis": {
+            "technical": {
+              "size": 2390249443,
+              "quality": "high",
+              "estimatedDuration": "2.2h",
+              "format": "MKV"
+            },
+            "inferred": {
+              "genre": "unknown",
+              "productionValue": "medium-budget",
+              "releaseType": "unknown"
+            },
+            "filesystem": {
+              "path": "unknown_path_KILLER JOE.mkv",
+              "directory": ".",
+              "lastModified": "unknown"
+            }
+          }
+        },
+        "correlation": {
+          "timing": {
+            "scriptScenes": 303,
+            "estimatedMovieDuration": "2.2h",
+            "scenesPerMinute": 2.2954545454545454,
+            "pacingCoherence": 0.8
+          },
+          "translation": {
+            "atmosphereToVisual": [
+              {
+                "scriptElement": "city",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 3024
+              },
+              {
+                "scriptElement": "dark",
+                "category": "mood",
+                "visualSuggestion": "Low-key lighting, shadows",
+                "frequency": 644
+              },
+              {
+                "scriptElement": "wind",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 129
+              },
+              {
+                "scriptElement": "sun",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 20
+              },
+              {
+                "scriptElement": "love",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 18
+              },
+              {
+                "scriptElement": "countryside",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 16
+              },
+              {
+                "scriptElement": "rain",
+                "category": "weather",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 10
+              },
+              {
+                "scriptElement": "hope",
+                "category": "emotion",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 9
+              },
+              {
+                "scriptElement": "beach",
+                "category": "setting",
+                "visualSuggestion": "Standard cinematography",
+                "frequency": 4
+              }
+            ],
+            "soundToAudio": [
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              },
+              {
+                "scriptSound": "car",
+                "category": "ambient",
+                "audioSuggestion": "Background atmosphere",
+                "frequency": 133
+              }
+            ],
+            "directionToExecution": [
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(He\"},{\"number\":8,\"heading\":\"INT. PARIS OFFICE SPACE, KITCHEN - DAWN\",\"characters\":[\"THE KILLER\"],\"dialogues\":[{\"character\":\"THE KILLER\",\"parenthetical\":\"(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 1
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              },
+              {
+                "scriptDirection": "(V.O.)",
+                "type": "action",
+                "filmingAdvice": "Blocking and performance direction",
+                "frequency": 162
+              }
+            ],
+            "complexityReduction": {
+              "originalComplexity": "low",
+              "expectedReduction": 0.3,
+              "adaptationStrategy": "Preserve script structure"
+            }
+          },
+          "patterns": {
+            "genreConsistency": {
+              "consistency": 0.5,
+              "scriptGenre": "action",
+              "movieGenre": "unknown",
+              "recommendation": "Verify genre match"
+            },
+            "structuralFidelity": {
+              "fidelity": 1,
+              "structure": "well-structured",
+              "recommendation": "Maintain script structure"
+            },
+            "rhythmTranslation": {
+              "scriptRhythm": "consistent",
+              "expectedFilmRhythm": "Standard film pacing",
+              "confidence": 0.5
+            }
+          },
+          "lessons": [
+            {
+              "type": "atmosphere_lesson",
+              "lesson": "Scripts with 9 atmospheric elements require careful visual translation",
+              "applicability": "atmosphere_design",
+              "confidence": 0.8
+            },
+            {
+              "type": "complexity_lesson",
+              "lesson": "low complexity scripts work well with high quality production",
+              "applicability": "production_planning",
+              "confidence": 0.7
+            },
+            {
+              "type": "timing_lesson",
+              "lesson": "303 scenes translate to ~2.3 scenes per minute",
+              "applicability": "timing_prediction",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "confidence": 0.75,
+        "timestamp": "2026-01-30T17:35:56.653Z"
+      }
+    ],
+    "cinematicPatterns": {
+      "atmosphere": {
+        "rain": 67,
+        "dark": 712,
+        "love": 711,
+        "anger": 24,
+        "mountain": 12,
+        "sun": 70,
+        "hope": 26,
+        "happy": 15,
+        "city": 3535,
+        "storm": 14,
+        "fear": 46,
+        "joy": 41,
+        "palace": 185,
+        "desert": 61,
+        "beach": 45,
+        "wind": 151,
+        "sol": 14,
+        "snow": 84,
+        "sad": 35,
+        "hate": 29,
+        "romantic": 1,
+        "dramatic": 1,
+        "countryside": 16
+      },
+      "lighting": {
+        "light": {
+          "frequency": 663,
+          "inferredStyle": "controlled",
+          "technicalAdvice": "Studio lighting setup",
+          "confidence": 0.7
+        },
+        "sol": {
+          "frequency": 14,
+          "inferredStyle": "naturalistic",
+          "technicalAdvice": "Use natural light, avoid harsh shadows",
+          "confidence": 0.7
+        },
+        "fire": {
+          "frequency": 518,
+          "inferredStyle": "dramatic",
+          "technicalAdvice": "Practical lights, warm color temperature",
+          "confidence": 0.7
+        },
+        "dark": {
+          "frequency": 16,
+          "inferredStyle": "noir",
+          "technicalAdvice": "Low-key lighting, strong contrast",
+          "confidence": 0.7
+        },
+        "noon": {
+          "frequency": 61,
+          "inferredStyle": "controlled",
+          "technicalAdvice": "Studio lighting setup",
+          "confidence": 0.7
+        }
+      },
+      "sound": {
+        "ambient_car": 3600,
+        "ambient_door": 372
+      },
+      "camera": {
+        "movement": 573,
+        "rotation": 10,
+        "transition": 406
+      },
+      "pacing": {
+        "consistent": 5
+      }
+    },
+    "timingRules": [
+      {
+        "type": "timing_rule",
+        "rule": "Average scenes per minute: 0.82",
+        "confidence": 0.7,
+        "applicability": "general_timing"
+      }
+    ],
+    "genrePatterns": {},
+    "ragKnowledge": [
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"rain\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 67,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "The Killer"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"dark\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 712,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"love\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 711,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"anger\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 24,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"mountain\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 12,
+        "examples": [
+          "Ferrari"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"sun\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 70,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "The Killer"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"hope\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 26,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"happy\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 15,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"city\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 3535,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"storm\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 14,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"fear\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 46,
+        "examples": [
+          "Ferrari",
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"joy\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 41,
+        "examples": [
+          "Ferrari",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"palace\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 185,
+        "examples": [
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"desert\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 61,
+        "examples": [
+          "Gladiator Ii",
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"beach\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 45,
+        "examples": [
+          "Gladiator Ii",
+          "Napoleon",
+          "The Killer"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"wind\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 151,
+        "examples": [
+          "Gladiator Ii",
+          "Napoleon",
+          "The Killer"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"sol\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 14,
+        "examples": [
+          "Gladiator Ii"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"snow\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 84,
+        "examples": [
+          "Napoleon"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"sad\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 35,
+        "examples": [
+          "Napoleon",
+          "Ricky Stanicky"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"hate\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 29,
+        "examples": [
+          "Napoleon",
+          "Ricky Stanicky"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "atmosphere",
+        "rule": "Cuando el script menciona \"countryside\", considerar elementos visuales que refuercen esta atmósfera",
+        "confidence": 1,
+        "frequency": 16,
+        "examples": [
+          "The Killer"
+        ]
+      },
+      {
+        "type": "direction_rule",
+        "category": "lighting",
+        "rule": "Referencias a \"light\" en el script sugieren esquema de iluminación controlled",
+        "confidence": 0.7,
+        "technicalAdvice": "Studio lighting setup"
+      },
+      {
+        "type": "direction_rule",
+        "category": "lighting",
+        "rule": "Referencias a \"sol\" en el script sugieren esquema de iluminación naturalistic",
+        "confidence": 0.7,
+        "technicalAdvice": "Use natural light, avoid harsh shadows"
+      },
+      {
+        "type": "direction_rule",
+        "category": "lighting",
+        "rule": "Referencias a \"fire\" en el script sugieren esquema de iluminación dramatic",
+        "confidence": 0.7,
+        "technicalAdvice": "Practical lights, warm color temperature"
+      },
+      {
+        "type": "direction_rule",
+        "category": "lighting",
+        "rule": "Referencias a \"dark\" en el script sugieren esquema de iluminación noir",
+        "confidence": 0.7,
+        "technicalAdvice": "Low-key lighting, strong contrast"
+      },
+      {
+        "type": "direction_rule",
+        "category": "lighting",
+        "rule": "Referencias a \"noon\" en el script sugieren esquema de iluminación controlled",
+        "confidence": 0.7,
+        "technicalAdvice": "Studio lighting setup"
+      },
+      {
+        "type": "timing_prediction",
+        "rule": "Script scenes to film duration mapping established",
+        "formula": {
+          "avgMinutesPerScene": 2.0187730581478047,
+          "samples": 5,
+          "reliability": "high"
+        },
+        "confidence": 0.8,
+        "applicability": "pre_production_planning"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "rain",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 67,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "dark",
+        "visualTranslation": "Low-key lighting, shadows",
+        "frequency": 712,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "love",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 711,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "anger",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 24,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "mountain",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 12,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "sun",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 70,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "hope",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 26,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "happy",
+        "visualTranslation": "Vibrant colors, open framing",
+        "frequency": 15,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "city",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 3535,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "storm",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 14,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "fear",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 46,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "joy",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 41,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "palace",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 185,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "desert",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 61,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "beach",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 45,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "wind",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 151,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "sol",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 14,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "snow",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 84,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "sad",
+        "visualTranslation": "Desaturated colors, overcast",
+        "frequency": 35,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "hate",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 29,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "countryside",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 16,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "case_lesson",
+        "caseId": 1,
+        "scriptTitle": "Ferrari",
+        "movieFile": "Ferrari.mkv",
+        "keyLessons": [
+          "Scripts with 12 atmospheric elements require careful visual translation",
+          "low complexity scripts work well with high quality production",
+          "221 scenes translate to ~0.7 scenes per minute"
+        ],
+        "confidence": 0.75,
+        "applicability": "real_world_examples"
+      },
+      {
+        "type": "case_lesson",
+        "caseId": 2,
+        "scriptTitle": "Gladiator Ii",
+        "movieFile": "Gladiator.mkv",
+        "keyLessons": [
+          "Scripts with 15 atmospheric elements require careful visual translation",
+          "low complexity scripts work well with high quality production",
+          "146 scenes translate to ~0.4 scenes per minute"
+        ],
+        "confidence": 0.75,
+        "applicability": "real_world_examples"
+      },
+      {
+        "type": "case_lesson",
+        "caseId": 3,
+        "scriptTitle": "Napoleon",
+        "movieFile": "Napoleon.mkv",
+        "keyLessons": [
+          "Scripts with 15 atmospheric elements require careful visual translation",
+          "low complexity scripts work well with high quality production",
+          "222 scenes translate to ~0.4 scenes per minute"
+        ],
+        "confidence": 0.75,
+        "applicability": "real_world_examples"
+      },
+      {
+        "type": "case_lesson",
+        "caseId": 4,
+        "scriptTitle": "Ricky Stanicky",
+        "movieFile": "Ricky Stanick.mkv",
+        "keyLessons": [
+          "Scripts with 8 atmospheric elements require careful visual translation",
+          "low complexity scripts work well with high quality production",
+          "97 scenes translate to ~0.3 scenes per minute"
+        ],
+        "confidence": 0.75,
+        "applicability": "real_world_examples"
+      },
+      {
+        "type": "case_lesson",
+        "caseId": 5,
+        "scriptTitle": "The Killer",
+        "movieFile": "KILLER JOE.mkv",
+        "keyLessons": [
+          "Scripts with 9 atmospheric elements require careful visual translation",
+          "low complexity scripts work well with high quality production",
+          "303 scenes translate to ~2.3 scenes per minute"
+        ],
+        "confidence": 0.75,
+        "applicability": "real_world_examples"
+      }
+    ]
+  },
+  "validation": {
+    "validCorrelations": 5,
+    "totalCorrelations": 5,
+    "consistentPatterns": 5,
+    "totalPatterns": 5,
+    "applicableRules": 53,
+    "totalRules": 53
+  },
+  "progressReports": [
+    {
+      "timestamp": "2026-01-30T17:35:56.423Z",
+      "phase": "Fase 1: Matches cargados",
+      "elapsed": 4,
+      "matches": 5,
+      "correlations": 0,
+      "patterns": 0,
+      "ragRules": 0
+    },
+    {
+      "timestamp": "2026-01-30T17:35:56.653Z",
+      "phase": "Fase 2: Análisis profundo completado",
+      "elapsed": 233,
+      "matches": 5,
+      "correlations": 5,
+      "patterns": 0,
+      "ragRules": 0
+    },
+    {
+      "timestamp": "2026-01-30T17:35:56.653Z",
+      "phase": "Fase 3: Patrones cinematográficos extraídos",
+      "elapsed": 233,
+      "matches": 5,
+      "correlations": 5,
+      "patterns": 5,
+      "ragRules": 0
+    },
+    {
+      "timestamp": "2026-01-30T17:35:56.654Z",
+      "phase": "Fase 4: Base RAG construida",
+      "elapsed": 234,
+      "matches": 5,
+      "correlations": 5,
+      "patterns": 5,
+      "ragRules": 53
+    }
+  ]
+}

@@ -1,0 +1,621 @@
+{
+  "version": "3.0-optimized",
+  "created": "2026-01-30T17:35:56.654Z",
+  "ragRules": [
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"rain\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 67,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "The Killer"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"dark\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 712,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"love\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 711,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"anger\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 24,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"mountain\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 12,
+      "examples": [
+        "Ferrari"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"sun\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 70,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "The Killer"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"hope\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 26,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"happy\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 15,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"city\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 3535,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"storm\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 14,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"fear\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 46,
+      "examples": [
+        "Ferrari",
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"joy\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 41,
+      "examples": [
+        "Ferrari",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"palace\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 185,
+      "examples": [
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"desert\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 61,
+      "examples": [
+        "Gladiator Ii",
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"beach\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 45,
+      "examples": [
+        "Gladiator Ii",
+        "Napoleon",
+        "The Killer"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"wind\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 151,
+      "examples": [
+        "Gladiator Ii",
+        "Napoleon",
+        "The Killer"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"sol\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 14,
+      "examples": [
+        "Gladiator Ii"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"snow\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 84,
+      "examples": [
+        "Napoleon"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"sad\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 35,
+      "examples": [
+        "Napoleon",
+        "Ricky Stanicky"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"hate\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 29,
+      "examples": [
+        "Napoleon",
+        "Ricky Stanicky"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "atmosphere",
+      "rule": "Cuando el script menciona \"countryside\", considerar elementos visuales que refuercen esta atmósfera",
+      "confidence": 1,
+      "frequency": 16,
+      "examples": [
+        "The Killer"
+      ]
+    },
+    {
+      "type": "direction_rule",
+      "category": "lighting",
+      "rule": "Referencias a \"light\" en el script sugieren esquema de iluminación controlled",
+      "confidence": 0.7,
+      "technicalAdvice": "Studio lighting setup"
+    },
+    {
+      "type": "direction_rule",
+      "category": "lighting",
+      "rule": "Referencias a \"sol\" en el script sugieren esquema de iluminación naturalistic",
+      "confidence": 0.7,
+      "technicalAdvice": "Use natural light, avoid harsh shadows"
+    },
+    {
+      "type": "direction_rule",
+      "category": "lighting",
+      "rule": "Referencias a \"fire\" en el script sugieren esquema de iluminación dramatic",
+      "confidence": 0.7,
+      "technicalAdvice": "Practical lights, warm color temperature"
+    },
+    {
+      "type": "direction_rule",
+      "category": "lighting",
+      "rule": "Referencias a \"dark\" en el script sugieren esquema de iluminación noir",
+      "confidence": 0.7,
+      "technicalAdvice": "Low-key lighting, strong contrast"
+    },
+    {
+      "type": "direction_rule",
+      "category": "lighting",
+      "rule": "Referencias a \"noon\" en el script sugieren esquema de iluminación controlled",
+      "confidence": 0.7,
+      "technicalAdvice": "Studio lighting setup"
+    },
+    {
+      "type": "timing_prediction",
+      "rule": "Script scenes to film duration mapping established",
+      "formula": {
+        "avgMinutesPerScene": 2.0187730581478047,
+        "samples": 5,
+        "reliability": "high"
+      },
+      "confidence": 0.8,
+      "applicability": "pre_production_planning"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "rain",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 67,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "dark",
+      "visualTranslation": "Low-key lighting, shadows",
+      "frequency": 712,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "love",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 711,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "anger",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 24,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "mountain",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 12,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "sun",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 70,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "hope",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 26,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "happy",
+      "visualTranslation": "Vibrant colors, open framing",
+      "frequency": 15,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "city",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 3535,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "storm",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 14,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "fear",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 46,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "joy",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 41,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "palace",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 185,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "desert",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 61,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "beach",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 45,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "wind",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 151,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "sol",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 14,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "snow",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 84,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "sad",
+      "visualTranslation": "Desaturated colors, overcast",
+      "frequency": 35,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "hate",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 29,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "atmosphere_translation",
+      "scriptElement": "countryside",
+      "visualTranslation": "Standard cinematography",
+      "frequency": 16,
+      "confidence": 1,
+      "applicability": "visual_design"
+    },
+    {
+      "type": "case_lesson",
+      "caseId": 1,
+      "scriptTitle": "Ferrari",
+      "movieFile": "Ferrari.mkv",
+      "keyLessons": [
+        "Scripts with 12 atmospheric elements require careful visual translation",
+        "low complexity scripts work well with high quality production",
+        "221 scenes translate to ~0.7 scenes per minute"
+      ],
+      "confidence": 0.75,
+      "applicability": "real_world_examples"
+    },
+    {
+      "type": "case_lesson",
+      "caseId": 2,
+      "scriptTitle": "Gladiator Ii",
+      "movieFile": "Gladiator.mkv",
+      "keyLessons": [
+        "Scripts with 15 atmospheric elements require careful visual translation",
+        "low complexity scripts work well with high quality production",
+        "146 scenes translate to ~0.4 scenes per minute"
+      ],
+      "confidence": 0.75,
+      "applicability": "real_world_examples"
+    },
+    {
+      "type": "case_lesson",
+      "caseId": 3,
+      "scriptTitle": "Napoleon",
+      "movieFile": "Napoleon.mkv",
+      "keyLessons": [
+        "Scripts with 15 atmospheric elements require careful visual translation",
+        "low complexity scripts work well with high quality production",
+        "222 scenes translate to ~0.4 scenes per minute"
+      ],
+      "confidence": 0.75,
+      "applicability": "real_world_examples"
+    },
+    {
+      "type": "case_lesson",
+      "caseId": 4,
+      "scriptTitle": "Ricky Stanicky",
+      "movieFile": "Ricky Stanick.mkv",
+      "keyLessons": [
+        "Scripts with 8 atmospheric elements require careful visual translation",
+        "low complexity scripts work well with high quality production",
+        "97 scenes translate to ~0.3 scenes per minute"
+      ],
+      "confidence": 0.75,
+      "applicability": "real_world_examples"
+    },
+    {
+      "type": "case_lesson",
+      "caseId": 5,
+      "scriptTitle": "The Killer",
+      "movieFile": "KILLER JOE.mkv",
+      "keyLessons": [
+        "Scripts with 9 atmospheric elements require careful visual translation",
+        "low complexity scripts work well with high quality production",
+        "303 scenes translate to ~2.3 scenes per minute"
+      ],
+      "confidence": 0.75,
+      "applicability": "real_world_examples"
+    }
+  ],
+  "quickReference": {
+    "commonAtmosphereTranslations": [
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "rain",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 67,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "dark",
+        "visualTranslation": "Low-key lighting, shadows",
+        "frequency": 712,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "love",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 711,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "anger",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 24,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "mountain",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 12,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "sun",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 70,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "hope",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 26,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "happy",
+        "visualTranslation": "Vibrant colors, open framing",
+        "frequency": 15,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "city",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 3535,
+        "confidence": 1,
+        "applicability": "visual_design"
+      },
+      {
+        "type": "atmosphere_translation",
+        "scriptElement": "storm",
+        "visualTranslation": "Standard cinematography",
+        "frequency": 14,
+        "confidence": 1,
+        "applicability": "visual_design"
+      }
+    ],
+    "timingGuidelines": [
+      {
+        "type": "timing_prediction",
+        "rule": "Script scenes to film duration mapping established",
+        "formula": {
+          "avgMinutesPerScene": 2.0187730581478047,
+          "samples": 5,
+          "reliability": "high"
+        },
+        "confidence": 0.8,
+        "applicability": "pre_production_planning"
+      }
+    ],
+    "genreSpecificRules": []
+  }
+}

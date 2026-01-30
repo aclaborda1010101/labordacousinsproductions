@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "created": "2026-01-30T17:29:34.480Z",
+    "version": "2.0",
+    "totalMovies": 16382,
+    "totalScripts": 47,
+    "totalCorrelations": 0,
+    "highConfidenceMatches": 0
+  },
+  "scriptToScreen": [],
+  "directionPatterns": {
+    "atmosphere": {},
+    "lighting": {},
+    "rhythm": {},
+    "cameraWork": {},
+    "soundDesign": {}
+  },
+  "timingAnalysis": {},
+  "ragKnowledge": []
+}

@@ -1,0 +1,85 @@
+{
+  "timestamp": "/Users/jarvismini/clawd/lc-studio-real/scripts-scraper",
+  "summary": {
+    "total_films": 690,
+    "total_scripts": 527,
+    "matches_found": 350,
+    "match_percentage": 66.41366223908919
+  },
+  "matches": [
+    {
+      "script": "trainwreck-2015",
+      "film": "trainwreck-2015",
+      "normalized": "trainwreck"
+    },
+    {
+      "script": "upgrade-2018",
+      "film": "upgrade-2018",
+      "normalized": "upgrade"
+    },
+    {
+      "script": "tower-block-2012",
+      "film": "tower-block-2012",
+      "normalized": "towerblock"
+    },
+    {
+      "script": "the-lunchbox-2013",
+      "film": "the-lunchbox-2013",
+      "normalized": "thelunchbox"
+    },
+    {
+      "script": "evil-dead-2013",
+      "film": "evil-dead-2013",
+      "normalized": "evildead"
+    },
+    {
+      "script": "the-beguiled-2017",
+      "film": "the-beguiled-2017",
+      "normalized": "thebeguiled"
+    },
+    {
+      "script": "overlord-2018",
+      "film": "overlord-2018",
+      "normalized": "overlord"
+    },
+    {
+      "script": "strawberry-mansion-2021",
+      "film": "strawberry-mansion-2021",
+      "normalized": "strawberrymansion"
+    },
+    {
+      "script": "kill-the-messenger-2014",
+      "film": "kill-the-messenger-2014",
+      "normalized": "killthemessenger"
+    },
+    {
+      "script": "the-lego-movie-2014",
+      "film": "the-lego-movie-2014",
+      "normalized": "thelegomovie"
+    }
+  ],
+  "sample_unmatched_scripts": [
+    "the-100-101-pilot-2014",
+    "izombie-101-pilot-2015",
+    "master-of-none-208-thanksgiving-2017",
+    "mindhunter-101-episode-1-1-2017",
+    "true-detective-105-the-secret-fate-of-all-life-2014",
+    "american-vandal-108-clean-up-2017",
+    "the-bear-101-system-2022",
+    "rick-and-morty-108-rixty-minutes-2014",
+    "black-mirror-102-fifteen-million-merits-2011",
+    "helix-101-pilot-2014"
+  ],
+  "sample_unmatched_films": [
+    "better-man-2024",
+    "nell-2024",
+    "nosferatu-2024",
+    "gladiator-ii-2024",
+    "red-one-2024",
+    "maria-2024",
+    "my-old-ass-2024",
+    "nightbitch-2024",
+    "the-wild-robot-2024",
+    "the-outrun-2024"
+  ]
+}

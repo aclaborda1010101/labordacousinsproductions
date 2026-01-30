@@ -1,0 +1,101 @@
+{
+  "timestamp": "2026-01-30T17:32:09.170Z",
+  "analysis": "improved_matching",
+  "summary": {
+    "totalScripts": 47,
+    "exactMatches": 5,
+    "successRate": "10.6%"
+  },
+  "matches": [
+    {
+      "script": {
+        "title": "Ferrari",
+        "slug": "ferrari-2023",
+        "year": 2023,
+        "scenes": 221
+      },
+      "movies": [
+        {
+          "filename": "Ferrari.mkv",
+          "confidence": 0.75,
+          "reason": "Palabras clave: ferrari",
+          "year": null,
+          "size": 5535572852,
+          "quality": "high"
+        }
+      ]
+    },
+    {
+      "script": {
+        "title": "Gladiator Ii",
+        "slug": "gladiator-ii-2024",
+        "year": 2024,
+        "scenes": 146
+      },
+      "movies": [
+        {
+          "filename": "Gladiator.mkv",
+          "confidence": 0.75,
+          "reason": "Palabras clave: gladiator",
+          "year": null,
+          "size": 7324435480,
+          "quality": "high"
+        }
+      ]
+    },
+    {
+      "script": {
+        "title": "Napoleon",
+        "slug": "napoleon-2023",
+        "year": 2023,
+        "scenes": 222
+      },
+      "movies": [
+        {
+          "filename": "Napoleon.mkv",
+          "confidence": 0.75,
+          "reason": "Palabras clave: napoleon",
+          "year": null,
+          "size": 9158982989,
+          "quality": "high"
+        }
+      ]
+    },
+    {
+      "script": {
+        "title": "Ricky Stanicky",
+        "slug": "ricky-stanicky-2024",
+        "year": 2024,
+        "scenes": 97
+      },
+      "movies": [
+        {
+          "filename": "Ricky Stanick.mkv",
+          "confidence": 0.75,
+          "reason": "Palabras clave: ricky, stanicky",
+          "year": null,
+          "size": 5444592931,
+          "quality": "high"
+        }
+      ]
+    },
+    {
+      "script": {
+        "title": "The Killer",
+        "slug": "the-killer-2023",
+        "year": 2023,
+        "scenes": 303
+      },
+      "movies": [
+        {
+          "filename": "KILLER JOE.mkv",
+          "confidence": 0.75,
+          "reason": "Palabras clave: killer",
+          "year": null,
+          "size": 2390249443,
+          "quality": "high"
+        }
+      ]
+    }
+  ]
+}

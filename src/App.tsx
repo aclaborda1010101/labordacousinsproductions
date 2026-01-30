@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,15 +11,26 @@ import { DeveloperModeProvider } from "@/contexts/DeveloperModeContext";
 import { BackgroundTasksProvider } from "@/contexts/BackgroundTasksContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
-// Pages
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import Projects from "./pages/Projects";
-import NewProject from "./pages/NewProject";
-import ProjectDetail from "./pages/ProjectDetail";
-import Dailies from "./pages/Dailies";
-import NotFound from "./pages/NotFound";
+// Loading Component
+const LoadingSpinner = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="flex flex-col items-center space-y-4">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <p className="text-sm text-muted-foreground">Cargando...</p>
+    </div>
+  </div>
+);
+
+// Lazy Loaded Pages - Code Splitting
+const Index = React.lazy(() => import("./pages/Index"));
+const Auth = React.lazy(() => import("./pages/Auth"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const Projects = React.lazy(() => import("./pages/Projects"));
+const NewProject = React.lazy(() => import("./pages/NewProject"));
+const ProjectDetail = React.lazy(() => import("./pages/ProjectDetail"));
+const Dailies = React.lazy(() => import("./pages/Dailies"));
+const MovieAnalysis = React.lazy(() => import("./pages/MovieAnalysis"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -106,20 +117,22 @@ function AppRoutes() {
       } />
       <Route path="/auth" element={
         loading ? (
-          <div className="min-h-screen bg-background flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
+          <LoadingSpinner />
         ) : user ? (
           <Navigate to="/dashboard" replace />
         ) : (
-          <Auth />
+          <Suspense fallback={<LoadingSpinner />}>
+            <Auth />
+          </Suspense>
         )
       } />
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Suspense fallback={<LoadingSpinner />}>
+              <Dashboard />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -127,7 +140,9 @@ function AppRoutes() {
         path="/projects"
         element={
           <ProtectedRoute>
-            <Projects />
+            <Suspense fallback={<LoadingSpinner />}>
+              <Projects />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -135,7 +150,9 @@ function AppRoutes() {
         path="/projects/new"
         element={
           <ProtectedRoute>
-            <NewProject />
+            <Suspense fallback={<LoadingSpinner />}>
+              <NewProject />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -143,7 +160,9 @@ function AppRoutes() {
         path="/projects/:projectId/*"
         element={
           <ProtectedRoute>
-            <ProjectDetail />
+            <Suspense fallback={<LoadingSpinner />}>
+              <ProjectDetail />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -151,11 +170,27 @@ function AppRoutes() {
         path="/dailies"
         element={
           <ProtectedRoute>
-            <Dailies />
+            <Suspense fallback={<LoadingSpinner />}>
+              <Dailies />
+            </Suspense>
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<NotFound />} />
+      <Route
+        path="/movie-analysis"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+              <MovieAnalysis />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={
+        <Suspense fallback={<LoadingSpinner />}>
+          <NotFound />
+        </Suspense>
+      } />
     </Routes>
   );
 }
